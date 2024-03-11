@@ -48,7 +48,7 @@ test.beforeEach((t) => {
   t.context.sinon = Sinon.createSandbox();
 });
 
-test.afterEach((t) => {
+test.afterEach.always((t) => {
   t.context.sinon.restore();
 });
 
@@ -72,8 +72,6 @@ test.serial('Should create carpool', async (t) => {
   t.true(requestRepository.save.calledOnce);
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
-  // t.log(eventRepository.syncStatus.getCalls());
-  t.true(eventRepository.syncStatus.calledOnce);
 
   const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     data.operator_id,
@@ -82,10 +80,7 @@ test.serial('Should create carpool', async (t) => {
   t.deepEqual(carpool, {
     ...data,
     incentive_status: 'pending',
-    incentive_last_event_id: null,
     fraud_status: 'pending',
-    fraud_last_event_id: null,
-    acquisition_last_event_id: 1,
     acquisition_status: 'received',
   });
 });
@@ -115,8 +110,6 @@ test.serial('Should update carpool', async (t) => {
   t.true(requestRepository.save.calledOnce);
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
-  // t.log(eventRepository.syncStatus.getCalls());
-  t.true(eventRepository.syncStatus.calledOnce);
 
   const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
@@ -126,10 +119,7 @@ test.serial('Should update carpool', async (t) => {
     ...insertableCarpool,
     ...updatableCarpool,
     incentive_status: 'pending',
-    incentive_last_event_id: null,
     fraud_status: 'pending',
-    fraud_last_event_id: null,
-    acquisition_last_event_id: 2,
     acquisition_status: 'updated',
   });
 });
@@ -160,8 +150,6 @@ test.serial('Should cancel carpool', async (t) => {
   t.true(requestRepository.save.calledOnce);
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
-  // t.log(eventRepository.syncStatus.getCalls());
-  t.true(eventRepository.syncStatus.calledOnce);
 
   const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
@@ -171,10 +159,7 @@ test.serial('Should cancel carpool', async (t) => {
     ...insertableCarpool,
     ...updatableCarpool,
     incentive_status: 'pending',
-    incentive_last_event_id: null,
     fraud_status: 'pending',
-    fraud_last_event_id: null,
-    acquisition_last_event_id: 3,
     acquisition_status: 'canceled',
   });
 });
@@ -182,7 +167,7 @@ test.serial('Should cancel carpool', async (t) => {
 test.serial('Should rollback if something fail', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  t.context.sinon.replace(t.context.eventRepository, 'syncStatus', t.context.sinon.fake.throws(new Error('DB')));
+  t.context.sinon.replace(t.context.eventRepository, 'saveAcquisitionEvent', t.context.sinon.fake.throws(new Error('DB')));
 
   const service = getService(t.context, {
     carpoolRepository,

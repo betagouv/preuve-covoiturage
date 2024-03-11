@@ -22,10 +22,11 @@ import { ProcessJourneyAction } from './actions/ProcessJourneyAction';
 import { ListJourneyAction } from './actions/ListJourneyAction';
 import { PatchJourneyAction } from './actions/PatchJourneyAction';
 import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { AcquisitionMigrateCommand } from './commands/MigrateAcquistionCommand';
 
 @serviceProvider({
   config,
-  commands: [AcquisitionProcessCommand],
+  commands: [AcquisitionProcessCommand, AcquisitionMigrateCommand],
   queues: ['acquisition'],
   providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider, CarpoolAcquisitionService],
   validator: [v3binding, listBinding, cancelBinding, statusBinding, patchBinding],

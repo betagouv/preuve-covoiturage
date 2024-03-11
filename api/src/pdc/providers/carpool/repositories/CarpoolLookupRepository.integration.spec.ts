@@ -27,7 +27,6 @@ test.before(async (t) => {
   const carpool = await t.context.carpoolRepository.register(insertableCarpool);
   const eventData = { ...insertableAcquisitionEvent, carpool_id: carpool._id };
   await t.context.eventRepository.saveAcquisitionEvent(eventData);
-  await t.context.eventRepository.syncStatus(carpool._id);
   t.context.carpool_id = carpool._id;
 });
 
@@ -60,10 +59,7 @@ test.serial('Should get one carpool', async (t) => {
   t.deepEqual(carpool, {
     ...data,
     incentive_status: 'pending',
-    incentive_last_event_id: null,
     fraud_status: 'pending',
-    fraud_last_event_id: null,
-    acquisition_last_event_id: 1,
     acquisition_status: 'canceled',
   });
 });
