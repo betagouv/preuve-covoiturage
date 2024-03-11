@@ -1,21 +1,18 @@
 import { territoryList } from '@/helpers/lists';
-
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
 
 type SelectObserveProps = {
   id: string,
   label: string,
-  type: PerimeterType,
-  value: string,
-  onChange: (v: PerimeterType) => void,
 };
 
 export default function SelectObserve(props: SelectObserveProps) {
-  const handlerChangeObserve = (value: PerimeterType) => {
-    props.onChange(value);
-  };
-  const observeObject = territoryList.find(d=>d.id===props.type)
+  const { dashboard } =useContext(DashboardContext);
+
+  const observeObject = territoryList.find(d=>d.id===dashboard.params.type)
   const filteredList = observeObject ? territoryList.filter(d=> territoryList.indexOf(d) < territoryList.indexOf(observeObject)) : [];
   return (
     <>
@@ -23,9 +20,9 @@ export default function SelectObserve(props: SelectObserveProps) {
         <InputLabel id={props.id}>{props.label}</InputLabel>
         <Select
           labelId={props.id}
-          value={props.value}
+          value={dashboard.params.observe}
           label={props.label}
-          onChange={(event) => handlerChangeObserve(event.target.value as PerimeterType)}
+          onChange={(event) => dashboard.onChangeObserve(event.target.value as PerimeterType)}
         >
           {filteredList.map((d, i: number) => (
             <MenuItem key={i} value={d.id}>

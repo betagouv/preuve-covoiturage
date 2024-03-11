@@ -1,25 +1,26 @@
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
-import { ClasseInterface, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { AiresCovoiturageDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useContext } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 import { SwitchFilterInterface } from '@/interfaces/observatoire/helpersInterfaces';
 import { useSwitchFilters } from '@/hooks/useSwitchFilters';
 import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
 import { FeatureCollection } from 'geojson';
-import Button from '@codegouvfr/react-dsfr/Button';
-import { downloadData } from '@/helpers/map';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
-export default function AiresCovoiturageMap({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function AiresCovoiturageMap({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/aires-covoiturage?code=${params.code}&type=${params.type}`;
+  const url = `${apiUrl}/aires-covoiturage?code=${dashboard.params.code}&type=${dashboard.params.type}`;
   
   const defaultFilters: SwitchFilterInterface[] = [
     {name:'Supermarché', active:true},
@@ -89,9 +90,9 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
   ];
 
   const bounds = useMemo(() => {
-    const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
+    const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
     return bounds as unknown as LngLatBoundsLike;
-  },[params.code, geojson]);
+  },[dashboard.params.code, geojson]);
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -162,14 +163,12 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           download={
-            <Button onClick={function download(){
-                downloadData('aires_de_covoiturage',geojson,'geojson')
-              }}
-              iconId="fr-icon-download-fill"
-              iconPosition="right"
-            >
-              Télécharger les données de la carte
-            </Button>
+            <DownloadButton 
+              title={'Télécharger les données de la carte'}
+              data={geojson as FeatureCollection}
+              type={'geojson'}
+              filename='aires_de_covoiturage'
+            />
           }
         >
           <Source id='aires' type='geojson' data={geojson}>

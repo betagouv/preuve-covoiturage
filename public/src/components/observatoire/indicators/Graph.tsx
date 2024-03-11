@@ -8,10 +8,10 @@ import OccupationGraph from '@/app/observatoire/territoire/graphs/OccupationGrap
 export default function SingleGraph(props: SingleGraphProps) {
   return(
     <>
-      {props.params.graph == 1 && <FluxGraph title={props.title} params={props.params} indic="journeys" />}
-      {props.params.graph== 2 && <DistanceGraph title={props.title} params={props.params} />}
-      {props.params.graph== 3 && <OccupationGraph title={props.title} params={props.params} indic="occupation_rate" />}
-      {props.params.graph== 4 && <OccupationGraph title={props.title} params={props.params} indic="trips" />}
+      {props.params.graph == 1 && <FluxGraph title={props.title} indic="journeys" />}
+      {props.params.graph== 2 && <DistanceGraph title={props.title} />}
+      {props.params.graph== 3 && <OccupationGraph title={props.title} indic="occupation_rate" />}
+      {props.params.graph== 4 && <OccupationGraph title={props.title} indic="trips" />}
     </>
   )
 };

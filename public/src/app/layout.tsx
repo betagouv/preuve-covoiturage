@@ -12,8 +12,9 @@ import Link from 'next/link';
 import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
 import Analytics from '@/components/layout/Analytics';
-import '../styles/global.scss';
 import { Metadata } from 'next';
+import { ContextProvider } from '@/context/ContextProvider';
+import '../styles/global.scss';
 
 export const metadata: Metadata = {
   title: 'Comprendre le covoiturage quotidien sur votre territoire | Observatoire.covoiturage.gouv.fr',
@@ -49,15 +50,17 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
         <DsfrProvider>
           <MuiDsfrThemeProvider>
             <Skiplinks />
-            <AppHeader />
-            <main tabIndex={-1}>
-              <div className={fr.cx('fr-container')}>
-                {children}
-                <ScrollToTop />
-              </div>
-              <Follow />
-            </main>
-            <AppFooter />
+            <ContextProvider>
+              <AppHeader />
+              <main tabIndex={-1}>
+                <div className={fr.cx('fr-container')}>
+                  {children}
+                  <ScrollToTop />
+                </div>
+                <Follow />
+              </main>
+              <AppFooter />
+            </ContextProvider>
           </MuiDsfrThemeProvider>
         </DsfrProvider>
       </body>

@@ -2,20 +2,20 @@ import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
 import { classWidth, getLegendClasses, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcLayer } from '@deck.gl/layers/typed';
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo } from 'react';
-import { downloadData } from '@/helpers/map';
+import { useMemo, useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
-export default function FluxMap({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function FluxMap({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-flux?code=${params.code}&type=${params.type}&observe=${params.observe}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<FluxDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const filteredData = useMemo(() => {
@@ -51,9 +51,9 @@ export default function FluxMap({ title, params }: { title: string; params: Sear
       ];
     })
     .reduce((acc, val) => acc.concat(val), []);
-    const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPoint(coords));
+    const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPoint(coords));
     return bounds as unknown as LngLatBoundsLike;
-  }, [params.code,filteredData]);
+  }, [dashboard.params.code,filteredData]);
   const tooltip = ({ object }: any) =>
     object && {
       html: `<div class="tooltip-title"><b>${object.ter_1} - ${object.ter_2}</b></div>
@@ -103,14 +103,11 @@ export default function FluxMap({ title, params }: { title: string; params: Sear
             }
           ]}
           download={
-            <Button onClick={function download(){
-                downloadData('flux',filteredData,'csv')
-              }}
-              iconId="fr-icon-download-fill"
-              iconPosition="right"
-            >
-              Télécharger les données de la carte
-            </Button>
+            <DownloadButton 
+              title={'Télécharger les données de la carte'}
+              data={filteredData}
+              filename='flux'
+            />
           }
         />
       )}

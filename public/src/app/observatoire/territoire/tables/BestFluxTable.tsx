@@ -1,11 +1,12 @@
 import { Config } from "@/config";
 import { useApi } from "@/hooks/useApi";
-import { SearchParamsInterface } from "@/interfaces/observatoire/componentsInterfaces";
 import { BestFluxDataInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table as TableStyled} from "@codegouvfr/react-dsfr/Table";
 import styled from '@emotion/styled';
 import { css } from "@emotion/react";
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
 
 const Table = styled(TableStyled)(
   css`
@@ -21,9 +22,10 @@ const Table = styled(TableStyled)(
   }
 `);
 
-export default function BestFluxTable({ title, limit, params }: { title: string, limit: number, params: SearchParamsInterface }) {
+export default function BestFluxTable({ title, limit}: { title: string, limit: number }) {
+  const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-monthly-flux?code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}&limit=${limit}`;
+  const url = `${apiUrl}/best-monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
   const { data, error, loading } = useApi<BestFluxDataInterface[]>(url);
   const dataTable = data ? data.map(d => [`${d.l_territory_1} - ${d.l_territory_2}`, d.journeys]) : []
 

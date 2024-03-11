@@ -6,7 +6,6 @@ import SelectPeriod from '@/components/observatoire/SelectPeriod';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import { getPeriod } from '@/helpers/analyse';
 import { graphList, mapList } from '@/helpers/lists';
-import { useDashboard } from '@/hooks/useDashboard';
 import { fr } from '@codegouvfr/react-dsfr';
 import SectionTitle from '../../../components/common/SectionTitle';
 import KeyFigures from './KeyFigures';
@@ -21,52 +20,54 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
+import { useContext } from 'react'
+import { DashboardContext } from '@/context/DashboardProvider'
+
 import { Suspense } from 'react';
 
 export default function Page() {
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';
   const subtitle = 'Les données sont issues des plateformes de covoiturage partenaires du Registre de preuve de covoiturage et représentent environ 4% des trajets covoiturés chaque mois en 2023';
   const content = "Bien que partielle, cette source de données est à ce jour la plus complète pour comprendre certaines pratiques du covoiturage quotidien à l'échelle du territoire national."
+  const { dashboard } =useContext(DashboardContext);
+  const period = getPeriod(dashboard.params.year, dashboard.params.month);
+  const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
 
-  const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard();
-  const period = getPeriod(params.year, params.month);
-  const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
-
-  return (
+    return (
     <Suspense>
-      {!loading && !error &&(
+      {!dashboard.loading && !dashboard.error &&(
         <div id='content'>
           <PageTitle title={title} />
           <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
           <p className={fr.cx('fr-text--lg')}>{content}</p>
           <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <SelectTerritory code={params.code} type={params.observe} year={Number(params.year)} onChange={onChangeTerritory} />
+              <SelectTerritory />
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <SelectPeriod year={Number(params.year)} month={Number(params.month)} onChange={onChangePeriod} />
+              <SelectPeriod />
             </div>
           </div>
           <SectionTitle
-            title={`${params.name} du ${new Date(period.start_date).toLocaleDateString()} au ${new Date(
+            title={`${dashboard.params.name} du ${new Date(period.start_date).toLocaleDateString()} au ${new Date(
               period.end_date,
             ).toLocaleDateString()}`}
           />
-          <KeyFigures params={params} />
+          <KeyFigures />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
+              <RepartitionHoraireGraph title='Trajets par horaire' />
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <RepartitionDistanceGraph title='Répartition des trajets par distance' params={params} />
+              <RepartitionDistanceGraph title='Répartition des trajets par distance' />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <BestFluxTable title='Top 10 des trajets les plus covoiturés' limit={10} params={params} />
+              <BestFluxTable title='Top 10 des trajets les plus covoiturés' limit={10} />
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <BestTerritoriesTable title='Top 10 des territoires' limit={10} params={params} />
+              <BestTerritoriesTable title='Top 10 des territoires' limit={10} />
             </div>
           </div>
           <SectionTitle title='Evolution' />
@@ -75,19 +76,19 @@ export default function Page() {
               <SelectInList
                 labelId='graph'
                 label='Sélectionner un graphique'
-                id={params.graph}
+                id={dashboard.params.graph}
                 list={graphList}
                 sx={{ minWidth: 300 }}
-                onChange={onChangeGraph}
+                onChange={dashboard.onChangeGraph}
               />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
-              {params.graph == 1 && <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>}
-              {params.graph == 2 && <DistanceGraph title={graphList[1].name} params={params} />}
-              {params.graph == 3 && <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>}
-              {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
+              {dashboard.params.graph == 1 && <FluxGraph title={graphList[0].name} indic="journeys"/>}
+              {dashboard.params.graph == 2 && <DistanceGraph title={graphList[1].name} />}
+              {dashboard.params.graph == 3 && <OccupationGraph title={graphList[2].name} indic="occupation_rate"/>}
+              {dashboard.params.graph == 4 && <OccupationGraph title={graphList[3].name} indic="trips"/>}
             </div>
           </div>
           <SectionTitle title='Cartographie' />
@@ -96,24 +97,24 @@ export default function Page() {
               <SelectInList
                 labelId='carte'
                 label='Sélectionner une carte'
-                id={params.map}
-                list={params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
+                id={dashboard.params.map}
+                list={dashboard.params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
                 sx={{ minWidth: 300 }}
-                onChange={onChangeMap}
+                onChange={dashboard.onChangeMap}
               />
             </div>
-            {[1,3].includes(params.map) && 
+            {[1,3].includes(dashboard.params.map) && 
               <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-                <SelectObserve id='observe' label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
+                <SelectObserve id='observe' label={observeLabel} />
               </div>
             }
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
-              {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
-              {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
-              {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
-              {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
+              {dashboard.params.map == 1 && <FluxMap title={mapList[0].name} />}
+              {dashboard.params.map == 2 && <DensiteMap title={mapList[1].name} />}
+              {dashboard.params.map == 3 && <OccupationMap title={mapList[2].name} />}
+              {dashboard.params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} />}
             </div>
           </div>  
         </div>

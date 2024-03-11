@@ -1,12 +1,15 @@
 import Rows from '@/components/observatoire/indicators/Rows';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
-import { IndicatorProps, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import { KeyFiguresDataInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
 
-export default function KeyFigures({ params }: { params: SearchParamsInterface }) {
+export default function KeyFigures() {
+  const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-keyfigures?code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/monthly-keyfigures?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data } = useApi<KeyFiguresDataInterface[]>(url);
   const row1 = data
     ? [

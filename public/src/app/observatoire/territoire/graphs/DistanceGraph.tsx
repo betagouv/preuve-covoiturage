@@ -1,9 +1,10 @@
 import { Config } from '@/config';
 import { monthList } from '@/helpers/lists';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { EvolDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -16,10 +17,12 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-export default function DistanceGraph({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function DistanceGraph({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const options = {
     responsive: true,
     plugins: {
@@ -30,7 +33,7 @@ export default function DistanceGraph({ title, params }: { title: string; params
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-flux?indic=distance&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/evol-monthly-flux?indic=distance&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<EvolDistanceDataInterface[]>(url);
   const dataset = data?.map((d) => d.distance/d.journeys).reverse();
 
@@ -67,7 +70,14 @@ export default function DistanceGraph({ title, params }: { title: string; params
       )}
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div className={fr.cx('fr-callout__title','fr-text--xl')}>
+            {title}  
+            <DownloadButton 
+              title={'Télécharger les données du graphique'}
+              data={data!}
+              filename='distance'
+            />
+          </div>
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
             <Line options={options} data={chartData()} aria-hidden />
             { dataset &&

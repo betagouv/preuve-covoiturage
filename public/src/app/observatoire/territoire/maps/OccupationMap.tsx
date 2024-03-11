@@ -2,23 +2,24 @@ import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
 import { getLegendClasses } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
-import { ClasseInterface, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { OccupationDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { AnalyseInterface } from '@/interfaces/observatoire/helpersInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import Button from '@codegouvfr/react-dsfr/Button';
 import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useContext } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { downloadData } from '@/helpers/map';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
-export default function OccupationMap({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function OccupationMap({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-occupation?code=${params.code}&type=${params.type}&observe=${params.observe}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/monthly-occupation?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<OccupationDataInterface[]>(url);
   const geojson = useMemo(() => {
     const occupationData = data ? data : [];
@@ -88,9 +89,9 @@ export default function OccupationMap({ title, params }: { title: string; params
    
 
   const bounds = useMemo(() => {
-    const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
+    const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
     return bounds as unknown as LngLatBoundsLike;
-  },[params.code, geojson]);
+  },[dashboard.params.code, geojson]);
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -152,14 +153,12 @@ export default function OccupationMap({ title, params }: { title: string; params
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         download={
-          <Button onClick={function download(){
-              downloadData('occupation',geojson,'geojson')
-            }}
-            iconId="fr-icon-download-fill"
-            iconPosition="right"
-          >
-            Télécharger les données de la carte
-          </Button>
+          <DownloadButton 
+            title={'Télécharger les données de la carte'}
+            data={geojson as FeatureCollection}
+            type={'geojson'}
+            filename='occupation'
+          />
         }
         >
           <Source id='occupation' type='geojson' data={geojson}>
