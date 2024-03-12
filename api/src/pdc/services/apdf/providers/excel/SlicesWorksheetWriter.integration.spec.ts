@@ -51,19 +51,19 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   // Data
   /* eslint-disable prettier/prettier,max-len */
   t.is(worksheet.getCell('A2').value, `Jusqu'à ${slices[0].slice.end / 1000} km`);
-  t.deepEqual(worksheet.getCell('B2').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
-  t.deepEqual(worksheet.getCell('C2').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
-  t.deepEqual(worksheet.getCell('D2').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
+  t.deepEqual(worksheet.getCell('B2').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")' });
+  t.deepEqual(worksheet.getCell('C2').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")' });
+  t.deepEqual(worksheet.getCell('D2').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")' });
 
   t.is(worksheet.getCell('A3').value, `De ${slices[1].slice.start / 1000} km à ${slices[1].slice.end / 1000} km`);
-  t.deepEqual(worksheet.getCell('B3').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
-  t.deepEqual(worksheet.getCell('C3').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
-  t.deepEqual(worksheet.getCell('D3').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
+  t.deepEqual(worksheet.getCell('B3').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")' });
+  t.deepEqual(worksheet.getCell('C3').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")' });
+  t.deepEqual(worksheet.getCell('D3').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")' });
 
   t.is(worksheet.getCell('A4').value, `Supérieure à ${slices[2].slice.start / 1000} km`);
-  t.deepEqual(worksheet.getCell('B4').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">30000")' });
-  t.deepEqual(worksheet.getCell('C4').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">30000")' });
-  t.deepEqual(worksheet.getCell('D4').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">30000")' });
+  t.deepEqual(worksheet.getCell('B4').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=30000")' });
+  t.deepEqual(worksheet.getCell('C4').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=30000")' });
+  t.deepEqual(worksheet.getCell('D4').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">=30000")' });
 
   /* eslint-enable prettier/prettier,max-len */
 });
