@@ -58,7 +58,6 @@ test.serial('Should get one carpool', async (t) => {
   );
   t.deepEqual(carpool, {
     ...data,
-    incentive_status: 'pending',
     fraud_status: 'pending',
     acquisition_status: 'canceled',
   });

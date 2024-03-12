@@ -20,7 +20,12 @@ export class CarpoolEventRepository {
     await this.setStatus(data.carpool_id, 'acquisition', data.status, client);
   }
 
-  protected async setStatus(carpool_id: Id, statusType: string, statusValue: string, client?: PoolClient): Promise<void> {
+  public async setStatus(
+    carpool_id: Id,
+    statusType: 'acquisition' | 'fraud',
+    statusValue: string,
+    client?: PoolClient,
+  ): Promise<void> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (

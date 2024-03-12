@@ -1,7 +1,13 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { CarpoolEventRepository, CarpoolGeoRepository, CarpoolRepository, CarpoolRequestRepository } from '@pdc/providers/carpool';
+import {
+  CarpoolEventRepository,
+  CarpoolGeoRepository,
+  CarpoolRepository,
+  CarpoolRequestRepository,
+} from '@pdc/providers/carpool';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { addSeconds } from 'date-fns';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '../../../providers/carpool/interfaces';
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -50,8 +56,8 @@ export class AcquisitionMigrateCommand implements CommandInterface {
         `,
         values: [batchSize],
       });
-  
-      for(const { acquisition } of result.rows) {
+
+      for (const { acquisition } of result.rows) {
         console.info(acquisition);
         const incentiveResult = await conn.query({
           text: `
@@ -85,71 +91,105 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           values: [acquisition._id],
         });
 
-        const { carpool, passenger_identity, driver_identity, driver_revenue, start_lat, start_lon, end_lat, end_lon } = carpoolResult.rows[0] || {};
-        if(!carpool || !passenger_identity || !driver_identity) {
+        const { carpool, passenger_identity, driver_identity, driver_revenue, start_lat, start_lon, end_lat, end_lon } =
+          carpoolResult.rows[0] || {};
+        if (!carpool || !passenger_identity || !driver_identity) {
           continue;
         }
 
-        const newCarpool = await this.carpool.register({
-          operator_id: carpool.operator_id,
-          operator_journey_id: carpool.operator_journey_id,
-          operator_trip_id: carpool.operator_trip_id,
-          operator_class: carpool.operator_class,
-          start_datetime: carpool.datetime,
-          start_position: {
-            lat: start_lat,
-            lon: start_lon,
+        const newCarpool = await this.carpool.register(
+          {
+            operator_id: carpool.operator_id,
+            operator_journey_id: carpool.operator_journey_id,
+            operator_trip_id: carpool.operator_trip_id,
+            operator_class: carpool.operator_class,
+            start_datetime: carpool.datetime,
+            start_position: {
+              lat: start_lat,
+              lon: start_lon,
+            },
+            end_datetime: addSeconds(new Date(carpool.datetime), carpool.duration || carpool.meta.calc_duration || 0),
+            end_position: {
+              lat: end_lat,
+              lon: end_lon,
+            },
+            distance: carpool.distance || carpool.meta.calc_distance || 0,
+            licence_plate: undefined,
+            driver_identity_key: driver_identity.identity_id,
+            driver_operator_user_id: driver_identity.operator_user_id,
+            driver_phone: driver_identity.phone,
+            driver_phone_trunc: driver_identity.phone_trunc,
+            driver_travelpass_name: driver_identity.travel_pass_name,
+            driver_travelpass_user_id: driver_identity.travel_pass_user_id,
+            driver_revenue: driver_revenue || 0,
+            passenger_identity_key: passenger_identity.identity_id,
+            passenger_operator_user_id: passenger_identity.operator_user_id,
+            passenger_phone: passenger_identity.phone,
+            passenger_phone_trunc: passenger_identity.phone_trunc,
+            passenger_travelpass_name: passenger_identity.travel_pass_name,
+            passenger_travelpass_user_id: passenger_identity.travel_pass_user_id,
+            passenger_over_18: passenger_identity.over_18,
+            passenger_seats: carpool.seats || 1,
+            passenger_contribution: carpool.payment || 0,
+            passenger_payments: carpool.meta?.payments || [],
+            incentives: incentives.map((i) => ({ index: i.idx, siret: i.siret, amount: i.amount })),
           },
-          end_datetime: addSeconds(new Date(carpool.datetime), carpool.duration || carpool.meta.calc_duration || 0),
-          end_position: {
-            lat: end_lat,
-            lon: end_lon,
+          conn,
+        );
+
+        await this.request.save(
+          {
+            carpool_id: newCarpool._id,
+            operator_id: carpool.operator_id,
+            operator_journey_id: carpool.operator_journey_id,
+            payload: acquisition.payload,
+            api_version: acquisition.api_version,
+            created_at: acquisition.created_at,
           },
-          distance: carpool.distance || carpool.meta.calc_distance || 0,
-          licence_plate: undefined,
-          driver_identity_key: driver_identity.identity_id,
-          driver_operator_user_id: driver_identity.operator_user_id,
-          driver_phone: driver_identity.phone,
-          driver_phone_trunc: driver_identity.phone_trunc,
-          driver_travelpass_name: driver_identity.travel_pass_name,
-          driver_travelpass_user_id: driver_identity.travel_pass_user_id,
-          driver_revenue: driver_revenue || 0,
-          passenger_identity_key: passenger_identity.identity_id,
-          passenger_operator_user_id: passenger_identity.operator_user_id,
-          passenger_phone: passenger_identity.phone,
-          passenger_phone_trunc: passenger_identity.phone_trunc,
-          passenger_travelpass_name: passenger_identity.travel_pass_name,
-          passenger_travelpass_user_id: passenger_identity.travel_pass_user_id,
-          passenger_over_18: passenger_identity.over_18,
-          passenger_seats: carpool.seats || 1,
-          passenger_contribution: carpool.payment || 0,
-          passenger_payments: carpool.meta?.payments|| [],
-          incentives: incentives.map(i => ({ index: i.idx, siret: i.siret, amount: i.amount })),
-        }, conn);
+          conn,
+        );
 
-        await this.request.save({
-          carpool_id: newCarpool._id,
-          operator_id: carpool.operator_id,
-          operator_journey_id: carpool.operator_journey_id,
-          payload: acquisition.payload,
-          api_version: acquisition.api_version,
-          created_at: acquisition.created_at,
-        }, conn);
+        await this.geo.upsert(
+          {
+            carpool_id: newCarpool._id,
+            start_geo_code: carpool.start_geo_code,
+            end_geo_code: carpool.end_geo_code,
+          },
+          conn,
+        );
 
-        await this.geo.upsert({
-          carpool_id: newCarpool._id,
-          start_geo_code: carpool.start_geo_code,
-          end_geo_code: carpool.end_geo_code,
-        }, conn);
+        let acquisitionStatus: CarpoolAcquisitionStatusEnum;
+        let fraudStatus: CarpoolFraudStatusEnum = CarpoolFraudStatusEnum.Passed;
+
+        switch (carpool.status) {
+          case 'ok':
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
+            break;
+          case 'expired':
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.Expired;
+            break;
+          case 'canceled':
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.Canceled;
+            break;
+          case 'fraudcheck_error':
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
+            fraudStatus = CarpoolFraudStatusEnum.Failed;
+            break;
+          default:
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
+            break;
+        }
+
+        await this.event.setStatus(newCarpool._id, 'acquisition', acquisitionStatus, conn);
+        await this.event.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
       }
       await conn.query('COMMIT');
       return result.rows.length === batchSize;
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       await conn.query('ROLLBACK');
     } finally {
       conn.release();
     }
-   // TODO : status
   }
 }

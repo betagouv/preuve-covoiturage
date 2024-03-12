@@ -79,7 +79,6 @@ test.serial('Should create carpool', async (t) => {
   );
   t.deepEqual(carpool, {
     ...data,
-    incentive_status: 'pending',
     fraud_status: 'pending',
     acquisition_status: 'received',
   });
@@ -118,7 +117,6 @@ test.serial('Should update carpool', async (t) => {
   t.deepEqual(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
-    incentive_status: 'pending',
     fraud_status: 'pending',
     acquisition_status: 'updated',
   });
@@ -158,7 +156,6 @@ test.serial('Should cancel carpool', async (t) => {
   t.deepEqual(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
-    incentive_status: 'pending',
     fraud_status: 'pending',
     acquisition_status: 'canceled',
   });
@@ -167,7 +164,11 @@ test.serial('Should cancel carpool', async (t) => {
 test.serial('Should rollback if something fail', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  t.context.sinon.replace(t.context.eventRepository, 'saveAcquisitionEvent', t.context.sinon.fake.throws(new Error('DB')));
+  t.context.sinon.replace(
+    t.context.eventRepository,
+    'saveAcquisitionEvent',
+    t.context.sinon.fake.throws(new Error('DB')),
+  );
 
   const service = getService(t.context, {
     carpoolRepository,
