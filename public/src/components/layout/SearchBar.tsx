@@ -73,7 +73,8 @@ export default function SearchBar(props: SearchBarProps) {
   return (
    <Autocomplete 
       id='search'
-      options= {options}
+      options={options}
+      noOptionsText={'Pas de résultats'}
       getOptionLabel={(option) => option.title}
       renderOption={(props, option) => {
         return (
