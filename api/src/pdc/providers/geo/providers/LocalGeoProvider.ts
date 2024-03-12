@@ -6,6 +6,7 @@ import { InseeCoderInterface, PointInterface } from '../interfaces';
 export class LocalGeoProvider implements InseeCoderInterface {
   protected fn = 'geo.get_latest_by_point';
   protected fb = 'geo.get_closest_country';
+  protected fbclose = 'geo.get_closest_com';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -15,7 +16,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
     const client = await pool.connect();
 
     try {
-      const comResultInFrance = await client.query({
+      const resultInCom = await client.query({
         text: `
         SELECT arr
         FROM ${this.fn}($1::float, $2::float)
@@ -24,11 +25,11 @@ export class LocalGeoProvider implements InseeCoderInterface {
         values: [lon, lat],
       });
 
-      if (comResultInFrance.rowCount > 0) {
-        return comResultInFrance.rows[0].arr;
+      if (resultInCom.rowCount > 0) {
+        return resultInCom.rows[0].arr;
       }
 
-      const comResultOutFrance = await client.query({
+      const resultOutFr = await client.query({
         text: `
         SELECT arr
         FROM ${this.fb}($1::float, $2::float)
@@ -37,11 +38,23 @@ export class LocalGeoProvider implements InseeCoderInterface {
         values: [lon, lat],
       });
 
-      if (comResultOutFrance.rowCount === 0) {
+      if (resultOutFr.rowCount > 0) {
+        return resultOutFr.rows[0].arr;
+      }
+
+      const resultCloseCom = await client.query({
+        text: `
+        SELECT arr
+        FROM ${this.fbclose}($1::float, $2::float,1000)
+      `,
+        values: [lon, lat],
+      });
+
+      if (resultCloseCom.rowCount === 0) {
         throw new NotFoundException();
       }
 
-      return comResultOutFrance.rows[0].arr;
+      return resultCloseCom.rows[0].arr;
     } catch (e) {
       console.error(`[LocalGeoProvider] ${e.message}`);
       throw e;
