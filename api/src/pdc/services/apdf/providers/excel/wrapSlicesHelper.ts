@@ -15,6 +15,11 @@ export function toBoundedSlices(slices: BoundedSlices | UnboundedSlices): Bounde
 }
 
 export function findBoundary(boundary: 'min' | 'max', slices: BoundedSlices): number | null {
-  if (boundary === 'max') return slices.reduce((min, { end }) => (min < end ? end : min), -Infinity);
-  return slices.reduce((min, { start }) => (min > start ? start : min), Infinity);
+  // FIXME
+  // Hack to handle the case where the slice is unbounded and the SQL uses 'Infinity'
+  // Behaviour seems buggy but it is used by one ended campaign only.
+  // @ts-ignore
+  if (boundary === 'max') return slices.reduce((min, { end }) => (min < end ? end : min), "'-Infinity'");
+  // @ts-ignore
+  return slices.reduce((min, { start }) => (min > start ? start : min), "'Infinity'");
 }

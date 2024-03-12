@@ -53,7 +53,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i: number) => {
-        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+        const f = `filter (where distance::numeric >= ${start}${end ? ` and distance::numeric < ${end}` : ''})`;
         return `
           (count(acquisition_id) ${f})::int as slice_${i}_count,
           (count(acquisition_id) ${f.replace('where', 'where amount > 0 and')})::int as slice_${i}_subsidized,
