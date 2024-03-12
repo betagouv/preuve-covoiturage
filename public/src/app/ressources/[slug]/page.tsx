@@ -78,7 +78,6 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
 
   return (
     <article id='resource-content'>
-      {JSON.stringify(await generateStaticParams())}
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       { data && 
         <div className={fr.cx('fr-col','fr-col-12')}>
