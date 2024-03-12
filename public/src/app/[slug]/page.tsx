@@ -40,7 +40,10 @@ export async function generateStaticParams() {
         }
       }
     },
-    fields:['slug']
+    fields:['slug'],
+    pagination: {
+      limit:-1,
+    },
   };
   const response  = await fetchAPI('/pages',query);
   const data = response.data

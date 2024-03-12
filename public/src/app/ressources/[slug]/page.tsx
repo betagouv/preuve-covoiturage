@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     filters: {
       slug: {
         $eq: params.slug,
-      }
+      },
     },
     fields:['title','content']
   };
@@ -27,7 +27,10 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
 
 export async function generateStaticParams() {
   const query = {
-    fields:['slug']
+    fields:['slug'],
+    pagination: {
+      limit:-1,
+    },
   };
   const response  = await fetchAPI('/resources',query);
   const data = response.data
@@ -75,6 +78,7 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
 
   return (
     <article id='resource-content'>
+      {JSON.stringify(await generateStaticParams())}
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       { data && 
         <div className={fr.cx('fr-col','fr-col-12')}>

@@ -23,6 +23,9 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
 export async function generateStaticParams() {
   const query = {
     fields: 'slug',
+    pagination: {
+      limit:-1,
+    },
   };
   const {data} =  await fetchAPI('/categories',query);
   
