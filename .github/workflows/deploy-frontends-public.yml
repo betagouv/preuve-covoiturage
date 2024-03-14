@@ -8,7 +8,7 @@ jobs:
     name: Deploy public
     strategy:
       matrix:
-        env: [demo]
+        env: [demo, production]
     environment: ${{ matrix.env }}
     runs-on: ubuntu-latest
     steps:
