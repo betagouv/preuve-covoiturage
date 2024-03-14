@@ -6,19 +6,6 @@ on:
 jobs:
   deploy:
     name: Deploy ${{ matrix.project_name }}
-    uses: ./.github/workflows/base-deploy-to-bucket.yml
-    with:
-      env: ${{ matrix.env }}
-      project_name: ${{ matrix.project_name }}
-      build_directory: ${{ matrix.build_directory }}
-      build_command: ${{ matrix.build_command }}
-      dist_directory: ${{ matrix.dist_directory }}
-      bucket_name_var: ${{ matrix.bucket_name_var }}
-      cache_dependency_path: ${{ matrix.cache_dependency_path }}
-    secrets:
-      bucket_access_key: ${{ secrets.BUCKET_ACCESS_KEY }}
-      bucket_secret_key: ${{ secrets.BUCKET_SECRET_KEY }}
-
     strategy:
       matrix:
         env: [demo, production]
@@ -27,7 +14,41 @@ jobs:
           - project_name: public
             build_directory: public
             build_command: |
-              cp .env.example .env && NODE_OPTIONS=--openssl-legacy-provider npm run build
+              NODE_OPTIONS=--openssl-legacy-provider npm run build
             dist_directory: public/out
             bucket_name_var: PUBLIC_BUCKET_NAME
             cache_dependency_path: public/package-lock.json
+    environment: ${{ matrix.env }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.cache_dependency_path }}
+
+      - name: Install and Build 🔧
+        env:
+          DEPLOY_ENV: ${{ matrix.env }}
+        run: |
+          cd ${{ matrix.build_directory }}
+          npm ci
+          ${{ matrix.build_command }} 
+
+      - name: Deploy to bucket
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ vars[matrix.bucket_name_var] }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          AWS_REGION: ${{ vars.BUCKET_REGION }}
+          SOURCE_DIR: ${{ matrix.dist_directory }}
