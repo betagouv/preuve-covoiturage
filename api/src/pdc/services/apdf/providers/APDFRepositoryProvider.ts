@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { set } from 'lodash';
+import { set, slice } from 'lodash';
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
@@ -50,19 +50,44 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
   ): Promise<PolicyStatsInterface> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
+    console.debug(slices);
+
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i: number) => {
-        const f = `filter (where distance::numeric >= ${start}${end ? ` and distance::numeric < ${end}` : ''})`;
+        // Infinity and -Infinity are from the PostgreSQL 'numeric' type
+        // They must be enclosed in quotes to be used in a query
+
+        // A missing start is set to '-Infinity'
+        const s =
+          start === null || typeof start === 'undefined' || start === -Infinity
+            ? "'-Infinity'"
+            : start === Infinity
+            ? "'Infinity'"
+            : start;
+
+        // A missing end is set to 'Infinity'
+        const e =
+          end === null || typeof end === 'undefined' || end === Infinity
+            ? "'Infinity'"
+            : end === -Infinity
+            ? "'-Infinity'"
+            : end;
+
+        // distance is cast to 'numeric' to allow comparison with Infinity
+        const f = `filter (where distance::numeric >= ${s}${e ? ` and distance::numeric < ${e}` : ''})`;
+
         return `
           (count(acquisition_id) ${f})::int as slice_${i}_count,
           (count(acquisition_id) ${f.replace('where', 'where amount > 0 and')})::int as slice_${i}_subsidized,
           (sum(amount) ${f})::int as slice_${i}_sum,
-          ${start} as slice_${i}_start,
-          ${end ? end : "'Infinity'"} as slice_${i}_end
+          ${s} as slice_${i}_start,
+          ${e} as slice_${i}_end
         `;
       })
       .join(',');
+
+    console.debug(sliceFilters);
 
     // select all trips with a positive incentive calculated by us for a given campaign
     // calculate a global count and incentive sum as well as details for each slice
@@ -93,6 +118,8 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         `,
       values: [start_date, end_date, operator_id, campaign_id],
     };
+
+    // console.debug(query.text);
 
     const result = await this.connection.getClient().query(query);
 
