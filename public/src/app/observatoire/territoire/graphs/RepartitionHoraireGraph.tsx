@@ -86,12 +86,12 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
         <div className={fr.cx('fr-callout')}>
           <div className={fr.cx('fr-callout__title','fr-text--xl')}>
             {title}  
-            <DownloadButton 
-              title={'Télécharger les données du graphique'}
-              data={data!}
-              filename='repartition_horaire'
-            />
           </div>
+          <DownloadButton 
+            title={'Télécharger les données du graphique'}
+            data={data!}
+            filename='repartition_horaire'
+          />
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px" }}>
             <Bar options={options} data={chartData() as ChartData<"bar",number[]>} aria-hidden />
             { chartData() &&

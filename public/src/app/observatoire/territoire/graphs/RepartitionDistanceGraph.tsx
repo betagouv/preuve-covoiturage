@@ -104,13 +104,13 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
           <div className={fr.cx('fr-callout__title','fr-text--xl')}>
-            {title}  
-            <DownloadButton 
-              title={'Télécharger les données du graphique'}
-              data={data!}
-              filename='repartition_distance'
-            />
+            {title}
           </div>
+          <DownloadButton 
+            title={'Télécharger les données du graphique'}
+            data={data!}
+            filename='repartition_distance'
+          />
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px"}}>
             <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} aria-hidden />
             { chartData() &&

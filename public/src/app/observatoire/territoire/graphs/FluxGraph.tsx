@@ -72,11 +72,13 @@ export default function TrajetsGraph({ title,indic }: { title: string, indic:Flu
         <div className={fr.cx('fr-callout')}>
           <div className={fr.cx('fr-callout__title','fr-text--xl')}>
             {title}  
-            <DownloadButton 
-              title={'Télécharger les données du graphique'}
-              data={data!}
-              filename='flux'
-            />
+            <span className={fr.cx('fr-pl-5v')}>
+              <DownloadButton 
+                title={'Télécharger les données du graphique'}
+                data={data!}
+                filename='flux'
+              />
+            </span>
           </div>
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
             <Line options={options} data={chartData()} aria-hidden />

@@ -136,16 +136,18 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
             </Button>
           }
           {data.attributes.file.data &&
-            <div className={fr.cx('fr-card','fr-enlarge-link', 'fr-card--download')}>
+            <div className={fr.cx('fr-card','fr-enlarge-link', 'fr-card--download')} style={{height:'8em'}}>
               <div className={fr.cx('fr-card__body')}>
                 <div className={fr.cx('fr-card__content')}>
                   <div className={fr.cx('fr-card__title')}>
                       <a download href={data.attributes.file.data.attributes.url}>
-                          {`Télécharger la ressource${data.attributes.file.data.attributes.name}`}
+                        {`Télécharger la ressource${data.attributes.file.data.attributes.name}`}
                       </a>
                   </div>
                   <div className={fr.cx('fr-card__end')}>
-                      <p className={fr.cx('fr-card__detail')}>{`${data.attributes.file.data.attributes.ext} – ${data.attributes.file.data.attributes.size/100} Mo`}</p>
+                    <p className={fr.cx('fr-card__detail')}>
+                      {`${(data.attributes.file.data.attributes.ext).replace('.','')} – ${(data.attributes.file.data.attributes.size/100).toFixed(2)} Mo`}
+                    </p>
                   </div>
                 </div>
               </div>
