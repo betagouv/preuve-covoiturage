@@ -81,6 +81,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and pi.policy_id = $4
             and pi.status = 'validated'
             and cc.operator_id = $3
+            and cc.status in ('ok', 'canceled')
           )
         select
           count(acquisition_id)::int as total_count,
