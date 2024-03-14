@@ -51,27 +51,27 @@ export default async function Home() {
   const tiles = [{
     desc:'Forfait mobilités durables, animations covoiturage en entreprise, mise en relation entre salariés, charte employeur engagé dans le covoiturage',
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/Entreprise_ffe13e5025.svg",
     linkProps:{
-      href: '/autres-acteurs/entreprises',
+      href: '/autres-acteurs/employeurs',
       title:"Vous êtes une entreprise"
     },
     title:"Une entreprise"
   },{
     desc:"Un bonus de 100€ pour les conducteurs réalisant leurs premiers trajets en covoiturage, un forfait mobilités durable jusqu'à 800€ par ans versé par votre employeur, quelques euros versés par votre collectivité à chaque trajet.",
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/avatar_907efa139c.svg",
     linkProps:{
-      href: '/autres-acteurs/particuliers',
+      href: '/autres-acteurs/covoitureurs',
       title:"Vous êtes un particulier"
     },
     title:"Un particulier"
   },{
     desc:"Découvrir le registre de preuve de covoiturage et en devenir partenaire",
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/application_ca50922463.svg",
     linkProps:{
-      href: '/autres-acteurs/operateurs',
+      href: '/autres-acteurs/plateformes',
       title:"Vous êtes une plateforme de covoiturage"
     },
     title:"Une plateforme de covoiturage"

@@ -30,7 +30,12 @@ export const useDashboard = () => {
 
   const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
     setParams( p =>{
-      const params = {code: value.territory, name: value.l_territory, type: value.type}
+        const params = {code: 'XXXXX', name: 'France', type: 'country'}
+        if (value) {
+           params.code = value.territory
+           params.name = value.l_territory
+           params.type = value.type
+        } 
       return { ...p, ...params, observe:'com' } as typeof p
     }) 
   },[]);  
