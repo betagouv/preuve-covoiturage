@@ -83,14 +83,14 @@ CREATE VIEW trip.list_view AS (
     
     -- compute the status from driver and passenger.
     -- errors' order is important!
-    CASE
+    (CASE
       WHEN cpp.status = 'ok' AND cpd.status = 'ok' THEN 'ok'
       WHEN cpp.status = 'expired' OR cpd.status = 'expired' THEN 'expired'
       WHEN cpp.status = 'canceled' OR cpd.status = 'canceled' THEN 'canceled'
       WHEN cpp.status = 'anomaly_error' OR cpd.status = 'anomaly_error' THEN 'anomaly_error'
       WHEN cpp.status = 'fraudcheck_error' OR cpd.status = 'fraudcheck_error' THEN 'fraudcheck_error'
       ELSE 'anomaly_error'
-    END AS status
+    END)::carpool.carpool_status_enum AS status
   
   FROM carpool.carpools cpp
   JOIN operator.operators ope ON ope._id = cpp.operator_id
