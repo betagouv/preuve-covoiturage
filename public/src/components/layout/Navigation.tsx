@@ -201,7 +201,7 @@ export default function Navigation() {
             'aria-label': 'Actualités'
           },
           text: 'Actualités',
-          isActive: pathname === '/actualites',
+          isActive: pathname.startsWith('/actualites'),
         },
         {
           linkProps: { 
@@ -211,7 +211,7 @@ export default function Navigation() {
             'aria-label': 'Ressources'
           },
           text: 'Ressources',
-          isActive: pathname === '/ressources',
+          isActive: pathname.startsWith('/ressources'),
         },
       ]}
     />

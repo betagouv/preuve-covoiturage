@@ -2,21 +2,20 @@ import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
 import { LineLayer, Layer, Source, Popup } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
 import { Feature, FeatureCollection } from 'geojson';
 import { useCallback, useMemo, useState } from 'react';
-//import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
 import SelectInList from '@/components/common/SelectInList';
 import Link from 'next/link';
 import bbox from '@turf/bbox';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const [bounds, setBounds] = useState<LngLatBoundsLike>([-5.225, 41.333, 9.55, 51.2]);
-  const url = `${cmsHost}/assets/897ba3a7-847e-4522-aead-7d8dd0db63c6`;
+  const url = `https://static.covoiturage.beta.gouv.fr/voies_covoit_10ea0b9f65.json`;
   const { data } = useJson<FeatureCollection>(url);
   const geojson = useMemo(()=>{
     return data ? data : ''
@@ -96,6 +95,14 @@ export default function VrMap({ title}: { title: string }) {
         cursor={cursor}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        download={
+          <DownloadButton 
+            title={'Télécharger les données de la carte'}
+            data={geojson as FeatureCollection}
+            type={'geojson'}
+            filename='voies_reservees_covoiturage'
+          />
+        }
       >
         <Source id='vr' type='geojson' data={geojson}>
           <Layer {...layer} />

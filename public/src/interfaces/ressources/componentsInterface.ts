@@ -3,8 +3,8 @@
   content: string,
   date: string,
   img: string,
-  img_legend?: string,
+  href:string,
   link?: string,
   file?: string,
-  horizontal?: boolean
+  horizontal?: false | undefined
 }

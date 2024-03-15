@@ -1,22 +1,19 @@
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { DistributionDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcElement, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {Context} from 'chartjs-plugin-datalabels';
 import { Doughnut } from 'react-chartjs-2';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
-export default function RepartitionDistanceGraph({
-  title,
-  params,
-}: {
-  title: string;
-  params: SearchParamsInterface;
-}) {
+export default function RepartitionDistanceGraph({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -28,7 +25,7 @@ export default function RepartitionDistanceGraph({
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-distances?code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/journeys-by-distances?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url);
   const plugins: any = [ChartDataLabels];
   const datasetFrom = data?.find((d) => d.direction === 'from')?.distances.map((d) => d.journeys);
@@ -106,7 +103,14 @@ export default function RepartitionDistanceGraph({
       )}
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div className={fr.cx('fr-callout__title','fr-text--xl')}>
+            {title}
+          </div>
+          <DownloadButton 
+            title={'Télécharger les données du graphique'}
+            data={data!}
+            filename='repartition_distance'
+          />
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px"}}>
             <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} aria-hidden />
             { chartData() &&

@@ -9,8 +9,8 @@ import VrMap from '@/app/observatoire/territoire/maps/VrMap';
 export default function SingleMap(props: SingleMapProps) {
   return(
     <>
-      {props.params.map == 3 && <OccupationMap title={props.title} params={props.params} />}
-      {props.params.map == 4 && <AiresCovoiturageMap title={props.title} params={props.params} />}
+      {props.params.map == 3 && <OccupationMap title={props.title} />}
+      {props.params.map == 4 && <AiresCovoiturageMap title={props.title} />}
       {props.params.map == 5 && <VrMap title={props.title} />}
     </>
   )

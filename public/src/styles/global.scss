@@ -1,3 +1,4 @@
+@import 'remixicon/fonts/remixicon.css';
 table {
   img {
     max-width: 100%;
@@ -23,4 +24,12 @@ table {
 }
 .Mui-focusVisible{
   background-color: #bbbbfc !important;
+}
+.fr-search-bar{
+  flex-direction: column;
+}
+// remove remixicon from dsfr
+[class^="ri-"]::before{
+  background: none;
+  mask-image: none;
 }

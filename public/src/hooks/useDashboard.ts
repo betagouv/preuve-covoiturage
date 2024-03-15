@@ -3,32 +3,43 @@ import { Config } from '@/config';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation'
-import { AutocompleteChangeReason } from '@mui/material';
+import { Params } from '../interfaces/common/contextInterface';
 
 export const useDashboard = () => {
-  const searchParams = useSearchParams()
   const [params, setParams] = useState({
-    code: searchParams.get('code') ? searchParams.get('code') as string : 'XXXXX' ,
+    code: 'XXXXX' ,
     name: 'France',
-    type: searchParams.get('type') ? searchParams.get('type') as PerimeterType : 'country',
-    observe: searchParams.get('observe') ? searchParams.get('observe') as PerimeterType : 'com',
-    year: searchParams.get('year') ? Number(searchParams.get('year')) : new Date().getFullYear(),
-    month: searchParams.get('month') ? Number(searchParams.get('month')) : new Date().getMonth(),
-    map: searchParams.get('map') ? Number(searchParams.get('map')) : 1,
-    graph: searchParams.get('graph') ? Number(searchParams.get('graph')) : 1,
+    type: 'country' as PerimeterType,
+    observe: 'com' as PerimeterType,
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
+    map: 1,
+    graph: 1,
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const apiUrl = Config.get('next.public_api_url', '');
   const url = `${apiUrl}/monthly-flux/last`;
-  const onChangeTerritory = useCallback((value: TerritoryListInterface | null, reason:AutocompleteChangeReason) => {
+
+  
+  const getParams = useCallback((params:Params) => {
     setParams( p =>{
-      const params = (reason === 'clear' || !value) ? {code: 'XXXXX', name: 'France', type: 'country'} : {code: value.territory, name: value.l_territory, type: value.type}
+      return { ...p, ...params }
+    })
+  },[]);
+
+  const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
+    setParams( p =>{
+        const params = {code: 'XXXXX', name: 'France', type: 'country'}
+        if (value) {
+           params.code = value.territory
+           params.name = value.l_territory
+           params.type = value.type
+        } 
       return { ...p, ...params, observe:'com' } as typeof p
     }) 
-    
-  },[]);
+  },[]);  
+  
   const onChangePeriod = useCallback((value: { year: number; month: number }) => {
     setParams( p =>{
       return { ...p, year: value.year, month: value.month }
@@ -64,6 +75,6 @@ export const useDashboard = () => {
     };
     fetchData();
   }, [onChangePeriod,url]);
-  return { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap };
+  return { params, error, loading, getParams, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap };
 };
 

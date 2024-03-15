@@ -4,58 +4,54 @@ import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
-import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import MDContent from "@/components/common/MDContent";
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
-  const { data } = await cmsInstance.items('Articles').readByQuery({
-    fields:'*',
-    filter: {
-      slug: { _eq: params.slug },
-      status: {
-        '_eq': 'published',
-      },
+  const query = {
+    filters: {
+      slug: {
+        $eq: params.slug,
+      }
     },
-    limit: 1,
-  });
+    fields:['title','description']
+  };
+  const response  = await fetchAPI('/articles',query);
+  const data = response.data[0];
   return {
-    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
-    description: shorten(`${data && data[0].description ? data[0].description : ''}`,150),
+    title: `${data ? data.attributes.title : ''} | Observatoire.covoiturage.gouv.fr`,
+    description: shorten(`${data && data.attributes.description ? data.attributes.description : ''}`,150),
   }
 }
 
 export async function generateStaticParams() {
-  const { data } = await cmsInstance.items('Articles').readByQuery({
-    fields:'slug',
-    filter:{
-      status: {
-        '_eq': 'published',
-      }
-    }
-  });
-  return data ? data.map((post:any) => ({
-    slug: post.slug,
+  const query = {
+    fields:['slug'],
+    pagination: {
+      limit:-1,
+    },
+  };
+  const response  = await fetchAPI('/articles',query);
+  const data = response.data
+  return data ? data.map((p:any) => ({
+    slug: p.attributes.slug,
   })) : []
 }
 
 export default async function ActuSingle({ params }: { params: { slug: string }}) {
   const hostUrl = Config.get<string>('next.public_url', 'http://localhost:4200');
   const location = `${hostUrl}/actualites/${params.slug}`;
-
-  const { data } = await cmsInstance.items('Articles').readByQuery({
-    fields:'*,img.*,categories.Categories_id.*',
-    limit:1,
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
+  const query = {
+    filters: {
       slug: {
-        '_eq': params.slug,
+        $eq: params.slug,
       },
     },
-    meta:'*',
-  });
-  
+    populate: '*',  
+  };
+  const response  = await fetchAPI('/articles',query);
+  const data = response.data[0];
+    
   const share = [
     {
       name:'Facebook', 
@@ -75,7 +71,7 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
     {
       name:'Email', 
       icon:'fr-share__link--mail', 
-      href:`mailto:?subject=${data ? data[0].title : ''}&body=${data ? data[0].description : ''} ${location}`,
+      href:`mailto:?subject=${data ? data.attributes.title : ''}&body=${data ? data.attributes.description : ''} ${location}`,
     }
   ]
 
@@ -84,21 +80,23 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       { data && 
         <div className={fr.cx('fr-col','fr-col-12')}>
-          <PageTitle title={data[0].title} />
-          <p>Publié le {new Date(data[0].date_created).toLocaleDateString('fr-FR')}</p>
+          <PageTitle title={data.attributes.title} />
+          { data.attributes.createdAt &&
+            <p>Publié le {new Date(data.attributes.createdAt).toLocaleDateString('fr-FR')}</p>
+          }
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col','fr-col-md-9')}>
               <ul className={fr.cx('fr-tags-group')}>
-                {data[0].categories &&
-                  data[0].categories.map((c:any, i:number) => {
+                {data.attributes.categories &&
+                  data.attributes.categories.data.map((c:any, i:number) => {
                     return (
                       <li key={i}>
                         <Tag
                           linkProps={{
-                            href: `/actualites/categorie/${c.Categories_id.slug}`
+                            href: `/actualites/categorie/${c.attributes.slug}`
                           }}
                         >
-                          {c.Categories_id.name}
+                          {c.attributes.label}
                         </Tag>
                       </li>
                     )
@@ -110,15 +108,18 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
               <Share social={share} location={location} />
             </div>
           </div>          
-          <figure className={fr.cx('fr-content-media')} role="group" style={{textAlign:'center'}}>
-            <div className={fr.cx('fr-content-media__img')}>
-                <Image className={fr.cx('fr-responsive-img', 'fr-responsive-img--16x9')} src={`${cmsHost}/assets/${data[0].img.id}`} alt={data[0].img_legend} width={data[0].img.width} height={data[0].img.height} />
-            </div>
-            <figcaption className={fr.cx('fr-content-media__caption')}>{data[0].img_legend}</figcaption>
+          <figure style={{textAlign:'center'}}>
+              <Image className={fr.cx('fr-responsive-img', 'fr-responsive-img--16x9')} 
+                src={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.url: data.attributes.img.data.attributes.url } 
+                alt={data.attributes.legend ? data.attributes.legend : ''} 
+                width={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.width : data.attributes.img.data.attributes.width} 
+                height={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.height : data.attributes.img.data.attributes.height} 
+              />
+            <figcaption className={fr.cx('fr-content-media__caption')}>{data.attributes.legend}</figcaption>
           </figure>
           <div>
-            {data[0].description}
-            <MDContent source={data[0].content} />
+            {data.attributes.description}
+            <MDContent source={data.attributes.content} />
           </div>
         </div>
       }

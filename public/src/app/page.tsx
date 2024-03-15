@@ -1,14 +1,14 @@
 import Hero from "@/components/common/Hero";
 import Block from "@/components/common/Block";
-import ListHighlight from "@/components/common/ListHighlights";
 import SectionTitle from "@/components/common/SectionTitle";
 import { Tile } from "@codegouvfr/react-dsfr/Tile";
 import { fr } from "@codegouvfr/react-dsfr";
-import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import RessourceCard from "@/components/ressources/RessourceCard";
-import { Section } from "@/interfaces/cms/collectionsInterface";
 import MDContent from "@/components/common/MDContent";
 import { Metadata } from 'next';
+import Highlight from '@/components/common/Highlight';
+import Rows from '@/components/observatoire/indicators/Rows';
 
 export const metadata: Metadata = {
   title: 'Accueil | Observatoire.covoiturage.gouv.fr',
@@ -16,42 +16,62 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const { data } = await cmsInstance.items('Pages').readByQuery({
-    filter: {
-      slug: { _eq: 'accueil' },
+  const query = {
+    filters: {
+      slug: {
+        $eq: 'accueil',
+      },
     },
-    fields: ['*', 'sections.*', 'sections.item.*','sections.item.highlights.Highlight_id.*','sections.item.categories.Categories_id.*'],
-    limit: 1,
-  });
+    populate: {
+      hero: {
+        populate: 'buttons,img'
+      },
+      block: {
+        populate: 'buttons,img'
+      },
+      list: {
+        populate: '*'
+      },
+      rows:{
+        populate: '*'
+      },
+      resources:{
+        populate: '*'
+      }
+    },  
+  };
+  const response  = await fetchAPI('/pages',query);
+  const data = response.data[0]
+  const hero = data.attributes.hero
+  const block = data.attributes.block
+  const list = data.attributes.list
+  const rows = data.attributes.rows
+  const resources = data.attributes.resources
 
-  const hero = data ? data[0].sections.find((s:Section) => s.collection === 'Hero') : null
-  const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
-  const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
-  const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
   const tiles = [{
     desc:'Forfait mobilités durables, animations covoiturage en entreprise, mise en relation entre salariés, charte employeur engagé dans le covoiturage',
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/Entreprise_ffe13e5025.svg",
     linkProps:{
-      href: '/autres-acteurs/entreprises',
+      href: '/autres-acteurs/employeurs',
       title:"Vous êtes une entreprise"
     },
     title:"Une entreprise"
   },{
     desc:"Un bonus de 100€ pour les conducteurs réalisant leurs premiers trajets en covoiturage, un forfait mobilités durable jusqu'à 800€ par ans versé par votre employeur, quelques euros versés par votre collectivité à chaque trajet.",
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/avatar_907efa139c.svg",
     linkProps:{
-      href: '/autres-acteurs/particuliers',
+      href: '/autres-acteurs/covoitureurs',
       title:"Vous êtes un particulier"
     },
     title:"Un particulier"
   },{
     desc:"Découvrir le registre de preuve de covoiturage et en devenir partenaire",
     grey: true,
-    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
+    imageUrl: "https://static.covoiturage.beta.gouv.fr/application_ca50922463.svg",
     linkProps:{
-      href: '/autres-acteurs/operateurs',
+      href: '/autres-acteurs/plateformes',
       title:"Vous êtes une plateforme de covoiturage"
     },
     title:"Une plateforme de covoiturage"
@@ -60,41 +80,51 @@ export default async function Home() {
 
   return (
     <div id='content'>
-      {hero && 
-        <Hero 
-          title={hero.item.title} 
-          subtitle={hero.item.subtitle}
-          content={hero.item.content} 
-          img={hero.item.img} 
-          alt={hero.item.alt} 
-          buttons={hero.item.buttons} 
+      { hero && <Hero 
+          title={hero.title} 
+          subtitle={hero.subtitle}
+          content={hero.content} 
+          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
+          alt={hero.alt} 
+          buttons={hero.buttons} 
         />
       }
-      {data && data[0].content && 
+      {data.content && 
         <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
           <div className={fr.cx('fr-col')}>
             <div>
-              <MDContent source={data[0].content} />
+              <MDContent source={data.content} />
             </div>
           </div>
         </div>
       }
-      {blocks && blocks.map((b:any, i:number) =>
+      {block &&
         <Block 
-          key={i}
-          title={b.item.title} 
-          content={b.item.content} 
-          img={b.item.img} 
-          alt={b.item.alt} 
-          buttons={b.item.buttons} 
+          title={block.title} 
+          content={block.content} 
+          img={block.img.data.attributes.url} 
+          alt={block.alt} 
+          buttons={block.buttons} 
         />
-      )}
-      {lists && lists.map((l:any, i:number) =>
-        <div key={i} className={fr.cx('fr-grid-row')}>
-          <SectionTitle title={l.item.title} />
-          <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
+      }
+      {rows && 
+        <Rows data={rows} />
+      }
+      {list && 
+        <div className={fr.cx('fr-grid-row')}>
+          {list.map((l:any, i:number) => 
+            l.__component === 'page.highlight' 
+            ? <Highlight key={i} 
+                title={l.title}
+                content={l.content}
+                img={l.img.data.attributes.url}
+                buttons={l.buttons}
+                classes={l.classes} 
+              /> 
+            : <SectionTitle key={i} title={l.title} />        
+          )}
         </div>
-      )}
+      }
       <SectionTitle title='Vous êtes ?' />
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         {tiles && tiles.map( (t, i) => 
@@ -110,36 +140,23 @@ export default async function Home() {
           </div>
         )}
       </div>
-      {ressources && 
-      <>
-        <SectionTitle title='Ressources' />
-        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
-            <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
-              <RessourceCard 
-                title={r.item.title}
-                content={shorten(r.item.content, 100)}
-                date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                link={r.item.link}
-                file={r.item.file ? `${cmsHost}/assets/${r.item.file}` : undefined}
-                img={`${cmsHost}/assets/${r.item.img}`}
-                img_legend={r.item.img_legend}                
-              />
-            </div>
-          )}
-        </div>
-      </>}
-      {data && data[0].complement &&
-        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-          <SectionTitle title='Ressources complémentaires' />
-          <div className={fr.cx('fr-grid-row')}>
-            <div className={fr.cx('fr-col')}>
-              <div>
-                <MDContent source={data ? data[0].complement : ''} />
+      {resources.data.length > 0 && 
+        <>
+          <SectionTitle title='Ressources' />
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            {resources.data.map((r:any, i:number) =>  
+              <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+                <RessourceCard 
+                  title={r.attributes.title}
+                  content={shorten(r.attributes.content, 100)}
+                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                  href={`/ressources/${r.attributes.slug}`}
+                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
+                />
               </div>
-            </div>
+            )}
           </div>
-        </div>
+        </>
       }
     </div>
   );

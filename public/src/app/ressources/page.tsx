@@ -1,9 +1,10 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import RessourceCard from "@/components/ressources/RessourceCard";
-import { cmsInstance, cmsHost, getNbPages, cmsRessourcesByPage } from "@/helpers/cms";
+import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
+import CategoryTags from '@/components/common/CategoryTags';
 
 export const metadata: Metadata = {
   title: 'Ressources | Observatoire.covoiturage.gouv.fr',
@@ -11,39 +12,44 @@ export const metadata: Metadata = {
 }
 
 export default async function Ressources() {
-
-  const { data, meta } = await cmsInstance.items('Ressources').readByQuery({
-    fields:'*,img.*,file.*',
-    limit: cmsRessourcesByPage,
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
-    },
-    sort:['-date_publi'] as never[],
-    meta:'filter_count',
-  });
-
+  const query = {
+    populate: 'img,file',
+    sort:'public_date:desc',
+    pagination: {
+      pageSize: cmsRessourcesByPage
+    }
+  };
+  const { data, meta } = await fetchAPI('/resources',query);
   const pageTitle= 'Ressources'; 
-  const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
+  const nbPage = meta ? meta.pagination.pageCount : 1;
+  const catQuery = {
+    filters:{
+      resources:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
+  }
+  const categories =  await fetchAPI('/categories',catQuery);
 
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
+      <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
+        {categories.data && <CategoryTags categories={categories.data} type={'ressources'} />}
+      </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
-          data.map((a, i) => {
+          data.map((a:any, i:number) => {
             return (
-              <div key={i} className={fr.cx('fr-col', 'fr-col-md-12')}>
+              <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <RessourceCard 
-                  title={a.title}
-                  content={a.content}
-                  date={new Date(a.date_publi).toLocaleDateString('fr-FR')}
-                  link={a.link}
-                  file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
-                  img={`${cmsHost}/assets/${a.img.id}`}
-                  img_legend={a.img_legend}
-                  horizontal
+                  title={a.attributes.title}
+                  content={a.attributes.content}
+                  date={new Date(a.attributes.public_date).toLocaleDateString('fr-FR')}
+                  href={`/ressources/${a.attributes.slug}`}
+                  img={a.attributes.img.data ? a.attributes.img.data.attributes.url : null}          
                 />
               </div>
             )

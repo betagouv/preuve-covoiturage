@@ -1,33 +1,30 @@
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { Hour } from '@/interfaces/observatoire/Perimeter';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { DistributionHoraireDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { BarElement, CategoryScale, LinearScale, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
-export default function RepartitionHoraireGraph({
-  title,
-  params,
-}: {
-  title: string;
-  params: SearchParamsInterface;
-}) {
+export default function RepartitionHoraireGraph({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins:{
       legend: {
-        display: params.type !== 'country' ? true : false
+        display: dashboard.params.type !== 'country' ? true : false
       }
     },
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-hours?code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const url = `${apiUrl}/journeys-by-hours?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url);
 
   const dataWithNull = (data:Hour[]) => {
@@ -54,7 +51,7 @@ export default function RepartitionHoraireGraph({
         },
       }
     ];
-    params.type !== 'country' ? datasets.push(
+    dashboard.params.type !== 'country' ? datasets.push(
       {
         label: 'Destination',
         data: data ? dataWithNull(data.find((d) => d.direction === 'to')?.hours || []).map((d) => d.journeys) : [],
@@ -87,7 +84,14 @@ export default function RepartitionHoraireGraph({
       )}
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div className={fr.cx('fr-callout__title','fr-text--xl')}>
+            {title}  
+          </div>
+          <DownloadButton 
+            title={'Télécharger les données du graphique'}
+            data={data!}
+            filename='repartition_horaire'
+          />
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px" }}>
             <Bar options={options} data={chartData() as ChartData<"bar",number[]>} aria-hidden />
             { chartData() &&

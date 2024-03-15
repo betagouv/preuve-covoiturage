@@ -3,7 +3,7 @@ import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 
 export function Follow() {
   return (
-    <div className={fr.cx('fr-follow','fr-footer','fr-mt-10v')}>
+    <div className={fr.cx('fr-follow','fr-mt-10v')}>
       <div className={fr.cx('fr-container')}>
         <div className={fr.cx('fr-grid-row')}>
           <div className={fr.cx('fr-col-12','fr-col-md-8')}>
@@ -40,7 +40,7 @@ export function Follow() {
               </h2>
               <ul className={fr.cx('fr-btns-group')}>
                 <li>
-                  <a className={fr.cx('fr-btn--twitter','fr-btn')} 
+                  <a className={fr.cx('fr-btn','fr-btn--twitter-x')} 
                     target="_blank" 
                     href="https://twitter.com/Covoitbetagouv"
                     title="Twitter - nouvelle fenêtre"

@@ -2,7 +2,6 @@ import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
 import { classColor, getPeriod, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { H3HexagonLayer } from '@deck.gl/geo-layers/typed';
@@ -10,13 +9,16 @@ import bbox from '@turf/bbox';
 import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo } from 'react';
+import { useMemo, useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
+import DownloadButton from '@/components/observatoire/DownloadButton';
 
-export default function DensiteMap({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function DensiteMap({ title }: { title: string }) {
+  const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const period = getPeriod(params.year, params.month);
+  const period = getPeriod(dashboard.params.year, dashboard.params.month);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/location?code=${params.code}&type=${params.type}&start_date=${period.start_date}&end_date=${period.end_date}&zoom=8`;
+  const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&start_date=${period.start_date}&end_date=${period.end_date}&zoom=8`;
   const { data, error, loading } = useApi<DensiteDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
 
@@ -44,7 +46,7 @@ export default function DensiteMap({ title, params }: { title: string; params: S
   const bounds = () => {
     const hexagons = data?.map((d) => d.hex);
     const polygon = cellsToMultiPolygon(hexagons!, true);
-    const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPolygon(polygon));
+    const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPolygon(polygon));
     return bounds as unknown as LngLatBoundsLike;
   };
   const tooltip = ({ object }: any) =>
@@ -84,6 +86,13 @@ export default function DensiteMap({ title, params }: { title: string; params: S
           layers={[layer]} 
           bounds={bounds()} 
           scrollZoom={false}
+          download={
+            <DownloadButton 
+              title={'Télécharger les données de la carte'}
+              data={data!}
+              filename='densite'
+            />
+          }
         />
       )}
     </>

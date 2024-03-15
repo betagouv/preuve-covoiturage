@@ -11,7 +11,7 @@ export type AnalyseProps = {
     url: string;
   }
 };
-export default function SingleIndicator(props: AnalyseProps) {
+export default function Analyse(props: AnalyseProps) {
   return (
     <div className={`${fr.cx('fr-col')} ${style.col}`}>
       <div className={`fr-callout ${style.analyse}`}>

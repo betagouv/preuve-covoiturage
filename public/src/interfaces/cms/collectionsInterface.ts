@@ -1,5 +1,3 @@
-import { ID } from "@directus/sdk"
-
 export type Collections = {
   articles: Article,
   ressources: Ressource,
@@ -11,7 +9,7 @@ export type Collections = {
 }
 
 export interface Ressource {
-  id:ID,
+  id:string,
   slug:string,
   title:string,
   content?:string,
@@ -27,14 +25,14 @@ export interface Ressource {
 
 export interface Category {
   Categories_id: {
-    id:ID,
+    id:string,
     slug:string,
     name:string,
   }
 }
 
 export interface Article {
-  id:ID,
+  id:string,
   slug:string,
   title:string,
   description:string,
@@ -49,7 +47,7 @@ export interface Article {
 }
 
 export interface Page {
-  id:ID,
+  id:string,
   slug:string,
   title:string,
   content?:string,
@@ -65,7 +63,7 @@ export interface Section {
 }
 
 export interface Hero {
-  id:ID,
+  id:string,
   title:string,
   subtitle:string,
   content?:string,
@@ -76,7 +74,7 @@ export interface Hero {
 }
 
 export interface Highlight {
-  id:ID,
+  id:string,
   title:string,
   content?:string,
   img?:string,
@@ -85,7 +83,7 @@ export interface Highlight {
 }
 
 export interface List {
-  id:ID,
+  id:string,
   title:string,
   highlights:Highlight[]
 }

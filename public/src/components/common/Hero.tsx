@@ -3,7 +3,6 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { ButtonProps } from '@codegouvfr/react-dsfr/Button';
 import Image from 'next/image';
 import { HeroProps } from '@/interfaces/common/componentsInterface';
-import { cmsHost } from '@/helpers/cms';
 import MDContent from './MDContent';
 
 export default function Hero(props:HeroProps) {
@@ -49,7 +48,7 @@ export default function Hero(props:HeroProps) {
         {props.img &&
           <figure className={fr.cx('fr-content-media')} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
+              <Image className={fr.cx('fr-responsive-img')} src={props.img} alt={''} width={120} height={80} />
             </div>
           </figure>
         }

@@ -1,20 +1,19 @@
 import { monthList, yearList } from '@/helpers/lists';
 import SelectInList from '../common/SelectInList';
+import { useContext } from 'react';
+import { DashboardContext } from '@/context/DashboardProvider';
 
-type SelectPeriodProps = {
-  year: number;
-  month: number;
-  onChange: (v: { year: number, month: number }) => void;
-};
 
-export default function SelectPeriod(props: SelectPeriodProps) {
+
+export default function SelectPeriod() {
+  const { dashboard } =useContext(DashboardContext);
   const handlerChangeYear = (value: number) => {
-    const period = { year: value, month: props.month };
-    props.onChange(period);
+    const period = { year: value, month: dashboard.params.month };
+    dashboard.onChangePeriod(period);
   };
   const handlerChangeMonth = (value: number) => {
-    const period = { year: props.year, month: value };
-    props.onChange(period);
+    const period = { year: dashboard.params.year, month: value };
+    dashboard.onChangePeriod(period);
   };
 
   return (
@@ -22,7 +21,7 @@ export default function SelectPeriod(props: SelectPeriodProps) {
       <SelectInList
         labelId='mois'
         label='Mois'
-        id={props.month}
+        id={dashboard.params.month}
         list={monthList}
         sx={{ minWidth: 120 }}
         onChange={handlerChangeMonth}
@@ -30,7 +29,7 @@ export default function SelectPeriod(props: SelectPeriodProps) {
       <SelectInList
         labelId='annee'
         label='Année'
-        id={props.year}
+        id={dashboard.params.year}
         list={yearList}
         sx={{ ml: 3, minWidth: 120 }}
         onChange={handlerChangeYear}

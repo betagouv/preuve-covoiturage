@@ -1,156 +1,156 @@
 import Block from "@/components/common/Block";
 import Hero from "@/components/common/Hero";
-import ListHighlight from "@/components/common/ListHighlights";
 import PageTitle from "@/components/common/PageTitle";
 import SectionTitle from "@/components/common/SectionTitle";
 import RessourceCard from "@/components/ressources/RessourceCard";
-import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
-import { Section } from "@/interfaces/cms/collectionsInterface";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
-import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
+import Highlight from '@/components/common/Highlight';
+import Rows from '@/components/observatoire/indicators/Rows';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
-  const { data } = await cmsInstance.items('Pages').readByQuery({
-    fields:'*',
-    filter: {
-      slug: { _eq: params.slug },
-      status: {
-        '_eq': 'published',
+  const query = {
+    filters: {
+      slug: {
+        $eq: params.slug,
       },
-      tag:{
+      tags:{
         slug:{
-          '_eq':'observatoire',
+          $in: ['observatoire'],
         }
       }
     },
-    limit: 1,
-  });
+    fields:['title','content']
+  };
+  const {data}  = await fetchAPI('/pages',query);
   return {
-    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
-    description: shorten(`${data && data[0].content ? data[0].content :
+    title: `${data ? data[0].attributes.title : ''} | Observatoire.covoiturage.gouv.fr`,
+    description: shorten(`${data ? data[0].attributes.content :
     'Observer le covoiturage de courte distance en France'}`,150),
   }
 }
 
 export async function generateStaticParams() {
-  const { data } = await cmsInstance.items('Pages').readByQuery({
-    fields:'slug',
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
-      tag:{
+  const query = {
+    filters: {
+      tags:{
         slug:{
-          '_eq':'observatoire',
+          $in: ['observatoire'],
         }
       }
-    }
-  });
+    },
+    fields:['slug'],
+    pagination: {
+      limit:-1,
+    },
+  };
+  const {data}  = await fetchAPI('/pages',query);
   return data ? data.map((post:any) => ({
-    slug: post.slug,
+    slug: post.attributes.slug,
   })) : []
 }
 
 export default async function ObservatoireSinglePage({ params }: { params: { slug: string }}) {
-  const { data } = await cmsInstance.items('Pages').readByQuery({
-    filter: {
-      slug: { _eq: params.slug },
-      status: {
-        '_eq': 'published',
+  const query = {
+    filters: {
+      slug: {
+        $eq: params.slug,
       },
-      tag:{
-        slug:{
-          '_eq':'observatoire',
-        }
-      }
     },
-    fields: [
-      '*',
-      'sections.*',
-      'sections.item.*',
-      'sections.item.highlights.Highlight_id.*',
-      'sections.item.categories.Categories_id.*',
-      'sections.item.composition.collection',
-      'sections.item.composition.item.*'
-    ],
-    limit: 1,
-  });
-  const hero = data ? data[0].sections.find((s:Section) => s.collection === 'Hero') : null
-  const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
-  const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
-  const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
-  const rows = data ? data[0].sections.filter((s:Section) => s.collection === 'Row') : null
+    populate: {
+      hero: {
+        populate: 'buttons,img'
+      },
+      block: {
+        populate: 'buttons,img'
+      },
+      list: {
+        populate: '*'
+      },
+      rows:{
+        populate: '*'
+      },
+      resources:{
+        populate: '*'
+      }
+    },  
+  };
+  const response  = await fetchAPI('/pages',query);
+  const data = response.data[0];
+  const hero = data.attributes.hero;
+  const block = data.attributes.block;
+  const list = data.attributes.list;
+  const rows = data.attributes.rows;
+  const resources = data.attributes.resources;
 
   return(
     <div id='content'>
       {!hero && 
-        <PageTitle title={data ? data[0].title : ''} />
+        <PageTitle title={data ? data.attributes.title : ''} />
       }
       {hero && 
         <Hero 
-          title={hero.item.title} 
-          subtitle={hero.item.subtitle}
-          content={hero.item.content} 
-          img={hero.item.img} 
-          alt={hero.item.alt} 
-          buttons={hero.item.buttons} 
+          title={hero.title} 
+          subtitle={hero.subtitle}
+          content={hero.content} 
+          img={hero.img.data ? hero.img.data.attributes.url : undefined} 
+          alt={hero.alt} 
+          buttons={hero.buttons} 
         />
       }
-      {
-        rows && rows.map((r:any, i:number) =>
-        <div key={i}>
-          {r.item.title && <SectionTitle title={r.item.title} />}
-          <IndicatorsRow 
-            indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
-            analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
-            maps={r.item.composition.filter((i:any) => i.collection === 'map').map((i:any) => i.item)}
-            graphs={r.item.composition.filter((i:any) => i.collection === 'graph').map((i:any) => i.item)}
-          />
-        </div>
-      )}
-      {blocks && blocks.map((b:any, i:number) =>
+      {rows && 
+        <Rows data={rows} />
+      }
+      {block &&
         <Block 
-          key={i}
-          title={b.item.title} 
-          content={b.item.content} 
-          img={b.item.img} 
-          alt={b.item.alt} 
-          buttons={b.item.buttons} 
+          title={block.title} 
+          content={block.content} 
+          img={block.img.data.attributes.url} 
+          alt={block.alt} 
+          buttons={block.buttons} 
         />
-      )}
-      {lists && lists.map((l:any, i:number) =>
-        <div key={i} className={fr.cx('fr-grid-row')}>
-          <SectionTitle title={l.item.title} />
-          <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
+      }
+      {list && 
+        <div className={fr.cx('fr-grid-row')}>
+          {list.map((l:any, i:number) => 
+            l.__component === 'page.highlight' 
+            ? <Highlight key={i} 
+                title={l.title}
+                content={l.content}
+                img={l.img.data.attributes.url}
+                buttons={l.buttons}
+                classes={l.classes} 
+              /> 
+            : <SectionTitle key={i} title={l.title} />        
+          )}
         </div>
-      )}
+      }
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <div>
-            <MDContent source={data ? data[0].content : ''} />
+            <MDContent source={data ? data.attributes.content : ''} />
           </div>
         </div>
       </div>
-      {ressources.length >=1 && 
-      <>
-        <SectionTitle title='Ressources' />
-        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
-            <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
-              <RessourceCard 
-                title={r.item.title}
-                content={shorten(r.item.content, 100)}
-                date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                link={r.item.link}
-                file={`${cmsHost}/assets/${r.item.file}`}
-                img={`${cmsHost}/assets/${r.item.img}`}
-                img_legend={r.item.img_legend}                
-              />
-            </div>
-          )}
-        </div>
-      </>}
+      {resources.data.length > 0 && 
+        <>
+          <SectionTitle title='Ressources' />
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            {resources.data.map((r:any, i:number) =>  
+              <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+                <RessourceCard 
+                  title={r.attributes.title}
+                  content={shorten(r.attributes.content, 100)}
+                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                  href={`/ressources/${r.attributes.slug}`}
+                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
+                />
+              </div>
+            )}
+          </div>
+        </>
+      }
     </div>
   );
 }

@@ -5,11 +5,13 @@
 import { observatoire } from './observatoire';
 import { analytics } from './analytics';
 import { cms } from './cms';
+import { search } from './search';
 
 const _configuration = objectToMap({
   cms,
   observatoire,
   analytics,
+  search,
   next: nextEnvironmentVariables(),
 });
 

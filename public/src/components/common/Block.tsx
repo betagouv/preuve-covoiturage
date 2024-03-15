@@ -3,7 +3,6 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { ButtonProps } from '@codegouvfr/react-dsfr/Button';
 import Image from 'next/image';
 import { BlockProps } from '@/interfaces/common/componentsInterface';
-import { cmsHost } from '@/helpers/cms';
 
 export default function Block(props:BlockProps) {
   return (
@@ -40,7 +39,7 @@ export default function Block(props:BlockProps) {
         {props.img &&
           <div className={fr.cx('fr-content-media')}>
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} aria-hidden={true} />
+              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={props.img} alt={''} width={120} height={80} aria-hidden={true} />
             </div>
           </div>
         }

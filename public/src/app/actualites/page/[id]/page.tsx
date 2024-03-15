@@ -1,9 +1,9 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/helpers/cms";
+import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
-import CategoryTags from "@/components/actualites/CategoryTags";
+import CategoryTags from "@/components/common/CategoryTags";
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
@@ -13,17 +13,13 @@ export async function generateMetadata({ params }: { params: { id: string }}) {
 }
 
 export async function generateStaticParams() {
-  const { meta } = await cmsInstance.items('Articles').readByQuery({
-    fields:'id',
-    limit: cmsActusByPage,
-    filter:{
-      status: {
-        '_eq': 'published',
-      }
-    },
-    meta:'filter_count',
-  });
-  const nbPage = meta && meta.filter_count ? Math.ceil(meta.filter_count/cmsActusByPage) : 1
+  const query = {
+    pagination: {
+      pageSize: cmsActusByPage
+    }
+  };
+  const { meta }  = await fetchAPI('/articles',query);
+  const nbPage = meta.pagination.pageCount;
   return Array.from({ length: nbPage }, (_, v) => {
     const id = v + 1;
     return {
@@ -33,49 +29,49 @@ export async function generateStaticParams() {
 }
 
 export default async function ActuPage({ params }: { params: { id: string }}) {
-  const { data, meta } = await cmsInstance.items('Articles').readByQuery({
-    fields:'*, categories.Categories_id.*',
-    limit: cmsActusByPage,
-    page: Number(params.id),
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
-    },
-    sort:['-date_created'] as never[],
-    meta:'filter_count',
-  });
-
-  const categories =  await cmsInstance.items('Categories').readByQuery({
-    fields:'*',
-    meta:'*',
-  });
-
-  const content = {
-    pageTitle: `Actualités page ${params.id}`,  
+  const query = {
+    populate: 'img',
+    sort:'createdAt:desc',
+    pagination: {
+      pageSize: cmsActusByPage,
+      page: params.id,
+    }
   };
-
-  const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
+  const { data, meta }  = await fetchAPI('/articles',query);
+  const catQuery = {
+    filters:{
+      articles:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
+  }
+  const categories =  await fetchAPI('/categories',catQuery);
+  const pageTitle=`Actualités page ${params.id}`;
+  const nbPage = meta.pagination.pageCount;
 
   return (
     <div id='content'>
-      <PageTitle title={content.pageTitle} />
-      <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} />}
-      </div>
+      <PageTitle title={pageTitle} />
+      {categories.data && 
+        <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
+          <CategoryTags categories={categories.data} page={params.id}/>
+        </div>
+      }
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
-          data.map((a, i) => {
-            if (i <= 1) return (
+          data.map((a:any, i:number) => {
+            return (
               <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <ActuCard 
-                  title={a.title}
-                  content={shorten(a.description,250)}
-                  date={new Date(a.date_created).toLocaleDateString('fr-FR')}
-                  href={`/actualites/${a.slug}`}
-                  img={`${cmsHost}/assets/${a.img}`}
-                  img_legend={a.img_legend}
-                  categories={a.categories}
+                  title={a.attributes.title}
+                  content={shorten(a.attributes.description,250)}
+                  date={new Date(a.attributes.createdAt).toLocaleDateString('fr-FR')}
+                  href={`/actualites/${a.attributes.slug}`}
+                  img={a.attributes.img.data.attributes.url}
+                  img_legend={a.attributes.img_legend}
+                  categories={a.attributes.categories}
                 />
               </div>
             )

@@ -15,10 +15,8 @@ export default function ActuCard(props: ActuCardProps) {
             props.categories.map((c, i) => {
               return (
                 <li key={i}>
-                  <Tag
-                    small
-                  >
-                    {c.Categories_id ? c.Categories_id.name : ''}
+                  <Tag small>
+                    {c.attributes ? c.attributes.label : ''}
                   </Tag>
                 </li>
               )

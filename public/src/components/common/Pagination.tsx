@@ -29,8 +29,8 @@ export default function Pagination(props:PaginationProps) {
   const pages = getPagination(props.count, defaultPage);
 
   return(
-    <div className={fr.cx('fr-grid-row', 'fr-grid-row--center', 'fr-mt-5w')}>
-      <div className={fr.cx('fr-col-6')}>
+    <div className={fr.cx('fr-grid-row', 'fr-mt-5w')}>
+      <div className={fr.cx('fr-mx-auto')}>
       <nav role="navigation" className={fr.cx('fr-pagination')} aria-label="Pagination">
         <ul className={fr.cx('fr-pagination__list')}>
           <li>
