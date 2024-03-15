@@ -80,6 +80,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and pi.datetime <  $2
             and pi.policy_id = $4
             and pi.status = 'validated'
+            and pi.amount >= 0
             and cc.operator_id = $3
             and cc.status in ('ok', 'canceled')
           )
@@ -197,6 +198,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       left join operator.operators oo on oo._id = ccd.operator_id
 
       where pid.policy_id is not null
+        and pid.amount >= 0
 
       order by ccd.datetime
     `;
