@@ -2,12 +2,12 @@ import { coerceIntList } from '@ilos/cli';
 import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '@ilos/common';
 import { ParamsInterface as ExportParams, signature as exportSignature } from '@shared/apdf/export.contract';
 import {
-  ParamsInterface as ListCampaignsParams,
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
 } from '@shared/policy/list.contract';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { set } from 'lodash';
+import { castExportParams } from '../helpers/castExportParams.helper';
 
 interface Options {
   campaigns: number[];
@@ -58,11 +58,8 @@ export class ExportCommand implements CommandInterface {
   constructor(private kernel: KernelInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {
-    const campaign_id = options.campaigns.length ? options.campaigns : await this.findActiveCampaigns();
-
-    const params: ExportParams = {
+    const params: Partial<ExportParams> = {
       format: { tz: options.tz },
-      query: { campaign_id },
     };
 
     const context: ContextType = {
@@ -74,17 +71,27 @@ export class ExportCommand implements CommandInterface {
     if (options.end) set(params, 'query.date.end', zonedTimeToUtc(options.end, options.tz).toISOString());
     if (options.operators?.length) set(params, 'query.operator_id', options.operators);
 
-    console.info(`Running [${exportSignature}]`);
+    // fetch active campaigns at the given date
+    const { start_date, end_date } = castExportParams(params as ExportParams);
+    const campaign_list = options.campaigns.length
+      ? options.campaigns
+      : await this.findActiveCampaigns(start_date.toISOString());
+    set(params, 'query.campaign_id', campaign_list);
+
+    // eslint-disable-next-line max-len,prettier/prettier
+    console.info(`Running [${exportSignature}] from ${start_date.toISOString()} to ${end_date.toISOString()} for campaigns: ${campaign_list.join(', ')}`);
+    // eslint-enable
+
     await this.kernel.call(exportSignature, params, context);
 
     return '';
   }
 
-  private async findActiveCampaigns(): Promise<number[]> {
-    const params: ListCampaignsParams = { status: 'active' };
+  private async findActiveCampaigns(datetime: String): Promise<number[]> {
+    const params = { datetime };
 
     return (
-      await this.kernel.call<ListCampaignsParams, ListCampaignsResults>(listCampaignsSignature, params, {
+      await this.kernel.call<{ datetime: String }, ListCampaignsResults>(listCampaignsSignature, params, {
         channel: { service: 'apdf' },
         call: { user: { permissions: ['common.policy.list'] } },
       })

@@ -1,6 +1,7 @@
 import { PolicyInterface } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
+  datetime?: Date;
   territory_id?: number | null;
   operator_id?: number | null;
   status?: string;
