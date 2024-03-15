@@ -236,7 +236,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
         this.formatSliceLabel(s.slice),
         { date1904: false, formula: `SUMIFS(Trajets!R:R,${mode_criteria},${slice_criteria})` },
         { date1904: false, formula: `COUNTIFS(${mode_criteria},${slice_criteria})` },
-        { date1904: false, formula: `COUNTIFS(Trajets!R:R,"<>0",${mode_criteria},${slice_criteria})` },
+        { date1904: false, formula: `COUNTIFS(Trajets!R:R,">0",${mode_criteria},${slice_criteria})` },
       ]);
       r.height = 20;
       r.alignment = { vertical: 'middle' };
