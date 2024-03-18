@@ -6,6 +6,7 @@ export interface InsertableCarpoolCreateRequest {
   operator_journey_id: Uuid;
   payload: Payload;
   api_version: ApiVersion;
+  created_at?: Date;
 }
 
 export interface InsertableCarpoolCancelRequest {
@@ -15,6 +16,7 @@ export interface InsertableCarpoolCancelRequest {
   api_version: ApiVersion;
   cancel_code: CancelCode;
   cancel_message: CancelMessage;
+  created_at?: Date;
 }
 
 export type InsertableCarpoolRequest = InsertableCarpoolCreateRequest | InsertableCarpoolCancelRequest;

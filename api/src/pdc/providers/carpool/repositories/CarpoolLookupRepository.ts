@@ -26,11 +26,7 @@ export class CarpoolLookupRepository {
         cc.operator_id,
         cc.operator_journey_id,
         cc.operator_trip_id,
-        ca.acquisition_last_event_id,
         ca.acquisition_status,
-        ca.incentive_last_event_id,
-        ca.incentive_status,
-        ca.fraud_last_event_id,
         ca.fraud_status
       FROM ${raw(this.table)} AS cc
       JOIN ${raw(this.statusTable)} AS ca
@@ -61,11 +57,7 @@ export class CarpoolLookupRepository {
           'lat', ST_Y(cc.end_position::geometry),
           'lon', ST_X(cc.end_position::geometry)
         ) AS end_position,
-        ca.acquisition_last_event_id,
         ca.acquisition_status,
-        ca.incentive_last_event_id,
-        ca.incentive_status,
-        ca.fraud_last_event_id,
         ca.fraud_status
       FROM ${raw(this.table)} AS cc
       JOIN ${raw(this.statusTable)} AS ca

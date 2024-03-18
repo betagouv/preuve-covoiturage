@@ -119,7 +119,7 @@ watch:
 
 # Run ilos commands wrapped for pretty printing
 ilos *command:
-  npm run ilos -- {{ command }} | pino-pretty -f
+  npm run ilos -- {{ command }}
 
 # Run any npm script from the API
 api *command:

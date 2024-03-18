@@ -62,13 +62,6 @@ export enum CarpoolAcquisitionStatusEnum {
   Expired = 'expired',
 }
 
-export enum CarpoolIncentiveStatusEnum {
-  Pending = 'pending',
-  Applied = 'applied',
-  Finalized = 'finalized',
-  Failed = 'failed',
-}
-
 export enum CarpoolFraudStatusEnum {
   Pending = 'pending',
   Passed = 'passed',

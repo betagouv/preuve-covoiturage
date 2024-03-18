@@ -35,19 +35,9 @@ test.serial('Should create acquisition event', async (t) => {
 
   await t.context.repository.saveAcquisitionEvent(data);
   const result = await t.context.db.connection.getClient().query(sql`
-    SELECT carpool_id, request_id, status FROM ${raw(t.context.repository.acquisitionEventTable)}
+    SELECT * FROM ${raw(t.context.repository.table)}
     WHERE carpool_id = ${t.context.carpool_id}
   `);
 
-  t.deepEqual(result.rows.pop(), data);
-});
-
-test.serial('Should create status', async (t) => {
-  await t.context.repository.syncStatus(t.context.carpool_id);
-  const result = await t.context.db.connection.getClient().query(sql`
-    SELECT acquisition_status FROM ${raw(t.context.repository.statusTable)}
-    WHERE carpool_id = ${t.context.carpool_id}
-  `);
-
-  t.deepEqual(result.rows.pop(), { acquisition_status: insertableAcquisitionEvent.status });
+  t.is(result.rows.pop()?.acquisition_status, data.status);
 });
