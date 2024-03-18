@@ -8,6 +8,7 @@ import {
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { addSeconds } from 'date-fns';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '../../../providers/carpool/interfaces';
+import { coerceInt } from '@ilos/cli';
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -18,6 +19,12 @@ export class AcquisitionMigrateCommand implements CommandInterface {
       signature: '-l, --loop',
       description: 'Process acquisition while remaining',
       default: false,
+    },
+    {
+      signature: '-s, --size <size>',
+      description: 'Batch size',
+      coerce: coerceInt,
+      default: 100,
     },
   ];
 
@@ -32,15 +39,21 @@ export class AcquisitionMigrateCommand implements CommandInterface {
   public async call(options): Promise<string> {
     let shouldContinue = true;
 
+    const batchSize = options.size;
+    const timerMessage = `Migrating to v2`;
+    console.time(timerMessage);
+
     do {
-      shouldContinue = await this.migration();
+      const did = await this.migration(batchSize);
+      console.timeLog(timerMessage, `Processed: ${did}`)
+      shouldContinue = did === batchSize;
     } while (shouldContinue && options.loop);
 
+    console.timeEnd(timerMessage);
     return 'done';
   }
 
-  protected async migration(): Promise<boolean> {
-    const batchSize = 10;
+  protected async migration(batchSize = 100): Promise<number> {
     const conn = await this.pg.getClient().connect();
     await conn.query('BEGIN');
     try {
@@ -183,7 +196,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
         await this.event.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
       }
       await conn.query('COMMIT');
-      return result.rows.length === batchSize;
+      return result.rows.length;
     } catch (e) {
       console.error(e);
       await conn.query('ROLLBACK');
