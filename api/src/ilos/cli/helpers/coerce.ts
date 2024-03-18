@@ -12,3 +12,11 @@ export function coerceDate(s: string | null): Date | null {
   if (d instanceof Date && !isNaN(d as unknown as number)) return d;
   return null;
 }
+
+export function coerceInt(s: string): number | undefined {
+  const i = parseInt(s);
+  if(isNaN(i)) {
+    return undefined;
+  }
+  return i;
+}
