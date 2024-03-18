@@ -52,13 +52,13 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           LEFT JOIN carpool_v2.carpools cv2
             ON (aa.journey_id = cv2.operator_journey_id AND aa.operator_id = cv2.operator_id)
           WHERE cv2._id IS NULL AND aa.status = 'ok'
+          ORDER BY aa.created_at ASC
           LIMIT $1
         `,
         values: [batchSize],
       });
 
       for (const { acquisition } of result.rows) {
-        console.info(acquisition);
         const incentiveResult = await conn.query({
           text: `
             SELECT
@@ -69,7 +69,6 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           values: [acquisition._id],
         });
         const incentives = incentiveResult.rows[0]?.operator_incentives || [];
-        console.info(incentives);
 
         const carpoolResult = await conn.query({
           text: `
