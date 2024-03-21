@@ -151,7 +151,7 @@ test.serial('Should update status', async (t) => {
       acquisition_id: data[0]._id,
       status: AcquisitionStatusEnum.Error,
       error_stage: AcquisitionErrorStageEnum.Acquisition,
-      errors: [statusError],
+      errors: [statusError.message],
     },
   ]);
   const result = await t.context.db.connection.getClient().query({
@@ -192,7 +192,7 @@ test.serial('Should update status', async (t) => {
       acquisition_id: data[0]._id,
       status: AcquisitionStatusEnum.Error,
       error_stage: AcquisitionErrorStageEnum.Acquisition,
-      errors: [statusError, statusError],
+      errors: [statusError.message, statusError.message],
     },
   ]);
   const result2 = await t.context.db.connection.getClient().query({

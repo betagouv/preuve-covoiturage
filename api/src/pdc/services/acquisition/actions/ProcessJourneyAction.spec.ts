@@ -33,14 +33,6 @@ function bootstrap(): {
   return { action, repository, kernel, normalizer };
 }
 
-test.afterEach((t) => {
-  // @ts-expect-error
-  if (ProcessJourneyAction.killSwitch.isSinonProxy) {
-    // @ts-expect-error
-    ProcessJourneyAction.killSwitch.restore();
-  }
-});
-
 test('should process if normalization ok', async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
@@ -176,9 +168,6 @@ test('should fail if carpool fail', async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.callsFake((data) => ({ ...normalizedPayload, acquisition_id: data._id }));
-  sinon.stub(ProcessJourneyAction, 'killSwitch').callsFake(() => async () => {
-    t.log('killSwitch');
-  });
   const kernelError = new Error('Boum');
   kernel.call.callsFake(async (_method, params: any) => {
     if (params.acquisition_id === 2) {

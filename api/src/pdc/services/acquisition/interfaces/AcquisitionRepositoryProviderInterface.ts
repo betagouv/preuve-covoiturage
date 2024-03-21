@@ -51,7 +51,7 @@ export interface AcquisitionStatusUpdateInterface {
   acquisition_id: number;
   status: AcquisitionStatusEnum;
   error_stage?: AcquisitionErrorStageEnum;
-  errors?: Error[];
+  errors?: string[];
 }
 
 export interface AcquisitionFindInterface<P> {

@@ -28,24 +28,6 @@ export class ProcessJourneyAction extends AbstractAction {
     super();
   }
 
-  public static killSwitch(
-    timerSkip: boolean,
-    commit: () => Promise<void>,
-    timeout: number,
-    runUUID: string,
-  ): () => Promise<void> {
-    return async () => {
-      if (timerSkip) return;
-      await commit();
-
-      // kill the process if the timeout is reached
-      // throwing cannot be catched by synchroneous try/catch block
-      // as the setTimeout() runs outside the loop
-      console.warn(`[acquisition:${runUUID}] timeout (${timeout}) -> exit`);
-      process.exit(1);
-    };
-  }
-
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
     const runUUID = randomUUID();
     const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 1000 });
@@ -64,15 +46,22 @@ export class ProcessJourneyAction extends AbstractAction {
     // We set a timeout to avoid the action to be stuck in case of error
     // and acquisitions to be locked forever
     let timerId: NodeJS.Timeout | null = null;
-
-    // timerSkip is used to skip the timeout if the action is done before
-    // and everything is commited
-    const timerSkip = false;
+    const failed = [];
 
     for (const acquisition of acquisitions) {
       // clear the timer on every loop and reset it
       timerId && clearTimeout(timerId);
-      timerId = setTimeout(ProcessJourneyAction.killSwitch(timerSkip, commit, timeout, runUUID), timeout);
+      timerId = setTimeout(async () => {
+        console.error(`[acquisition:${runUUID}] timeout ${acquisition._id}`);
+        await update({
+          acquisition_id: acquisition._id,
+          status: AcquisitionStatusEnum.Error,
+          error_stage: AcquisitionErrorStageEnum.Normalisation,
+          errors: ['Timeout'],
+        });
+        failed.push(acquisition._id);
+        console.debug(` >>> Update TIMED OUT: ${acquisition._id}`);
+      }, timeout);
 
       try {
         // track how much time the action takes
@@ -98,11 +87,13 @@ export class ProcessJourneyAction extends AbstractAction {
         );
 
         // Update the acquisition status
-        console.debug(` >>> Update OK: ${acquisition._id}`);
-        await update({
-          acquisition_id: acquisition._id,
-          status: AcquisitionStatusEnum.Ok,
-        });
+        if (!failed.includes(acquisition._id)) {
+          console.debug(` >>> Update OK: ${acquisition._id}`);
+          await update({
+            acquisition_id: acquisition._id,
+            status: AcquisitionStatusEnum.Ok,
+          });
+        }
         console.timeEnd(timerMsg);
       } catch (e) {
         console.error(`[acquisition:${runUUID}] error ${e.message} processing ${acquisition._id}`);
@@ -113,6 +104,8 @@ export class ProcessJourneyAction extends AbstractAction {
           errors: [e.message],
         });
         console.debug(` >>> Update FAILED: ${acquisition._id}`);
+      } finally {
+        timerId && clearTimeout(timerId);
       }
     }
 
