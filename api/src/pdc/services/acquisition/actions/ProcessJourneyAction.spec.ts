@@ -10,7 +10,7 @@ import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/
 import { signature } from '@shared/carpool/crosscheck.contract';
 import { callContext } from '../config/callContext';
 
-function bootstap(): {
+function bootstrap(): {
   action: ProcessJourneyAction;
   repository: SinonStubbedInstance<AcquisitionRepositoryProvider>;
   kernel: SinonStubbedInstance<KernelInterfaceResolver>;
@@ -33,8 +33,16 @@ function bootstap(): {
   return { action, repository, kernel, normalizer };
 }
 
+test.afterEach((t) => {
+  // @ts-expect-error
+  if (ProcessJourneyAction.killSwitch.isSinonProxy) {
+    // @ts-expect-error
+    ProcessJourneyAction.killSwitch.restore();
+  }
+});
+
 test('should process if normalization ok', async (t) => {
-  const { action, repository, normalizer, kernel } = bootstap();
+  const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.resolves(normalizedPayload);
   const updateCallbackStub = sinon.stub();
@@ -90,7 +98,7 @@ test('should process if normalization ok', async (t) => {
 });
 
 test('should fail if normalization fail', async (t) => {
-  const { action, repository, normalizer, kernel } = bootstap();
+  const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   const normalizationError = new Error('normalization');
   normalizer.handle.callsFake(async (data) => {
@@ -159,15 +167,18 @@ test('should fail if normalization fail', async (t) => {
       acquisition_id: 2,
       status: AcquisitionStatusEnum.Error,
       error_stage: AcquisitionErrorStageEnum.Normalisation,
-      errors: [normalizationError],
+      errors: [normalizationError.message],
     },
   ]);
 });
 
 test('should fail if carpool fail', async (t) => {
-  const { action, repository, normalizer, kernel } = bootstap();
+  const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.callsFake((data) => ({ ...normalizedPayload, acquisition_id: data._id }));
+  sinon.stub(ProcessJourneyAction, 'killSwitch').callsFake(() => async () => {
+    t.log('killSwitch');
+  });
   const kernelError = new Error('Boum');
   kernel.call.callsFake(async (_method, params: any) => {
     if (params.acquisition_id === 2) {
@@ -215,7 +226,7 @@ test('should fail if carpool fail', async (t) => {
       acquisition_id: 2,
       status: AcquisitionStatusEnum.Error,
       error_stage: AcquisitionErrorStageEnum.Normalisation,
-      errors: [kernelError],
+      errors: [kernelError.message],
     },
   ]);
 });

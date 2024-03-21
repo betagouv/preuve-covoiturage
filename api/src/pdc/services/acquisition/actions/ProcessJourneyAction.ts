@@ -28,6 +28,24 @@ export class ProcessJourneyAction extends AbstractAction {
     super();
   }
 
+  public static killSwitch(
+    timerSkip: boolean,
+    commit: () => Promise<void>,
+    timeout: number,
+    runUUID: string,
+  ): () => Promise<void> {
+    return async () => {
+      if (timerSkip) return;
+      await commit();
+
+      // kill the process if the timeout is reached
+      // throwing cannot be catched by synchroneous try/catch block
+      // as the setTimeout() runs outside the loop
+      console.warn(`[acquisition:${runUUID}] timeout (${timeout}) -> exit`);
+      process.exit(1);
+    };
+  }
+
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
     const runUUID = randomUUID();
     const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 1000 });
@@ -39,8 +57,8 @@ export class ProcessJourneyAction extends AbstractAction {
       status: AcquisitionStatusEnum.Pending,
     });
 
-    const msg = `[acquisition] processed (${acquisitions.length}) *${runUUID}*`;
-    console.debug(`[acquisition] processing batch ${acquisitions.map((a) => a._id).join(', ')} *${runUUID}*`);
+    const msg = `[acquisition:${runUUID}] processed (${acquisitions.length})`;
+    console.debug(`[acquisition:${runUUID}] processing batch ${acquisitions.map((a) => a._id).join(', ')}`);
     console.time(msg);
 
     // We set a timeout to avoid the action to be stuck in case of error
@@ -51,58 +69,55 @@ export class ProcessJourneyAction extends AbstractAction {
     // and everything is commited
     const timerSkip = false;
 
-    try {
-      for (const acquisition of acquisitions) {
-        // clear the timer on every loop and reset it
-        timerId && clearTimeout(timerId);
-        timerId = setTimeout(async () => {
-          if (timerSkip) return;
-          console.warn(`[acquisition] timeout processing escape commit *${runUUID}*`);
-          await commit();
-        }, timeout);
+    for (const acquisition of acquisitions) {
+      // clear the timer on every loop and reset it
+      timerId && clearTimeout(timerId);
+      timerId = setTimeout(ProcessJourneyAction.killSwitch(timerSkip, commit, timeout, runUUID), timeout);
 
+      try {
         // track how much time the action takes
-        const timerMsg = `[acquisition] processed (${acquisition._id} *${runUUID}*`;
+        const timerMsg = `[acquisition:${runUUID}] processed (${acquisition._id}`;
         console.time(timerMsg);
 
-        try {
-          // Normalize geo, route and cost data
-          const normalizedAcquisition = await this.normalizer.handle(acquisition);
+        // Normalize geo, route and cost data
+        console.debug(` >>> Normalise acquisition: ${acquisition._id}`);
+        const normalizedAcquisition = await this.normalizer.handle(acquisition);
 
-          // Cross check with carpool
-          // This will create the entries in carpool.carpools and carpool.incentives
-          //
-          // ! WARNING !
-          // The PG client cannot be passed to the crosscheck action because it is called
-          // through the kernel.
-          // The crosscheck action will run its own transaction to update the records.
-          await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
-            crosscheckSignature,
-            normalizedAcquisition,
-            callContext,
-          );
+        // Cross check with carpool
+        // This will create the entries in carpool.carpools and carpool.incentives
+        //
+        // ! WARNING !
+        // The PG client cannot be passed to the crosscheck action because it is called
+        // through the kernel.
+        // The crosscheck action will run its own transaction to update the records.
+        console.debug(` >>> Crosscheck: ${acquisition._id}`);
+        await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
+          crosscheckSignature,
+          normalizedAcquisition,
+          callContext,
+        );
 
-          // Update the acquisition status
-          await update({
-            acquisition_id: acquisition._id,
-            status: AcquisitionStatusEnum.Ok,
-          });
-        } catch (e) {
-          console.debug(`[acquisition] error ${e.message} processing ${acquisition._id} *${runUUID}`);
-          await update({
-            acquisition_id: acquisition._id,
-            status: AcquisitionStatusEnum.Error,
-            error_stage: AcquisitionErrorStageEnum.Normalisation,
-            errors: [e],
-          });
-        } finally {
-          console.timeEnd(timerMsg);
-        }
+        // Update the acquisition status
+        console.debug(` >>> Update OK: ${acquisition._id}`);
+        await update({
+          acquisition_id: acquisition._id,
+          status: AcquisitionStatusEnum.Ok,
+        });
+        console.timeEnd(timerMsg);
+      } catch (e) {
+        console.error(`[acquisition:${runUUID}] error ${e.message} processing ${acquisition._id}`);
+        await update({
+          acquisition_id: acquisition._id,
+          status: AcquisitionStatusEnum.Error,
+          error_stage: AcquisitionErrorStageEnum.Normalisation,
+          errors: [e.message],
+        });
+        console.debug(` >>> Update FAILED: ${acquisition._id}`);
       }
-    } finally {
-      await commit();
-      console.timeEnd(msg);
-      return acquisitions.length === batchSize;
     }
+
+    await commit();
+    console.timeEnd(msg);
+    return acquisitions.length === batchSize;
   }
 }

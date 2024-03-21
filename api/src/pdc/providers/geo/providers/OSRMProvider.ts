@@ -28,7 +28,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      console.error(`[OSRMProvider] (${start.lon},${start.lat};${end.lon},${end.lat}) ${e.message}`);
+      console.error(`[OSRMProvider] (${start.lon},${start.lat};${end.lon},${end.lat})`);
       switch (e.response?.status) {
         case 429:
           throw new Error(`[OSRMProvider] Too many requests on ${this.domain}`);
