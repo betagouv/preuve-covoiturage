@@ -49,7 +49,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await geocoder.literalToPosition(literal);
       } catch (e) {
-        console.error(`[GeoProvider:literalToPosition] ${e.message}`);
+        console.error(`[GeoProvider:literalToPosition] (${literal}) ${e.message}`);
         failure.push(`literalToPosition ${e.message}`);
       }
     }
@@ -62,7 +62,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseeReverseCoder.inseeToPosition(insee);
       } catch (e) {
-        console.error(`[GeoProvider:inseeToPosition] ${e.message}`);
+        console.error(`[GeoProvider:inseeToPosition] (${insee}) ${e.message}`);
         failure.push(`inseeToPosition ${e.message}`);
       }
     }
@@ -76,7 +76,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        console.error(`[GeoProvider:positionToInsee] ${e.message}`);
+        console.error(`[GeoProvider:positionToInsee] (${geo.lon},${geo.lat}) ${e.message}`);
         failure.push(`positionToInsee ${e.message}`);
       }
     }
@@ -89,7 +89,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
-        console.error(`[GeoProvider:getRouteMeta] ${e.message}`);
+        console.error(`[GeoProvider:getRouteMeta] (${start.lon},${start.lat};${end.lon},${end.lat}) ${e.message}`);
         failure.push(`getRouteMeta ${e.message}`);
       }
     }

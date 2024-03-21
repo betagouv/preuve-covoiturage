@@ -56,7 +56,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
 
       return resultCloseCom.rows[0].arr;
     } catch (e) {
-      console.error(`[LocalGeoProvider] ${e.message}`);
+      console.error(`[LocalGeoProvider] (${lon},${lat}) ${e.message}`);
       throw e;
     } finally {
       client.release();
