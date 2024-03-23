@@ -4,6 +4,7 @@ import { formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 export const defaultTz = 'Europe/Paris';
 
+// Regular UTC toISOString
 export function toISOString(d: Date): string {
   try {
     return d.toISOString();
@@ -12,6 +13,7 @@ export function toISOString(d: Date): string {
   }
 }
 
+// convert a Date to a string in the User timezone
 export function toTzString(d: Date, tz?: Timezone): string {
   try {
     return formatInTimeZone(d, tz || defaultTz, "yyyy-MM-dd'T'HH:mm:ssXX");

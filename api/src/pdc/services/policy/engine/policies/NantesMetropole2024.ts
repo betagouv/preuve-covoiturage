@@ -1,3 +1,5 @@
+import { toTzString } from '@pdc/helpers/dates.helper';
+import { Timezone } from '@pdc/providers/validator';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -5,7 +7,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices, TestingLogFn } from '../../interfaces/engine/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   LimitTargetEnum,
@@ -28,19 +30,42 @@ import { description } from './NantesMetropole2024.html';
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
 export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = 'pdll_2024';
+  static readonly id = 'nantes_metropole_2024';
+  static readonly tz: Timezone = 'Europe/Paris';
+
+  public static mode<T>(date: Date, regular: T, booster: T): T {
+    if (!NantesMetropole2024.boosterDates) return regular;
+    const ymd = toTzString(date).slice(0, 10);
+    return NantesMetropole2024.boosterDates.includes(ymd) ? booster : regular;
+  }
+
+  // Liste de dates au format YYYY-MM-DD dans la zone Europe/Paris
+  // pour lesquelles les règles de booster s'appliquent
+  protected boosterDates: string[] = [];
+
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
-  protected slices: RunnableSlices = [
+
+  protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },
     {
       start: 17_000,
-      end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 30_000 })),
-    },
-    {
-      start: 30_000,
       end: 60_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+      fn: (ctx: StatelessContextInterface) => {
+        // 0,10 euro par trajet par km par passager avec un maximum de 2,00 euros
+        return perSeat(ctx, Math.min(perKm(ctx, { amount: 10, offset: 17_000, limit: 60_000 }), 200 - 75));
+      },
+    },
+  ];
+
+  protected boosterSlices: RunnableSlices = [
+    { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 165) },
+    {
+      start: 17_000,
+      end: 60_000,
+      fn: (ctx: StatelessContextInterface) => {
+        // 0,10 euro par trajet par km par passager avec un maximum de 2,90 euros
+        return perSeat(ctx, Math.min(perKm(ctx, { amount: 10, offset: 17_000, limit: 60_000 }), 290 - 165));
+      },
     },
   ];
 
@@ -54,24 +79,29 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
     ];
   }
 
-  protected processExclusion(ctx: StatelessContextInterface) {
+  protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
 
-    // Exclure les trajets qui ne sont pas de l'AOM
+    // Exclusion des OD des autres régions
+    if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
+      throw new NotEligibleTargetException();
+    }
+
+    // Exclusion des OD des autres AOM
     if (!startsAt(ctx, { aom: ['244400404'] }) || !endsAt(ctx, { aom: ['244400404'] })) {
       throw new NotEligibleTargetException();
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
-    this.processExclusion(ctx);
+  processStateless(ctx: StatelessContextInterface, log?: TestingLogFn): void {
+    this.processExclusion(ctx, log);
     super.processStateless(ctx);
 
-    // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    const slices = NantesMetropole2024.mode(ctx.carpool.datetime, this.regularSlices, this.boosterSlices);
+    for (const { start, fn } of slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
@@ -80,10 +110,11 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
     ctx.incentive.set(amount);
   }
 
-  params(): PolicyHandlerParamsInterface {
+  params(date?: Date): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
-      slices: this.slices,
+      tz: NantesMetropole2024.tz,
+      slices: date ? NantesMetropole2024.mode(date, this.regularSlices, this.boosterSlices) : this.regularSlices,
+      booster_dates: this.boosterDates,
       operators: this.operators,
       limits: {
         glob: this.max_amount,
