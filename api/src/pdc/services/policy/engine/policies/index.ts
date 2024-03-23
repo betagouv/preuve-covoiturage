@@ -10,6 +10,7 @@ import { Laval } from './Laval';
 import { MetropoleSavoie } from './MetropoleSavoie';
 import { Montpellier } from './Montpellier';
 import { Mrn } from './Mrn';
+import { NantesMetropole2024 } from './NantesMetropole2024';
 import { Nm } from './Nm';
 import { Occitanie } from './Occitanie';
 import { PaysBasque } from './PaysBasque';
@@ -45,6 +46,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Montpellier,
     Mrn,
     Nm,
+    NantesMetropole2024,
     Occitanie,
     PaysBasque,
     Pdll,

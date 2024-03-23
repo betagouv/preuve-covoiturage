@@ -1,23 +1,24 @@
 import { Timezone } from '@pdc/providers/validator';
-import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
-import { isSelected } from '../helpers';
 import {
   CarpoolInterface,
   MetadataStoreInterface,
-  PolicyInterface,
   PolicyHandlerInterface,
+  PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
+  PolicyInterface,
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
-  StatelessIncentiveInterface,
-  PolicyHandlerParamsInterface,
-  TerritorySelectorsInterface,
   StatelessContextInterface,
-  PolicyHandlerStaticInterface,
+  StatelessIncentiveInterface,
+  TerritorySelectorsInterface,
 } from '../../interfaces';
+import { TestingLogFn } from '../../interfaces/engine/PolicyInterface';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
+import { isSelected } from '../helpers';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 
 export class Policy implements PolicyInterface {
   constructor(
@@ -74,12 +75,12 @@ export class Policy implements PolicyInterface {
     };
   }
 
-  async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
+  async processStateless(carpool: CarpoolInterface, log?: TestingLogFn): Promise<StatelessIncentiveInterface> {
     const context: StatelessContextInterface = StatelessContext.fromCarpool(this._id, carpool);
     context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
-        this.handler.processStateless(context);
+        this.handler.processStateless(context, log);
       } catch (e) {
         if (e instanceof NotEligibleTargetException) {
           context.incentive.set(0);
@@ -96,13 +97,14 @@ export class Policy implements PolicyInterface {
   async processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
+    log?: TestingLogFn,
   ): Promise<StatefulIncentiveInterface> {
     try {
       const context = await StatefulContext.fromIncentive(store, incentive);
       if (context.meta.isEmpty() || context.incentive.get() === 0) {
         return context.incentive;
       }
-      this.handler.processStateful(context);
+      this.handler.processStateful(context, log);
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {

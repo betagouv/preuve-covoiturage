@@ -83,8 +83,8 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
     const store = new MetadataStore(new MemoryMetadataRepository(inputMeta));
     const incentives: SerializedIncentiveInterface[] = [];
     for (const carpool of carpools) {
-      const statelessIncentive = await policy.processStateless(carpool);
-      const statefulIncentive = await policy.processStateful(store, statelessIncentive.export());
+      const statelessIncentive = await policy.processStateless(carpool, t.log);
+      const statefulIncentive = await policy.processStateful(store, statelessIncentive.export(), t.log);
       incentives.push(statefulIncentive.export());
     }
     t.deepEqual(

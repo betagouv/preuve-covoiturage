@@ -1,4 +1,5 @@
 import { Timezone } from '@pdc/providers/validator';
+import { LogFn } from 'ava';
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -52,6 +53,9 @@ export interface SerializedPolicyInterface {
 export interface PolicyHandlerStaticInterface {
   policy_max_amount?: number;
   readonly id: string;
+  readonly tz?: Timezone;
+  readonly boosterDates?: string[];
+  mode?<T>(date: Date, regular: T, booster: T): T;
   /**
    * Optional max amount to spend for the policy
    */
@@ -68,11 +72,15 @@ export interface PolicyHandlerParamsInterface {
   booster_dates?: Array<string>;
 }
 
+// Let the policy handler define its own log function
+// when test suites have their own logging requirements (e.g. ava)
+export type TestingLogFn = LogFn;
+
 export interface PolicyHandlerInterface {
   max_amount?: number;
   load(): Promise<void>;
-  processStateless(context: StatelessContextInterface): void;
-  processStateful(context: StatefulContextInterface): void;
+  processStateless(context: StatelessContextInterface, log?: TestingLogFn): void;
+  processStateful(context: StatefulContextInterface, log?: TestingLogFn): void;
   params(): PolicyHandlerParamsInterface;
   describe(): string;
   getOperators?(datetime?: Date): OperatorsEnum[]; // TODO generalise this from GrandPoitiers campaign
