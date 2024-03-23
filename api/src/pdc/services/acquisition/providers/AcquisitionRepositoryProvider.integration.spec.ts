@@ -46,7 +46,7 @@ function createPayload(data: Partial<AcquisitionCreateInterface>): AcquisitionCr
 }
 
 const statusError = new Error('message');
-const errors = JSON.parse(JSON.stringify([statusError.message, statusError.message, statusError.message]));
+const errors = [statusError.message, statusError.message, statusError.message];
 
 test.serial('Should create acquisition', async (t) => {
   const { operator_id } = t.context;
@@ -178,7 +178,7 @@ test.serial('Should update status', async (t) => {
       operator_journey_id: '1',
       status: 'error',
       error_stage: 'acquisition',
-      errors: JSON.parse(JSON.stringify([statusError.message])),
+      errors: [statusError.message],
       try_count: 1,
     },
     { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: [], try_count: 50 },
