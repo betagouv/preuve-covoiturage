@@ -2,6 +2,7 @@ import { PolicyHandlerStaticInterface } from '../../interfaces';
 import { Atmb } from './Atmb';
 import { Cannes } from './Cannes';
 import { Cotentin } from './Cotentin';
+import { GrandChatellerault2024 } from './GrandChatellerault2024';
 import { GrandPoitiers } from './GrandPoitiers';
 import { Idfm } from './Idfm';
 import { LaRochelle } from './LaRochelle';
@@ -37,6 +38,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Atmb,
     Cannes,
     Cotentin,
+    GrandChatellerault2024,
     GrandPoitiers,
     Idfm,
     Lannion,
