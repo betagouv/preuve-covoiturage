@@ -8,7 +8,7 @@ import {
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { addSeconds } from 'date-fns';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '../../../providers/carpool/interfaces';
-import { coerceInt } from '@ilos/cli';
+import { coerceDate, coerceInt } from '@ilos/cli';
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -25,6 +25,16 @@ export class AcquisitionMigrateCommand implements CommandInterface {
       description: 'Batch size',
       coerce: coerceInt,
       default: 100,
+    },
+    {
+      signature: '-a, --after <after>',
+      description: 'Start date',
+      coerce: coerceDate,
+    },
+    {
+      signature: '-u, --until <until>',
+      description: 'end date',
+      coerce: coerceDate,
     },
   ];
 
@@ -44,8 +54,9 @@ export class AcquisitionMigrateCommand implements CommandInterface {
     console.time(timerMessage);
 
     do {
-      const did = await this.migration(batchSize);
-      console.timeLog(timerMessage, `Processed: ${did}`)
+      const did = await this.migration(batchSize, options.after, options.until);
+      console.timeLog(timerMessage);
+      console.info(`Processed: ${did}`);
       shouldContinue = did === batchSize;
     } while (shouldContinue && options.loop);
 
@@ -53,7 +64,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
     return 'done';
   }
 
-  protected async migration(batchSize = 100): Promise<number> {
+  protected async migration(batchSize = 100, after?: Date, until?: Date): Promise<number> {
     const conn = await this.pg.getClient().connect();
     await conn.query('BEGIN');
     try {
@@ -64,11 +75,13 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           FROM acquisition.acquisitions aa
           LEFT JOIN carpool_v2.carpools cv2
             ON (aa.journey_id = cv2.operator_journey_id AND aa.operator_id = cv2.operator_id)
-          WHERE cv2._id IS NULL AND aa.status = 'ok'
+          WHERE
+            ${after && until ? 'aa.created_at >= $2 AND aa.created_at < $3 AND' : ''}
+            cv2._id IS NULL AND aa.status = 'ok'
           ORDER BY aa.created_at ASC
           LIMIT $1
         `,
-        values: [batchSize],
+        values: [batchSize, ...(after && until ? [after, until] : [])],
       });
 
       for (const { acquisition } of result.rows) {
