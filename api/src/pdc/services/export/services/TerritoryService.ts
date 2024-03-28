@@ -1,9 +1,9 @@
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { Options } from "../commands/CreateCommand.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
 } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { Options } from "../commands/CreateCommand.ts";
 
 export type ResolveParams = Partial<Pick<Options, "territory_id" | "geo">>;
 export type ResolveResults = TerritorySelectorsInterface;
@@ -30,7 +30,7 @@ export class TerritoryService {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   /**
-   * Resolve to a geo_selector from a `territory_id` or a `geo_selector`.
+   * Resolve to a geo_selector from a `territory_id` or a `geo_selector` string.
    *
    * `territory_id` might differ from an administrative geographical division.
    * When given both params, `geo_selector` takes precedence
@@ -38,10 +38,8 @@ export class TerritoryService {
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
     // select the whole country if all params are missing
     if (
-      Object.keys(params).filter((k) =>
-          params[k] !== null && typeof params[k] !== "undefined"
-        ).length === 0 ||
-      ("geo" in params && Object.keys(params.geo).length === 0)
+      (!params.territory_id && !params.geo) ||
+      (Array.isArray(params.geo) && params.geo.length === 0)
     ) {
       return this.defaultResolveResult;
     }
@@ -49,32 +47,21 @@ export class TerritoryService {
     // TODO add support for territory_id
     // use the territory service to get geo_selectors from the territory_id / territory SIREN
 
+    if (!params.geo) {
+      return this.defaultResolveResult;
+    }
+
     const { geo } = params;
     const selectors = geo.reduce(
       (p, c) => {
-        const [type, code] = c.split(":").map((s) =>
-          String(s).toLowerCase().trim()
-        );
+        const [type, code] = c.split(":")
+          .map((s) => String(s).toLowerCase().trim()) as [
+            keyof TerritorySelectorsInterface,
+            string[],
+          ];
 
-        switch (type as TerritoryCodeEnum) {
-          case TerritoryCodeEnum.City:
-            p[TerritoryCodeEnum.City].push(code);
-            break;
-          case TerritoryCodeEnum.Mobility:
-            p[TerritoryCodeEnum.Mobility].push(code);
-            break;
-          case TerritoryCodeEnum.CityGroup:
-            p[TerritoryCodeEnum.CityGroup].push(code);
-            break;
-          case TerritoryCodeEnum.District:
-            p[TerritoryCodeEnum.District].push(code);
-            break;
-          case TerritoryCodeEnum.Region:
-            p[TerritoryCodeEnum.Region].push(code);
-            break;
-          case TerritoryCodeEnum.Country:
-            p[TerritoryCodeEnum.Country].push(code);
-            break;
+        if (p[type] && Array.isArray(p[type])) {
+          p[type] = [...p[type]!, ...code];
         }
 
         return p;
@@ -90,8 +77,8 @@ export class TerritoryService {
     );
 
     // clean up empty selectors
-    Object.keys(selectors).forEach((key) => {
-      if (selectors[key].length === 0) {
+    Object.keys(selectors).forEach((key: keyof TerritorySelectorsInterface) => {
+      if (selectors[key]?.length === 0) {
         delete selectors[key];
       }
     });
