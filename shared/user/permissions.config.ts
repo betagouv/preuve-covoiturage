@@ -101,6 +101,9 @@ const permissions = {
   ],
   'user.sendEmail': ['operator.admin', 'territory.admin', 'registry.admin'],
   'user.policySimulate': ['common'],
+
+  // export service
+  'export.create': ['common'],
 };
 
 function scopeToGroup(permissionName, group) {

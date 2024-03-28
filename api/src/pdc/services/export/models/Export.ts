@@ -1,4 +1,5 @@
-import { ExportParams } from "./ExportParams.ts";
+import { ContextType } from '@ilos/common';
+import { ExportParams } from './ExportParams';
 
 export enum ExportStatus {
   PENDING = "pending",
@@ -55,5 +56,15 @@ export class Export {
       error: export_.error,
       stats: export_.stats,
     };
+  }
+
+  public static setTarget(context: ContextType, target: ExportTarget | null = null): ExportTarget {
+    if (target) return target;
+
+    const { operator_id, territory_id } = context.call?.user || {};
+    if (parseInt(operator_id) > 0) return ExportTarget.OPERATOR;
+    if (parseInt(territory_id) > 0) return ExportTarget.TERRITORY;
+
+    return ExportTarget.OPENDATA;
   }
 }

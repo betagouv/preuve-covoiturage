@@ -18,6 +18,7 @@
               p7zip
               just
               openssl
+              pm2
 
               # rpc infra
               nodejs_20
