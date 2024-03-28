@@ -78,11 +78,11 @@ def intra_day_change_count(row):
     count = sum((row['roles'][i] != row['roles'][i+1]) for i in range(len(row['roles']) - 1) if row['carpool_day_list'][i] == row['carpool_day_list'][i+1])
     return count
 
-def total_change_count(row):
-    if len(row['roles']) <= 1:
-        return 0
-    count = sum((row['roles'][i] != row['roles'][i+1]) for i in range(len(row['roles']) - 1))
-    return count
+def total_change_count(role_list):
+  if len(role_list) <= 1:
+          return 0
+  count = sum((role_list[i] != role_list[i+1]) for i in range(len(role_list) - 1))
+  return count
 
 def intra_day_change_percentage(row):
     unique_days = np.unique(row['carpool_day_list'])
@@ -91,23 +91,14 @@ def intra_day_change_percentage(row):
     return percentage
 
 def count_consecutive_changes(date_list, role_list):
-    df = pd.DataFrame({'Date': date_list, 'Role': role_list})
-    consecutive_changes = []
-    for date, group in df.groupby('Date'):
-        consecutive_changes_count = 0
-        previous_value = None
-
-        for index, row in group.iterrows():
-            current_value = row['Role']
-
-            if previous_value is not None and current_value != previous_value:
-                consecutive_changes_count += 1
-
-            previous_value = current_value
-
-        consecutive_changes.append(consecutive_changes_count)
-
-    return consecutive_changes
+    
+    dates = pd.to_datetime(date_list)
+    date_only = dates.date
+    df = pd.DataFrame({'Date': date_only, 'Role': role_list})
+    _temp = df.groupby(['Date','Role']).size() - 1
+    changes_per_date = _temp.values.tolist()
+    
+    return changes_per_date
 
 def check_presence(phone, level_set):
     return True if phone in level_set else False
@@ -271,8 +262,8 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   potential_fraud_carpool_df = df_carpool[df_carpool['phone_trunc'].isin(phone_numbers)].copy()
   potential_fraud_carpool_with_insights_df = potential_fraud_carpool_df.merge(phone_trunc_insights_df,how='left',on='phone_trunc')
 
-  potential_fraud_carpool_with_insights_df_level_1 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.total_change_count / potential_fraud_carpool_with_insights_df.carpool_days >= 2].copy()
-  potential_fraud_carpool_with_insights_df_level_2 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.total_change_count / potential_fraud_carpool_with_insights_df.carpool_days >= 1].copy()
+  potential_fraud_carpool_with_insights_df_level_1 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.intraday_change_count >= 2].copy()
+  potential_fraud_carpool_with_insights_df_level_2 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.intraday_change_count >= 1].copy()
   # For level 1 
   filtered_df_grouped_level_1 = potential_fraud_carpool_with_insights_df_level_1.groupby(['operator_journey_id']).agg({'phone_trunc' : list,
                                                                                                       'intraday_change_percentage': list,
