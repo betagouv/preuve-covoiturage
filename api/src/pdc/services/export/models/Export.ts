@@ -58,7 +58,7 @@ export class Export {
     };
   }
 
-  public static setTarget(context: ContextType, target: ExportTarget | null = null): ExportTarget {
+  public static target(context: ContextType, target: ExportTarget | null = null): ExportTarget {
     if (target) return target;
 
     const { operator_id, territory_id } = context.call?.user || {};

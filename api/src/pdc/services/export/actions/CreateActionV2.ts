@@ -41,6 +41,6 @@ export class CreateActionV2 extends AbstractAction {
       paramsV3.geo_selector = paramsV2.geo_selector;
     }
 
-    return this.kernel.call<AJVParams, ResultInterfaceV3>(signatureV3, paramsV3, context);
+    await this.kernel.call<AJVParams, ResultInterfaceV3>(signatureV3, paramsV3, context);
   }
 }

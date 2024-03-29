@@ -10,12 +10,18 @@ import { ParamsInterfaceV3, ResultInterfaceV3, handlerConfigV3 } from '@shared/e
 import { aliasV3 } from '@shared/export/create.schema';
 import { maxEndDefault, minStartDefault } from '../config/export';
 import { DefaultTimezoneMiddleware } from '../middlewares/DefaultTimezoneMiddleware';
+import { Export } from '../models/Export';
+import { ExportParams } from '../models/ExportParams';
+import { ExportRecipient } from '../models/ExportRecipient';
+import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
+import { RecipientServiceInterfaceResolver } from '../services/RecipientService';
+import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 
 @handler({
   ...handlerConfigV3,
   middlewares: [
     hasPermissionMiddleware('common.export.create'),
-    castToArrayMiddleware('operator_id'),
+    castToArrayMiddleware(['operator_id', 'territory_id', 'recipients']),
     ['timezone', DefaultTimezoneMiddleware],
     copyFromContextMiddleware(`call.user._id`, 'created_by', true),
     copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
@@ -30,15 +36,54 @@ import { DefaultTimezoneMiddleware } from '../middlewares/DefaultTimezoneMiddlew
   ],
 })
 export class CreateActionV3 extends AbstractAction {
-  constructor() {
+  constructor(
+    protected exportRepository: ExportRepositoryInterfaceResolver,
+    protected territoryService: TerritoryServiceInterfaceResolver,
+    protected recipientService: RecipientServiceInterfaceResolver,
+  ) {
     super();
   }
 
   protected async handle(params: ParamsInterfaceV3, context: ContextType): Promise<ResultInterfaceV3> {
-    // TODO cast params, get target...
+    const paramTarget = Export.target(context);
 
-    console.debug('CreateActionV3.handle', params, context);
-    // @ts-expect-error
-    return params;
+    // make sure we have at least one recipient
+    const emails = await this.recipientService.maybeAddCreator(
+      (params.recipients || []).map(ExportRecipient.fromEmail),
+      params.created_by,
+    );
+    if (!emails.length) {
+      console.error('No recipient found! You must set "created_by" or "recipients"');
+      return;
+    }
+
+    // Create the export request
+    const {
+      uuid,
+      target,
+      status,
+      params: createParams,
+    } = await this.exportRepository.create({
+      created_by: params.created_by,
+      target: paramTarget,
+      recipients: emails,
+      params: new ExportParams({
+        tz: params.tz,
+        start_at: params.start_at,
+        end_at: params.end_at,
+        operator_id: params.operator_id,
+        // TODO add support for the territory_id (territory_group._id)
+        // TODO add support for the SIREN to select the territory
+        geo_selector: params.geo_selector,
+      }),
+    });
+
+    return {
+      uuid,
+      target,
+      status,
+      start_at: createParams.get().start_at,
+      end_at: createParams.get().end_at,
+    };
   }
 }

@@ -1,5 +1,6 @@
 import { Timezone } from '@pdc/providers/validator';
 import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+import { ExportStatus, ExportTarget } from '../../pdc/services/export/models/Export';
 
 // Legacy API for the Angular frontend to be replaced.
 // Not all features are supported.
@@ -27,7 +28,13 @@ export type ParamsInterfaceV3 = {
   operator_id: number[];
   geo_selector?: TerritorySelectorsInterface;
 };
-export type ResultInterfaceV3 = void; // TODO return some useful stuff
+export type ResultInterfaceV3 = {
+  uuid: string;
+  target: ExportTarget;
+  status: ExportStatus;
+  start_at: Date;
+  end_at: Date;
+};
 
 export const handlerConfigV2 = {
   service: 'export',

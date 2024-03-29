@@ -55,28 +55,19 @@ export const schemaV3 = {
       macro: 'serial',
     },
     operator_id: {
-      oneOf: [
-        {
-          type: 'array',
-          minItems: 0,
-          items: { macro: 'serial' },
-        },
-        {
-          macro: 'serial',
-        },
-      ],
+      type: 'array',
+      minItems: 0,
+      items: { macro: 'serial' },
     },
     territory_id: {
-      oneOf: [
-        {
-          type: 'array',
-          minItems: 0,
-          items: { macro: 'serial' },
-        },
-        {
-          macro: 'serial',
-        },
-      ],
+      type: 'array',
+      minItems: 0,
+      items: { macro: 'serial' },
+    },
+    recipients: {
+      type: 'array',
+      minItems: 0,
+      items: { macro: 'varchar' },
     },
     geo_selector: territoryCodeSchema,
   },
