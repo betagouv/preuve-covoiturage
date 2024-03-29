@@ -25,6 +25,7 @@ import { PmgfLate2023 } from './PmgfLate2023';
 import { SMTC } from './SMTC';
 import { Smt } from './Smt';
 import { Smt2023 } from './Smt2023';
+import { TerresTouloises2024 } from './TerresTouloises2024';
 import { Vitre } from './Vitre';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
@@ -47,8 +48,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     MetropoleSavoie,
     Montpellier,
     Mrn,
-    Nm,
     NantesMetropole2024,
+    Nm,
     Occitanie,
     PaysBasque,
     Pdll,
@@ -64,6 +65,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Smt,
     Smt2023,
     SMTC,
+    TerresTouloises2024,
     Vitre,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */

@@ -10,7 +10,7 @@ export const isOperatorClassOrThrow: StatelessRuleHelper<Array<string>> = (
     throw new MisconfigurationException();
   }
   if (!operatorClass.includes(ctx.carpool.operator_class)) {
-    throw new NotEligibleTargetException();
+    throw new NotEligibleTargetException(`Operator class not allowed: ${ctx?.carpool?.operator_class}`);
   }
   return true;
 };
