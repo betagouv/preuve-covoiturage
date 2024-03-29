@@ -2,6 +2,7 @@ import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { FindBySiretRawResultInterface } from '../interfaces/FindBySiretRawResultInterface';
 import {
+  AllGeoResultInterface,
   GeoRepositoryProviderInterface,
   GeoRepositoryProviderInterfaceResolver,
   ListGeoParamsInterface,
@@ -13,12 +14,12 @@ import {
   ResultInterface as FindBySirenResultInterface,
 } from '@shared/territory/findGeoBySiren.contract';
 import { SingleResultInterface as GeoSingleResultInterface } from '@shared/territory/listGeo.contract';
-
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,
 })
 export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   public readonly table = 'geo.perimeters';
+  public readonly tableCentroid = 'geo.perimeters_centroid';
   public readonly relationTable = 'territory.territory_group_selector';
   public readonly getMillesimeFunction = 'geo.get_latest_millesime';
 
@@ -26,6 +27,20 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     protected connection: PostgresConnection,
     protected kernel: KernelInterfaceResolver,
   ) {}
+
+  async getAllGeo(): Promise<AllGeoResultInterface> {
+    const sql = {
+
+      text: `
+        SELECT territory, l_territory, type
+        FROM ${this.tableCentroid}
+        WHERE year = geo.get_latest_millesime()
+        ORDER BY type,territory;
+      `,
+    };
+    const response:{rows: AllGeoResultInterface } = await this.connection.getClient().query(sql);
+    return response.rows;
+  }
 
   async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
     const { search, where: whereParams, exclude_coms, limit, offset } = { limit: 100, offset: 0, ...params };

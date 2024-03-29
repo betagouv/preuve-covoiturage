@@ -9,8 +9,11 @@ import { FindGeoBySirenAction } from './actions/geo/FindGeoBySirenAction';
 import { ListTerritoryAction } from './actions/group/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/group/PatchContactsTerritoryAction';
 import { UpdateTerritoryAction } from './actions/group/UpdateTerritoryAction';
+import { GetAuthorizedCodesAction } from './actions/group/GetAuthorizedCodesAction';
+import { IndexAllGeoAction } from './actions/geo/IndexAllGeoAction';
 import { config } from './config';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
+import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
 import { create } from '@shared/territory/create.schema';
 import { deleteTerritory } from '@shared/territory/delete.schema';
 import { binding as listGeoBinding } from '@shared/territory/listGeo.schema';
@@ -20,8 +23,7 @@ import { binding as listBinding } from '@shared/territory/list.schema';
 import { patchContacts } from '@shared/territory/patchContacts.schema';
 import { update } from '@shared/territory/update.schema';
 import { binding as getAuthorizedCodesBinding } from '@shared/territory/getAuthorizedCodes.schema';
-import { GetAuthorizedCodesAction } from './actions/group/GetAuthorizedCodesAction';
-import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
+import { IndexCommand } from './commands/IndexCommand';
 
 @serviceProvider({
   config,
@@ -47,8 +49,9 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     CreateTerritoryAction,
     FindGeoBySirenAction,
     GetAuthorizedCodesAction,
+    IndexAllGeoAction,
   ],
-  commands: [],
+  commands: [IndexCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

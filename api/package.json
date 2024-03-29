@@ -128,6 +128,7 @@
     "jsonwebtoken": "^9.0.0",
     "libphonenumber-js": "^1.10.53",
     "lodash": "^4.17.21",
+    "meilisearch": "^0.38.0",
     "mjml": "^4.12.0",
     "module-alias": "^2.2.3",
     "nodemailer": "^6.9.1",
