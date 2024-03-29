@@ -104,6 +104,11 @@ const permissions = {
 
   // export service
   'export.create': ['common'],
+  'export.list': ['common'],
+  'export.read': ['common'],
+  'export.status': ['common'],
+  'export.cancel': ['common'],
+  'export.download': ['common'],
 };
 
 function scopeToGroup(permissionName, group) {

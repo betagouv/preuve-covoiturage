@@ -58,7 +58,7 @@ export const schemaV3 = {
       oneOf: [
         {
           type: 'array',
-          minItems: 1,
+          minItems: 0,
           items: { macro: 'serial' },
         },
         {
@@ -70,7 +70,7 @@ export const schemaV3 = {
       oneOf: [
         {
           type: 'array',
-          minItems: 1,
+          minItems: 0,
           items: { macro: 'serial' },
         },
         {

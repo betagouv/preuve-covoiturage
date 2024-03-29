@@ -15,12 +15,12 @@ La spécification OpenAPI complète de l'API est disponible sur [la documentatio
 
 Les appels sont authentifiés par un token applicatif. Les permissions du token doivent contenir les scopes suivants :
 
-- `export:create` pour la création d'un nouvel export
-- `export:list` pour accéder à la liste de ses exports
-- `export:read` pour accéder à un export en particulier
-- `export:status` pour accéder au statut d'un export
-- `export:cancel` pour annuler un export
-- `export:download` pour télécharger un export
+- `export.create` pour la création d'un nouvel export
+- `export.list` pour accéder à la liste de ses exports
+- `export.read` pour accéder à un export en particulier
+- `export.status` pour accéder au statut d'un export
+- `export.cancel` pour annuler un export
+- `export.download` pour télécharger un export
 
 > Vous pouvez générer un nouveau token applicatif afin qu'il ai les permissions nécessaires pour utiliser cette API.
 > 
