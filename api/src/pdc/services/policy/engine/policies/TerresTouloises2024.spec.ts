@@ -125,12 +125,12 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'A', passenger_identity_uuid: 'Z' },
-      { distance: 5_000, driver_identity_uuid: 'B', passenger_identity_uuid: 'Z' },
-      { distance: 5_000, driver_identity_uuid: 'C', passenger_identity_uuid: 'Z' },
+      { distance: 5_000, driver_identity_uuid: 'driver_A' },
+      { distance: 5_000, driver_identity_uuid: 'driver_A' },
+      { distance: 5_000, driver_identity_uuid: 'driver_A' },
+      { distance: 5_000, driver_identity_uuid: 'driver_B', passenger_identity_uuid: 'pass_A' },
+      { distance: 5_000, driver_identity_uuid: 'driver_C', passenger_identity_uuid: 'pass_A' },
+      { distance: 5_000, driver_identity_uuid: 'driver_D', passenger_identity_uuid: 'pass_A' },
     ],
     meta: [],
   },
@@ -142,26 +142,21 @@ test(
         value: 800,
       },
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
+        key: 'max_amount_restriction.0-driver_A.month.3-2024',
         value: 400,
       },
       {
-        key: 'max_amount_restriction.0-A.month.3-2024',
+        key: 'max_amount_restriction.0-driver_B.month.3-2024',
         value: 200,
       },
       {
-        key: 'max_amount_restriction.0-B.month.3-2024',
+        key: 'max_amount_restriction.0-driver_C.month.3-2024',
         value: 200,
       },
       {
-        key: 'max_amount_restriction.0-C.month.3-2024',
+        key: 'max_amount_restriction.0-driver_D.month.3-2024',
         value: 0,
       },
-      // FIXME
-      // {
-      //   key: 'max_amount_restriction.0-Z.month.3-2024',
-      //   value: 400,
-      // },
     ],
   },
 );
