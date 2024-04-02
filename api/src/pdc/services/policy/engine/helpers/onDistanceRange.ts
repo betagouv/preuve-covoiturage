@@ -24,7 +24,7 @@ export const onDistanceRangeOrThrow: StatelessRuleHelper<OnDistanceParams> = (
   params: OnDistanceParams,
 ): boolean => {
   if (!onDistanceRange(ctx, params)) {
-    throw new NotEligibleTargetException();
+    throw new NotEligibleTargetException(`Distance out of range: ${ctx?.carpool?.distance} meters`);
   }
   return true;
 };

@@ -10,7 +10,7 @@ export const isOperatorOrThrow: StatelessRuleHelper<Array<string>> = (
     throw new MisconfigurationException();
   }
   if (!operators.includes(ctx.carpool.operator_siret)) {
-    throw new NotEligibleTargetException();
+    throw new NotEligibleTargetException(`Operator not allowed: ${ctx?.carpool?.operator_siret}`);
   }
   return true;
 };
