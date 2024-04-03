@@ -65,6 +65,9 @@ export class ApplyCommand implements CommandInterface {
     try {
       const { tz, override } = options;
 
+      // update all campaign statuses
+      await this.policyRepository.updateAllCampaignStatuses();
+
       // list campaigns
       const campaigns = options.campaigns.length
         ? options.campaigns

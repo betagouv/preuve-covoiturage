@@ -25,4 +25,5 @@ export abstract class PolicyRepositoryProviderInterfaceResolver {
   abstract listApplicablePoliciesId(): Promise<number[]>;
   abstract activeOperators(policy_id: number): Promise<number[]>;
   abstract syncIncentiveSum(campaign_id: number): Promise<void>;
+  abstract updateAllCampaignStatuses(): Promise<void>;
 }
