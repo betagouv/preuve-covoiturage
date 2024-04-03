@@ -6,6 +6,8 @@ import { CarpoolAcquisitionEvent } from '../events';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
 import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces';
+import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
+import { GeoProvider } from '@pdc/providers/geo';
 
 @provider()
 export class CarpoolAcquisitionService {
@@ -15,6 +17,8 @@ export class CarpoolAcquisitionService {
     protected requestRepository: CarpoolRequestRepository,
     protected lookupRepository: CarpoolLookupRepository,
     protected carpoolRepository: CarpoolRepository,
+    protected geoRepository: CarpoolGeoRepository,
+    protected geoService: GeoProvider,
   ) {}
 
   public async registerRequest(data: RegisterRequest): Promise<void> {
@@ -98,6 +102,26 @@ export class CarpoolAcquisitionService {
     } catch (e) {
       await conn.query('ROLLBACK');
       throw e;
+    } finally {
+      conn.release();
+    }
+  }
+
+  public async processGeo(search: { batchSize: number; from: Date; to: Date }): Promise<boolean> {
+    const conn = await this.connection.getClient().connect();
+    try {
+      const toProcess = await this.geoRepository.findProcessable({ limit: search.batchSize, from: search.from, to: search.to }, conn);
+      for (const toEncode of toProcess) {
+        try {
+          const start = await this.geoService.positionToInsee(toEncode.start);
+          const end = await this.geoService.positionToInsee(toEncode.end);
+          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end }, conn)
+        } catch (e) {
+          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message}, conn);
+          console.error(`[geo] ${e.message}`);
+        }
+      }
+      return toProcess.length === search.batchSize;
     } finally {
       conn.release();
     }
