@@ -1,14 +1,11 @@
-import { merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
-
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-
+import { merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { PolicyInterface, PolicyStatusEnum } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
@@ -20,13 +17,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   public readonly PAGE_SIZE = 25;
 
   // order is reflected in the data table
-  public readonly statuses: string[] = [
-    CampaignStatusEnum.VALIDATED,
-    CampaignStatusEnum.PENDING,
-    CampaignStatusEnum.DRAFT,
-    CampaignStatusEnum.ENDED,
-    CampaignStatusEnum.ARCHIVED,
-  ];
+  public readonly statuses: string[] = [PolicyStatusEnum.ACTIVE, PolicyStatusEnum.DRAFT, PolicyStatusEnum.FINISHED];
 
   // order must match the 'statuses' array
   public readonly icons: string[] = [

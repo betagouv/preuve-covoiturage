@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { Operator } from '~/core/entities/operator/operator';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { PolicyInterface, PolicyStatusEnum } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
@@ -198,7 +197,7 @@ export class CommonDataService {
         if (campaignsR && campaignsR.data) {
           this._campaigns$.next(
             campaignsR.data
-              .filter((campaign) => CampaignStatusEnum.TEMPLATE !== campaign.status)
+              .filter((campaign) => PolicyStatusEnum.TEMPLATE !== campaign.status)
               .sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name)),
           );
         }
