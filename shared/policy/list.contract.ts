@@ -1,10 +1,10 @@
-import { PolicyInterface } from './common/interfaces/PolicyInterface';
+import { PolicyInterface, PolicyStatusEnum } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
   datetime?: Date;
   territory_id?: number | null;
   operator_id?: number | null;
-  status?: string;
+  status?: PolicyStatusEnum;
 }
 
 export type SingleResultInterface = Omit<PolicyInterface, 'description' | 'handler'>;

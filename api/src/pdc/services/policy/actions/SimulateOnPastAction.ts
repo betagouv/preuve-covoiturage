@@ -1,11 +1,11 @@
 import { handler } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import Redis from 'ioredis';
-
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract';
-
-import { RedisConnection } from '@ilos/connection-redis';
+import { alias } from '@shared/policy/simulateOnPast.schema';
+import Redis from 'ioredis';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import {
@@ -13,7 +13,6 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { alias } from '@shared/policy/simulateOnPast.schema';
 
 @handler({
   ...handlerConfig,
@@ -54,7 +53,7 @@ export class SimulateOnPastAction extends AbstractAction {
     const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
     const serialized_policy: SerializedPolicyInterface = {
       ...params,
-      status: 'active',
+      status: PolicyStatusEnum.ACTIVE,
       start_date,
       end_date: today,
       tz: 'Europe/Paris',

@@ -2,7 +2,7 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
 import { differenceInSeconds } from 'date-fns';
-
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
   handlerConfig,
   ParamsInterface,
@@ -10,15 +10,15 @@ import {
   ResultInterface,
 } from '@shared/policy/simulateOnFuture.contract';
 import { alias } from '@shared/policy/simulateOnFuture.schema';
-import {
-  PolicyRepositoryProviderInterfaceResolver,
-  TerritoryRepositoryProviderInterfaceResolver,
-  CarpoolInterface,
-  PolicyInterface,
-  StatelessIncentiveInterface,
-} from '../interfaces';
 import { v4 } from 'uuid';
 import { Policy } from '../engine/entities/Policy';
+import {
+  CarpoolInterface,
+  PolicyInterface,
+  PolicyRepositoryProviderInterfaceResolver,
+  StatelessIncentiveInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -52,7 +52,7 @@ export class SimulateOnFutureAction extends AbstractAction {
 
     // 3. Find appliable policys and instanciate them
     const policysRaw = await this.policyRepository.findWhere({
-      status: 'active',
+      status: PolicyStatusEnum.ACTIVE,
       territory_id: territories,
       datetime: data.datetime,
     });

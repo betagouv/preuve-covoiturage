@@ -1,7 +1,8 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { toISOString } from '../helpers';
 
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
   LockInformationInterface,
   PolicyRepositoryProviderInterfaceResolver,
@@ -204,7 +205,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   async findWhere(search: {
     _id?: number;
     territory_id?: number | null | number[];
-    status?: string;
+    status?: PolicyStatusEnum;
     datetime?: Date;
     ends_in_the_future?: boolean;
   }): Promise<SerializedPolicyInterface[]> {

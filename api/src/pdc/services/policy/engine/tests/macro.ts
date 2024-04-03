@@ -1,8 +1,9 @@
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { ExecutionContext } from 'ava';
 import {
-  MetadataRepositoryProviderInterfaceResolver,
   CarpoolInterface,
   MetadataLifetime,
+  MetadataRepositoryProviderInterfaceResolver,
   PolicyHandlerInterface,
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
@@ -58,7 +59,7 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
         country: ['XXXXX'],
       },
       name: '',
-      status: 'active',
+      status: PolicyStatusEnum.ACTIVE,
       tz: 'Europe/Paris',
       handler: '',
       incentive_sum: 0,

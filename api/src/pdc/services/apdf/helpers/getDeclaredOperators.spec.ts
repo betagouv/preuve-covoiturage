@@ -1,12 +1,13 @@
 import { KernelInterfaceResolver, NotFoundException, RPCException } from '@ilos/common';
-import anyTest, { TestFn } from 'ava';
-import sinon, { SinonStub } from 'sinon';
-import { getDeclaredOperators, getPolicySiretList, siretToOperatorId } from './getDeclaredOperators.helper';
 import {
   ParamsInterface as FindBySiretParams,
   ResultInterface as FindBySiretResult,
 } from '@shared/operator/findbysiret.contract';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { ResultInterface as PolicyFindResult } from '@shared/policy/find.contract';
+import anyTest, { TestFn } from 'ava';
+import sinon, { SinonStub } from 'sinon';
+import { getDeclaredOperators, getPolicySiretList, siretToOperatorId } from './getDeclaredOperators.helper';
 
 interface Context {
   kernel: KernelInterfaceResolver;
@@ -119,7 +120,7 @@ function fakePolicy(id: number, operators: string[]): PolicyFindResult {
     description: `Description ${id}`,
     start_date: new Date('2020-01-08T00:00:00Z'),
     end_date: new Date('2020-02-08T00:00:00Z'),
-    status: 'active',
+    status: PolicyStatusEnum.ACTIVE,
     handler: `handler_${id}`,
     incentive_sum: 100,
     params: {

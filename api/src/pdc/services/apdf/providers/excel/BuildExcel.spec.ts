@@ -1,12 +1,13 @@
 import { KernelInterfaceResolver } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/providers/storage';
+import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { SliceInterface } from '@shared/policy/common/interfaces/Slices';
+import { ResultInterface as Campaign } from '@shared/policy/find.contract';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
-import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
-import { SliceInterface } from '@shared/policy/common/interfaces/Slices';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider';
 import { BuildExcel } from './BuildExcel';
 import { SlicesWorksheetWriter } from './SlicesWorksheetWriter';
@@ -82,7 +83,7 @@ test.before((t) => {
     start_date: new Date('2022-01-01T00:00:00Z'),
     end_date: new Date('2022-02-01T00:00:00Z'),
     handler: 'handler.js',
-    status: 'active',
+    status: PolicyStatusEnum.ACTIVE,
     incentive_sum: 4000,
     params: {
       slices: [
