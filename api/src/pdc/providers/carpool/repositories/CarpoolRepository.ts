@@ -82,6 +82,8 @@ export class CarpoolRepository {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
       if (!carpool) {
+        // New carpool hasn't been saved because there is a conflict
+        // Select data to provide function consistency
         const selectResult = await cl.query<WrittenCarpool>(sql`
           SELECT _id, created_at, updated_at 
           FROM ${raw(this.table)}
