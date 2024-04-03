@@ -13,6 +13,7 @@ import { CheckCampaign } from '../providers/CheckCampaign';
 import { BuildExcel } from '../providers/excel/BuildExcel';
 import { ResultInterface as Campaign } from '@shared/policy/find.contract';
 import { ExportAction } from './ExportAction';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 
 interface Context {
   // Injected tokens
@@ -84,7 +85,7 @@ test.afterEach((t) => {
 
 test('ExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
-  const campaign: Campaign = createGetCampaignResult('active');
+  const campaign: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
   t.context.checkCampaignStub!.resolves(campaign);
@@ -122,7 +123,7 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
 
 test('ExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const campaign: Campaign = createGetCampaignResult('active');
+  const campaign: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
   const s3_key: string = faker.system.fileName();
@@ -180,8 +181,8 @@ test('ExportAction: should create 1 xlsx file if date range provided and 1 campa
 
 test('ExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
   // Arrange
-  const campaign1: Campaign = createGetCampaignResult('active');
-  const campaign2: Campaign = createGetCampaignResult('active');
+  const campaign1: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
+  const campaign2: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const expectedFiles: string[] = [0, 1, 2, 3].map((i) => {
     const filename = `${faker.system.fileName()}.xlsx`;
     const filepath = `/tmp/exports/${filename}`;
@@ -235,8 +236,8 @@ test('ExportAction: should create 4 xlsx file if date range provided and 2 campa
 
 test('ExportAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
-  const campaign1: Campaign = createGetCampaignResult('active');
-  const campaign2: Campaign = createGetCampaignResult('active');
+  const campaign1: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
+  const campaign2: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
   t.context.apdfRepositoryStub!.resolves([4, 5]);

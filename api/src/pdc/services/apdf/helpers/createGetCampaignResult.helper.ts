@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 import faker from '@faker-js/faker';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { ResultInterface as GetCampaignResultInterface } from '@shared/policy/find.contract';
 
 export const createGetCampaignResult = (
-  status: string,
+  status: PolicyStatusEnum,
   name?: string,
   start_date?: Date,
   end_date?: Date,

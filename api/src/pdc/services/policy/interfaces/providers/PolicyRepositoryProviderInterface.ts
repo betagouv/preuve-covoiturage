@@ -1,3 +1,4 @@
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { SerializedPolicyInterface } from '..';
 
 export interface LockInformationInterface {
@@ -17,7 +18,7 @@ export abstract class PolicyRepositoryProviderInterfaceResolver {
   abstract findWhere(search: {
     _id?: number;
     territory_id?: number | null | number[];
-    status?: string;
+    status?: PolicyStatusEnum;
     datetime?: Date;
     ends_in_the_future?: boolean;
   }): Promise<SerializedPolicyInterface[]>;

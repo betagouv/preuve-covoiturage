@@ -1,22 +1,18 @@
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPastGeo.contract';
-
-import { MetadataStore } from '../engine/entities/MetadataStore';
-import { Policy } from '../engine/entities/Policy';
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { alias } from '@shared/policy/simulateOnPastGeo.schema';
-import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider';
-
 import {
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
   signature as geoSignature,
 } from '@shared/territory/findGeoBySiren.contract';
-
-import { SerializedPolicyInterface } from '../interfaces';
+import { MetadataStore } from '../engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
+import { SerializedPolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider';
 
 @handler({
   ...handlerConfig,
@@ -47,7 +43,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       _id: 1000,
       name: '',
       tz: 'Europe/Paris',
-      status: 'active',
+      status: PolicyStatusEnum.ACTIVE,
       handler: params.policy_template_id,
       incentive_sum: 0,
       territory_id: 0,

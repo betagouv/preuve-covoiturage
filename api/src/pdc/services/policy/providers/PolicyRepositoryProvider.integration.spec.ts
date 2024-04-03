@@ -1,8 +1,9 @@
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 
-import { PolicyRepositoryProvider } from './PolicyRepositoryProvider';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { SerializedPolicyInterface } from '../interfaces';
+import { PolicyRepositoryProvider } from './PolicyRepositoryProvider';
 
 interface TestContext {
   repository: PolicyRepositoryProvider;
@@ -26,7 +27,7 @@ function makePolicy(data: Partial<SerializedPolicyInterface> = {}): Omit<Seriali
     start_date,
     end_date,
     tz: 'Europe/Paris',
-    status: 'draft',
+    status: PolicyStatusEnum.DRAFT,
     handler: 'Idfm',
     incentive_sum: 5000,
     max_amount: 10_000_000_00,

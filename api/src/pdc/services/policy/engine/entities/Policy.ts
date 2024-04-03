@@ -1,4 +1,5 @@
 import { Timezone } from '@pdc/providers/validator';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
   CarpoolInterface,
   MetadataStoreInterface,
@@ -30,7 +31,7 @@ export class Policy implements PolicyInterface {
     public end_date: Date,
     public tz: Timezone,
     public handler: PolicyHandlerInterface,
-    public status: string,
+    public status: PolicyStatusEnum,
     public incentive_sum: number,
   ) {}
 

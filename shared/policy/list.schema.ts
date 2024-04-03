@@ -1,3 +1,5 @@
+import { policyStatusValues } from './common/interfaces/PolicyInterface';
+
 export const alias = 'campaign.list';
 export const schema = {
   type: 'object',
@@ -14,7 +16,7 @@ export const schema = {
     operator_id: { macro: 'serial' },
     status: {
       type: 'string',
-      enum: ['template', 'draft', 'active', 'finished'],
+      enum: policyStatusValues,
     },
     datetime: {
       macro: 'timestamp',

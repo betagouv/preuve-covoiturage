@@ -1,4 +1,5 @@
 import { Timezone } from '@pdc/providers/validator';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { LogFn } from 'ava';
 import {
   BoundedSlices,
@@ -24,7 +25,7 @@ export interface PolicyInterface {
   end_date: Date;
   tz: Timezone;
   handler: PolicyHandlerInterface;
-  status: string;
+  status: PolicyStatusEnum;
 
   export(): SerializedPolicyInterface;
   processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface>;
@@ -45,7 +46,7 @@ export interface SerializedPolicyInterface {
   end_date: Date;
   tz: Timezone;
   handler: string;
-  status: string;
+  status: PolicyStatusEnum;
   incentive_sum: number;
   max_amount?: number;
 }

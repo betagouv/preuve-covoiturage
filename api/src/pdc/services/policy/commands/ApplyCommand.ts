@@ -7,9 +7,10 @@ import {
   ResultType,
 } from '@ilos/common';
 import { Timezone } from '@pdc/providers/validator';
+import { signature as apply } from '@shared/policy/apply.contract';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { castUserStringToUTC, toISOString } from '../helpers';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { signature as apply } from '@shared/policy/apply.contract';
 
 interface CommandOptions {
   campaigns: number[];
@@ -67,7 +68,7 @@ export class ApplyCommand implements CommandInterface {
       // list campaigns
       const campaigns = options.campaigns.length
         ? options.campaigns
-        : (await this.policyRepository.findWhere({ status: 'active' })).map((c) => c._id);
+        : (await this.policyRepository.findWhere({ status: PolicyStatusEnum.ACTIVE })).map((c) => c._id);
 
       for (const policy_id of campaigns) {
         const context: ContextType = { channel: { service: 'campaign' } };
