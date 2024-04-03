@@ -24,22 +24,24 @@ export class CampaignTableComponent implements OnChanges {
   @Input() campaigns: PolicyInterface[];
   @Input() displayedColumns = ['detailed_status', 'start', 'end', 'name', 'territory', 'amount_spent', 'max_amount'];
 
-  policies: PolicyInterfaceWithStatus[];
+  policies: PolicyInterfaceWithStatus[] = [];
 
   private today: Date = new Date();
 
   constructor() {}
   ngOnChanges(): void {
-    this.policies = this.campaigns
-      .map((c) => ({
-        ...c,
-        detailed_status: this.computeStatus(c),
-      }))
-      .sort(
-        (a, b) =>
-          detailedStatusDisplayedOrder.indexOf(a.detailed_status) -
-          detailedStatusDisplayedOrder.indexOf(b.detailed_status),
-      );
+    if (this.campaigns) {
+      this.policies = this.campaigns
+        .map((c) => ({
+          ...c,
+          detailed_status: this.computeStatus(c),
+        }))
+        .sort(
+          (a, b) =>
+            detailedStatusDisplayedOrder.indexOf(a.detailed_status) -
+            detailedStatusDisplayedOrder.indexOf(b.detailed_status),
+        );
+    }
   }
 
   centToEuro(amount: number): number {

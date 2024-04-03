@@ -3,11 +3,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { PolicyInterface, PolicyStatusEnum } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -75,8 +74,8 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
             .filter(
               (campaign) =>
                 ((!userTerritoryId || userTerritoryId === (campaign as PolicyInterface).territory_id) &&
-                  campaign.status === CampaignStatusEnum.VALIDATED) ||
-                campaign.status === CampaignStatusEnum.ARCHIVED,
+                  campaign.status === PolicyStatusEnum.ACTIVE) ||
+                campaign.status === PolicyStatusEnum.FINISHED,
             )
             .map((campaign: PolicyInterface) => ({
               _id: campaign._id,
