@@ -381,4 +381,19 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [campaign_id, incentive_sum],
     });
   }
+
+  /**
+   * Mass update campaign status
+   *
+   * For each campaign, check if it is still active and update its status
+   */
+  async updateAllCampaignStatuses(): Promise<void> {
+    await this.connection.getClient().query({
+      text: `
+        UPDATE ${this.table} SET status = $1
+        WHERE end_date < CURRENT_TIMESTAMP AND status = $2
+      `,
+      values: [PolicyStatusEnum.FINISHED, PolicyStatusEnum.ACTIVE],
+    });
+  }
 }
