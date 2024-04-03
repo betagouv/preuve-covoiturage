@@ -60,6 +60,15 @@ test.serial('Should create carpool', async (t) => {
   t.deepEqual(result, { ...carpool, ...data });
 });
 
+test.serial('Should do nothing on duplicate carpool', async (t) => {
+  const data = { ...insertableCarpool };
+
+  const carpool = await t.context.repository.register(data);
+  const result = await getCarpool(t.context, carpool._id);
+
+  t.deepEqual(result, { ...carpool, ...data });
+});
+
 test.serial('Should update acquisition', async (t) => {
   const insertData = { ...insertableCarpool, operator_journey_id: 'journey_2' };
 

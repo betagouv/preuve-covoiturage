@@ -43,15 +43,15 @@ stop keep_volume="true":
 stop_e2e:
   just dc_e2e down -v
 
-# Run docker-compose dev
+# Run docker compose dev
 [private]
 @dc *args:
-  docker-compose -f {{ docker_compose_e2e_file }} -f {{ docker_compose_dev_file }} {{ args }}
+  docker compose -f {{ docker_compose_e2e_file }} -f {{ docker_compose_dev_file }} {{ args }}
 
-# Run docker-compose e2e
+# Run docker compose e2e
 [private]
 @dc_e2e *args:
-  docker-compose -f {{ docker_compose_e2e_file }} {{ args }}
+  docker compose -f {{ docker_compose_e2e_file }} {{ args }}
 
 # Generate keys
 [private]

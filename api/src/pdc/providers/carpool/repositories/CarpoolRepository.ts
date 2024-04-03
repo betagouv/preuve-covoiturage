@@ -75,13 +75,27 @@ export class CarpoolRepository {
         ${data.passenger_contribution},
         ${JSON.stringify(data.passenger_payments)}
       )
+      ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
       RETURNING _id, created_at, updated_at
     `;
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
       if (!carpool) {
-        throw new DatabaseException();
+        // New carpool hasn't been saved because there is a conflict
+        // Select data to provide function consistency
+        const selectResult = await cl.query<WrittenCarpool>(sql`
+          SELECT _id, created_at, updated_at 
+          FROM ${raw(this.table)}
+          WHERE
+            operator_id = ${data.operator_id} AND 
+            operator_journey_id = ${data.operator_journey_id}
+        `);
+        const selectCarpool = selectResult.rows.pop();
+        if(!selectCarpool) {
+          throw new DatabaseException();
+        }
+        return selectCarpool;
       }
       await this.syncIncentives(carpool._id, data.incentives, cl);
       return carpool;

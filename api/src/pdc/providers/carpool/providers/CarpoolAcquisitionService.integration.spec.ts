@@ -1,4 +1,5 @@
 import anyTest, { TestFn } from 'ava';
+import sinon from 'sinon';
 import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
@@ -8,12 +9,16 @@ import { CarpoolRequestRepository } from '../repositories/CarpoolRequestReposito
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
 import { CarpoolRepository } from '../repositories/CarpoolRepository';
 import sql, { raw } from '../helpers/sql';
+import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
+import { GeoProvider } from '@pdc/providers/geo';
 
 interface TestContext {
   carpoolRepository: CarpoolRepository;
   eventRepository: CarpoolEventRepository;
   requestRepository: CarpoolRequestRepository;
   lookupRepository: CarpoolLookupRepository;
+  geoRepository: CarpoolGeoRepository;
+  geoService: GeoProvider
   db: DbContext;
   sinon: SinonSandbox;
 }
@@ -23,11 +28,15 @@ const { before, after } = makeDbBeforeAfter();
 
 test.before(async (t) => {
   const db = await before();
+  const geoStub = sinon.createStubInstance(GeoProvider);
+  
   t.context.db = db;
   t.context.carpoolRepository = new CarpoolRepository(db.connection);
   t.context.eventRepository = new CarpoolEventRepository(db.connection);
   t.context.requestRepository = new CarpoolRequestRepository(db.connection);
   t.context.lookupRepository = new CarpoolLookupRepository(db.connection);
+  t.context.geoRepository = new CarpoolGeoRepository(db.connection);
+  t.context.geoService = geoStub; 
 });
 
 function getService(context: TestContext, overrides: any): CarpoolAcquisitionService {
@@ -37,6 +46,8 @@ function getService(context: TestContext, overrides: any): CarpoolAcquisitionSer
     overrides.requestRepository ?? context.requestRepository,
     overrides.lookupRepository ?? context.lookupRepository,
     overrides.carpoolRepository ?? context.carpoolRepository,
+    overrides.geoRepository ?? context.geoRepository,
+    context.geoService,
   );
 }
 
