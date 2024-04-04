@@ -4,7 +4,7 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
   return class extends AbstractDataset {
     static producer = 'transport_data_gouv';
     static dataset = 'aires_covoiturage';
-    static year = 2023;
+    static year = 2024;
     static url = url;
     static skipStatePersistence = true;
     static table = `aires_covoiturage_temp`;
