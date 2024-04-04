@@ -2,8 +2,13 @@ import { StaticAbstractDataset, StaticMigrable } from '@betagouvpdc/evolution-ge
 import { CreateAiresCovoiturageTable } from './datastructures/CreateAiresCovoiturageTable';
 import { getAiresLastUrl } from './helpers';
 import { AiresCovoiturage } from './datasets/AiresCovoiturage';
+import { IncentiveCampaigns } from './datasets/IncentiveCampaigns';
+import { CreateIncentiveCampaignsTable } from './datastructures/CreateIncentiveCampaignsTable';
 
-export const datastructures: Set<StaticMigrable> = new Set([CreateAiresCovoiturageTable]);
+export const datastructures: Set<StaticMigrable> = new Set([
+  CreateAiresCovoiturageTable,
+  CreateIncentiveCampaignsTable,
+]);
 
 export const datasets = async () => {
   // add Aires migration
@@ -11,5 +16,6 @@ export const datasets = async () => {
   const url = await getAiresLastUrl(AiresUrl);
   const datasets: Set<StaticAbstractDataset> = new Set([]);
   datasets.add(AiresCovoiturage(url));
+  datasets.add(IncentiveCampaigns('https://www.data.gouv.fr/fr/datasets/r/08f58ee3-7b3e-43d8-9e55-3c82bf406190'));
   return datasets;
 };
