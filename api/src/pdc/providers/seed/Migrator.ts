@@ -292,7 +292,7 @@ export class Migrator {
     await this.connection.getClient().query({
       text: `
         INSERT INTO operator.operators
-          (_id, name, legal_name, siret, company, address, bank, contacts)
+          (_id, name, legal_name, siret, company, address, bank, contacts, uuid)
         VALUES (
           $1::int,
           $2::varchar,
@@ -301,7 +301,8 @@ export class Migrator {
           $5::json,
           $6::json,
           $7::json,
-          $8::json
+          $8::json,
+          $9::uuid
         )
         ON CONFLICT DO NOTHING
       `,
@@ -314,6 +315,7 @@ export class Migrator {
         operator.address,
         operator.bank,
         operator.contacts,
+        operator.uuid,
       ],
     });
   }
