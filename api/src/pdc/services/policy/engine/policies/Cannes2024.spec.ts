@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { SMTC as Handler } from './SMTC';
+import { Cannes2024 as Handler } from './Cannes2024';
 
 const defaultPosition = {
   arr: '74278',
@@ -22,8 +22,8 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.Mobicoop,
-  operator_class: 'C',
+  operator_uuid: OperatorsEnum.KLAXIT,
+  operator_class: 'B',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
@@ -49,7 +49,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { distance: 80_001 }, { operator_class: 'A' }],
+    carpool: [{ operator_uuid: 'not in list' }, { distance: 100 }, { distance: 80_001 }, { operator_class: 'A' }],
     meta: [],
   },
   { incentive: [0, 0, 0, 0], meta: [] },
@@ -63,31 +63,28 @@ test(
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 30_000, driver_identity_uuid: 'one' },
       { distance: 60_000, driver_identity_uuid: 'one' },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 150],
+    incentive: [150, 300, 300, 300],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2024',
-        value: 600,
-      },
-      {
-        key: 'max_amount_restriction.0-one.year.2024',
-        value: 600,
+        value: 1050,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 600,
+        value: 1050,
       },
     ],
   },
 );
 
 test(
-  'should work with driver month limits 90',
+  'should work with driver month limits 150',
   process,
   {
     policy: { handler: Handler.id },
@@ -98,11 +95,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2024',
-        value: 88_50,
-      },
-      {
-        key: 'max_amount_restriction.0-one.year.2024',
-        value: 88_50,
+        value: 148_50,
       },
     ],
   },
@@ -111,48 +104,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2024',
-        value: 90_00,
-      },
-      // La limite à l'année est incrémentée de 1,50 €
-      // mais la limite au mois prévaut, la 2ème incitation de 1,5€ ne sera pas attribuée
-      {
-        key: 'max_amount_restriction.0-one.year.2024',
-        value: 91_50,
-      },
-      {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 150,
-      },
-    ],
-  },
-);
-
-test(
-  'should work with driver year limit 540',
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-    ],
-    meta: [
-      {
-        key: 'max_amount_restriction.0-one.year.2024',
-        value: 538_50,
-      },
-    ],
-  },
-  {
-    incentive: [150, 0],
-    meta: [
-      {
-        key: 'max_amount_restriction.0-one.month.4-2024',
-        value: 150,
-      },
-      {
-        key: 'max_amount_restriction.0-one.year.2024',
-        value: 540_00,
+        value: 150_00,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',

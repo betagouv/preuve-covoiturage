@@ -117,13 +117,17 @@ dev:
 watch:
   npm run watch
 
-# Run ilos commands wrapped for pretty printing
+# Run ilos commands
 ilos *command:
   npm run ilos -- {{ command }}
 
 # Run any npm script from the API
 api *command:
   npm run {{ command }}
+
+# Start the HTTP API server on port 8080
+serve:
+  npm run ilos -- http 8080
 
 # List all the APP_ environment variables
 env:

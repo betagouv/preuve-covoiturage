@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.Klaxit,
+  operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -49,7 +49,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
+    carpool: [{ operator_uuid: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
     meta: [],
   },
   { incentive: [0, 0, 0], meta: [] },

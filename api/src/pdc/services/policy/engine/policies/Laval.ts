@@ -34,7 +34,7 @@ export const Laval: PolicyHandlerStaticInterface = class
     ];
   }
 
-  protected operators = [OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [{ start: 2_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
 
   protected processExclusion(ctx: StatelessContextInterface) {

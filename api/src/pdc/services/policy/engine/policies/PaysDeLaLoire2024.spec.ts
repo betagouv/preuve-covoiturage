@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Pdll2024 as Handler } from './Pdll2024';
+import { PaysDeLaLoire2024 as Handler } from './PaysDeLaLoire2024';
 
 const defaultPosition = {
   arr: '85047',
@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.Karos,
+  operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,

@@ -26,7 +26,7 @@ import { description } from './Nm.html';
 // Politique de Nantes Métropole
 export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '656';
-  protected operators = [OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.KLAXIT];
   protected operatorClass = ['C'];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },

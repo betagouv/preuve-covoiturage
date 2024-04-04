@@ -23,10 +23,10 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Vitre.html';
+import { description } from './Vitre2023.html';
 
 // Politique Vitré Communauté
-export const Vitre: PolicyHandlerStaticInterface = class
+export const Vitre2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
@@ -38,7 +38,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
    * A changer avec le nouveau code commune de Beaussais-Vitré
    */
   private readonly vitre_com = '35360';
-  protected operators = [OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {

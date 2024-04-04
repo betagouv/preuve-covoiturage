@@ -22,7 +22,7 @@ import { description } from './MetropoleSavoie.html';
 /* eslint-disable-next-line */
 export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'metropole_savoie_2022';
-  protected operators = [OperatorsEnum.BlaBlaDaily];
+  protected operators = [OperatorsEnum.BLABLACAR_DAILY];
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {

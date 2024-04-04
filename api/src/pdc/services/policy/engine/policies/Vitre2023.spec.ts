@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Vitre as Handler } from './Vitre';
+import { Vitre2023 as Handler } from './Vitre2023';
 
 const defaultPosition = {
   arr: '35361',
@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.Klaxit,
+  operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: 'B',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -50,7 +50,7 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_siret: 'not in list' },
+      { operator_uuid: 'not in list' },
       { distance: 100 },
       { operator_class: 'A' },
       { distance: 80_000, datetime: new Date('2023-07-17') },

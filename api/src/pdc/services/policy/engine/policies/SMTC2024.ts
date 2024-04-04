@@ -12,49 +12,44 @@ import {
   isOperatorOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
-  perKm,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { watchForPersonMaxTripByDay } from '../helpers/limits';
+import { watchForPersonMaxAmountByYear, watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cannes.html';
+import { description } from './SMTC2024.html';
 
-// Politique Cannes
-export const Cannes: PolicyHandlerStaticInterface = class
+// Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
+export const SMTC2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
-  static readonly id = 'cannes_2024';
-  protected operators = [OperatorsEnum.Klaxit];
+  static readonly id = 'smtc_2024';
+  protected operators = [OperatorsEnum.MOV_ICI];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['AFE1C47D-BF05-4FA9-9133-853D297AZEPD', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 90_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['AFE1C47D-BF05-4FA9-9133-853D2987GF56', 540_00, watchForPersonMaxAmountByYear, LimitTargetEnum.Driver],
+      ['AFE1C47D-BF05-4FA9-9133-853D297AZEPD', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
   protected slices: RunnableSlices = [
     {
-      start: 2_000,
-      end: 15_000,
+      start: 5_000,
+      end: 80_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
-    },
-    {
-      start: 15_000,
-      end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_001 });
+    onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
 

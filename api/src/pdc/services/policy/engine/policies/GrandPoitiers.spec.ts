@@ -10,30 +10,30 @@ import { generatePartialCarpools } from '../tests/helpers';
 test('should return the last operators if no datetime is provided', (t) => {
   const handler = new Handler(100);
   t.deepEqual(handler.getOperators(), [
-    OperatorsEnum.Karos,
-    OperatorsEnum.Mobicoop,
-    OperatorsEnum.BlaBlaDaily,
-    OperatorsEnum.Klaxit,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.MOBICOOP,
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KLAXIT,
   ]);
 });
 
 test('should return Karos only if datetime is before 16/10/2023', (t) => {
   const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(new Date('2023-10-15')), [OperatorsEnum.Karos]);
+  t.deepEqual(handler.getOperators(new Date('2023-10-15')), [OperatorsEnum.KAROS]);
 });
 
 test('should return Karos and Mobicoop if datetime is after 16/10/2023', (t) => {
   const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(new Date('2023-10-16')), [OperatorsEnum.Karos, OperatorsEnum.Mobicoop]);
+  t.deepEqual(handler.getOperators(new Date('2023-10-16')), [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP]);
 });
 
 test('should return all operators if datetime is after 22/12/2023', (t) => {
   const handler = new Handler(100);
   t.deepEqual(handler.getOperators(new Date('2023-12-23')), [
-    OperatorsEnum.Karos,
-    OperatorsEnum.Mobicoop,
-    OperatorsEnum.BlaBlaDaily,
-    OperatorsEnum.Klaxit,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.MOBICOOP,
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KLAXIT,
   ]);
 });
 
@@ -57,7 +57,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.Karos,
+  operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -85,12 +85,12 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_siret: 'not in list' },
+      { operator_uuid: 'not in list' },
       { distance: 100 },
       { operator_class: 'A' },
       { operator_class: 'B' },
       { distance: 81_000 },
-      { operator_siret: OperatorsEnum.Mobicoop, datetime: new Date('2023-11-15') },
+      { operator_uuid: OperatorsEnum.MOBICOOP, datetime: new Date('2023-11-15') },
     ],
     meta: [],
   },
@@ -108,7 +108,7 @@ test(
       {
         distance: 5_000,
         driver_identity_uuid: 'two',
-        operator_siret: OperatorsEnum.Mobicoop,
+        operator_uuid: OperatorsEnum.MOBICOOP,
         datetime: new Date('2023-11-16'),
       },
     ],

@@ -24,7 +24,7 @@ import { description } from './PetrLunevilloisS12023.html';
 /* eslint-disable-next-line */
 export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'petr_lunevillois_s1_2023';
-  protected operators = [OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.MOBICOOP];
 
   // 7 cts per km per passenger
   protected slices: RunnableSlices = [

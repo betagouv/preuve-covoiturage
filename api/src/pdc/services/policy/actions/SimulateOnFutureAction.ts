@@ -69,7 +69,7 @@ export class SimulateOnFutureAction extends AbstractAction {
     }
 
     // 6. Get siret code for applied policies
-    const sirets = await this.territoryRepository.findSiretById(policies.map((c) => c.territory_id));
+    const uuidList = await this.territoryRepository.findUUIDById(policies.map((c) => c.territory_id));
 
     // 7. Normalize incentives output and return
     const normalizedIncentives = incentives
@@ -78,7 +78,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       .map((i) => ({
         carpool_id: i.carpool_id,
         amount: i.statelessAmount,
-        siret: sirets.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).siret,
+        siret: uuidList.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).uuid,
       }));
 
     return {
@@ -96,7 +96,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       driver_identity_uuid: v4(),
       passenger_identity_uuid: v4(),
       trip_id: v4(),
-      operator_siret: await this.territoryRepository.findSiretByOperatorId(input.operator_id),
+      operator_uuid: await this.territoryRepository.findUUIDByOperatorId(input.operator_id),
       operator_class: input.operator_class,
       passenger_is_over_18: input.passenger.identity.over_18,
       driver_has_travel_pass: 'travel_pass' in input.driver.identity,

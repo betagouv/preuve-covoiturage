@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Occitanie as Handler } from './Occitanie';
+import { Occitanie20232024 as Handler } from './Occitanie20232024';
 
 const defaultPosition = {
   arr: '46240',
@@ -22,7 +22,7 @@ const defaultCarpool: CarpoolInterface = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.BlaBlaDaily,
+  operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -42,7 +42,7 @@ const defaultCarpool: CarpoolInterface = {
   driver_payment: 10,
   passenger_payment: 10,
   passenger_meta: {
-    payments: [{ siret: OperatorsEnum.BlaBlaDaily, type: 'payment', amount: 10 }],
+    payments: [{ siret: OperatorsEnum.BLABLACAR_DAILY, type: 'payment', amount: 10 }],
   },
 };
 
@@ -56,7 +56,7 @@ test(
     carpool: [
       { distance: 40_000 }, // distance
       { operator_class: 'A' }, // operator_class
-      { operator_siret: 'not_a_real_operator' }, // operator
+      { operator_uuid: 'not_a_real_operator' }, // operator
       { datetime: new Date('2022-11-06') }, // not on sunday
       { datetime: new Date('2022-11-07') }, // works on other day
       { start: { ...defaultPosition, reg: 'not_in_region' } }, // starts/end in region only

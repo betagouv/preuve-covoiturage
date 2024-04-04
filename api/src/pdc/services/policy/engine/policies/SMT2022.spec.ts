@@ -1,17 +1,18 @@
 import test from 'ava';
 import { v4 } from 'uuid';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Pdll as Handler } from './Pdll';
+import { SMT2022 as Handler } from './SMT2022';
 
 const defaultPosition = {
-  arr: '85047',
-  com: '85047',
-  aom: '200071629',
-  epci: '200071629',
-  dep: '85',
-  reg: '52',
+  arr: '37261',
+  com: '37261',
+  aom: '200085108',
+  epci: '243700754',
+  dep: '37',
+  reg: '24',
   country: 'XXXXX',
-  reseau: '430',
+  reseau: '96',
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -21,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: '80279897500024',
+  operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -48,20 +49,10 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [
-      { operator_siret: 'not in list' },
-      { distance: 100 },
-      { operator_class: 'A' },
-      { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },
-      { start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition, aom: '244400404' } },
-      { start: { ...defaultPosition, aom: '247200132' }, end: { ...defaultPosition, aom: '247200132' } },
-      { start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition, aom: '200071678' } },
-      { start: { ...defaultPosition, reg: '11' } },
-      { end: { ...defaultPosition, reg: '11' } },
-    ],
+    carpool: [{ operator_uuid: 'not in list' }, { distance: 100 }, { distance: 200_000 }, { operator_class: 'A' }],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -79,11 +70,11 @@ test(
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 250, 500],
+    incentive: [200, 400, 250, 250, 400],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1600,
+        value: 1500,
       },
     ],
   },
@@ -93,12 +84,12 @@ test(
   'should work with global limits',
   process,
   {
-    policy: { handler: Handler.id, max_amount: 2_000_000_00 },
+    policy: { handler: Handler.id, max_amount: 40_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1_999_999_50,
+        value: 39_999_50,
       },
     ],
   },
@@ -107,7 +98,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2_000_000_00,
+        value: 40_000_00,
       },
     ],
   },
@@ -134,7 +125,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1200,
+        value: 12_00,
       },
     ],
   },

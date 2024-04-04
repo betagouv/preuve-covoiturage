@@ -12,6 +12,7 @@ import {
   LimitTargetEnum,
   endsAt,
   isOperatorClassOrThrow,
+  isOperatorOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perSeat,
@@ -30,7 +31,12 @@ export const GrandChatellerault2024: PolicyHandlerStaticInterface = class extend
   static readonly id = 'grand_chatellerault_2024';
   static readonly tz: Timezone = 'Europe/Paris';
 
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
+  protected operators = [
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.MOBICOOP,
+  ];
 
   protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 80_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
@@ -47,6 +53,7 @@ export const GrandChatellerault2024: PolicyHandlerStaticInterface = class extend
   }
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
+    isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_000 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);

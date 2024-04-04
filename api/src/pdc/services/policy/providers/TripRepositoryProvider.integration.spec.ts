@@ -52,7 +52,7 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
       .map((c) => ({
         start: c.start,
         end: c.end,
-        operator_siret: c.operator_siret,
+        operator_uuid: c.operator_uuid,
         datetime: c.datetime,
         distance: c.distance,
         duration: c.duration,
@@ -79,7 +79,7 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
         reg: '11',
         reseau: 232,
       },
-      operator_siret: '89248032800012',
+      operator_uuid: '25a8774f-8708-4cf7-8527-446106b64a35',
       datetime: new Date('2022-06-15'),
       distance: 10000,
       duration: 900,

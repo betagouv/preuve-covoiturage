@@ -20,16 +20,16 @@ import {
 } from '../helpers';
 import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Atmb.html';
+import { description } from './ATMB202305.html';
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len
-export const Atmb: PolicyHandlerStaticInterface = class
+export const ATMB202305: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
   static readonly id = 'atmb_2023';
-  protected readonly operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected readonly operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT];
   protected readonly operator_class = ['B', 'C'];
   protected readonly policy_change_date = new Date('2023-12-18');
 

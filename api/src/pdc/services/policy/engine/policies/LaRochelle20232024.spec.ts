@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { LaRochelle as Handler } from './LaRochelle';
+import { LaRochelle20232024 as Handler } from './LaRochelle20232024';
 
 const defaultPosition = {
   arr: '73031',
@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: 'driver_id_one',
-  operator_siret: OperatorsEnum.Klaxit,
+  operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,

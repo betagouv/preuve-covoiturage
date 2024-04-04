@@ -198,7 +198,10 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   }
 
   async listApplicablePoliciesId(): Promise<number[]> {
-    const results = await this.connection.getClient().query("SELECT _id FROM policy.policies WHERE status = 'active'");
+    const results = await this.connection.getClient().query({
+      text: 'SELECT _id FROM policy.policies WHERE status = $1',
+      values: [PolicyStatusEnum.ACTIVE],
+    });
     return results.rows.map((r) => r._id);
   }
 
@@ -219,7 +222,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           break;
         case 'status':
           values.push(search[key]);
-          whereClauses.push(`pp.status::text = $${values.length}`);
+          whereClauses.push(`pp.status = $${values.length}`);
           break;
         case 'territory_id':
           const tid = search[key];

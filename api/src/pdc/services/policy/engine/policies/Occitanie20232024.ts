@@ -19,24 +19,24 @@ import {
 } from '../helpers';
 import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Occitanie.html';
+import { description } from './Occitanie20232024.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return ctx.carpool.passenger_payment || 0;
 }
 
 // Politique de la région Occitanie
-export const Occitanie: PolicyHandlerStaticInterface = class
+export const Occitanie20232024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
   static readonly id = 'occitanie_2022';
   protected operators = [
-    OperatorsEnum.Atchoum,
-    OperatorsEnum.BlaBlaDaily,
-    OperatorsEnum.Karos,
-    OperatorsEnum.Klaxit,
-    OperatorsEnum.Mobicoop,
+    OperatorsEnum.ATCHOUM,
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.MOBICOOP,
   ];
   protected operator_class = ['B', 'C'];
   protected slices: BoundedSlices = [

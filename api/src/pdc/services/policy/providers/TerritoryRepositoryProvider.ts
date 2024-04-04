@@ -41,11 +41,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     }
   }
 
-  async findSiretByOperatorId(_id: number): Promise<string> {
+  async findUUIDByOperatorId(_id: number): Promise<string> {
     const query = {
       text: `
         SELECT
-          o._id, c.siret
+          o._id, c.uuid
         FROM ${this.operatorTable} AS o
         LEFT JOIN ${this.companyTable} AS c
           ON c._id = o.company_id
@@ -59,14 +59,14 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       throw new NotFoundException();
     }
 
-    return result.rows[0]?.siret;
+    return result.rows[0]?.uuid;
   }
 
-  async findSiretById(_id: number | number[]): Promise<{ _id: number; siret: string }[]> {
+  async findUUIDById(_id: number | number[]): Promise<{ _id: number; uuid: string }[]> {
     const query = {
       text: `
         SELECT
-          t._id, c.siret
+          t._id, c.uuid
         FROM ${this.territoryGroupTable} AS t
         LEFT JOIN ${this.companyTable} AS c
           ON c._id = t.company_id
