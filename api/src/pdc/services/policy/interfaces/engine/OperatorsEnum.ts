@@ -12,13 +12,6 @@
 // ```
 //
 export enum OperatorsEnum {
-  // Atchoum = '83104476300017',
-  // BlaBlaDaily = '49190454600034',
-  // Karos = '80279897500024',
-  // Klaxit = '75315323800047',
-  // Mobicoop = '84403286200014',
-  // Ynstant = '91234298700019',
-
   ATCHOUM = '25a8774f-8708-4cf7-8527-446106b64a35',
   BLABLACAR = '51dba52f-913c-47fe-a976-25a799374f7f',
   BLABLACAR_DAILY = '0b361f5b-4651-45f1-8f59-5952d5e745fd',

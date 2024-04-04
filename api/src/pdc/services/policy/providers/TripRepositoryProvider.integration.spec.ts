@@ -79,7 +79,7 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
         reg: '11',
         reseau: 232,
       },
-      operator_uuid: '89248032800012',
+      operator_uuid: '29d58efa-ea01-4a34-926f-0c7e4e10929c',
       datetime: new Date('2022-06-15'),
       distance: 10000,
       duration: 900,
