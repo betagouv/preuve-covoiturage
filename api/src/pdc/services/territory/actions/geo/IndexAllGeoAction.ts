@@ -5,7 +5,7 @@ import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepo
 import { handlerConfig } from '@shared/territory/indexAllGeo.contract';
 import { indexData } from '../../helpers/meilisearch';
 import { SingleResultInterface as AllGeoResultInterface } from '@shared/territory/allGeo.contract';
-import { config } from '../../config/meilisearch';
+import { host, apiKey, index, batchSize } from '../../config/meilisearch';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ export class IndexAllGeoAction extends AbstractAction {
 
   public async handle(): Promise<void> {
     const allGeo = await this.geoRepository.getAllGeo();
-    const response = await indexData<AllGeoResultInterface>({host: config.host, apiKey: config.apiKey}, config.index, config.batchSize, allGeo);
+    const response = await indexData<AllGeoResultInterface>({host: host, apiKey: apiKey}, index, batchSize, allGeo);
     return response;
   }
 }

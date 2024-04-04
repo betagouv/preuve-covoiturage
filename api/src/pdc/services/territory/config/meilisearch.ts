@@ -1,6 +1,6 @@
-export const config = {
-  host: process.env.APP_MEILISEARCH_HOST || 'http://localhost',
-  apiKey: process.env.APP_MEILISEARCH_APIKEY || '',
-  index: process.env.APP_MEILISEARCH_INDEX || 'geo',
-  batchSize: Number(process.env.APP_MEILISEARCH_BATCH) || 1000,
-}
+import { env } from '@ilos/core';
+
+export const host = env.or_fail('APP_MEILISEARCH_HOST', 'http://localhost');
+export const apiKey = env.or_fail('APP_MEILISEARCH_APIKEY');
+export const index = env.or_fail('APP_MEILISEARCH_INDEX', 'geo');
+export const batchSize = env.or_int('APP_MEILISEARCH_BATCH', 1000);
