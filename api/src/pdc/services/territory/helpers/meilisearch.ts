@@ -12,6 +12,6 @@ export async function indexData<T>(config:Config, indexName:string, batchSize: n
     await index.addDocumentsInBatches(documents, batchSize);
     console.log( `Données indexées avec succès dans MeiliSearch`);
   } catch (error) {
-    console.log(`Erreur lors de l\'indexation des données: ${error}`);
+    console.log(`Erreur lors de l\'indexation des données: ${error.message}`);
   }
 }
