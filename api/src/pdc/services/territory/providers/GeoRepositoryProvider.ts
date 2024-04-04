@@ -32,7 +32,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const sql = {
 
       text: `
-        SELECT territory, l_territory, type
+        SELECT concat(territory, '_', type) as id, territory, l_territory, type
         FROM ${this.tableCentroid}
         WHERE year = geo.get_latest_millesime()
         ORDER BY type,territory;

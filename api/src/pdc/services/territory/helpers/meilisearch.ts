@@ -1,7 +1,7 @@
 import { MeiliSearch } from 'meilisearch';
 import type { Config } from 'meilisearch';
 
-export async function indexData<T>(config:Config, indexName:string, documents:T[]) {
+export async function indexData<T>(config:Config, indexName:string, batchSize: number, documents:T[]) {
   try {  
     const client = new MeiliSearch(config);
     // Selection de l'index. Un index est créé s'il n'existe pas
@@ -9,9 +9,9 @@ export async function indexData<T>(config:Config, indexName:string, documents:T[
     // On supprime les documents de l'index
     await index.deleteAllDocuments();
     // Indexation des données dans MeiliSearch
-    const response = await index.addDocuments(documents);
-    return `Données indexées avec succès dans MeiliSearch : ${response}`;
+    await index.addDocumentsInBatches(documents, batchSize);
+    console.log( `Données indexées avec succès dans MeiliSearch`);
   } catch (error) {
-    throw `Erreur lors de la récupération ou de l\'indexation des données: ${error}`;
+    console.log(`Erreur lors de l\'indexation des données: ${error}`);
   }
 }

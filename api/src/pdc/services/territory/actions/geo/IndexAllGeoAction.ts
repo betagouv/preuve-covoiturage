@@ -16,9 +16,9 @@ export class IndexAllGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(): Promise<string> {
+  public async handle(): Promise<void> {
     const allGeo = await this.geoRepository.getAllGeo();
-    const response = await indexData<AllGeoResultInterface>({host: config.host, apiKey: config.apiKey}, config.index, allGeo);
+    const response = await indexData<AllGeoResultInterface>({host: config.host, apiKey: config.apiKey}, config.index, config.batchSize, allGeo);
     return response;
   }
 }
