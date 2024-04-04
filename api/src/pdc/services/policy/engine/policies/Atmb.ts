@@ -29,7 +29,7 @@ export const Atmb: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'atmb_2023';
-  protected readonly operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected readonly operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT];
   protected readonly operator_class = ['B', 'C'];
   protected readonly policy_change_date = new Date('2023-12-18');
 

@@ -32,11 +32,11 @@ export const Occitanie: PolicyHandlerStaticInterface = class
 {
   static readonly id = 'occitanie_2022';
   protected operators = [
-    OperatorsEnum.Atchoum,
-    OperatorsEnum.BlaBlaDaily,
-    OperatorsEnum.Karos,
-    OperatorsEnum.Klaxit,
-    OperatorsEnum.Mobicoop,
+    OperatorsEnum.ATCHOUM,
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.MOBICOOP,
   ];
   protected operator_class = ['B', 'C'];
   protected slices: BoundedSlices = [

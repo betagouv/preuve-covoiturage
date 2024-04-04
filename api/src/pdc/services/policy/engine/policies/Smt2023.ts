@@ -28,8 +28,8 @@ export const Smt2023: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'smt_2023';
-  protected operators = [OperatorsEnum.Klaxit];
-  protected new_operators = [OperatorsEnum.Klaxit, OperatorsEnum.BlaBlaDaily];
+  protected operators = [OperatorsEnum.KLAXIT];
+  protected new_operators = [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY];
 
   protected relaunch_update_date = new Date('15/02/2024');
 

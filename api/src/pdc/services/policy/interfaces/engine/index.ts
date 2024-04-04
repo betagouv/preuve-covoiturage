@@ -56,7 +56,7 @@ export interface CarpoolInterface {
   driver_identity_uuid: string;
   driver_has_travel_pass: boolean;
   driver_meta?: CarpoolMetaInterface;
-  operator_siret: string;
+  operator_uuid: string;
   operator_class: string;
   datetime: Date;
   seats: number;

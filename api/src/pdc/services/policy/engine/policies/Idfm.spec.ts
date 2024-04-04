@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: '80279897500024',
+  operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -50,7 +50,7 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_siret: 'not in list' },
+      { operator_uuid: 'not in list' },
       { distance: 100 },
       { distance: 200_000 },
       { start: { ...defaultPosition, com: '75056' }, end: { ...defaultPosition, com: '75056' } },
@@ -58,7 +58,7 @@ test(
       { end: { ...defaultPosition, aom: 'not_ok' } },
       { operator_class: 'A' },
       { operator_class: 'B', datetime: new Date('2022-09-02') },
-      { operator_siret: OperatorsEnum.Ynstant },
+      { operator_uuid: OperatorsEnum.YNSTANT },
     ],
     meta: [],
   },
@@ -78,7 +78,7 @@ test(
       { distance: 55_000, driver_identity_uuid: 'three' },
       {
         distance: 5_000,
-        operator_siret: OperatorsEnum.Ynstant,
+        operator_uuid: OperatorsEnum.YNSTANT,
         datetime: new Date('2023-03-22'),
         driver_identity_uuid: 'four',
       },

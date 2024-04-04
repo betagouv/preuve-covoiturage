@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: OperatorsEnum.BlaBlaDaily,
+  operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -50,10 +50,10 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_siret: 'not in list' },
+      { operator_uuid: 'not in list' },
       { distance: 100 },
       { operator_class: 'A' },
-      { operator_siret: OperatorsEnum.Mobicoop },
+      { operator_uuid: OperatorsEnum.MOBICOOP },
     ],
     meta: [],
   },
@@ -163,7 +163,7 @@ test(
       {
         distance: 5_000,
         driver_identity_uuid: 'one',
-        operator_siret: OperatorsEnum.Mobicoop,
+        operator_uuid: OperatorsEnum.MOBICOOP,
         datetime: new Date('2023-01-02'),
       },
     ],

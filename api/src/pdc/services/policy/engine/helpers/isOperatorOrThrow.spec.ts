@@ -6,8 +6,8 @@ import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetExcep
 import { generateCarpool } from '../tests/helpers';
 import { isOperatorOrThrow } from './isOperatorOrThrow';
 
-function setup(operator_siret: string) {
-  return StatelessContext.fromCarpool(1, generateCarpool({ operator_siret }));
+function setup(operator_uuid: string) {
+  return StatelessContext.fromCarpool(1, generateCarpool({ operator_uuid }));
 }
 
 test('should throw if not in list', async (t) => {

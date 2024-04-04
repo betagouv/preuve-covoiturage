@@ -27,7 +27,7 @@ export const Cannes: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'cannes_2024';
-  protected operators = [OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.KLAXIT];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {

@@ -35,15 +35,15 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   protected readonly operators = [
     {
       date: new Date('2023-09-27T00:00:00+0200'),
-      operators: [OperatorsEnum.Karos],
+      operators: [OperatorsEnum.KAROS],
     },
     {
       date: new Date('2023-10-16T00:00:00+0200'),
-      operators: [OperatorsEnum.Karos, OperatorsEnum.Mobicoop],
+      operators: [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP],
     },
     {
       date: new Date('2023-12-22T00:00:00+0100'),
-      operators: [OperatorsEnum.Karos, OperatorsEnum.Mobicoop, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Klaxit],
+      operators: [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KLAXIT],
     },
   ];
 

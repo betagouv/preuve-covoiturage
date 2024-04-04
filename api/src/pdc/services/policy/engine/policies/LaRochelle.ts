@@ -24,7 +24,7 @@ import { description } from './LaRochelle.html';
 /* eslint-disable-next-line */
 export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'larochelle_2023';
-  protected operators = [OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.KLAXIT];
   protected slices_before_may: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {

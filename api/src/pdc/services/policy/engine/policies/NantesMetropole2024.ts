@@ -43,7 +43,7 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   // pour lesquelles les règles de booster s'appliquent
   protected boosterDates: string[] = [];
 
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP];
 
   protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },

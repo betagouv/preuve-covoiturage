@@ -29,7 +29,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'pmgf_2022';
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {
@@ -178,7 +178,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class
     if (isAfter(ctx, { date: new Date('2023-01-02') })) {
       isOperatorOrThrow(ctx, this.operators);
     } else {
-      isOperatorOrThrow(ctx, [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit]);
+      isOperatorOrThrow(ctx, [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT]);
     }
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);

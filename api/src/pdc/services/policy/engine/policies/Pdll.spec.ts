@@ -1,5 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { Pdll as Handler } from './Pdll';
 
@@ -21,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: '80279897500024',
+  operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -49,7 +50,7 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_siret: 'not in list' },
+      { operator_uuid: 'not in list' },
       { distance: 100 },
       { operator_class: 'A' },
       { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },

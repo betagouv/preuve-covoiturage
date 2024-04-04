@@ -26,7 +26,7 @@ export const SMTC: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'smtc_2024';
-  protected operators = [OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.MOBICOOP];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {

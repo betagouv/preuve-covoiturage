@@ -29,7 +29,7 @@ import { description } from './Pdll2023.html';
 /* eslint-disable-next-line */
 export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pdll_2023';
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP];
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {

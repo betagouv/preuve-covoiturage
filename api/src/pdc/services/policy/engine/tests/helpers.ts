@@ -25,7 +25,7 @@ const dftCarpool: CarpoolInterface = {
   trip_id: v4(),
   driver_identity_uuid: v4(),
   passenger_identity_uuid: v4(),
-  operator_siret: '89248032800012',
+  operator_uuid: '0b361f5b-4651-45f1-8f59-5952d5e745fd',
   operator_class: 'C',
   passenger_is_over_18: true,
   driver_has_travel_pass: true,

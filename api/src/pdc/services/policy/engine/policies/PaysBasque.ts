@@ -28,8 +28,8 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'pays_basque_2023';
-  protected operators = [OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos];
-  protected operators_for_2024 = [OperatorsEnum.Klaxit, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos];
+  protected operators = [OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS];
+  protected operators_for_2024 = [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS];
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {

@@ -30,7 +30,7 @@ export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends A
   static readonly id = 'terres_touloises_2024';
   static readonly tz: Timezone = 'Europe/Paris';
 
-  protected operators = [OperatorsEnum.Mobicoop];
+  protected operators = [OperatorsEnum.MOBICOOP];
   protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 10_000, fn: (ctx: StatelessContextInterface) => 100 + perSeat(ctx, 100) },
     { start: 10_000, end: 15_000, fn: (ctx: StatelessContextInterface) => 100 + perSeat(ctx, 150) },
