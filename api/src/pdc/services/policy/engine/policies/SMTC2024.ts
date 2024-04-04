@@ -18,15 +18,15 @@ import {
 } from '../helpers';
 import { watchForPersonMaxAmountByYear, watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './SMTC.html';
+import { description } from './SMTC2024.html';
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
-export const SMTC: PolicyHandlerStaticInterface = class
+export const SMTC2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
   static readonly id = 'smtc_2024';
-  protected operators = [OperatorsEnum.MOBICOOP];
+  protected operators = [OperatorsEnum.MOV_ICI];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {

@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { LaRochelle as Handler } from './LaRochelle';
+import { LaRochelle20232024 as Handler } from './LaRochelle20232024';
 
 const defaultPosition = {
   arr: '73031',

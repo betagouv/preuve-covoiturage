@@ -10,6 +10,7 @@ import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetExcep
 import {
   endsAt,
   isOperatorClassOrThrow,
+  isOperatorOrThrow,
   LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
@@ -23,22 +24,27 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll2023.html';
+import { description } from './PaysDeLaLoire2024.html';
 
-// Politique de Pays de la Loire
+// Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
-export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = 'pdll_2023';
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP];
+export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+  static readonly id = 'pdll_2024';
+  protected operators = [
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.MOBICOOP,
+  ];
   protected slices: RunnableSlices = [
-    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },
     {
-      start: 20_000,
-      end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      start: 17_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 })),
     },
     {
-      start: 40_000,
+      start: 30_000,
       fn: (ctx: StatelessContextInterface) => 0,
     },
   ];
@@ -48,32 +54,33 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
     this.limits = [
       ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.max_amount, watchForGlobalMaxAmount],
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 84_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_001 });
+    isOperatorOrThrow(ctx, this.operators);
+    onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
 
     /*
-     Exclure les trajets :
-     - NM->NM, 
-     - Angers->Angers,
-     - Le Mans->Le Mans, 
-     - CA Agglomération du Choletais->CA Agglomération du Choletais
+      Exclure les trajets :
+       - 244400404: Nantes Métropole -> Nantes Métropole,
+       - 244900015: Angers -> Angers,
+       - 247200132: Le Mans -> Le Mans, 
+       - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
      */
     if (
-      startsAndEndsAt(ctx, { aom: ['244900015'] }) ||
       startsAndEndsAt(ctx, { aom: ['244400404'] }) ||
+      startsAndEndsAt(ctx, { aom: ['244900015'] }) ||
       startsAndEndsAt(ctx, { aom: ['247200132'] }) ||
       startsAndEndsAt(ctx, { aom: ['200071678'] })
     ) {
       throw new NotEligibleTargetException();
     }
 
-    // Exclure les trajets qui ne sont pas dans l'aom
+    // Exclure les trajets qui ne sont pas dans l'AOM
     if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
       throw new NotEligibleTargetException();
     }

@@ -13,6 +13,7 @@ import {
   LimitTargetEnum,
   endsAt,
   isOperatorClassOrThrow,
+  isOperatorOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -43,7 +44,12 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   // pour lesquelles les règles de booster s'appliquent
   protected boosterDates: string[] = [];
 
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP];
+  protected operators = [
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.MOBICOOP,
+  ];
 
   protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },
@@ -80,6 +86,7 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   }
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
+    isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);

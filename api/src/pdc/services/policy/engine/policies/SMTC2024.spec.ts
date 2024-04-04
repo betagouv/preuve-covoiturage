@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { SMTC as Handler } from './SMTC';
+import { SMTC2024 as Handler } from './SMTC2024';
 
 const defaultPosition = {
   arr: '74278',
@@ -22,7 +22,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_uuid: OperatorsEnum.MOBICOOP,
+  operator_uuid: OperatorsEnum.MOV_ICI,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -49,7 +49,12 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_uuid: 'not in list' }, { distance: 100 }, { distance: 80_001 }, { operator_class: 'A' }],
+    carpool: [
+      { operator_uuid: OperatorsEnum.MOBICOOP },
+      { distance: 100 },
+      { distance: 80_001 },
+      { operator_class: 'A' },
+    ],
     meta: [],
   },
   { incentive: [0, 0, 0, 0], meta: [] },

@@ -19,10 +19,10 @@ import {
 } from '../helpers';
 import { watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cannes.html';
+import { description } from './Cannes2024.html';
 
 // Politique Cannes
-export const Cannes: PolicyHandlerStaticInterface = class
+export const Cannes2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

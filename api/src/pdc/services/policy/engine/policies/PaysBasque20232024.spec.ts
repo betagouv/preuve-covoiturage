@@ -2,17 +2,17 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Smt2023 as Handler } from './Smt2023';
+import { PaysBasque20232024 as Handler } from './PaysBasque20232024';
 
 const defaultPosition = {
-  arr: '37050',
-  com: '37050',
-  aom: '200085108',
-  epci: '243700754',
-  dep: '37',
-  reg: '24',
+  arr: '64155',
+  com: '64155',
+  aom: '256401605',
+  epci: '200067106',
+  dep: '64',
+  reg: '75',
   country: 'XXXXX',
-  reseau: '96',
+  reseau: '15',
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -23,14 +23,14 @@ const defaultCarpool = {
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
   operator_uuid: OperatorsEnum.KLAXIT,
-  operator_class: 'B',
+  operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
   datetime: new Date('2023-04-15'),
   seats: 1,
   duration: 600,
-  distance: 5_000,
+  distance: 6_000,
   cost: 20,
   driver_payment: 20,
   passenger_payment: 20,
@@ -69,11 +69,13 @@ test(
           reg: '24',
         },
       },
-      { distance: 31_000, datetime: new Date('2023-04-17') },
+      { passenger_is_over_18: false },
+      { distance: 90_000, datetime: new Date('2024-01-01') },
+      { datetime: new Date('2024-01-01'), operator_uuid: OperatorsEnum.MOBICOOP },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -87,29 +89,28 @@ test(
       { distance: 25_000, driver_identity_uuid: 'one' },
       { distance: 25_000, seats: 2, driver_identity_uuid: 'one' },
       {
-        distance: 29_000,
+        distance: 35_000,
         driver_identity_uuid: 'one',
-        end: {
-          arr: '37109',
-          com: '37109',
-          aom: '200085108',
-          epci: '243700754',
-          reg: '24',
-        },
       },
+      { distance: 90_000, datetime: new Date('2023-12-31'), driver_identity_uuid: 'one' },
+      { distance: 80_000, driver_identity_uuid: 'one' },
     ],
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 500, 290],
+    incentive: [200, 400, 250, 500, 300, 300, 300],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 1640,
+        value: 1950,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1640,
+        value: 2250,
+      },
+      {
+        key: 'max_amount_restriction.0-one.month.11-2023',
+        value: 300,
       },
     ],
   },
@@ -124,12 +125,12 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 59_999_50,
+        value: 49_998_00,
       },
     ],
   },
   {
-    incentive: [50],
+    incentive: [200],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
@@ -137,7 +138,7 @@ test(
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 60_000_00,
+        value: 50_000_00,
       },
     ],
   },

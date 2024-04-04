@@ -7,10 +7,10 @@ import {
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   perKm,
   perSeat,
@@ -19,10 +19,10 @@ import {
 } from '../helpers';
 import { onDistanceRangeOrThrow } from '../helpers/onDistanceRange';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cotentin.html';
+import { description } from './Cotentin2023.html';
 
 // Politique de la Communauté D'Agglomeration du Cotentin
-export const Cotentin: PolicyHandlerStaticInterface = class
+export const Cotentin2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

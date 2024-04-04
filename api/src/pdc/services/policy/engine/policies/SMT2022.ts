@@ -6,9 +6,8 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  endsAt,
+  ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -16,60 +15,39 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  startsAndEndsAt,
-  startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll.html';
+import { description } from './SMT2022.html';
 
-// Politique de Pays de la Loire
-/* eslint-disable-next-line */
-export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = '249';
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
-  ];
+// Politique du Syndicat des Mobilités de Touraine
+export const SMT2022: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
+  static readonly id = '713';
+  protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
-      end: 50_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
-
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['5499304F-2C64-AB1A-7392-52FF88F5E78D', max_amount, watchForGlobalMaxAmount],
+      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
-
-    // Exclure les trajets NM->NM, Angers->Angers, Le Mans->Le Mans
-    if (
-      startsAndEndsAt(ctx, { aom: ['244900015'] }) ||
-      startsAndEndsAt(ctx, { aom: ['244400404'] }) ||
-      startsAndEndsAt(ctx, { aom: ['247200132'] }) ||
-      startsAndEndsAt(ctx, { aom: ['200071678'] })
-    ) {
-      throw new NotEligibleTargetException();
-    }
-
-    // Exclure les trajets qui ne sont pas dans l'aom
-    if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
-      throw new NotEligibleTargetException();
-    }
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -84,6 +62,7 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       }
     }
 
+    amount += ensureFreeRide(ctx, amount);
     ctx.incentive.set(amount);
   }
 
@@ -93,7 +72,7 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.max_amount,
+        glob: 40_000_00,
       },
     };
   }

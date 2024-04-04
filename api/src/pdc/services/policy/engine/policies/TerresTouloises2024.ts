@@ -49,9 +49,9 @@ export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends A
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
     try {
+      isOperatorOrThrow(ctx, this.operators);
       onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_000 });
       isOperatorClassOrThrow(ctx, ['B', 'C']);
-      isOperatorOrThrow(ctx, this.operators);
       isAdultOrThrow(ctx);
 
       // Exclusion des OD des autres AOM

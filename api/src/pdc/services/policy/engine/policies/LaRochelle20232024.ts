@@ -19,10 +19,10 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './LaRochelle.html';
+import { description } from './LaRochelle20232024.html';
 
 /* eslint-disable-next-line */
-export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'larochelle_2023';
   protected operators = [OperatorsEnum.KLAXIT];
   protected slices_before_may: RunnableSlices = [

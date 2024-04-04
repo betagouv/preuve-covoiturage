@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Pdll2024 as Handler } from './Pdll2024';
+import { PaysDeLaLoire2023 as Handler } from './PaysDeLaLoire2023';
 
 const defaultPosition = {
   arr: '85047',
@@ -27,7 +27,7 @@ const defaultCarpool = {
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2024-04-15'),
+  datetime: new Date('2023-04-15'),
   seats: 1,
   duration: 600,
   distance: 5_000,
@@ -50,25 +50,15 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 4999 },
+      { distance: 100 },
       { operator_class: 'A' },
-
-      // Nantes Métropole (244400404)
-      { start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition, aom: '244400404' } },
-
-      // Angers (244900015)
       { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },
-
-      // Le Mans (247200132)
+      { start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition, aom: '244400404' } },
       { start: { ...defaultPosition, aom: '247200132' }, end: { ...defaultPosition, aom: '247200132' } },
-
-      // CA Agglomération du Choletais (200071678)
       { start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition, aom: '200071678' } },
-
-      // Région Île-de-France
       { start: { ...defaultPosition, reg: '11' } },
       { end: { ...defaultPosition, reg: '11' } },
-      { distance: 60_001 },
+      { distance: 90_000 },
       { passenger_is_over_18: false },
     ],
     meta: [],
@@ -87,25 +77,32 @@ test(
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
       { distance: 20_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two' },
+      { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 40_000, driver_identity_uuid: 'two' },
       { distance: 55_000, driver_identity_uuid: 'two' },
-      { distance: 61_000, driver_identity_uuid: 'two' },
+      { distance: 80_000, driver_identity_uuid: 'two' },
+      { distance: 90_000, driver_identity_uuid: 'two' },
     ],
     meta: [],
   },
   {
-    incentive: [0, 75, 150, 105, 155, 200, 0],
+    incentive: [0, 100, 200, 100, 150, 150, 300, 300, 300, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 685,
+        value: 1600,
       },
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 225,
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 300,
       },
       {
-        key: 'max_amount_restriction.0-two.month.3-2024',
-        value: 460,
+        key: 'max_amount_restriction.0-two.month.3-2023',
+        value: 1150,
+      },
+      {
+        key: 'max_amount_restriction.0-two.month.2-2022',
+        value: 150,
       },
     ],
   },
@@ -115,25 +112,25 @@ test(
   'should work with global limits',
   process,
   {
-    policy: { handler: Handler.id, max_amount: 2_200_000_00 },
+    policy: { handler: Handler.id, max_amount: 500_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2_199_999_25,
+        value: 499_999_50,
       },
     ],
   },
   {
-    incentive: [75],
+    incentive: [50],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2_200_000_00,
+        value: 500_000_00,
       },
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 75,
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 100,
       },
     ],
   },
@@ -156,50 +153,15 @@ test(
     meta: [],
   },
   {
-    incentive: [75, 75, 75, 75, 75, 75, 0],
+    incentive: [100, 100, 100, 100, 100, 100, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 450,
+        value: 600,
       },
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 450,
-      },
-    ],
-  },
-);
-
-test(
-  'should work with driver month limits of 84 €',
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 6_000, driver_identity_uuid: 'one' },
-      { distance: 6_000, driver_identity_uuid: 'one' },
-    ],
-    meta: [
-      {
-        key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 83_25,
-      },
-      {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 83_25,
-      },
-    ],
-  },
-  {
-    incentive: [75, 0],
-    meta: [
-      {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 84_00,
-      },
-      {
-        key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 84_00,
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 600,
       },
     ],
   },

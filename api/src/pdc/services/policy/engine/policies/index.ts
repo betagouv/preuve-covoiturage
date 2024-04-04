@@ -1,11 +1,11 @@
 import { PolicyHandlerStaticInterface } from '../../interfaces';
-import { Atmb } from './Atmb';
-import { Cannes } from './Cannes';
-import { Cotentin } from './Cotentin';
+import { ATMB202305 } from './ATMB202305';
+import { Cannes2024 } from './Cannes2024';
+import { Cotentin2023 } from './Cotentin2023';
 import { GrandChatellerault2024 } from './GrandChatellerault2024';
 import { GrandPoitiers } from './GrandPoitiers';
 import { Idfm } from './Idfm';
-import { LaRochelle } from './LaRochelle';
+import { LaRochelle20232024 } from './LaRochelle20232024';
 import { Lannion } from './Lannion';
 import { Laval } from './Laval';
 import { MetropoleSavoie } from './MetropoleSavoie';
@@ -13,20 +13,20 @@ import { Montpellier } from './Montpellier';
 import { Mrn } from './Mrn';
 import { NantesMetropole2024 } from './NantesMetropole2024';
 import { Nm } from './Nm';
-import { Occitanie } from './Occitanie';
-import { PaysBasque } from './PaysBasque';
-import { Pdll } from './Pdll';
-import { Pdll2023 } from './Pdll2023';
-import { Pdll2024 } from './Pdll2024';
+import { Occitanie20232024 } from './Occitanie20232024';
+import { PaysBasque20232024 } from './PaysBasque20232024';
+import { PaysDeLaLoire2021 } from './PaysDeLaLoire2021';
+import { PaysDeLaLoire2023 } from './PaysDeLaLoire2023';
+import { PaysDeLaLoire2024 } from './PaysDeLaLoire2024';
 import { PetrLunevilloisS12023 } from './PetrLunevilloisS12023';
 import { Pmgf } from './Pmgf';
 import { Pmgf2023 } from './Pmgf2023';
 import { PmgfLate2023 } from './PmgfLate2023';
-import { SMTC } from './SMTC';
-import { Smt } from './Smt';
-import { Smt2023 } from './Smt2023';
+import { SMTC2024 } from './SMTC2024';
+import { SMT2022 } from './SMT2022';
+import { SMT2023 } from './SMT2023';
 import { TerresTouloises2024 } from './TerresTouloises2024';
-import { Vitre } from './Vitre';
+import { Vitre2023 } from './Vitre2023';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
@@ -36,25 +36,25 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // this helps with git conflicts when modifying the list.
   /* eslint-disable prettier/prettier */
   [
-    Atmb,
-    Cannes,
-    Cotentin,
+    ATMB202305,
+    Cannes2024,
+    Cotentin2023,
     GrandChatellerault2024,
     GrandPoitiers,
     Idfm,
     Lannion,
-    LaRochelle,
+    LaRochelle20232024,
     Laval,
     MetropoleSavoie,
     Montpellier,
     Mrn,
     NantesMetropole2024,
     Nm,
-    Occitanie,
-    PaysBasque,
-    Pdll,
-    Pdll2023,
-    Pdll2024,
+    Occitanie20232024,
+    PaysBasque20232024,
+    PaysDeLaLoire2021,
+    PaysDeLaLoire2023,
+    PaysDeLaLoire2024,
     PetrLunevilloisS12023,
     Pmgf,
     Pmgf2023,
@@ -62,11 +62,11 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PolicyTemplateOne,
     PolicyTemplateThree,
     PolicyTemplateTwo,
-    Smt,
-    Smt2023,
-    SMTC,
+    SMT2022,
+    SMT2023,
+    SMTC2024,
     TerresTouloises2024,
-    Vitre,
+    Vitre2023,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );

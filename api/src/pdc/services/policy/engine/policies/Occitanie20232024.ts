@@ -19,14 +19,14 @@ import {
 } from '../helpers';
 import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Occitanie.html';
+import { description } from './Occitanie20232024.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return ctx.carpool.passenger_payment || 0;
 }
 
 // Politique de la région Occitanie
-export const Occitanie: PolicyHandlerStaticInterface = class
+export const Occitanie20232024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

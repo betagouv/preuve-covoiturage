@@ -20,11 +20,11 @@ import {
 } from '../helpers';
 import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Atmb.html';
+import { description } from './ATMB202305.html';
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len
-export const Atmb: PolicyHandlerStaticInterface = class
+export const ATMB202305: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
