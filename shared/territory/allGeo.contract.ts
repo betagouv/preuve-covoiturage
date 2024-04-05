@@ -1,6 +1,7 @@
-import { PerimeterLabel, PerimeterType, PerimeterCode } from '../../geo/shared/Perimeter';
+import { PerimeterCode, PerimeterLabel, PerimeterType } from '../geo/shared/Perimeter';
 
 export interface SingleResultInterface {
+  id: string;
   territory: PerimeterCode;
   l_territory: PerimeterLabel;
   type: PerimeterType;
@@ -8,13 +9,9 @@ export interface SingleResultInterface {
 
 export type ResultInterface = SingleResultInterface[];
 
-export interface ParamsInterface {
-  year: number;
-}
-
 export const handlerConfig = {
-  service: 'observatory',
-  method: 'territoriesList',
+  service: 'territory',
+  method: 'allGeo',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

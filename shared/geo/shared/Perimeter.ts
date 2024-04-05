@@ -1,6 +1,7 @@
 export const perimeterTypes = ['com', 'epci', 'aom', 'dep', 'reg', 'country'] as const;
 export type PerimeterType = (typeof perimeterTypes)[number];
 export type PerimeterLabel = string;
+export type PerimeterCode = string;
 
 export type INSEECode = string;
 
