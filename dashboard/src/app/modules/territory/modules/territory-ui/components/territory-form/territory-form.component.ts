@@ -38,7 +38,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public comComs: GeoSingleResultInterface[];
+  public comComs: Array<Pick<GeoSingleResultInterface, 'insee' | 'name'>>;
 
   private findGeoBySiretResponse: FindGeoBySirenResultInterface;
   private companyId: number;
@@ -190,6 +190,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       });
 
       companyFormGroup.get('siret').setValidators([Validators.required]);
+
       this.siretValueChanges(companyFormGroup);
 
       this.territoryForm.addControl('address', addressFormGroup);
@@ -258,17 +259,19 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.territoryForm.get('address.city')) {
       this.territoryForm.get('address.city').setValue(company.address_city);
     }
+    if (this.territoryForm.get('address.country')) {
+      this.territoryForm.get('address.country').setValue('France');
+    }
 
-    this.territoryForm.get('address.country').setValue('France');
-
-    companyFormGroup.patchValue({
-      siret: company.siret,
-      _id: company._id,
-      naf_entreprise: company.company_naf_code || '',
-      nature_juridique: company.legal_nature_label || '',
-      rna: company.nonprofit_code || '',
-      vat_intra: company.intra_vat || '',
-    });
+    companyFormGroup &&
+      companyFormGroup.patchValue({
+        siret: company.siret,
+        _id: company._id,
+        naf_entreprise: company.company_naf_code || '',
+        nature_juridique: company.legal_nature_label || '',
+        rna: company.nonprofit_code || '',
+        vat_intra: company.intra_vat || '',
+      });
   }
 
   private resetCompanyForm(companyFormGroup: FormGroup) {
