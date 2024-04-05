@@ -1,4 +1,4 @@
-import { PerimeterLabel, PerimeterType, PerimeterCode } from '@shared/geo/shared/Perimeter';
+import { PerimeterCode, PerimeterLabel, PerimeterType } from '../geo/shared/Perimeter';
 
 export interface SingleResultInterface {
   id: string;

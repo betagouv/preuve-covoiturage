@@ -20,7 +20,7 @@ export interface SingleResultInterface {
   dep_name: string;
   dep_siren: string;
 
-  coms: Array<GeoSingleResultInterface>;
+  coms: Array<Pick<GeoSingleResultInterface, 'insee' | 'name'>>;
 }
 
 export type ResultInterface = SingleResultInterface;
