@@ -14,7 +14,6 @@ interface CommandOptions {
   from: string;
   to: string;
   tz: Timezone;
-  detach: boolean;
   resync: boolean;
   clear: boolean;
 }
@@ -36,11 +35,6 @@ export class FinalizeCommand implements CommandInterface {
       signature: '--tz <tz>',
       description: 'timezone',
       default: 'Europe/Paris',
-    },
-    {
-      signature: '-d, --detach',
-      description: 'detach execution to background jobs',
-      default: false,
     },
     {
       signature: '--resync',
@@ -72,13 +66,7 @@ export class FinalizeCommand implements CommandInterface {
         if (to) params.to = toISOString(to);
       }
 
-      if (options.detach) {
-        console.info(`[campaign:finalize] run in detached mode`);
-        await this.kernel.notify(finalize, params, context);
-      } else {
-        console.info(`[campaign:finalize] run in sync mode`);
-        await this.kernel.call(finalize, params, context);
-      }
+      await this.kernel.call(finalize, params, context);
 
       return '';
     } catch (e) {
