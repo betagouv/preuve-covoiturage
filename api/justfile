@@ -127,7 +127,11 @@ api *command:
 
 # Start the HTTP API server on port 8080
 serve:
-  npm run ilos -- http 8080
+  if command -v pm2-runtime >/dev/null 2>&1; then \
+    pm2-runtime start pm2-api.json; \
+  else \
+    npm run -- ilos http 8080; \
+  fi
 
 # List all the APP_ environment variables
 env:
