@@ -51,7 +51,7 @@ export class FinalizeAction extends AbstractAction {
       return console.warn('[campaign:finalize] stateful already processing');
     }
 
-    console.debug(`[campaign:finalize] Acquired lock #${lock._id} at ${toISOString(lock.started_at)}`);
+    console.info(`[campaign:finalize] Acquired lock #${lock._id} at ${toISOString(lock.started_at)}`);
 
     // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
@@ -60,36 +60,48 @@ export class FinalizeAction extends AbstractAction {
       await this.kernel.call(syncincentivesumSignature, {}, { channel: { service: handlerConfig.service } });
     }
 
-    // Update incentive on canceled carpool
-    await this.incentiveRepository.disableOnCanceledTrip();
-
     const policyMap: Map<number, PolicyInterface> = new Map();
 
-    try {
-      // eslint-disable-next-line prettier/prettier,max-len
-      console.debug(`[campaign:finalize] stateful starting from ${from ? toTzString(from) : 'start'} until ${to ? toTzString(to) : 'now' }`);
-      await this.processStatefulPolicies(policyMap, to, from);
-      console.debug('[campaign:finalize] stateful finished');
+    const timespan = 6 * 3600000; // N hours in milliseconds
+    let currentTime = from.getTime();
+    const endTime = to.getTime();
 
-      // Lock all
-      console.debug(`[campaign:finalize] lock all incentive until ${toTzString(to)}`);
-      await this.incentiveRepository.lockAll(to);
-      console.debug('[campaign:finalize] lock finished');
+    while (currentTime <= endTime) {
+      const currentFrom = new Date(currentTime);
+      const currentTo = new Date(currentTime + timespan);
 
-      // Release the lock
-      await this.policyRepository.releaseLock({ from_date: from, to_date: to });
-    } catch (e) {
-      console.debug(`[campaign:finalize] unlock all incentive until ${toTzString(to)} in catch block`);
-      await this.incentiveRepository.lockAll(to, true);
-      console.debug('[campaign:finalize] unlock finished in catch block');
+      try {
+        // Update incentive on canceled carpool
+        console.time('[campaign:finalize] disableOnCanceledTrip');
+        await this.incentiveRepository.disableOnCanceledTrip(currentFrom, currentTo);
+        console.timeEnd('[campaign:finalize] disableOnCanceledTrip');
 
-      // Release the lock
-      await this.policyRepository.releaseLock({ from_date: from, to_date: to, error: e });
-      throw e;
-    } finally {
-      // Release the lock ?
-      console.timeEnd('[campaign:finalize] stateful');
+        // eslint-disable-next-line prettier/prettier,max-len
+        console.info(`[campaign:finalize] stateful starting from ${toTzString(currentFrom)} until ${toTzString(currentTo)}`);
+        await this.processStatefulPolicies(policyMap, currentTo, currentFrom);
+        console.debug('[campaign:finalize] stateful finished');
+
+        // Lock all
+        console.debug(`[campaign:finalize] set status on incentives`);
+        await this.incentiveRepository.setStatus(currentFrom, currentTo);
+        console.debug('[campaign:finalize] lock finished');
+
+        // Release the lock
+        await this.policyRepository.releaseLock({ from_date: currentFrom, to_date: currentTo });
+      } catch (e) {
+        console.debug(`[campaign:finalize] unlock all incentive until ${toTzString(currentTo)} in catch block`);
+        await this.incentiveRepository.setStatus(currentFrom, currentTo, true);
+        console.debug('[campaign:finalize] unlock finished in catch block');
+
+        // Release the lock
+        await this.policyRepository.releaseLock({ from_date: currentFrom, to_date: currentTo, error: e });
+        throw e;
+      }
+
+      currentTime += timespan; // move to the next hour
     }
+
+    console.timeEnd('[campaign:finalize] stateful');
   }
 
   /**

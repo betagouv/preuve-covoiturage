@@ -6,8 +6,8 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
     status?: IncentiveStatusEnum,
   ): Promise<void>;
   abstract createOrUpdateMany(data: Array<SerializedIncentiveInterface<undefined>>): Promise<void>;
-  abstract disableOnCanceledTrip(): Promise<void>;
-  abstract lockAll(before: Date, failure?: boolean): Promise<void>;
+  abstract disableOnCanceledTrip(from: Date, to: Date): Promise<void>;
+  abstract setStatus(from: Date, to: Date, hasFailed?: boolean): Promise<void>;
   abstract findDraftIncentive(
     to: Date,
     batchSize?: number,

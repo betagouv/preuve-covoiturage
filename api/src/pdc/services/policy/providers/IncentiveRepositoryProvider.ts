@@ -18,7 +18,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
   constructor(protected connection: PostgresConnection) {}
 
-  async disableOnCanceledTrip(): Promise<void> {
+  async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table} AS pi
@@ -26,28 +26,33 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           state = 'disabled'::policy.incentive_state_enum,
           status = 'error'::policy.incentive_status_enum
         FROM ${this.tripTable} AS pt
-        WHERE
-          pt.carpool_id = pi.carpool_id AND
-          pt.carpool_status <> 'ok'::carpool.carpool_status_enum
+        WHERE pt.datetime >= $1::timestamp
+          AND pt.datetime <  $2::timestamp
+          AND pt.carpool_id = pi.carpool_id
+          AND pt.carpool_status <> 'ok'::carpool.carpool_status_enum
       `,
-      values: [],
+      values: [from, to],
     };
 
     await this.connection.getClient().query(query);
   }
 
-  async lockAll(before: Date, failure = false): Promise<void> {
+  /**
+   * Set the status of pending incentives to either Draft or Validated
+   */
+  async setStatus(from: Date, to: Date, hasFailed = false): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table}
           SET status = $1::policy.incentive_status_enum
-        WHERE
-          datetime < $2::timestamp AND
-          status = $3::policy.incentive_status_enum
+        WHERE datetime >= $2::timestamp
+          AND datetime <  $3::timestamp
+          AND status = $4::policy.incentive_status_enum
       `,
       values: [
-        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Validated,
-        before,
+        hasFailed ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Validated,
+        from,
+        to,
         IncentiveStatusEnum.Pending,
       ],
     };
