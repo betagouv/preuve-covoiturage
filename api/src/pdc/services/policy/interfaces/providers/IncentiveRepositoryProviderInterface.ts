@@ -13,5 +13,6 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
     batchSize?: number,
     from?: Date,
   ): AsyncGenerator<Array<SerializedIncentiveInterface<number>>, void, void>;
+  abstract latestDraft(): Promise<Date>;
   abstract updateIncentiveSum(): Promise<void>;
 }

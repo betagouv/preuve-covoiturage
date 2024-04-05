@@ -38,7 +38,7 @@ export class FinalizeAction extends AbstractAction {
     }
 
     console.time('[campaign:finalize] stateful');
-    const { from, to, sync_incentive_sum, clear } = this.defaultParams(params);
+    const { from, to, sync_incentive_sum, clear } = await this.defaultParams(params);
 
     // clear dead locks prior to finalization (meant to be used manually, not in CRON)
     if (clear) {
@@ -57,6 +57,7 @@ export class FinalizeAction extends AbstractAction {
     // call the action instead of the repo to avoid having
     // to duplicate the listing of all campaigns
     if (sync_incentive_sum) {
+      console.info('[campaign:finalize] syncIncentiveSum');
       await this.kernel.call(syncincentivesumSignature, {}, { channel: { service: handlerConfig.service } });
     }
 
@@ -108,10 +109,13 @@ export class FinalizeAction extends AbstractAction {
    * Trips are finalized until 5 days ago to make sure the data is sent by the operators
    * and make sure the trips are finalized before APDF are generated on the 6th of every month
    */
-  protected defaultParams(params: ParamsInterface): DefaultParamsInterface {
+  protected async defaultParams(params: ParamsInterface): Promise<DefaultParamsInterface> {
     const tz = params.tz ?? defaultTz;
-    const from = castUserStringToUTC(params.from) || subDaysTz(today(tz), this.config.get('policies.finalize.from'));
     const to = castUserStringToUTC(params.to) || subDaysTz(today(tz), this.config.get('policies.finalize.to'));
+    const from =
+      castUserStringToUTC(params.from) ||
+      (await this.incentiveRepository.latestDraft()) ||
+      subDaysTz(today(tz), this.config.get('policies.finalize.from'));
 
     return { tz, from, to, sync_incentive_sum: !!params.sync_incentive_sum, clear: !!params.clear };
   }

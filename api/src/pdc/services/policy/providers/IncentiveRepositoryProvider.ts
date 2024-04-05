@@ -272,6 +272,21 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
+  async latestDraft(): Promise<Date> {
+    const query = {
+      text: `
+        SELECT min(datetime) AS datetime
+        FROM ${this.table}
+        WHERE status = $1::policy.incentive_status_enum
+          AND datetime > current_timestamp - interval '1 year'
+        `,
+      values: [IncentiveStatusEnum.Draft],
+    };
+
+    const res = await this.connection.getClient().query(query);
+    return res.rows[0]?.datetime;
+  }
+
   // TODO dedup from PolicyRepositoryProvider.syncIncentiveSum
   async updateIncentiveSum(): Promise<void> {
     await this.connection.getClient().query(`

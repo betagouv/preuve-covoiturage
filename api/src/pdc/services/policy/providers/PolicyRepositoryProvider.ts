@@ -71,6 +71,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       `,
       values: [lockInformation?.error ? false : true, JSON.stringify(data)],
     });
+
+    console.info('[campaign:finalize] incentive lock released');
   }
 
   async clearDeadLocks(): Promise<void> {
