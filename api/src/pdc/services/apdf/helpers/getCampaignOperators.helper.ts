@@ -1,23 +1,23 @@
 import { KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import {
-  ParamsInterface as FindBySiretParamsInterface,
-  ResultInterface as FindBySiretResultInterface,
-  signature as findBySiretSignature,
-} from '@shared/operator/findbysiret.contract';
+  ParamsInterface as FindByUuidParamsInterface,
+  ResultInterface as FindByUuidResultInterface,
+  signature as findByUuidSignature,
+} from '@shared/operator/findbyuuid.contract';
 import {
   ParamsInterface as PolicyParamsInterface,
   ResultInterface as PolicyResultInterface,
   signature as policyFindSignature,
 } from '@shared/policy/find.contract';
 
-export async function getDeclaredOperators(
+export async function getCampaignOperators(
   kernel: KernelInterfaceResolver,
   service: string,
   _id: number,
 ): Promise<number[]> {
   try {
-    const siret = await getPolicySiretList(kernel, service, _id);
-    return await siretToOperatorId(kernel, service, siret);
+    const uuid = await getPolicyUuidList(kernel, service, _id);
+    return await uuidToOperatorId(kernel, service, uuid);
   } catch (e) {
     // catch and log to avoid blocking the whole export
     // on error, the list will not be filtered
@@ -26,7 +26,7 @@ export async function getDeclaredOperators(
   }
 }
 
-export async function getPolicySiretList(
+export async function getPolicyUuidList(
   kernel: KernelInterfaceResolver,
   service: string,
   _id: number,
@@ -43,24 +43,24 @@ export async function getPolicySiretList(
   );
 
   const list = policy?.params?.operators || [];
-  if (!list.length) throw new NotFoundException(`No SIRET declared in policy ${_id}`);
+  if (!list.length) throw new NotFoundException(`No UUID declared in policy ${_id}`);
 
   return list;
 }
 
-export async function siretToOperatorId(
+export async function uuidToOperatorId(
   kernel: KernelInterfaceResolver,
   service: string,
-  siret: string[],
+  uuid: string[],
 ): Promise<number[]> {
-  const list = await kernel.call<FindBySiretParamsInterface, FindBySiretResultInterface>(
-    findBySiretSignature,
-    { siret },
+  const list = await kernel.call<FindByUuidParamsInterface, FindByUuidResultInterface>(
+    findByUuidSignature,
+    { uuid },
     {
       channel: { service },
       call: { user: { permissions: ['common.operator.find'] } },
     },
   );
 
-  return list.map((i: FindBySiretResultInterface[0]) => i._id);
+  return list.map((i: FindByUuidResultInterface[0]) => i._id);
 }

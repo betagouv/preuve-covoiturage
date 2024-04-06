@@ -94,14 +94,15 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return operator;
   }
 
-  async findBySiret(siret: string[]): Promise<{ _id: number; siret: string }[]> {
+  async findByUuid(uuid: string[]): Promise<{ _id: number; uuid: string }[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT _id, siret FROM ${this.table}
-        WHERE siret = ANY($1)
+        SELECT _id, uuid
+        FROM ${this.table}
+        WHERE uuid = ANY($1)
         AND deleted_at IS NULL
       `,
-      values: [siret],
+      values: [uuid],
     });
 
     return result.rowCount ? result.rows : [];

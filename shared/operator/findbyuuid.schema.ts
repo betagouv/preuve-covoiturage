@@ -1,13 +1,13 @@
-export const alias = 'operator.findbysiret';
+export const alias = 'operator.findbyuuid';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['siret'],
+  required: ['uuid'],
   additionalProperties: false,
   properties: {
-    siret: {
+    uuid: {
       type: 'array',
-      items: { macro: 'siret' },
+      items: { macro: 'uuid' },
       minItems: 1,
       maxItems: 50,
     },

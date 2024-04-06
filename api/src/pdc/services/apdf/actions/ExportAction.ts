@@ -10,7 +10,7 @@ import { zonedTimeToUtc } from 'date-fns-tz';
 import fs from 'fs';
 import { get } from 'lodash';
 import { castExportParams } from '../helpers/castExportParams.helper';
-import { getDeclaredOperators } from '../helpers/getDeclaredOperators.helper';
+import { getCampaignOperators } from '../helpers/getCampaignOperators.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { CheckCampaign } from '../providers/CheckCampaign';
 import { BuildExcel } from '../providers/excel/BuildExcel';
@@ -50,7 +50,7 @@ export class ExportAction extends Action {
         if (!campaign) return;
 
         // Get declared operators
-        const declaredOperators = await getDeclaredOperators(this.kernel, handlerConfig.service, campaign._id);
+        const operators = await getCampaignOperators(this.kernel, handlerConfig.service, campaign._id);
 
         // List operators having subsidized trips and filter them by the ones declared
         // in the policy file (policy/src/engine/policies/<policy.ts>).
@@ -58,7 +58,7 @@ export class ExportAction extends Action {
         const activeOperatorIds = (
           params.query.operator_id ||
           (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date))
-        ).filter((operator_id) => (declaredOperators.length ? declaredOperators.includes(operator_id) : true));
+        ).filter((operator_id) => (operators.length ? operators.includes(operator_id) : true));
 
         if (!activeOperatorIds.length) console.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
 
@@ -68,7 +68,7 @@ export class ExportAction extends Action {
             $$$  - start_date: ${campaign.start_date.toISOString()}
             $$$  - end_date:   ${campaign.end_date.toISOString()}
             $$$  - used:       ${campaign.incentive_sum / 100}€
-            $$$ Declared  :    ${declaredOperators.map((i) => `#${i}`).join(', ')}
+            $$$ Declared  :    ${operators.map((i) => `#${i}`).join(', ')}
             $$$ Operators :    ${activeOperatorIds.map((i) => `#${i}`).join(', ')}
           `);
         }

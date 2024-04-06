@@ -1,13 +1,13 @@
 import { KernelInterfaceResolver, NotFoundException, RPCException } from '@ilos/common';
 import {
-  ParamsInterface as FindBySiretParams,
-  ResultInterface as FindBySiretResult,
-} from '@shared/operator/findbysiret.contract';
+  ParamsInterface as FindByUuidParams,
+  ResultInterface as FindByUuidResult,
+} from '@shared/operator/findbyuuid.contract';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { ResultInterface as PolicyFindResult } from '@shared/policy/find.contract';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { getDeclaredOperators, getPolicySiretList, siretToOperatorId } from './getDeclaredOperators.helper';
+import { getCampaignOperators, getPolicyUuidList, uuidToOperatorId } from './getCampaignOperators.helper';
 
 interface Context {
   kernel: KernelInterfaceResolver;
@@ -21,83 +21,83 @@ test.beforeEach((t) => {
   t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
 });
 
-test('getPolicySiretList: success', async (t) => {
+test('getPolicyUuidList: success', async (t) => {
   const response: PolicyFindResult = fakePolicy(1, ['12345678900001', '98765432100001']);
   t.context.kernelStub.resolves(response);
-  const result = await getPolicySiretList(t.context.kernel, 'apdf', 1);
+  const result = await getPolicyUuidList(t.context.kernel, 'apdf', 1);
   t.deepEqual(result, ['12345678900001', '98765432100001']);
 });
 
-test('getPolicySiretList: no policy found', async (t) => {
+test('getPolicyUuidList: no policy found', async (t) => {
   const message = 'policy:find not found';
   t.context.kernelStub.throws(new NotFoundException(message));
-  const error: RPCException = await t.throwsAsync(getPolicySiretList(t.context.kernel, 'apdf', 1), {
+  const error: RPCException = await t.throwsAsync(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
     instanceOf: NotFoundException,
   });
   t.is(error.rpcError?.data || '', message);
 });
 
-test('getPolicySiretList: no operators', async (t) => {
+test('getPolicyUuidList: no operators', async (t) => {
   const response: PolicyFindResult = fakePolicy(1, []);
   t.context.kernelStub.resolves(response);
-  const error: RPCException = await t.throwsAsync(getPolicySiretList(t.context.kernel, 'apdf', 1), {
+  const error: RPCException = await t.throwsAsync(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
     instanceOf: NotFoundException,
   });
-  t.is(error.rpcError?.data || '', 'No SIRET declared in policy 1');
+  t.is(error.rpcError?.data || '', 'No UUID declared in policy 1');
 });
 
-test('siretToOperatorId: success', async (t) => {
+test('uuidToOperatorId: success', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
-  const query: FindBySiretParams['siret'] = policy.params.operators;
-  const response: FindBySiretResult = [
-    { _id: 1, siret: '12345678900001' },
-    { _id: 2, siret: '98765432100001' },
+  const query: FindByUuidParams['uuid'] = policy.params.operators;
+  const response: FindByUuidResult = [
+    { _id: 1, uuid: '12345678900001' },
+    { _id: 2, uuid: '98765432100001' },
   ];
   t.context.kernelStub.resolves(response);
-  const result = await siretToOperatorId(t.context.kernel, 'apdf', query);
+  const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
   t.deepEqual(result, [1, 2]);
 });
 
-test('siretToOperatorId: empty', async (t) => {
+test('uuidToOperatorId: empty', async (t) => {
   const policy = fakePolicy(1, []);
-  const query: FindBySiretParams['siret'] = policy.params.operators;
-  const response: FindBySiretResult = [];
+  const query: FindByUuidParams['uuid'] = policy.params.operators;
+  const response: FindByUuidResult = [];
   t.context.kernelStub.resolves(response);
-  const result = await siretToOperatorId(t.context.kernel, 'apdf', query);
+  const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
   t.deepEqual(result, []);
 });
 
-test('siretToOperatorId: no matching SIRET', async (t) => {
+test('uuidToOperatorId: no matching UUID', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
-  const query: FindBySiretParams['siret'] = policy.params.operators;
-  const response: FindBySiretResult = [];
+  const query: FindByUuidParams['uuid'] = policy.params.operators;
+  const response: FindByUuidResult = [];
   t.context.kernelStub.resolves(response);
-  const result = await siretToOperatorId(t.context.kernel, 'apdf', query);
+  const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
   t.deepEqual(result, []);
 });
 
 test('getDeclaredOperators: success', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const operators = [
-    { _id: 1, siret: '12345678900001' },
-    { _id: 2, siret: '98765432100001' },
+    { _id: 1, uuid: '12345678900001' },
+    { _id: 2, uuid: '98765432100001' },
   ];
 
   t.context.kernelStub.onFirstCall().resolves(policy);
   t.context.kernelStub.onSecondCall().resolves(operators);
 
-  const result = await getDeclaredOperators(t.context.kernel, 'apdf', policy._id);
+  const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
   t.deepEqual(result, [1, 2]);
 });
 
-test('getDeclaredOperators: no matching SIRET', async (t) => {
+test('getDeclaredOperators: no matching UUID', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const operators = [];
 
   t.context.kernelStub.onFirstCall().resolves(policy);
   t.context.kernelStub.onSecondCall().resolves(operators);
 
-  const result = await getDeclaredOperators(t.context.kernel, 'apdf', policy._id);
+  const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
   t.deepEqual(result, []);
 });
 
@@ -108,7 +108,7 @@ test('getDeclaredOperators: empty', async (t) => {
   t.context.kernelStub.onFirstCall().resolves(policy);
   t.context.kernelStub.onSecondCall().resolves(operators);
 
-  const result = await getDeclaredOperators(t.context.kernel, 'apdf', policy._id);
+  const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
   t.deepEqual(result, []);
 });
 

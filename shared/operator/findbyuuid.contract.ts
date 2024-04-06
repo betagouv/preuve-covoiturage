@@ -1,15 +1,15 @@
 export interface ParamsInterface {
-  siret: string[];
+  uuid: string[];
 }
 
 export type ResultInterface = Array<{
   _id: number;
-  siret: string;
+  uuid: string;
 }>;
 
 export const handlerConfig = {
   service: 'operator',
-  method: 'findbysiret',
+  method: 'findbyuuid',
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
