@@ -20,7 +20,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
     max: 100,
     handler(req: Request, res: Response) {
       res.status(429).json({
-        error: { code: 429, message: 'Too many requests', ...req.rateLimit },
+        error: { code: 429, message: 'Too many requests' },
       });
     },
     ...opts,
