@@ -63,7 +63,6 @@
     "@types/nodemailer": "^6.4.14",
     "@types/pg": "^8.11.4",
     "@types/pg-cursor": "^2.7.2",
-    "@types/sinon": "^10.0.20",
     "@types/supertest": "^2.0.16",
     "@types/uuid": "^9.0.8",
     "ava": "^5.3.1",
@@ -74,7 +73,7 @@
     "nyc": "^15.1.0",
     "pino-pretty": "^11.0.0",
     "pm2": "^5.3.1",
-    "sinon": "^14.0.2",
+    "sinon": "^17.0.1",
     "supertest": "^6.3.4",
     "typescript": "^5.4.4"
   },
