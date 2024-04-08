@@ -1,4 +1,4 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 
@@ -106,7 +106,7 @@ export class SeedCommand implements CommandInterface {
         VALUES ( $1, $2, $3, $4 )
         RETURNING *
       `,
-      values: [is_driver, (Math.random() * 10000) | 0, faker.date.past(2), identity_id],
+      values: [is_driver, (Math.random() * 10000) | 0, faker.date.past({ years: 2 }), identity_id],
     });
 
     return result.rows[0];

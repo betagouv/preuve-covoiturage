@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { ExecutionContext, TestFn } from 'ava';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { mapFromCarpools } from '../helpers/mapFromCarpools';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
@@ -68,13 +68,13 @@ test.beforeEach((t) => {
   const configGetStub = sinon.stub(configInterfaceResolver, 'get');
   configGetStub.returns(6);
   t.context = {
-    OPERATOR_UUID: faker.datatype.uuid(),
+    OPERATOR_UUID: faker.string.uuid(),
     RPC_IDENTITIES: [
-      { _id: 1, uuid: faker.datatype.uuid() },
-      { _id: 2, uuid: faker.datatype.uuid() },
+      { _id: 1, uuid: faker.string.uuid() },
+      { _id: 2, uuid: faker.string.uuid() },
     ],
-    CERTIFICATE_UUID: faker.datatype.uuid(),
-    OPERATOR_NAME: faker.random.alpha(),
+    CERTIFICATE_UUID: faker.string.uuid(),
+    OPERATOR_NAME: faker.company.name(),
     OPERATOR_SUPPORT: faker.internet.email(),
     fakeKernelInterfaceResolver,
     configInterfaceResolver,
@@ -187,7 +187,7 @@ function stubCertificateCreateAndGetParams(t: ExecutionContext<Context>) {
   const params: ParamsInterface = {
     tz: 'Europe/Paris',
     operator_id: 4,
-    identity: { operator_user_id: faker.datatype.uuid() },
+    identity: { operator_user_id: faker.string.uuid() },
   };
 
   return params;

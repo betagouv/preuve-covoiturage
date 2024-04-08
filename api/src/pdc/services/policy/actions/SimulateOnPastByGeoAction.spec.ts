@@ -4,7 +4,7 @@ import sinon, { SinonStub } from 'sinon';
 import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction';
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { ResultInterface } from '@shared/policy/simulateOnPastGeo.contract';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
 interface Context {
   // Injected tokens
@@ -94,7 +94,7 @@ test('SimulateOnPastByGeoAction: should process trip with default time frame', a
       _id: 1,
       trip_id: '',
       operator_class: 'C',
-      datetime: faker.date.between(t.context.todayMinusSizMonthes, new Date()),
+      datetime: faker.date.between({ from: t.context.todayMinusSizMonthes, to: new Date() }),
       seats: 1,
       distance: 25000,
       start: { com: '08199', aom: '200041630', epci: '200041630', reg: '44' },
@@ -128,7 +128,7 @@ test('SimulateOnPastByGeoAction: should exclude trip with start and end not in 2
       _id: 1,
       trip_id: '',
       operator_class: 'C',
-      datetime: faker.date.between(t.context.todayMinusSizMonthes, new Date()),
+      datetime: faker.date.between({ from: t.context.todayMinusSizMonthes, to: new Date() }),
       seats: 1,
       distance: 25000,
       start: { com: '73290', aom: '84', epci: '200070340', reg: '84' },

@@ -1,4 +1,4 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { ResultInterface as GetCampaignResultInterface } from '@shared/policy/find.contract';
@@ -30,7 +30,7 @@ test.beforeEach((t) => {
 
   t.context.kernelInterfaceResolverStub = sinon.stub(t.context.kernelInterfaceResolver, 'call');
   t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
-  t.context.CAMPAIGN_NAME = faker.random.word();
+  t.context.CAMPAIGN_NAME = faker.word.noun();
 });
 
 test.afterEach((t) => {
@@ -133,7 +133,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date());
+    await t.context.checkCampaign.call(faker.number.int(), new Date(), new Date());
   });
 
   // Assert
@@ -148,7 +148,7 @@ test('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date());
+    await t.context.checkCampaign.call(faker.number.int(), new Date(), new Date());
   });
 
   // Assert
@@ -174,7 +174,7 @@ test('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), todayMinus3Years, todayMinus2Years);
+    await t.context.checkCampaign.call(faker.number.int(), todayMinus3Years, todayMinus2Years);
   });
 
   // Assert
