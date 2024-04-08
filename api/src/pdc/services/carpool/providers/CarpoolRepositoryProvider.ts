@@ -29,7 +29,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       `,
       values: [status, acquisition_id],
     };
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   public async importFromAcquisition(
@@ -48,14 +48,14 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
   ): Promise<void> {
     const client = await this.connection.getClient().connect();
     try {
-      await client.query('BEGIN');
+      await client.query<any>('BEGIN');
       for (const person of people) {
         await this.addParticipant(client, shared, person);
       }
       await this.addIncentives(client, shared.acquisition_id, people[0].datetime, shared.incentives);
-      await client.query('COMMIT');
+      await client.query<any>('COMMIT');
     } catch (e) {
-      await client.query('ROLLBACK');
+      await client.query<any>('ROLLBACK');
       throw e;
     } finally {
       client.release();
@@ -101,7 +101,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       values,
     };
 
-    await client.query(query);
+    await client.query<any>(query);
   }
 
   protected async addParticipant(
@@ -171,6 +171,6 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       ],
     };
 
-    await client.query(query);
+    await client.query<any>(query);
   }
 }

@@ -45,7 +45,7 @@ export class SeedUsersCommand implements CommandInterface {
       const { email, password, firstname, lastname, role, operator_id, territory_id } = this.users.shift();
 
       try {
-        const insert = await pgClient.query({
+        const insert = await pgClient.query<any>({
           text: `
               INSERT INTO auth.users
               ( email, password, firstname, lastname, role, operator_id, territory_id, status )

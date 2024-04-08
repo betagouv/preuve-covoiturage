@@ -66,7 +66,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
   public async count(params: ExportParams): Promise<number> {
     const [values, templates] = this.getListValuesAndTemplates(params);
-    const { rows } = await this.connection.getClient().query({
+    const { rows } = await this.connection.getClient().query<any>({
       text: new CarpoolListQuery().getCountText(templates),
       values,
     });

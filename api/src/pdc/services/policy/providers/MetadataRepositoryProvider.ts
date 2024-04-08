@@ -17,7 +17,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
     key: string,
     datetime?: Date,
   ): Promise<SerializedStoredMetadataInterface> {
-    const res = await client.query({
+    const res = await client.query<any>({
       text: `
         SELECT datetime, policy_id, key, value FROM ${this.table}
         WHERE policy_id = $1 AND key = $2 ${datetime ? 'AND datetime <= $3' : ''}
@@ -65,7 +65,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
       values,
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
     return;
   }
 
@@ -79,7 +79,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
       values: [policyId, ...(from ? [from] : [])],
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
     return;
   }
 }

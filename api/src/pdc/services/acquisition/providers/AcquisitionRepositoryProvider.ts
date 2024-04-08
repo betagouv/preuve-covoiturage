@@ -111,12 +111,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values,
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows;
   }
 
   async cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table}
           SET
@@ -157,7 +157,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       `,
       values: whereClauses.values,
     };
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (!result.rows.length) {
       return;
     }
@@ -242,8 +242,8 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     const poolClient = await pool.connect();
 
     try {
-      await poolClient.query('BEGIN');
-      const result = await poolClient.query(query);
+      await poolClient.query<any>('BEGIN');
+      const result = await poolClient.query<any>(query);
 
       return [
         result.rows,
@@ -256,12 +256,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         // commit and release
         async () => {
           console.info('  >>> COMMIT');
-          await poolClient.query('COMMIT');
+          await poolClient.query<any>('COMMIT');
           poolClient.release();
         },
       ];
     } catch (e) {
-      await poolClient.query('ROLLBACK');
+      await poolClient.query<any>('ROLLBACK');
       poolClient.release();
 
       throw e;
@@ -270,7 +270,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
   async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
     const pool = poolClient ?? (await this.connection.getClient().connect());
-    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
+    await pool.query<any>(poolClient ? 'SAVEPOINT results' : 'BEGIN');
     const values = data.reduce(
       (acc, d) => {
         const [acquisition_id, status, error_stage, errors] = acc;
@@ -317,11 +317,11 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     };
 
     try {
-      await pool.query(query);
-      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
+      await pool.query<any>(query);
+      await pool.query<any>(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
       return;
     } catch (e) {
-      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
+      await pool.query<any>(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
       if (!poolClient) {
         throw e;
       }
@@ -336,7 +336,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     const { start, end, limit, offset, operator_id, status } = search;
     const { carpool_status, acquisition_status, acquisition_error } = fromStatus(status);
     if (!carpool_status) {
-      const result = await this.connection.getClient().query({
+      const result = await this.connection.getClient().query<any>({
         text: `
           SELECT journey_id as operator_journey_id
           FROM ${this.table}
@@ -361,7 +361,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       });
       return result.rows;
     }
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT operator_journey_id
         FROM ${this.carpoolTable}
@@ -385,9 +385,9 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     payload: P,
   ): Promise<void> {
     const connection = await this.connection.getClient().connect();
-    await connection.query('BEGIN');
+    await connection.query<any>('BEGIN');
     try {
-      const oldPayloadResult = await connection.query({
+      const oldPayloadResult = await connection.query<any>({
         text: `
           SELECT payload FROM ${this.table}
           WHERE operator_id = $1 AND journey_id = $2 AND status = ANY($3)
@@ -401,16 +401,16 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       }
 
       const newPayload = { ...oldPayloadResult.rows[0].payload, ...payload };
-      await connection.query({
+      await connection.query<any>({
         text: `
           UPDATE ${this.table} SET payload = $4
           WHERE operator_id = $1 AND journey_id = $2 AND status = ANY($3)
         `,
         values: [search.operator_id, search.operator_journey_id, search.status, JSON.stringify(newPayload)],
       });
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();

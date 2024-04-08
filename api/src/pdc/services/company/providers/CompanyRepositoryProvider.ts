@@ -46,7 +46,7 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
       values: [id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       return undefined;
     }
@@ -83,7 +83,7 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
       values: [siret],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       return undefined;
     }
@@ -174,7 +174,7 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
       ],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create or update company (${data.siret})`);
     }

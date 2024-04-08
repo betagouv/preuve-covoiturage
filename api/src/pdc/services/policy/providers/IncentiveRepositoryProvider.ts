@@ -34,7 +34,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [from, to],
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   /**
@@ -57,7 +57,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       ],
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   async updateStatefulAmount(
@@ -117,7 +117,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [...values],
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   async *findDraftIncentive(
@@ -125,7 +125,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     batchSize = 100,
     from?: Date,
   ): AsyncGenerator<SerializedIncentiveInterface<number>[], void, void> {
-    const resCount = await this.connection.getClient().query({
+    const resCount = await this.connection.getClient().query<any>({
       text: `
       SELECT
         count(*)
@@ -268,7 +268,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values,
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
     return;
   }
 
@@ -283,13 +283,13 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [IncentiveStatusEnum.Draft],
     };
 
-    const res = await this.connection.getClient().query(query);
+    const res = await this.connection.getClient().query<any>(query);
     return res.rows[0]?.datetime;
   }
 
   // TODO dedup from PolicyRepositoryProvider.syncIncentiveSum
   async updateIncentiveSum(): Promise<void> {
-    await this.connection.getClient().query(`
+    await this.connection.getClient().query<any>(`
       UPDATE policy.policies p
       SET incentive_sum = policy_incentive_sum.amount
       FROM

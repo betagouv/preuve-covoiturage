@@ -62,7 +62,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: [email, userId],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount > 0) {
       throw new ConflictException(`A User already has the email ${email}`);
     }
@@ -111,7 +111,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       ],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create user (${JSON.stringify(data)})`);
@@ -137,7 +137,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       query.values.push(where.operator_id ? where.operator_id : where.territory_id);
     }
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       return false;
@@ -163,7 +163,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       throw new Error('Only territory_id and operator_id are supported keys');
     }
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         DELETE FROM ${this.table}
         WHERE ${key} = $1
@@ -194,7 +194,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return `${acc}${current}$${idx + 1}`;
     }, '');
 
-    const totalResult = await this.connection.getClient().query(totalQuery);
+    const totalResult = await this.connection.getClient().query<any>(totalQuery);
     const total = Number(totalResult.rows.length === 1 ? totalResult.rows[0].total : -1);
 
     let limit: number = (pagination && pagination.limit) || this.defaultLimit;
@@ -236,7 +236,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return `${acc}${current}$${idx + 1}`;
     }, '');
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return {
@@ -324,7 +324,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
       return `${acc}${current}$${idx + 1}`;
     }, '');
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -353,7 +353,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async findInactive(months = 6): Promise<UserLastLoginInterface[]> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT
           _id,
@@ -457,7 +457,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return `${acc}${current}$${idx + 1}`;
     }, '');
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       return undefined;
@@ -502,7 +502,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: [finalRole, _id],
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {
@@ -514,7 +514,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async hasUsers(): Promise<HasUsersResultInterface> {
-    const results = await this.connection.getClient().query({
+    const results = await this.connection.getClient().query<any>({
       text: `
         SELECT
           array_remove(array_agg(distinct operator_id), NULL) AS operators,
@@ -529,7 +529,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async touchLastLogin(_id: number): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE ${this.table} SET last_login_at = NOW() WHERE _id = $1`,
       values: [_id],
     });

@@ -21,7 +21,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
    * in the campaign for the given date range
    */
   public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         select cc.operator_id
         from policy.incentives pi
@@ -94,7 +94,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       values: [start_date, end_date, operator_id, campaign_id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     // return null results on missing data
     if (!result.rowCount) {

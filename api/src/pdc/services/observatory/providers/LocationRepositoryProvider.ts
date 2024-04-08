@@ -68,7 +68,7 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
         }
       `,
     };
-    const response: { rowCount: number; rows: LocationSqlResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: LocationSqlResultInterface } = await this.pg.getClient().query<any>(sql);
     const geomToHex = response.rows
       .map((r) => latLngToCell(r.lat, r.lon, params.zoom))
       .reduce((acc, curr) => ((acc[curr] = (acc[curr] || 0) + 1), acc), {});

@@ -277,13 +277,13 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     }
 
     query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`;
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
       throw new ConflictException();
     }
 
-    const siretResult = await this.connection.getClient().query({
+    const siretResult = await this.connection.getClient().query<any>({
       text: `SELECT siret FROM ${this.operatorTable} WHERE _id = $1`,
       values: [data.operator_id],
     });
@@ -346,13 +346,13 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       `,
     };
 
-    await this.connection.getClient().query(query);
+    await this.connection.getClient().query<any>(query);
   }
 
   async importSpecificApplicationIdentity(
     data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum },
   ): Promise<void> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table}
           SET identity_key = $1
@@ -378,7 +378,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     identity_key: string;
     operator_id: number;
   }): Promise<void> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table}
           SET identity_key = $1

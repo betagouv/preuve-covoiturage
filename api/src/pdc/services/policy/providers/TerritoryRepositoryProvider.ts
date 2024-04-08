@@ -24,7 +24,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
   async findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<TerritoryCodeInterface> {
     try {
-      const result = await this.connection.getClient().query({
+      const result = await this.connection.getClient().query<any>({
         text: `
           SELECT * FROM ${this.getByPointFunction}($1::float, $2::float)
         `,
@@ -53,7 +53,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       `,
       values: [_id],
     };
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount < 1) {
       throw new NotFoundException();
@@ -74,12 +74,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       `,
       values: [_id],
     };
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows;
   }
 
   async findBySelector(data: Partial<TerritoryCodeInterface>): Promise<number[]> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `SELECT _id FROM ${this.getBySelectorFunction}($1::varchar, $2::varchar)`,
       values: [data[TerritoryCodeEnum.Arr] || data[TerritoryCodeEnum.City], data[TerritoryCodeEnum.Mobility]],
     });
@@ -93,7 +93,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       `,
       values: [[id]],
     };
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       throw new NotFoundException();
     }

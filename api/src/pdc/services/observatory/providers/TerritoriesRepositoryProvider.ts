@@ -28,7 +28,9 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
         ORDER BY type,territory;
       `,
     };
-    const response: { rowCount: number; rows: TerritoriesListResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: TerritoriesListResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 
@@ -44,7 +46,7 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
         ORDER BY type,territory;
       `,
     };
-    const response = await this.pg.getClient().query(sql);
+    const response = await this.pg.getClient().query<any>(sql);
     return response.rows[0];
   }
 }

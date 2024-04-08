@@ -50,7 +50,7 @@ export class SeedCommand implements CommandInterface {
     // 3. créer une policy.incentives avec le carpool_id et un amount ~ 180
 
     try {
-      await this.db.query('BEGIN');
+      await this.db.query<any>('BEGIN');
 
       // Create driver and passenger identities
       const driver = await this.upsertIdentity(options.driver);
@@ -68,27 +68,27 @@ export class SeedCommand implements CommandInterface {
         await this.fakeIncentive(cpP._id);
       }
 
-      await this.db.query('COMMIT');
+      await this.db.query<any>('COMMIT');
 
       return 'Done!';
     } catch (e) {
       console.error('Failed to seed identities, carpools and incentives for certificates');
       console.error(e.message);
-      await this.db.query('ROLLBACK');
+      await this.db.query<any>('ROLLBACK');
     } finally {
       this.db.release();
     }
   }
 
   private async upsertIdentity(id: string): Promise<{ _id: number }> {
-    const result = await this.db.query({
+    const result = await this.db.query<any>({
       text: `SELECT _id FROM carpool.identities WHERE phone = $1 LIMIT 1;`,
       values: [id],
     });
 
     if (result.rowCount > 0) return result.rows[0];
 
-    const created = await this.db.query({
+    const created = await this.db.query<any>({
       text: ` INSERT INTO carpool.identities ( phone, over_18 ) VALUES ( $1, $2 ) RETURNING _id`,
       values: [id, true],
     });
@@ -99,7 +99,7 @@ export class SeedCommand implements CommandInterface {
   }
 
   private async fakeCarpool(identity_id: number, is_driver: boolean): Promise<any> {
-    const result = await this.db.query({
+    const result = await this.db.query<any>({
       text: `
         INSERT INTO carpool.carpools
         ( is_driver, distance, datetime, identity_id )
@@ -113,7 +113,7 @@ export class SeedCommand implements CommandInterface {
   }
 
   private async fakeIncentive(carpool_id: number): Promise<void> {
-    await this.db.query({
+    await this.db.query<any>({
       text: `
         INSERT INTO policy.incentives
         ( policy_id, status, carpool_id, amount )

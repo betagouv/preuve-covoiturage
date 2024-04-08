@@ -44,7 +44,9 @@ export class KeyfiguresRepositoryProvider implements KeyfiguresRepositoryInterfa
       WHERE b.territory = $4 AND a.type::varchar = $3::varchar AND a.year = $1 AND a.month = $2
       GROUP BY b.territory,b.l_territory,b.journeys,b.trips,b.has_incentive,b.occupation_rate;`,
     };
-    const response: { rowCount: number; rows: MonthlyKeyfiguresResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: MonthlyKeyfiguresResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 }

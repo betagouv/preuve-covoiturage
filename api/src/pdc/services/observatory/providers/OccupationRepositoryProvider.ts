@@ -25,7 +25,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   constructor(private pg: PostgresConnection) {}
 
   async insertOneMonthOccupation(params: InsertMonthlyOccupationParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         CALL ${this.insert_procedure}($1, $2);
@@ -34,7 +34,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   }
 
   async deleteOneMonthOccupation(params: DeleteMonthlyOccupationParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
@@ -65,7 +65,9 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
           : ''
       };`,
     };
-    const response: { rowCount: number; rows: MonthlyOccupationResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: MonthlyOccupationResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 
@@ -90,7 +92,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     };
     const response: { rowCount: number; rows: EvolMonthlyOccupationResultInterface } = await this.pg
       .getClient()
-      .query(sql);
+      .query<any>(sql);
     return response.rows;
   }
 
@@ -118,7 +120,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     };
     const response: { rowCount: number; rows: BestMonthlyTerritoriesResultInterface } = await this.pg
       .getClient()
-      .query(sql);
+      .query<any>(sql);
     return response.rows;
   }
 }

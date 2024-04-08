@@ -21,9 +21,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   async getLock(): Promise<{ _id: number; started_at: Date } | null> {
     const conn = await this.connection.getClient().connect();
-    await conn.query('BEGIN');
+    await conn.query<any>('BEGIN');
     try {
-      const res = await conn.query(`
+      const res = await conn.query<any>(`
         SELECT true
         FROM ${this.lockTable}
         WHERE stopped_at IS NULL AND started_at >= NOW() - '23 hours'::interval
@@ -34,18 +34,18 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       if (res.rowCount >= 1) {
         return null;
       }
-      await conn.query(`
+      await conn.query<any>(`
         UPDATE ${this.lockTable} SET stopped_at = NOW(), success = false WHERE stopped_at IS NULL
       `);
-      const lock = await conn.query(`
+      const lock = await conn.query<any>(`
         INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
         RETURNING _id, started_at
       `);
       if (!lock.rowCount) throw new Error('Failed to acquire lock');
-      await conn.query('COMMIT');
+      await conn.query<any>('COMMIT');
       return lock.rows[0];
     } catch (e) {
-      await conn.query('ROLLBACK');
+      await conn.query<any>('ROLLBACK');
       throw e;
     } finally {
       conn.release();
@@ -62,7 +62,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       ),
     };
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE ${this.lockTable} SET
         stopped_at = now(),
         success = $1,
@@ -78,7 +78,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   async clearDeadLocks(): Promise<void> {
     console.warn(`Clearing dead locks from ${this.lockTable} table`);
 
-    const res = await this.connection.getClient().query(`
+    const res = await this.connection.getClient().query<any>(`
       UPDATE ${this.lockTable}
       SET stopped_at = NOW(), success = false, data = '{"command":"campaign:finalize --clear","manual":true}'
       WHERE stopped_at IS NULL
@@ -115,7 +115,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [id, ...(territoryId ? [territoryId] : [])],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -147,7 +147,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [data.territory_id, data.start_date, data.end_date, data.name, data.status, data.handler],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
@@ -172,7 +172,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [data._id, data.name, data.start_date, data.end_date, data.handler, data.status],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     if (result.rowCount !== 1) {
       throw new NotFoundException(`campaign not found (${data._id})`);
     }
@@ -190,7 +190,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new NotFoundException(`Campaign not found (${id})`);
@@ -200,7 +200,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   }
 
   async listApplicablePoliciesId(): Promise<number[]> {
-    const results = await this.connection.getClient().query({
+    const results = await this.connection.getClient().query<any>({
       text: 'SELECT _id FROM policy.policies WHERE status = $1',
       values: [PolicyStatusEnum.ACTIVE],
     });
@@ -273,7 +273,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       `,
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows;
   }
 
@@ -305,7 +305,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [policy_id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rowCount ? result.rows.map((o: { operator_id: number }) => o.operator_id) : [];
   }
 
@@ -374,14 +374,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         `for campaign ${campaign_id}`,
     );
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE policy.policy_metas SET value = $2 WHERE _id = $1`,
       values: [key_id, incentive_sum],
     });
 
     // update incentive_sum in the policy
     console.info(`${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`);
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE policy.policies SET incentive_sum = $2 WHERE _id = $1`,
       values: [campaign_id, incentive_sum],
     });
@@ -393,7 +393,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
    * For each campaign, check if it is still active and update its status
    */
   async updateAllCampaignStatuses(): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table} SET status = $1
         WHERE end_date < CURRENT_TIMESTAMP AND status = $2

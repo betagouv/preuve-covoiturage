@@ -35,7 +35,7 @@ export class RecipientRepository implements RecipientRepositoryInterface {
   constructor(protected connection: PostgresConnection) {}
 
   public async create(data: CreateRecipientData): Promise<number> {
-    const { rows } = await this.connection.getClient().query({
+    const { rows } = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.table}
         (export_id, email, fullname, message)
@@ -47,7 +47,7 @@ export class RecipientRepository implements RecipientRepositoryInterface {
   }
 
   public async anonymize(export_id: number): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table}
         SET

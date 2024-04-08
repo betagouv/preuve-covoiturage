@@ -72,7 +72,7 @@ export class Migrator {
     if (!this.connection) {
       await this.up();
     }
-    await this.connection.getClient().query(`SET session_replication_role = 'replica'`);
+    await this.connection.getClient().query<any>(`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
       console.debug(`Seeding company ${company.legal_name}`);
@@ -129,7 +129,7 @@ export class Migrator {
             - policy.incentives
             +++ VIEWS +++ 
     */
-    await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+    await this.connection.getClient().query<any>(`SET session_replication_role = 'origin'`);
   }
 
   protected async *dataFromCsv<P>(filename: string, options: ParseOptions = {}): AsyncIterator<P> {
@@ -151,7 +151,7 @@ export class Migrator {
     do {
       const data = await cursor.next();
       if (data.value && Array.isArray(data.value)) {
-        await this.connection.getClient().query({
+        await this.connection.getClient().query<any>({
           text: `INSERT INTO ${tablename} VALUES (${data.value.map((_, i) => `$${i + 1}`).join(', ')})`,
           values: data.value,
         });
@@ -161,7 +161,7 @@ export class Migrator {
   }
 
   async seedCarpool(carpool: Carpool) {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO carpool.identities 
           (uuid, travel_pass_user_id, over_18, phone_trunc)
@@ -182,7 +182,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO carpool.carpools 
           (
@@ -235,7 +235,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO acquisition.acquisitions
           (
@@ -251,15 +251,19 @@ export class Migrator {
       `,
       values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
     });
-    await this.connection
-      .getClient()
-      .query(
-        `SELECT setval('acquisition.acquisitions__id_seq', (SELECT max(_id) FROM acquisition.acquisitions), true)`,
-      );
+
+    await this.connection.getClient().query<any>(`
+        SELECT
+          setval(
+            'acquisition.acquisitions__id_seq',
+            (SELECT max(_id) FROM acquisition.acquisitions),
+            true
+          )
+        `);
   }
 
   async seedCompany(company: Company) {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO company.companies
           (_id, siret, siren, nic, legal_name, company_naf_code, establishment_naf_code, headquarter)
@@ -289,7 +293,7 @@ export class Migrator {
   }
 
   async seedOperator(operator: Operator) {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO operator.operators
           (_id, name, legal_name, siret, company, address, bank, contacts, uuid)
@@ -321,7 +325,7 @@ export class Migrator {
   }
 
   async seedUser(user: User) {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO auth.users
           (email, firstname, lastname, password, status, role, territory_id, operator_id)
@@ -369,7 +373,7 @@ export class Migrator {
       `,
       values,
     };
-    const resultData = await this.connection.getClient().query(query);
+    const resultData = await this.connection.getClient().query<any>(query);
     this.syncSelector(resultData.rows[0]._id, territory_group.selector);
   }
 
@@ -386,7 +390,7 @@ export class Migrator {
         },
         [[], [], []],
       );
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         DELETE FROM territory.territory_group_selector
         WHERE territory_group_id = $1
@@ -394,7 +398,7 @@ export class Migrator {
       values: [groupId],
     });
 
-    const query = {
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO territory.territory_group_selector (
           territory_group_id,
@@ -403,9 +407,7 @@ export class Migrator {
         ) 
         SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])`,
       values,
-    };
-
-    await this.connection.getClient().query(query);
+    });
   }
 
   async seedTerritory() {
