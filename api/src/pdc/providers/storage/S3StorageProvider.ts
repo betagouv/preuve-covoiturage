@@ -9,11 +9,10 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common';
+import { env } from '@ilos/core';
 import fs from 'fs';
 import { S3ObjectList } from '.';
-
-import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
-import { env } from '@ilos/core';
 import { filenameFromPath, getBucketName } from './helpers/buckets';
 import { BucketName } from './interfaces/BucketName';
 
@@ -55,6 +54,8 @@ export class S3StorageProvider implements ProviderInterface {
     if (folder) {
       params.Prefix = folder;
     }
+
+    console.info(`[S3StorageProvider:list] bucket ${params.Bucket}/${folder}`);
 
     const command = new ListObjectsV2Command(params);
     const result: ListObjectsV2CommandOutput = await this.s3Instances.get(bucket).send(command);
