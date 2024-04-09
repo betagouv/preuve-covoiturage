@@ -58,8 +58,8 @@ export class FindAction extends AbstractAction {
       },
     );
 
-    if (!result.params.operators.includes(operator.siret)) {
-      throw new ForbiddenException('Invalid permissions');
+    if (!result.params.operators.includes(operator.uuid)) {
+      throw new ForbiddenException(`Operator ${operator.uuid} is not allowed to access policy #${params._id}`);
     }
     return result;
   }
