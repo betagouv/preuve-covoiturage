@@ -1,14 +1,11 @@
 {
   "name": "worker",
-  "script": "../../ilos/framework/dist/cli.js",
+  "script": "dist/main.js",
   "args": "queue redis://redis:6379",
-  "cwd": "proxy/dist",
   "watch_delay": 1000,
   "watch": [
-    "../../ilos/*/dist/**/*.js",
-    "../../proxy/dist/**/*.js",
-    "../../providers/*/dist/**/*.js",
-    "../../services/*/dist/**/*.js"
+    "dist/**/*.js"
+
   ],
   "ignore_watch": [
     "node_modules",

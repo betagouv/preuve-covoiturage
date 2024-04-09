@@ -40,7 +40,7 @@
     "**/*.postman_collection.json": true,
     "**/node_modules/**": false,
     "**/*.d.ts": true,
-    "api/**/dist": true,
+    // "api/**/dist": true,
     "db": true
   }
 }

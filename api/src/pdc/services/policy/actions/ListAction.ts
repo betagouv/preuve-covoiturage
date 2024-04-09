@@ -68,6 +68,6 @@ export class ListAction extends AbstractAction {
   }
 
   private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
-    return p.params?.operators?.includes(operator.siret);
+    return p.params?.operators?.includes(operator.uuid);
   }
 }

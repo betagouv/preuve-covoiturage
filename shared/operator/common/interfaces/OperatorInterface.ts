@@ -7,6 +7,7 @@ export interface OperatorInterface {
   name: string;
   legal_name: string;
   siret: string;
+  uuid: string;
   company?: CompanyInterface;
   address?: AddressInterface;
   bank?: BankInterface;

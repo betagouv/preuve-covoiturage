@@ -48,6 +48,7 @@ test.serial.skip('should create an operator', async (t) => {
     name: 'Toto',
     legal_name: 'Toto inc.',
     siret: '1234567890123',
+    uuid: '83c833b0-4b51-4793-96db-f9679c957a38',
     contacts: {},
   };
 
