@@ -1,14 +1,10 @@
 {
   "name": "api",
-  "script": "../../ilos/framework/dist/cli.js",
+  "script": "dist/main.js",
   "args": "http 8080",
-  "cwd": "proxy/dist",
   "watch_delay": 1000,
   "watch": [
-    "../../ilos/*/dist/**/*.js",
-    "../../proxy/dist/**/*.js",
-    "../../providers/*/dist/**/*.js",
-    "../../services/*/dist/**/*.js"
+    "dist/**/*.js"
   ],
   "ignore_watch": [
     "node_modules",
