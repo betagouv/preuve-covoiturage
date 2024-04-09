@@ -67,7 +67,7 @@ export class CarpoolListQuery extends Query {
         pi.campaigns,
 
         -- CEE application data
-        cee._id IS NOT NULL as demande_cee
+        cee._id IS NOT NULL as cee_application
 
       FROM carpool.carpools cc
 
@@ -200,7 +200,7 @@ export class CarpoolListQuery extends Query {
       trips.passenger_contribution,
 
       -- CEE application data
-      trips.demande_cee,
+      trips.cee_application,
 
       -- campaigns (for computation)
       trips.campaigns,

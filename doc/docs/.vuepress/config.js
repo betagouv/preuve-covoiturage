@@ -29,12 +29,16 @@ module.exports = {
                   path: 'acces',
                 },
                 {
-                  title: "Référence V3",
+                  title: "Référence API V3.0",
                   path: 'api-v3',
                 },
                 {
-                  title: "Référence V2 (dépréciée)",
+                  title: "Référence API V2.0 (dépréciée)",
                   path: 'api-v2',
+                },
+                {
+                  title: "Exports de trajets",
+                  path: 'exports-de-trajets',
                 },
                 {
                   title: 'Limites',
