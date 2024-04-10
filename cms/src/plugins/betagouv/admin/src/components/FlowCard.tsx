@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Button } from '@strapi/design-system';
 import getTrad from '../utils/getTrad';
 import { useIntl } from "react-intl"
