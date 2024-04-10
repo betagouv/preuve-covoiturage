@@ -1,6 +1,6 @@
+import { ConfigInterfaceResolver, RPCException } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
-import { ConfigInterfaceResolver } from '@ilos/common';
 
 import { AjvValidator } from './AjvValidator';
 
@@ -34,7 +34,7 @@ class FakeObject {
   }
 }
 
-test('Json Schema provider: should work', async (t) => {
+test('should work', async (t) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema',
@@ -52,7 +52,7 @@ test('Json Schema provider: should work', async (t) => {
   t.true(result);
 });
 
-test('Json Schema provider: should raise exception if data unvalid', async (t) => {
+test('should raise exception on invalid data', async (t) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema',
@@ -66,11 +66,12 @@ test('Json Schema provider: should raise exception if data unvalid', async (t) =
   };
 
   t.context.provider.registerValidator(schema, FakeObject);
-  const err = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
-  t.is(err.message, 'data/hello must be string');
+  const err: RPCException = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
+  t.is(err.message, 'Invalid params');
+  t.is(err.rpcError.data[0], '/hello: must be string');
 });
 
-test('Json Schema provider: should work with ref', async (t) => {
+test('should work with ref', async (t) => {
   const subSchema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema.world',
@@ -99,7 +100,7 @@ test('Json Schema provider: should work with ref', async (t) => {
   t.true(result);
 });
 
-test('Json Schema provider: should work with inherance', async (t) => {
+test('should work with inheritance', async (t) => {
   class FakeObjectExtended extends FakeObject {}
 
   const schema = {
