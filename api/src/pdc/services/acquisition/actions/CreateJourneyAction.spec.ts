@@ -1,12 +1,12 @@
+import { InvalidParamsException, ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
 import test from 'ava';
 import sinon, { SinonStubbedInstance } from 'sinon';
-import { CreateJourneyAction } from './CreateJourneyAction';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
+import { CreateJourneyAction } from './CreateJourneyAction';
 
-function bootstap(): {
+function bootstrap(): {
   action: CreateJourneyAction;
   repository: SinonStubbedInstance<AcquisitionRepositoryProvider>;
   validator: SinonStubbedInstance<ValidatorInterfaceResolver>;
@@ -15,11 +15,12 @@ function bootstap(): {
   const validator = sinon.createStubInstance(ValidatorInterfaceResolver);
   const service = sinon.createStubInstance(CarpoolAcquisitionService);
   const action = new CreateJourneyAction(repository, validator, service);
+
   return { action, repository, validator };
 }
 
 test('should return repository data if validator not fail', async (t) => {
-  const { action, repository, validator } = bootstap();
+  const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = '1';
   const repositoryResponse = [{ operator_journey_id, created_at }];
@@ -44,7 +45,6 @@ test('should return repository data if validator not fail', async (t) => {
     },
   };
   const result = await action.call(inputData);
-  t.log(result);
   t.deepEqual(result, { operator_journey_id, created_at });
   const { api_version, ...payload } = inputData.params;
   t.true(validator.validate.calledOnceWith(payload));
@@ -61,12 +61,12 @@ test('should return repository data if validator not fail', async (t) => {
 });
 
 test('should fail if validator fail', async (t) => {
-  const { action, repository, validator } = bootstap();
+  const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = '1';
   const repositoryResponse = [{ operator_journey_id, created_at }];
   repository.createOrUpdateMany.resolves(repositoryResponse);
-  const validatorError = new Error('wrong');
+  const validatorError = new InvalidParamsException('wrong');
   validator.validate.rejects(validatorError);
   const inputData = {
     method: '',
@@ -105,7 +105,7 @@ test('should fail if validator fail', async (t) => {
 });
 
 test('should fail if date validation fail', async (t) => {
-  const { action, repository, validator } = bootstap();
+  const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = '1';
   const repositoryResponse = [{ operator_journey_id, created_at }];
@@ -152,7 +152,7 @@ test('should fail if date validation fail', async (t) => {
 });
 
 test('should fail if journey already registred', async (t) => {
-  const { action, repository, validator } = bootstap();
+  const { action, repository, validator } = bootstrap();
   const operator_journey_id = '1';
   repository.createOrUpdateMany.resolves([]);
   const inputData = {

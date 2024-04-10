@@ -1,10 +1,16 @@
 import * as ajv from 'ajv';
-import ajvKeywords from 'ajv-keywords';
-import addFormats from 'ajv-formats';
 import ajvErrors from 'ajv-errors';
+import addFormats from 'ajv-formats';
+import ajvKeywords from 'ajv-keywords';
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
-import { provider, ConfigInterfaceResolver, NewableType, ValidatorInterface } from '@ilos/common';
+import {
+  ConfigInterfaceResolver,
+  InvalidParamsException,
+  NewableType,
+  ValidatorInterface,
+  provider,
+} from '@ilos/common';
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
@@ -97,10 +103,16 @@ export class AjvValidator implements ValidatorInterface {
       throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);
-    const valid = await validator(data);
-    if (!valid) throw new Error(this.ajv.errorsText(validator.errors));
+    const valid = validator(data);
+
+    if (!valid) throw new InvalidParamsException(this.mapErrors(validator.errors));
 
     return true;
+  }
+
+  protected mapErrors(errors: ajv.ErrorObject[]): string[] {
+    if (!errors || !Array.isArray(errors)) return [];
+    return errors.map((error) => `${error.instancePath}: ${error.message}`);
   }
 
   protected addFormat(name: string, format: ajv.Format): ValidatorInterface {
