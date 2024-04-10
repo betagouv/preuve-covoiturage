@@ -1,15 +1,15 @@
-import anyTest, { TestFn } from 'ava';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { ServiceProvider } from '../ServiceProvider';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplication.contract';
 import { ContextType } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
+import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
 import {
   ceeJourneyTypeEnumSchema,
   lastNameTruncSchema,
   phoneTruncSchema,
   timestampSchema,
 } from '@shared/cee/common/ceeSchema';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplication.contract';
+import anyTest, { TestFn } from 'ava';
+import { ServiceProvider } from '../ServiceProvider';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,
@@ -54,7 +54,7 @@ test.serial(
   [],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, 'data must NOT have fewer than 1 items');
+    t.is(e.rpcError?.data[0], ': must NOT have fewer than 1 items');
   },
   defaultContext,
 );
@@ -64,7 +64,7 @@ test.serial(
   [{ ...defaultPayload, last_name_trunc: 'abcd' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/0/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -74,7 +74,7 @@ test.serial(
   [{ ...defaultPayload, journey_type: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/0/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -84,7 +84,7 @@ test.serial(
   [{ ...defaultPayload, datetime: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/datetime ${timestampSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/0/datetime: ${timestampSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -94,7 +94,7 @@ test.serial(
   [{ ...defaultPayload, phone_trunc: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/phone_trunc ${phoneTruncSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/0/phone_trunc: ${phoneTruncSchema.errorMessage}`);
   },
   defaultContext,
 );

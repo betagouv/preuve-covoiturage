@@ -1,10 +1,6 @@
-import anyTest, { TestFn } from 'ava';
-import { createSign } from 'crypto';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { ServiceProvider } from '../ServiceProvider';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/registerApplication.contract';
-import { config } from '../config';
 import { ContextType } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
+import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
@@ -13,7 +9,11 @@ import {
   phoneTruncSchema,
   timestampSchema,
 } from '@shared/cee/common/ceeSchema';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/registerApplication.contract';
+import anyTest, { TestFn } from 'ava';
+import { createSign } from 'crypto';
+import { ServiceProvider } from '../ServiceProvider';
+import { config } from '../config';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,
@@ -71,7 +71,7 @@ test.serial(
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -81,7 +81,7 @@ test.serial(
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -91,7 +91,7 @@ test.serial(
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/driving_license ${drivingLicenseSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -101,10 +101,10 @@ test.serial(
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(
-      e.rpcError?.data,
-      `data/operator_journey_id ${operatorJourneyIdSchema.errorMessage}, data must match "then" schema`,
-    );
+    t.deepEqual(e.rpcError?.data, [
+      `/operator_journey_id: ${operatorJourneyIdSchema.errorMessage}`,
+      ': must match "then" schema',
+    ]);
   },
   defaultContext,
 );
@@ -114,7 +114,7 @@ test.serial(
   { ...defaultLongPayload, datetime: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/datetime ${timestampSchema.errorMessage}, data must match "then" schema`);
+    t.deepEqual(e.rpcError?.data, [`/datetime: ${timestampSchema.errorMessage}`, ': must match "then" schema']);
   },
   defaultContext,
 );
@@ -124,7 +124,7 @@ test.serial(
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/phone_trunc ${phoneTruncSchema.errorMessage}, data must match "then" schema`);
+    t.deepEqual(e.rpcError?.data, [`/phone_trunc: ${phoneTruncSchema.errorMessage}`, ': must match "then" schema']);
   },
   defaultContext,
 );
@@ -165,7 +165,6 @@ test.serial(
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
   (e: any, t) => {
-    t.log(e);
     t.is(e.message, 'Conflict');
     t.like(e.rpcError.data, { datetime: '2022-06-15T00:15:00.000Z' });
   },
@@ -176,7 +175,6 @@ test.serial(
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
   (e: any, t) => {
-    t.log(e);
     t.is(e.message, 'Not found');
   },
   defaultContext,
@@ -186,7 +184,6 @@ test.serial('Should have register errors', async (t) => {
   const result = await t.context.db.connection.getClient().query(`
     SELECT * FROM cee.cee_application_errors ORDER BY created_at
   `);
-  t.log(result.rows);
   t.is(result.rowCount, 3);
   t.like(result.rows[0], { error_type: 'date' });
   t.like(result.rows[1], { error_type: 'conflict' });

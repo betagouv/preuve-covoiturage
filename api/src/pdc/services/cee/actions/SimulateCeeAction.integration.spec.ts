@@ -79,7 +79,7 @@ test.serial(
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -89,7 +89,7 @@ test.serial(
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -99,7 +99,7 @@ test.serial(
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/driving_license ${drivingLicenseSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -109,7 +109,7 @@ test.serial(
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/phone_trunc ${phoneTruncSchema.errorMessage}`);
+    t.is(e.rpcError?.data[0], `/phone_trunc: ${phoneTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -122,7 +122,6 @@ test.serial(
   error,
   defaultLongPayload,
   (e: any, t) => {
-    t.log(e);
     t.is(e.message, 'Conflict');
     t.like(e.rpcError.data, { datetime: '2022-01-02T00:00:00.000Z' });
   },

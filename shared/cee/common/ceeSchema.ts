@@ -26,7 +26,7 @@ export const identityKeySchema = {
 
 export const phoneTruncSchema = {
   macro: 'phonetrunc',
-  errorMessage: 'must be a valid trunced phone number',
+  errorMessage: 'must be a valid truncated phone number',
 };
 
 export const lastNameTruncSchema = {
@@ -72,14 +72,14 @@ export const drivingLicenseSchema = {
       maxLength: 64,
     },
   ],
-  errorMessage: 'must be a valid driving license id',
+  errorMessage: 'must be a valid driving_license_id',
 };
 
 export const timestampSchema = {
   type: 'string',
   format: 'date-time',
   maxLength: 64,
-  errorMessage: 'must be a valid is ISO 8601 UTC date',
+  errorMessage: 'must be a valid ISO 8601 UTC date',
 };
 
 export const journeyIdSchema = {
@@ -88,7 +88,7 @@ export const journeyIdSchema = {
 
 export const operatorJourneyIdSchema = {
   macro: 'varchar',
-  errorMessage: 'must be a valid operator journey id',
+  errorMessage: 'must be a valid operator_journey_id',
 };
 
 export const statusSchema = {

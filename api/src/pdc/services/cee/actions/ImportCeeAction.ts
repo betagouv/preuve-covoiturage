@@ -28,7 +28,7 @@ export class ImportCeeAction extends AbstractAction {
     const operator_id = getOperatorIdOrFail(context);
     const data = params.map((d, i) => ({
       ...d,
-      datetime: getDateOrFail(d.datetime, `data/${i}/datetime ${timestampSchema.errorMessage}`),
+      datetime: getDateOrFail(d.datetime, `data/${i}/datetime: ${timestampSchema.errorMessage}`),
     }));
 
     const result: ResultInterface = {
