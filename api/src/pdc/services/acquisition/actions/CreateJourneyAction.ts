@@ -38,6 +38,7 @@ export class CreateJourneyAction extends AbstractAction {
     // validate the payload manually to log rejected journeys
     try {
       await this.validate(apiVersionString, payload);
+
       const acquisitions = await this.repository.createOrUpdateMany([
         {
           operator_id,
@@ -48,9 +49,11 @@ export class CreateJourneyAction extends AbstractAction {
           payload,
         },
       ]);
+
       if (acquisitions.length !== 1) {
         throw new ConflictException('Journey already registered');
       }
+
       if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
         await this.acquisitionService.registerRequest({
           api_version,
@@ -90,15 +93,18 @@ export class CreateJourneyAction extends AbstractAction {
           incentives: payload.incentives,
         });
       }
+
       return {
         operator_journey_id: acquisitions[0].operator_journey_id,
         created_at: acquisitions[0].created_at,
       };
     } catch (e) {
+      console.error(e.message, { operator_journey_id, operator_id });
+
       if (e instanceof ConflictException) {
         throw e;
       }
-      console.error(e.message, { journey_id: operator_journey_id, operator_id });
+
       await this.repository.createOrUpdateMany([
         {
           operator_id,
@@ -112,6 +118,7 @@ export class CreateJourneyAction extends AbstractAction {
           errors: [e],
         },
       ]);
+
       throw e;
     }
   }
