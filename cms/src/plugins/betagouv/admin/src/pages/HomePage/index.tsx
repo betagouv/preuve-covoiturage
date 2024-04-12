@@ -17,9 +17,7 @@ const HomePage = () => {
         />
       </Box>
       <GridLayout>
-      <FlowCard id={'flush_cache'} />
-      <FlowCard id={'deploy'} />
-      { !isLoading && flows.map((f,i) => <FlowCard id={f} key={i} />)}
+        { !isLoading && flows.map((f) => <FlowCard id={f} key={f} />)}
       </GridLayout>
     </>
   );
