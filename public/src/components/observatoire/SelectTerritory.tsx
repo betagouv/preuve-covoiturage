@@ -4,19 +4,11 @@ import TextField from '@mui/material/TextField';
 import { createFilterOptions } from '@mui/material';
 import { fetchSearchAPI } from '@/helpers/search';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
-import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
-
-type TerritorySearchOptions = {
-  territory: string,
-  l_territory:string,
-  type: string,
-};
 
 export default function SelectTerritory() {
-  const searchParams = useSearchParams();
   const { dashboard } =useContext(DashboardContext)
   const router = useRouter();
   const defaultOption = {
@@ -24,7 +16,7 @@ export default function SelectTerritory() {
     l_territory: dashboard.params.name,
     type: dashboard.params.type
   }
-  const [options, setOptions] = useState<TerritorySearchOptions[]>([defaultOption]);
+  const [options, setOptions] = useState<TerritoryListInterface[]>([defaultOption]);
   const search =  async (v: string | null) => {
     const query = {
       queries: [
@@ -45,7 +37,7 @@ export default function SelectTerritory() {
     })).flat());
   };
 
-  const getUrl = (option?:TerritorySearchOptions) => {
+  const getUrl = (option?:TerritoryListInterface) => {
     return `/observatoire/territoire${option ? `?code=${option.territory}&type=${option.type}` : ''}`
   }
   
@@ -55,7 +47,6 @@ export default function SelectTerritory() {
       id='select-territory'
       options={options}
       noOptionsText={'Pas de résultats'}
-      value={options[0]}
       getOptionLabel={(option) => `${option.l_territory} (${option.type})`}
       renderOption={(props, option) => {
         return (
@@ -64,10 +55,11 @@ export default function SelectTerritory() {
           </li>
         )
       }}
-      renderInput={(params) => <TextField {...params} label='Territoire' />}
+      renderInput={(params) => <TextField {...params} label='Chercher mon territoire' />}
       onInputChange={async(e, v) => {
         await search(v);
       }}
+      
       onChange={(e,v) =>{
         router.push(getUrl(v!))
         }
