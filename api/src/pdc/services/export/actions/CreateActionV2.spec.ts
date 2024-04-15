@@ -3,7 +3,6 @@ import { ParamsInterfaceV2, ParamsInterfaceV3 } from '@shared/export/create.cont
 import anyTest, { TestFn } from 'ava';
 import { SinonStub, stub } from 'sinon';
 import { CreateActionV2 } from './CreateActionV2';
-import { ExportTarget } from '../models/Export';
 
 // ----------------------------------------------------------------------------------------
 // SETUP
@@ -57,7 +56,7 @@ test('CreateActionV2 should convert params to V3', async (t) => {
       },
     },
 
-    // pass a operator_id in the list
+    // pass an operator_id in the list
     {
       context: {
         channel: { service: 'test' },
@@ -117,6 +116,7 @@ test('CreateActionV2 should convert params to V3', async (t) => {
     },
   ];
 
+  // run the tests
   for (const { v2, v3, context } of configs) {
     const action = new CreateActionV2(t.context.kernel);
     t.deepEqual(await action['handle'](v2, context), v3);

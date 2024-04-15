@@ -1,5 +1,6 @@
 import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { toISOString } from '@pdc/helpers/dates.helper';
 import { copyFromContextMiddleware } from '@pdc/providers/middleware';
 import {
   handlerConfigV2,
@@ -27,12 +28,14 @@ export class CreateActionV2 extends AbstractAction {
   }
 
   protected async handle(paramsV2: ParamsInterfaceV2, context: ContextType): Promise<ResultInterfaceV2> {
+    // dates are sent to the API as strings
+    // override date params as string to please AJV.
     type AJVParams = Omit<ParamsInterfaceV3, 'start_at' | 'end_at'> & { start_at: string; end_at: string };
 
     const paramsV3: AJVParams = {
       tz: paramsV2.tz,
-      start_at: paramsV2.date.start.toISOString(),
-      end_at: paramsV2.date.end.toISOString(),
+      start_at: toISOString(paramsV2.date.start),
+      end_at: toISOString(paramsV2.date.end),
       operator_id: paramsV2.operator_id || [],
       created_by: context.call.user._id,
     };
