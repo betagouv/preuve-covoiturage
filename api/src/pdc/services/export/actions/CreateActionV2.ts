@@ -44,6 +44,9 @@ export class CreateActionV2 extends AbstractAction {
       paramsV3.geo_selector = paramsV2.geo_selector;
     }
 
-    await this.kernel.call<AJVParams, ResultInterfaceV3>(signatureV3, paramsV3, context);
+    const resultV3 = await this.kernel.call<AJVParams, ResultInterfaceV3>(signatureV3, paramsV3, context);
+    const resultV2 = resultV3; // TODO convert V3 -> V2
+
+    return resultV2;
   }
 }

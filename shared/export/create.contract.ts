@@ -17,7 +17,7 @@ export type ParamsInterfaceV2 = {
   geo_selector?: TerritorySelectorsInterface;
 };
 
-export type ResultInterfaceV2 = void;
+export type ResultInterfaceV2 = any; // TODO convert V3 return to V2 return
 
 export type ParamsInterfaceV3 = {
   tz: Timezone;
