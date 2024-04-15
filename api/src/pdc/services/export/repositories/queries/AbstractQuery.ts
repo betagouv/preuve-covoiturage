@@ -1,6 +1,6 @@
 export type QueryTemplates<T> = Map<T, string>;
 
-export abstract class Query {
+export abstract class AbstractQuery {
   protected abstract query: string;
   protected abstract countQuery: string;
 

@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
-import { Query } from "./Query.ts";
+import { AbstractQuery } from './AbstractQuery';
 
 export type TemplateKeys = "geo_selectors" | "operator_id";
 
-export class CarpoolListQuery extends Query {
+export class CarpoolListQuery extends AbstractQuery {
   protected countQuery = `
     SELECT count(*) as count
     FROM carpool.carpools cc
