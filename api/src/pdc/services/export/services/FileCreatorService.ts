@@ -43,9 +43,9 @@ export abstract class BuildServiceInterfaceResolver
 }
 
 @provider({
-  identifier: BuildServiceInterfaceResolver,
+  identifier: FileCreatorServiceInterfaceResolver,
 })
-export class BuildService {
+export class FileCreatorService {
   protected fileWriter: XLSXWriter;
   protected params: ExportParams;
   protected progress: ExportProgress;

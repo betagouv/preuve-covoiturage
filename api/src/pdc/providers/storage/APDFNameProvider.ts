@@ -1,6 +1,8 @@
-import { provider, ProviderInterface } from "@/ilos/common/index.ts";
-import { toTzString } from "@/pdc/helpers/dates.helper.ts";
-import { os, path } from "@/deps.ts";
+import { provider, ProviderInterface } from '@ilos/common';
+import { toTzString } from '@pdc/helpers/date.helper';
+import { sanitize } from '@pdc/helpers/string.helper';
+import os from 'os';
+import path from 'path';
 
 export interface APDFNameParamsInterface {
   name: string;
@@ -41,7 +43,7 @@ export class APDFNameProvider implements ProviderInterface {
       trips || 0,
       subsidized || 0,
       amount || 0,
-      this.sanitize(name),
+      sanitize(name, 128),
     ]
       .filter((s: string | number) =>
         ["string", "number"].indexOf(typeof s) > -1 && String(s).length
@@ -76,16 +78,5 @@ export class APDFNameProvider implements ProviderInterface {
       subsidized: parseInt(parts[5], 10),
       amount: parseInt(parts[6], 10),
     };
-  }
-
-  public sanitize(str: string): string {
-    return str
-      .replace(/\u20AC/g, "e") // € -> e
-      .normalize("NFD")
-      .replace(/[\ \.\/]/g, "_")
-      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, "")
-      .replace("_-_", "-")
-      .toLowerCase()
-      .substring(0, 128);
   }
 }

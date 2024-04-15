@@ -79,7 +79,7 @@ export class XLSXWriter {
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.options, ...config } as Options;
     this.folder = os.tmpdir();
-    this.basename = this.sanitize(filename);
+    this.basename = sanitize(filename, 128);
   }
 
   // TODO create the workbook and the worksheets
@@ -177,17 +177,5 @@ export class XLSXWriter {
   public addDatasource(key: string, value: any): XLSXWriter {
     this.options.datasources.set(key, value);
     return this;
-  }
-
-  // TODO share with APDF where the code comes from
-  protected sanitize(str: string): string {
-    return str
-      .replace(/\u20AC/g, "e") // € -> e
-      .normalize("NFD")
-      .replace(/[\ \.\/]/g, "_")
-      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, "")
-      .replace("_-_", "-")
-      .toLowerCase()
-      .substring(0, 128);
   }
 }

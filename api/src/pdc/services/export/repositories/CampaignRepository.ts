@@ -17,7 +17,10 @@ export abstract class CampaignRepositoryInterfaceResolver
   identifier: CampaignRepositoryInterfaceResolver,
 })
 export class CampaignRepository implements CampaignRepositoryInterface {
-  constructor(protected kernel: KernelInterfaceResolver) {}
+  constructor(
+    protected kernel: KernelInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
+  ) {}
 
   // list all campaigns
   public async list(): Promise<Map<number, Campaign>> {
@@ -31,7 +34,7 @@ export class CampaignRepository implements CampaignRepositoryInterface {
     );
 
     return campaigns.reduce((acc, c) => {
-      acc.set(c._id, new Campaign(c));
+      acc.set(c._id, new Campaign(c, this.config));
       return acc;
     }, new Map());
   }
