@@ -41,7 +41,7 @@ export default function Page() {
       type: searchParams.get('type') ? searchParams.get('type')! as PerimeterType : 'country'
     }
     dashboard.onLoadTerritory(params);
-  }, []);
+  }, [searchParams]);
     return (
     <Suspense>
       {!dashboard.loading && !dashboard.error &&(
