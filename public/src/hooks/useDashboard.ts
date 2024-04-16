@@ -1,9 +1,10 @@
 'use client'
 import { Config } from '@/config';
-import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
+import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Params } from '../interfaces/common/contextInterface';
+import { fetchSearchAPI } from '../helpers/search';
 
 export const useDashboard = () => {
   const [params, setParams] = useState({
@@ -12,7 +13,7 @@ export const useDashboard = () => {
     type: 'country' as PerimeterType,
     observe: 'com' as PerimeterType,
     year: new Date().getFullYear(),
-    month: new Date().getMonth(),
+    month: 1,
     map: 1,
     graph: 1,
   });
@@ -20,7 +21,6 @@ export const useDashboard = () => {
   const [loading, setLoading] = useState(true);
   const apiUrl = Config.get('next.public_api_url', '');
   const url = `${apiUrl}/monthly-flux/last`;
-
   
   const getParams = useCallback((params:Params) => {
     setParams( p =>{
@@ -28,6 +28,15 @@ export const useDashboard = () => {
     })
   },[]);
 
+  const onLoadTerritory = useCallback( async (value?: {code: INSEECode, type: PerimeterType}) => {
+    const params = value ? value : {code: 'XXXXX', type: 'country' as PerimeterType};
+    const name = await getName(params);
+    setParams( p =>{
+      return { ...p, ...params, name: name, observe:'com' } as typeof p
+    });
+    await getLastPeriod(); 
+  },[]); 
+  
   const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
     setParams( p =>{
         const params = {code: 'XXXXX', name: 'France', type: 'country'}
@@ -60,21 +69,29 @@ export const useDashboard = () => {
       return{ ...p, map: value }
     });
   },[]);
+
+  const getLastPeriod = async () => {
+    const response = await fetch(url);
+    const res = await response.json();
+    if (response.ok) {
+      onChangePeriod({ year: res.result.data.year, month: res.result.data.month });
+      setError(null);
+    } else {
+      setError(res.error.data);
+    }
+    setLoading(false);
+  };
   
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(url);
-      const res = await response.json();
-      if (response.ok) {
-        onChangePeriod({ year: res.result.data.year, month: res.result.data.month });
-        setError(null);
-      } else {
-        setError(res.error.data);
-      }
-      setLoading(false);
+  const getName =async (value: {code: INSEECode, type: PerimeterType}) => {
+    const query = {
+      q:`${value.code}_${value.type}`,
+      attributesToSearchOn:['id'], 
+      limit:1
     };
-    fetchData();
-  }, [onChangePeriod,url]);
-  return { params, error, loading, getParams, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap };
+    const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
+    return response ? response.hits[0].l_territory : 'France';
+  };
+  
+  return { params, error, loading, getParams, onLoadTerritory, onChangeTerritory,getName, onChangePeriod, getLastPeriod, onChangeObserve, onChangeGraph, onChangeMap };
 };
 

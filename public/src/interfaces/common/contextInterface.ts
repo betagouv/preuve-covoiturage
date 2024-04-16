@@ -1,4 +1,4 @@
-import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
+import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '../observatoire/dataInterfaces';
 
 export type Params = {
@@ -21,8 +21,11 @@ export type DashboardContextType = {
     loading: boolean,
     error: string | null,
     getParams: (params:Params) => void,
+    onLoadTerritory:(value?: {code: INSEECode, type: PerimeterType}) => void,
     onChangeTerritory:(value: TerritoryListInterface) => void,
+    getName:Promise<void>,
     onChangePeriod: (value:{ year: number; month: number }) => void,
+    getLastPeriod:Promise<void>,
     onChangeObserve:(value:PerimeterType) => void,
     onChangeGraph:(value:number) => void,
     onChangeMap:(value:number) => void,

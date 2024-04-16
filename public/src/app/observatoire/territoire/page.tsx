@@ -1,4 +1,5 @@
 'use client';
+import { useSearchParams } from 'next/navigation';
 import PageTitle from '@/components/common/PageTitle';
 import SelectInList from '@/components/common/SelectInList';
 import SelectObserve from '@/components/observatoire/SelectObserve';
@@ -20,19 +21,27 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { DashboardContext } from '@/context/DashboardProvider'
 
 import { Suspense } from 'react';
+import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 
 export default function Page() {
+  const searchParams = useSearchParams();
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';
   const subtitle = 'Les données sont issues des plateformes de covoiturage partenaires du Registre de preuve de covoiturage et représentent environ 4% des trajets covoiturés chaque mois en 2023';
   const content = "Bien que partielle, cette source de données est à ce jour la plus complète pour comprendre certaines pratiques du covoiturage quotidien à l'échelle du territoire national."
   const { dashboard } =useContext(DashboardContext);
   const period = getPeriod(dashboard.params.year, dashboard.params.month);
   const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
-
+  useEffect(() => {
+    const params = {
+      code: searchParams.get('code') ? searchParams.get('code')! : 'XXXXX',
+      type: searchParams.get('type') ? searchParams.get('type')! as PerimeterType : 'country'
+    }
+    dashboard.onLoadTerritory(params);
+  }, []);
     return (
     <Suspense>
       {!dashboard.loading && !dashboard.error &&(
