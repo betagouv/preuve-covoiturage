@@ -18,6 +18,7 @@ export interface DashboardParams extends Params {
 export type DashboardContextType = {
   dashboard: {
     params: DashboardParams,
+    lastPeriod: number,
     loading: boolean,
     error: string | null,
     getParams: (params:Params) => void,

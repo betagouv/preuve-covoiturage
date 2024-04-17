@@ -1,12 +1,13 @@
 'use client'
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { fetchSearchAPI } from '@/helpers/search';
+import { castPerimeterType, fetchSearchAPI } from '@/helpers/search';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
-import Badge from '@codegouvfr/react-dsfr/Badge';
+import Tag from '@codegouvfr/react-dsfr/Tag';
+import { fr } from '@codegouvfr/react-dsfr';
 
 export default function SelectTerritory() {
   const { dashboard } =useContext(DashboardContext)
@@ -37,12 +38,17 @@ export default function SelectTerritory() {
     <Autocomplete
       id='select-territory'
       options={options}
-      getOptionLabel={(option) => `${option.l_territory} (${option.type})`}
+      getOptionLabel={(option) => `${option.l_territory} - ${castPerimeterType(option.type)}`}
       renderOption={(props, option) => {
         return (
           <li {...props} key={option.id}>
-            <Badge severity="info" small>{option.type}</Badge>
-            {option.l_territory} ({option.territory})            
+            <div>
+              <div> <span className={fr.cx('fr-text--bold')}>{option.l_territory}</span> <span className={fr.cx('fr-text--xs')}>({option.territory})</span></div>
+              <div>
+                <Tag small>{castPerimeterType(option.type)}</Tag>
+              </div>
+              
+            </div>
           </li>
         )
       }}

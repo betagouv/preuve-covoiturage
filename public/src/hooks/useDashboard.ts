@@ -17,6 +17,7 @@ export const useDashboard = () => {
     map: 1,
     graph: 1,
   });
+  const [lastPeriod, setLastPeriod] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const apiUrl = Config.get('next.public_api_url', '');
@@ -75,6 +76,7 @@ export const useDashboard = () => {
     const res = await response.json();
     if (response.ok) {
       onChangePeriod({ year: res.result.data.year, month: res.result.data.month });
+      setLastPeriod(new Date(res.result.data.year, res.result.data.month-1).getTime());
       setError(null);
     } else {
       setError(res.error.data);
@@ -92,6 +94,6 @@ export const useDashboard = () => {
     return response ? response.hits[0].l_territory : 'France';
   };
   
-  return { params, error, loading, getParams, onLoadTerritory, onChangeTerritory,getName, onChangePeriod, getLastPeriod, onChangeObserve, onChangeGraph, onChangeMap };
+  return { params, lastPeriod, error, loading, getParams, onLoadTerritory, onChangeTerritory,getName, onChangePeriod, getLastPeriod, onChangeObserve, onChangeGraph, onChangeMap };
 };
 
