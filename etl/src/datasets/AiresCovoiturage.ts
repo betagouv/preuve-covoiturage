@@ -6,8 +6,8 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
     static dataset = 'aires_covoiturage';
     static year = 2024;
     static url = url;
-    static skipStatePersistence = true;
     static table = `aires_covoiturage_temp`;
+    static skipStatePersistence = true;
     readonly targetTable = 'aires_covoiturage';
     readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
     readonly rows: Map<string, [string, string]> = new Map([

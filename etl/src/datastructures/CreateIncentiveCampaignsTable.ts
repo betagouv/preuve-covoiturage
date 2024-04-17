@@ -4,6 +4,7 @@ export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
   static uuid = 'create_incentive_campaigns_table';
   static table = 'incentive_campaigns';
   static year = 2024;
+  //static skipStatePersistence = true;
   readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
   readonly sql = `
       DROP TABLE IF EXISTS ${this.tableWithSchema};
@@ -12,7 +13,8 @@ export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
         collectivite varchar,
         derniere_maj varchar,
         email	varchar,
-        siret	varchar,
+        type varchar,
+        code	varchar,
         premiere_campagne	varchar,
         budget_incitations varchar,
         date_debut varchar,
@@ -35,7 +37,8 @@ export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
         trajet_longueur_max varchar,
         trajet_classe_de_preuve varchar,
         operateurs varchar,
-        autres_informations varchar
+        autres_informations varchar,
+        zone_sens_des_trajets_litteral varchar
       );
       CREATE INDEX IF NOT EXISTS ${this.indexWithSchema}_id_index ON ${this.tableWithSchema} USING btree (id);
     `;

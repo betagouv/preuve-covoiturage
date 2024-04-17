@@ -2,19 +2,20 @@ import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum, StaticAbstractDatas
 
 export function IncentiveCampaigns(url: string): StaticAbstractDataset {
   return class extends AbstractDataset {
-    static producer = 'data_gouv';
+    static producer = 'datagouv';
     static dataset = 'incentive_campaigns';
     static year = 2024;
     static url = url;
-    static skipStatePersistence = true;
     static table = `incentive_campaigns_temp`;
+    static skipStatePersistence = true;
     readonly targetTable = 'incentive_campaigns';
     readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
     readonly rows: Map<string, [string, string]> = new Map([
       ['collectivite', ['collectivite', 'varchar']],
       ['derniere_maj', ['derniere_maj', 'varchar']],
       ['email', ['email', 'varchar']],
-      ['siret', ['siret', 'varchar']],
+      ['type', ['type', 'varchar']],
+      ['code', ['code', 'varchar']],
       ['premiere_campagne', ['premiere_campagne', 'varchar']],
       ['budget_incitations', ['budget_incitations', 'varchar']],
       ['date_debut', ['date_debut', 'varchar']],
@@ -22,7 +23,7 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
       ['conducteur_montant_max_par_passager', ['conducteur_montant_max_par_passager', 'varchar']],
       ['conducteur_montant_max_par_mois', ['conducteur_montant_max_par_mois', 'varchar']],
       ['conducteur_montant_min_par_passager', ['conducteur_montant_min_par_passager', 'varchar']],
-      ['conducteur_trajets_max par_mois', ['conducteur_trajets_max_par_mois', 'varchar']],
+      ['conducteur_trajets_max_par_mois', ['conducteur_trajets_max_par_mois', 'varchar']],
       ['passager_trajets_max_par_mois', ['passager_trajets_max_par_mois', 'varchar']],
       ['passager_gratuite', ['passager_gratuite', 'varchar']],
       ['passager_eligible_gratuite', ['passager_eligible_gratuite', 'varchar']],
@@ -38,19 +39,20 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
       ['trajet_classe_de_preuve', ['trajet_classe_de_preuve', 'varchar']],
       ['operateurs', ['operateurs', 'varchar']],
       ['autres_informations', ['autres_informations', 'varchar']],
+      ['zone_sens_des_trajets_litteral', ['zone_sens_des_trajets_litteral', 'varchar']],
     ]);
     fileType: FileTypeEnum = FileTypeEnum.Csv;
     sheetOptions = {
       delimiter: ',',
       columns: true,
     };
-
     readonly importSql = `
       INSERT INTO ${this.targetTableWithSchema} (
         collectivite,
         derniere_maj,
         email,
-        siret,
+        type,
+        code,
         premiere_campagne,
         budget_incitations,
         date_debut,
@@ -58,7 +60,7 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         conducteur_montant_max_par_passager,
         conducteur_montant_max_par_mois,
         conducteur_montant_min_par_passager,
-        conducteur_trajets_max par_mois,
+        conducteur_trajets_max_par_mois,
         passager_trajets_max_par_mois,
         passager_gratuite,
         passager_eligible_gratuite,
@@ -73,12 +75,39 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         trajet_longueur_max,
         trajet_classe_de_preuve,
         operateurs,
-        autres_informations
+        autres_informations,
+        zone_sens_des_trajets_litteral
       ) SELECT
-        *
-      FROM ${this.tableWithSchema} 
-      ON CONFLICT
-      DO NOTHING;
+        collectivite,
+        derniere_maj,
+        email,
+        type,
+        code,
+        premiere_campagne,
+        budget_incitations,
+        date_debut,
+        date_fin,
+        conducteur_montant_max_par_passager,
+        conducteur_montant_max_par_mois,
+        conducteur_montant_min_par_passager,
+        conducteur_trajets_max_par_mois,
+        passager_trajets_max_par_mois,
+        passager_gratuite,
+        passager_eligible_gratuite,
+        passager_reduction_ticket,
+        passager_eligibilite_reduction,
+        passager_montant_ticket,
+        zone_sens_des_trajets,
+        zone_exclusion,
+        si_zone_exclue_liste,
+        autre_exclusion,
+        trajet_longueur_min,
+        trajet_longueur_max,
+        trajet_classe_de_preuve,
+        operateurs,
+        autres_informations,
+        zone_sens_des_trajets_litteral
+      FROM ${this.tableWithSchema};
     `;
   };
 }
