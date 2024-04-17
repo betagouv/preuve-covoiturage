@@ -8,9 +8,9 @@ import { fetchSearchAPI } from '../helpers/search';
 
 export const useDashboard = () => {
   const [params, setParams] = useState({
-    code: 'XXXXX' ,
+    code: 'XXXXX',
     name: 'France',
-    type: 'country' as PerimeterType,
+    type: 'country'as PerimeterType,
     observe: 'com' as PerimeterType,
     year: new Date().getFullYear(),
     month: 1,
@@ -84,14 +84,14 @@ export const useDashboard = () => {
     setLoading(false);
   };
   
-  const getName =async (value: {code: INSEECode, type: PerimeterType}) => {
+  const getName = async (value: {code: INSEECode, type: PerimeterType}) => {
     const query = {
       q:`${value.code}_${value.type}`,
       attributesToSearchOn:['id'], 
       limit:1
     };
     const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
-    return response ? response.hits[0].l_territory : 'France';
+    return response ? response.hits[0].l_territory as string : 'France';
   };
   
   return { params, lastPeriod, error, loading, getParams, onLoadTerritory, onChangeTerritory,getName, onChangePeriod, getLastPeriod, onChangeObserve, onChangeGraph, onChangeMap };
