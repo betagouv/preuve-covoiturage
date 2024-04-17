@@ -26,7 +26,7 @@ export default function SelectPeriod() {
         }
       })
       setMonthAvailable(list)
-  },[dashboard.params.year]);
+  },[dashboard.params.year, dashboard.params.month]);
   return (
     <>
       <SelectInList

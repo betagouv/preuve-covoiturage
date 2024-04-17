@@ -30,12 +30,14 @@ export const useDashboard = () => {
   },[]);
 
   const onLoadTerritory = useCallback( async (value?: {code: INSEECode, type: PerimeterType}) => {
+    setLoading(true);
     const params = value ? value : {code: 'XXXXX', type: 'country' as PerimeterType};
     const name = await getName(params);
     setParams( p =>{
       return { ...p, ...params, name: name, observe:'com' } as typeof p
     });
-    await getLastPeriod(); 
+    await getLastPeriod();
+    setLoading(false); 
   },[]); 
   
   const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
@@ -47,7 +49,7 @@ export const useDashboard = () => {
            params.type = value.type
         } 
       return { ...p, ...params, observe:'com' } as typeof p
-    }) 
+    })
   },[]);  
   
   const onChangePeriod = useCallback((value: { year: number; month: number }) => {
@@ -81,7 +83,6 @@ export const useDashboard = () => {
     } else {
       setError(res.error.data);
     }
-    setLoading(false);
   };
   
   const getName = async (value: {code: INSEECode, type: PerimeterType}) => {
