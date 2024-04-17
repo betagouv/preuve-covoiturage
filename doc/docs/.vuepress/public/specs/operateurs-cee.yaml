@@ -30,7 +30,7 @@ components:
       minLength: 64
       maxLength: 64
       description: |
-        Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
+        Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) où
         - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
         - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe (regexp: [A-Z ]*)
         Par exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit "+33701020304-D HERUG DE L HERAULT"
@@ -136,7 +136,10 @@ components:
       pattern: /^[A-Z ]{3}$/
       minLength: 3
       maxLength: 3
-      description: Les trois premières lettres du nom de famille. Dans le cas où le nom comporterait moins de 3 lettres, compléter avec des espaces.
+      description: |
+        Correspond aux trois premièrs caractères du nom de famille complet en majuscule, sans accent ni tiret ni apostrophe. Dans le cas où le nom comporterait moins de 3 lettres, compléter avec des espaces.
+        Ex 1: M. D'Hérûg-de-l'Hérault => "D H"
+        Ex 2: M. Tô => "TO "
     cee_application_import:
       type: object
       description: Précédente demande de CEE
