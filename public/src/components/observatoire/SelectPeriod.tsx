@@ -1,8 +1,9 @@
+'use client'
 import { monthList, yearList } from '@/helpers/lists';
 import SelectInList from '../common/SelectInList';
 import { useContext } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
-
+import {useState, useEffect} from 'react';
 
 
 export default function SelectPeriod() {
@@ -15,14 +16,24 @@ export default function SelectPeriod() {
     const period = { year: dashboard.params.year, month: value };
     dashboard.onChangePeriod(period);
   };
-
+  const [monthAvailable, setMonthAvailable] = useState<{id: number; name: string; disabled: boolean;}[]>([]);
+  useEffect(()=>{
+      const list = monthList.map((m) => {
+        if(new Date(dashboard.params.year, m.id -1).getTime() > dashboard.lastPeriod) {
+          return {...m, disabled: true}
+        } else {
+          return {...m, disabled: false}
+        }
+      })
+      setMonthAvailable(list)
+  },[dashboard.params.year, dashboard.params.month]);
   return (
     <>
       <SelectInList
         labelId='mois'
         label='Mois'
         id={dashboard.params.month}
-        list={monthList}
+        list={monthAvailable}
         sx={{ minWidth: 120 }}
         onChange={handlerChangeMonth}
       />

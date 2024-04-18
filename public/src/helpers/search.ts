@@ -1,5 +1,6 @@
 import { Config } from '@/config';
 import { search } from '@/config/search';
+import { PerimeterType } from '../interfaces/observatoire/Perimeter';
 
 export const searchHost = Config.get<string>('search.host');
 
@@ -19,4 +20,21 @@ export const fetchSearchAPI = async (path:string, options = {}) => {
     console.error(e);
     throw new Error(`Please check if your server is running and you set all the required tokens.`);
   }
+}
+
+export const castPerimeterType = (value: PerimeterType) => {
+  switch (value) {
+    case 'com':
+      return 'Commune';
+    case 'epci':
+      return 'Communauté de commune';
+    case 'aom':
+      return 'Autorité organisatrice des mobilités';
+    case 'dep':
+      return 'Département';
+    case 'reg':
+      return 'Région';
+    case 'country':
+      return 'Pays';
+  };
 }

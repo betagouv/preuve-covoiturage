@@ -38,10 +38,10 @@ export default function TrajetsGraph({ title,indic }: { title: string, indic:Flu
   const { data, error, loading } = useApi<EvolFluxDataInterface[]>(url);
   const dataset = data?.map((d) => d[`${indic}`]).reverse();
   const chartData = () => {
-    const labels = data?.map((d) => {
+    const labels = data ? data.map((d) => {
       const month = monthList.find((m) => m.id == d.month);
       return month!.name + ' ' + d.year;
-    });
+    }) : [];
     const datasets = [
       {
         data: dataset,

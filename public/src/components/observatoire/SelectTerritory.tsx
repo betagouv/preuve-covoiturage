@@ -1,66 +1,68 @@
-import { Config } from '@/config';
-import { useApi } from '@/hooks/useApi';
-import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
-import { createFilterOptions } from '@mui/material';
+'use client'
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { useSearchParams } from 'next/navigation';
-import { useContext, useEffect } from 'react';
+import { castPerimeterType, fetchSearchAPI } from '@/helpers/search';
+import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
-import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
-
-
+import Tag from '@codegouvfr/react-dsfr/Tag';
+import { fr } from '@codegouvfr/react-dsfr';
 
 export default function SelectTerritory() {
-  const searchParams = useSearchParams();
   const { dashboard } =useContext(DashboardContext)
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const territoryUrl = `${apiUrl}/territories?year=${dashboard.params.year}`;
-  const { data, loading, error } = useApi<TerritoryListInterface[]>(territoryUrl);
+  const router = useRouter();
+  const defaultOption = {
+    territory: dashboard.params.code,
+    l_territory: dashboard.params.name,
+    type: dashboard.params.type
+  }
+  const [options, setOptions] = useState<any[]>([defaultOption]);
+  const search =  async (v: string | null) => {
+    const query = {
+      q:v,
+      attributesToSearchOn:['territory','l_territory'], 
+      limit:20
+    };
+    const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
+    setOptions(response.hits);
+  };
 
-  useEffect(()=>{
-    const perim = async () => {
-      if(searchParams.get('code') || searchParams.get('type') || searchParams.get('observe')){
-        dashboard.getParams({
-          code: searchParams.get('code') ? searchParams.get('code') as string : 'XXXXX',
-          type: searchParams.get('type') ? searchParams.get('type') as PerimeterType : 'country',
-          observe: searchParams.get('observe') ? searchParams.get('observe') as PerimeterType : 'com',
-          name: data ? data.find(d => d.territory === dashboard.params.code && d.type === dashboard.params.type)?.l_territory as string : 'France'
-        })
-      }}
-      perim()
-    },[loading])
-  return (
+  const getUrl = (option?:TerritoryListInterface) => {
+    return `/observatoire/territoire${option ? `?code=${option.territory}&type=${option.type}` : ''}`
+  }
+  
+
+  return ( 
     <>
-      {loading && (
-        <div>Chargement en cours...</div>
-      )}
-      {error && (
-        <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
-      )}
-      {data && (
-        <Autocomplete
-          id='select-territory'
-          options={data}
-          value={data.find(d => d.territory === dashboard.params.code && d.type === dashboard.params.type)}
-          getOptionLabel={(option) => `${option.l_territory} (${option.type})`}
-          renderOption={(props, option) => {
-            return (
-              <li {...props} key={option.territory}>
-                {option.l_territory} ({option.type})
-              </li>
-            )
-          }}
-          renderInput={(params) => <TextField {...params} label='Territoire' />}
-          onChange={(e, v) => dashboard.onChangeTerritory(v as TerritoryListInterface)}
-          filterOptions={createFilterOptions({
-            matchFrom: 'any',
-            limit: 100,
-            ignoreCase: true,
-            stringify: (option) => option.l_territory,
-          })}
-        />
-      )}
+    <Autocomplete
+      id='select-territory'
+      options={options}
+      getOptionLabel={(option) => `${option.l_territory} - ${castPerimeterType(option.type)}`}
+      renderOption={(props, option) => {
+        return (
+          <li {...props} key={option.id}>
+            <div>
+              <div> <span className={fr.cx('fr-text--bold')}>{option.l_territory}</span> <span className={fr.cx('fr-text--xs')}>({option.territory})</span></div>
+              <div>
+                <Tag small>{castPerimeterType(option.type)}</Tag>
+              </div>
+              
+            </div>
+          </li>
+        )
+      }}
+      noOptionsText={'Pas de résultats'}
+      renderInput={(params) => <TextField {...params} label='Chercher mon territoire' />}
+      onInputChange={async(e, v) => {
+        await search(v);
+      }}
+      
+      onChange={(e,v) =>{
+        router.push(getUrl(v!))
+        }
+      }
+    />
     </>
   );
 }

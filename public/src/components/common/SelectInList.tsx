@@ -7,6 +7,7 @@ interface Props {
   list: {
     id: number;
     name: string;
+    disabled?: boolean;
   }[];
   sx?: SxProps;
   onChange: (v: number) => void;
@@ -24,7 +25,7 @@ export default function SelectInList(props: Props) {
           onChange={(event) => props.onChange(event.target.value as number)}
         >
           {props.list.map((d) => (
-            <MenuItem key={d.id} value={d.id}>
+            <MenuItem key={d.id} disabled={d.disabled} value={d.id}>
               {d.name}
             </MenuItem>
           ))}
