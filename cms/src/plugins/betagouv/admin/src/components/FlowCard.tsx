@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Button } from '@strapi/design-system';
 import getTrad from '../utils/getTrad';
 import { useIntl } from "react-intl"
@@ -11,8 +10,8 @@ const FlowCard = (props: {id: string}) => {
 
   return (
     <Box padding={4} hasRadius background="neutral0" shadow="tableShadow">
-          <Typography>{formatMessage({ id: getTrad(`flow-${props.id}`)})}</Typography>
-          <Button onClick={run} disabled={isLoading}>{formatMessage({ id: getTrad('action')})}</Button>
+      <Typography>{formatMessage({ id: getTrad(`flow-${props.id}`)})}</Typography>
+      <Button onClick={run} disabled={isLoading}>{formatMessage({ id: getTrad('action')})}</Button>
     </Box>
   );
 };
