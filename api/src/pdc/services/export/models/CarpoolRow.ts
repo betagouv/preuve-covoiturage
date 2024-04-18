@@ -65,7 +65,7 @@ export type CarpoolRowData = {
   driver_revenue: number;
   passenger_contribution: number;
 
-  demande_cee: boolean;
+  cee_application: boolean;
   campaigns: number[];
 
   incentive_0_index: number;
