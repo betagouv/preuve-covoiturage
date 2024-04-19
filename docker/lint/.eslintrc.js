@@ -28,7 +28,7 @@ module.exports = {
       },
     ],
     'max-len': ['warn', { code: 120 }],
-    'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug', 'table', 'time', 'timeEnd'] }],
+    'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug', 'table', 'time', 'timeEnd', 'timeLog'] }],
     'prefer-template': 'error',
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',

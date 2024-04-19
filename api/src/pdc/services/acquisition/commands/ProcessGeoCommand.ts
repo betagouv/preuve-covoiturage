@@ -1,0 +1,61 @@
+import { command, CommandInterface, CommandOptionType } from '@ilos/common';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { coerceDate, coerceInt } from '@ilos/cli';
+
+@command()
+export class ProcessGeoCommand implements CommandInterface {
+  static readonly signature: string = 'acquisition:geo';
+  static readonly description: string = 'Process acquisition geo';
+  static readonly options: CommandOptionType[] = [
+    {
+      signature: '-l, --loop',
+      description: 'Process acquisition while remaining',
+      default: false,
+    },
+    {
+      signature: '-s, --size <size>',
+      description: 'Batch size',
+      coerce: coerceInt,
+      default: 100,
+    },
+    {
+      signature: '-a, --after <after>',
+      description: 'Start date',
+      coerce: coerceDate,
+    },
+    {
+      signature: '-u, --until <until>',
+      description: 'end date',
+      coerce: coerceDate,
+    },
+    {
+      signature: '-f, --failed',
+      description: 'Process failed geo only',
+      default: false,
+    },
+  ];
+
+  constructor(protected carpool: CarpoolAcquisitionService) {}
+
+  public async call(options): Promise<string> {
+    let shouldContinue = true;
+
+    const batchSize = options.size;
+    const timerMessage = `Encoding carpool geo`;
+    console.time(timerMessage);
+
+    do {
+      const did = await this.encode(batchSize, options.failed, options.after, options.until);
+      console.timeLog(timerMessage);
+      console.info(`Processed: ${did}`);
+      shouldContinue = did === batchSize;
+    } while (shouldContinue && options.loop);
+
+    console.timeEnd(timerMessage);
+    return 'done';
+  }
+
+  protected async encode(batchSize = 100, failedOnly: boolean, after?: Date, until?: Date): Promise<number> {
+    return await this.carpool.processGeo({ batchSize, failedOnly, from: after, to: until });
+  }
+}

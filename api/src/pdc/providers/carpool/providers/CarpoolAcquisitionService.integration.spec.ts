@@ -18,7 +18,7 @@ interface TestContext {
   requestRepository: CarpoolRequestRepository;
   lookupRepository: CarpoolLookupRepository;
   geoRepository: CarpoolGeoRepository;
-  geoService: GeoProvider
+  geoService: GeoProvider;
   db: DbContext;
   sinon: SinonSandbox;
 }
@@ -29,14 +29,14 @@ const { before, after } = makeDbBeforeAfter();
 test.before(async (t) => {
   const db = await before();
   const geoStub = sinon.createStubInstance(GeoProvider);
-  
+
   t.context.db = db;
   t.context.carpoolRepository = new CarpoolRepository(db.connection);
   t.context.eventRepository = new CarpoolEventRepository(db.connection);
   t.context.requestRepository = new CarpoolRequestRepository(db.connection);
   t.context.lookupRepository = new CarpoolLookupRepository(db.connection);
   t.context.geoRepository = new CarpoolGeoRepository(db.connection);
-  t.context.geoService = geoStub; 
+  t.context.geoService = geoStub;
 });
 
 function getService(context: TestContext, overrides: any): CarpoolAcquisitionService {

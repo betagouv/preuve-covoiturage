@@ -107,21 +107,27 @@ export class CarpoolAcquisitionService {
     }
   }
 
-  public async processGeo(search: { batchSize: number; from: Date; to: Date }): Promise<boolean> {
+  public async processGeo(search: { batchSize: number; from: Date; to: Date; failedOnly: boolean }): Promise<number> {
     const conn = await this.connection.getClient().connect();
     try {
-      const toProcess = await this.geoRepository.findProcessable({ limit: search.batchSize, from: search.from, to: search.to }, conn);
+      const toProcess = await this.geoRepository.findProcessable(
+        { limit: search.batchSize, from: search.from, to: search.to, failedOnly: search.failedOnly },
+        conn,
+      );
       for (const toEncode of toProcess) {
         try {
           const start = await this.geoService.positionToInsee(toEncode.start);
           const end = await this.geoService.positionToInsee(toEncode.end);
-          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end }, conn)
+          await this.geoRepository.upsert(
+            { carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end },
+            conn,
+          );
         } catch (e) {
-          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message}, conn);
-          console.error(`[geo] ${e.message}`);
+          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message }, conn);
+          console.error(`[geo] error encoding ${toEncode.carpool_id} : ${e.message}`);
         }
       }
-      return toProcess.length === search.batchSize;
+      return toProcess.length;
     } finally {
       conn.release();
     }
