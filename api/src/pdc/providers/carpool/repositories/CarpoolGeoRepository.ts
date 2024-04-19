@@ -11,7 +11,7 @@ export class CarpoolGeoRepository {
   constructor(protected connection: PostgresConnection) {}
 
   async findProcessable(
-    search: { limit: number; from: Date; to: Date },
+    search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
     client: PoolClient,
   ): Promise<Array<{ carpool_id: Id; start: Position; end: Position }>> {
     const query = sql`
@@ -26,13 +26,22 @@ export class CarpoolGeoRepository {
           ON cg.carpool_id = cc._id
         WHERE 
           cc.start_datetime >= ${search.from} AND
-          cc.start_datetime < ${search.to} AND
-          cg._id IS NULL
+          cc.start_datetime < ${search.to}
+          ${
+            !!!search.failedOnly
+              ? raw(`
+            AND cg._id IS NULL`)
+              : raw(`
+            AND (
+              cg.start_geo_code IS NULL OR
+              cg.end_geo_code IS NULL
+            )`)
+          }
         ORDER BY cc.start_datetime
         LIMIT ${search.limit}
-    `
+    `;
     const result = await client.query(query);
-    return result.rows.map(r => ({
+    return result.rows.map((r) => ({
       carpool_id: r._id,
       start: {
         lat: parseFloat(r.start_lat),
@@ -60,7 +69,7 @@ export class CarpoolGeoRepository {
       SET
         start_geo_code = excluded.start_geo_code,
         end_geo_code = excluded.end_geo_code,
-        errors = geo.errors || excluded.errors::jsonb
+        errors = excluded.errors::jsonb
     `;
     await client.query(sqlQuery);
   }

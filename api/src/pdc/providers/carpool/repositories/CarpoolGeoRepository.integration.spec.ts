@@ -36,14 +36,19 @@ test.beforeEach(async (t) => {
   t.context.conn = await t.context.db.connection.getClient().connect();
 });
 
-test.afterEach.always(t => {
+test.afterEach.always((t) => {
   t.context.conn.release();
-})
+});
 
 test.serial('Should create geo', async (t) => {
   const conn = t.context.conn;
-  const processable = await t.context.repository.findProcessable({ limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime }, conn);
-  t.deepEqual(processable, [{ carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position }]);
+  const processable = await t.context.repository.findProcessable(
+    { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
+    conn,
+  );
+  t.deepEqual(processable, [
+    { carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position },
+  ]);
   const data = { ...upsertableGeoSuccess, carpool_id: processable[0].carpool_id };
   await t.context.repository.upsert(data, conn);
   const result = await conn.query(sql`
@@ -55,7 +60,10 @@ test.serial('Should create geo', async (t) => {
 
 test.serial('Should do nothing if geo exists', async (t) => {
   const conn = t.context.conn;
-  const processable = await t.context.repository.findProcessable({ limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime }, conn);
+  const processable = await t.context.repository.findProcessable(
+    { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
+    conn,
+  );
   t.is(processable.length, 0);
   await conn.query(sql`
     DELETE FROM ${raw(t.context.repository.table)}
@@ -65,8 +73,13 @@ test.serial('Should do nothing if geo exists', async (t) => {
 
 test.serial('Should create status', async (t) => {
   const conn = t.context.conn;
-  const processable = await t.context.repository.findProcessable({ limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime }, conn);
-  t.deepEqual(processable, [{ carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position }]);
+  const processable = await t.context.repository.findProcessable(
+    { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
+    conn,
+  );
+  t.deepEqual(processable, [
+    { carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position },
+  ]);
   const data = { ...upsertableGeoError, carpool_id: processable[0].carpool_id };
   await t.context.repository.upsert(data, conn);
   const result = await conn.query(sql`

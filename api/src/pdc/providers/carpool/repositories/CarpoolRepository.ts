@@ -92,7 +92,7 @@ export class CarpoolRepository {
             operator_journey_id = ${data.operator_journey_id}
         `);
         const selectCarpool = selectResult.rows.pop();
-        if(!selectCarpool) {
+        if (!selectCarpool) {
           throw new DatabaseException();
         }
         return selectCarpool;
