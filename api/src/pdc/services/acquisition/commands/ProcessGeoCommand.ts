@@ -30,7 +30,7 @@ export class ProcessGeoCommand implements CommandInterface {
       coerce: coerceDate,
     },
     {
-      signature: '-l, --last-days <days>',
+      signature: '-d, --last-days <days>',
       description: 'Process x last days from now',
       default: 1,
       coerce: coerceInt,
