@@ -1,6 +1,7 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
 import { coerceDate, coerceInt } from '@ilos/cli';
+import { subDays } from 'date-fns';
 
 @command()
 export class ProcessGeoCommand implements CommandInterface {
@@ -29,6 +30,12 @@ export class ProcessGeoCommand implements CommandInterface {
       coerce: coerceDate,
     },
     {
+      signature: '-l, --last-days <days>',
+      description: 'Process x last days from now',
+      default: 1,
+      coerce: coerceInt,
+    },
+    {
       signature: '-f, --failed',
       description: 'Process failed geo only',
       default: false,
@@ -45,7 +52,12 @@ export class ProcessGeoCommand implements CommandInterface {
     console.time(timerMessage);
 
     do {
-      const did = await this.encode(batchSize, options.failed, options.after, options.until);
+      const did = await this.encode(
+        batchSize,
+        options.failed,
+        options.after ?? subDays(new Date(), options.lastDays),
+        options.until ?? new Date(),
+      );
       console.timeLog(timerMessage);
       console.info(`Processed: ${did}`);
       shouldContinue = did === batchSize;
