@@ -5,7 +5,7 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/mi
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract';
 import { alias } from '@shared/policy/simulateOnPast.schema';
-import Redis from 'ioredis';
+import { RedisKey } from 'ioredis';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import {
@@ -108,7 +108,7 @@ export class SimulateOnPastAction extends AbstractAction {
       .set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.TEN_DAYS_IN_SECONDS);
   }
 
-  private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
+  private getSimulationCachingKey(params: ParamsInterface): RedisKey {
     return `simulations:${params.territory_id}:${params.months}`;
   }
 }

@@ -30,7 +30,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   ) {}
 
   async find(params: FindParamsInterface): Promise<FindResultInterface> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         WITH selector_raw AS (
           SELECT
@@ -95,7 +95,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const total = parseFloat(
       (
-        await client.query({
+        await client.query<any>({
           text: countQuery,
           values,
         })
@@ -114,14 +114,14 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       `,
       values,
     };
-    const result = await client.query(query);
+    const result = await client.query<any>(query);
 
     return { data: result.rows, meta: { pagination: { offset, limit, total } } };
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
     const connection = await this.connection.getClient().connect();
-    await connection.query('BEGIN');
+    await connection.query<any>('BEGIN');
     try {
       const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
@@ -136,7 +136,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         values,
       };
 
-      const result = await connection.query(query);
+      const result = await connection.query<any>(query);
       if (result.rowCount !== 1) {
         throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
       }
@@ -147,10 +147,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         await this.syncSelector(connection, resultData._id, data.selector);
       }
 
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
       return { ...resultData, selector: data.selector };
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();
@@ -174,7 +174,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         },
         [[], [], []],
       );
-    await connection.query({
+    await connection.query<any>({
       text: `
         DELETE FROM ${this.relationTable}
         WHERE territory_group_id = $1
@@ -193,7 +193,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values,
     };
 
-    await connection.query(query);
+    await connection.query<any>(query);
     return;
   }
 
@@ -207,7 +207,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values: [id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new NotFoundException(`territory not found (${id})`);
@@ -218,7 +218,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
     const connection = await this.connection.getClient().connect();
-    await connection.query('BEGIN');
+    await connection.query<any>('BEGIN');
     try {
       const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
@@ -234,7 +234,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         values,
       };
 
-      const result = await connection.query(query);
+      const result = await connection.query<any>(query);
 
       if (result.rowCount !== 1) {
         throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
@@ -246,10 +246,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         await this.syncSelector(connection, resultData._id, data.selector);
       }
 
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
       return { ...resultData, selector: data.selector };
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();
@@ -263,9 +263,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     };
 
     const client = this.connection.getClient();
-    await client.query(query);
+    await client.query<any>(query);
 
-    const modifiedTerritoryRes = await client.query({
+    const modifiedTerritoryRes = await client.query<any>({
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
       values: [params._id],
     });
@@ -297,7 +297,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values: [params._id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows[0].selector;
   }
 
@@ -314,7 +314,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values: [params._id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows[0];
   }
 }

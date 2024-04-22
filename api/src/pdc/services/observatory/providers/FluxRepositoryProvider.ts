@@ -26,7 +26,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   constructor(private pg: PostgresConnection) {}
 
   async insertOneMonthFlux(params: InsertMonthlyFluxParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         CALL ${this.insert_procedure}($1, $2);
@@ -35,7 +35,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   }
 
   async deleteOneMonthFlux(params: DeleteMonthlyFluxParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
@@ -74,7 +74,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       } 
       AND territory_1 <> territory_2;`,
     };
-    const response: { rowCount: number; rows: MonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: MonthlyFluxResultInterface } = await this.pg.getClient().query<any>(sql);
     return response.rows;
   }
 
@@ -86,7 +86,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       ORDER BY year DESC,month DESC
       LIMIT 1;
     `;
-    const response = await this.pg.getClient().query(sql);
+    const response = await this.pg.getClient().query<any>(sql);
     return response.rows[0];
   }
 
@@ -110,7 +110,9 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         LIMIT $3;
       `,
     };
-    const response: { rowCount: number; rows: EvolMonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: EvolMonthlyFluxResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 
@@ -138,7 +140,9 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         LIMIT $4;
       `,
     };
-    const response: { rowCount: number; rows: BestMonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: BestMonthlyFluxResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 }

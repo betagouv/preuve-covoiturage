@@ -42,7 +42,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       values: [id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -71,7 +71,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
     const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
 
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT uuid, name ${selectThumbnail}, support
         FROM ${this.table} oo
@@ -95,7 +95,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   async findByUuid(uuid: string[]): Promise<{ _id: number; uuid: string }[]> {
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT _id, uuid
         FROM ${this.table}
@@ -129,7 +129,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       values: [],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
     return result.rows;
   }
 
@@ -142,7 +142,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     }
 
     const connection = await this.connection.getClient().connect();
-    connection.query('BEGIN');
+    connection.query<any>('BEGIN');
     try {
       const query = {
         text: `
@@ -177,7 +177,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       };
 
       // store the operator
-      const result = await connection.query(query);
+      const result = await connection.query<any>(query);
 
       if (result.rowCount !== 1) {
         throw new Error(`Unable to create operator (${JSON.stringify(data)})`);
@@ -188,11 +188,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         await this.insertThumbnail(connection, result.rows[0]._id, data.thumbnail);
       }
 
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
 
       return result.rows[0];
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();
@@ -213,7 +213,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       values: [id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new NotFoundException(`operator not found (${id})`);
@@ -244,7 +244,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       });
     }
     const connection = await this.connection.getClient().connect();
-    await connection.query('BEGIN');
+    await connection.query<any>('BEGIN');
 
     try {
       const updatablefields = [
@@ -288,7 +288,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         return `${acc}${current}$${idx + 1}`;
       }, '');
 
-      const result = await connection.query(query);
+      const result = await connection.query<any>(query);
 
       if (result.rowCount !== 1) {
         throw new NotFoundException(`operator not found (${id})`);
@@ -304,11 +304,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         }
       }
 
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
 
       return result.rows[0];
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();
@@ -317,16 +317,16 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
   public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
     const connection = await this.connection.getClient().connect();
-    await connection.query('BEGIN');
+    await connection.query<any>('BEGIN');
     try {
       if (base64Thumbnail && base64Thumbnail.length) {
         await this.insertThumbnail(connection, operator_id, base64Thumbnail);
       } else if (base64Thumbnail === null) {
         await this.removeThumbnail(connection, operator_id);
       }
-      await connection.query('COMMIT');
+      await connection.query<any>('COMMIT');
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query<any>('ROLLBACK');
       throw e;
     } finally {
       connection.release();
@@ -337,14 +337,14 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     // cleanup
     await this.removeThumbnail(connection, operator_id);
     // insert
-    await connection.query({
+    await connection.query<any>({
       text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
       values: [operator_id, this.b64ToHex(base64Thumbnail)],
     });
   }
 
   private async removeThumbnail(connection: PoolClient, operator_id: number): Promise<void> {
-    await connection.query({
+    await connection.query<any>({
       text: 'DELETE FROM operator.thumbnails WHERE operator_id = $1',
       values: [operator_id],
     });

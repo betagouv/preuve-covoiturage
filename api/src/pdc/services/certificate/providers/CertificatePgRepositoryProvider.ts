@@ -45,13 +45,13 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
         }
       : `SELECT COUNT(*) as row_count FROM ${this.table}`;
 
-    const countResult = await this.connection.getClient().query(query);
+    const countResult = await this.connection.getClient().query<any>(query);
 
     return countResult.rows.length > 0 ? countResult.rows[0].row_count : 0;
   }
 
   async find(withLog = false, pagination?: Pagination): Promise<CertificateInterface[]> {
-    const result = await this.connection.getClient().query(
+    const result = await this.connection.getClient().query<any>(
       this.paginate(
         {
           text: `SELECT * FROM ${this.table} ORDER BY created_at DESC`,
@@ -70,7 +70,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     const values: [string, number?] = [uuid];
     if (operator_id) values.push(operator_id);
 
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT *
         FROM ${this.table}
@@ -91,7 +91,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     withLog = false,
     pagination?: Pagination,
   ): Promise<CertificateInterface[]> {
-    const result = await this.connection.getClient().query(
+    const result = await this.connection.getClient().query<any>(
       this.paginate(
         {
           text: `SELECT * FROM ${this.table} WHERE operator_id = $1 ORDER BY created_at DESC`,
@@ -109,7 +109,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
     const { identity_uuid, operator_id, start_at, end_at, meta } = params;
 
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.table}
         ( identity_uuid, operator_id, start_at, end_at, meta )
@@ -134,7 +134,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     const certs = (isMany ? certificates : [certificates]) as CertificateInterface[];
 
     // search for all access_log for all certificate_id
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT * FROM ${this.accessLogTable}
         WHERE certificate_id = ANY ($1::int[])

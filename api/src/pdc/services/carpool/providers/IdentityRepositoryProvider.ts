@@ -26,7 +26,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
     identity: IdentityInterface,
     meta: IdentityMetaInterface,
   ): Promise<{ _id: number; uuid: string }> {
-    const results = await this.connection.getClient().query({
+    const results = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.table}
         (
@@ -69,7 +69,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
   }
 
   public async delete(_id: number): Promise<void> {
-    const results = await this.connection.getClient().query({
+    const results = await this.connection.getClient().query<any>({
       text: `DELETE FROM ${this.table} WHERE _id = $1`,
       values: [_id],
     });

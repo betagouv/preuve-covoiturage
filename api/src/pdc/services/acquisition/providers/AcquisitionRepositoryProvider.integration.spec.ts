@@ -61,7 +61,7 @@ test.serial('Should create acquisition', async (t) => {
   const acqs = await t.context.repository.createOrUpdateMany(data);
   t.deepEqual(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4', '5']);
 
-  const result = await t.context.db.connection.getClient().query({
+  const result = await t.context.db.connection.getClient().query<any>({
     text: `
       SELECT
         operator_id,
@@ -87,7 +87,7 @@ test.serial('Should create acquisition', async (t) => {
 
 test.serial('Should update acquisition', async (t) => {
   const { operator_id } = t.context;
-  await t.context.db.connection.getClient().query({
+  await t.context.db.connection.getClient().query<any>({
     text: `
       UPDATE ${t.context.repository.table}
       SET status = 'ok', try_count = 50
@@ -110,7 +110,7 @@ test.serial('Should update acquisition', async (t) => {
     ['1'],
   );
 
-  const result = await t.context.db.connection.getClient().query({
+  const result = await t.context.db.connection.getClient().query<any>({
     text: `
       SELECT
         operator_id,
@@ -154,7 +154,7 @@ test.serial('Should update status', async (t) => {
       errors: [statusError.message],
     },
   ]);
-  const result = await t.context.db.connection.getClient().query({
+  const result = await t.context.db.connection.getClient().query<any>({
     text: `
       SELECT
         operator_id,
@@ -195,7 +195,7 @@ test.serial('Should update status', async (t) => {
       errors: [statusError.message, statusError.message],
     },
   ]);
-  const result2 = await t.context.db.connection.getClient().query({
+  const result2 = await t.context.db.connection.getClient().query<any>({
     text: `
       SELECT
         operator_id,
@@ -239,7 +239,7 @@ test.serial('Should get fraudcheck status and labels for carpool', async (t) => 
   // Arrange
   const acquisition_row = await updateAcquistionJourneyIdOk(t.context, '5');
   const { _id: carpool_id } = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
-  await t.context.db.connection.getClient().query({
+  await t.context.db.connection.getClient().query<any>({
     text: `
     INSERT INTO fraudcheck.labels(
       carpool_id, label, geo_code)
@@ -334,7 +334,7 @@ test.serial('Should find and update with lock', async (t) => {
 test.serial('Should find with lock timeout', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const { operator_id } = t.context;
-  await t.context.db.connection.getClient().query({
+  await t.context.db.connection.getClient().query<any>({
     text: `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1 AND status <> 'error'`,
     values: [operator_id],
   });
@@ -453,7 +453,7 @@ test.serial('Should list acquisition status', async (t) => {
 test.serial('Should cancel acquisition', async (t) => {
   await t.context.repository.cancel(1, '3');
   await t.context.repository.cancel(1, '4', 'CODE1', 'TOTO');
-  const result = await t.context.db.connection.getClient().query({
+  const result = await t.context.db.connection.getClient().query<any>({
     text: `SELECT
       journey_id as operator_journey_id, cancel_code, cancel_message
     FROM ${t.context.repository.table}
@@ -497,7 +497,7 @@ test.serial('Should patch payload', async (t) => {
     { operator_id: 1, operator_journey_id: '1', status: [AcquisitionStatusEnum.Error, AcquisitionStatusEnum.Pending] },
     { test2: true },
   );
-  const result = await t.context.db.connection.getClient().query({
+  const result = await t.context.db.connection.getClient().query<any>({
     text: `SELECT payload
     FROM ${t.context.repository.table}
     WHERE operator_id = $1 AND journey_id = $2
@@ -531,7 +531,7 @@ test.serial('Should create new acquisition and get anomaly error with temporal o
   const { _id: carpool_id_7 } = await insertCarpoolWithStatus(t.context, acquisition_row_7, 'anomaly_error');
 
   // add anomaly label for carpool_id 7
-  await t.context.db.connection.getClient().query({
+  await t.context.db.connection.getClient().query<any>({
     text: `
     INSERT INTO anomaly.labels(
       carpool_id, label, conflicting_carpool_id, conflicting_operator_journey_id, overlap_duration_ratio)
@@ -554,7 +554,7 @@ const updateAcquistionJourneyIdOk = async (
   context: TestContext,
   journey_id: string,
 ): Promise<{ _id: number; journey_id: number }> => {
-  const result = await context.db.connection.getClient().query({
+  const result = await context.db.connection.getClient().query<any>({
     text: `
       UPDATE ${context.repository.table}
       SET status = 'ok'
@@ -571,7 +571,7 @@ const insertCarpoolWithStatus = async (
   acquisition: { _id: number; journey_id: number },
   status: 'fraudcheck_error' | 'anomaly_error' | 'ok',
 ): Promise<Carpool & { _id: number }> => {
-  const result = await context.db.connection.getClient().query({
+  const result = await context.db.connection.getClient().query<any>({
     text: `
     INSERT INTO carpool.carpools(
       acquisition_id, operator_id, trip_id, operator_trip_id, is_driver, 

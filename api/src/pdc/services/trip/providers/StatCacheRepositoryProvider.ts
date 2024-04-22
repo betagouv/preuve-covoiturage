@@ -25,7 +25,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
 
   public async getOrBuild(fn: Function, target: any): Promise<StatInterface[]> {
     const hash = this.genHash(target);
-    const result = await this.connection.getClient().query({
+    const result = await this.connection.getClient().query<any>({
       text: `
         SELECT data
         FROM ${this.table}
@@ -63,7 +63,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
     await this.cleanup(target);
 
     try {
-      const result = await this.connection.getClient().query({
+      const result = await this.connection.getClient().query<any>({
         text: `
         INSERT INTO ${this.table} (
           hash,
@@ -91,7 +91,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
    */
   protected async cleanup(target: any): Promise<boolean> {
     try {
-      const deleted = await this.connection.getClient().query({
+      const deleted = await this.connection.getClient().query<any>({
         text: `DELETE FROM ${this.table} WHERE hash = $1`,
         values: [this.genHash(target)],
       });

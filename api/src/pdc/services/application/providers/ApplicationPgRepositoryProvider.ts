@@ -33,7 +33,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       values: [owner_service, owner_id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (!result.rowCount) return [];
 
@@ -64,7 +64,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       values: [owner_service, uuid, ...ownerParams.values],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new Error(`Application not found (${uuid})`);
@@ -85,7 +85,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       values: [name, owner_id, owner_service, permissions],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create application (${name})`);
@@ -107,7 +107,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       values: [owner_service, owner_id, uuid],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
       throw new NotFoundException(`Revoking application failed (${uuid})`);

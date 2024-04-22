@@ -21,7 +21,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
   constructor(private pg: PostgresConnection) {}
 
   async insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         CALL ${this.insert_procedure}($1, $2);
@@ -30,7 +30,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
   }
 
   async deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void> {
-    await this.pg.getClient().query({
+    await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
         DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
@@ -56,7 +56,9 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
       AND territory = $4
       ${filterDirection};`,
     };
-    const response: { rowCount: number; rows: JourneysByHoursResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: JourneysByHoursResultInterface } = await this.pg
+      .getClient()
+      .query<any>(sql);
     return response.rows;
   }
 
@@ -82,7 +84,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
     };
     const response: { rowCount: number; rows: JourneysByDistancesResultInterface } = await this.pg
       .getClient()
-      .query(sql);
+      .query<any>(sql);
     return response.rows;
   }
 }

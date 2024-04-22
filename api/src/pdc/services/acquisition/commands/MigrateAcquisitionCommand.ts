@@ -55,6 +55,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
 
     do {
       const did = await this.migration(batchSize, options.after, options.until);
+      // eslint-disable-next-line no-console
       console.timeLog(timerMessage);
       console.info(`Processed: ${did}`);
       shouldContinue = did === batchSize;
@@ -66,9 +67,9 @@ export class AcquisitionMigrateCommand implements CommandInterface {
 
   protected async migration(batchSize = 100, after?: Date, until?: Date): Promise<number> {
     const conn = await this.pg.getClient().connect();
-    await conn.query('BEGIN');
+    await conn.query<any>('BEGIN');
     try {
-      const result = await conn.query({
+      const result = await conn.query<any>({
         text: `
           SELECT
             row_to_json(aa) as acquisition
@@ -85,7 +86,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
       });
 
       for (const { acquisition } of result.rows) {
-        const incentiveResult = await conn.query({
+        const incentiveResult = await conn.query<any>({
           text: `
             SELECT
               json_agg(row_to_json(inc)) as operator_incentives
@@ -96,7 +97,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
         });
         const incentives = incentiveResult.rows[0]?.operator_incentives || [];
 
-        const carpoolResult = await conn.query({
+        const carpoolResult = await conn.query<any>({
           text: `
             SELECT
               row_to_json(cp) as carpool,
@@ -208,11 +209,11 @@ export class AcquisitionMigrateCommand implements CommandInterface {
         await this.event.setStatus(newCarpool._id, 'acquisition', acquisitionStatus, conn);
         await this.event.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
       }
-      await conn.query('COMMIT');
+      await conn.query<any>('COMMIT');
       return result.rows.length;
     } catch (e) {
       console.error(e);
-      await conn.query('ROLLBACK');
+      await conn.query<any>('ROLLBACK');
     } finally {
       conn.release();
     }

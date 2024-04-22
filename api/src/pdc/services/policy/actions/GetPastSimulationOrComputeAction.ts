@@ -1,17 +1,15 @@
 import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import Redis from 'ioredis';
-
-import {
-  signature as simulatePastSignature,
-  handlerConfig as simulatePastHandler,
-  ParamsInterface as SimulateOnPastParams,
-} from '@shared/policy/simulateOnPast.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/getPastSimulationOrCompute.contract';
-
-import { RedisConnection } from '@ilos/connection-redis';
+import {
+  ParamsInterface as SimulateOnPastParams,
+  handlerConfig as simulatePastHandler,
+  signature as simulatePastSignature,
+} from '@shared/policy/simulateOnPast.contract';
 import { alias } from '@shared/policy/simulateOnPast.schema';
+import { RedisKey } from 'ioredis';
 
 @handler({
   ...handlerConfig,
@@ -52,7 +50,7 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     throw new NotFoundException(`[policy] No cached policy simulation for territory ${params.territory_id}`);
   }
 
-  private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
+  private getSimulationCachingKey(params: ParamsInterface): RedisKey {
     return `simulations:${params.territory_id}:${params.months}`;
   }
 }

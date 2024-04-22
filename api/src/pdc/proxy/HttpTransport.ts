@@ -12,7 +12,7 @@ import { mapStatusCode } from '@ilos/transport-http';
 import { Sentry, SentryProvider } from '@pdc/providers/sentry';
 import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
 import bodyParser from 'body-parser';
-import createStore from 'connect-redis';
+import RedisStore from 'connect-redis';
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import expressSession from 'express-session';
@@ -143,7 +143,6 @@ export class HttpTransport implements TransportInterface {
     const sessionName = this.config.get('proxy.session.name');
     const redisConfig = this.config.get('connections.redis');
     const redis = new Redis(redisConfig);
-    const redisStore = createStore(expressSession);
 
     const sessionMiddleware = expressSession({
       cookie: {
@@ -159,7 +158,7 @@ export class HttpTransport implements TransportInterface {
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
-      store: new redisStore({ client: redis, keyPrefix: 'proxy:' }),
+      store: new RedisStore({ client: redis, prefix: 'proxy:' }),
     });
 
     this.app.use(function (req, res, next) {

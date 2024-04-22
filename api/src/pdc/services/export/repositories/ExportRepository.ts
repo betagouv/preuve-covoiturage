@@ -69,7 +69,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async create(data: ExportCreateData): Promise<Export> {
     const { created_by, target, params, recipients } = data;
 
-    const { rows } = await this.connection.getClient().query({
+    const { rows } = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.exportsTable} (created_by, target, params)
         VALUES ($1, $2, $3)
@@ -91,7 +91,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   }
 
   public async get(id: number): Promise<Export> {
-    const { rows } = await this.connection.getClient().query({
+    const { rows } = await this.connection.getClient().query<any>({
       text: `SELECT * FROM ${this.exportsTable} WHERE _id = $1`,
       values: [id],
     });
@@ -99,7 +99,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   }
 
   public async update(id: number, data: ExportUpdateData): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE ${this.exportsTable} SET ${Object.keys(data)
         .map((key, index) => `${key} = $${index + 2}`)
         .join(', ')} WHERE _id = $1`,
@@ -108,14 +108,14 @@ export class ExportRepository implements ExportRepositoryInterface {
   }
 
   public async delete(id: number): Promise<void> {
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `DELETE FROM ${this.exportsTable} WHERE _id = $1`,
       values: [id],
     });
   }
 
   public async list(): Promise<Export[]> {
-    const { rows } = await this.connection.getClient().query({
+    const { rows } = await this.connection.getClient().query<any>({
       text: `SELECT * FROM ${this.exportsTable}`,
     });
     return rows.map(Export.fromJSON);
@@ -123,7 +123,7 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async status(id: number, status: ExportStatus): Promise<void> {
     // update the export status
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE ${this.exportsTable} SET status = $1::text WHERE _id = $2`,
       values: [status, id],
     });
@@ -147,7 +147,7 @@ export class ExportRepository implements ExportRepositoryInterface {
     await this.logger.failure(id, error);
 
     // update the export status
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `UPDATE ${this.exportsTable} SET status = $1, error = $2::text WHERE _id = $3`,
       values: [ExportStatus.FAILURE, error, id],
     });
@@ -157,7 +157,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   // to be able to update the `progress` field of the export as the export is running
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
-      await this.connection.getClient().query({
+      await this.connection.getClient().query<any>({
         text: `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],
       });
@@ -165,7 +165,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   }
 
   public async pickPending(): Promise<Export | null> {
-    const { rows, rowCount } = await this.connection.getClient().query({
+    const { rows, rowCount } = await this.connection.getClient().query<any>({
       text: `
         SELECT * FROM ${this.exportsTable}
         WHERE status = 'pending'
@@ -180,7 +180,7 @@ export class ExportRepository implements ExportRepositoryInterface {
     if (!export_id) throw new Error('Export _id is required');
     if (!recipient.email) throw new Error('Recipient email is required');
 
-    await this.connection.getClient().query({
+    await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.recipientsTable} (export_id, email, fullname, message)
         VALUES ($1, $2, $3, $4)

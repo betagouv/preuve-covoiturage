@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { uuid } from '@pdc/providers/test';
 import { BucketName, S3StorageProvider } from '@pdc/providers/storage';

@@ -42,7 +42,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [_id],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -66,7 +66,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [email],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -91,7 +91,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [email],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return {
@@ -130,7 +130,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: status ? [...values, status] : values,
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -157,7 +157,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       query.values.push(status);
     }
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     return result.rowCount > 0;
   }
@@ -223,7 +223,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [_id, newHashPassword],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     return result.rowCount > 0;
   }
@@ -250,7 +250,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [email, newHashPassword, status],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     return result.rowCount > 0;
   }
@@ -275,7 +275,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       values: [_id, cryptedToken, token_expires_at, email, status],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
       return undefined;

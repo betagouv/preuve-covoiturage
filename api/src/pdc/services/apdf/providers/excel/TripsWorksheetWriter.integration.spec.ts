@@ -1,4 +1,4 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import test from 'ava';
 import { Row, stream, Workbook, Worksheet } from 'exceljs';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface';
@@ -15,25 +15,25 @@ function sortRowValues(values: Row['values']): Row['values'] {
 let dataWorkBookWriter: TripsWorksheetWriter;
 
 const exportTripInterface: APDFTripInterface = {
-  operator_journey_id: faker.datatype.uuid().toUpperCase(),
-  trip_id: faker.datatype.uuid().toUpperCase(),
-  operator_trip_id: faker.datatype.uuid().toUpperCase(),
-  start_datetime: faker.date.past(2).toISOString(),
-  end_datetime: faker.date.future(2).toISOString(),
-  start_location: faker.address.cityName(),
-  start_epci: faker.address.cityName(),
-  start_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
-  end_location: faker.address.cityName(),
-  end_epci: faker.address.cityName(),
-  end_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
-  duration: faker.datatype.number({ min: 300, max: 3600 }),
-  distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
-  operator: faker.company.companyName(),
+  operator_journey_id: faker.string.uuid().toUpperCase(),
+  trip_id: faker.string.uuid().toUpperCase(),
+  operator_trip_id: faker.string.uuid().toUpperCase(),
+  start_datetime: faker.date.past({ years: 2 }).toISOString(),
+  end_datetime: faker.date.future({ years: 2 }).toISOString(),
+  start_location: faker.location.city(),
+  start_epci: faker.location.city(),
+  start_insee: faker.string.numeric(5),
+  end_location: faker.location.city(),
+  end_epci: faker.location.city(),
+  end_insee: faker.string.numeric(5),
+  duration: faker.number.int({ min: 300, max: 3600 }),
+  distance: faker.number.int({ min: 1_500, max: 150_000 }),
+  operator: faker.company.name(),
   operator_class: 'C',
-  operator_driver_id: faker.datatype.uuid().toUpperCase(),
-  operator_passenger_id: faker.datatype.uuid().toUpperCase(),
+  operator_driver_id: faker.string.uuid().toUpperCase(),
+  operator_passenger_id: faker.string.uuid().toUpperCase(),
   incentive_type: faker.helpers.arrayElement(['normale', 'booster']),
-  rpc_incentive: faker.datatype.number(1000),
+  rpc_incentive: faker.number.int(1000),
 };
 
 test.before((t) => {
