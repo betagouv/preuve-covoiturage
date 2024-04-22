@@ -152,15 +152,17 @@ export class ExportRepository implements ExportRepositoryInterface {
     }
   }
 
-  public async error(id: number, error: string): Promise<void> {
+  public async error(id: number, error: string | Error): Promise<void> {
+    // cast the Error
+    const { message, stack } = error instanceof Error && 'message' in error ? error : new Error(error);
+
     // log error event
-    await this.logger.failure(id, error);
+    await this.logger.failure(id, message);
 
     // update the export status
     await this.connection.getClient().query<any>({
-      text:
-        `UPDATE ${this.exportsTable} SET status = $1, error = $2::text WHERE _id = $3`,
-      values: [ExportStatus.FAILURE, error, id],
+      text: `UPDATE ${this.exportsTable} SET status = $1, error = $2::json WHERE _id = $3`,
+      values: [ExportStatus.FAILURE, { message, stack }, id],
     });
   }
 

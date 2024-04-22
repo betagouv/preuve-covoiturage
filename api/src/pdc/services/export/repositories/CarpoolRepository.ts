@@ -4,8 +4,8 @@ import { CarpoolRow } from '../models/CarpoolRow';
 import { ExportParams } from '../models/ExportParams';
 import { XLSXWriter } from '../models/XLSXWriter';
 import { ExportProgress } from './ExportRepository';
-import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery';
 import { QueryTemplates } from './queries/AbstractQuery';
+import { CarpoolListQuery, CarpoolListType, TemplateKeys } from './queries/CarpoolListQuery';
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
@@ -51,7 +51,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
       let count = 0; // number of rows read in the current batch
 
       const text = new CarpoolListQuery().getText(templates);
-      cursor = await this.connection.getCursor(text, values);
+      cursor = await this.connection.getCursor<CarpoolListType>(text, values);
       do {
         const results = await cursor.read(this.batchSize);
         count = results.length;
@@ -64,11 +64,12 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
         if (progress) await progress(((done / total) * 100) | 0);
       } while (count !== 0);
-    } catch (e) {
-      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
-      console.debug(e.stack);
-    } finally {
+
       await cursor.release();
+    } catch (e) {
+      await cursor.release();
+      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      throw e;
     }
   }
 

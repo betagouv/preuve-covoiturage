@@ -27,9 +27,9 @@ export const filters: Array<FieldFilter> = [
 
 // fields are defined in the models/CarpoolRow.ts types
 export const fields: Fields = [
-  "trip_id",
-  "operator_journey_id",
-  "operator_class",
+  'operator_trip_id',
+  'operator_journey_id',
+  'operator_class',
 
   "status",
 
@@ -87,10 +87,13 @@ export const fields: Fields = [
   "incentive_2_siret",
   "incentive_2_amount",
 
-  "incentive_rpc_0_siret",
-  "incentive_rpc_0_amount",
-  "incentive_rpc_1_siret",
-  "incentive_rpc_1_amount",
-  "incentive_rpc_2_siret",
-  "incentive_rpc_2_amount",
+  'incentive_rpc_0_campaign_id',
+  'incentive_rpc_0_campaign_name',
+  'incentive_rpc_0_amount',
+  'incentive_rpc_1_campaign_id',
+  'incentive_rpc_1_campaign_name',
+  'incentive_rpc_1_amount',
+  'incentive_rpc_2_campaign_id',
+  'incentive_rpc_2_campaign_name',
+  'incentive_rpc_2_amount',
 ];

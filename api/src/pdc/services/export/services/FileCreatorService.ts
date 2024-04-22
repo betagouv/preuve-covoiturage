@@ -89,8 +89,9 @@ export class FileCreatorService {
     await this.fileWriter.printHelp();
   }
 
-  protected async wrap(): Promise<void> {
+  protected async wrap(e?: Error): Promise<void> {
     await this.fileWriter.close();
+    if (e) throw e;
     await this.fileWriter.compress();
   }
 
@@ -104,12 +105,10 @@ export class FileCreatorService {
       await this.initialize();
       await this.data();
       await this.help();
-    } catch (e) {
-      console.error(e.message);
-    } finally {
       await this.wrap();
       console.info(`File written to ${this.fileWriter.workbookPath}`);
-      // TODO cleanup on failure
+    } catch (e) {
+      await this.wrap(e);
     }
   }
 }
