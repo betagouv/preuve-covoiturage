@@ -4,10 +4,14 @@ import { getAiresLastUrl } from './helpers';
 import { AiresCovoiturage } from './datasets/AiresCovoiturage';
 import { IncentiveCampaigns } from './datasets/IncentiveCampaigns';
 import { CreateIncentiveCampaignsTable } from './datastructures/CreateIncentiveCampaignsTable';
+import { CreateGeoAggregationTable } from './datastructures/CreateGeoAggregationTable';
+import { GeoAggregation } from './datasets/GeoAggregation';
 
 export const datastructures: Set<StaticMigrable> = new Set([
   CreateAiresCovoiturageTable,
   CreateIncentiveCampaignsTable,
+  CreateGeoAggregationTable,
+  GeoAggregation,
 ]);
 
 export const datasets = async () => {
