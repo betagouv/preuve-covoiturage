@@ -35,8 +35,8 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
       delimiter: ',',
       columns: true,
     };
-
     readonly importSql = `
+      TRUNCATE ${this.targetTableWithSchema} RESTART IDENTITY;
       INSERT INTO ${this.targetTableWithSchema} (
         id_lieu,
         nom_lieu,
@@ -77,10 +77,7 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
         lumiere,
         comm,
         ST_SetSRID(ST_Point(trim(xlong,chr(160))::float,trim(ylat,chr(160))::float),4326)
-      FROM ${this.tableWithSchema} 
-      ON CONFLICT 
-      ON CONSTRAINT ${this.targetTable}_id_lieu_key
-      DO NOTHING;
+      FROM ${this.tableWithSchema};
     `;
   };
 }

@@ -4,7 +4,6 @@ export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
   static uuid = 'create_incentive_campaigns_table';
   static table = 'incentive_campaigns';
   static year = 2024;
-  //static skipStatePersistence = true;
   readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
   readonly sql = `
       DROP TABLE IF EXISTS ${this.tableWithSchema};
