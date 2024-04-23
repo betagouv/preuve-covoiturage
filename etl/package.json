@@ -8,6 +8,7 @@
     "start": "node ./dist/index.js",
     "build": "tsc",
     "watch": "tsc -w",
+    "cli": "node dist/cli.js",
     "test": "exit 0"
   },
   "dependencies": {

@@ -47,6 +47,7 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
       columns: true,
     };
     readonly importSql = `
+      TRUNCATE ${this.targetTableWithSchema} RESTART IDENTITY;
       INSERT INTO ${this.targetTableWithSchema} (
         collectivite,
         derniere_maj,
