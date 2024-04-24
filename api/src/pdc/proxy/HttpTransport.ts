@@ -813,6 +813,8 @@ export class HttpTransport implements TransportInterface {
         journeysByDistances: 'journeys-by-distances',
         getLocation: 'location',
         airesCovoiturage: 'aires-covoiturage',
+        oneCampaign: 'one-campaign',
+        allCampaigns: 'all-campaigns'
       }),
     );
 
