@@ -55,6 +55,8 @@ export interface CarpoolInterface {
   driver_identity_key: string;
   driver_has_travel_pass: boolean;
   driver_meta?: CarpoolMetaInterface;
+  operator_journey_id: string;
+  operator_id: number;
   operator_trip_id?: string;
   operator_uuid: string;
   operator_class: string;
@@ -62,7 +64,6 @@ export interface CarpoolInterface {
   seats: number;
   duration: number;
   distance: number;
-  cost: number;
   start: TerritoryCodeInterface;
   start_lat: number;
   start_lon: number;
