@@ -23,8 +23,8 @@ const defaultLon = 2.261827843187402;
 const dftCarpool: CarpoolInterface = {
   _id: 1,
   operator_trip_id: v4(),
-  driver_identity_uuid: v4(),
-  passenger_identity_uuid: v4(),
+  driver_identity_key: v4(),
+  passenger_identity_key: v4(),
   operator_uuid: '0b361f5b-4651-45f1-8f59-5952d5e745fd',
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -77,7 +77,7 @@ export function generatePartialCarpools(count = 75): Partial<CarpoolInterface>[]
   ].map((x) => ({
     datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
     distance: 25_000,
-    driver_identity_uuid: 'three',
-    passenger_identity_uuid: v4(),
+    driver_identity_key: 'three',
+    passenger_identity_key: v4(),
   }));
 }

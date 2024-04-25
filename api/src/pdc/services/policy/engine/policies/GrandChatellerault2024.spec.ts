@@ -20,8 +20,8 @@ const defaultLon = 0.5471076683365941;
 const defaultCarpool = {
   _id: 1,
   operator_trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -76,11 +76,11 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 1_000, driver_identity_uuid: 'tom' },
-      { distance: 5_000, driver_identity_uuid: 'tom' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'tom' },
-      { distance: 5_000, driver_identity_uuid: 'nina', passenger_identity_uuid: 'marcel' },
-      { distance: 80_000, driver_identity_uuid: 'nina', passenger_identity_uuid: 'marcel' },
+      { distance: 1_000, driver_identity_key: 'tom' },
+      { distance: 5_000, driver_identity_key: 'tom' },
+      { distance: 5_000, seats: 2, driver_identity_key: 'tom' },
+      { distance: 5_000, driver_identity_key: 'nina', passenger_identity_key: 'marcel' },
+      { distance: 80_000, driver_identity_key: 'nina', passenger_identity_key: 'marcel' },
     ],
     meta: [],
   },
@@ -108,7 +108,7 @@ test(
   process,
   {
     policy: { handler: Handler.id, max_amount: 2_200_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_key: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
@@ -137,13 +137,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'four' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'four' },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'five' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'four' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'four' },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: 'five' },
     ],
     meta: [],
   },
@@ -168,8 +168,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 6_000, driver_identity_uuid: 'one' },
-      { distance: 6_000, driver_identity_uuid: 'one' },
+      { distance: 6_000, driver_identity_key: 'one' },
+      { distance: 6_000, driver_identity_key: 'one' },
     ],
     meta: [
       {

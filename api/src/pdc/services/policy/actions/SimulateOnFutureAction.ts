@@ -93,8 +93,8 @@ export class SimulateOnFutureAction extends AbstractAction {
   protected async normalize(input: ParamsInterface): Promise<CarpoolInterface> {
     const common = {
       _id: 1,
-      driver_identity_uuid: v4(),
-      passenger_identity_uuid: v4(),
+      driver_identity_key: v4(),
+      passenger_identity_key: v4(),
       operator_trip_id: v4(),
       operator_uuid: await this.territoryRepository.findUUIDByOperatorId(input.operator_id),
       operator_class: input.operator_class,

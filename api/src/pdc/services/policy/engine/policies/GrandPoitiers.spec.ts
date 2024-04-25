@@ -55,8 +55,8 @@ const defaultLon = 2.261827843187402;
 const defaultCarpool = {
   _id: 1,
   operator_trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.KAROS,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -103,11 +103,11 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 79_999, seats: 2, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 79_999, seats: 2, driver_identity_key: 'one', passenger_identity_key: 'three' },
       {
         distance: 5_000,
-        driver_identity_uuid: 'two',
+        driver_identity_key: 'two',
         operator_uuid: OperatorsEnum.MOBICOOP,
         datetime: new Date('2023-11-16'),
       },
@@ -139,8 +139,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 6_000, driver_identity_uuid: 'one' },
-      { distance: 6_000, driver_identity_uuid: 'one' },
+      { distance: 6_000, driver_identity_key: 'one' },
+      { distance: 6_000, driver_identity_key: 'one' },
     ],
     meta: [
       {
@@ -174,13 +174,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '21', operator_trip_id: '1' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '22', operator_trip_id: '2' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '23', operator_trip_id: '3' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '24', operator_trip_id: '4' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '25', operator_trip_id: '5' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '26', operator_trip_id: '6' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '26', operator_trip_id: '6' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '21', operator_trip_id: '1' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '22', operator_trip_id: '2' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '23', operator_trip_id: '3' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '24', operator_trip_id: '4' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '25', operator_trip_id: '5' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '26', operator_trip_id: '6' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '26', operator_trip_id: '6' },
     ],
     meta: [],
   },
@@ -205,9 +205,9 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '21', operator_trip_id: '1' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '21', operator_trip_id: '2' },
-      { distance: 6_000, driver_identity_uuid: '11', passenger_identity_uuid: '21', operator_trip_id: '3' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '21', operator_trip_id: '1' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '21', operator_trip_id: '2' },
+      { distance: 6_000, driver_identity_key: '11', passenger_identity_key: '21', operator_trip_id: '3' },
     ],
     meta: [],
   },
