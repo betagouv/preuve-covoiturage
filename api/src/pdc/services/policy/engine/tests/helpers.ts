@@ -22,7 +22,7 @@ const defaultLon = 2.261827843187402;
 
 const dftCarpool: CarpoolInterface = {
   _id: 1,
-  trip_id: v4(),
+  operator_trip_id: v4(),
   driver_identity_uuid: v4(),
   passenger_identity_uuid: v4(),
   operator_uuid: '0b361f5b-4651-45f1-8f59-5952d5e745fd',

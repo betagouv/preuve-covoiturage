@@ -46,7 +46,6 @@ export interface CarpoolMetaInterface {
 
 export interface CarpoolInterface {
   _id: number;
-  trip_id: string;
   passenger_payment: number;
   passenger_identity_uuid: string;
   passenger_has_travel_pass: boolean;
@@ -56,6 +55,7 @@ export interface CarpoolInterface {
   driver_identity_uuid: string;
   driver_has_travel_pass: boolean;
   driver_meta?: CarpoolMetaInterface;
+  operator_trip_id?: string;
   operator_uuid: string;
   operator_class: string;
   datetime: Date;

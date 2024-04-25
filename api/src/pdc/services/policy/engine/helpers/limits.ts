@@ -131,13 +131,15 @@ export const watchForPersonMaxTripByDay: LimitStatelessStageHelper = (() => {
 
 export const watchForPassengerMaxByTripByDay: LimitStatelessStageHelper = (() => {
   function fn(ctx: StatelessContextInterface, uuid: string): void {
-    ctx.meta.register({
-      uuid,
-      name: 'max_passenger_restriction',
-      scope: ctx.carpool.trip_id,
-      lifetime: MetadataLifetime.Day,
-      carpoolValue: ctx.carpool.seats,
-    });
+    if ('operator_trip_id' in ctx.carpool && ctx.carpool.operator_trip_id.length) {
+      ctx.meta.register({
+        uuid,
+        name: 'max_passenger_restriction',
+        scope: ctx.carpool.operator_trip_id,
+        lifetime: MetadataLifetime.Day,
+        carpoolValue: ctx.carpool.seats,
+      });
+    }
   }
   fn.counter = LimitCounterTypeEnum.Other;
   fn.priority = 10;

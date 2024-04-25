@@ -19,7 +19,7 @@ const defaultLon = 0.5471076683365941;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
+  operator_trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
   operator_uuid: OperatorsEnum.KAROS,

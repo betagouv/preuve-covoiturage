@@ -214,7 +214,7 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
-      key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`,
+      key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Day,
       carpoolValue: 1,
@@ -235,13 +235,13 @@ test('should watch and apply for custom data', async (t) => {
 
   const [ctxStateful, store] = await setupStateful({ ...ctxStateless.incentive.export(), _id: 1 });
   t.deepEqual(ctxStateful.meta.export(), [
-    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 0, carpoolValue: 1 },
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`, value: 0, carpoolValue: 1 },
   ]);
 
   applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 100);
   t.deepEqual(ctxStateful.meta.export(), [
-    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 1, carpoolValue: 1 },
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`, value: 1, carpoolValue: 1 },
   ]);
   await store.save(ctxStateful.meta);
   t.deepEqual(await store.store(MetadataLifetime.Day), []);
@@ -249,7 +249,7 @@ test('should watch and apply for custom data', async (t) => {
   applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 100);
   t.deepEqual(ctxStateful.meta.export(), [
-    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 2, carpoolValue: 1 },
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`, value: 2, carpoolValue: 1 },
   ]);
   await store.save(ctxStateful.meta);
   t.deepEqual(await store.store(MetadataLifetime.Day), []);

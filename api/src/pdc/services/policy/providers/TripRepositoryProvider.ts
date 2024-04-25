@@ -19,7 +19,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       text: `
         SELECT
           t.carpool_id as _id,
-          t.trip_id,
+          t.operator_trip_id,
           t.operator_uuid,
           t.operator_class,
           t.passenger_payment,
@@ -74,7 +74,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       text: `
         SELECT
           t.carpool_id as _id,
-          t.trip_id,
+          t.operator_trip_id,
           t.operator_uuid,
           t.operator_class,
           t.passenger_payment,

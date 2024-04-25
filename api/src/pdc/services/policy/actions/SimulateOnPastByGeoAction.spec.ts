@@ -92,7 +92,7 @@ test('SimulateOnPastByGeoAction: should process trip with default time frame', a
   t.context.tripRepositoryResolverStub!.callsFake(function* fake() {
     const carpool: Partial<CarpoolInterface> = {
       _id: 1,
-      trip_id: '',
+      operator_trip_id: '',
       operator_class: 'C',
       datetime: faker.date.between({ from: t.context.todayMinusSizMonthes, to: new Date() }),
       seats: 1,
@@ -126,7 +126,7 @@ test('SimulateOnPastByGeoAction: should exclude trip with start and end not in 2
   t.context.tripRepositoryResolverStub!.callsFake(function* fake() {
     const carpool: Partial<CarpoolInterface> = {
       _id: 1,
-      trip_id: '',
+      operator_trip_id: '',
       operator_class: 'C',
       datetime: faker.date.between({ from: t.context.todayMinusSizMonthes, to: new Date() }),
       seats: 1,
