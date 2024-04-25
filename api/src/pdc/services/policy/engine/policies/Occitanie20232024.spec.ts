@@ -39,7 +39,7 @@ const defaultCarpool: CarpoolInterface = {
   end_lat: defaultLat,
   end_lon: defaultLon,
   driver_meta: {},
-  driver_payment: 10,
+  driver_revenue: 10,
   passenger_contribution: 10,
   passenger_meta: {
     payments: [{ siret: OperatorsEnum.BLABLACAR_DAILY, type: 'payment', amount: 10 }],

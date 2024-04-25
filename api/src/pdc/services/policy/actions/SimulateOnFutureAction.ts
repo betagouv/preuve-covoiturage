@@ -102,7 +102,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       driver_has_travel_pass: 'travel_pass' in input.driver.identity,
       passenger_has_travel_pass: 'travel_pass' in input.passenger.identity,
       seats: input.passenger.seats,
-      driver_payment: input.driver.revenue,
+      driver_revenue: input.driver.revenue,
       passenger_contribution: input.passenger.contribution,
       cost: input.passenger.contribution,
     };

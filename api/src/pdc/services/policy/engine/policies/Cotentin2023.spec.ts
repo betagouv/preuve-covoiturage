@@ -32,7 +32,7 @@ const defaultCarpool = {
   duration: 2_000,
   distance: 19_000,
   cost: 20,
-  driver_payment: 20,
+  driver_revenue: 20,
   passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
