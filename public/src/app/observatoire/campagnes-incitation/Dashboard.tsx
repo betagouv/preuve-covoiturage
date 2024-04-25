@@ -17,7 +17,6 @@ export default function Dashboard() {
   const searchParams = useSearchParams();
   const { dashboard } =useContext(DashboardContext);
   const period = getPeriod(dashboard.params.year, dashboard.params.month);
-  const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
   useEffect(() => {
     const params = {
       code: searchParams.get('code') ? searchParams.get('code')! : 'XXXXX',

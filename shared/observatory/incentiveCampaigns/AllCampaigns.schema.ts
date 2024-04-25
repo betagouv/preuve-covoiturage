@@ -4,11 +4,11 @@ export const alias = 'observatory.allCampaigns';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['type'],
+  required: [],
   properties: {
     type: {
       type: 'string',
-      //enum: perimeterTypes,
+      enum: perimeterTypes,
     },
     year: {
       type: 'integer',

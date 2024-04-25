@@ -11,82 +11,39 @@ import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useMemo, useState, useContext } from 'react';
-import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { FillLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 import { DashboardContext } from '@/context/DashboardProvider';
 import DownloadButton from '@/components/observatoire/DownloadButton';
+
 
 export default function IncentiveMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-occupation?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
-  const { data, error, loading } = useApi<OccupationDataInterface[]>(url);
+  const url = `${apiUrl}/all-campaigns`;
+  const { data, error, loading } = useApi<any[]>(url);
   const geojson = useMemo(() => {
-    const occupationData = data ? data : [];
+    const campaignsData = data ? data : [];
     return featureCollection(
-      occupationData.map((d) =>
+      campaignsData.map((d) =>
         feature(d.geom, {
-          territory: d.territory,
-          l_territory: d.l_territory,
-          journeys: d.journeys,
-          occupation_rate: d.occupation_rate,
+          budget: d.budget_incitations,
         }),
       ),
     ) as unknown as FeatureCollection;
   }, [data]);
 
-  const layer: CircleLayer = {
-    id: 'occupation',
-    source:'occupation',
-    type: 'circle',
+  const layer: FillLayer = {
+    id: 'campaigns',
+    source:'campaigns',
+    type: 'fill',
     paint: {
-      'circle-radius': {
-        property: 'journeys',
-        type: 'exponential',
-        stops: [
-          [0, 0],
-          [10, 5],
-          [100, 10],
-          [10000, 20],
-          [100000, 40],
-        ],
-      },
-      'circle-color': {
-        property: 'occupation_rate',
-        type: 'exponential',
-        stops: [
-          [2, '#E5E5F4'],
-          [2.25, '#9A9AFF'],
-          [2.5, '#7F7FC8'],
-          [2.75, '#000091'],
-          [3, '#000074'],
-          [4, '#00006D'],
-        ],
-      },
-      'circle-stroke-color': 'black',
-      'circle-stroke-width': 1,
-      'circle-opacity': 0.8,
+      'fill-color': '#020C7C',
+      'fill-opacity': 0.6,
     },
   };
 
-  const mapStyle = Config.get<string>('observatoire.mapStyle');
-
-  const analyse: AnalyseInterface[] = [
-    { color: [229, 229, 244], val: 2, width: 10},
-    { color: [154, 154, 255], val: 2.25, width: 10},
-    { color: [127, 127, 200], val: 2.5, width: 10},
-    { color: [0, 0, 145], val: 2.75, width: 10},
-    { color: [0, 0, 116], val: 3, width: 10},
-    { color: [0, 0, 109], val: 4, width: 10},
-  ];
-
-  const classes: ClasseInterface[] = [
-    { color: [229, 229, 224], val: '>= 100 000', width: 40},
-    { color: [229, 229, 224], val: '10 000', width: 20},
-    { color: [229, 229, 224], val: '100', width: 10},
-    { color: [229, 229, 224], val: '10', width: 5},
-    ];
-   
+  const mapStyle = Config.get<string>('observatoire.mapStyle');  
 
   const bounds = useMemo(() => {
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
@@ -96,7 +53,7 @@ export default function IncentiveMap({ title }: { title: string }) {
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
     latitude: number,
-    properties: OccupationDataInterface
+    properties: any
   } | undefined>();
   const [cursor, setCursor] = useState<string>('');
   const onMouseEnter = useCallback((e:any) => {
@@ -132,23 +89,7 @@ export default function IncentiveMap({ title }: { title: string }) {
         mapStyle={mapStyle} 
         bounds={bounds} 
         scrollZoom={false} 
-        legend={
-          [
-            {
-              title: mapTitle,
-              type:'proportional_circles',
-              classes: classes,
-              order:1
-            },
-            {
-              title: mapTitle,
-              type:'interval',
-              classes: getLegendClasses(analyse,'interval'),
-              order:2
-            }
-          ]
-        }
-        interactiveLayerIds={['occupation']}
+        interactiveLayerIds={['campaigns']}
         cursor={cursor}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -161,13 +102,12 @@ export default function IncentiveMap({ title }: { title: string }) {
           />
         }
         >
-          <Source id='occupation' type='geojson' data={geojson}>
+          <Source id='campaigns' type='geojson' data={geojson}>
             <Layer {...layer} />
             <Popup longitude={hoverInfo ? hoverInfo.longitude : 0} latitude={hoverInfo ? hoverInfo.latitude : 0} closeButton={false}>
               {hoverInfo && 
                 <div>
-                  {hoverInfo.properties.occupation_rate && <p><b>taux d&rsquo;ocupation des véhicules : </b>{hoverInfo.properties.occupation_rate}</p>}
-                  {hoverInfo.properties.journeys && <p><b>véhicules partagés : </b>{hoverInfo.properties.journeys}</p>}
+                  {hoverInfo.properties.budget && <p><b>Budget de la campagne : </b>{hoverInfo.properties.budget} €</p>}
                 </div>
               }
             </Popup>

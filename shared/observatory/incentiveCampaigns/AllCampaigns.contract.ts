@@ -33,7 +33,7 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
-  type: PerimeterType; //type de territoire selectionné
+  type?: PerimeterType; //type de territoire selectionné
   year?: number;
 }
 

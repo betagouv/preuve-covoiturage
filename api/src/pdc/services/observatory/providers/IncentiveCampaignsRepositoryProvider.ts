@@ -34,17 +34,19 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
   }
 
   async getAllCampaigns(params: AllCampaignsParamsInterface): Promise<AllCampaignsResultInterface> {
+    const type = params.type !== undefined ? checkTerritoryParam(params.type) : null ;
     const year = params.year !== undefined ? params.year : new Date().getFullYear();
     const sql = {
-      values: [checkTerritoryParam(params.type), year],
-      text: `SELECT a.*, ST_AsGeoJSON(b.geom,6) as geom
+      values: [year],
+      text: `SELECT a.*, ST_AsGeoJSON(b.geom,6)::json as geom
       FROM ${this.table} a 
       LEFT JOIN ${this.perim_table} b on a.type = b.type AND left(a.code,9) = b.territory 
-      AND b.year = geo.get_latest_millesime_or($2)
-      WHERE a.type = $1
+      AND b.year = geo.get_latest_millesime_or($1)
+      WHERE ${type ? `a.type = '${type}' AND` : ''}
+      b.geom IS NOT NULL
       ${
         params.year
-          ? `AND (right(a.date_debut,4) = $2::varchar AND right(a.date_fin,4) = $2::varchar)`
+          ? `AND (right(a.date_debut,4) = $1::varchar AND right(a.date_fin,4) = $1::varchar)`
           : `AND to_date(a.date_fin,'DD/MM/YYYY') > now()`
       }
       ;`,
