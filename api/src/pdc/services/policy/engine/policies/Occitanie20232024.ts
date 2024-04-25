@@ -22,7 +22,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Occitanie20232024.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
-  return ctx.carpool.passenger_payment || 0;
+  return ctx.carpool.passenger_contribution || 0;
 }
 
 // Politique de la région Occitanie

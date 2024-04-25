@@ -46,7 +46,7 @@ export interface CarpoolMetaInterface {
 
 export interface CarpoolInterface {
   _id: number;
-  passenger_payment: number;
+  passenger_contribution: number;
   passenger_identity_key: string;
   passenger_has_travel_pass: boolean;
   passenger_is_over_18: boolean | null;

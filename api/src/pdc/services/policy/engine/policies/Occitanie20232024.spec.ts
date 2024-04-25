@@ -40,7 +40,7 @@ const defaultCarpool: CarpoolInterface = {
   end_lon: defaultLon,
   driver_meta: {},
   driver_payment: 10,
-  passenger_payment: 10,
+  passenger_contribution: 10,
   passenger_meta: {
     payments: [{ siret: OperatorsEnum.BLABLACAR_DAILY, type: 'payment', amount: 10 }],
   },
@@ -63,8 +63,8 @@ test(
       // but not inside same aom if not region
       { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom1' } },
       { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom2' } },
-      { passenger_payment: 0 },
-      { passenger_payment: 0, datetime: new Date('2022-10-28') },
+      { passenger_contribution: 0 },
+      { passenger_contribution: 0, datetime: new Date('2022-10-28') },
     ],
     meta: [],
   },
