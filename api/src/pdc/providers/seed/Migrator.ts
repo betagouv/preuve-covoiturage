@@ -1,16 +1,15 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
 import { createDatabase, dropDatabase, migrate } from '@db/index';
-import { parse, Options as ParseOptions } from 'csv-parse';
+import { PostgresConnection } from '@ilos/connection-postgres';
+import { Options as ParseOptions, parse } from 'csv-parse';
+import { add } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
-
 import { URL } from 'url';
-import { Carpool, carpools, carpoolsV2 } from './carpools';
-import { companies, Company } from './companies';
+import { SeedableCarpoolData, carpools } from './carpools';
+import { Company, companies } from './companies';
 import { Operator, operators } from './operators';
 import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories';
 import { User, users } from './users';
-import { add } from 'date-fns';
 export class Migrator {
   public connection: PostgresConnection;
   public currentConnectionString: string;
@@ -28,6 +27,7 @@ export class Migrator {
 
   constructor(dbUrlString: string, newDatabase = true) {
     const dbUrl = new URL(dbUrlString);
+
     this.config = {
       driver: 'pg',
       user: dbUrl.username,
@@ -37,15 +37,20 @@ export class Migrator {
       port: parseInt(dbUrl.port, 10),
       ssl: false,
     };
+
     this.dbIsCreated = newDatabase;
+
     this.dbName = newDatabase
       ? `test_${Date.now().valueOf()}_${(Math.random() + 1).toString(36).substring(7)}`
       : dbUrl.pathname.replace('/', '');
+
     const currentConnection = new URL(dbUrlString);
     if (newDatabase) {
       currentConnection.pathname = `/${this.dbName}`;
     }
     this.currentConnectionString = currentConnection.toString();
+
+    console.debug(`Created temporary test database: ${this.dbName}`);
   }
 
   async up() {
@@ -98,41 +103,45 @@ export class Migrator {
       await this.seedTerritoryGroup(territory_group);
     }
 
+    // carpools V1
+    // @deprecated
     for (const carpool of carpools) {
-      console.debug(`Seeding carpool ${carpool.acquisition_id}`);
+      console.debug(`Seeding carpool ${carpool.operator_trip_id}`);
       await this.seedCarpool(carpool);
     }
-    for (const carpool of carpoolsV2) {
-      console.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
-      await this.seedCarpoolV2(carpool);
+
+    // carpools V2
+    for (const carpool of carpools) {
+      console.debug(`Seeding carpool ${carpool.operator_trip_id}`);
+      if (carpool.is_driver) await this.seedCarpoolV2(carpool);
     }
 
     /*
-          - Territoires
-            - company.companies
+    - Territoires
+      - company.companies
 
-          - Operateurs
-            - operator.operators
-            - operator.thumbnails
-            - application.applications
-            - company.companies
-            - territory.territory_operators
+    - Operateurs
+      - operator.operators
+      - operator.thumbnails
+      - application.applications
+      - company.companies
+      - territory.territory_operators
 
-          - Politiques
-            - policy.policies
+    - Politiques
+      - policy.policies
 
-          - Trajets
-            - acquisition.acquisitions
-            - carpool.carpools
-            - carpool.identities
+    - Trajets
+      - acquisition.acquisitions
+      - carpool.carpools
+      - carpool.identities
 
-          - Liste des tables
-            - certificates.**
-            - honor.tracking
-            - fraudcheck.fraudchecks
-            - policy.policy_metas
-            - policy.incentives
-            +++ VIEWS +++ 
+    - Liste des tables
+      - certificates.**
+      - honor.tracking
+      - fraudcheck.fraudchecks
+      - policy.policy_metas
+      - policy.incentives
+      +++ VIEWS +++ 
     */
     await this.connection.getClient().query<any>(`SET session_replication_role = 'origin'`);
   }
@@ -165,145 +174,105 @@ export class Migrator {
     } while (!done);
   }
 
-  async seedCarpoolV2([driverCarpool, passengerCarpool]: [Carpool, Carpool]) {
-    const carpoolResult = await this.connection.getClient().query({
+  async seedCarpoolV2(carpool: SeedableCarpoolData) {
+    const carpoolResult = await this.connection.getClient().query<{ _id: number; created_at: Date; updated_at: Date }>({
       text: `INSERT INTO carpool_v2.carpools (
-        operator_id,
-        operator_journey_id,
-        operator_trip_id,
-        operator_class,
-        start_datetime,
-        start_position,
-        end_datetime,
-        end_position,
-        distance,
-        licence_plate,
-        driver_identity_key,
-        driver_operator_user_id,
-        driver_phone,
-        driver_phone_trunc,
-        driver_travelpass_name,
-        driver_travelpass_user_id,
-        driver_revenue,
-        passenger_identity_key,
-        passenger_operator_user_id,
-        passenger_phone,
-        passenger_phone_trunc,
-        passenger_travelpass_name,
-        passenger_travelpass_user_id,
-        passenger_over_18,
-        passenger_seats,
-        passenger_contribution,
-        passenger_payments
-      ) VALUES(
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        ST_SetSRID(ST_Point($6, $7), 4326),
-        $8,
-        ST_SetSRID(ST_Point($9, $10), 4326),
-        $11,
-        $12,
-        $13,
-        $14,
-        $15,
-        $16,
-        $17,
-        $18,
-        $19,
-        $20,
-        $21,
-        $22,
-        $23,
-        $24,
-        $25,
-        $26,
-        $27,
-        $28,
-        $29
-      )
-      ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, created_at, updated_at
-    `,
-      values: [
-        driverCarpool.operator_id,
-        driverCarpool.operator_journey_id,
-        driverCarpool.operator_trip_id,
-        driverCarpool.operator_class,
-        driverCarpool.datetime,
-        driverCarpool.start_position.lon,
-        driverCarpool.start_position.lat,
-        add(driverCarpool.datetime, { seconds: driverCarpool.duration }),
-        driverCarpool.end_position.lon,
-        driverCarpool.end_position.lat,
-        driverCarpool.distance,
-        driverCarpool.licence_plate,
-        driverCarpool.identity_key,
-        driverCarpool.identity_operator_user_id,
-        driverCarpool.identity_phone,
-        driverCarpool.identity_phone_trunc,
-        driverCarpool.identity_travelpass_name,
-        driverCarpool.identity_travelpass_user_id,
-        driverCarpool.cost,
-        passengerCarpool.identity_key,
-        passengerCarpool.identity_operator_user_id,
-        passengerCarpool.identity_phone,
-        passengerCarpool.identity_phone_trunc,
-        passengerCarpool.identity_travelpass_name,
-        passengerCarpool.identity_travelpass_user_id,
-        passengerCarpool.identity_over_18,
-        passengerCarpool.seats,
-        passengerCarpool.cost,
-        JSON.stringify(passengerCarpool.payments),
-      ],
-    });
-
-    await this.connection.getClient().query({
-      text: `
-        INSERT INTO carpool_v2.requests (
-          carpool_id, operator_id, operator_journey_id, payload, api_version, cancel_code, cancel_message
-        ) VALUES (
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6,
-          $7
+          operator_id,
+          operator_journey_id,
+          operator_trip_id,
+          operator_class,
+          start_datetime,
+          start_position,
+          end_datetime,
+          end_position,
+          distance,
+          licence_plate,
+          driver_identity_key,
+          driver_operator_user_id,
+          driver_phone,
+          driver_phone_trunc,
+          driver_travelpass_name,
+          driver_travelpass_user_id,
+          driver_revenue,
+          passenger_identity_key,
+          passenger_operator_user_id,
+          passenger_phone,
+          passenger_phone_trunc,
+          passenger_travelpass_name,
+          passenger_travelpass_user_id,
+          passenger_over_18,
+          passenger_seats,
+          passenger_contribution,
+          passenger_payments
+        ) VALUES(
+          $1, $2, $3, $4, $5, ST_SetSRID(ST_Point($6, $7), 4326), $8, ST_SetSRID(ST_Point($9, $10), 4326),
+          $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
+          $21, $22, $23, $24, $25, $26, $27, $28, $29
         )
-        RETURNING _id, created_at
+        ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
+        RETURNING _id, created_at, updated_at
       `,
       values: [
-        carpoolResult.rows[0]._id,
-        driverCarpool.operator_id,
-        driverCarpool.operator_journey_id,
-        null,
-        3,
-        null,
-        null,
+        carpool.operator_id,
+        carpool.operator_journey_id,
+        carpool.operator_trip_id,
+        carpool.operator_class,
+        carpool.datetime,
+        carpool.start_position.lon,
+        carpool.start_position.lat,
+        add(carpool.datetime, { seconds: carpool.duration }),
+        carpool.end_position.lon,
+        carpool.end_position.lat,
+        carpool.distance,
+        carpool.licence_plate,
+        carpool.identity_key,
+        carpool.identity_operator_user_id,
+        carpool.identity_phone,
+        carpool.identity_phone_trunc,
+        carpool.identity_travelpass_name,
+        carpool.identity_travelpass_user_id,
+        carpool.cost,
+        carpool.identity_key,
+        carpool.identity_operator_user_id,
+        carpool.identity_phone,
+        carpool.identity_phone_trunc,
+        carpool.identity_travelpass_name,
+        carpool.identity_travelpass_user_id,
+        carpool.identity_over_18,
+        carpool.seats,
+        carpool.cost,
+        JSON.stringify(carpool.passenger_payments),
       ],
+    });
+
+    await this.connection.getClient().query<{ _id: number; created_at: Date }>({
+      text: `
+          INSERT INTO carpool_v2.requests (
+            carpool_id, operator_id, operator_journey_id, payload, api_version, cancel_code, cancel_message
+          ) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+          RETURNING _id, created_at
+        `,
+      values: [carpoolResult.rows[0]._id, carpool.operator_id, carpool.operator_journey_id, null, 3, null, null],
     });
 
     await this.connection.getClient().query({
       text: `
-      INSERT INTO carpool_v2.geo (
-        carpool_id, start_geo_code, end_geo_code, errors
-      ) VALUES (
-        $1,
-        $2,
-        $3,
-        $4
-      )
-      ON CONFLICT (carpool_id)
-      DO UPDATE
-      SET
-        start_geo_code = excluded.start_geo_code,
-        end_geo_code = excluded.end_geo_code,
-        errors = excluded.errors::jsonb
-      `,
-      values: [carpoolResult.rows[0]._id, driverCarpool.start_geo_code, driverCarpool.end_geo_code, JSON.stringify([])],
+          INSERT INTO carpool_v2.geo (
+            carpool_id, start_geo_code, end_geo_code, errors
+          ) VALUES (
+            $1,
+            $2,
+            $3,
+            $4
+          )
+          ON CONFLICT (carpool_id)
+          DO UPDATE
+          SET
+            start_geo_code = excluded.start_geo_code,
+            end_geo_code = excluded.end_geo_code,
+            errors = excluded.errors::jsonb
+        `,
+      values: [carpoolResult.rows[0]._id, carpool.start_geo_code, carpool.end_geo_code, JSON.stringify([])],
     });
 
     await this.connection.getClient().query({
@@ -315,11 +284,11 @@ export class Migrator {
         $2
       )
       `,
-      values: [carpoolResult.rows[0]._id, 'processed'],
+      values: [carpoolResult.rows[0]._id, carpool.acquisition_status],
     });
   }
 
-  async seedCarpool(carpool: Carpool) {
+  async seedCarpool(carpool: SeedableCarpoolData) {
     const result = await this.connection.getClient().query<any>({
       text: `
         INSERT INTO carpool.identities 
@@ -412,114 +381,12 @@ export class Migrator {
       values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
     });
 
-    await this.connection.getClient().query<any>(`
-        SELECT
-          setval(
-            'acquisition.acquisitions__id_seq',
-            (SELECT max(_id) FROM acquisition.acquisitions),
-            true
-          )
-        `);
-
-    // seed carpool V2
-    // no acquisitions, no identities
-    // carpool V2 has one entry for driver and passenger
-    // when V1 had 2 entries : one for driver and one for passenger
-    if (carpool.is_driver) {
-      await this.connection.getClient().query<any>({
-        text: `
-        INSERT INTO carpool_v2.carpools (
-            _id,
-            operator_id,
-            operator_journey_id,
-            operator_trip_id,
-            operator_class,
-            start_datetime,
-            start_position,
-            end_datetime,
-            end_position,
-            distance,
-            licence_plate,
-            driver_identity_key,
-            driver_operator_user_id,
-            driver_phone,
-            driver_phone_trunc,
-            driver_travelpass_name,
-            driver_travelpass_user_id,
-            driver_revenue,
-            passenger_identity_key,
-            passenger_operator_user_id,
-            passenger_phone,
-            passenger_phone_trunc,
-            passenger_travelpass_name,
-            passenger_travelpass_user_id,
-            passenger_over_18,
-            passenger_seats,
-            passenger_contribution,
-            passenger_payments
-        ) VALUES (
-          $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9,  $10,
-          $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-          $21, $22, $23, $24, $25, $26, $27, $28
-        )
-        --ON CONFLICT DO NOTHING
-      `,
-        values: [
-          carpool._id,
-          carpool.operator_id,
-          carpool.operator_journey_id,
-          carpool.operator_trip_id,
-          carpool.operator_class,
-          carpool.datetime,
-          `POINT(${carpool.start_position.lon} ${carpool.start_position.lat})`,
-          new Date(carpool.datetime.getTime() + carpool.duration * 1000),
-          `POINT(${carpool.end_position.lon} ${carpool.end_position.lat})`,
-          carpool.distance,
-          carpool.licence_plate,
-          carpool.driver_identity_key,
-          carpool.driver_operator_user_id,
-          carpool.driver_phone,
-          carpool.driver_phone_trunc,
-          carpool.driver_travelpass_name,
-          carpool.driver_travelpass_user_id,
-          carpool.driver_revenue,
-          carpool.passenger_identity_key,
-          carpool.passenger_operator_user_id,
-          carpool.passenger_phone,
-          carpool.passenger_phone_trunc,
-          carpool.passenger_travelpass_name,
-          carpool.passenger_travelpass_user_id,
-          carpool.passenger_over_18,
-          carpool.passenger_seats,
-          carpool.passenger_contribution,
-          JSON.stringify(carpool.passenger_payments),
-        ],
-      });
-
-      // carpool_v2.geo
-      await this.connection.getClient().query<any>({
-        text: `
-        INSERT INTO carpool_v2.geo (
-          carpool_id,
-          start_geo_code,
-          end_geo_code
-        ) VALUES ( $1, $2, $3 )
-      `,
-        values: [carpool._id, carpool.start_geo_code, carpool.end_geo_code],
-      });
-
-      // carpool_v2.status
-      await this.connection.getClient().query<any>({
-        text: `
-        INSERT INTO carpool_v2.status (
-          carpool_id,
-          acquisition_status,
-          fraud_status
-        ) VALUES ( $1, $2, $3 )
-      `,
-        values: [carpool._id, carpool.acquisition_status, carpool.fraud_status],
-      });
-    }
+    // Update acquisition_id sequence
+    await this.connection
+      .getClient()
+      .query<any>(
+        `SELECT setval( 'acquisition.acquisitions__id_seq', (SELECT max(_id) FROM acquisition.acquisitions), true )`,
+      );
   }
 
   async seedCompany(company: Company) {

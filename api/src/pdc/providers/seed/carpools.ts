@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../carpool/interfaces';
 import { PaymentInterface } from '../normalization/interfaces';
 
-export interface Carpool {
+export interface SeedableCarpoolData {
   _id: number;
   acquisition_id: number;
   trip_id: string;
@@ -67,7 +67,7 @@ function phone_trunc(): string {
   return `${faker.helpers.arrayElement(['+33', '+262', '+590'])}6${faker.number.int({ min: 10_00_00, max: 99_99_99 })}`;
 }
 
-function defaultCarpool(): Carpool {
+function defaultCarpool(): SeedableCarpoolData {
   return {
     _id: faker.number.int(),
     acquisition_id: 1,
@@ -94,9 +94,14 @@ function defaultCarpool(): Carpool {
     },
     seats: 1,
     identity_uuid: v4(),
-    identity_travel_pass: 'identity_travel_pass',
+    identity_key: v4(),
+    identity_operator_user_id: v4(),
+    identity_travel_pass: faker.word.noun(),
+    identity_travelpass_name: faker.word.noun(),
+    identity_travelpass_user_id: v4(),
     identity_over_18: true,
-    identity_phone_trunc: '+336000000',
+    identity_phone: `${phone_trunc()}00`,
+    identity_phone_trunc: phone_trunc(),
     cost: 100,
     status: faker.helpers.arrayElement([
       CarpoolV1StatusEnum.Ok,
@@ -151,7 +156,10 @@ function defaultCarpool(): Carpool {
   };
 }
 
-function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpool>): [Carpool, Carpool] {
+function makeCarpoolsFromAcquisition(
+  acquisition_id: number,
+  data: Partial<SeedableCarpoolData>,
+): [SeedableCarpoolData, SeedableCarpoolData] {
   const commonData = {
     _id: acquisition_id,
     acquisition_id,
@@ -182,8 +190,23 @@ function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpo
   ];
 }
 
-export const carpools: Carpool[] = [
-  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2022-06-15') }),
-  ...makeCarpoolsFromAcquisition(3, { datetime: new Date('2022-06-16') }),
-  ...makeCarpoolsFromAcquisition(5, { datetime: new Date('2022-06-16'), status: CarpoolV1StatusEnum.FraudcheckError }),
+export const carpools: SeedableCarpoolData[] = [
+  ...makeCarpoolsFromAcquisition(1, {
+    datetime: new Date('2022-06-15'),
+    status: CarpoolV1StatusEnum.Ok,
+    acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+    fraud_status: CarpoolFraudStatusEnum.Passed,
+  }),
+  ...makeCarpoolsFromAcquisition(3, {
+    datetime: new Date('2022-06-16'),
+    status: CarpoolV1StatusEnum.Ok,
+    acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+    fraud_status: CarpoolFraudStatusEnum.Passed,
+  }),
+  ...makeCarpoolsFromAcquisition(5, {
+    datetime: new Date('2022-06-16'),
+    status: CarpoolV1StatusEnum.FraudcheckError,
+    acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+    fraud_status: CarpoolFraudStatusEnum.Failed,
+  }),
 ];

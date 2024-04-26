@@ -2,6 +2,7 @@ import { ConflictException, InvalidRequestException, NotFoundException, provider
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { statusConverter } from '@pdc/providers/carpool/helpers/statusConverter';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
+import { omit } from 'lodash';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -17,7 +18,6 @@ import {
   ValidJourney,
   ValidJourneyConstraint,
 } from '../interfaces';
-import { omit } from 'lodash';
 
 @provider({
   identifier: CeeRepositoryProviderInterfaceResolver,
@@ -36,7 +36,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | null> {
     const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
       .filter((k) => !k.filter((kk) => !(kk in search)).length)
       .map((k, i) => {
@@ -58,7 +58,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         { text: [], values: [] },
       );
 
-    const query = {
+    const { short, long } = constraint;
+    const result = await this.connection.getClient().query<ExistingCeeApplication>({
       text: `
         SELECT
           ce._id as uuid,
@@ -67,15 +68,17 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.acquisition_id,
-          cc.status as acquisition_status
-        FROM ${this.table} AS ce
-        JOIN ${this.operatorTable} AS op ON op._id = ce.operator_id
-        LEFT JOIN carpool.carpools AS cc ON cc._id = ce.carpool_id
-        WHERE
-          ce.journey_type = $1::cee.journey_type_enum AND
-          ce.datetime >= ($5::timestamp - $2::int * interval '1 year') AND
-          ce.is_specific = false AND (${values.length ? text.join(' OR ') : ''})
+          ce.operator_journey_id,
+          cs.acquisition_status,
+          cs.fraud_status
+        FROM ${this.table}            AS ce
+        JOIN ${this.operatorTable}    AS op ON op._id = ce.operator_id
+        LEFT JOIN carpool_v2.carpools AS cc ON cc.operator_journey_id = ce.operator_journey_id
+        LEFT JOIN carpool_v2.status   AS cs ON cc._id = cs.carpool_id
+        WHERE ce.journey_type = $1::cee.journey_type_enum
+          AND ce.datetime >= ($5::timestamp - $2::int * interval '1 year')
+          AND ce.is_specific = false
+          AND (${values.length ? text.join(' OR ') : ''})
 
         UNION
 
@@ -86,46 +89,46 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.acquisition_id,
-          cc.status as acquisition_status
-        FROM ${this.table} AS ce
-        JOIN ${this.operatorTable} AS op ON op._id = ce.operator_id
-        LEFT JOIN carpool.carpools AS cc ON cc._id = ce.carpool_id
-          WHERE ce.journey_type = $1::cee.journey_type_enum
-            AND (
-              ce.datetime >= ($5::timestamp - $3::int * interval '1 year')
-              AND ce.datetime >= $4::timestamp
-            )
-            AND ce.is_specific = true AND (${values.length ? text.join('OR') : ''})
+          ce.operator_journey_id,
+          cs.acquisition_status,
+          cs.fraud_status
+        FROM ${this.table}            AS ce
+        JOIN ${this.operatorTable}    AS op ON op._id = ce.operator_id
+        LEFT JOIN carpool_v2.carpools AS cc ON cc.operator_journey_id = ce.operator_journey_id
+        LEFT JOIN carpool_v2.status   AS cs ON cc._id = cs.carpool_id
+        WHERE ce.journey_type = $1::cee.journey_type_enum
+          AND ce.datetime >= ($5::timestamp - $3::int * interval '1 year')
+          AND ce.datetime >= $4::timestamp
+          AND ce.is_specific = true
+          AND (${values.length ? text.join('OR') : ''})
+        
         ORDER BY datetime DESC
         LIMIT 1
       `,
       values: [
         journeyType,
-        journeyType === CeeJourneyTypeEnum.Short
-          ? constraint.short.standardized.year
-          : constraint.long.standardized.year,
-        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
-        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
+        journeyType === CeeJourneyTypeEnum.Short ? short.standardized.year : long.standardized.year,
+        journeyType === CeeJourneyTypeEnum.Short ? short.specific.year : long.specific.year,
+        journeyType === CeeJourneyTypeEnum.Short ? short.specific.after : long.specific.after,
         search.datetime,
         ...values,
       ],
-    };
-    const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
-    return result.rows[0];
+    });
+
+    return result.rowCount ? result.rows[0] : null;
   }
 
   async searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | null> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
   async searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | null> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 
@@ -148,7 +151,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           END AS phone_trunc,
           cc.end_datetime AS datetime,
           cc.driver_identity_key AS identity_key,
-          ce._id IS NULL AS already_registered
+          ce._id IS NOT NULL AS already_registered
         FROM carpool_v2.carpools AS cc
         LEFT JOIN ${this.table} ce ON ce.operator_journey_id = cc.operator_journey_id
         LEFT JOIN carpool_v2.geo cg ON cc._id = cg.carpool_id
@@ -241,7 +244,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         fields.push(['operator_journey_id', 'varchar']);
         values.push('operator_journey_id' in data ? data.operator_journey_id : undefined);
 
-        // TODO(carpool_v2_migration): remove when all data is migrated
+        /**
+         * @deprecated [carpool_v2_migration]
+         */
         fields.push(['carpool_id', 'int']);
         values.push('carpool_id' in data ? data.carpool_id : undefined);
       }

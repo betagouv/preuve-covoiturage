@@ -44,7 +44,7 @@ test.serial('Should find a valid journey', async (t) => {
 
   const result = await t.context.repository.searchForValidJourney(search, constraint);
 
-  t.not(result, undefined);
+  t.not(result, null);
   t.is(result.operator_journey_id, 'operator_journey_id-1');
   t.is(result.carpool_id, 1);
 });
@@ -124,8 +124,8 @@ test.serial('Search should be equal to a new registration', async (t) => {
     application_timestamp: new Date('2022-11-01'),
     driving_license: 'driving_license_3',
     identity_key: 'search_1',
+    operator_journey_id: 'operator_journey_id-3',
     carpool_id: 2,
-    operator_journey_id: 'operator_journey_id-2',
   };
 
   const createResult = await t.context.repository.registerShortApplication(
@@ -139,9 +139,9 @@ test.serial('Search should be equal to a new registration', async (t) => {
     } as any,
     config.rules.applicationCooldownConstraint,
   );
-  const { acquisition_id, acquisition_status, ...otherSearchResult } = searchResult || {};
+  const { operator_journey_id, acquisition_status, fraud_status, ...otherSearchResult } = searchResult || {};
   t.deepEqual(createResult, otherSearchResult);
-  t.is(acquisition_id, 1);
+  t.is(operator_journey_id, 'operator_journey_id-3');
 });
 
 test.serial('Should raise error if conflicts with short application', async (t) => {
@@ -224,7 +224,7 @@ test.serial('Should find short application with id if exists', async (t) => {
     config.rules.applicationCooldownConstraint,
   );
 
-  t.not(result, undefined);
+  t.not(result, null);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
 
@@ -241,7 +241,7 @@ test.serial('Should find short application with driver license if exists', async
     config.rules.applicationCooldownConstraint,
   );
 
-  t.not(result, undefined);
+  t.not(result, null);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
 
@@ -258,7 +258,7 @@ test.serial('Should not find long application with name match if id key is not n
     search,
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  t.is(result, null);
 });
 
 test.serial('Should find short application with id key if exists', async (t) => {
@@ -274,7 +274,7 @@ test.serial('Should find short application with id key if exists', async (t) => 
     search,
     config.rules.applicationCooldownConstraint,
   );
-  t.not(result, undefined);
+  t.not(result, null);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
 
@@ -290,7 +290,7 @@ test.serial('Should not find short application if criterias dont match', async (
     search,
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  t.is(result, null);
 });
 
 test.serial('Should match cooldown criteria', async (t) => {
@@ -324,7 +324,7 @@ test.serial('Should match cooldown criteria', async (t) => {
     },
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  t.is(result, null);
 
   const result2 = await t.context.repository.searchForLongApplication(
     {

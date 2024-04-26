@@ -1,5 +1,6 @@
 import { ContextType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
 import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
 import {
   ceeJourneyTypeEnumSchema,
@@ -67,6 +68,7 @@ const defaultLongPayload: any = {
 };
 
 test.serial(
+  'Invalid last_name_trunc param',
   error,
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
@@ -77,6 +79,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid journey_type param',
   error,
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
@@ -87,6 +90,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid driving license param',
   error,
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
@@ -97,6 +101,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid operator_journey_id param',
   error,
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
@@ -110,6 +115,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid datetime param',
   error,
   { ...defaultLongPayload, datetime: 'bip' },
   (e: any, t) => {
@@ -120,6 +126,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid phone_trunc param',
   error,
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
@@ -129,9 +136,13 @@ test.serial(
   defaultContext,
 );
 
-test.serial(error, defaultShortPayload, 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial('Unauthorized access', error, defaultShortPayload, 'Unauthorized Error', {
+  ...defaultContext,
+  call: { user: {} },
+});
 
 test.serial(
+  'Invalid data params',
   error,
   { ...defaultLongPayload, datetime: new Date().toISOString() },
   (e: any, t) => {
@@ -142,12 +153,13 @@ test.serial(
 );
 
 test.serial(
+  'Successful short distance application',
   success,
   defaultShortPayload,
   {
-    datetime: '2024-03-15T00:15:00.000Z',
-    journey_id: 1,
-    status: 'ok',
+    datetime: '2022-06-15T00:15:00.000Z',
+    journey_id: 'operator_journey_id-1',
+    status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;
       const signer = createSign('RSA-SHA512');
@@ -162,8 +174,9 @@ test.serial(
 );
 
 test.serial(
+  'Conflicting short distance operator_journey_id',
   error,
-  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
+  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-3' },
   (e: any, t) => {
     t.is(e.message, 'Conflict');
     t.like(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
@@ -172,6 +185,7 @@ test.serial(
 );
 
 test.serial(
+  'Wrong operator_journey_id',
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
   (e: any, t) => {

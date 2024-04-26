@@ -12,6 +12,7 @@ import { timestampSchema } from '@shared/cee/common/ceeSchema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/registerApplication.contract';
 import { alias } from '@shared/cee/registerApplication.schema';
 import { createSign } from 'crypto';
+import { statusConverter } from '../../../providers/carpool/helpers/statusConverter';
 import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getDateOrFail } from '../helpers/getDateOrFail';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
@@ -131,7 +132,7 @@ export class RegisterCeeAction extends AbstractAction {
         uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
         token: await this.sign(application),
-        journey_id: carpoolData.acquisition_id,
+        journey_id: carpoolData.operator_journey_id,
         status: carpoolData.status,
       };
     } catch (e) {
@@ -153,10 +154,11 @@ export class RegisterCeeAction extends AbstractAction {
             throw new ConflictException({
               uuid: old.uuid,
               datetime: old.datetime.toISOString(),
-              journey_id: old.acquisition_id,
-              status: old.acquisition_status,
+              journey_id: old.operator_journey_id,
+              status: statusConverter(old.acquisition_status, old.fraud_status),
             });
           }
+
           throw new ConflictException({
             datetime: old.datetime.toISOString(),
           });

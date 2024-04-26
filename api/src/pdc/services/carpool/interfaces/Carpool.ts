@@ -1,6 +1,5 @@
-import { PaymentInterface } from '@shared/common/interfaces/PaymentInterface';
 import { GeoPositionInterface } from '@shared/common/interfaces/GeoPositionInterface';
-
+import { PaymentInterface } from '@shared/common/interfaces/PaymentInterface';
 export { IdentityInterface } from '@shared/common/interfaces/IdentityInterface';
 export { IncentiveInterface } from '@shared/common/interfaces/IncentiveInterface';
 

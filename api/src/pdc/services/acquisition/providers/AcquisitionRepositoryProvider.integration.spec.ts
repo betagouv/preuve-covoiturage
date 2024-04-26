@@ -1,5 +1,5 @@
 import { NotFoundException } from '@ilos/common';
-import { Carpool } from '@pdc/providers/seed/carpools';
+import { SeedableCarpoolData } from '@pdc/providers/seed/carpools';
 import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
 import { subDays } from 'date-fns';
@@ -445,7 +445,7 @@ test.serial('Should list acquisition status', async (t) => {
     status: StatusEnum.Ok,
   });
   t.deepEqual(result2, [
-    { operator_journey_id: 'operator_journey_id-2' },
+    { operator_journey_id: 'operator_journey_id-3' },
     { operator_journey_id: 'operator_journey_id-1' },
   ]);
 });
@@ -570,7 +570,7 @@ const insertCarpoolWithStatus = async (
   context: TestContext,
   acquisition: { _id: number; journey_id: number },
   status: 'fraudcheck_error' | 'anomaly_error' | 'ok',
-): Promise<Carpool & { _id: number }> => {
+): Promise<SeedableCarpoolData & { _id: number }> => {
   const result = await context.db.connection.getClient().query<any>({
     text: `
     INSERT INTO carpool.carpools(
