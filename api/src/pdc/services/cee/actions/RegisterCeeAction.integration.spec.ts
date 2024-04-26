@@ -145,14 +145,14 @@ test.serial(
   success,
   defaultShortPayload,
   {
-    datetime: '2022-06-15T00:15:00.000Z',
+    datetime: '2024-03-15T00:15:00.000Z',
     journey_id: 1,
     status: 'ok',
     token: (function (): string {
       const private_key = config.signature.private_key as string;
       const signer = createSign('RSA-SHA512');
       signer.write(
-        ['89248032800012', 'short', defaultShortPayload.driving_license, '2022-06-15T00:15:00.000Z'].join('/'),
+        ['89248032800012', 'short', defaultShortPayload.driving_license, '2024-03-15T00:15:00.000Z'].join('/'),
       );
       signer.end();
       return signer.sign(private_key, 'base64');
@@ -166,7 +166,7 @@ test.serial(
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
   (e: any, t) => {
     t.is(e.message, 'Conflict');
-    t.like(e.rpcError.data, { datetime: '2022-06-15T00:15:00.000Z' });
+    t.like(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
   },
   defaultContext,
 );

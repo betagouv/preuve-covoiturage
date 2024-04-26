@@ -104,13 +104,13 @@ function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpo
 }
 
 export const carpools: Carpool[] = [
-  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-06-15') }),
-  ...makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-06-16') }),
-  ...makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-06-16'), status: 'fraudcheck_error' }),
+  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-03-15') }),
+  ...makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-03-16') }),
+  ...makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-03-16'), status: 'fraudcheck_error' }),
 ];
 
 export const carpoolsV2: Array<[Carpool, Carpool]> = [
-  makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-06-15') }),
-  makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-06-16') }),
-  makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-06-16'), status: 'fraudcheck_error' }),
+  makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-03-15') }),
+  makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-03-16') }),
+  makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-03-16'), status: 'fraudcheck_error' }),
 ];
