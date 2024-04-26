@@ -227,7 +227,7 @@ export class Migrator {
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
       RETURNING _id, created_at, updated_at
     `,
-    values: [
+      values: [
         driverCarpool.operator_id,
         driverCarpool.operator_journey_id,
         driverCarpool.operator_trip_id,
@@ -257,7 +257,7 @@ export class Migrator {
         passengerCarpool.seats,
         passengerCarpool.cost,
         JSON.stringify(passengerCarpool.payments),
-    ]
+      ],
     });
 
     await this.connection.getClient().query({
@@ -303,12 +303,7 @@ export class Migrator {
         end_geo_code = excluded.end_geo_code,
         errors = excluded.errors::jsonb
       `,
-      values: [
-        carpoolResult.rows[0]._id,
-        driverCarpool.start_geo_code,
-        driverCarpool.end_geo_code,
-        JSON.stringify([]),
-      ],
+      values: [carpoolResult.rows[0]._id, driverCarpool.start_geo_code, driverCarpool.end_geo_code, JSON.stringify([])],
     });
 
     await this.connection.getClient().query({
@@ -320,10 +315,7 @@ export class Migrator {
         $2
       )
       `,
-      values: [
-        carpoolResult.rows[0]._id,
-        'processed'
-      ],
+      values: [carpoolResult.rows[0]._id, 'processed'],
     });
   }
 

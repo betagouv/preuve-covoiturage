@@ -18,7 +18,14 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   constructor(protected connection: PostgresConnection) {}
 
-  async *findTripByGeo(coms: string[], from: Date, to: Date, batchSize = 300, override = true, policy_id?: number): AsyncGenerator<CarpoolInterface[], void, void> {
+  async *findTripByGeo(
+    coms: string[],
+    from: Date,
+    to: Date,
+    batchSize = 300,
+    override = true,
+    policy_id?: number,
+  ): AsyncGenerator<CarpoolInterface[], void, void> {
     const query = {
       text: `
         SELECT
@@ -87,7 +94,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
           (co.start_geo_code = ANY($1::varchar[]) OR co.end_geo_code = ANY($1::varchar[]))
         ORDER BY cc.start_datetime ASC
       `,
-      values: [coms, from, to, ...((!override && policy_id) ? [policy_id] : [])],
+      values: [coms, from, to, ...(!override && policy_id ? [policy_id] : [])],
     };
     // TODO status
 

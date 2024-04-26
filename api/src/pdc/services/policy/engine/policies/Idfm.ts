@@ -40,7 +40,12 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     ];
   }
 
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.YNSTANT];
+  protected operators = [
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+    OperatorsEnum.YNSTANT,
+  ];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {

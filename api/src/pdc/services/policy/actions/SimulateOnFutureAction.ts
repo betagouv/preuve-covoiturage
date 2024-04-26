@@ -1,7 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { differenceInSeconds } from 'date-fns';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
   handlerConfig,

@@ -78,7 +78,7 @@ export interface Carpool {
   payments: Array<unknown>;
 }
 
-function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpool>): [Carpool,Carpool] {
+function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpool>): [Carpool, Carpool] {
   const commonData = {
     acquisition_id,
     trip_id: `trip_id-${acquisition_id}`,

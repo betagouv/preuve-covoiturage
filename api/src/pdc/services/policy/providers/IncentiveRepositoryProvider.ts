@@ -242,7 +242,21 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       Array<number>,
       Array<SerializedMetadataVariableDefinitionInterface>,
     ] = filteredData.reduce(
-      ([policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, operatorIds, operatorJourneyIds, metas], i) => {
+      (
+        [
+          policyIds,
+          carpoolIds,
+          datetimes,
+          statelessAmounts,
+          statefulAmounts,
+          statuses,
+          states,
+          operatorIds,
+          operatorJourneyIds,
+          metas,
+        ],
+        i,
+      ) => {
         policyIds.push(i.policy_id);
         carpoolIds.push(i.carpool_id);
         datetimes.push(i.datetime);
@@ -253,7 +267,18 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         operatorIds.push(i.operator_id);
         operatorJourneyIds.push(i.operator_journey_id);
         metas.push(JSON.stringify(i.meta));
-        return [policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, operatorIds, operatorJourneyIds, metas];
+        return [
+          policyIds,
+          carpoolIds,
+          datetimes,
+          statelessAmounts,
+          statefulAmounts,
+          statuses,
+          states,
+          operatorIds,
+          operatorJourneyIds,
+          metas,
+        ];
       },
       [[], [], [], [], [], [], [], [], [], []],
     );
