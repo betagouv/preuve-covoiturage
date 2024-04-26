@@ -45,7 +45,6 @@ test.serial('Should find a valid journey', async (t) => {
   const result = await t.context.repository.searchForValidJourney(search, constraint);
 
   t.not(result, undefined);
-  t.is(result.phone_trunc, '+336000000');
   t.is(result.operator_journey_id, 'operator_journey_id-1');
   t.is(result.carpool_id, 1);
 });

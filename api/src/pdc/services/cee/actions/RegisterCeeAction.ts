@@ -1,11 +1,21 @@
-import { createSign } from 'crypto';
-import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
+import {
+  ConfigInterfaceResolver,
+  ConflictException,
+  ContextType,
+  handler,
+  InvalidParamsException,
+  NotFoundException,
+} from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
-
+import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface';
+import { timestampSchema } from '@shared/cee/common/ceeSchema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/registerApplication.contract';
-
 import { alias } from '@shared/cee/registerApplication.schema';
-
+import { createSign } from 'crypto';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError';
+import { getDateOrFail } from '../helpers/getDateOrFail';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
+import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import {
   ApplicationCooldownConstraint,
   CeeApplicationError,
@@ -16,13 +26,6 @@ import {
   TimeRangeConstraint,
   ValidJourneyConstraint,
 } from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
-import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
-import { getDateOrFail } from '../helpers/getDateOrFail';
-import { timestampSchema } from '@shared/cee/common/ceeSchema';
-import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
-import { ConflictException } from '@ilos/common';
-import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface';
 
 @handler({
   ...handlerConfig,
@@ -55,10 +58,11 @@ export class RegisterCeeAction extends AbstractAction {
         case CeeJourneyTypeEnum.Short:
           return await this.processForShortApplication(operator_id, params);
         case CeeJourneyTypeEnum.Long:
-          return await this.proceesForLongApplication(operator_id, params);
+          return await this.processForLongApplication(operator_id, params);
       }
     } catch (e) {
-      let errorType;
+      let errorType: CeeApplicationErrorEnum;
+
       switch (true) {
         case e instanceof InvalidParamsException:
           errorType = CeeApplicationErrorEnum.Date;
@@ -72,6 +76,7 @@ export class RegisterCeeAction extends AbstractAction {
         default:
           errorType = CeeApplicationErrorEnum.Validation;
       }
+
       const errorData: CeeApplicationError = {
         operator_id,
         error_type: errorType,
@@ -84,9 +89,13 @@ export class RegisterCeeAction extends AbstractAction {
         application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
         identity_key: params['identity_key'],
       };
+
       try {
         await this.ceeRepository.registerApplicationError(errorData);
-      } catch {}
+      } catch (err) {
+        console.error(`[cee:registerCeeApplication] ${err.message}`);
+      }
+
       throw e;
     }
   }
@@ -99,20 +108,25 @@ export class RegisterCeeAction extends AbstractAction {
       { operator_id, operator_journey_id: params.operator_journey_id },
       this.validJourneyConstraint,
     );
+
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
       `data/application_timestamp ${timestampSchema.errorMessage}`,
     );
+
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
+
     try {
       if (carpoolData.already_registered) {
         throw new ConflictException();
       }
+
       const application = await this.ceeRepository.registerShortApplication(
         { ...params, ...carpoolData, application_timestamp, operator_id },
         this.cooldownConstraint,
       );
+
       return {
         uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
@@ -129,6 +143,7 @@ export class RegisterCeeAction extends AbstractAction {
           driving_license: params.driving_license,
           identity_key: params.identity_key,
         };
+
         const old = await this.ceeRepository.searchForShortApplication(search, this.cooldownConstraint);
         if (!old) {
           // Server error
@@ -151,23 +166,27 @@ export class RegisterCeeAction extends AbstractAction {
     }
   }
 
-  protected async proceesForLongApplication(
+  protected async processForLongApplication(
     operator_id: number,
     params: CeeLongApplicationInterface,
   ): Promise<ResultInterface> {
     const datetime = getDateOrFail(params.datetime, `data/datetime ${timestampSchema.errorMessage}`);
+
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
       `data/application_timestamp ${timestampSchema.errorMessage}`,
     );
+
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(datetime, this.timeConstraint.long);
     isBetweenOrFail(datetime, this.validJourneyConstraint.start_date, this.validJourneyConstraint.end_date);
+
     try {
       const application = await this.ceeRepository.registerLongApplication(
         { ...params, datetime, application_timestamp, operator_id },
         this.cooldownConstraint,
       );
+
       return {
         uuid: application.uuid,
         datetime: datetime.toISOString(),
@@ -182,6 +201,7 @@ export class RegisterCeeAction extends AbstractAction {
           driving_license: params.driving_license,
           identity_key: params.identity_key,
         };
+
         const old = await this.ceeRepository.searchForLongApplication(search, this.cooldownConstraint);
         if (!old) {
           // Server error

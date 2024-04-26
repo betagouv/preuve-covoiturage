@@ -1,5 +1,7 @@
 import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { statusConverter } from '@pdc/providers/carpool/helpers/statusConverter';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -15,6 +17,7 @@ import {
   ValidJourney,
   ValidJourneyConstraint,
 } from '../interfaces';
+import { omit } from 'lodash';
 
 @provider({
   identifier: CeeRepositoryProviderInterfaceResolver,
@@ -22,7 +25,6 @@ import {
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'cee.cee_applications';
   public readonly errorTable = 'cee.cee_application_errors';
-  public readonly carpoolTable = 'carpool.carpools';
   public readonly identityTable = 'carpool.identities';
   public readonly operatorTable = 'operator.operators';
 
@@ -68,17 +70,15 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.acquisition_id,
           cc.status as acquisition_status
         FROM ${this.table} AS ce
-        JOIN ${this.operatorTable} AS op
-          ON op._id = ce.operator_id
-        LEFT JOIN ${this.carpoolTable} AS cc
-          ON cc._id = ce.carpool_id
-        WHERE 
+        JOIN ${this.operatorTable} AS op ON op._id = ce.operator_id
+        LEFT JOIN carpool.carpools AS cc ON cc._id = ce.carpool_id
+        WHERE
           ce.journey_type = $1::cee.journey_type_enum AND
           ce.datetime >= ($5::timestamp - $2::int * interval '1 year') AND
-          ce.is_specific = false AND (
-            ${values.length ? text.join(' OR ') : ''}
-          )
+          ce.is_specific = false AND (${values.length ? text.join(' OR ') : ''})
+
         UNION
+
         SELECT
           ce._id as uuid,
           ce.operator_id,
@@ -89,19 +89,14 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.acquisition_id,
           cc.status as acquisition_status
         FROM ${this.table} AS ce
-        JOIN ${this.operatorTable} AS op
-          ON op._id = ce.operator_id
-        LEFT JOIN ${this.carpoolTable} AS cc
-          ON cc._id = ce.carpool_id
-        WHERE
-          ce.journey_type = $1::cee.journey_type_enum AND
-          (
-            ce.datetime >= ($5::timestamp - $3::int * interval '1 year') AND
-            ce.datetime >= $4::timestamp
-          ) AND
-          ce.is_specific = true AND (
-            ${values.length ? text.join('OR') : ''}
-          )
+        JOIN ${this.operatorTable} AS op ON op._id = ce.operator_id
+        LEFT JOIN carpool.carpools AS cc ON cc._id = ce.carpool_id
+          WHERE ce.journey_type = $1::cee.journey_type_enum
+            AND (
+              ce.datetime >= ($5::timestamp - $3::int * interval '1 year')
+              AND ce.datetime >= $4::timestamp
+            )
+            AND ce.is_specific = true AND (${values.length ? text.join('OR') : ''})
         ORDER BY datetime DESC
         LIMIT 1
       `,
@@ -135,37 +130,37 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   }
 
   async searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney> {
-    const query = {
+    const result = await this.connection.getClient().query<
+      Omit<ValidJourney, 'carpool_id' | 'status'> & {
+        acquisition_status: CarpoolAcquisitionStatusEnum;
+        fraud_status: CarpoolFraudStatusEnum;
+      }
+    >({
       text: `
         SELECT
-          cc.acquisition_id       AS acquisition_id,
-          cc._id                  AS carpool_id,
+          cc._id                  AS acquisition_id, -- TODO deprecate this field
           cc.operator_journey_id  AS operator_journey_id,
-          CASE 
-            WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
-            ELSE ci.phone_trunc
-          END AS phone_trunc,
-          cc.datetime + cc.duration * interval '1 second' AS datetime,
-          cc.status AS status,
+          cs.acquisition_status   AS acquisition_status,
+          cs.fraud_status         AS fraud_status,
           CASE
-            WHEN ce._id IS NULL THEN false
-            ELSE true
-          END as already_registered,
-          ci.identity_key
-        FROM ${this.carpoolTable} AS cc
-        JOIN ${this.identityTable} AS ci
-          ON cc.identity_id = ci._id
-        LEFT JOIN ${this.table} ce ON ce.carpool_id = cc._id
-        WHERE
-          cc.operator_id = $1 AND
-          cc.operator_journey_id = $2 AND
-          cc.operator_class = $3 AND
-          cc.datetime >= $4 AND
-          cc.datetime < $5 AND
-          COALESCE(cc.distance, (cc.meta#>'{calc_distance}')::text::int) <= $6 AND
-          (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7) AND
-          cc.is_driver = true
-        ORDER BY cc.datetime DESC
+            WHEN cc.driver_phone_trunc IS NULL THEN left(cc.driver_phone, -2)
+            ELSE cc.driver_phone_trunc
+          END AS phone_trunc,
+          cc.end_datetime AS datetime,
+          cc.driver_identity_key AS identity_key,
+          ce._id IS NULL AS already_registered
+        FROM carpool_v2.carpools AS cc
+        LEFT JOIN ${this.table} ce ON ce.operator_journey_id = cc.operator_journey_id
+        LEFT JOIN carpool_v2.geo cg ON cc._id = cg.carpool_id
+        LEFT JOIN carpool_v2.status cs ON cc._id = cs.carpool_id
+        WHERE cc.operator_id = $1
+          AND cc.operator_journey_id = $2
+          AND cc.operator_class = $3
+          AND cc.start_datetime >= $4
+          AND cc.start_datetime < $5
+          AND cc.distance <= $6
+          AND (cg.start_geo_code NOT LIKE $7 OR cg.end_geo_code NOT LIKE $7)
+        ORDER BY cc.start_datetime DESC
         LIMIT 1
       `,
       values: [
@@ -177,13 +172,40 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         constraint.max_distance,
         constraint.geo_pattern,
       ],
-    };
+    });
 
-    const result = await this.connection.getClient().query<ValidJourney>(query);
     if (!result.rows.length) {
       throw new NotFoundException();
     }
-    return result.rows[0];
+
+    /**
+     * @deprecated [carpool_v2_migration]
+     *
+     * return the carpool_v2 object directly when carpool_id is not required anymore.
+     */
+    const carpool_v2 = result.rows[0];
+
+    /**
+     * @deprecated [carpool_v2_migration]
+     *
+     * enrich carpool with the carpool_id from carpool_V1 while this is required.
+     */
+    const result_v1 = await this.connection.getClient().query<{ _id: number }>({
+      text: `SELECT _id FROM carpool.carpools WHERE operator_journey_id = $1 AND is_driver = true`,
+      values: [search.operator_journey_id],
+    });
+
+    if (result_v1.rowCount === 0) {
+      throw new NotFoundException(
+        `[searchForValidJourney] operator_journey_id not found in carpool_v1: ${search.operator_journey_id}`,
+      );
+    }
+
+    return {
+      ...omit(carpool_v2, ['acquisition_status', 'fraud_status']),
+      carpool_id: result_v1.rows[0]._id,
+      status: statusConverter(carpool_v2.acquisition_status, carpool_v2.fraud_status),
+    };
   }
 
   protected async registerApplication(
@@ -242,7 +264,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     if (constraint) {
       query.text = `
         ${query.text}
-        LEFT JOIN ${this.table} AS cep on 
+        LEFT JOIN ${this.table} AS cep on
           cep.is_specific = true AND
           cep.journey_type = tmp.journey_type AND
           (
@@ -256,7 +278,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
             cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year' AND
             cep.datetime >= $${values.length + 2}
           )
-        LEFT JOIN ${this.table} AS ced on 
+        LEFT JOIN ${this.table} AS ced on
           ced.is_specific = false AND
           ced.journey_type = tmp.journey_type AND
           (
