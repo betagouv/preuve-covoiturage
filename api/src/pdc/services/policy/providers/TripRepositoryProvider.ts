@@ -7,9 +7,9 @@ import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResol
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryProviderInterfaceResolver {
-  public readonly table = 'carpoolv2.carpools';
-  public readonly geoTable = 'carpoolv2.geo';
-  public readonly statusTable = 'carpoolv2.status';
+  public readonly table = 'carpool_v2.carpools';
+  public readonly geoTable = 'carpool_v2.geo';
+  public readonly statusTable = 'carpool_v2.status';
   public readonly operatorTable = 'operator.operators';
   public readonly oldCarpoolTable = 'carpool.carpools';
   public readonly incentiveTable = 'policy.incentives';
@@ -23,7 +23,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       text: `
         SELECT
           oc._id as _id,
-          oo.operator_uuid,
+          oo.uuid as operator_uuid,
           cc.operator_trip_id,
           cc.operator_id,
           cc.operator_journey_id,
@@ -37,7 +37,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
           cc.driver_identity_key,
           (CASE WHEN cc.driver_travelpass_user_id IS NULL THEN false ELSE true END) as driver_has_travel_pass,
           cc.start_datetime as datetime,
-          (cc.start_datetime - cc.end_datetime) AS duration,
           cc.distance,
           row_to_json(
             geo.get_by_code(
@@ -50,23 +49,24 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
               co.end_geo_code::varchar,
               geo.get_latest_millesime_or(EXTRACT(year FROM cc.start_datetime)::smallint)
             )
-          ) as start,
-          ST_X(cc.start_position::geometry)::numeric) as start_lon,
-          ST_Y(cc.start_position::geometry)::numeric) as start_lat,
-          ST_X(cc.end_position::geometry)::numeric) as end_lon,
-          ST_Y(cc.end_position::geometry)::numeric) as end_lat
+          ) as end,
+          ST_X(cc.start_position::geometry)::numeric as start_lon,
+          ST_Y(cc.start_position::geometry)::numeric as start_lat,
+          ST_X(cc.end_position::geometry)::numeric as end_lon,
+          ST_Y(cc.end_position::geometry)::numeric as end_lat
         FROM ${this.table} cc
         JOIN ${this.geoTable} co
           ON co.carpool_id = cc._id
         JOIN ${this.operatorTable} oo
-          ON co.operator_id = oo._id
+          ON oo._id = cc.operator_id
         JOIN ${this.statusTable} cs
           ON cs.carpool_id = cc._id
         JOIN ${this.oldCarpoolTable} oc
           ON (
             oc.datetime >= '2024-01-01'::timestamp AND
             cc.operator_journey_id = oc.operator_journey_id AND
-            cc.operator_id = oc.operator_id
+            cc.operator_id = oc.operator_id AND
+            oc.is_driver = true
           )
         ${
           override
@@ -82,8 +82,8 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
             `
         }
         WHERE
-          cc.datetime >= $2::timestamp AND
-          cc.datetime < $3::timestamp AND
+          cc.start_datetime >= $2::timestamp AND
+          cc.start_datetime < $3::timestamp AND
           (co.start_geo_code = ANY($1::varchar[]) OR co.end_geo_code = ANY($1::varchar[]))
         ORDER BY cc.start_datetime ASC
       `,

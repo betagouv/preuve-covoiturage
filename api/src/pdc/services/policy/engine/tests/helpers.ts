@@ -32,7 +32,6 @@ const dftCarpool: CarpoolInterface = {
   passenger_has_travel_pass: true,
   datetime: new Date('2019-01-15'),
   seats: 1,
-  duration: 600,
   distance: 5000,
   operator_journey_id: v4(),
   operator_id: 1,

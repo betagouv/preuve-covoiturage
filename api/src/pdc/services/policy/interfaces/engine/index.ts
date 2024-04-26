@@ -62,7 +62,6 @@ export interface CarpoolInterface {
   operator_class: string;
   datetime: Date;
   seats: number;
-  duration: number;
   distance: number;
   start: TerritoryCodeInterface;
   start_lat: number;

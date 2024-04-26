@@ -64,7 +64,6 @@ const defaultCarpool = {
   driver_has_travel_pass: true,
   datetime: new Date('2023-11-15'),
   seats: 1,
-  duration: 600,
   distance: 7_000,
   operator_journey_id: v4(),
   operator_id: 1,
