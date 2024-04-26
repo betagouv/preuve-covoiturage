@@ -164,6 +164,8 @@ test('should watch and apply', async (t) => {
   t.deepEqual(ctxStateless.incentive.export(), {
     _id: undefined,
     carpool_id: ctxStateless.carpool._id,
+    operator_id: ctxStateless.carpool.operator_id,
+    operator_journey_id: ctxStateless.carpool.operator_journey_id,
     datetime: ctxStateless.carpool.datetime,
     meta: ctxStateless.meta.export(),
     policy_id: ctxStateless.meta.policy_id,
@@ -224,6 +226,8 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateless.incentive.export(), {
     _id: undefined,
     carpool_id: ctxStateless.carpool._id,
+    operator_id: ctxStateless.carpool.operator_id,
+    operator_journey_id: ctxStateless.carpool.operator_journey_id,
     datetime: ctxStateless.carpool.datetime,
     meta: ctxStateless.meta.export(),
     policy_id: ctxStateless.meta.policy_id,

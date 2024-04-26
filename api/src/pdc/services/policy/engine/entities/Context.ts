@@ -22,7 +22,7 @@ export class StatelessContext implements StatelessContextInterface {
   static fromCarpool(policy_id: number, carpool: CarpoolInterface): StatelessContext {
     const registry = MetadataRegistry.create(policy_id, carpool.datetime);
     return new StatelessContext(
-      Incentive.create(policy_id, carpool._id, carpool.datetime, registry),
+      Incentive.create(policy_id, carpool._id, carpool.operator_id, carpool.operator_journey_id, carpool.datetime, registry),
       registry,
       carpool,
     );

@@ -56,6 +56,8 @@ const defaultIncentive: SerializedIncentiveInterface = {
   _id: 1,
   policy_id: 1,
   carpool_id: 1,
+  operator_id: 1,
+  operator_journey_id: dftCarpool.operator_journey_id,
   datetime: new Date('2019-01-15'),
   statelessAmount: 100,
   statefulAmount: 100,
