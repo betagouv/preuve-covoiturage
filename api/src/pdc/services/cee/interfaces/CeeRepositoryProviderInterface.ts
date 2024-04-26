@@ -18,6 +18,7 @@ export interface ExistingCeeApplication extends RegisteredCeeApplication {
 export interface ValidJourney {
   acquisition_id: number;
   carpool_id: number;
+  operator_journey_id: string;
   phone_trunc: string;
   datetime: Date;
   status: string;
@@ -41,6 +42,7 @@ export interface LongCeeApplication<T = Date> extends CeeApplication<T> {
 export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
   carpool_id: number;
+  operator_journey_id: string;
 }
 
 export interface SearchCeeApplication {

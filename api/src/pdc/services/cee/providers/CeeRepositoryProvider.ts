@@ -1,21 +1,19 @@
-import { InvalidRequestException, NotFoundException } from '@ilos/common';
-import { ConflictException } from '@ilos/common';
-import { provider } from '@ilos/common';
+import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
+  CeeApplicationError,
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
+  ExistingCeeApplication,
   LongCeeApplication,
+  RegisteredCeeApplication,
   SearchCeeApplication,
   SearchJourney,
   ShortCeeApplication,
   ValidJourney,
   ValidJourneyConstraint,
-  RegisteredCeeApplication,
-  CeeApplicationError,
-  ExistingCeeApplication,
 } from '../interfaces';
 
 @provider({
@@ -140,8 +138,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const query = {
       text: `
         SELECT
-          cc.acquisition_id AS acquisition_id,
-          cc._id AS carpool_id,
+          cc.acquisition_id       AS acquisition_id,
+          cc._id                  AS carpool_id,
+          cc.operator_journey_id  AS operator_journey_id,
           CASE 
             WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
             ELSE ci.phone_trunc
@@ -217,6 +216,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         values.push('driving_license' in data ? data.driving_license : undefined);
       }
       if (journeyType === CeeJourneyTypeEnum.Short) {
+        fields.push(['operator_journey_id', 'varchar']);
+        values.push('operator_journey_id' in data ? data.operator_journey_id : undefined);
+
+        // TODO(carpool_v2_migration): remove when all data is migrated
         fields.push(['carpool_id', 'int']);
         values.push('carpool_id' in data ? data.carpool_id : undefined);
       }
@@ -243,7 +246,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cep.is_specific = true AND
           cep.journey_type = tmp.journey_type AND
           (
-            (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc AND cep.identity_key IS NULL) OR
+            (cep.last_name_trunc = tmp.last_name_trunc
+              AND cep.phone_trunc = tmp.phone_trunc
+              AND cep.identity_key IS NULL
+            ) OR
              cep.driving_license = tmp.driving_license OR
              cep.identity_key = tmp.identity_key
           ) AND (
@@ -254,7 +260,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ced.is_specific = false AND
           ced.journey_type = tmp.journey_type AND
           (
-            (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc AND ced.identity_key IS NULL) OR
+            (ced.last_name_trunc = tmp.last_name_trunc
+              AND ced.phone_trunc = tmp.phone_trunc
+              AND ced.identity_key IS NULL
+            ) OR
              ced.driving_license = tmp.driving_license OR
              ced.identity_key = tmp.identity_key
           ) AND
@@ -276,14 +285,14 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       );
     }
 
-    query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`;
-    const result = await this.connection.getClient().query<any>(query);
+    query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`; // _id is a UUID!
+    const result = await this.connection.getClient().query<{ _id: string }>(query);
     if (result.rowCount !== 1) {
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
       throw new ConflictException();
     }
 
-    const siretResult = await this.connection.getClient().query<any>({
+    const siretResult = await this.connection.getClient().query<{ siret: string }>({
       text: `SELECT siret FROM ${this.operatorTable} WHERE _id = $1`,
       values: [data.operator_id],
     });

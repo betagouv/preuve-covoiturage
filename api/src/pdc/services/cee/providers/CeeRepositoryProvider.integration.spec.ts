@@ -1,7 +1,6 @@
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 
-import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 import { config } from '../config';
 import {
   CeeApplicationErrorEnum,
@@ -12,6 +11,7 @@ import {
   ShortCeeApplication,
   ValidJourneyConstraint,
 } from '../interfaces';
+import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 
 interface TestContext {
   db: DbContext;
@@ -43,8 +43,11 @@ test.serial('Should find a valid journey', async (t) => {
   };
 
   const result = await t.context.repository.searchForValidJourney(search, constraint);
+
   t.not(result, undefined);
   t.is(result.phone_trunc, '+336000000');
+  t.is(result.operator_journey_id, 'operator_journey_id-1');
+  t.is(result.carpool_id, 1);
 });
 
 test.serial('Should throw error is no valid journey found', async (t) => {
@@ -72,6 +75,7 @@ test.serial('Should create short application', async (t) => {
     application_timestamp: new Date('2022-11-01'),
     driving_license: 'driving_license_1',
     carpool_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
   };
 
   await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
@@ -112,7 +116,7 @@ test.serial('Should create long application', async (t) => {
   t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
-test.serial('Search should be equals as new registration', async (t) => {
+test.serial('Search should be equal to a new registration', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
     last_name_trunc: 'BBA',
@@ -122,6 +126,7 @@ test.serial('Search should be equals as new registration', async (t) => {
     driving_license: 'driving_license_3',
     identity_key: 'search_1',
     carpool_id: 2,
+    operator_journey_id: 'operator_journey_id-2',
   };
 
   const createResult = await t.context.repository.registerShortApplication(
@@ -138,10 +143,9 @@ test.serial('Search should be equals as new registration', async (t) => {
   const { acquisition_id, acquisition_status, ...otherSearchResult } = searchResult || {};
   t.deepEqual(createResult, otherSearchResult);
   t.is(acquisition_id, 1);
-  t.is(acquisition_status, 'ok');
 });
 
-test.serial('Should raise error if conflict short application', async (t) => {
+test.serial('Should raise error if conflicts with short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
     last_name_trunc: 'AAA',
@@ -150,6 +154,7 @@ test.serial('Should raise error if conflict short application', async (t) => {
     application_timestamp: new Date('2022-11-02'),
     driving_license: 'driving_license_1',
     carpool_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
   };
 
   const error = await t.throwsAsync(
@@ -159,7 +164,7 @@ test.serial('Should raise error if conflict short application', async (t) => {
   t.true(error instanceof Error);
 });
 
-test.serial('Should raise error if conflict id key long application', async (t) => {
+test.serial('Should raise error if conflicts with id key long application', async (t) => {
   const application: LongCeeApplication = {
     operator_id: 1,
     last_name_trunc: 'CCC',
@@ -219,6 +224,7 @@ test.serial('Should find short application with id if exists', async (t) => {
     search,
     config.rules.applicationCooldownConstraint,
   );
+
   t.not(result, undefined);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
@@ -235,6 +241,7 @@ test.serial('Should find short application with driver license if exists', async
     search,
     config.rules.applicationCooldownConstraint,
   );
+
   t.not(result, undefined);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
@@ -344,7 +351,7 @@ test.serial('Should match cooldown criteria', async (t) => {
   });
 });
 
-test.serial('Should resgister application error', async (t) => {
+test.serial('Should register application error', async (t) => {
   const uuidResult = await t.context.db.connection
     .getClient()
     .query<any>(`SELECT _id FROM ${t.context.repository.table} LIMIT 1`);

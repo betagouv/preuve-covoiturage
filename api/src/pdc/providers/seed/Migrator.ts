@@ -341,6 +341,7 @@ export class Migrator {
       ],
     });
 
+    // seed carpool V1
     await this.connection.getClient().query<any>({
       text: `
         INSERT INTO carpool.carpools 
@@ -419,6 +420,106 @@ export class Migrator {
             true
           )
         `);
+
+    // seed carpool V2
+    // no acquisitions, no identities
+    // carpool V2 has one entry for driver and passenger
+    // when V1 had 2 entries : one for driver and one for passenger
+    if (carpool.is_driver) {
+      await this.connection.getClient().query<any>({
+        text: `
+        INSERT INTO carpool_v2.carpools (
+            _id,
+            operator_id,
+            operator_journey_id,
+            operator_trip_id,
+            operator_class,
+            start_datetime,
+            start_position,
+            end_datetime,
+            end_position,
+            distance,
+            licence_plate,
+            driver_identity_key,
+            driver_operator_user_id,
+            driver_phone,
+            driver_phone_trunc,
+            driver_travelpass_name,
+            driver_travelpass_user_id,
+            driver_revenue,
+            passenger_identity_key,
+            passenger_operator_user_id,
+            passenger_phone,
+            passenger_phone_trunc,
+            passenger_travelpass_name,
+            passenger_travelpass_user_id,
+            passenger_over_18,
+            passenger_seats,
+            passenger_contribution,
+            passenger_payments
+        ) VALUES (
+          $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9,  $10,
+          $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
+          $21, $22, $23, $24, $25, $26, $27, $28
+        )
+        --ON CONFLICT DO NOTHING
+      `,
+        values: [
+          carpool._id,
+          carpool.operator_id,
+          carpool.operator_journey_id,
+          carpool.operator_trip_id,
+          carpool.operator_class,
+          carpool.datetime,
+          `POINT(${carpool.start_position.lon} ${carpool.start_position.lat})`,
+          new Date(carpool.datetime.getTime() + carpool.duration * 1000),
+          `POINT(${carpool.end_position.lon} ${carpool.end_position.lat})`,
+          carpool.distance,
+          carpool.licence_plate,
+          carpool.driver_identity_key,
+          carpool.driver_operator_user_id,
+          carpool.driver_phone,
+          carpool.driver_phone_trunc,
+          carpool.driver_travelpass_name,
+          carpool.driver_travelpass_user_id,
+          carpool.driver_revenue,
+          carpool.passenger_identity_key,
+          carpool.passenger_operator_user_id,
+          carpool.passenger_phone,
+          carpool.passenger_phone_trunc,
+          carpool.passenger_travelpass_name,
+          carpool.passenger_travelpass_user_id,
+          carpool.passenger_over_18,
+          carpool.passenger_seats,
+          carpool.passenger_contribution,
+          JSON.stringify(carpool.passenger_payments),
+        ],
+      });
+
+      // carpool_v2.geo
+      await this.connection.getClient().query<any>({
+        text: `
+        INSERT INTO carpool_v2.geo (
+          carpool_id,
+          start_geo_code,
+          end_geo_code
+        ) VALUES ( $1, $2, $3 )
+      `,
+        values: [carpool._id, carpool.start_geo_code, carpool.end_geo_code],
+      });
+
+      // carpool_v2.status
+      await this.connection.getClient().query<any>({
+        text: `
+        INSERT INTO carpool_v2.status (
+          carpool_id,
+          acquisition_status,
+          fraud_status
+        ) VALUES ( $1, $2, $3 )
+      `,
+        values: [carpool._id, carpool.acquisition_status, carpool.fraud_status],
+      });
+    }
   }
 
   async seedCompany(company: Company) {
