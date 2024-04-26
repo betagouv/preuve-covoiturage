@@ -1,16 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { v4 } from 'uuid';
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '../carpool/interfaces';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../carpool/interfaces';
 import { PaymentInterface } from '../normalization/interfaces';
-
-// TODO remove when migrated to carpool_v2
-enum CarpoolV1StatusEnum {
-  Ok = 'ok',
-  Expired = 'expired',
-  Canceled = 'canceled',
-  FraudcheckError = 'fraudcheck_error',
-  AnomalyError = 'anomaly_error',
-}
 
 export interface Carpool {
   _id: number;
