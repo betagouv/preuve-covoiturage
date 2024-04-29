@@ -17,6 +17,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { onDistanceRangeOrThrow } from '../helpers/onDistanceRange';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Cotentin2023.html';
@@ -36,7 +37,17 @@ export const Cotentin2023: PolicyHandlerStaticInterface = class
     ];
   }
 
-  protected operators = [OperatorsEnum.KLAXIT];
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+    {
+      date: new Date('2024-04-01T00:00:00+0200'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
+  ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -48,7 +59,7 @@ export const Cotentin2023: PolicyHandlerStaticInterface = class
 
   protected processExclusion(ctx: StatelessContextInterface) {
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
@@ -72,7 +83,7 @@ export const Cotentin2023: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },

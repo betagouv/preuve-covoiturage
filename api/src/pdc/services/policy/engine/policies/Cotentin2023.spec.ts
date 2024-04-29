@@ -27,7 +27,7 @@ const defaultCarpool = {
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date('2023-01-15'),
   seats: 1,
   duration: 2_000,
   distance: 19_000,
@@ -64,7 +64,7 @@ test(
       { distance: 5_000, driver_identity_uuid: 'one', trip_id: '1' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one', trip_id: '2' },
       { distance: 25_000, driver_identity_uuid: 'two', seats: 2, trip_id: '3' },
-      { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2023-03-28') },
     ],
     meta: [],
   },
@@ -106,3 +106,11 @@ test(
     ],
   },
 );
+
+test('latest operator', (t) => {
+  const handler = new Handler(100);
+  const { operators } = handler.params();
+  t.not(operators, undefined);
+  t.not(operators, []);
+  t.deepEqual(operators, [OperatorsEnum.BLABLACAR_DAILY]);
+});
