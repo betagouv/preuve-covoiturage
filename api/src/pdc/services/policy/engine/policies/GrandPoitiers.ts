@@ -17,6 +17,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './GrandPoitiers.html';
 
@@ -32,7 +33,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   // Mobicoop : 16 octobre 2023
   // BlaBlaDaily et Klaxit : 22 décembre 2023
   protected operator_class = ['C'];
-  protected readonly operators = [
+  protected readonly operators: TimestampedOperators = [
     {
       date: new Date('2023-09-27T00:00:00+0200'),
       operators: [OperatorsEnum.KAROS],
@@ -65,23 +66,8 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
     },
   ];
 
-  // get the list of operators for a given datetime
-  // or the last one if no datetime is provided
-  public getOperators(datetime?: Date): OperatorsEnum[] {
-    if (datetime) {
-      for (const { date, operators } of this.operators.reverse()) {
-        if (datetime.getTime() >= date.getTime()) {
-          return operators;
-        }
-      }
-    }
-
-    // return the last one anyway
-    return this.operators[this.operators.length - 1].operators;
-  }
-
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.getOperators(ctx.carpool.datetime));
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 80_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -105,7 +91,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.getOperators(),
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
