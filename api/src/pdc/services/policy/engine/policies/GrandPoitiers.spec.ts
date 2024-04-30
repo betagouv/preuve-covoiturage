@@ -48,7 +48,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusion',
+  'should work with exclusions',
   process,
   {
     policy: { handler: Handler.id },
@@ -58,7 +58,7 @@ test(
       { operator_class: 'A' },
       { operator_class: 'B' },
       { distance: 81_000 },
-      { operator_uuid: OperatorsEnum.MOBICOOP, datetime: new Date('2023-11-15') },
+      { operator_uuid: OperatorsEnum.MOBICOOP, datetime: new Date('2023-09-28') },
     ],
     meta: [],
   },
