@@ -17,7 +17,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Occitanie20232024.html';
 
@@ -62,7 +62,7 @@ export const Occitanie20232024: PolicyHandlerStaticInterface = class
       throw new NotEligibleTargetException('Sunday is forbidden');
     }
     // Dans la région
-    startAndEndAtOrThrow(ctx, { reg: ['76'] });
+    startsAndEndsAtOrThrow(ctx, { reg: ['76'] });
 
     // En excluant les trajets intra aom
     if (ctx.carpool.start.aom === ctx.carpool.end.aom && ctx.carpool.start.aom != '200053791') {

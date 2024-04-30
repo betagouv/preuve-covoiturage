@@ -27,7 +27,7 @@ const defaultCarpool = {
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date('2023-01-15'),
   seats: 1,
   distance: 19_000,
   operator_journey_id: v4(),
@@ -106,3 +106,11 @@ test(
     ],
   },
 );
+
+test('latest operator', (t) => {
+  const handler = new Handler(100);
+  const { operators } = handler.params();
+  t.not(operators, undefined);
+  t.not(operators, []);
+  t.deepEqual(operators, [OperatorsEnum.BLABLACAR_DAILY]);
+});

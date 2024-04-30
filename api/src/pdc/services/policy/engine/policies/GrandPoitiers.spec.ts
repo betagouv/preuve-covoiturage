@@ -1,41 +1,9 @@
 import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
+import { generatePartialCarpools } from '../tests/helpers';
 import { makeProcessHelper } from '../tests/macro';
 import { GrandPoitiers as Handler } from './GrandPoitiers';
-import { generatePartialCarpools } from '../tests/helpers';
-
-// Unit test the getOperators method
-
-test('should return the last operators if no datetime is provided', (t) => {
-  const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(), [
-    OperatorsEnum.KAROS,
-    OperatorsEnum.MOBICOOP,
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KLAXIT,
-  ]);
-});
-
-test('should return Karos only if datetime is before 16/10/2023', (t) => {
-  const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(new Date('2023-10-15')), [OperatorsEnum.KAROS]);
-});
-
-test('should return Karos and Mobicoop if datetime is after 16/10/2023', (t) => {
-  const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(new Date('2023-10-16')), [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP]);
-});
-
-test('should return all operators if datetime is after 22/12/2023', (t) => {
-  const handler = new Handler(100);
-  t.deepEqual(handler.getOperators(new Date('2023-12-23')), [
-    OperatorsEnum.KAROS,
-    OperatorsEnum.MOBICOOP,
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KLAXIT,
-  ]);
-});
 
 // Unit test calculations
 
@@ -80,7 +48,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusion',
+  'should work with exclusions',
   process,
   {
     policy: { handler: Handler.id },
@@ -90,7 +58,7 @@ test(
       { operator_class: 'A' },
       { operator_class: 'B' },
       { distance: 81_000 },
-      { operator_uuid: OperatorsEnum.MOBICOOP, datetime: new Date('2023-11-15') },
+      { operator_uuid: OperatorsEnum.MOBICOOP, datetime: new Date('2023-09-28') },
     ],
     meta: [],
   },
