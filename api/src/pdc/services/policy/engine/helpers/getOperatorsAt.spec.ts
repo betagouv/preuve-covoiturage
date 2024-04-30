@@ -23,6 +23,16 @@ test('missing operators returns empty array', (t) => {
   t.deepEqual(getOperatorsAt(undefined), []);
 });
 
+test('missing operators property returns empty array', (t) => {
+  // @ts-expect-error
+  t.deepEqual(getOperatorsAt([{ date: new Date() }]), []);
+});
+
+test('missing date property returns empty array', (t) => {
+  // @ts-expect-error
+  t.deepEqual(getOperatorsAt([{ operators: [] }]), []);
+});
+
 test('should return the last operators if no datetime is provided', (t) => {
   t.deepEqual(getOperatorsAt(list), [
     OperatorsEnum.KAROS,
@@ -47,4 +57,68 @@ test('should return all operators if datetime is after 22/12/2023', (t) => {
     OperatorsEnum.BLABLACAR_DAILY,
     OperatorsEnum.KLAXIT,
   ]);
+});
+
+test('should sort operators in chronological order: sorted', (t) => {
+  const list: TimestampedOperators = [
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KAROS],
+    },
+    {
+      date: new Date('2023-02-01T00:00:00+0100'),
+      operators: [OperatorsEnum.MOBICOOP],
+    },
+    {
+      date: new Date('2023-03-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
+  ];
+
+  const sorted = getOperatorsAt(list);
+  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
+});
+
+test('should sort operators in chronological order: reverse', (t) => {
+  const list: TimestampedOperators = [
+    {
+      date: new Date('2023-03-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
+    {
+      date: new Date('2023-02-01T00:00:00+0100'),
+      operators: [OperatorsEnum.MOBICOOP],
+    },
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KAROS],
+    },
+  ];
+
+  const sorted = getOperatorsAt(list);
+  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
+});
+
+test('should sort operators in chronological order: random', (t) => {
+  const list: TimestampedOperators = [
+    {
+      date: new Date('2023-03-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KAROS],
+    },
+    {
+      date: new Date('2023-04-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
+    {
+      date: new Date('2023-02-01T00:00:00+0100'),
+      operators: [OperatorsEnum.MOBICOOP],
+    },
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
+  const sorted = getOperatorsAt(list);
+  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
 });

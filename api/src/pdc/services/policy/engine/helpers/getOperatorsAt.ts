@@ -6,8 +6,14 @@ export type TimestampedOperators = Array<{
 }>;
 
 export function getOperatorsAt(list: TimestampedOperators, datetime?: Date): OperatorsEnum[] {
+  if (!Array.isArray(list) || !list.length) return [];
+
+  const sorted = [...list].sort(({ date: dateA }, { date: dateB }) => {
+    return dateA.getTime() > dateB.getTime() ? 1 : -1;
+  });
+
   if (datetime) {
-    for (const { date, operators } of [...list].reverse()) {
+    for (const { date, operators } of sorted.reverse()) {
       if (datetime.getTime() >= date.getTime()) {
         return operators;
       }
@@ -15,8 +21,8 @@ export function getOperatorsAt(list: TimestampedOperators, datetime?: Date): Ope
   }
 
   // return the last one or fallback
-  if (Array.isArray(list) && list.length) {
-    const last = list[list.length - 1];
+  if (Array.isArray(sorted) && sorted.length) {
+    const last = sorted[sorted.length - 1];
     if ('operators' in last) return last.operators;
   }
 

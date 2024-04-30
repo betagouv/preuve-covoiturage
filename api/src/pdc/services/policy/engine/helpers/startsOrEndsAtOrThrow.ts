@@ -1,13 +1,13 @@
 import { StatelessContextInterface, StatelessRuleHelper, TerritorySelectorsInterface } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { startsAndEndsAt } from './position';
+import { startsOrEndsAt } from './position';
 
-export const startAndEndAtOrThrow: StatelessRuleHelper<TerritorySelectorsInterface> = (
+export const startsOrEndsAtOrThrow: StatelessRuleHelper<TerritorySelectorsInterface> = (
   ctx: StatelessContextInterface,
   selector: TerritorySelectorsInterface,
 ): boolean => {
-  if (!startsAndEndsAt(ctx, selector)) {
-    throw new NotEligibleTargetException('Journey start & end not in region');
+  if (!startsOrEndsAt(ctx, selector)) {
+    throw new NotEligibleTargetException("Journey doesn't start or end in the territory");
   }
   return true;
 };

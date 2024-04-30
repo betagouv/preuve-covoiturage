@@ -23,6 +23,10 @@ export const startsAndEndsAt = (ctx: StatelessContextInterface, selector: Territ
   return startsAt(ctx, selector) && endsAt(ctx, selector);
 };
 
+export const startsOrEndsAt = (ctx: StatelessContextInterface, selector: TerritorySelectorsInterface): boolean => {
+  return startsAt(ctx, selector) || endsAt(ctx, selector);
+};
+
 export const startsAt: StatelessRuleHelper<TerritorySelectorsInterface> = (
   ctx: StatelessContextInterface,
   selector: TerritorySelectorsInterface,
