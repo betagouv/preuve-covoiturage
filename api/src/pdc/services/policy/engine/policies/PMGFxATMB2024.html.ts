@@ -6,7 +6,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
   <p>Cette campagne est limitée à <b>242 446,00 €</b>.</p>
 
   <p>
-    Les <b> conducteurs </b> effectuant un trajet entre 5 et 40 km (inclus)
+    Les <b> conducteurs </b> effectuant un trajet entre 5 et 40 km
     au départ ou à l'arrivée du Pôle Métropolitain Genevois
     sont incités selon les règles suivantes.
   </p>
