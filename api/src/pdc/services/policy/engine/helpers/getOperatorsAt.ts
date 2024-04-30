@@ -7,7 +7,7 @@ export type TimestampedOperators = Array<{
 
 export function getOperatorsAt(list: TimestampedOperators, datetime?: Date): OperatorsEnum[] {
   if (datetime) {
-    for (const { date, operators } of list.reverse()) {
+    for (const { date, operators } of [...list].reverse()) {
       if (datetime.getTime() >= date.getTime()) {
         return operators;
       }
