@@ -17,7 +17,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './PetrLunevilloisS12023.html';
 
@@ -47,7 +47,7 @@ export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 60_000 });
     isOperatorClassOrThrow(ctx, ['C']);
-    startAndEndAtOrThrow(ctx, { aom: ['200051134'] });
+    startsAndEndsAtOrThrow(ctx, { aom: ['200051134'] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {

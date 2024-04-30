@@ -15,7 +15,7 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
 
@@ -40,7 +40,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
-    startAndEndAtOrThrow(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] });
+    startsAndEndsAtOrThrow(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {

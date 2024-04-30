@@ -18,7 +18,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './ATMB202305.html';
 
@@ -73,7 +73,7 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
-    startAndEndAtOrThrow(ctx, ctx.carpool.datetime >= this.policy_change_date ? this.new_selector : this.selector);
+    startsAndEndsAtOrThrow(ctx, ctx.carpool.datetime >= this.policy_change_date ? this.new_selector : this.selector);
   }
 
   processStateless(ctx: StatelessContextInterface): void {

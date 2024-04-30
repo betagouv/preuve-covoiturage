@@ -19,7 +19,7 @@ import {
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Nm.html';
 
@@ -49,7 +49,7 @@ export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHand
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, this.operatorClass);
     // Exclure les trajets qui ne sont pas dans l'aom NM
-    startAndEndAtOrThrow(ctx, { aom: ['244400404'] });
+    startsAndEndsAtOrThrow(ctx, { aom: ['244400404'] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {
