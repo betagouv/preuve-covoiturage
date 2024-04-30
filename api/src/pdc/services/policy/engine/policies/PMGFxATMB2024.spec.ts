@@ -20,9 +20,9 @@ const defaultLon = 6.487631441991693;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -32,9 +32,10 @@ const defaultCarpool = {
   seats: 1,
   duration: 600,
   distance: 5_000,
-  cost: 150,
-  driver_payment: 150,
-  passenger_payment: 150,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -103,13 +104,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 20_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 30_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 40_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 40_000, seats: 2, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 70_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
+      { distance: 20_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 30_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 40_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
+      { distance: 40_000, seats: 2, driver_identity_key: 'one', passenger_identity_key: 'three' },
+      { distance: 70_000, driver_identity_key: 'one' },
     ],
   },
   {
@@ -125,43 +126,43 @@ test(
     carpool: [
       {
         distance: 5_000,
-        driver_identity_uuid: 'one',
+        driver_identity_key: 'one',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 5_000,
         seats: 2,
-        driver_identity_uuid: 'one',
+        driver_identity_key: 'one',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 20_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'two',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 30_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'two',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 40_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'three',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 40_000,
         seats: 2,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'three',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
       {
         distance: 70_000,
-        driver_identity_uuid: 'one',
+        driver_identity_key: 'one',
         start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
       },
     ],
@@ -177,8 +178,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [
       {
