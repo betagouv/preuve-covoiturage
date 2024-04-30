@@ -14,6 +14,7 @@ import { Mrn } from './Mrn';
 import { NantesMetropole2024 } from './NantesMetropole2024';
 import { Nm } from './Nm';
 import { Occitanie20232024 } from './Occitanie20232024';
+import { PMGFxATMB2024 } from './PMGFxATMB2024';
 import { PaysBasque20232024 } from './PaysBasque20232024';
 import { PaysDeLaLoire2021 } from './PaysDeLaLoire2021';
 import { PaysDeLaLoire2023 } from './PaysDeLaLoire2023';
@@ -22,9 +23,9 @@ import { PetrLunevilloisS12023 } from './PetrLunevilloisS12023';
 import { Pmgf } from './Pmgf';
 import { Pmgf2023 } from './Pmgf2023';
 import { PmgfLate2023 } from './PmgfLate2023';
-import { SMTC2024 } from './SMTC2024';
 import { SMT2022 } from './SMT2022';
 import { SMT2023 } from './SMT2023';
+import { SMTC2024 } from './SMTC2024';
 import { TerresTouloises2024 } from './TerresTouloises2024';
 import { Vitre2023 } from './Vitre2023';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
@@ -59,6 +60,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Pmgf,
     Pmgf2023,
     PmgfLate2023,
+    PMGFxATMB2024,
     PolicyTemplateOne,
     PolicyTemplateThree,
     PolicyTemplateTwo,
