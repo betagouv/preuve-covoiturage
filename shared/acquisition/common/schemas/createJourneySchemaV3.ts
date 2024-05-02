@@ -41,7 +41,7 @@ const identitySchema = {
   required: ['operator_user_id', 'identity_key'],
   additionalProperties: false,
   properties: {
-    identity_key: { pattern: '^[a-f0-9]{64}$' },
+    identity_key: { pattern: '^[a-f0-9]{64}$', maxLength: 64 },
     ...identityPropsSchema,
   },
 };

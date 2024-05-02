@@ -20,6 +20,7 @@ export const ceeApplicationUuidSchema = {
 export const identityKeySchema = {
   type: 'string',
   pattern: '^[a-f0-9]{64}$',
+  maxLength: 64,
   errorMessage: 'must be a valid identity key',
 };
 
