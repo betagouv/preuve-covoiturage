@@ -41,7 +41,7 @@ const defaultContext: ContextType = {
 
 const defaultPayload: any = {
   cee_application_type: 'specific',
-  identity_key: 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo',
+  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
   journey_type: 'short',
   last_name_trunc: 'ABC',
   phone_trunc: '+336273488',
