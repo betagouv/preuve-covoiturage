@@ -157,7 +157,7 @@ test.serial(
   success,
   defaultShortPayload,
   {
-    datetime: '2022-06-15T00:15:00.000Z',
+    datetime: '2024-03-15T00:15:00.000Z',
     journey_id: 'operator_journey_id-1',
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
