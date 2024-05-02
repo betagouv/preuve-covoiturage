@@ -277,8 +277,8 @@ test.serial('Should find then update with selectors', async (t) => {
   t.deepEqual(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
-      { _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 8, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 9, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
 
@@ -293,7 +293,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 8, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   const [result2, update2, commit2] = await t.context.repository.findThenUpdate({
@@ -303,7 +303,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 9, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   await commit1(); // release lock 1
@@ -314,12 +314,12 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 8, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
-  await update2({ acquisition_id: 7, status: AcquisitionStatusEnum.Ok }); // <-- error
-  await update2({ acquisition_id: 8, status: AcquisitionStatusEnum.Ok });
-  await commit2();
-  // release lock 2
+
+  await update2({ acquisition_id: 9, status: AcquisitionStatusEnum.Ok }); // <-- error
+  await update2({ acquisition_id: 10, status: AcquisitionStatusEnum.Ok });
+  await commit2(); // release lock 2
 
   const [result4, , commit4] = await t.context.repository.findThenUpdate({
     limit: 1,
@@ -382,6 +382,7 @@ test.serial('Should partial rollback if update error', async (t) => {
     limit: 2,
     status: AcquisitionStatusEnum.Pending,
   });
+
   await update1({
     acquisition_id: result1[0]._id,
     status: AcquisitionStatusEnum.Ok,

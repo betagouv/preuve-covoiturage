@@ -255,7 +255,6 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
         // commit and release
         async () => {
-          console.info('  >>> COMMIT');
           await poolClient.query<any>('COMMIT');
           poolClient.release();
         },
