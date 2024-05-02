@@ -122,8 +122,16 @@ export class CarpoolAcquisitionService {
             { carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end },
             conn,
           );
+          await this.eventRepository.saveAcquisitionEvent(
+            { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Processed },
+            conn,
+          );
         } catch (e) {
           await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message }, conn);
+          await this.eventRepository.saveAcquisitionEvent(
+            { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Failed },
+            conn,
+          );
           console.error(`[geo] error encoding ${toEncode.carpool_id} : ${e.message}`);
         }
       }

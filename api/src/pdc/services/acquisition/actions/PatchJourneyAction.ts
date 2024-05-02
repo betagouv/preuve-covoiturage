@@ -1,7 +1,9 @@
 import { get } from 'lodash';
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { OperatorClass } from '@pdc/providers/carpool/interfaces';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/patch.contract';
 
@@ -15,7 +17,10 @@ import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProvid
   middlewares: [['validate', alias], hasPermissionMiddleware('operator.acquisition.create')],
 })
 export class PatchJourneyAction extends AbstractAction {
-  constructor(private repository: AcquisitionRepositoryProvider) {
+  constructor(
+    private repository: AcquisitionRepositoryProvider,
+    private acquisitionService: CarpoolAcquisitionService,
+  ) {
     super();
   }
 
@@ -29,5 +34,18 @@ export class PatchJourneyAction extends AbstractAction {
       },
       params,
     );
+    if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
+      const toUpdate = {
+        ...params,
+        ...(params.operator_class ? { operator_class: OperatorClass[params.operator_class] } : {}),
+      };
+
+      await this.acquisitionService.updateRequest({
+        ...toUpdate,
+        api_version: 3,
+        operator_id,
+        operator_journey_id: params.operator_journey_id,
+      });
+    }
   }
 }
