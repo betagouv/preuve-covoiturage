@@ -1,6 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
+import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { LannionTregor2024 as Handler } from './LannionTregor2024';
 
@@ -19,27 +19,27 @@ const defaultPosition = {
 const defaultLat = 48.81387693883991;
 const defaultLon = -3.4424441671291306;
 
-const defaultCarpool = {
+const defaultCarpool: CarpoolInterface = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  passenger_contribution: 150,
+  passenger_identity_key: v4(),
+  passenger_has_travel_pass: true,
+  passenger_is_over_18: true,
+  driver_revenue: 150,
+  driver_identity_key: v4(),
+  driver_has_travel_pass: true,
+  operator_journey_id: v4(),
+  operator_id: 9,
+  operator_trip_id: v4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: 'C',
-  passenger_is_over_18: true,
-  passenger_has_travel_pass: true,
-  driver_has_travel_pass: true,
   datetime: new Date('2024-04-15'),
   seats: 1,
-  duration: 600,
   distance: 5_000,
-  cost: 150,
-  driver_payment: 150,
-  passenger_payment: 150,
   start: { ...defaultPosition },
-  end: { ...defaultPosition },
   start_lat: defaultLat,
   start_lon: defaultLon,
+  end: { ...defaultPosition },
   end_lat: defaultLat,
   end_lon: defaultLon,
 };
@@ -93,9 +93,8 @@ test(
         datetime: new Date('2024-04-15'),
       },
     ],
-    meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0] },
 );
 
 test(
@@ -104,13 +103,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one', seats: 2 },
-      { distance: 20_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 29_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 30_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 40_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three', seats: 2 },
-      { distance: 80_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one', seats: 2 },
+      { distance: 20_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 29_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
+      { distance: 30_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
+      { distance: 40_000, driver_identity_key: 'one', passenger_identity_key: 'three', seats: 2 },
+      { distance: 80_000, driver_identity_key: 'one' },
     ],
   },
   { incentive: [150, 300, 150, 240, 250, 500, 0] },
@@ -122,8 +121,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [
       {
@@ -153,13 +152,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [
       {
