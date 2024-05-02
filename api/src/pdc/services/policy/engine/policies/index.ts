@@ -7,6 +7,7 @@ import { GrandPoitiers } from './GrandPoitiers';
 import { Idfm } from './Idfm';
 import { LaRochelle20232024 } from './LaRochelle20232024';
 import { Lannion } from './Lannion';
+import { LannionTregor2024 } from './LannionTregor2024';
 import { Laval } from './Laval';
 import { MetropoleSavoie } from './MetropoleSavoie';
 import { Montpellier } from './Montpellier';
@@ -44,6 +45,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     GrandPoitiers,
     Idfm,
     Lannion,
+    LannionTregor2024,
     LaRochelle20232024,
     Laval,
     MetropoleSavoie,

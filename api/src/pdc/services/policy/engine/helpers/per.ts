@@ -16,7 +16,8 @@ export interface PerKmParams {
 }
 
 export const perKm = (ctx: StatelessContextInterface, params: PerKmParams): number => {
-  let distance = ctx.carpool.distance;
+  let { distance } = ctx.carpool;
+
   if (Number.isNaN(distance) || distance === 0) {
     return 0;
   }

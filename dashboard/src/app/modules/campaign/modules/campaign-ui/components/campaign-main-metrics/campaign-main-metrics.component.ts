@@ -51,9 +51,13 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   }
 
   private initPeriod(): void {
-    const start = moment(this.campaign.start_date);
-    const end = moment(this.campaign.end_date);
     const today = moment();
+    const start = moment(this.campaign.start_date);
+
+    // configuration in the database is exclusive end_date
+    // to avoid displaying the day after the end of the campaign
+    // to the user, we display the day before.
+    const end = moment(this.campaign.end_date).subtract(1, 'second');
 
     const period = end.diff(start, 'days');
 

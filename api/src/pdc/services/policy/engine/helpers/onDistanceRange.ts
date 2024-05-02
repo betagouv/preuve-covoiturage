@@ -1,5 +1,6 @@
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { InvalidParamsException } from '@ilos/common';
 import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 
 interface OnDistanceParams {
   min?: number;
@@ -10,12 +11,18 @@ export const onDistanceRange: StatelessRuleHelper<OnDistanceParams> = (
   ctx: StatelessContextInterface,
   params: OnDistanceParams,
 ): boolean => {
-  if (params.min && ctx.carpool.distance < params.min) {
+  if (ctx?.carpool?.distance === null || typeof ctx?.carpool?.distance === 'undefined') {
+    throw new InvalidParamsException('[onDistanceRange] distance is missing from carpool');
+  }
+
+  if (params?.min !== null && typeof params?.min !== 'undefined' && ctx.carpool.distance < params.min) {
     return false;
   }
-  if (params.max && ctx.carpool.distance >= params.max) {
+
+  if (params?.max !== null && typeof params?.max !== 'undefined' && ctx.carpool.distance >= params.max) {
     return false;
   }
+
   return true;
 };
 
