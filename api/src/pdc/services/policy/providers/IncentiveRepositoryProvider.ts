@@ -14,26 +14,47 @@ import {
 })
 export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.incentives';
-  public readonly tripTable = 'policy.trips';
+  public readonly oldCarpoolTable = 'carpool.carpools';
+  public readonly carpoolTable = 'carpool_v2.carpools';
+  public readonly carpoolStatusTable = 'carpool_v2.status';
 
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
+    const oldQuery = {
+      text: `
+        UPDATE ${this.table} AS pi
+        SET
+          state = 'disabled'::policy.incentive_state_enum,
+          status = 'error'::policy.incentive_status_enum
+        FROM ${this.oldCarpoolTable} AS oc
+        WHERE oc.datetime >= $1::timestamp
+          AND oc.datetime <  $2::timestamp
+          AND oc.carpool_id = pi.carpool_id
+          AND oc.carpool_status <> 'ok'::carpool.carpool_status_enum
+      `,
+      values: [from, to],
+    };
+
     const query = {
       text: `
         UPDATE ${this.table} AS pi
         SET
           state = 'disabled'::policy.incentive_state_enum,
           status = 'error'::policy.incentive_status_enum
-        FROM ${this.tripTable} AS pt
-        WHERE pt.datetime >= $1::timestamp
-          AND pt.datetime <  $2::timestamp
-          AND pt.carpool_id = pi.carpool_id
-          AND pt.carpool_status <> 'ok'::carpool.carpool_status_enum
+        FROM ${this.carpoolTable} AS cc
+        JOIN ${this.carpoolStatusTable} AS cs
+          ON cs.carpool_id = cc._id
+        WHERE cc.datetime >= $1::timestamp
+          AND cc.datetime <  $2::timestamp
+          AND cc.operator_id = pi.operator_id
+          AND cc.operator_journey_id = pi.operator_journey_id
+          AND cs.acquisition_status = 'canceled'
       `,
       values: [from, to],
     };
 
+    await this.connection.getClient().query<any>(oldQuery);
     await this.connection.getClient().query<any>(query);
   }
 
@@ -151,6 +172,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         amount as stateful_amount,
         status,
         state,
+        operator_id,
+        operator_journey_id,
         meta
       FROM ${this.table}
       WHERE
@@ -215,18 +238,49 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       Array<number>,
       Array<IncentiveStatusEnum>,
       Array<IncentiveStateEnum>,
+      Array<number>,
+      Array<number>,
       Array<SerializedMetadataVariableDefinitionInterface>,
     ] = filteredData.reduce(
-      ([policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, metas], i) => {
-        policyIds.push(i.policy_id), carpoolIds.push(i.carpool_id), datetimes.push(i.datetime);
-        statelessAmounts.push(i.statelessAmount),
-          statefulAmounts.push(i.statefulAmount),
-          statuses.push(i.status),
-          states.push(i.state),
-          metas.push(JSON.stringify(i.meta));
-        return [policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, metas];
+      (
+        [
+          policyIds,
+          carpoolIds,
+          datetimes,
+          statelessAmounts,
+          statefulAmounts,
+          statuses,
+          states,
+          operatorIds,
+          operatorJourneyIds,
+          metas,
+        ],
+        i,
+      ) => {
+        policyIds.push(i.policy_id);
+        carpoolIds.push(i.carpool_id);
+        datetimes.push(i.datetime);
+        statelessAmounts.push(i.statelessAmount);
+        statefulAmounts.push(i.statefulAmount);
+        statuses.push(i.status);
+        states.push(i.state);
+        operatorIds.push(i.operator_id);
+        operatorJourneyIds.push(i.operator_journey_id);
+        metas.push(JSON.stringify(i.meta));
+        return [
+          policyIds,
+          carpoolIds,
+          datetimes,
+          statelessAmounts,
+          statefulAmounts,
+          statuses,
+          states,
+          operatorIds,
+          operatorJourneyIds,
+          metas,
+        ];
       },
-      [[], [], [], [], [], [], [], []],
+      [[], [], [], [], [], [], [], [], [], []],
     );
 
     const query = {
@@ -239,6 +293,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           amount,
           status,
           state,
+          operator_id,
+          operator_journey_id,
           meta
         ) SELECT * FROM UNNEST(
           $1::int[],
@@ -248,7 +304,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           $5::int[],
           $6::policy.incentive_status_enum[],
           $7::policy.incentive_state_enum[],
-          $8::json[]
+          $8::int[],
+          $9::varchar[],
+          $10::json[]
         )
         ON CONFLICT (policy_id, carpool_id)
         DO UPDATE SET (

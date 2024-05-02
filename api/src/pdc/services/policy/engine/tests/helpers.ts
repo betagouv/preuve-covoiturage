@@ -22,9 +22,9 @@ const defaultLon = 2.261827843187402;
 
 const dftCarpool: CarpoolInterface = {
   _id: 1,
-  trip_id: v4(),
-  driver_identity_uuid: v4(),
-  passenger_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  driver_identity_key: v4(),
+  passenger_identity_key: v4(),
   operator_uuid: '0b361f5b-4651-45f1-8f59-5952d5e745fd',
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -32,11 +32,11 @@ const dftCarpool: CarpoolInterface = {
   passenger_has_travel_pass: true,
   datetime: new Date('2019-01-15'),
   seats: 1,
-  duration: 600,
   distance: 5000,
-  cost: 20,
-  driver_payment: 20,
-  passenger_payment: 20,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -56,6 +56,8 @@ const defaultIncentive: SerializedIncentiveInterface = {
   _id: 1,
   policy_id: 1,
   carpool_id: 1,
+  operator_id: 1,
+  operator_journey_id: dftCarpool.operator_journey_id,
   datetime: new Date('2019-01-15'),
   statelessAmount: 100,
   statefulAmount: 100,
@@ -77,7 +79,7 @@ export function generatePartialCarpools(count = 75): Partial<CarpoolInterface>[]
   ].map((x) => ({
     datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
     distance: 25_000,
-    driver_identity_uuid: 'three',
-    passenger_identity_uuid: v4(),
+    driver_identity_key: 'three',
+    passenger_identity_key: v4(),
   }));
 }

@@ -19,9 +19,9 @@ const defaultLon = 2.261827843187402;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.MOV_ICI,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -29,11 +29,11 @@ const defaultCarpool = {
   driver_has_travel_pass: true,
   datetime: new Date('2024-05-15'),
   seats: 1,
-  duration: 600,
   distance: 5_000,
-  cost: 20,
-  driver_payment: 20,
-  passenger_payment: 20,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -66,9 +66,9 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 60_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
+      { distance: 60_000, driver_identity_key: 'one' },
     ],
     meta: [],
   },
@@ -97,8 +97,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [
       {
@@ -138,8 +138,8 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [
       {

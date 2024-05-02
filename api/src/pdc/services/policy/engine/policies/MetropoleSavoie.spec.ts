@@ -19,9 +19,9 @@ const defaultLon = 2.261827843187402;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -29,11 +29,11 @@ const defaultCarpool = {
   driver_has_travel_pass: true,
   datetime: new Date('2023-01-02'),
   seats: 1,
-  duration: 600,
   distance: 6_000,
-  cost: 20,
-  driver_payment: 20,
-  passenger_payment: 20,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -77,7 +77,7 @@ test(
   process,
   {
     policy: { handler: Handler.id, max_amount: 150_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_key: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',

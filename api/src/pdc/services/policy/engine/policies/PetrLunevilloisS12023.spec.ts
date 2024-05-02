@@ -19,9 +19,9 @@ const defaultLon = 6.499392987670189;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.MOBICOOP,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -29,11 +29,11 @@ const defaultCarpool = {
   driver_has_travel_pass: true,
   datetime: new Date('2023-02-01'),
   seats: 1,
-  duration: 600,
   distance: 5_000,
-  cost: 20,
-  driver_payment: 20,
-  passenger_payment: 20,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -67,10 +67,10 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 25_000, driver_identity_uuid: 'two' },
-      { distance: 25_000, seats: 2, driver_identity_uuid: 'two' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
+      { distance: 25_000, driver_identity_key: 'two' },
+      { distance: 25_000, seats: 2, driver_identity_key: 'two' },
     ],
     meta: [],
   },
@@ -92,18 +92,18 @@ test(
     policy: { handler: Handler.id },
     carpool: [
       // start
-      { distance: 5_000, driver_identity_uuid: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, driver_identity_uuid: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, seats: 2, driver_identity_uuid: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 55_000, driver_identity_uuid: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 5_000, driver_identity_key: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 25_000, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 25_000, seats: 2, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 55_000, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
 
       // end
-      { distance: 5_000, driver_identity_uuid: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, driver_identity_uuid: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, seats: 2, driver_identity_uuid: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 55_000, driver_identity_uuid: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 5_000, driver_identity_key: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 25_000, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 25_000, seats: 2, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      { distance: 55_000, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
     ],
     meta: [],
   },
@@ -118,7 +118,7 @@ test(
   process,
   {
     policy: { handler: Handler.id, max_amount: 10_000_00 },
-    carpool: [{ distance: 59_000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 59_000, driver_identity_key: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
@@ -143,10 +143,10 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [],
   },

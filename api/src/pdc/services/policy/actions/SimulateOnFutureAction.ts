@@ -1,7 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { differenceInSeconds } from 'date-fns';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
   handlerConfig,
@@ -93,17 +92,19 @@ export class SimulateOnFutureAction extends AbstractAction {
   protected async normalize(input: ParamsInterface): Promise<CarpoolInterface> {
     const common = {
       _id: 1,
-      driver_identity_uuid: v4(),
-      passenger_identity_uuid: v4(),
-      trip_id: v4(),
+      operator_id: 1,
+      driver_identity_key: v4(),
+      passenger_identity_key: v4(),
+      operator_trip_id: v4(),
+      operator_journey_id: v4(),
       operator_uuid: await this.territoryRepository.findUUIDByOperatorId(input.operator_id),
       operator_class: input.operator_class,
       passenger_is_over_18: input.passenger.identity.over_18,
       driver_has_travel_pass: 'travel_pass' in input.driver.identity,
       passenger_has_travel_pass: 'travel_pass' in input.passenger.identity,
       seats: input.passenger.seats,
-      driver_payment: input.driver.revenue,
-      passenger_payment: input.passenger.contribution,
+      driver_revenue: input.driver.revenue,
+      passenger_contribution: input.passenger.contribution,
       cost: input.passenger.contribution,
     };
 
@@ -113,7 +114,6 @@ export class SimulateOnFutureAction extends AbstractAction {
         return {
           ...common,
           datetime: inputv3.start.datetime,
-          duration: differenceInSeconds(inputv3.end.datetime, inputv3.start.datetime),
           distance: inputv3.distance,
           start: await this.territoryRepository.findByPoint(inputv3.start),
           end: await this.territoryRepository.findByPoint(inputv3.end),

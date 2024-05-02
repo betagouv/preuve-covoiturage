@@ -21,8 +21,7 @@ interface LimitStatelessStageHelper {
 }
 
 function getTargetUuid(target: LimitTargetEnum, ctx: StatelessContextInterface): string {
-  const uuid =
-    target === LimitTargetEnum.Driver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid;
+  const uuid = target === LimitTargetEnum.Driver ? ctx.carpool.driver_identity_key : ctx.carpool.passenger_identity_key;
   return `${target.toString()}-${uuid}`;
 }
 
@@ -131,13 +130,15 @@ export const watchForPersonMaxTripByDay: LimitStatelessStageHelper = (() => {
 
 export const watchForPassengerMaxByTripByDay: LimitStatelessStageHelper = (() => {
   function fn(ctx: StatelessContextInterface, uuid: string): void {
-    ctx.meta.register({
-      uuid,
-      name: 'max_passenger_restriction',
-      scope: ctx.carpool.trip_id,
-      lifetime: MetadataLifetime.Day,
-      carpoolValue: ctx.carpool.seats,
-    });
+    if ('operator_trip_id' in ctx.carpool && ctx.carpool.operator_trip_id.length) {
+      ctx.meta.register({
+        uuid,
+        name: 'max_passenger_restriction',
+        scope: `${ctx.carpool.operator_id}.${ctx.carpool.operator_trip_id}`,
+        lifetime: MetadataLifetime.Day,
+        carpoolValue: ctx.carpool.seats,
+      });
+    }
   }
   fn.counter = LimitCounterTypeEnum.Other;
   fn.priority = 10;

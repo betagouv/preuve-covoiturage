@@ -19,9 +19,9 @@ const defaultLon = 2.261827843187402;
 
 const defaultCarpool = {
   _id: 1,
-  trip_id: v4(),
-  passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  operator_trip_id: v4(),
+  passenger_identity_key: v4(),
+  driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: 'B',
   passenger_is_over_18: true,
@@ -29,11 +29,11 @@ const defaultCarpool = {
   driver_has_travel_pass: true,
   datetime: new Date('2023-04-15'),
   seats: 1,
-  duration: 600,
   distance: 5_000,
-  cost: 20,
-  driver_payment: 20,
-  passenger_payment: 20,
+  operator_journey_id: v4(),
+  operator_id: 1,
+  driver_revenue: 20,
+  passenger_contribution: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   start_lat: defaultLat,
@@ -85,12 +85,12 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
       {
         distance: 25_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'two',
         start: {
           com: '35360',
           aom: '200039022',
@@ -103,21 +103,21 @@ test(
       {
         distance: 40_000,
         seats: 2,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'three',
         datetime: new Date('2023-07-01'),
       },
       {
         distance: 25_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'two',
         datetime: new Date('2023-07-20'),
       },
       {
         distance: 50_000,
         seats: 2,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
+        driver_identity_key: 'one',
+        passenger_identity_key: 'three',
         datetime: new Date('2023-07-20'),
       },
     ],
@@ -147,7 +147,7 @@ test(
   process,
   {
     policy: { handler: Handler.id, max_amount: 180_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_key: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
@@ -176,13 +176,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
-      { distance: 5_000, driver_identity_uuid: 'one', passenger_identity_uuid: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
+      { distance: 5_000, driver_identity_key: 'one', passenger_identity_key: v4() },
     ],
     meta: [],
   },
@@ -207,9 +207,9 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: 'one' },
     ],
     meta: [],
   },

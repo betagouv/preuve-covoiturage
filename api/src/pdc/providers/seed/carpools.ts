@@ -25,11 +25,18 @@ const defaultCarpool: Carpool = {
   },
   seats: 1,
   identity_uuid: v4(),
+  identity_key: v4(),
+  identity_operator_user_id: v4(),
   identity_travel_pass: 'identity_travel_pass',
+  identity_travelpass_name: 'identity_travel_pass',
+  identity_travelpass_user_id: 'identity_travel_pass',
   identity_over_18: true,
+  identity_phone: '+33600000000',
   identity_phone_trunc: '+336000000',
+  licence_plate: 'XXXDDSS',
   cost: 100,
   status: 'ok',
+  payments: [],
 };
 
 export interface Carpool {
@@ -53,8 +60,13 @@ export interface Carpool {
   };
   seats: number;
   identity_uuid: string;
+  identity_key: string;
+  identity_operator_user_id: string;
   identity_travel_pass: string;
+  identity_travelpass_name: string;
+  identity_travelpass_user_id: string;
   identity_over_18: boolean;
+  identity_phone: string;
   identity_phone_trunc: string;
   cost: number;
   calc_distance: number;
@@ -62,9 +74,11 @@ export interface Carpool {
   status: string;
   start_geo_code: string;
   end_geo_code: string;
+  licence_plate: string;
+  payments: Array<unknown>;
 }
 
-function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpool>): Carpool[] {
+function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpool>): [Carpool, Carpool] {
   const commonData = {
     acquisition_id,
     trip_id: `trip_id-${acquisition_id}`,
@@ -90,7 +104,13 @@ function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpo
 }
 
 export const carpools: Carpool[] = [
-  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2022-06-15') }),
-  ...makeCarpoolsFromAcquisition(2, { datetime: new Date('2022-06-16') }),
-  ...makeCarpoolsFromAcquisition(3, { datetime: new Date('2022-06-16'), status: 'fraudcheck_error' }),
+  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-03-15') }),
+  ...makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-03-16') }),
+  ...makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-03-16'), status: 'fraudcheck_error' }),
+];
+
+export const carpoolsV2: Array<[Carpool, Carpool]> = [
+  makeCarpoolsFromAcquisition(1, { datetime: new Date('2024-03-15') }),
+  makeCarpoolsFromAcquisition(2, { datetime: new Date('2024-03-16') }),
+  makeCarpoolsFromAcquisition(3, { datetime: new Date('2024-03-16'), status: 'fraudcheck_error' }),
 ];

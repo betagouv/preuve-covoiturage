@@ -7,48 +7,101 @@ import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResol
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryProviderInterfaceResolver {
-  public readonly table = 'policy.trips';
+  public readonly table = 'carpool_v2.carpools';
+  public readonly geoTable = 'carpool_v2.geo';
+  public readonly statusTable = 'carpool_v2.status';
+  public readonly operatorTable = 'operator.operators';
+  public readonly oldCarpoolTable = 'carpool.carpools';
   public readonly incentiveTable = 'policy.incentives';
   public readonly getComFunction = 'territory.get_com_by_territory_id';
   public readonly getMillesimeFunction = 'geo.get_latest_millesime';
 
   constructor(protected connection: PostgresConnection) {}
 
-  async *findTripByGeo(coms: string[], from: Date, to: Date): AsyncGenerator<CarpoolInterface[], void, void> {
+  async *findTripByGeo(
+    coms: string[],
+    from: Date,
+    to: Date,
+    batchSize = 300,
+    override = true,
+    policy_id?: number,
+  ): AsyncGenerator<CarpoolInterface[], void, void> {
     const query = {
       text: `
         SELECT
-          t.carpool_id as _id,
-          t.trip_id,
-          t.operator_uuid,
-          t.operator_class,
-          t.passenger_payment,
-          t.passenger_identity_uuid,
-          t.passenger_has_travel_pass,
-          t.passenger_is_over_18,
-          t.driver_payment,
-          t.driver_identity_uuid,
-          t.driver_has_travel_pass,
-          t.datetime,
-          t.seats,
-          t.duration,
-          t.distance,
-          t.cost,
-          t.carpool_start as start,
-          t.carpool_end as end,
-          t.start_geo_code
-        FROM ${this.table} t
+          oc._id as _id,
+          oo.uuid as operator_uuid,
+          cc.operator_trip_id,
+          cc.operator_id,
+          cc.operator_journey_id,
+          cc.operator_class,
+          cc.passenger_contribution,
+          cc.passenger_identity_key,
+          cc.passenger_travelpass_user_id IS NOT NULL as passenger_has_travel_pass,
+          cc.passenger_over_18 as passenger_is_over_18,
+          cc.passenger_seats as seats,
+          cc.driver_revenue,
+          cc.driver_identity_key,
+          cc.driver_travelpass_user_id IS NOT NULL as driver_has_travel_pass,
+          cc.start_datetime as datetime,
+          cc.distance,
+          row_to_json(
+            geo.get_by_code(
+              co.start_geo_code::varchar,
+              geo.get_latest_millesime_or(EXTRACT(year FROM cc.start_datetime)::smallint)
+            )
+          ) as start,
+          row_to_json(
+            geo.get_by_code(
+              co.end_geo_code::varchar,
+              geo.get_latest_millesime_or(EXTRACT(year FROM cc.start_datetime)::smallint)
+            )
+          ) as end,
+          ST_X(cc.start_position::geometry)::numeric as start_lon,
+          ST_Y(cc.start_position::geometry)::numeric as start_lat,
+          ST_X(cc.end_position::geometry)::numeric as end_lon,
+          ST_Y(cc.end_position::geometry)::numeric as end_lat
+        FROM ${this.table} cc
+        JOIN ${this.geoTable} co
+          ON co.carpool_id = cc._id
+        JOIN ${this.operatorTable} oo
+          ON oo._id = cc.operator_id
+        JOIN ${this.statusTable} cs
+          ON cs.carpool_id = cc._id
+        JOIN ${this.oldCarpoolTable} oc
+          ON (
+            oc.datetime >= '2024-01-01'::timestamp AND
+            cc.operator_journey_id = oc.operator_journey_id AND
+            cc.operator_id = oc.operator_id AND
+            oc.is_driver = true
+          )
+        ${
+          override
+            ? ''
+            : `
+              LEFT JOIN ${this.incentiveTable} pi
+                ON (
+                  oc._id = pi.carpool_id OR (
+                    cc.operator_journey_id = pi.operator_journey_id AND
+                    cc.operator_id = pi.operator_id
+                  )
+                ) AND pi.policy_id = $4::int
+            `
+        }
         WHERE
-          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[]))
-          AND t.datetime >= $2::timestamp
-          AND t.datetime < $3::timestamp
-          AND t.carpool_status = 'ok'
-        ORDER BY t.datetime ASC
+          cc.start_datetime >= $2::timestamp
+          AND cc.start_datetime < $3::timestamp
+          AND (
+            co.start_geo_code = ANY($1::varchar[])
+            OR co.end_geo_code = ANY($1::varchar[])
+          )
+        ORDER BY cc.start_datetime ASC
       `,
-      values: [coms, from, to],
+      values: [coms, from, to, ...(!override && policy_id ? [policy_id] : [])],
     };
+    // TODO status
 
-    yield* this.queryAndYieldRows(query, 300);
+    yield* this.queryAndYieldRows(query, batchSize);
   }
 
   async *findTripByPolicy(
@@ -70,53 +123,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
     const com: string[] = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
 
-    const query = {
-      text: `
-        SELECT
-          t.carpool_id as _id,
-          t.trip_id,
-          t.operator_uuid,
-          t.operator_class,
-          t.passenger_payment,
-          t.passenger_identity_uuid,
-          t.passenger_has_travel_pass,
-          t.passenger_is_over_18,
-          t.passenger_meta,
-          t.driver_payment,
-          t.driver_identity_uuid,
-          t.driver_has_travel_pass,
-          t.driver_meta,
-          t.datetime,
-          t.seats,
-          t.duration,
-          t.distance,
-          t.cost,
-          t.carpool_start as start,
-          t.carpool_end as end
-        FROM ${this.table} t
-        ${
-          override
-            ? ''
-            : `
-              LEFT JOIN ${this.incentiveTable} pi
-                ON t.carpool_id = pi.carpool_id
-                AND pi.policy_id = $4::int
-            `
-        }
-        WHERE
-          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[]))
-          AND t.datetime >= $2::timestamp
-          AND t.datetime < $3::timestamp
-          AND ( t.carpool_status = 'ok'::carpool.carpool_status_enum 
-                or 
-                t.carpool_status = 'fraudcheck_error'::carpool.carpool_status_enum)
-          ${override ? '' : 'AND pi.carpool_id IS NULL'}
-        ORDER BY t.datetime ASC
-        `,
-      values: override ? [com, from, to] : [com, from, to, policy._id],
-    };
-
-    yield* this.queryAndYieldRows(query, batchSize);
+    yield* this.findTripByGeo(com, from, to, batchSize, override, policy._id);
   }
 
   private async *queryAndYieldRows(
