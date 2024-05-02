@@ -37,12 +37,12 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
           cc.operator_class,
           cc.passenger_contribution,
           cc.passenger_identity_key,
-          (CASE WHEN cc.passenger_travelpass_user_id IS NULL THEN false ELSE true END) as passenger_has_travel_pass,
+          cc.passenger_travelpass_user_id IS NOT NULL as passenger_has_travel_pass,
           cc.passenger_over_18 as passenger_is_over_18,
           cc.passenger_seats as seats,
           cc.driver_revenue,
           cc.driver_identity_key,
-          (CASE WHEN cc.driver_travelpass_user_id IS NULL THEN false ELSE true END) as driver_has_travel_pass,
+          cc.driver_travelpass_user_id IS NOT NULL as driver_has_travel_pass,
           cc.start_datetime as datetime,
           cc.distance,
           row_to_json(
@@ -89,9 +89,12 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
             `
         }
         WHERE
-          cc.start_datetime >= $2::timestamp AND
-          cc.start_datetime < $3::timestamp AND
-          (co.start_geo_code = ANY($1::varchar[]) OR co.end_geo_code = ANY($1::varchar[]))
+          cc.start_datetime >= $2::timestamp
+          AND cc.start_datetime < $3::timestamp
+          AND (
+            co.start_geo_code = ANY($1::varchar[])
+            OR co.end_geo_code = ANY($1::varchar[])
+          )
         ORDER BY cc.start_datetime ASC
       `,
       values: [coms, from, to, ...(!override && policy_id ? [policy_id] : [])],
