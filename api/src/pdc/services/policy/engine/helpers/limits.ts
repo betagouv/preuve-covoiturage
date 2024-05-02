@@ -134,7 +134,7 @@ export const watchForPassengerMaxByTripByDay: LimitStatelessStageHelper = (() =>
       ctx.meta.register({
         uuid,
         name: 'max_passenger_restriction',
-        scope: ctx.carpool.operator_trip_id,
+        scope: `${ctx.carpool.operator_id}.${ctx.carpool.operator_trip_id}`,
         lifetime: MetadataLifetime.Day,
         carpoolValue: ctx.carpool.seats,
       });

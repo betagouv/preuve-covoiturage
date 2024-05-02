@@ -216,7 +216,7 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
-      key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`,
+      key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Day,
       carpoolValue: 1,
