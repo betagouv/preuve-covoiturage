@@ -45,7 +45,6 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
   const { value } = await cursor.next(); // ok carpool
   await cursor.next(); // ok carpool
   await cursor.next(); // fraudcheck_error carpool
-  t.log(value);
   t.is((value || []).length, 3);
   t.true(Array.isArray(value));
   t.like(

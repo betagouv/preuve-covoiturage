@@ -278,13 +278,16 @@ export class Migrator {
     await this.connection.getClient().query({
       text: `
       INSERT INTO carpool_v2.status (
-        carpool_id, acquisition_status
+        carpool_id,
+        acquisition_status,
+        fraud_status
       ) VALUES (
         $1,
-        $2
+        $2,
+        $3
       )
       `,
-      values: [carpoolResult.rows[0]._id, carpool.acquisition_status],
+      values: [carpoolResult.rows[0]._id, carpool.acquisition_status, carpool.fraud_status],
     });
   }
 

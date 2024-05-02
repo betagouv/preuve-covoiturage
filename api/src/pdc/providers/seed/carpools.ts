@@ -192,19 +192,19 @@ function makeCarpoolsFromAcquisition(
 
 export const carpools: SeedableCarpoolData[] = [
   ...makeCarpoolsFromAcquisition(1, {
-    datetime: new Date('2022-06-15'),
+    datetime: new Date('2024-03-15'),
     status: CarpoolV1StatusEnum.Ok,
     acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
     fraud_status: CarpoolFraudStatusEnum.Passed,
   }),
   ...makeCarpoolsFromAcquisition(3, {
-    datetime: new Date('2022-06-16'),
+    datetime: new Date('2024-03-16'),
     status: CarpoolV1StatusEnum.Ok,
     acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
     fraud_status: CarpoolFraudStatusEnum.Passed,
   }),
   ...makeCarpoolsFromAcquisition(5, {
-    datetime: new Date('2022-06-16'),
+    datetime: new Date('2024-03-16'),
     status: CarpoolV1StatusEnum.FraudcheckError,
     acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
     fraud_status: CarpoolFraudStatusEnum.Failed,
