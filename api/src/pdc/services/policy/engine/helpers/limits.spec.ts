@@ -241,7 +241,7 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateful.meta.export(), [
     {
       policy_id: 1,
-      key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`,
+      key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
       value: 0,
       carpoolValue: 1,
     },
@@ -252,7 +252,7 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateful.meta.export(), [
     {
       policy_id: 1,
-      key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`,
+      key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
       value: 1,
       carpoolValue: 1,
     },
@@ -265,7 +265,7 @@ test('should watch and apply for custom data', async (t) => {
   t.deepEqual(ctxStateful.meta.export(), [
     {
       policy_id: 1,
-      key: `max_passenger_restriction.${carpool.operator_trip_id}.day.15-0-2019`,
+      key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
       value: 2,
       carpoolValue: 1,
     },
