@@ -16,7 +16,6 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  startsAndEndsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
@@ -78,12 +77,14 @@ export const LannionTregor2024: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => {
+        return perSeat(ctx, 150) + perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 }));
+      },
     },
     {
       start: 30_000,
       end: 80_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 250),
+      fn: (ctx: StatelessContextInterface): number => perSeat(ctx, 250),
     },
   ];
 
@@ -98,15 +99,11 @@ export const LannionTregor2024: PolicyHandlerStaticInterface = class
     this.processExclusions(ctx);
     super.processStateless(ctx);
 
-    // Apply each slice and sum up the results
-    let amount = 0;
-    for (const { start, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start })) {
-        amount += fn(ctx);
+    for (const { start, end, fn } of this.slices) {
+      if (onDistanceRange(ctx, { min: start, max: end })) {
+        ctx.incentive.set(fn(ctx));
       }
     }
-
-    ctx.incentive.set(amount);
   }
 
   params(): PolicyHandlerParamsInterface {

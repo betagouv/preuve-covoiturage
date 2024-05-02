@@ -4,19 +4,20 @@ import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { LannionTregor2024 as Handler } from './LannionTregor2024';
 
+// Perros-Guirec
 const defaultPosition = {
-  arr: '74206',
-  com: '74206',
-  aom: '200067551',
-  epci: '200067551',
-  dep: '74',
-  reg: '84',
+  arr: '22168',
+  com: '22168',
+  aom: '200065928',
+  epci: '200065928',
+  dep: '22',
+  reg: '53',
   country: 'XXXXX',
-  reseau: null,
+  reseau: '194',
 };
 
-const defaultLat = 46.313355215729146;
-const defaultLon = 6.487631441991693;
+const defaultLat = 48.81387693883991;
+const defaultLon = -3.4424441671291306;
 
 const defaultCarpool = {
   _id: 1,
@@ -98,77 +99,21 @@ test(
 );
 
 test(
-  'trips inside AOM',
+  'validate calculations',
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one', seats: 2 },
       { distance: 20_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 30_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 40_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 40_000, seats: 2, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
-      { distance: 70_000, driver_identity_uuid: 'one' },
+      { distance: 29_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
+      { distance: 30_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
+      { distance: 40_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three', seats: 2 },
+      { distance: 80_000, driver_identity_uuid: 'one' },
     ],
   },
-  {
-    incentive: [150, 300, 150, 275, 400, 800, 400],
-  },
-);
-
-test(
-  'trips outside AOM',
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      {
-        distance: 5_000,
-        driver_identity_uuid: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 5_000,
-        seats: 2,
-        driver_identity_uuid: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 20_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 30_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'two',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 40_000,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 40_000,
-        seats: 2,
-        driver_identity_uuid: 'one',
-        passenger_identity_uuid: 'three',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-      {
-        distance: 70_000,
-        driver_identity_uuid: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
-      },
-    ],
-  },
-  {
-    incentive: [50, 100, 50, 175, 300, 600, 300],
-  },
+  { incentive: [150, 300, 150, 240, 250, 500, 0] },
 );
 
 test(
@@ -183,7 +128,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 48_50,
+        value: 148_50,
       },
     ],
   },
@@ -192,11 +137,47 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2024',
-        value: 50_00,
+        value: 150_00,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
         value: 150,
+      },
+    ],
+  },
+);
+
+test(
+  'should work with driver daily limits',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+    ],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-one.month.3-2024',
+        value: 0,
+      },
+    ],
+  },
+  {
+    incentive: [150, 150, 150, 150, 150, 150, 0],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-one.month.3-2024',
+        value: 900,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 900,
       },
     ],
   },
