@@ -100,19 +100,19 @@ test.after(async (t) => {
   await after(t.context);
 });
 
-test(success, 'call.user.permissions', ['test.run'], {
+test('Success call.user.permissions', success, 'call.user.permissions', ['test.run'], {
   call: { user: { permissions: ['test.run'] } },
   channel: { service: 'dummy' },
 });
 
-test(success, 'channel.service', 'dummy', {
+test('Success channel.service', success, 'channel.service', 'dummy', {
   call: { user: { permissions: ['test.run'] } },
   channel: { service: 'dummy' },
 });
 
 test('undefined permissions = Forbidden Error', error, 'call.user.permissions', 'Forbidden Error');
 
-test(error, 'call.user.permissions', 'Forbidden Error', {
+test('Error call.user.permissions', error, 'call.user.permissions', 'Forbidden Error', {
   call: { user: { permissions: [] } },
   channel: { service: 'dummy' },
 });

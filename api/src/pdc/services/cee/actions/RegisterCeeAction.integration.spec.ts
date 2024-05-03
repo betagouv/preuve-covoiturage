@@ -67,6 +67,7 @@ const defaultLongPayload: any = {
 };
 
 test.serial(
+  'Invalid last_name_trunc param',
   error,
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
@@ -77,6 +78,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid journey_type param',
   error,
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
@@ -87,6 +89,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid driving_license param',
   error,
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
@@ -97,6 +100,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid operator_journey_id param',
   error,
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
@@ -110,6 +114,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid identity_key param',
   error,
   { ...defaultLongPayload, datetime: 'bip' },
   (e: any, t) => {
@@ -120,6 +125,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid phone_trunc param',
   error,
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
@@ -129,9 +135,13 @@ test.serial(
   defaultContext,
 );
 
-test.serial(error, defaultShortPayload, 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial('Unauthorized user', error, defaultShortPayload, 'Unauthorized Error', {
+  ...defaultContext,
+  call: { user: {} },
+});
 
 test.serial(
+  'Invalid datetime param',
   error,
   { ...defaultLongPayload, datetime: new Date().toISOString() },
   (e: any, t) => {
@@ -142,6 +152,7 @@ test.serial(
 );
 
 test.serial(
+  'Successful registration',
   success,
   defaultShortPayload,
   {
@@ -162,6 +173,7 @@ test.serial(
 );
 
 test.serial(
+  'Conflict',
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
   (e: any, t) => {
@@ -172,6 +184,7 @@ test.serial(
 );
 
 test.serial(
+  'Not found',
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
   (e: any, t) => {

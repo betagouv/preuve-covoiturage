@@ -75,6 +75,7 @@ const defaultLongPayload: any = {
 };
 
 test.serial(
+  'Invalid last_name_trunc param',
   error,
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
@@ -85,6 +86,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid journey_type param',
   error,
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
@@ -95,6 +97,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid driving_license param',
   error,
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
@@ -105,6 +108,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid phone_trunc param',
   error,
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
@@ -114,11 +118,15 @@ test.serial(
   defaultContext,
 );
 
-test.serial(error, defaultShortPayload, 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial('Unauthorized', error, defaultShortPayload, 'Unauthorized Error', {
+  ...defaultContext,
+  call: { user: {} },
+});
 
-test.serial(success, defaultShortPayload, undefined, defaultContext);
+test.serial('Success', success, defaultShortPayload, undefined, defaultContext);
 
 test.serial(
+  'Conflict',
   error,
   defaultLongPayload,
   (e: any, t) => {

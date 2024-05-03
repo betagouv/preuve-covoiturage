@@ -53,8 +53,8 @@ test.after(async (t) => {
   await after({ kernel: t.context.kernel });
 });
 
-test(success, 'toto', 'hello toto');
-test(error, 'error', 'custom:test');
+test('Success', success, 'toto', 'hello toto');
+test('Error', error, 'error', 'custom:test');
 
 test('should preserve context type and before hook', (t) => {
   t.is(t.context.hi, 'you');
