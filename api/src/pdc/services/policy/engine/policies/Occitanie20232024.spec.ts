@@ -18,7 +18,6 @@ const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
 
 const defaultCarpool: CarpoolInterface = {
-  _id: 1,
   operator_trip_id: v4(),
   passenger_identity_key: v4(),
   driver_identity_key: v4(),

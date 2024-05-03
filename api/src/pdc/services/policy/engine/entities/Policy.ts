@@ -87,7 +87,9 @@ export class Policy implements PolicyInterface {
           context.incentive.set(0);
           return context.incentive;
         }
-        console.error(`Stateless incentive calculation for carpool ${carpool._id} failed : ${e.message}`);
+        console.error(
+          `Stateless incentive calculation for carpool ${carpool.operator_id} ${carpool.operator_journey_id} failed : ${e.message}`,
+        );
         console.debug(e);
         throw e;
       }

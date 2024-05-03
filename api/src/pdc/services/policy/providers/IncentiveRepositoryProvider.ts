@@ -89,7 +89,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     // get only last incentive for each carpool / policy
     const filteredData = data.reverse().filter((d) => {
-      const key = `${d.policy_id}/${d.carpool_id}`;
+      const key = `${d.policy_id}/${d.operator_id}/${d.operator_journey_id}`;
       if (idSet.has(key)) {
         return false;
       }
@@ -165,7 +165,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       text: `
       SELECT
         _id,
-        carpool_id,
         policy_id,
         datetime,
         result as stateless_amount,
@@ -216,7 +215,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const filteredData = data
       .reverse()
       .filter((d) => {
-        const key = `${d.policy_id}/${d.carpool_id}`;
+        const key = `${d.policy_id}/${d.operator_id}/${d.operator_journey_id}`;
         if (idSet.has(key)) {
           return false;
         }
@@ -232,7 +231,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     const values: [
       Array<number>,
-      Array<number>,
       Array<Date>,
       Array<number>,
       Array<number>,
@@ -245,7 +243,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       (
         [
           policyIds,
-          carpoolIds,
           datetimes,
           statelessAmounts,
           statefulAmounts,
@@ -258,7 +255,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         i,
       ) => {
         policyIds.push(i.policy_id);
-        carpoolIds.push(i.carpool_id);
         datetimes.push(i.datetime);
         statelessAmounts.push(i.statelessAmount);
         statefulAmounts.push(i.statefulAmount);
@@ -269,7 +265,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         metas.push(JSON.stringify(i.meta));
         return [
           policyIds,
-          carpoolIds,
           datetimes,
           statelessAmounts,
           statefulAmounts,
@@ -280,7 +275,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           metas,
         ];
       },
-      [[], [], [], [], [], [], [], [], [], []],
+      [[], [], [], [], [], [], [], [], []],
     );
 
     const query = {
@@ -296,32 +291,41 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           operator_id,
           operator_journey_id,
           meta
-        ) SELECT * FROM UNNEST(
+        )
+        SELECT 
+          unnest_data.policy_id,
+          cc._id as carpool_id,
+          unnest_data.datetime,
+          unnest_data.result,
+          unnest_data.amount,
+          unnest_data.status,
+          unnest_data.state,
+          unnest_data.operator_id,
+          unnest_data.operator_journey_id,
+          unnest_data.meta
+        FROM UNNEST(
           $1::int[],
-          $2::int[],
-          $3::timestamp[],
+          $2::timestamp[],
+          $3::int[],
           $4::int[],
-          $5::int[],
-          $6::policy.incentive_status_enum[],
-          $7::policy.incentive_state_enum[],
-          $8::int[],
-          $9::varchar[],
-          $10::json[]
-        )
-        ON CONFLICT (policy_id, carpool_id)
-        DO UPDATE SET (
-          result,
-          amount,
-          status,
-          state,
-          meta
-        ) = (
-          excluded.result,
-          excluded.amount,
-          excluded.status,
-          excluded.state,
-          excluded.meta
-        )
+          $5::policy.incentive_status_enum[],
+          $6::policy.incentive_state_enum[],
+          $7::int[],
+          $8::varchar[],
+          $9::json[]
+        ) AS unnest_data(policy_id, datetime, result, amount, status, state, operator_id, operator_journey_id, meta)
+        JOIN carpool.carpools cc
+          ON cc.operator_id = unnest_data.operator_id
+          AND cc.operator_journey_id = unnest_data.operator_journey_id
+          AND cc.datetime >= '2024-03-01'::timestamp
+          AND cc.is_driver IS TRUE
+        ON CONFLICT (policy_id, operator_id, operator_journey_id)
+        DO UPDATE SET 
+          result = excluded.result,
+          amount = excluded.amount,
+          status = excluded.status,
+          state = excluded.state,
+          meta = excluded.meta;
       `,
       values,
     };

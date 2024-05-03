@@ -29,7 +29,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
     const query = {
       text: `
         SELECT
-          oc._id as _id,
           oo.uuid as operator_uuid,
           cc.operator_trip_id,
           cc.operator_id,
@@ -68,24 +67,15 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
           ON oo._id = cc.operator_id
         JOIN ${this.statusTable} cs
           ON cs.carpool_id = cc._id
-        JOIN ${this.oldCarpoolTable} oc
-          ON (
-            oc.datetime >= '2024-01-01'::timestamp AND
-            cc.operator_journey_id = oc.operator_journey_id AND
-            cc.operator_id = oc.operator_id AND
-            oc.is_driver = true
-          )
         ${
           override
             ? ''
             : `
               LEFT JOIN ${this.incentiveTable} pi
-                ON (
-                  oc._id = pi.carpool_id OR (
-                    cc.operator_journey_id = pi.operator_journey_id AND
-                    cc.operator_id = pi.operator_id
-                  )
-                ) AND pi.policy_id = $4::int
+                ON
+                  cc.operator_journey_id = pi.operator_journey_id
+                  AND cc.operator_id = pi.operator_id
+                  AND pi.policy_id = $4::int
             `
         }
         WHERE
@@ -95,6 +85,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
             co.start_geo_code = ANY($1::varchar[])
             OR co.end_geo_code = ANY($1::varchar[])
           )
+          ${override ? '' : 'AND pi._id IS NULL'}
         ORDER BY cc.start_datetime ASC
       `,
       values: [coms, from, to, ...(!override && policy_id ? [policy_id] : [])],

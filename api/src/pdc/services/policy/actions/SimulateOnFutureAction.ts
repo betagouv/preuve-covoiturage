@@ -75,7 +75,6 @@ export class SimulateOnFutureAction extends AbstractAction {
       .map((i) => i.export())
       .filter((i) => i.statelessAmount > 0)
       .map((i) => ({
-        carpool_id: i.carpool_id,
         amount: i.statelessAmount,
         siret: uuidList.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).uuid,
       }));
