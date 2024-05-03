@@ -278,8 +278,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       [[], [], [], [], [], [], [], [], []],
     );
 
-    console.table(values);
-
     const query = {
       text: `
         INSERT INTO ${this.table} (
