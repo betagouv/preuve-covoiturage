@@ -1,5 +1,6 @@
 import { ContextType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
 import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
 import {
   ceeJourneyTypeEnumSchema,
@@ -158,7 +159,7 @@ test.serial(
   {
     datetime: '2024-03-15T00:15:00.000Z',
     journey_id: 1,
-    status: 'ok',
+    status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;
       const signer = createSign('RSA-SHA512');

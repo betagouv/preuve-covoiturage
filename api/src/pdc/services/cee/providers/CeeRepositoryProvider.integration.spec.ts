@@ -1,7 +1,6 @@
+import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-
-import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 import { config } from '../config';
 import {
   CeeApplicationErrorEnum,
@@ -12,6 +11,7 @@ import {
   ShortCeeApplication,
   ValidJourneyConstraint,
 } from '../interfaces';
+import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 
 interface TestContext {
   db: DbContext;
@@ -138,7 +138,7 @@ test.serial('Search should be equals as new registration', async (t) => {
   const { acquisition_id, acquisition_status, ...otherSearchResult } = searchResult || {};
   t.deepEqual(createResult, otherSearchResult);
   t.is(acquisition_id, 1);
-  t.is(acquisition_status, 'ok');
+  t.is(acquisition_status, CarpoolV1StatusEnum.Ok);
 });
 
 test.serial('Should raise error if conflict short application', async (t) => {
