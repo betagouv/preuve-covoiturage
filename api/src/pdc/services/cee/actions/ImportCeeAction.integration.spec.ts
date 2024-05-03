@@ -50,6 +50,7 @@ const defaultPayload: any = {
 };
 
 test.serial(
+  'Invalid params empty',
   error,
   [],
   (e: any, t) => {
@@ -60,6 +61,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid params last_name_trunc',
   error,
   [{ ...defaultPayload, last_name_trunc: 'abcd' }],
   (e: any, t) => {
@@ -70,6 +72,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid params unsupported journey type',
   error,
   [{ ...defaultPayload, journey_type: 'bip' }],
   (e: any, t) => {
@@ -80,6 +83,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid params datetime',
   error,
   [{ ...defaultPayload, datetime: 'bip' }],
   (e: any, t) => {
@@ -90,6 +94,7 @@ test.serial(
 );
 
 test.serial(
+  'Invalid params phone_trunc',
   error,
   [{ ...defaultPayload, phone_trunc: 'bip' }],
   (e: any, t) => {
@@ -99,9 +104,10 @@ test.serial(
   defaultContext,
 );
 
-test.serial(error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial('Unauthorized', error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
 
 test.serial(
+  'Success',
   success,
   [defaultPayload, defaultPayload],
   {

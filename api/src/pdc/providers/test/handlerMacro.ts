@@ -1,7 +1,6 @@
-import { ContextType, ServiceContainerInterface, NewableType } from '@ilos/common';
+import { ContextType, NewableType, ServiceContainerInterface } from '@ilos/common';
 import test, { ExecutionContext, Macro } from 'ava';
-
-import { KernelTestFn, KernelBeforeAfter, makeKernelBeforeAfter } from './helpers';
+import { KernelBeforeAfter, KernelTestFn, makeKernelBeforeAfter } from './helpers';
 
 interface HandlerConfigInterface {
   service: string;
@@ -32,6 +31,11 @@ interface HandlerMacroInterface<P, R, E, C> extends KernelBeforeAfter {
 }
 export type HandlerMacroContext = KernelTestFn;
 
+function title(providedTitle = '', params: any, response: any, currentContext) {
+  if (typeof providedTitle === 'string' && providedTitle.length) return providedTitle;
+  return `${params} = ${response}`.trim();
+}
+
 export function handlerMacro<ActionParams, ActionResult, ActionError extends Error = Error, TestContext = unknown>(
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   handlerConfig: HandlerConfigInterface,
@@ -56,35 +60,38 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
     HandlerMacroContext
   > = test.macro({
     async exec(t: ExecutionContext<HandlerMacroContext & TestContext>, params, response, currentContext = {}) {
-      const context = {
-        ...emptyContext,
-        ...currentContext,
-      };
-      const finalParams =
-        typeof params === 'function'
-          ? await (params as paramsBuilder<ActionParams, HandlerMacroContext & TestContext>)(t)
-          : params;
+      try {
+        const context = {
+          ...emptyContext,
+          ...currentContext,
+        };
+        const finalParams =
+          typeof params === 'function'
+            ? await (params as paramsBuilder<ActionParams, HandlerMacroContext & TestContext>)(t)
+            : params;
 
-      const kernel = t.context.kernel;
-      const result = await kernel.call<ActionParams, ActionResult>(
-        `${handlerConfig.service}:${handlerConfig.method}`,
-        finalParams,
-        context,
-      );
-      // t.log(`Calling ${handlerConfig.service}:${handlerConfig.method}`, { params: finalParams, context });
-      if (typeof response === 'function') {
-        await response(result, t);
-      } else {
-        if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
-          t.like(result, response as Awaited<ActionResult>);
+        const kernel = t.context.kernel;
+        const result = await kernel.call<ActionParams, ActionResult>(
+          `${handlerConfig.service}:${handlerConfig.method}`,
+          finalParams,
+          context,
+        );
+        // t.log(`Calling ${handlerConfig.service}:${handlerConfig.method}`, { params: finalParams, context });
+        if (typeof response === 'function') {
+          await response(result, t);
         } else {
-          t.deepEqual(result, response as Awaited<ActionResult>);
+          if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
+            t.like(result, response as Awaited<ActionResult>);
+          } else {
+            t.deepEqual(result, response as Awaited<ActionResult>);
+          }
         }
+      } catch (e) {
+        t.log(e.message);
+        throw e;
       }
     },
-    title(providedTitle = '', params, response, currentContext) {
-      return `${providedTitle} ${params} = ${response}`.trim();
-    },
+    title,
   });
 
   const error: Macro<
@@ -117,9 +124,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
         t.is(err.message, message);
       }
     },
-    title(providedTitle = '', params, response, currentContext) {
-      return `${providedTitle} ${params} = ${response}`.trim();
-    },
+    title,
   });
 
   return {
