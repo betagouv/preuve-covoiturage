@@ -1,4 +1,4 @@
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
 
@@ -11,6 +11,7 @@ import { alias } from '@shared/acquisition/cancel.schema';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { callContext } from '../config/callContext';
 import { StatusEnum } from '@shared/acquisition/status.contract';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
 
 @handler({
   ...handlerConfig,
@@ -23,6 +24,7 @@ export class CancelJourneyAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,
     private repository: AcquisitionRepositoryProvider,
+    private acquisitionService: CarpoolAcquisitionService,
   ) {
     super();
   }
@@ -48,5 +50,15 @@ export class CancelJourneyAction extends AbstractAction {
       { acquisition_id: acquisition._id, status: 'canceled' },
       callContext,
     );
+
+    if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
+      await this.acquisitionService.cancelRequest({
+        api_version: 3,
+        operator_id,
+        operator_journey_id,
+        cancel_code: params.code,
+        cancel_message: params.message,
+      });
+    }
   }
 }
