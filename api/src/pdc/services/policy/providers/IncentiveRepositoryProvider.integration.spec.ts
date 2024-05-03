@@ -27,9 +27,8 @@ test.serial('Should create many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 1,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id',
+      operator_journey_id: 'operator_journey_id-1',
       datetime: new Date(),
       statelessAmount: 0,
       statefulAmount: 0,
@@ -40,9 +39,8 @@ test.serial('Should create many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 1,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id',
+      operator_journey_id: 'operator_journey_id-1',
       datetime: new Date(),
       statelessAmount: 100,
       statefulAmount: 100,
@@ -53,9 +51,8 @@ test.serial('Should create many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 2,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id_2',
+      operator_journey_id: 'operator_journey_id-2',
       datetime: new Date(),
       statelessAmount: 200,
       statefulAmount: 200,
@@ -77,8 +74,8 @@ test.serial('Should create many incentives', async (t) => {
     values: [0],
   });
   t.is(incentiveResults.rowCount, 2);
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 1).result, 100);
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 2).result, 200);
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 100);
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 200);
 });
 
 test.serial('Should update many incentives', async (t) => {
@@ -86,9 +83,8 @@ test.serial('Should update many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 1,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id',
+      operator_journey_id: 'operator_journey_id-1',
       datetime: new Date(),
       statelessAmount: 0,
       statefulAmount: 0,
@@ -104,9 +100,8 @@ test.serial('Should update many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 2,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id_2',
+      operator_journey_id: 'operator_journey_id-2',
       datetime: new Date(),
       statelessAmount: 500,
       statefulAmount: 500,
@@ -117,9 +112,8 @@ test.serial('Should update many incentives', async (t) => {
     {
       _id: undefined,
       policy_id: 0,
-      carpool_id: 3,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id_3',
+      operator_journey_id: 'operator_journey_id-3',
       datetime: new Date(),
       statelessAmount: 100,
       statefulAmount: 100,
@@ -137,10 +131,10 @@ test.serial('Should update many incentives', async (t) => {
   });
 
   t.is(incentiveResults.rowCount, 3);
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 1).result, 0);
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 1).state, 'null');
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 2).result, 500);
-  t.is(incentiveResults.rows.find((i) => i.carpool_id === 3).result, 100);
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 0);
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').state, 'null');
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 500);
+  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-3').result, 100);
 });
 
 test.serial('Should update many incentives amount', async (t) => {
@@ -167,23 +161,27 @@ test.serial('Should list draft incentive', async (t) => {
   await cursor.next();
   t.true(Array.isArray(value));
   const incentives = (Array.isArray(value) ? value : []).map((v) => ({
-    carpool_id: v.carpool_id,
+    operator_id: v.operator_id,
+    operator_journey_id: v.operator_journey_id,
     statefulAmount: v.statefulAmount,
     statelessAmount: v.statelessAmount,
   }));
   t.deepEqual(incentives, [
     {
-      carpool_id: 1,
+      operator_id: 1,
+      operator_journey_id: 'operator_journey_id-1',
       statefulAmount: 0,
       statelessAmount: 0,
     },
     {
-      carpool_id: 2,
+      operator_id: 1,
+      operator_journey_id: 'operator_journey_id-2',
       statefulAmount: 0,
       statelessAmount: 500,
     },
     {
-      carpool_id: 3,
+      operator_id: 1,
+      operator_journey_id: 'operator_journey_id-3',
       statefulAmount: 0,
       statelessAmount: 100,
     },

@@ -12,7 +12,6 @@ export class Incentive<T> {
   constructor(
     public readonly _id: T,
     public readonly policy_id: number,
-    public readonly carpool_id: number,
     public readonly operator_id: number,
     public readonly operator_journey_id: string,
     public readonly datetime: Date,
@@ -25,7 +24,6 @@ export class Incentive<T> {
 
   static create(
     policy_id: number,
-    carpool_id: number,
     operator_id: number,
     operator_journey_id: string,
     datetime: Date,
@@ -34,7 +32,6 @@ export class Incentive<T> {
     return new StatelessIncentive(
       undefined,
       policy_id,
-      carpool_id,
       operator_id,
       operator_journey_id,
       datetime,
@@ -50,7 +47,6 @@ export class Incentive<T> {
     return new Incentive(
       data._id,
       data.policy_id,
-      data.carpool_id,
       data.operator_id,
       data.operator_journey_id,
       data.datetime,
@@ -66,7 +62,6 @@ export class Incentive<T> {
     return {
       _id: this._id,
       policy_id: this.policy_id,
-      carpool_id: this.carpool_id,
       operator_id: this.operator_id,
       operator_journey_id: this.operator_journey_id,
       datetime: this.datetime,

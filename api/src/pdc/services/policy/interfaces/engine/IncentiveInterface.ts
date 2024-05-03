@@ -17,7 +17,6 @@ export enum IncentiveStatusEnum {
 export interface SerializedIncentiveInterface<T = number> {
   _id: T;
   policy_id: number;
-  carpool_id: number;
   operator_id: number;
   operator_journey_id: string;
   datetime: Date;
