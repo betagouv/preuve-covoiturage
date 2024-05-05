@@ -30,7 +30,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         FROM ${this.oldCarpoolTable} AS oc
         WHERE oc.datetime >= $1::timestamp
           AND oc.datetime <  $2::timestamp
-          AND oc.carpool_id = pi.carpool_id
+          AND oc._id = pi.carpool_id
           AND oc.carpool_status <> 'ok'::carpool.carpool_status_enum
       `,
       values: [from, to],
