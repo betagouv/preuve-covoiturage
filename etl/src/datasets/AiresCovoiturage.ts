@@ -11,7 +11,7 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
     readonly targetTable = 'aires_covoiturage';
     readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
     readonly rows: Map<string, [string, string]> = new Map([
-      ['id_lieu', ['id_lieu', 'varchar']],
+      ['id_local', ['id_local', 'varchar']],
       ['nom_lieu', ['nom_lieu', 'varchar']],
       ['ad_lieu', ['ad_lieu', 'varchar']],
       ['com_lieu', ['com_lieu', 'varchar']],
@@ -38,7 +38,7 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
     readonly importSql = `
       TRUNCATE ${this.targetTableWithSchema} RESTART IDENTITY;
       INSERT INTO ${this.targetTableWithSchema} (
-        id_lieu,
+        id_local,
         nom_lieu,
         ad_lieu,
         com_lieu,
@@ -58,7 +58,7 @@ export function AiresCovoiturage(url: string): StaticAbstractDataset {
         comm,
         geom
       ) SELECT
-        id_lieu,
+        id_local,
         nom_lieu,
         ad_lieu,
         com_lieu,
