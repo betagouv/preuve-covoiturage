@@ -45,8 +45,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         FROM ${this.carpoolTable} AS cc
         JOIN ${this.carpoolStatusTable} AS cs
           ON cs.carpool_id = cc._id
-        WHERE cc.datetime >= $1::timestamp
-          AND cc.datetime <  $2::timestamp
+        WHERE cc.start_datetime >= $1::timestamp
+          AND cc.start_datetime <  $2::timestamp
           AND cc.operator_id = pi.operator_id
           AND cc.operator_journey_id = pi.operator_journey_id
           AND cs.acquisition_status = 'canceled'
