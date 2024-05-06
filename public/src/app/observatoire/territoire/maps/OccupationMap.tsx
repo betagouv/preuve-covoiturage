@@ -88,10 +88,10 @@ export default function OccupationMap({ title }: { title: string }) {
     ];
    
 
-  const bounds = useMemo(() => {
+  const bounds = () => {
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
-    return bounds as unknown as LngLatBoundsLike;
-  },[dashboard.params.code, geojson]);
+    return bounds as LngLatBoundsLike;
+  };
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -130,7 +130,7 @@ export default function OccupationMap({ title }: { title: string }) {
         <AppMap 
         title={mapTitle} 
         mapStyle={mapStyle} 
-        bounds={bounds} 
+        bounds={bounds()} 
         scrollZoom={false} 
         legend={
           [

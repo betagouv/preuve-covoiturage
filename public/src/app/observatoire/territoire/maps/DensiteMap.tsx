@@ -47,7 +47,7 @@ export default function DensiteMap({ title }: { title: string }) {
     const hexagons = data?.map((d) => d.hex);
     const polygon = cellsToMultiPolygon(hexagons!, true);
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPolygon(polygon));
-    return bounds as unknown as LngLatBoundsLike;
+    return bounds as LngLatBoundsLike;
   };
   const tooltip = ({ object }: any) =>
     object && {
