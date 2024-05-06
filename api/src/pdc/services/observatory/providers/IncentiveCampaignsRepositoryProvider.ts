@@ -37,15 +37,17 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
     const type = params.type !== undefined ? checkTerritoryParam(params.type) : null ;
     const year = params.year !== undefined ? params.year : new Date().getFullYear();
     const sql = {
-      values: [year],
+      values: params.code !== undefined ? [year, params.code] : [year],
       text: `SELECT a.*, ST_AsGeoJSON(b.geom,6)::json as geom
       FROM ${this.table} a 
       LEFT JOIN ${this.perim_table} b on a.type = b.type AND left(a.code,9) = b.territory 
       AND b.year = geo.get_latest_millesime_or($1)
-      WHERE ${type ? `a.type = '${type}' AND` : ''}
+      WHERE 
+      ${params.code !== undefined ? `left(a.code,9) = $2 AND` : ''}
+      ${type ? `a.type = '${type}' AND` : ''}
       b.geom IS NOT NULL
       ${
-        params.year
+        params.year !== undefined
           ? `AND (right(a.date_debut,4) = $1::varchar AND right(a.date_fin,4) = $1::varchar)`
           : `AND to_date(a.date_fin,'DD/MM/YYYY') > now()`
       }

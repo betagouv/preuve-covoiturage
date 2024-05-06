@@ -33,6 +33,7 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
+  code?: INSEECode;
   type?: PerimeterType; //type de territoire selectionné
   year?: number;
 }

@@ -8,7 +8,6 @@ import { fr } from '@codegouvfr/react-dsfr';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import SelectPeriod from '@/components/observatoire/SelectPeriod';
 import SectionTitle from '@/components/common/SectionTitle';
-import SelectObserve from '@/components/observatoire/SelectObserve';
 import SelectInList from '@/components/common/SelectInList';
 import IncentiveMap from './maps/IncentiveMap';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -16,7 +15,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const { dashboard } =useContext(DashboardContext);
-  const period = getPeriod(dashboard.params.year, dashboard.params.month);
   useEffect(() => {
     const params = {
       code: searchParams.get('code') ? searchParams.get('code')! : 'XXXXX',
@@ -29,7 +27,7 @@ export default function Dashboard() {
     <>
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-          <SelectTerritory />
+          <SelectTerritory url={'campagnes-incitation'}/>
         </div>
         <div className={fr.cx('fr-col-12','fr-col-md-6')}>
           <SelectPeriod />
@@ -42,11 +40,6 @@ export default function Dashboard() {
       ) 
       : (
         <>
-          <SectionTitle
-            title={`${dashboard.params.name} du ${new Date(period.start_date).toLocaleDateString()} au ${new Date(
-              period.end_date,
-            ).toLocaleDateString()}`}
-          />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
              <IncentiveMap title={''} />

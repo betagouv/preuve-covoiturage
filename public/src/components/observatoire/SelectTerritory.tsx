@@ -9,7 +9,7 @@ import { DashboardContext } from '@/context/DashboardProvider';
 import Tag from '@codegouvfr/react-dsfr/Tag';
 import { fr } from '@codegouvfr/react-dsfr';
 
-export default function SelectTerritory() {
+export default function SelectTerritory(props: { url:string }) {
   const { dashboard } =useContext(DashboardContext)
   const router = useRouter();
   const defaultOption = {
@@ -28,8 +28,8 @@ export default function SelectTerritory() {
     setOptions(response.hits);
   };
 
-  const getUrl = (option?:TerritoryListInterface) => {
-    return `/observatoire/territoire${option ? `?code=${option.territory}&type=${option.type}` : ''}`
+  const getUrl = (url: string, option?:TerritoryListInterface) => {
+    return `/observatoire/${url}${option ? `?code=${option.territory}&type=${option.type}` : ''}`
   }
   
 
@@ -59,7 +59,7 @@ export default function SelectTerritory() {
       }}
       
       onChange={(e,v) =>{
-        router.push(getUrl(v!))
+        router.push(getUrl(props.url, v!))
         }
       }
     />

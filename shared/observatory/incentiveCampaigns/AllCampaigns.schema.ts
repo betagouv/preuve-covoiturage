@@ -6,6 +6,9 @@ export const schema = {
   additionalProperties: false,
   required: [],
   properties: {
+    code: {
+      anyOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
+    },
     type: {
       type: 'string',
       enum: perimeterTypes,

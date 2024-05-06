@@ -23,6 +23,7 @@ const AppMap = (props: MapInterface) => {
   const [cursor, setCursor] = useState<string>('');
   const defaultOnMouseEnter = useCallback(() => setCursor('pointer'), []);
   const defaultOnMouseLeave = useCallback(() => setCursor(''), []);
+
   const inRange = (value: number, min: number, max: number) => {
     return Math.trunc(value) >=min && Math.trunc(value) <= max ? true : false;
   }
@@ -57,6 +58,7 @@ const AppMap = (props: MapInterface) => {
             cursor={props.cursor ? props.cursor : cursor}
             onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
             onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
+            onMouseMove={props.onMouseMove}
             interactiveLayerIds={props.interactiveLayerIds}
           >
             <NavigationControl />
