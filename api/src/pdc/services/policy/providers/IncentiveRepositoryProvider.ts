@@ -31,7 +31,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         WHERE oc.datetime >= $1::timestamp
           AND oc.datetime <  $2::timestamp
           AND oc._id = pi.carpool_id
-          AND oc.carpool_status <> 'ok'::carpool.carpool_status_enum
+          AND oc.status <> 'ok'::carpool.carpool_status_enum
       `,
       values: [from, to],
     };
