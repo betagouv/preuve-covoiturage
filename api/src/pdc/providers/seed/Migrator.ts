@@ -225,7 +225,7 @@ export class Migrator {
         $29
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, created_at, updated_at
+      RETURNING _id, uuid, created_at, updated_at
     `,
       values: [
         driverCarpool.operator_id,

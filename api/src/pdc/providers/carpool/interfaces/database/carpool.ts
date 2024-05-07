@@ -75,6 +75,7 @@ export interface UpdatableCarpool {
 
 export interface WrittenCarpool {
   _id: Id;
+  uuid: Uuid;
   created_at: Date;
   updated_at: Date;
 }
