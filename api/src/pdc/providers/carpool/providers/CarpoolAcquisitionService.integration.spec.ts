@@ -84,7 +84,7 @@ test.serial('Should create carpool', async (t) => {
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
 
-  const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
+  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     data.operator_id,
     data.operator_journey_id,
   );
@@ -121,7 +121,7 @@ test.serial('Should update carpool', async (t) => {
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
 
-  const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
+  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
@@ -160,7 +160,7 @@ test.serial('Should cancel carpool', async (t) => {
   // t.log(eventRepository.saveAcquisitionEvent.getCalls());
   t.true(eventRepository.saveAcquisitionEvent.calledOnce);
 
-  const { _id, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
+  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
