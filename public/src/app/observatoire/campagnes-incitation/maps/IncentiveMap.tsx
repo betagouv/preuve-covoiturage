@@ -1,37 +1,22 @@
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
-import { useApi } from '@/hooks/useApi';
 import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
-import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
-import { useCallback, useMemo, useState, useContext } from 'react';
+import { useCallback, useState} from 'react';
 import { FillLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { DashboardContext } from '@/context/DashboardProvider';
+
 import DownloadButton from '@/components/observatoire/DownloadButton';
+import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
 
 
-export default function IncentiveMap({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
-  const mapTitle = title;
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/all-campaigns${dashboard.params.code !== 'XXXXX' ?`?code=${dashboard.params.code}&type=${dashboard.params.type}`: ''}`;
-  const { data, error, loading } = useApi<any[]>(url);
-  const geojson = useMemo(() => {
-    const campaignsData = data ? data : [];
-    return featureCollection(
-      campaignsData.map((d) =>
-        feature(d.geom, {
-          type: d.type,
-          code: d.code,
-          debut: d.date_debut,
-          fin: d.date_fin,
-          budget: d.budget_incitations,
-        }),
-      ),
-    ) as FeatureCollection;
-  }, [data]);
+export default function IncentiveMap({ params, data, loading, error }: { 
+  params: {code: INSEECode, type:PerimeterType},
+  data: FeatureCollection,
+  loading: boolean,
+  error: string | null
+}) {
 
   const countryLayer: FillLayer = {
     id: 'country',
@@ -96,10 +81,10 @@ export default function IncentiveMap({ title }: { title: string }) {
 
   const mapStyle = Config.get<string>('observatoire.mapStyle');  
 
-  const bounds = useMemo(() => {
-    const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
+  const bounds = () => {
+    const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(data);
     return bounds as LngLatBoundsLike;
-  },[dashboard.params.code, geojson]);
+  };
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -131,27 +116,23 @@ export default function IncentiveMap({ title }: { title: string }) {
     <>
       {loading && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <div>Chargement en cours...</div>
         </div>
       )}
       {error && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && geojson.features.length === 0 && (
+      {!loading && !error && data.features.length === 0 && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <div>{`Ce territoire n'a pas encore réalisé de campagne d'incitation au covoiturage quotidien`}</div>
         </div>
       )}
-      {!loading && !error && geojson.features.length > 0 && (
+      {!loading && !error && data.features.length > 0 && (
         <AppMap 
-        title={mapTitle} 
         mapStyle={mapStyle} 
-        bounds={bounds} 
+        bounds={bounds()} 
         scrollZoom={false} 
         interactiveLayerIds={['country','reg','dep','aom','epci']}
         cursor={cursor}
@@ -161,13 +142,13 @@ export default function IncentiveMap({ title }: { title: string }) {
         download={
           <DownloadButton 
             title={'Télécharger les données de la carte'}
-            data={geojson as FeatureCollection}
+            data={data}
             type={'geojson'}
             filename='occupation'
           />
         }
         >
-          <Source id='campaigns' type='geojson' data={geojson}>
+          <Source id='campaigns' type='geojson' data={data}>
             <Layer {...countryLayer} />
             <Layer {...regLayer} />
             <Layer {...depLayer} />

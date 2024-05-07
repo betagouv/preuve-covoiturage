@@ -29,7 +29,7 @@ export const useDashboard = () => {
     })
   },[]);
 
-  const onLoadTerritory = useCallback( async (value?: {code: INSEECode, type: PerimeterType}) => {
+  const onLoadTerritory = useCallback( async (value?: {code: INSEECode, type: PerimeterType}, ) => {
     setLoading(true);
     const params = value ? value : {code: 'XXXXX', type: 'country' as PerimeterType};
     const name = await getName(params);
