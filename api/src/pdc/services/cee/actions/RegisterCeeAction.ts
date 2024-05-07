@@ -23,6 +23,7 @@ import { timestampSchema } from '@shared/cee/common/ceeSchema';
 import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import { ConflictException } from '@ilos/common';
 import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface';
+import { carpoolV2ToV1StatusConverter } from '../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter';
 
 @handler({
   ...handlerConfig,
@@ -117,8 +118,8 @@ export class RegisterCeeAction extends AbstractAction {
         uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
         token: await this.sign(application),
-        journey_id: carpoolData.acquisition_id, // FIXME
-        status: carpoolData.status,
+        journey_id: carpoolData.uuid,
+        status: carpoolV2ToV1StatusConverter(carpoolData.acquisition_status, carpoolData.fraud_status),
       };
     } catch (e) {
       if (e instanceof ConflictException) {
@@ -138,7 +139,7 @@ export class RegisterCeeAction extends AbstractAction {
             throw new ConflictException({
               uuid: old.uuid,
               datetime: old.datetime.toISOString(),
-              journey_id: old.acquisition_id, // FIXME
+              journey_id: old.journey_id,
               status: old.acquisition_status,
             });
           }

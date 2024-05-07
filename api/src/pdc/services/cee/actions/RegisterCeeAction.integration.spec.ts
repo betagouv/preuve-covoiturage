@@ -158,7 +158,6 @@ test.serial(
   defaultShortPayload,
   {
     datetime: '2024-03-15T00:15:00.000Z',
-    journey_id: 1,
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;

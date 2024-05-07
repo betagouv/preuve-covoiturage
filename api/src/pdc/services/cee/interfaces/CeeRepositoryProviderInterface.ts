@@ -1,4 +1,4 @@
-import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
 import { CeeJourneyTypeEnum } from '@shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum };
 
@@ -12,16 +12,18 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ExistingCeeApplication extends RegisteredCeeApplication {
-  acquisition_id?: number; // FIXME
-  acquisition_status?: CarpoolV1StatusEnum; //FIXME
+  journey_id?: string;
+  operator_journey_id?: string;
+  acquisition_status?: CarpoolAcquisitionStatusEnum;
+  fraud_status?: CarpoolFraudStatusEnum;
 }
 
 export interface ValidJourney {
   uuid: string;
   phone_trunc: string;
   datetime: Date;
-  acquisition_status: CarpoolV2AcquisitionStatusEnum;
-  fraud_status: CarpoolV2FraudStatusEnum;
+  acquisition_status: CarpoolAcquisitionStatusEnum;
+  fraud_status: CarpoolFraudStatusEnum;
   already_registered: boolean;
   identity_key?: string;
 }
@@ -41,7 +43,6 @@ export interface LongCeeApplication<T = Date> extends CeeApplication<T> {
 
 export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
-  carpool_id: number; // FIXME - REMOVE
   operator_journey_id: string;
 }
 

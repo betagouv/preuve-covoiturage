@@ -1,6 +1,6 @@
 import test from 'ava';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces';
-import { statusConverter } from './statusConverter';
+import { carpoolV2ToV1StatusConverter } from './carpoolV2ToV1StatusConverter';
 
 type Config = Array<{
   title: string;
@@ -109,6 +109,6 @@ const failedFraud: Config = [
 
 for (const { title, args, expected } of [...pendingFraud, ...passedFraud, ...failedFraud]) {
   test(title, (t) => {
-    t.is(statusConverter(args[0], args[1]), expected);
+    t.is(carpoolV2ToV1StatusConverter(args[0], args[1]), expected);
   });
 }
