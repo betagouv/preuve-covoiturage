@@ -117,7 +117,7 @@ export class RegisterCeeAction extends AbstractAction {
         uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
         token: await this.sign(application),
-        journey_id: carpoolData.acquisition_id,
+        journey_id: carpoolData.acquisition_id, // FIXME
         status: carpoolData.status,
       };
     } catch (e) {
@@ -138,7 +138,7 @@ export class RegisterCeeAction extends AbstractAction {
             throw new ConflictException({
               uuid: old.uuid,
               datetime: old.datetime.toISOString(),
-              journey_id: old.acquisition_id,
+              journey_id: old.acquisition_id, // FIXME
               status: old.acquisition_status,
             });
           }

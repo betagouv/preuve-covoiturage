@@ -12,16 +12,16 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ExistingCeeApplication extends RegisteredCeeApplication {
-  acquisition_id?: number;
-  acquisition_status?: CarpoolV1StatusEnum;
+  acquisition_id?: number; // FIXME
+  acquisition_status?: CarpoolV1StatusEnum; //FIXME
 }
 
 export interface ValidJourney {
-  acquisition_id: number;
-  carpool_id: number;
+  uuid: string;
   phone_trunc: string;
   datetime: Date;
-  status: CarpoolV1StatusEnum;
+  acquisition_status: CarpoolV2AcquisitionStatusEnum;
+  fraud_status: CarpoolV2FraudStatusEnum;
   already_registered: boolean;
   identity_key?: string;
 }
@@ -41,7 +41,8 @@ export interface LongCeeApplication<T = Date> extends CeeApplication<T> {
 
 export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
-  carpool_id: number;
+  carpool_id: number; // FIXME - REMOVE
+  operator_journey_id: string;
 }
 
 export interface SearchCeeApplication {
@@ -111,7 +112,7 @@ export interface CeeApplicationError {
 }
 
 export abstract class CeeRepositoryProviderInterfaceResolver {
-  abstract readonly table: string;
+  abstract readonly ceeApplicationsTable: string;
   abstract searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,

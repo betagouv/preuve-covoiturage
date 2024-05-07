@@ -78,7 +78,7 @@ test.serial('Should create short application', async (t) => {
 
   const applicationResults = await t.context.db.connection.getClient().query<any>({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
-      t.context.repository.table
+      t.context.repository.ceeApplicationsTable
     } WHERE operator_id = $1 and last_name_trunc = $2`,
     values: [1, 'AAA'],
   });
@@ -102,7 +102,7 @@ test.serial('Should create long application', async (t) => {
 
   const applicationResults = await t.context.db.connection.getClient().query<any>({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
-      t.context.repository.table
+      t.context.repository.ceeApplicationsTable
     } WHERE operator_id = $1 AND last_name_trunc = $2`,
     values: [1, 'BBB'],
   });
@@ -347,7 +347,7 @@ test.serial('Should match cooldown criteria', async (t) => {
 test.serial('Should resgister application error', async (t) => {
   const uuidResult = await t.context.db.connection
     .getClient()
-    .query<any>(`SELECT _id FROM ${t.context.repository.table} LIMIT 1`);
+    .query<any>(`SELECT _id FROM ${t.context.repository.ceeApplicationsTable} LIMIT 1`);
   const data1 = {
     operator_id: 1,
     error_type: CeeApplicationErrorEnum.Conflict,
@@ -391,7 +391,7 @@ test.serial('Should import identity_key', async (t) => {
 
   await t.context.repository.importSpecificApplicationIdentity(app1);
   const result1 = await t.context.db.connection.getClient().query<any>({
-    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE phone_trunc = $1`,
+    text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE phone_trunc = $1`,
     values: [app1.phone_trunc],
   });
   t.is(result1.rows[0].identity_key, app1.identity_key);
@@ -401,7 +401,7 @@ test.serial('Should import identity_key', async (t) => {
   const uuidResult = await t.context.db.connection.getClient().query<any>(
     `SELECT
         _id as cee_application_uuid, operator_id
-      FROM ${t.context.repository.table}
+      FROM ${t.context.repository.ceeApplicationsTable}
       WHERE
         identity_key is null AND is_specific = false
       LIMIT 1`,
@@ -412,7 +412,7 @@ test.serial('Should import identity_key', async (t) => {
   };
   await t.context.repository.importStandardizedApplicationIdentity(app2);
   const result2 = await t.context.db.connection.getClient().query<any>({
-    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE _id = $1`,
+    text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE _id = $1`,
     values: [app2.cee_application_uuid],
   });
   t.is(result2.rows[0].identity_key, app2.identity_key);
