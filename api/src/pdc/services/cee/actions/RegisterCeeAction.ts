@@ -55,7 +55,7 @@ export class RegisterCeeAction extends AbstractAction {
         case CeeJourneyTypeEnum.Short:
           return await this.processForShortApplication(operator_id, params);
         case CeeJourneyTypeEnum.Long:
-          return await this.proceesForLongApplication(operator_id, params);
+          return await this.processForLongApplication(operator_id, params);
       }
     } catch (e) {
       let errorType;
@@ -151,7 +151,7 @@ export class RegisterCeeAction extends AbstractAction {
     }
   }
 
-  protected async proceesForLongApplication(
+  protected async processForLongApplication(
     operator_id: number,
     params: CeeLongApplicationInterface,
   ): Promise<ResultInterface> {
