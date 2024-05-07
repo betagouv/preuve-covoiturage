@@ -24,7 +24,9 @@ import {
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'cee.cee_applications';
   public readonly errorTable = 'cee.cee_application_errors';
-  public readonly carpoolTable = 'carpool.carpools';
+  /** @deprecated [carpool_v2_migration] */
+  public readonly carpoolV1Table = 'carpool.carpools';
+  public readonly carpoolV2Table = 'carpool_v2.carpools';
   public readonly identityTable = 'carpool.identities';
   public readonly operatorTable = 'operator.operators';
 
@@ -72,7 +74,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table} AS ce
         JOIN ${this.operatorTable} AS op
           ON op._id = ce.operator_id
-        LEFT JOIN ${this.carpoolTable} AS cc
+        LEFT JOIN ${this.carpoolV1Table} AS cc
           ON cc._id = ce.carpool_id
         WHERE 
           ce.journey_type = $1::cee.journey_type_enum AND
@@ -93,7 +95,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table} AS ce
         JOIN ${this.operatorTable} AS op
           ON op._id = ce.operator_id
-        LEFT JOIN ${this.carpoolTable} AS cc
+        LEFT JOIN ${this.carpoolV1Table} AS cc
           ON cc._id = ce.carpool_id
         WHERE
           ce.journey_type = $1::cee.journey_type_enum AND
@@ -153,7 +155,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
             ELSE true
           END as already_registered,
           ci.identity_key
-        FROM ${this.carpoolTable} AS cc
+        FROM ${this.carpoolV1Table} AS cc
         JOIN ${this.identityTable} AS ci
           ON cc.identity_id = ci._id
         LEFT JOIN ${this.table} ce ON ce.carpool_id = cc._id
