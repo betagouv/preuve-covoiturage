@@ -76,7 +76,7 @@ export class CarpoolRepository {
         ${JSON.stringify(data.passenger_payments)}
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, created_at, updated_at
+      RETURNING _id, uuid, created_at, updated_at
     `;
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
@@ -85,7 +85,7 @@ export class CarpoolRepository {
         // New carpool hasn't been saved because there is a conflict
         // Select data to provide function consistency
         const selectResult = await cl.query<WrittenCarpool>(sql`
-          SELECT _id, created_at, updated_at 
+          SELECT _id, uuid, created_at, updated_at 
           FROM ${raw(this.table)}
           WHERE
             operator_id = ${data.operator_id} AND 
@@ -140,7 +140,7 @@ export class CarpoolRepository {
        WHERE
          operator_id = ${operator_id} AND
          operator_journey_id = ${operator_journey_id}
-       RETURNING _id, created_at, updated_at
+       RETURNING _id, uuid, created_at, updated_at
     `;
 
     if (!client) {

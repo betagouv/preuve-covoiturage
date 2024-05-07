@@ -52,7 +52,7 @@ test.serial('Should get one carpool status', async (t) => {
 
 test.serial('Should get one carpool', async (t) => {
   const data = { ...insertableCarpool };
-  const { _id, created_at, updated_at, ...carpool } = await t.context.repository.findOne(
+  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.repository.findOne(
     data.operator_id,
     data.operator_journey_id,
   );

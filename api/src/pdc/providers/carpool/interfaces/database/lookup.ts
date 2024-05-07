@@ -3,6 +3,7 @@ import { InsertableCarpool } from './carpool';
 
 export interface SelectableCarpoolStatus {
   _id: Id;
+  uuid: Uuid;
   created_at: Date;
   updated_at: Date;
   operator_id: Id;
