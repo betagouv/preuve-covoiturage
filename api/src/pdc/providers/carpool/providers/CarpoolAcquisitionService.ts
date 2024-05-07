@@ -1,8 +1,8 @@
 import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolEventRepository } from '../repositories/CarpoolEventRepository';
+import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository';
 import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import { CarpoolAcquisitionEvent } from '../events';
+import { CarpoolAcquisitionStatus } from '../status';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
 import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces';
@@ -13,7 +13,7 @@ import { GeoProvider } from '@pdc/providers/geo';
 export class CarpoolAcquisitionService {
   constructor(
     protected connection: PostgresConnection,
-    protected eventRepository: CarpoolEventRepository,
+    protected statusRepository: CarpoolStatusRepository,
     protected requestRepository: CarpoolRequestRepository,
     protected lookupRepository: CarpoolLookupRepository,
     protected carpoolRepository: CarpoolRepository,
@@ -37,8 +37,8 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Received),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Received),
         conn,
       );
       await conn.query('COMMIT');
@@ -66,8 +66,8 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Updated),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Updated),
         conn,
       );
       await conn.query('COMMIT');
@@ -94,8 +94,8 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Canceled),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Canceled),
         conn,
       );
       await conn.query('COMMIT');
@@ -122,13 +122,13 @@ export class CarpoolAcquisitionService {
             { carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end },
             conn,
           );
-          await this.eventRepository.saveAcquisitionEvent(
+          await this.statusRepository.saveAcquisitionStatus(
             { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Processed },
             conn,
           );
         } catch (e) {
           await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message }, conn);
-          await this.eventRepository.saveAcquisitionEvent(
+          await this.statusRepository.saveAcquisitionStatus(
             { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Failed },
             conn,
           );

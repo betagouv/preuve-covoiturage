@@ -1,14 +1,14 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
+import { coerceDate, coerceInt } from '@ilos/cli';
+import { CommandInterface, CommandOptionType, command } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import {
-  CarpoolEventRepository,
   CarpoolGeoRepository,
   CarpoolRepository,
   CarpoolRequestRepository,
+  CarpoolStatusRepository,
 } from '@pdc/providers/carpool';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
 import { addSeconds } from 'date-fns';
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '../../../providers/carpool/interfaces';
-import { coerceDate, coerceInt } from '@ilos/cli';
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -39,7 +39,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
   ];
 
   constructor(
-    protected event: CarpoolEventRepository,
+    protected status: CarpoolStatusRepository,
     protected geo: CarpoolGeoRepository,
     protected carpool: CarpoolRepository,
     protected request: CarpoolRequestRepository,
@@ -206,8 +206,8 @@ export class AcquisitionMigrateCommand implements CommandInterface {
             break;
         }
 
-        await this.event.setStatus(newCarpool._id, 'acquisition', acquisitionStatus, conn);
-        await this.event.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
+        await this.status.setStatus(newCarpool._id, 'acquisition', acquisitionStatus, conn);
+        await this.status.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
       }
       await conn.query<any>('COMMIT');
       return result.rows.length;

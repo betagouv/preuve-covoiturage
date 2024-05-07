@@ -1,5 +1,5 @@
 export * from './database/carpool';
-export * from './database/event';
+export * from './database/status';
 export * from './database/geo';
 export * from './database/lookup';
 export * from './database/request';

@@ -4,7 +4,7 @@ import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
 import Sinon, { SinonSandbox } from 'sinon';
-import { CarpoolEventRepository } from '../repositories/CarpoolEventRepository';
+import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
 import { CarpoolRepository } from '../repositories/CarpoolRepository';
@@ -14,7 +14,7 @@ import { GeoProvider } from '@pdc/providers/geo';
 
 interface TestContext {
   carpoolRepository: CarpoolRepository;
-  eventRepository: CarpoolEventRepository;
+  statusRepository: CarpoolStatusRepository;
   requestRepository: CarpoolRequestRepository;
   lookupRepository: CarpoolLookupRepository;
   geoRepository: CarpoolGeoRepository;
@@ -32,7 +32,7 @@ test.before(async (t) => {
 
   t.context.db = db;
   t.context.carpoolRepository = new CarpoolRepository(db.connection);
-  t.context.eventRepository = new CarpoolEventRepository(db.connection);
+  t.context.statusRepository = new CarpoolStatusRepository(db.connection);
   t.context.requestRepository = new CarpoolRequestRepository(db.connection);
   t.context.lookupRepository = new CarpoolLookupRepository(db.connection);
   t.context.geoRepository = new CarpoolGeoRepository(db.connection);
@@ -42,7 +42,7 @@ test.before(async (t) => {
 function getService(context: TestContext, overrides: any): CarpoolAcquisitionService {
   return new CarpoolAcquisitionService(
     context.db.connection,
-    overrides.eventRepository ?? context.eventRepository,
+    overrides.statusRepository ?? context.statusRepository,
     overrides.requestRepository ?? context.requestRepository,
     overrides.lookupRepository ?? context.lookupRepository,
     overrides.carpoolRepository ?? context.carpoolRepository,
@@ -66,12 +66,12 @@ test.afterEach.always((t) => {
 test.serial('Should create carpool', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const eventRepository = t.context.sinon.spy(t.context.eventRepository);
+  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
 
   const service = getService(t.context, {
     carpoolRepository,
     requestRepository,
-    eventRepository,
+    statusRepository,
   });
 
   const data = { ...insertableCarpool };
@@ -81,8 +81,8 @@ test.serial('Should create carpool', async (t) => {
   t.true(carpoolRepository.register.calledOnce);
   // t.log(requestRepository.save.getCalls());
   t.true(requestRepository.save.calledOnce);
-  // t.log(eventRepository.saveAcquisitionEvent.getCalls());
-  t.true(eventRepository.saveAcquisitionEvent.calledOnce);
+  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     data.operator_id,
@@ -98,12 +98,12 @@ test.serial('Should create carpool', async (t) => {
 test.serial('Should update carpool', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const eventRepository = t.context.sinon.spy(t.context.eventRepository);
+  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
 
   const service = getService(t.context, {
     carpoolRepository,
     requestRepository,
-    eventRepository,
+    statusRepository,
   });
 
   const data = { ...updatableCarpool };
@@ -118,8 +118,8 @@ test.serial('Should update carpool', async (t) => {
   t.true(carpoolRepository.update.calledOnce);
   // t.log(requestRepository.save.getCalls());
   t.true(requestRepository.save.calledOnce);
-  // t.log(eventRepository.saveAcquisitionEvent.getCalls());
-  t.true(eventRepository.saveAcquisitionEvent.calledOnce);
+  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
@@ -136,12 +136,12 @@ test.serial('Should update carpool', async (t) => {
 test.serial('Should cancel carpool', async (t) => {
   const lookupRepository = t.context.sinon.spy(t.context.lookupRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const eventRepository = t.context.sinon.spy(t.context.eventRepository);
+  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
 
   const service = getService(t.context, {
     lookupRepository,
     requestRepository,
-    eventRepository,
+    statusRepository,
   });
 
   const data = {
@@ -157,8 +157,8 @@ test.serial('Should cancel carpool', async (t) => {
   t.true(lookupRepository.findOneStatus.calledOnce);
   // t.log(requestRepository.save.getCalls());
   t.true(requestRepository.save.calledOnce);
-  // t.log(eventRepository.saveAcquisitionEvent.getCalls());
-  t.true(eventRepository.saveAcquisitionEvent.calledOnce);
+  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
@@ -176,8 +176,8 @@ test.serial('Should rollback if something fail', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
   t.context.sinon.replace(
-    t.context.eventRepository,
-    'saveAcquisitionEvent',
+    t.context.statusRepository,
+    'saveAcquisitionStatus',
     t.context.sinon.fake.throws(new Error('DB')),
   );
 

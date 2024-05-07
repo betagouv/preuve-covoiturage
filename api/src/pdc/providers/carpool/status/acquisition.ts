@@ -1,7 +1,7 @@
 import { CarpoolAcquisitionStatusEnum, Id } from '../interfaces';
-import { AbstractEvent } from './AbstractEvent';
+import { AbstractStatus } from './AbstractStatus';
 
-export class CarpoolAcquisitionEvent extends AbstractEvent {
+export class CarpoolAcquisitionStatus extends AbstractStatus {
   public status: CarpoolAcquisitionStatusEnum;
 
   constructor(carpool_id: Id, relation_id: Id, status: CarpoolAcquisitionStatusEnum) {

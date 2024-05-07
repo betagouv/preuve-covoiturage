@@ -1,22 +1,22 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import sql, { raw } from '../helpers/sql';
-import { Id, InsertableCarpoolAcquisitionEvent } from '../interfaces';
+import { Id, InsertableCarpoolAcquisitionStatus } from '../interfaces';
 
 @provider()
-export class CarpoolEventRepository {
+export class CarpoolStatusRepository {
   readonly table = 'carpool_v2.status';
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async saveIncentiveEvent(data: unknown, client?: PoolClient): Promise<void> {
+  public async saveIncentiveStatus(data: unknown, client?: PoolClient): Promise<void> {
     throw new Error();
   }
-  public async saveFraudEvent(data: unknown, client?: PoolClient): Promise<void> {
+  public async saveFraudStatus(data: unknown, client?: PoolClient): Promise<void> {
     throw new Error();
   }
 
-  public async saveAcquisitionEvent(data: InsertableCarpoolAcquisitionEvent, client?: PoolClient): Promise<void> {
+  public async saveAcquisitionStatus(data: InsertableCarpoolAcquisitionStatus, client?: PoolClient): Promise<void> {
     await this.setStatus(data.carpool_id, 'acquisition', data.status, client);
   }
 

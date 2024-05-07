@@ -1,15 +1,15 @@
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { CarpoolEventRepository } from './CarpoolEventRepository';
-import { insertableCarpool } from '../mocks/database/carpool';
 import { Id } from '../interfaces';
-import { insertableAcquisitionEvent } from '../mocks/database/event';
+import { insertableCarpool } from '../mocks/database/carpool';
+import { insertableAcquisitionStatus } from '../mocks/database/status';
 import { CarpoolLookupRepository } from './CarpoolLookupRepository';
+import { CarpoolRepository } from './CarpoolRepository';
+import { CarpoolStatusRepository } from './CarpoolStatusRepository';
 
 interface TestContext {
   repository: CarpoolLookupRepository;
-  eventRepository: CarpoolEventRepository;
+  statusRepository: CarpoolStatusRepository;
   carpoolRepository: CarpoolRepository;
   db: DbContext;
   carpool_id: Id;
@@ -22,11 +22,11 @@ test.before(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new CarpoolLookupRepository(t.context.db.connection);
-  t.context.eventRepository = new CarpoolEventRepository(t.context.db.connection);
+  t.context.statusRepository = new CarpoolStatusRepository(t.context.db.connection);
   t.context.carpoolRepository = new CarpoolRepository(t.context.db.connection);
   const carpool = await t.context.carpoolRepository.register(insertableCarpool);
-  const eventData = { ...insertableAcquisitionEvent, carpool_id: carpool._id };
-  await t.context.eventRepository.saveAcquisitionEvent(eventData);
+  const statusData = { ...insertableAcquisitionStatus, carpool_id: carpool._id };
+  await t.context.statusRepository.saveAcquisitionStatus(statusData);
   t.context.carpool_id = carpool._id;
 });
 
@@ -44,7 +44,7 @@ test.serial('Should get one carpool status', async (t) => {
     { _id, acquisition_status, operator_trip_id },
     {
       _id: t.context.carpool_id,
-      acquisition_status: insertableAcquisitionEvent.status,
+      acquisition_status: insertableAcquisitionStatus.status,
       operator_trip_id: data.operator_trip_id,
     },
   );
