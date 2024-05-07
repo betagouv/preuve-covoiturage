@@ -13,3 +13,5 @@ BEGIN
       ADD COLUMN uuid UUID NOT NULL DEFAULT uuid_generate_v4();
   END IF;
 END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS carpool_v2_carpools_uuid_idx ON carpool_v2.carpools (uuid);
