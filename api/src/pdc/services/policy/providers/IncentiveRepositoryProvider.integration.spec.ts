@@ -29,19 +29,22 @@ test.serial('Should create many incentives', async (t) => {
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date(),
+      datetime: new Date('2024-03-15'),
       statelessAmount: 0,
       statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
       meta: [],
     },
+
+    // same operator_id / operator_journey_id
+    // -> should update the existing incentive
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date(),
+      datetime: new Date('2024-03-15'),
       statelessAmount: 100,
       statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
@@ -53,7 +56,7 @@ test.serial('Should create many incentives', async (t) => {
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-2',
-      datetime: new Date(),
+      datetime: new Date('2024-03-16'),
       statelessAmount: 200,
       statefulAmount: 200,
       status: IncentiveStatusEnum.Draft,
@@ -70,7 +73,7 @@ test.serial('Should create many incentives', async (t) => {
   await t.context.repository.createOrUpdateMany(incentives);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
+    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
   t.is(incentiveResults.rowCount, 2);
@@ -80,12 +83,13 @@ test.serial('Should create many incentives', async (t) => {
 
 test.serial('Should update many incentives', async (t) => {
   const incentives = [
+    // update
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date(),
+      datetime: new Date('2024-03-15'),
       statelessAmount: 0,
       statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
@@ -97,24 +101,28 @@ test.serial('Should update many incentives', async (t) => {
         },
       ],
     },
+
+    // update
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-2',
-      datetime: new Date(),
+      datetime: new Date('2024-03-16'),
       statelessAmount: 500,
       statefulAmount: 500,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
       meta: [],
     },
+
+    // create
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-3',
-      datetime: new Date(),
+      datetime: new Date('2024-03-16'),
       statelessAmount: 100,
       statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
@@ -126,7 +134,7 @@ test.serial('Should update many incentives', async (t) => {
   await t.context.repository.createOrUpdateMany(incentives);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
+    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 
@@ -139,7 +147,7 @@ test.serial('Should update many incentives', async (t) => {
 
 test.serial('Should update many incentives amount', async (t) => {
   const incentives = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
+    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 
@@ -147,7 +155,7 @@ test.serial('Should update many incentives amount', async (t) => {
   await t.context.repository.updateStatefulAmount(data as any);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
+    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 

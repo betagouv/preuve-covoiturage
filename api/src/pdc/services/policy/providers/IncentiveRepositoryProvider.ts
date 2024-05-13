@@ -13,17 +13,21 @@ import {
   identifier: IncentiveRepositoryProviderInterfaceResolver,
 })
 export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
-  public readonly table = 'policy.incentives';
-  public readonly oldCarpoolTable = 'carpool.carpools';
+  public readonly incentivesTable = 'policy.incentives';
   public readonly carpoolTable = 'carpool_v2.carpools';
   public readonly carpoolStatusTable = 'carpool_v2.status';
+
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
+  public readonly oldCarpoolTable = 'carpool.carpools';
 
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
     const oldQuery = {
       text: `
-        UPDATE ${this.table} AS pi
+        UPDATE ${this.incentivesTable} AS pi
         SET
           state = 'disabled'::policy.incentive_state_enum,
           status = 'error'::policy.incentive_status_enum
@@ -38,7 +42,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     const query = {
       text: `
-        UPDATE ${this.table} AS pi
+        UPDATE ${this.incentivesTable} AS pi
         SET
           state = 'disabled'::policy.incentive_state_enum,
           status = 'error'::policy.incentive_status_enum
@@ -64,7 +68,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   async setStatus(from: Date, to: Date, hasFailed = false): Promise<void> {
     const query = {
       text: `
-        UPDATE ${this.table}
+        UPDATE ${this.incentivesTable}
           SET status = $1::policy.incentive_status_enum
         WHERE datetime >= $2::timestamp
           AND datetime <  $3::timestamp
@@ -121,7 +125,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           status
         )
       )
-      UPDATE ${this.table} as pi
+      UPDATE ${this.incentivesTable} as pi
       SET (
         amount,
         state,
@@ -150,7 +154,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       text: `
       SELECT
         count(*)
-      FROM ${this.table}
+      FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
         ${from ? 'AND datetime >= $3::timestamp' : ''}
@@ -174,7 +178,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         operator_id,
         operator_journey_id,
         meta
-      FROM ${this.table}
+      FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
         ${from ? 'AND datetime >= $3::timestamp' : ''}
@@ -288,7 +292,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         )
         --
 
-        INSERT INTO ${this.table} (
+        INSERT INTO ${this.incentivesTable} (
           policy_id,
           carpool_id,
           datetime,
@@ -324,7 +328,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         ) AS unnest_data(policy_id, datetime, result, amount, status, state, operator_id, operator_journey_id, meta)
 
         -- FIXME : REMOVE WHEN DONE WITH carpool.carpools
-        JOIN carpool.carpools cc
+        JOIN ${this.oldCarpoolTable} cc
           ON cc.operator_id = unnest_data.operator_id
           AND cc.operator_journey_id = unnest_data.operator_journey_id
           AND cc.datetime >= (SELECT datetime FROM lowest_incentive)
@@ -350,7 +354,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const query = {
       text: `
         SELECT min(datetime) AS datetime
-        FROM ${this.table}
+        FROM ${this.incentivesTable}
         WHERE status = $1::policy.incentive_status_enum
           AND datetime > current_timestamp - interval '1 year'
         `,
