@@ -11,9 +11,9 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   public readonly WORKSHEET_NAME = 'Trajets';
   // TODO improve listing of columns
   public readonly WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
+    'rpc_journey_id',
     'operator_journey_id',
     'operator_trip_id',
-    'trip_id',
     'start_datetime',
     'end_datetime',
     'start_location',
@@ -26,8 +26,8 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     'distance',
     'operator',
     'operator_class',
-    'operator_driver_id',
-    'operator_passenger_id',
+    'driver_operator_user_id',
+    'passenger_operator_user_id',
     'rpc_incentive',
     'incentive_type',
   ].map((header) => ({ header, key: header }));
