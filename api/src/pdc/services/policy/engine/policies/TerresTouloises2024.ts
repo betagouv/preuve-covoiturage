@@ -54,8 +54,8 @@ export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends A
       isOperatorClassOrThrow(ctx, ['B', 'C']);
       isAdultOrThrow(ctx);
 
-      // Exclusion des OD des autres AOM
-      if (!startsAt(ctx, { aom: ['200070563'] }) || !endsAt(ctx, { aom: ['200070563'] })) {
+      // Exclusion des trajets qui ne partent pas de l'AOM
+      if (!startsAt(ctx, { aom: ['200070563'] })) {
         throw new NotEligibleTargetException('Not in CC Terres Touloises');
       }
     } catch (e) {

@@ -58,9 +58,6 @@ test(
       // // OD hors AOM
       { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },
 
-      // O dans l'AOM et D hors AOM
-      { start: { ...defaultPosition, aom: '200070563' }, end: { ...defaultPosition, aom: '247200132' } },
-
       // O hors AOM et D dans l'AOM
       { start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition, aom: '200070563' } },
 
@@ -68,7 +65,7 @@ test(
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(

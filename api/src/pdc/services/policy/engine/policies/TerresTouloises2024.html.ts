@@ -6,7 +6,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
 
   <p>
     Les <b> conducteurs </b> effectuant un trajet entre 5 et 80 km (inclus)
-    au départ ET à l'arrivée de la Communauté de Communes des Terres Touloises
+    au départ de la Communauté de Communes des Terres Touloises
     sont incités selon les règles suivantes :
   </p>
 
