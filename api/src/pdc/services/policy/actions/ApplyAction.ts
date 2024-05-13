@@ -93,17 +93,21 @@ export class ApplyAction extends AbstractAction {
       throw new InvalidParamsException(`[policy ${policy._id}] Invalid time span (from ${s} to ${e})`);
     }
 
-    console.debug(`[policy ${policy_id}] starting from ${s} to ${e}`);
+    console.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
 
-    const batchSize = 50;
+    const batchSize = 1000;
     const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, override);
     let done = false;
 
     do {
-      const bs = new Date(); // benchmark start
+      if (total === 0) console.info(`[policy ${policy._id}] Fetching carpools...`);
+      if (total === 0) console.time(`[policy ${policy._id}] Fetched carpools`);
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
       done = results.done;
+      if (total === 0) console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
+
+      const bs = new Date(); // benchmark start
       if (results.value) {
         for (const carpool of results.value) {
           // 3. For each trip, process
@@ -112,19 +116,24 @@ export class ApplyAction extends AbstractAction {
         }
       }
 
-      // 4. Save incentives
-      console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
-      await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
-
       // benchmark
       const ms = new Date().getTime() - bs.getTime();
-      console.debug(
-        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
-      );
+      if (counter) {
+        const rate = ((counter / ms) * 1000).toFixed(0);
+        console.info(`[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`);
+      }
       total += counter;
       counter = 0;
+
+      // 4. Save incentives
+      if (incentives.length) {
+        const saveMsg = `[policy ${policy_id}] stored ${incentives.length} incentives`;
+        console.time(saveMsg);
+        await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
+        console.timeEnd(saveMsg);
+      }
     } while (!done);
 
-    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
+    console.info(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
   }
 }
