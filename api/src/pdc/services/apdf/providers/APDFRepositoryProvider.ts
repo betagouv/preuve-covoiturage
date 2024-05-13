@@ -14,6 +14,12 @@ import { UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
+  /**
+   * @deprecated [carpool_v2_migration]
+   **/
+  protected readonly carpoolV1Table = 'carpool.carpools';
+  protected readonly carpoolV2Table = 'carpool_v2.carpools';
+
   constructor(public connection: PostgresConnection) {}
 
   /**
@@ -25,7 +31,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       text: `
         select cc.operator_id
         from policy.incentives pi
-        join carpool.carpools cc on cc._id = pi.carpool_id
+        join ${this.carpoolV1Table} cc on cc._id = pi.carpool_id
         where
               pi.policy_id = $3
           and pi.amount    >  0
@@ -55,8 +61,8 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       .map(({ start, end }, i: number) => {
         const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
         return `
-          (count(acquisition_id) ${f})::int as slice_${i}_count,
-          (count(acquisition_id) ${f.replace('where', 'where amount > 0 and')})::int as slice_${i}_subsidized,
+          (count(uuid) ${f})::int as slice_${i}_count,
+          (count(uuid) ${f.replace('where', 'where amount > 0 and')})::int as slice_${i}_subsidized,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
           ${end ? end : "'Infinity'"} as slice_${i}_end
@@ -70,24 +76,28 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       text: `
         with trips as (
           select
-              distinct cc.acquisition_id,
+              distinct cc.uuid,
               cc.distance,
               coalesce(pi.amount, 0) as amount
           from policy.incentives pi
-          join carpool.carpools cc on cc._id = pi.carpool_id
-          where
+          join ${this.carpoolV2Table} cc
+            on  cc.operator_id = pi.operator_id
+            and cc.operator_journey_id = pi.operator_journey_id
+          join carpool_v2.status cs on cs.carpool_id = cc._id
+        where
                 pi.datetime >= $1
             and pi.datetime <  $2
             and pi.policy_id = $4
             and pi.status = 'validated'
             and pi.amount >= 0
             and cc.operator_id = $3
-            and cc.status in ('ok', 'canceled')
+            and cs.acquisition_status in ('processed', 'canceled', 'updated')
+            and cs.fraud_status       in ('passed', 'failed')
           )
         select
-          count(acquisition_id)::int as total_count,
+          count(uuid)::int as total_count,
           sum(amount)::int as total_sum,
-          (count(acquisition_id) filter (where amount > 0))::int as subsidized_count
+          (count(uuid) filter (where amount > 0))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
@@ -151,7 +161,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
           duration,
           operator_class,
           operator_id
-        from carpool.carpools
+        from ${this.carpoolV1Table}
         where
           datetime >= $1
           and datetime < $2
@@ -189,7 +199,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         ccd.operator_class
 
       from ccd
-      left join carpool.carpools ccp on ccd.acquisition_id = ccp.acquisition_id and ccp.is_driver = false
+      left join ${this.carpoolV1Table} ccp on ccd.acquisition_id = ccp.acquisition_id and ccp.is_driver = false
       left join carpool.identities cid on cid._id = ccd.identity_id
       left join carpool.identities cip on cip._id = ccp.identity_id
       left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
