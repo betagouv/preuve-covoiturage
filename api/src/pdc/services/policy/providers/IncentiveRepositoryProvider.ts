@@ -280,6 +280,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     const query = {
       text: `
+        -- FIXME: temp hack to set a lower boundary when
+        --        joining the deprecated carpool.carpools table
+        WITH lowest_incentive AS (
+          SELECT min(dtz) AS datetime
+          FROM UNNEST($2::timestamp with time zone[]) AS x(dtz)
+        )
+        --
+
         INSERT INTO ${this.table} (
           policy_id,
           carpool_id,
@@ -292,7 +300,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           operator_journey_id,
           meta
         )
-        SELECT 
+        SELECT
           unnest_data.policy_id,
           cc._id as carpool_id,
           unnest_data.datetime,
@@ -314,13 +322,17 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           $8::varchar[],
           $9::json[]
         ) AS unnest_data(policy_id, datetime, result, amount, status, state, operator_id, operator_journey_id, meta)
+
+        -- FIXME : REMOVE WHEN DONE WITH carpool.carpools
         JOIN carpool.carpools cc
           ON cc.operator_id = unnest_data.operator_id
           AND cc.operator_journey_id = unnest_data.operator_journey_id
-          AND cc.datetime >= '2024-03-01'::timestamp
+          AND cc.datetime >= (SELECT datetime FROM lowest_incentive)
           AND cc.is_driver IS TRUE
+        --
+
         ON CONFLICT (policy_id, operator_id, operator_journey_id)
-        DO UPDATE SET 
+        DO UPDATE SET
           result = excluded.result,
           amount = excluded.amount,
           status = excluded.status,
