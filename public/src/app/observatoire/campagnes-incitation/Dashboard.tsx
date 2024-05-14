@@ -4,6 +4,7 @@ import {  useMemo } from 'react';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
+import SelectYear from '@/components/observatoire/SelectYear';
 import IncentiveMap from './maps/IncentiveMap';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Config } from '@/config';
@@ -12,20 +13,25 @@ import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import Details from './Details';
 
+
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const params = {
     code: searchParams.get('code') ? searchParams.get('code')! : 'XXXXX',
-    type: searchParams.get('type') ? searchParams.get('type')! as PerimeterType : 'country'
+    type: searchParams.get('type') ? searchParams.get('type')! as PerimeterType : 'country',
+    year: searchParams.get('year') ? searchParams.get('year') : null
   }
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/all-campaigns${params.code !== 'XXXXX' ?`?code=${params.code}&type=${params.type}`: ''}`;
+  const url = `${apiUrl}/all-campaigns${params.code !== 'XXXXX' 
+    ?`?code=${params.code}&type=${params.type}${params.year ? `&year=${params.year}` : ''}`
+    : params.year ? `?year=${params.year}` : ''}`;
   const { data, error, loading } = useApi<any[]>(url);
   const geojson = useMemo(() => {
     const campaignsData = data ? data : [];
     return featureCollection(
       campaignsData.map((d) =>
         feature(d.geom, {
+          name:d.collectivite,
           type: d.type,
           code: d.code,
           debut: d.date_debut,
@@ -57,11 +63,6 @@ export default function Dashboard() {
 
   return(
     <>
-      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-        <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-          <SelectTerritory url={'campagnes-incitation'}/>
-        </div>
-      </div>
       {loading ? (
         <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
           <div className={fr.cx('fr-mx-auto','fr-py-10w')}><CircularProgress /></div>
@@ -71,7 +72,15 @@ export default function Dashboard() {
         <>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
-             <IncentiveMap params={params} data={geojson} loading={loading} error={error} />
+              <IncentiveMap params={params} 
+                data={geojson} 
+                loading={loading} 
+                error={error} 
+                sidebar={<>
+                  <SelectTerritory url={'campagnes-incitation'}/>
+                  <SelectYear params={params} url={'campagnes-incitation'}/>
+                </>}
+              />
             </div>
           </div>
           { params.code !== 'XXXXX' && geojson.features.length > 0 &&

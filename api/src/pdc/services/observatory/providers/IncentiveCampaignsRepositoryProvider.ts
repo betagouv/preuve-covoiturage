@@ -35,7 +35,7 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
 
   async getAllCampaigns(params: AllCampaignsParamsInterface): Promise<AllCampaignsResultInterface> {
     const type = params.type !== undefined ? checkTerritoryParam(params.type) : null ;
-    const year = params.year !== undefined ? params.year : new Date().getFullYear();
+    const year = params.year !== undefined ? Number(params.year) : new Date().getFullYear();
     const sql = {
       values: params.code !== undefined ? [year, params.code] : [year],
       text: `SELECT a.*, ST_AsGeoJSON(b.geom,6)::json as geom
@@ -49,7 +49,7 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
       ${
         params.year !== undefined
           ? `AND (right(a.date_debut,4) = $1::varchar AND right(a.date_fin,4) = $1::varchar)`
-          : `AND to_date(a.date_fin,'DD/MM/YYYY') > now()`
+          : `${params.code !== undefined ? `` : `AND to_date(a.date_fin,'DD/MM/YYYY') > now()`}`
       }
       ;`,
     };

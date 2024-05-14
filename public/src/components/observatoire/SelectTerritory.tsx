@@ -1,8 +1,7 @@
 'use client'
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { castPerimeterType, fetchSearchAPI } from '@/helpers/search';
-import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
@@ -28,9 +27,7 @@ export default function SelectTerritory(props: { url:string }) {
     setOptions(response.hits);
   };
 
-  const getUrl = (url: string, option?:TerritoryListInterface) => {
-    return `/observatoire/${url}${option ? `?code=${option.territory}&type=${option.type}` : ''}`
-  }
+  
   
 
   return ( 

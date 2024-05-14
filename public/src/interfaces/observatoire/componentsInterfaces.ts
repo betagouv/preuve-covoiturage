@@ -40,9 +40,10 @@ export interface MapInterface {
   sidebarPosition?: 'left' | 'right',
   sidebarWidth?: number,
   cursor?: string,
-  onMouseEnter?: (e:MapEvent<Map, MouseEvent>) => void;
-  onMouseLeave?:(e:MapEvent<Map, MouseEvent>) => void;
+  onMouseEnter?: (e: MapLayerMouseEvent) => void;
+  onMouseLeave?:(e: MapLayerMouseEvent) => void;
   onMouseMove?:(e:MapLayerMouseEvent) => void;
+  onClick?:(e: MapLayerMouseEvent) => void;
   interactiveLayerIds?: string[],
 }
 

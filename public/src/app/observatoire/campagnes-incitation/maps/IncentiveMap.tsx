@@ -4,20 +4,24 @@ import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
-import { useCallback, useState} from 'react';
+import { ReactNode, useCallback, useState} from 'react';
 import { FillLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
+import { useRouter } from 'next/navigation';
+import { getUrl } from '@/helpers/search';
 
 
-export default function IncentiveMap({ params, data, loading, error }: { 
-  params: {code: INSEECode, type:PerimeterType},
-  data: FeatureCollection,
-  loading: boolean,
-  error: string | null
-}) {
-
+export default function IncentiveMap({ params, data, loading, error, sidebar }: { 
+  params: {code: INSEECode, type:PerimeterType, year: string | null},
+    data: FeatureCollection,
+    loading: boolean,
+    error: string | null,
+    sidebar?:ReactNode
+  }) {
+   
+  const router = useRouter();
   const countryLayer: FillLayer = {
     id: 'country',
     source:'campaigns',
@@ -110,7 +114,16 @@ export default function IncentiveMap({ params, data, loading, error }: {
       latitude: e.lngLat.lat,
       properties: e.features[0].properties
     }) : undefined
-   }, [])
+   }, []);
+   const onClick = useCallback((e:MapLayerMouseEvent) =>  {
+    e.features && e.features.length > 0 
+      ? router.push(getUrl('campagnes-incitation', {
+          territory: e.features[0].properties.code,
+          l_territory: e.features[0].properties.name,
+          type: e.features[0].properties.type
+        })) 
+      : undefined
+   }, []);
 
   return (
     <>
@@ -139,6 +152,10 @@ export default function IncentiveMap({ params, data, loading, error }: {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseMove={onMouseMove}
+        onClick={onClick}
+        sidebar={sidebar}
+        sidebarPosition='right'
+        sidebarWidth={4}
         download={
           <DownloadButton 
             title={'Télécharger les données de la carte'}
@@ -154,9 +171,14 @@ export default function IncentiveMap({ params, data, loading, error }: {
             <Layer {...depLayer} />
             <Layer {...aomLayer} />
             <Layer {...epciLayer} />
-            <Popup longitude={hoverInfo ? hoverInfo.longitude : 0} latitude={hoverInfo ? hoverInfo.latitude : 0} closeButton={false}>
+            <Popup 
+              longitude={hoverInfo ? hoverInfo.longitude : 0} 
+              latitude={hoverInfo ? hoverInfo.latitude : 0} 
+              closeButton={false}
+            >
               {hoverInfo && 
                 <div>
+                  {hoverInfo.properties.name && <p><b>{hoverInfo.properties.name}</b></p>}
                   {hoverInfo.properties.fin && hoverInfo.properties.debut && <p>Campagne active du <b>{hoverInfo.properties.debut} au {hoverInfo.properties.fin}</b></p>}
                   {hoverInfo.properties.budget && <p>Budget de la campagne : <b>{hoverInfo.properties.budget} €</b></p>}
                 </div>

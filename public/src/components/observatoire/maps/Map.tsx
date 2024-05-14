@@ -59,6 +59,7 @@ const AppMap = (props: MapInterface) => {
             onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
             onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
             onMouseMove={props.onMouseMove}
+            onClick={props.onClick}
             interactiveLayerIds={props.interactiveLayerIds}
           >
             <NavigationControl />
