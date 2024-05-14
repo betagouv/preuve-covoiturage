@@ -77,8 +77,8 @@ export default function Dashboard() {
                 loading={loading} 
                 error={error} 
                 sidebar={<>
-                  <SelectTerritory url={'campagnes-incitation'}/>
                   <SelectYear params={params} url={'campagnes-incitation'}/>
+                  <SelectTerritory url={'campagnes-incitation'}/>
                 </>}
               />
             </div>

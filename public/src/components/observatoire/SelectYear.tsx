@@ -17,7 +17,7 @@ export default function SelectYear(props: { params: {code: INSEECode, type:Perim
   };
   
   return ( 
-    <fieldset className={fr.cx('fr-segmented')}>
+    <fieldset className={fr.cx('fr-segmented', 'fr-mb-5v')}>
       <legend className={fr.cx('fr-segmented__legend')}>
           Filtrer par année
       </legend>
