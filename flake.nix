@@ -19,6 +19,7 @@
               just
               openssl
               dbt
+              python311Packages.dbt-postgres
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"
