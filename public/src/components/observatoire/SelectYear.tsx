@@ -24,7 +24,7 @@ export default function SelectYear(props: { params: {code: INSEECode, type:Perim
       <div className={fr.cx('fr-segmented__elements')}>
         {list.map((l,i) => {
           return(
-            <div key={i} className={fr.cx('fr-segmented__element')} onClick={(e) => onClick(l.val)} >
+            <div key={i} className={fr.cx('fr-segmented__element')} onClick={() => onClick(l.val)} >
               <input value={l.val} name='year' type="radio" checked={currentYear === l.val} />
               <label className={fr.cx('fr-label')}>
                   {l.name}

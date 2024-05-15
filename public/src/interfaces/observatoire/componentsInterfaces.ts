@@ -1,8 +1,6 @@
 import type { LayersList, PickingInfo } from '@deck.gl/core/typed';
-
-import { LngLatBoundsLike, Map, MapLayerMouseEvent } from 'maplibre-gl';
+import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
 import { ReactNode } from 'react';
-import { MapEvent } from 'react-map-gl/dist/esm/types/events';
 import { INSEECode, PerimeterType } from './Perimeter';
 import { FrCxArg } from '@codegouvfr/react-dsfr';
 
