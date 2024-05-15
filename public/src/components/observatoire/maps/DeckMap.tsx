@@ -31,7 +31,6 @@ const DeckMap = (props: DeckMapInterface) => {
   };
   useEffect(() => {
     if (props.bounds !== undefined && mapRef.current) {
-      console.log(JSON.stringify(props.bounds))
       mapRef.current.fitBounds(props.bounds, { padding: 20 });
     }
   }, [props.bounds]);
