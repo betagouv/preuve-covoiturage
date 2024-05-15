@@ -1,0 +1,8 @@
+set dotenv-load
+
+default:
+  @just --list
+
+# Run dbt
+dbt cmd:
+    dbt {{cmd}} --profiles-dir local 
