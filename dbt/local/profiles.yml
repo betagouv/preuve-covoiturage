@@ -1,0 +1,13 @@
+default:
+  target: "local"
+  outputs: 
+    local:
+      type: postgres
+      threads: 1
+      host: localhost
+      port: 5432
+      user: postgres
+      pass: postgres
+      dbname: demo
+      schema: stats
+

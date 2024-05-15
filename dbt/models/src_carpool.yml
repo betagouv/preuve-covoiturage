@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: carpool
+    schema: carpool_v2
+    tables:
+      - name: carpools
+        columns:
+          - name: _id
+          - name: created_at
