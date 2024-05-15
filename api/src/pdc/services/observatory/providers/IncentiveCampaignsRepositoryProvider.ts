@@ -1,10 +1,8 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import {
-  OneCampaignParamsInterface,
-  OneCampaignResultInterface,
-  AllCampaignsParamsInterface,
-  AllCampaignsResultInterface,
+  CampaignsParamsInterface,
+  CampaignsResultInterface,
   IncentiveCampaignsRepositoryInterfaceResolver,
   IncentiveCampaignsRepositoryInterface
 } from '../interfaces/IncentiveCampaignsRepositoryProviderInterface';
@@ -19,21 +17,7 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
 
   constructor(private pg: PostgresConnection) {}
 
-
-  async getOneCampaign(params: OneCampaignParamsInterface): Promise<OneCampaignResultInterface> {
-    const sql = {
-      values: [params.code, checkTerritoryParam(params.type)],
-      text: `SELECT *
-      FROM ${this.table}
-      WHERE left(code,9) = $1
-      AND type = $2
-      `
-    };
-    const response: { rows: OneCampaignResultInterface } = await this.pg.getClient().query<any>(sql);
-    return response.rows;
-  }
-
-  async getAllCampaigns(params: AllCampaignsParamsInterface): Promise<AllCampaignsResultInterface> {
+  async getCampaigns(params: CampaignsParamsInterface): Promise<CampaignsResultInterface> {
     const type = params.type !== undefined ? checkTerritoryParam(params.type) : null ;
     const year = params.year !== undefined ? Number(params.year) : new Date().getFullYear();
     const sql = {
@@ -53,7 +37,7 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
       }
       ;`,
     };
-    const response: { rows: AllCampaignsResultInterface } = await this.pg.getClient().query<any>(sql);
+    const response: { rows: CampaignsResultInterface } = await this.pg.getClient().query<any>(sql);
     return response.rows;
   }
 }

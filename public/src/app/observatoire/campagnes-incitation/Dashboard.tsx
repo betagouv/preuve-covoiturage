@@ -22,7 +22,7 @@ export default function Dashboard() {
     year: searchParams.get('year') ? searchParams.get('year') : null
   }
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/all-campaigns${params.code !== 'XXXXX' 
+  const url = `${apiUrl}/campaigns${params.code !== 'XXXXX' 
     ?`?code=${params.code}&type=${params.type}${params.year ? `&year=${params.year}` : ''}`
     : params.year ? `?year=${params.year}` : ''}`;
   const { data, error, loading } = useApi<any[]>(url);

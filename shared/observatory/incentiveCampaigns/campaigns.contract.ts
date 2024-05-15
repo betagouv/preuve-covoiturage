@@ -40,7 +40,7 @@ export interface ParamsInterface {
 
 export const handlerConfig = {
   service: 'observatory',
-  method: 'allCampaigns',
+  method: 'campaigns',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

@@ -1,17 +1,17 @@
 import { perimeterTypes } from '../../geo/shared/Perimeter';
 
-export const alias = 'observatory.oneCampaign';
+export const alias = 'observatory.campaigns';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['type', 'code'],
+  required: [],
   properties: {
+    code: {
+      anyOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
+    },
     type: {
       type: 'string',
       enum: perimeterTypes,
-    },
-    code: {
-      anyOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
     },
     year: {
       type: 'integer',

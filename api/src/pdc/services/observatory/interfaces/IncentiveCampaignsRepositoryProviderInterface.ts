@@ -1,31 +1,21 @@
 import {
-  ParamsInterface as OneCampaignParamsInterface,
-  ResultInterface as OneCampaignResultInterface,
-} from '@shared/observatory/incentiveCampaigns/OneCampaign.contract';
-import {
-  ParamsInterface as AllCampaignsParamsInterface,
-  ResultInterface as AllCampaignsResultInterface,
-} from '@shared/observatory/incentiveCampaigns/AllCampaigns.contract';
+  ParamsInterface as CampaignsParamsInterface,
+  ResultInterface as CampaignsResultInterface,
+} from '@shared/observatory/incentiveCampaigns/campaigns.contract';
 
 
 
 export {
-  OneCampaignParamsInterface,
-  OneCampaignResultInterface,
-  AllCampaignsParamsInterface,
-  AllCampaignsResultInterface,
+  CampaignsParamsInterface,
+  CampaignsResultInterface,
 };
 
 export interface IncentiveCampaignsRepositoryInterface {
-  getOneCampaign(params: OneCampaignParamsInterface): Promise<OneCampaignResultInterface>;
-  getAllCampaigns(params: AllCampaignsParamsInterface): Promise<AllCampaignsResultInterface>;
+  getCampaigns(params: CampaignsParamsInterface): Promise<CampaignsResultInterface>;
 }
 
 export abstract class IncentiveCampaignsRepositoryInterfaceResolver implements IncentiveCampaignsRepositoryInterface {
-  async getOneCampaign(params: OneCampaignParamsInterface): Promise<OneCampaignResultInterface> {
-    throw new Error();
-  } 
-  async getAllCampaigns(params: AllCampaignsParamsInterface): Promise<AllCampaignsResultInterface> {
+  async getCampaigns(params: CampaignsParamsInterface): Promise<CampaignsResultInterface> {
     throw new Error();
   } 
 }

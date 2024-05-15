@@ -23,8 +23,7 @@ import { MonthlyOccupationAction } from './actions/occupation/MonthlyOccupationA
 import { RefreshAllOccupationAction } from './actions/occupation/RefreshAllOccupationAction';
 import { TerritoriesListAction } from './actions/territories/TerritoriesListAction';
 import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
-import { OneCampaignAction } from './actions/incentiveCampaigns/OneCampaignAction';
-import { AllCampaignsAction } from './actions/incentiveCampaigns/AllCampaignsAction';
+import { CampaignsAction } from './actions/incentiveCampaigns/CampaignsAction';
 import { InsertCommand } from './commands/InsertCommand';
 import { config } from './config';
 import { DistributionRepositoryProvider } from './providers/DistributionRepositoryProvider';
@@ -48,8 +47,7 @@ import { binding as EvolMonthlyOccupationBinding } from '@shared/observatory/occ
 import { binding as MonthlyOccupationBinding } from '@shared/observatory/occupation/monthlyOccupation.schema';
 import { binding as TerritoriesListBinding } from '@shared/observatory/territories/list.schema';
 import { binding as TerritoryNameBinding } from '@shared/observatory/territories/name.schema';
-import { binding as OneCampaignBinding } from '@shared/observatory/incentiveCampaigns/OneCampaign.schema';
-import { binding as AllCampaignsBinding } from '@shared/observatory/incentiveCampaigns/AllCampaigns.schema';
+import { binding as CampaignsBinding } from '@shared/observatory/incentiveCampaigns/campaigns.schema';
 /* eslint-enable */
 @serviceProvider({
   config,
@@ -78,8 +76,7 @@ import { binding as AllCampaignsBinding } from '@shared/observatory/incentiveCam
     MonthlyOccupationBinding,
     TerritoriesListBinding,
     TerritoryNameBinding,
-    OneCampaignBinding,
-    AllCampaignsBinding,
+    CampaignsBinding,
   ],
   handlers: [
     AiresCovoiturageAction,
@@ -102,8 +99,7 @@ import { binding as AllCampaignsBinding } from '@shared/observatory/incentiveCam
     RefreshAllOccupationAction,
     TerritoriesListAction,
     TerritoryNameAction,
-    OneCampaignAction,
-    AllCampaignsAction,
+    CampaignsAction,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   queues: ['observatory'],
