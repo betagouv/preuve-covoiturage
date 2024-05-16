@@ -25,10 +25,14 @@ const DeckMap = (props: DeckMapInterface) => {
     zoom: 5,
   };
   const fitBounds = () => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    if (props.bounds !== undefined && mapRef.current) {
+      mapRef.current.fitBounds(props.bounds, { padding: 20 });
+    }
   };
   useEffect(() => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    if (props.bounds !== undefined && mapRef.current) {
+      mapRef.current.fitBounds(props.bounds, { padding: 20 });
+    }
   }, [props.bounds]);
 
   const inRange = (value: number, min: number, max: number) => {

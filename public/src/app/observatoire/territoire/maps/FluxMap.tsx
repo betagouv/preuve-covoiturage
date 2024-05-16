@@ -43,7 +43,8 @@ export default function FluxMap({ title }: { title: string }) {
     getSourceColor: [0, 0, 145],
     getTargetColor: [0, 0, 145],
   });
-  const fitBounds = useMemo(() => {
+
+  const fitBounds = () => {
     const coords = filteredData.map((d) => {
       return [
         [d.lng_1, d.lat_1],
@@ -52,8 +53,9 @@ export default function FluxMap({ title }: { title: string }) {
     })
     .reduce((acc, val) => acc.concat(val), []);
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPoint(coords));
-    return bounds as unknown as LngLatBoundsLike;
-  }, [dashboard.params.code,filteredData]);
+    return  bounds as LngLatBoundsLike;
+  };
+
   const tooltip = ({ object }: any) =>
     object && {
       html: `<div class="tooltip-title"><b>${object.ter_1} - ${object.ter_2}</b></div>
@@ -93,7 +95,7 @@ export default function FluxMap({ title }: { title: string }) {
           tooltip={tooltip} 
           mapStyle={mapStyle} 
           layers={[layer]} 
-          bounds={fitBounds}
+          bounds={fitBounds()}
           scrollZoom={false}
           legend={[
             {

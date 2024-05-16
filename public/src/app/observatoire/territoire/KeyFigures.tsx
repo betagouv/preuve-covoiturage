@@ -11,7 +11,7 @@ export default function KeyFigures() {
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/monthly-keyfigures?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data } = useApi<KeyFiguresDataInterface[]>(url);
-  const row1 = data
+  const row1 = (data && data.length > 0)
     ? [
         { __component: 'row.indicator',
           value: data[0].journeys.toLocaleString(),
@@ -46,7 +46,7 @@ export default function KeyFigures() {
       ] as IndicatorProps[]
     : [];
 
-  const row2 = data
+  const row2 = (data && data.length > 0)
     ? [
         { __component: 'row.indicator',
           value: `${((data[0].intra_journeys / data[0].journeys) * 100).toLocaleString('fr-FR', {

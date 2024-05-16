@@ -1,6 +1,7 @@
 import { Config } from '@/config';
 import { search } from '@/config/search';
 import { PerimeterType } from '../interfaces/observatoire/Perimeter';
+import { TerritoryListInterface } from '../interfaces/observatoire/dataInterfaces';
 
 export const searchHost = Config.get<string>('search.host');
 
@@ -37,4 +38,8 @@ export const castPerimeterType = (value: PerimeterType) => {
     case 'country':
       return 'Pays';
   };
+}
+
+export const getUrl = (url: string, option?:TerritoryListInterface) => {
+  return `/observatoire/${url}${option ? `?code=${option.territory.slice(0,9)}&type=${option.type}` : ''}`
 }

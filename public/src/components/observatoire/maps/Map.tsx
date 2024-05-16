@@ -14,15 +14,16 @@ const AppMap = (props: MapInterface) => {
     zoom: 5,
   };
   const fitBounds = () => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    if (props.bounds !== undefined && mapRef.current) mapRef.current.fitBounds(props.bounds, { padding: 20 }) ;
   };
   useEffect(() => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    if (props.bounds !== undefined && mapRef.current) mapRef.current.fitBounds(props.bounds, { padding: 20 }) ;
   }, [props.bounds]);
   
   const [cursor, setCursor] = useState<string>('');
   const defaultOnMouseEnter = useCallback(() => setCursor('pointer'), []);
   const defaultOnMouseLeave = useCallback(() => setCursor(''), []);
+
   const inRange = (value: number, min: number, max: number) => {
     return Math.trunc(value) >=min && Math.trunc(value) <= max ? true : false;
   }
@@ -57,6 +58,8 @@ const AppMap = (props: MapInterface) => {
             cursor={props.cursor ? props.cursor : cursor}
             onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
             onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
+            onMouseMove={props.onMouseMove}
+            onClick={props.onClick}
             interactiveLayerIds={props.interactiveLayerIds}
           >
             <NavigationControl />
