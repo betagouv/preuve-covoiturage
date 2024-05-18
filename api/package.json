@@ -54,7 +54,6 @@
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.21",
-    "@types/express-rate-limit": "^6.0.0",
     "@types/express-session": "^1.18.0",
     "@types/geojson": "^7946.0.14",
     "@types/jsonwebtoken": "^9.0.6",
