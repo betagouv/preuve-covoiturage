@@ -1,6 +1,5 @@
+import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common';
 import { get } from 'lodash';
-import { provider, ProviderInterface, ConfigInterfaceResolver } from '@ilos/common';
-
 import { Sentry } from './Sentry';
 
 @provider()
