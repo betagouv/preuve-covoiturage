@@ -97,7 +97,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bullmq": "^1.91.1",
-    "commander": "^8.3.0",
+    "commander": "^12.1.0",
     "connect-redis": "^7.1.1",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
