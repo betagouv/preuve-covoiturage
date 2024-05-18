@@ -1,6 +1,7 @@
 import PageTitle from '@/components/common/PageTitle';
 import { fr } from '@codegouvfr/react-dsfr';
 import Dashboard from './Dashboard';
+import { Suspense } from 'react';
 
 export default function IncentiveCampaignsPage() {
   const title = 'Recensement des campagnes d\'incitation financière au covoiturage';
@@ -9,7 +10,9 @@ export default function IncentiveCampaignsPage() {
       <div id='content'>
         <PageTitle title={title} />
         <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
-        <Dashboard />
+        <Suspense>
+          <Dashboard />
+        </Suspense>
     </div>
     
   );
