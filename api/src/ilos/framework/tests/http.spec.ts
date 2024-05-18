@@ -1,12 +1,10 @@
-import axios from 'axios';
-import getPort from 'get-port';
-import anyTest, { TestFn } from 'ava';
-
-import { HttpTransport } from '@ilos/transport-http';
-import { httpHandlerFactory } from '@ilos/handler-http';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@ilos/common';
 import { ServiceProvider } from '@ilos/core';
-import { serviceProvider, kernel as kernelDecorator, TransportInterface, KernelInterface } from '@ilos/common';
-
+import { httpHandlerFactory } from '@ilos/handler-http';
+import { HttpTransport } from '@ilos/transport-http';
+import { getPorts } from '@pdc/helpers/ports.helper';
+import anyTest, { TestFn } from 'ava';
+import axios from 'axios';
 import { Kernel } from '../Kernel';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
@@ -23,8 +21,8 @@ interface Context {
 const test = anyTest as TestFn<Context>;
 
 test.before(async (t) => {
-  t.context.mathPort = await getPort();
-  t.context.stringPort = await getPort();
+  t.context.mathPort = await getPorts();
+  t.context.stringPort = await getPorts();
 
   @serviceProvider({
     children: [ParentStringServiceProvider],
