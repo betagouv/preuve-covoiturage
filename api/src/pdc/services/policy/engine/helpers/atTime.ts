@@ -1,4 +1,4 @@
-import { utcToZonedTime } from './utcToZonedTime';
+import { toZonedTime } from './toZonedTime';
 import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface AtTimeParams {
@@ -10,7 +10,7 @@ export const atTime: StatelessRuleHelper<AtTimeParams> = (
   ctx: StatelessContextInterface,
   params: AtTimeParams,
 ): boolean => {
-  const hours = utcToZonedTime(ctx.carpool.datetime, params.tz).getHours();
+  const hours = toZonedTime(ctx.carpool.datetime, params.tz).getHours();
   if (hours >= params.start && hours <= params.end) {
     return true;
   }

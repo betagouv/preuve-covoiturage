@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { FlattenTripInterface } from '../actions/BuildExportAction';
 import { ExportTripInterface } from '../interfaces';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format, toZonedTime } from 'date-fns-tz';
 
 export function normalizeExport(src: ExportTripInterface, timeZone: string): FlattenTripInterface {
   const { data, driver_incentive_raw, passenger_incentive_raw } = normalize(src, timeZone);
@@ -43,8 +43,8 @@ function normalize(
   src: ExportTripInterface,
   timeZone: string,
 ): { data: FlattenTripInterface; driver_incentive_raw; passenger_incentive_raw } {
-  const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
-  const jed = utcToZonedTime(src.journey_end_datetime, timeZone);
+  const jsd = toZonedTime(src.journey_start_datetime, timeZone);
+  const jed = toZonedTime(src.journey_end_datetime, timeZone);
 
   const data: FlattenTripInterface = {
     ...src,

@@ -1,9 +1,9 @@
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format, toZonedTime } from 'date-fns-tz';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
 
 export function normalize(src: APDFTripInterface, booster_dates: Set<string>, timeZone: string): APDFTripInterface {
-  const sd = utcToZonedTime(src.start_datetime, timeZone);
-  const ed = utcToZonedTime(src.end_datetime, timeZone);
+  const sd = toZonedTime(src.start_datetime, timeZone);
+  const ed = toZonedTime(src.end_datetime, timeZone);
 
   // format and convert to user timezone
   const sdf = format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
