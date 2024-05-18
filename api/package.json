@@ -73,7 +73,7 @@
     "pino-pretty": "^11.0.0",
     "pm2": "^5.3.1",
     "sinon": "^18.0.0",
-    "supertest": "^6.3.4",
+    "supertest": "^7.0.0",
     "typescript": "^5.4.4"
   },
   "resolutions": {
@@ -134,7 +134,6 @@
     "prom-client": "^15.1.1",
     "rate-limit-redis": "^4.2.0",
     "reflect-metadata": "^0.2.2",
-    "supertest": "^6.3.4",
     "uuid": "^9.0.1",
     "xss": "^1.0.15"
   }
