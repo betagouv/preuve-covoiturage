@@ -81,7 +81,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       text: `
         with trips as (
           select
-              distinct cc.uuid,
+              cc.uuid,
               cc.distance,
               coalesce(pi.amount, 0) as amount
           from ${this.policyIncentivesTable} pi
@@ -90,14 +90,14 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and cc.operator_journey_id = pi.operator_journey_id
           join ${this.carpoolV2StatusTable} cs on cs.carpool_id = cc._id
         where
-                pi.datetime >= $1
-            and pi.datetime <  $2
+                cc.start_datetime >= $1
+            and cc.start_datetime  < $2
+            and cs.acquisition_status in ('processed', 'canceled', 'updated')
+            and cs.fraud_status       in ('passed', 'failed')
+            and cc.operator_id = $3
             and pi.policy_id = $4
             and pi.status = 'validated'
             and pi.amount >= 0
-            and cc.operator_id = $3
-            and cs.acquisition_status in ('processed', 'canceled', 'updated')
-            and cs.fraud_status       in ('passed', 'failed')
           )
         select
           count(uuid)::int as total_count,
@@ -180,10 +180,10 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         oo.name as operator,
         cc.operator_class
 
-      from ${this.carpoolV2Table} cc
+      from ${this.policyIncentivesTable} pi
+      join ${this.carpoolV2Table} cc on cc.operator_id = pi.operator_id and cc.operator_journey_id = pi.operator_journey_id
       join ${this.carpoolV2StatusTable} cs on cc._id = cs.carpool_id
       join ${this.carpoolV2GeoTable} cg on cc._id = cg.carpool_id
-      left join ${this.policyIncentivesTable} pi on cc.operator_id = pi.operator_id and cc.operator_journey_id = pi.operator_journey_id
       left join ${this.geoPerimetersTable} gps on cg.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from cc.start_datetime)::smallint)
       left join ${this.geoPerimetersTable} gpe on cg.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from cc.end_datetime)::smallint)
       left join ${this.operatorsTable} oo on oo._id = cc.operator_id
@@ -191,7 +191,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       where
             cc.start_datetime >= $1
         and cc.start_datetime  < $2
-        and cs.acquisition_status in ('processed', 'canceled')
+        and cs.acquisition_status in ('processed', 'canceled', 'updated')
         and cs.fraud_status in ('passed', 'failed')
         and cc.operator_id = $3
         and pi.policy_id = $4
