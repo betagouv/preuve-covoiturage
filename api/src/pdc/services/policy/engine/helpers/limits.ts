@@ -22,6 +22,12 @@ interface LimitStatelessStageHelper {
 
 function getTargetUuid(target: LimitTargetEnum, ctx: StatelessContextInterface): string {
   const uuid = target === LimitTargetEnum.Driver ? ctx.carpool.driver_identity_key : ctx.carpool.passenger_identity_key;
+
+  if (uuid === null || typeof uuid === 'undefined') {
+    const targetName = target === LimitTargetEnum.Driver ? 'driver_identity_key' : 'passenger_identity_key';
+    throw new Error(`[getTargetUuid] Missing ${targetName} to build the limit key.`);
+  }
+
   return `${target.toString()}-${uuid}`;
 }
 
