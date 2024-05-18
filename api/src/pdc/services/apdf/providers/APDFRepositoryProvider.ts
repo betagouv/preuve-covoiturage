@@ -174,7 +174,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         gpe.arr as end_insee,
         gpe.l_epci as end_epci,
 
-        cc.end_datetime - cc.start_datetime as duration,
+        to_char(cc.end_datetime - cc.start_datetime, 'HH24:MI:SS') as duration,
         cc.distance,
 
         oo.name as operator,
