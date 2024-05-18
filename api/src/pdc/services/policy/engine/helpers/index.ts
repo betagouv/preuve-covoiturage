@@ -23,5 +23,5 @@ export { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange';
 export { onWeekday } from './onWeekday';
 export { perKm, perSeat } from './per';
 export { startsAt, endsAt, startsAndEndsAt } from './position';
-export { utcToZonedTime } from './utcToZonedTime';
+export { toZonedTime } from './toZonedTime';
 export { ensureFreeRide } from './ensureFreeRide';

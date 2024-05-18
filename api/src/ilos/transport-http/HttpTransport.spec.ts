@@ -1,12 +1,12 @@
-import anyTest, { TestFn } from 'ava';
-import supertest from 'supertest';
-import { Kernel } from '@ilos/core';
 import { RPCCallType, RPCResponseType } from '@ilos/common';
-
+import { Kernel } from '@ilos/core';
+import anyTest, { TestFn } from 'ava';
+import supertest, { Test } from 'supertest';
+import TestAgent from 'supertest/lib/agent';
 import { HttpTransport } from './HttpTransport';
 
 interface Context {
-  request: supertest.SuperTest<supertest.Test>;
+  request: TestAgent<Test>;
   httpTransport: HttpTransport;
 }
 

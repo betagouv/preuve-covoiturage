@@ -1,19 +1,20 @@
 import {
   ContextType,
-  ParamsType,
-  TransportInterface,
-  ResultType,
   NewableType,
+  ParamsType,
+  ResultType,
   ServiceContainerInterface,
+  TransportInterface,
 } from '@ilos/common';
-import test, { ExecutionContext, Macro } from 'ava';
 import { Bootstrap } from '@ilos/framework';
-import supert from 'supertest';
+import test, { ExecutionContext, Macro } from 'ava';
+import spt, { Test } from 'supertest';
+import TestAgent from 'supertest/lib/agent';
 import { makeKernelCtor } from './helpers';
 
 export interface HttpMacroContext {
   transport: TransportInterface;
-  supertest: supert.SuperTest<supert.Test>;
+  supertest: TestAgent<Test>;
   request: <P = ParamsType, R = ResultType>(method: string, params: P, context: Partial<ContextType>) => Promise<R>;
 }
 
@@ -30,7 +31,7 @@ export function httpMacro<TestContext = unknown>(
     const kernel = makeKernelCtor(serviceProviderCtor);
     const bootstrap = Bootstrap.create({ kernel: () => kernel });
     const transport = await bootstrap.boot('http', '0');
-    const supertest = supert(transport.getInstance());
+    const supertest = spt(transport.getInstance());
     const request = async <P = ParamsType>(method: string, params: P, context: Partial<ContextType>) => {
       const mergedContext: ContextType = {
         call: { user: {}, ...context.call },

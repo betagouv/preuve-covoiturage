@@ -1,15 +1,13 @@
-import anyTest, { TestFn } from 'ava';
-import getPort from 'get-port';
-import fs from 'fs';
-import os from 'os';
-import axios from 'axios';
-import path from 'path';
-
+import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
-import { RedisConnection } from '@ilos/connection-redis';
-import { TransportInterface, KernelInterface, serviceProvider, kernel as kernelDecorator } from '@ilos/common';
-
+import { getPorts } from '@pdc/helpers/ports.helper';
+import anyTest, { TestFn } from 'ava';
+import axios from 'axios';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { Kernel } from '../Kernel';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
@@ -29,7 +27,7 @@ interface Context {
 const test = anyTest as TestFn<Context>;
 
 test.before(async (t) => {
-  t.context.stringPort = await getPort();
+  t.context.stringPort = await getPorts();
 
   @serviceProvider({
     config: {

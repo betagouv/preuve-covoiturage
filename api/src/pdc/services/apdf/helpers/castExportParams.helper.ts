@@ -1,6 +1,6 @@
 import { ParamsInterface } from '@shared/apdf/export.contract';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
+import { fromZonedTime } from 'date-fns-tz';
 import { get } from 'lodash';
 
 export function castExportParams(params: ParamsInterface): { start_date: Date; end_date: Date } {
@@ -29,7 +29,7 @@ export function castExportParams(params: ParamsInterface): { start_date: Date; e
 
   // timezoned
   return {
-    start_date: zonedTimeToUtc(start, params.format?.tz),
-    end_date: zonedTimeToUtc(end, params.format?.tz),
+    start_date: fromZonedTime(start, params.format?.tz),
+    end_date: fromZonedTime(end, params.format?.tz),
   };
 }

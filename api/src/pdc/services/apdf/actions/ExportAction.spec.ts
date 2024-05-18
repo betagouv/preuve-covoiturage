@@ -5,7 +5,7 @@ import { uuid } from '@pdc/providers/test';
 import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
+import { fromZonedTime } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
@@ -111,8 +111,8 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
   );
 
   // Assert
-  const startDate = zonedTimeToUtc(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
-  const endDate = zonedTimeToUtc(startOfMonth(new Date()), 'Europe/Paris');
+  const startDate = fromZonedTime(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
+  const endDate = fromZonedTime(startOfMonth(new Date()), 'Europe/Paris');
 
   t.deepEqual(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub!, campaign._id);

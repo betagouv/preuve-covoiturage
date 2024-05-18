@@ -1,6 +1,6 @@
 import { Timezone } from '@pdc/providers/validator';
 import { addDays, addMonths, startOfMonth, subDays, subMonths } from 'date-fns';
-import { formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { formatInTimeZone, toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 export const defaultTz = 'Europe/Paris';
 
@@ -34,7 +34,7 @@ export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Ti
   // a short-form date (YYYY-MM-DD) has no timezone
   // the User timezone is applied and the date is converted to UTC
   if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(d)) {
-    return zonedTimeToUtc(d, tz || defaultTz);
+    return fromZonedTime(d, tz || defaultTz);
   }
 
   // a full-short date (YYYY-MM-DDTHH:mm:ssZZ) has a timezone
@@ -46,7 +46,7 @@ export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Ti
 }
 
 export function dateWithTz(date: Date, tz?: Timezone): Date {
-  return zonedTimeToUtc(date.toISOString().substring(0, 11), tz || defaultTz);
+  return fromZonedTime(date.toISOString().substring(0, 11), tz || defaultTz);
 }
 
 export function today(tz?: Timezone): Date {
@@ -54,21 +54,21 @@ export function today(tz?: Timezone): Date {
 }
 
 export function addDaysTz(d: Date, days: number, tz?: Timezone): Date {
-  return zonedTimeToUtc(addDays(utcToZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+  return fromZonedTime(addDays(toZonedTime(d, tz || defaultTz), days), tz || defaultTz);
 }
 
 export function subDaysTz(d: Date, days: number, tz?: Timezone): Date {
-  return zonedTimeToUtc(subDays(utcToZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+  return fromZonedTime(subDays(toZonedTime(d, tz || defaultTz), days), tz || defaultTz);
 }
 
 export function addMonthsTz(d: Date, months: number, tz?: Timezone): Date {
-  return zonedTimeToUtc(addMonths(utcToZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+  return fromZonedTime(addMonths(toZonedTime(d, tz || defaultTz), months), tz || defaultTz);
 }
 
 export function subMonthsTz(d: Date, months: number, tz?: Timezone): Date {
-  return zonedTimeToUtc(subMonths(utcToZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+  return fromZonedTime(subMonths(toZonedTime(d, tz || defaultTz), months), tz || defaultTz);
 }
 
 export function startOfMonthTz(d: Date, tz?: Timezone): Date {
-  return zonedTimeToUtc(startOfMonth(utcToZonedTime(d, tz || defaultTz)), tz || defaultTz);
+  return fromZonedTime(startOfMonth(toZonedTime(d, tz || defaultTz)), tz || defaultTz);
 }

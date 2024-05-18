@@ -11,6 +11,17 @@ import { env } from '@ilos/core';
 import { mapStatusCode } from '@ilos/transport-http';
 import { Sentry, SentryProvider } from '@pdc/providers/sentry';
 import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
+import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
+import { signature as importCeeSignature } from '@shared/cee/importApplication.contract';
+import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract';
+import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract';
+import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract';
+import { RPCResponseType } from '@shared/common/rpc/RPCResponseType';
+import {
+  ParamsInterface as GetAuthorizedCodesParams,
+  ResultInterface as GetAuthorizedCodesResult,
+  signature as getAuthorizedCodesSignature,
+} from '@shared/territory/getAuthorizedCodes.contract';
 import bodyParser from 'body-parser';
 import RedisStore from 'connect-redis';
 import cors from 'cors';
@@ -20,12 +31,15 @@ import helmet from 'helmet';
 import http from 'http';
 import Redis from 'ioredis';
 import { get, pick } from 'lodash';
+import path from 'node:path';
 import { asyncHandler } from './helpers/asyncHandler';
 import { createRPCPayload } from './helpers/createRPCPayload';
 import { healthCheckFactory } from './helpers/healthCheckFactory';
 import { injectContext } from './helpers/injectContext';
 import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
 import { dataWrapMiddleware, errorHandlerMiddleware, signResponseMiddleware } from './middlewares';
+import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 import {
   acquisitionRateLimiter,
   apiRateLimiter,
@@ -38,21 +52,6 @@ import {
   rateLimiter,
 } from './middlewares/rateLimiter';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
-import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
-import { RPCResponseType } from '@shared/common/rpc/RPCResponseType';
-import {
-  ParamsInterface as GetAuthorizedCodesParams,
-  ResultInterface as GetAuthorizedCodesResult,
-  signature as getAuthorizedCodesSignature,
-} from '@shared/territory/getAuthorizedCodes.contract';
-
-import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
-import { metricsMiddleware } from './middlewares/metricsMiddleware';
-import { signature as importCeeSignature } from '@shared/cee/importApplication.contract';
-import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract';
-import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract';
-import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract';
-import path from 'node:path';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -124,7 +123,6 @@ export class HttpTransport implements TransportInterface {
 
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
-    this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
     Sentry.setTag('transport', 'http');
     Sentry.setTag('version', this.config.get('sentry.version'));
   }
@@ -747,7 +745,7 @@ export class HttpTransport implements TransportInterface {
       next(error);
     });
 
-    this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+    Sentry.setupExpressErrorHandler(this.app);
 
     // general error handler
     // keep last
@@ -813,7 +811,7 @@ export class HttpTransport implements TransportInterface {
         journeysByDistances: 'journeys-by-distances',
         getLocation: 'location',
         airesCovoiturage: 'aires-covoiturage',
-        campaigns: 'campaigns'
+        campaigns: 'campaigns',
       }),
     );
 
