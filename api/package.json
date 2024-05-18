@@ -63,7 +63,7 @@
     "@types/nodemailer": "^6.4.14",
     "@types/pg": "^8.11.4",
     "@types/pg-cursor": "^2.7.2",
-    "@types/supertest": "^2.0.16",
+    "@types/supertest": "^6.0.2",
     "@types/uuid": "^9.0.8",
     "ava": "^5.3.1",
     "get-port": "^5",
