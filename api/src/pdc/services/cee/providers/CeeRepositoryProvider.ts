@@ -334,6 +334,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         WHERE c1.operator_id = ce.operator_id
           AND c1.operator_journey_id = ce.operator_journey_id
           AND c1.is_driver = true
+          AND c1.datetime >= '2024-01-01T00:00:00+00' -- hit the index!
           AND ce._id = $1
       `,
       values: [res.rows[0]._id],
