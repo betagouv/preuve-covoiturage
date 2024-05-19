@@ -95,6 +95,6 @@ The project follows the [semver](https://semver.org/) specification.
 
 # License
 
-DINUM, 2017-2023.
+DINUM / DGITM / ADEME, 2017-2024
 
 The source code is published under [Apache license 2.0](./LICENSE).
