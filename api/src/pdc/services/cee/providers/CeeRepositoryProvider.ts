@@ -1,5 +1,6 @@
 import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { Uuid } from '@pdc/providers/carpool/interfaces';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -22,7 +23,9 @@ import {
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly ceeApplicationsTable = 'cee.cee_applications';
   public readonly errorTable = 'cee.cee_application_errors';
-  /** @deprecated [carpool_v2_migration] */
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
   public readonly carpoolV1Table = 'carpool.carpools';
   public readonly carpoolV2Table = 'carpool_v2.carpools';
   public readonly carpoolV2StatusTable = 'carpool_v2.status';
@@ -221,7 +224,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         values.push(data.driving_license);
       }
 
-      /** @deprecated [carpool_v2_migration] */
+      /**
+       * @deprecated [carpool_v2_migration]
+       */
       if (journeyType === CeeJourneyTypeEnum.Short && 'carpool_id' in data) {
         fields.push(['carpool_id', 'int']);
         values.push(data.carpool_id);
@@ -296,8 +301,12 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       );
     }
 
-    query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`;
-    const res = await this.connection.getClient().query<any>(query);
+    query.text = `
+      ${query.text}
+      ON CONFLICT DO NOTHING
+      RETURNING _id
+    `;
+    const res = await this.connection.getClient().query<{ _id: Uuid }>(query);
     if (res.rowCount !== 1) {
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
       throw new ConflictException();
@@ -312,6 +321,23 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     if (res.rowCount !== 1) {
       throw new InvalidRequestException('Operator not found');
     }
+
+    /**
+     * @deprecated [carpool_v2_migration]
+     * Fetch and add the carpool_id from carpool.carpools to the CEE application
+     */
+    await this.connection.getClient().query<any>({
+      text: `
+        UPDATE ${this.ceeApplicationsTable} ce
+        SET carpool_id = c1._id
+        FROM ${this.carpoolV1Table} c1
+        WHERE c1.operator_id = ce.operator_id
+          AND c1.operator_journey_id = ce.operator_journey_id
+          AND c1.is_driver = true
+          AND ce._id = $1
+      `,
+      values: [res.rows[0]._id],
+    });
 
     // build the return object
     const result: RegisteredCeeApplication = {
