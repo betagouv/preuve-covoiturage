@@ -22,6 +22,7 @@ export class Migrator {
     database: string;
     port: number;
     ssl: boolean;
+    verbose: boolean;
   };
   public readonly dbName: string;
   public readonly dbIsCreated: boolean;
@@ -36,6 +37,7 @@ export class Migrator {
       database: dbUrl.pathname.replace('/', ''),
       port: parseInt(dbUrl.port, 10),
       ssl: false,
+      verbose: false,
     };
     this.dbIsCreated = newDatabase;
     this.dbName = newDatabase
@@ -73,37 +75,40 @@ export class Migrator {
     if (!this.connection) {
       await this.up();
     }
+
+    console.debug('[migrator] seeding...');
+
     await this.connection.getClient().query<any>(`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
-      console.debug(`Seeding company ${company.legal_name}`);
+      this.config.verbose && console.debug(`Seeding company ${company.legal_name}`);
       await this.seedCompany(company);
     }
 
-    console.debug(`Seeding geo`);
+    this.config.verbose && console.debug(`Seeding geo`);
     await this.seedTerritory();
 
     for (const operator of operators) {
-      console.debug(`Seeding operator ${operator.name}`);
+      this.config.verbose && console.debug(`Seeding operator ${operator.name}`);
       await this.seedOperator(operator);
     }
 
     for (const user of users) {
-      console.debug(`Seeding user ${user.email}`);
+      this.config.verbose && console.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
     }
 
     for (const territory_group of territory_groups) {
-      console.debug(`Seeding territory group ${territory_group.name}`);
+      this.config.verbose && console.debug(`Seeding territory group ${territory_group.name}`);
       await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpools) {
-      console.debug(`Seeding carpool ${carpool.acquisition_id}`);
+      this.config.verbose && console.debug(`Seeding carpool ${carpool.acquisition_id}`);
       await this.seedCarpool(carpool);
     }
     for (const carpool of carpoolsV2) {
-      console.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+      this.config.verbose && console.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
       await this.seedCarpoolV2(carpool);
     }
 

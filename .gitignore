@@ -4,6 +4,7 @@ node_modules
 .ignore
 !.vscode/settings.json
 .env
+.pgclirc
 db/*
 
 !docker/dashboard

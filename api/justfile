@@ -136,3 +136,14 @@ serve:
 # List all the APP_ environment variables
 env:
   env | grep APP_ | sort | column -t -s=
+
+# drop remaining test databases
+drop_test_databases:
+  pgcli -l; \
+  echo "Are you sure you want to drop all databases starting with 'test_'? (y/n)"; \
+  read -r response; \
+  if [[ $response =~ ^([yY][eE][sS]|[yY])+$ ]]; then \
+    pgcli -l | rg test_ | awk '{ print $2 }' | while read db; do psql -c "DROP DATABASE ${db};"; done; \
+  else \
+    echo "No database dropped"; \
+  fi

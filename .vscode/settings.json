@@ -5,6 +5,7 @@
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -30,8 +31,7 @@
     "**/*.d.ts": true,
     "api/.nx": true,
     "api/providers/*/src/shared": true,
-    "api/proxy/src/shared": true,
-    "api/services/*/src/shared": true,
+    "api/src/shared": true,
     "dashboard/src/app/core/entities/api/shared": true,
     "public/.next": true,
     "tmp/*": true

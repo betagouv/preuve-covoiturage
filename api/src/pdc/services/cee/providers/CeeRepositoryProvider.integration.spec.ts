@@ -1,7 +1,6 @@
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-
-import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 import { config } from '../config';
 import {
   CeeApplicationErrorEnum,
@@ -12,6 +11,7 @@ import {
   ShortCeeApplication,
   ValidJourneyConstraint,
 } from '../interfaces';
+import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 
 interface TestContext {
   db: DbContext;
@@ -63,22 +63,59 @@ test.serial('Should throw error is no valid journey found', async (t) => {
   t.not(error, undefined);
 });
 
+test.serial('Should find a carpool and checks its registered state', async (t) => {
+  // Search and make sure the journey is not registered
+  const search: SearchJourney = {
+    operator_id: 1,
+    operator_journey_id: 'operator_journey_id-3',
+  };
+
+  const constraint: ValidJourneyConstraint = {
+    ...config.rules.validJourneyConstraint,
+    start_date: new Date('2024-03-16'),
+  };
+
+  const resultBefore = await t.context.repository.searchForValidJourney(search, constraint);
+  t.not(resultBefore, undefined);
+  t.is(resultBefore.phone_trunc, '+336000000');
+  t.is(resultBefore.already_registered, false);
+
+  // Register a journey
+  const application: ShortCeeApplication = {
+    operator_id: 1,
+    operator_journey_id: 'operator_journey_id-3',
+    last_name_trunc: 'ZZZ',
+    phone_trunc: '+336000000',
+    datetime: new Date('2024-03-16'),
+    application_timestamp: new Date('2024-03-16'),
+    driving_license: 'driving_license_100',
+  };
+
+  await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
+
+  // Search for the journey and check if it is already registered
+  const resultAfter = await t.context.repository.searchForValidJourney(search, constraint);
+  t.not(resultAfter, undefined);
+  t.is(resultAfter.phone_trunc, '+336000000');
+  t.is(resultAfter.already_registered, true);
+});
+
 test.serial('Should create short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
     datetime: new Date('2022-11-01'),
     application_timestamp: new Date('2022-11-01'),
     driving_license: 'driving_license_1',
-    carpool_id: 1,
   };
 
   await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
 
   const applicationResults = await t.context.db.connection.getClient().query<any>({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
-      t.context.repository.table
+      t.context.repository.ceeApplicationsTable
     } WHERE operator_id = $1 and last_name_trunc = $2`,
     values: [1, 'AAA'],
   });
@@ -102,7 +139,7 @@ test.serial('Should create long application', async (t) => {
 
   const applicationResults = await t.context.db.connection.getClient().query<any>({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
-      t.context.repository.table
+      t.context.repository.ceeApplicationsTable
     } WHERE operator_id = $1 AND last_name_trunc = $2`,
     values: [1, 'BBB'],
   });
@@ -112,22 +149,23 @@ test.serial('Should create long application', async (t) => {
   t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
-test.serial('Search should be equals as new registration', async (t) => {
+test.serial('Search should be equal to the new registration', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
+    operator_journey_id: 'operator_journey_id-2',
     last_name_trunc: 'BBA',
     phone_trunc: '+3361100000000',
     datetime: new Date('2022-11-01'),
     application_timestamp: new Date('2022-11-01'),
     driving_license: 'driving_license_3',
     identity_key: 'search_1',
-    carpool_id: 2,
   };
 
   const createResult = await t.context.repository.registerShortApplication(
     application,
     config.rules.applicationCooldownConstraint,
   );
+
   const searchResult = await t.context.repository.searchForShortApplication(
     {
       datetime: application.datetime,
@@ -135,21 +173,24 @@ test.serial('Search should be equals as new registration', async (t) => {
     } as any,
     config.rules.applicationCooldownConstraint,
   );
-  const { acquisition_id, acquisition_status, ...otherSearchResult } = searchResult || {};
-  t.deepEqual(createResult, otherSearchResult);
-  t.is(acquisition_id, 1);
-  t.is(acquisition_status, 'ok');
+
+  const { journey_id, operator_journey_id, acquisition_status, fraud_status, ...match } = searchResult || {};
+
+  t.deepEqual(createResult, match);
+  t.is(operator_journey_id, 'operator_journey_id-2');
+  t.is(acquisition_status, CarpoolAcquisitionStatusEnum.Processed);
+  t.is(fraud_status, CarpoolFraudStatusEnum.Pending);
 });
 
 test.serial('Should raise error if conflict short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
     datetime: new Date('2022-11-02'),
     application_timestamp: new Date('2022-11-02'),
     driving_license: 'driving_license_1',
-    carpool_id: 1,
   };
 
   const error = await t.throwsAsync(
@@ -255,7 +296,7 @@ test.serial('Should not find long application with name match if id key is not n
   t.is(result, undefined);
 });
 
-test.serial('Should find short application with id key if exists', async (t) => {
+test.serial('Should find long application with id key if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'EEE',
     phone_trunc: '+336000000777',
@@ -344,10 +385,10 @@ test.serial('Should match cooldown criteria', async (t) => {
   });
 });
 
-test.serial('Should resgister application error', async (t) => {
+test.serial('Should register application error', async (t) => {
   const uuidResult = await t.context.db.connection
     .getClient()
-    .query<any>(`SELECT _id FROM ${t.context.repository.table} LIMIT 1`);
+    .query<any>(`SELECT _id FROM ${t.context.repository.ceeApplicationsTable} LIMIT 1`);
   const data1 = {
     operator_id: 1,
     error_type: CeeApplicationErrorEnum.Conflict,
@@ -391,7 +432,7 @@ test.serial('Should import identity_key', async (t) => {
 
   await t.context.repository.importSpecificApplicationIdentity(app1);
   const result1 = await t.context.db.connection.getClient().query<any>({
-    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE phone_trunc = $1`,
+    text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE phone_trunc = $1`,
     values: [app1.phone_trunc],
   });
   t.is(result1.rows[0].identity_key, app1.identity_key);
@@ -401,7 +442,7 @@ test.serial('Should import identity_key', async (t) => {
   const uuidResult = await t.context.db.connection.getClient().query<any>(
     `SELECT
         _id as cee_application_uuid, operator_id
-      FROM ${t.context.repository.table}
+      FROM ${t.context.repository.ceeApplicationsTable}
       WHERE
         identity_key is null AND is_specific = false
       LIMIT 1`,
@@ -412,7 +453,7 @@ test.serial('Should import identity_key', async (t) => {
   };
   await t.context.repository.importStandardizedApplicationIdentity(app2);
   const result2 = await t.context.db.connection.getClient().query<any>({
-    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE _id = $1`,
+    text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE _id = $1`,
     values: [app2.cee_application_uuid],
   });
   t.is(result2.rows[0].identity_key, app2.identity_key);
