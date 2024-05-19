@@ -57,25 +57,25 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.getCell('A20').alignment = { horizontal: 'center', vertical: 'middle'};
     ws.getCell('A20').border = { bottom: { style: 'thin' } };
 
-    ws.getCell('A22').value = 'operator_journey_id';
+    ws.getCell('A22').value = 'rpc_journey_id';
     ws.mergeCells('B22:D22');
-    ws.getCell('B22').value = 'Identifiant du trajet envoyé par l\'opérateur';
+    ws.getCell('B22').value = 'Identifiant du trajet pour le RPC';
 
-    ws.getCell('A23').value = 'operator_trip_id';
+    ws.getCell('A23').value = 'operator_journey_id';
     ws.mergeCells('B23:D23');
-    ws.getCell('B23').value = 'Identifiant de regroupement par conducteur envoyé par l\'opérateur';
+    ws.getCell('B23').value = 'Identifiant du trajet envoyé par l\'opérateur';
 
-    ws.getCell('A24').value = 'trip_id';
+    ws.getCell('A24').value = 'operator_trip_id';
     ws.mergeCells('B24:D24');
-    ws.getCell('B24').value = 'Identifiant de regroupement par conducteur calculé par le RPC';
+    ws.getCell('B24').value = 'Identifiant de regroupement par conducteur envoyé par l\'opérateur';
 
     ws.getCell('A25').value = 'start_datetime';
     ws.mergeCells('B25:D25');
-    ws.getCell('B25').value = 'Date et heure de début du trajet (UTC)';
+    ws.getCell('B25').value = 'Date et heure de début du trajet';
 
     ws.getCell('A26').value = 'end_datetime';
     ws.mergeCells('B26:D26');
-    ws.getCell('B26').value = 'Date et heure de fin du trajet (UTC)';
+    ws.getCell('B26').value = 'Date et heure de fin du trajet';
 
     ws.getCell('A27').value = 'start_location';
     ws.mergeCells('B27:D27');
@@ -117,11 +117,11 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.mergeCells('B36:D36');
     ws.getCell('B36').value = 'Classe du trajet envoyée par l\'opérateur (A, B, C)';
 
-    ws.getCell('A37').value = 'operator_driver_id';
+    ws.getCell('A37').value = 'driver_operator_user_id';
     ws.mergeCells('B37:D37');
     ws.getCell('B37').value = 'Identifiant du conducteur envoyé par l\'opérateur';
 
-    ws.getCell('A38').value = 'operator_passenger_id';
+    ws.getCell('A38').value = 'passenger_operator_user_id';
     ws.mergeCells('B38:D38');
     ws.getCell('B38').value = 'Identifiant du passager envoyé par l\'opérateur';
 

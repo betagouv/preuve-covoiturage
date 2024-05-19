@@ -15,25 +15,25 @@ function sortRowValues(values: Row['values']): Row['values'] {
 let dataWorkBookWriter: TripsWorksheetWriter;
 
 const exportTripInterface: APDFTripInterface = {
-  operator_journey_id: faker.string.uuid().toUpperCase(),
-  trip_id: faker.string.uuid().toUpperCase(),
-  operator_trip_id: faker.string.uuid().toUpperCase(),
-  start_datetime: faker.date.past({ years: 2 }).toISOString(),
+  distance: faker.number.int({ min: 1_500, max: 150_000 }),
+  driver_operator_user_id: faker.string.uuid().toUpperCase(),
+  duration: faker.number.int({ min: 300, max: 3600 }),
   end_datetime: faker.date.future({ years: 2 }).toISOString(),
-  start_location: faker.location.city(),
-  start_epci: faker.location.city(),
-  start_insee: faker.string.numeric(5),
-  end_location: faker.location.city(),
   end_epci: faker.location.city(),
   end_insee: faker.string.numeric(5),
-  duration: faker.number.int({ min: 300, max: 3600 }),
-  distance: faker.number.int({ min: 1_500, max: 150_000 }),
-  operator: faker.company.name(),
-  operator_class: 'C',
-  operator_driver_id: faker.string.uuid().toUpperCase(),
-  operator_passenger_id: faker.string.uuid().toUpperCase(),
+  end_location: faker.location.city(),
   incentive_type: faker.helpers.arrayElement(['normale', 'booster']),
+  operator_class: 'C',
+  operator_journey_id: faker.string.uuid().toUpperCase(),
+  operator_trip_id: faker.string.uuid().toUpperCase(),
+  operator: faker.company.name(),
+  passenger_operator_user_id: faker.string.uuid().toUpperCase(),
   rpc_incentive: faker.number.int(1000),
+  rpc_journey_id: faker.string.uuid().toUpperCase(),
+  start_datetime: faker.date.past({ years: 2 }).toISOString(),
+  start_epci: faker.location.city(),
+  start_insee: faker.string.numeric(5),
+  start_location: faker.location.city(),
 };
 
 test.before((t) => {
@@ -90,6 +90,6 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   );
   t.is(
     workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).getCell(1).value,
-    exportTripInterface.operator_journey_id,
+    exportTripInterface.rpc_journey_id,
   );
 });
