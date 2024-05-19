@@ -153,7 +153,7 @@ test.serial(
 );
 
 test.serial(
-  'Successful registration',
+  'Successful registration 1',
   success,
   defaultShortPayload,
   {
@@ -171,6 +171,75 @@ test.serial(
   },
   defaultContext,
 );
+
+/**
+ * @deprecated [carpool_v2_migration]
+ */
+test.serial(
+  'Successful registration 2',
+  success,
+  {
+    ...defaultShortPayload,
+    operator_journey_id: 'operator_journey_id-2',
+    last_name_trunc: 'DEF',
+    driving_license: '051227308990',
+    identity_key: '1'.repeat(64),
+  },
+  {
+    datetime: '2024-03-16T00:15:00.000Z',
+    status: CarpoolV1StatusEnum.Ok,
+    token: (function (): string {
+      const private_key = config.signature.private_key as string;
+      const signer = createSign('RSA-SHA512');
+      signer.write(['89248032800012', 'short', '051227308990', '2024-03-16T00:15:00.000Z'].join('/'));
+      signer.end();
+      return signer.sign(private_key, 'base64');
+    })(),
+  },
+  defaultContext,
+);
+
+/**
+ * @deprecated [carpool_v2_migration]
+ */
+test.serial(
+  'Successful registration 3',
+  success,
+  {
+    ...defaultShortPayload,
+    operator_journey_id: 'operator_journey_id-3',
+    last_name_trunc: 'GHI',
+    driving_license: '051227308991',
+    identity_key: '2'.repeat(64),
+  },
+  {
+    datetime: '2024-03-16T00:15:00.000Z',
+    status: CarpoolV1StatusEnum.Ok,
+    token: (function (): string {
+      const private_key = config.signature.private_key as string;
+      const signer = createSign('RSA-SHA512');
+      signer.write(['89248032800012', 'short', '051227308991', '2024-03-16T00:15:00.000Z'].join('/'));
+      signer.end();
+      return signer.sign(private_key, 'base64');
+    })(),
+  },
+  defaultContext,
+);
+
+/**
+ * @deprecated [carpool_v2_migration]
+ */
+test.serial('Ensure deprecated carpool_id are properly inserted', async (t) => {
+  const result = await t.context.db.connection.getClient().query<any>(`
+    SELECT carpool_id, operator_id, operator_journey_id
+    FROM cee.cee_applications
+    ORDER BY operator_journey_id
+  `);
+  t.is(result.rowCount, 3);
+  t.deepEqual(result.rows[0], { carpool_id: 1, operator_id: 1, operator_journey_id: 'operator_journey_id-1' });
+  t.deepEqual(result.rows[1], { carpool_id: 3, operator_id: 1, operator_journey_id: 'operator_journey_id-2' });
+  t.deepEqual(result.rows[2], { carpool_id: 5, operator_id: 1, operator_journey_id: 'operator_journey_id-3' });
+});
 
 test.serial(
   'Conflict',

@@ -42,7 +42,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
         'APP_POSTGRES_KEEP_TEST_DATABASES' in process.env &&
         process.env.APP_POSTGRES_KEEP_TEST_DATABASES === 'true'
       ) {
-        console.info(`[db-macro] Keeping the test database: ${ctx.db.dbName}. Run 'just drop_test_databases to clear'`);
+        console.info(`[db-macro] Keeping the test database: ${ctx.db.dbName} run 'just drop_test_databases to clear'`);
       } else {
         await ctx.db.drop();
       }
