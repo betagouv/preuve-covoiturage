@@ -61,7 +61,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   protected slices: RunnableSlices = [
     {
       start: 5_000,
-      end: 79_999,
+      end: 80_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
     },
   ];
