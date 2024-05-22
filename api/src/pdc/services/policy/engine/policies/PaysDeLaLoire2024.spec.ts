@@ -45,35 +45,66 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusion',
+  'should work with regular exclusions',
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
       { distance: 4999 },
       { operator_class: 'A' },
-
-      // Nantes Métropole (244400404)
-      { start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition, aom: '244400404' } },
-
-      // Angers (244900015)
-      { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },
-
-      // Le Mans (247200132)
-      { start: { ...defaultPosition, aom: '247200132' }, end: { ...defaultPosition, aom: '247200132' } },
-
-      // CA Agglomération du Choletais (200071678)
-      { start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition, aom: '200071678' } },
-
-      // Région Île-de-France
       { start: { ...defaultPosition, reg: '11' } },
       { end: { ...defaultPosition, reg: '11' } },
       { distance: 60_001 },
       { passenger_is_over_18: false },
     ],
-    meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0] },
+);
+
+test(
+  'should work with AOM exclusions',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      // Nantes Métropole (244400404)
+      {
+        driver_identity_key: 'nantes',
+        start: { ...defaultPosition, aom: '244400404' },
+        end: { ...defaultPosition, aom: '244400404' },
+      },
+      { driver_identity_key: 'nantes', start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition } },
+      { driver_identity_key: 'nantes', start: { ...defaultPosition }, end: { ...defaultPosition, aom: '244400404' } },
+
+      // Angers (244900015)
+      {
+        driver_identity_key: 'angers',
+        start: { ...defaultPosition, aom: '244900015' },
+        end: { ...defaultPosition, aom: '244900015' },
+      },
+      { driver_identity_key: 'angers', start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition } },
+      { driver_identity_key: 'angers', start: { ...defaultPosition }, end: { ...defaultPosition, aom: '244900015' } },
+
+      // Le Mans (247200132)
+      {
+        driver_identity_key: 'le_mans',
+        start: { ...defaultPosition, aom: '247200132' },
+        end: { ...defaultPosition, aom: '247200132' },
+      },
+      { driver_identity_key: 'le_mans', start: { ...defaultPosition, aom: '247200132' }, end: { ...defaultPosition } },
+      { driver_identity_key: 'le_mans', start: { ...defaultPosition }, end: { ...defaultPosition, aom: '247200132' } },
+
+      // CA Agglomération du Choletais (200071678)
+      {
+        driver_identity_key: 'cholet',
+        start: { ...defaultPosition, aom: '200071678' },
+        end: { ...defaultPosition, aom: '200071678' },
+      },
+      { driver_identity_key: 'cholet', start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition } },
+      { driver_identity_key: 'cholet', start: { ...defaultPosition }, end: { ...defaultPosition, aom: '200071678' } },
+    ],
+  },
+  { incentive: [0, 75, 75, 0, 75, 75, 0, 75, 75, 0, 75, 75] },
 );
 
 test(

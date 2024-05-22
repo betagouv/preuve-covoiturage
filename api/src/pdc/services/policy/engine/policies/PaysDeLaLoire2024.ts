@@ -67,8 +67,8 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
     /*
       Exclure les trajets :
        - 244400404: Nantes Métropole -> Nantes Métropole,
-       - 244900015: Angers -> Angers,
-       - 247200132: Le Mans -> Le Mans, 
+       - 244900015: CU Angers Loire Métropole -> CU Angers Loire Métropole,
+       - 247200132: CU Le Mans Métropole -> CU Le Mans Métropole,
        - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
      */
     if (
