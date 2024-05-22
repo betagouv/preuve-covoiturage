@@ -22,6 +22,8 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './GrandPoitiers.html';
 
 // Politique Grands poitiers
+// territory_id: 323
+// aom: 200069854
 export const GrandPoitiers: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
