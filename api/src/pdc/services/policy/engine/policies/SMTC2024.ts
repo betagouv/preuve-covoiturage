@@ -21,6 +21,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './SMTC2024.html';
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
+// aom = 256300120
 export const SMTC2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
