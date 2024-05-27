@@ -15,27 +15,27 @@ update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 import pandas as pd
 from sqlalchemy import create_engine, text
-from helpers.apply_metods import add_overlap_columns 
+from helpers.apply_metods import add_overlap_columns
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 query = f"""
-SELECT cc._id, operator_id, cc.datetime, cc.duration, cc.identity_id, cc.operator_journey_id, start_geo_code, end_geo_code, 
+SELECT cc._id, cc.operator_id, cc.datetime, cc.duration, cc.identity_id, cc.operator_journey_id, start_geo_code, end_geo_code,
 cc.trip_id,
 cc.is_driver,
 ci.identity_key,
 ci.operator_user_id,
-CASE 
+CASE
       WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
       ELSE ci.phone_trunc
       END AS phone_trunc,
-cc.start_position, 
+cc.start_position,
 cc.end_position
 FROM CARPOOL.CARPOOLS CC
 JOIN carpool.identities ci on cc.identity_id = ci._id
     WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
 	AND CC.DATETIME < NOW() - '{delay} hours'::interval and
-      cc.is_driver = false 
+      cc.is_driver = false
 """
 
 with engine.connect() as conn:
@@ -76,7 +76,7 @@ df_row_to_keep = grouped_tmp.nth(0).reset_index(drop=False)
 
 df_row_to_flag = df_final_result[~df_final_result._id.isin(df_row_to_keep['_id'])]
 
-def add_conflicting_carpool_id(row): 
+def add_conflicting_carpool_id(row):
     # recherche de la row carpool flaguée à partir du carpool_id
     df_row_to_flag_mask = df_row_to_flag['_id'] == row['carpool_id']
     df_carpool_row_flaged = df_row_to_flag[df_row_to_flag_mask]
@@ -102,7 +102,7 @@ if update_carpool_status is True:
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool.carpools']
-    
+
     print(f"Updating {len(df_labels['carpool_id'])} carpools with anomaly_error")
 
     where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())

@@ -10,7 +10,7 @@ import os
 connection_string = os.environ['PG_CONNECTION_STRING']
 delay = os.environ['DELAY']
 frame = os.environ['FRAME']
-update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False 
+update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 osrm_url = os.environ['OSRM_URL']
 
 
@@ -23,17 +23,17 @@ from sqlalchemy import create_engine, text
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 query = f"""
-SELECT cc._id, operator_id, cc.datetime, cc.duration, cc.distance, cc.identity_id, cc.operator_journey_id, start_geo_code, end_geo_code, 
+SELECT cc._id, cc.operator_id, cc.datetime, cc.duration, cc.distance, cc.identity_id, cc.operator_journey_id, start_geo_code, end_geo_code,
 cc.trip_id,
 cc.is_driver,
 cc.operator_class,
 ci.operator_user_id,
-CASE 
+CASE
       WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
       ELSE ci.phone_trunc
       END AS phone_trunc,
 ST_X(ST_AsText(cc.start_position)) start_x,
-ST_Y(ST_AsText(cc.start_position)) start_y, 
+ST_Y(ST_AsText(cc.start_position)) start_y,
 ST_X(ST_AsText(cc.end_position)) end_x,
 ST_Y(ST_AsText(cc.end_position)) end_y
 FROM CARPOOL.CARPOOLS CC
@@ -43,7 +43,7 @@ JOIN carpool.identities ci on cc.identity_id = ci._id
 JOIN policy.incentives pi on pi.carpool_id = cc._id
 WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
 	AND CC.DATETIME < NOW() - '{delay} hours'::interval and
-      cc.is_driver = true 
+      cc.is_driver = true
 """
 
 with engine.connect() as conn:
@@ -79,11 +79,11 @@ df_only_class_c_trip = df_carpool[operator_class_c_mask]
 
 
 # Sur les trajets de class C
-# 
+#
 # https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/quest-ce-que-cest/classes-de-preuve-and-identite/classes-a-b-c
-# 
-# # Relever les trajets : 
-# - Qui ont une distance estimée par osrm ou transmises inférieure à 300m. 
+#
+# # Relever les trajets :
+# - Qui ont une distance estimée par osrm ou transmises inférieure à 300m.
 #     * Le trajet est beaucoup trop court en termes de distance
 # - Qui ont une durée estimée par osrm ou transmises inférieures à 1 minute.
 #     * Le trajet est beaucoup trop court en termes de durée
@@ -126,7 +126,7 @@ if update_carpool_status is True:
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool.carpools']
-    
+
     where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='anomaly_error')
