@@ -4,7 +4,6 @@ import { toISOString } from '../helpers';
 
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import {
-  LockInformationInterface,
   PolicyRepositoryProviderInterfaceResolver,
   SerializedPolicyInterface,
 } from '../interfaces';
@@ -14,79 +13,9 @@ import {
 })
 export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.policies';
-  public readonly lockTable = 'policy.lock';
   public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
 
   constructor(protected connection: PostgresConnection) {}
-
-  async getLock(): Promise<{ _id: number; started_at: Date } | null> {
-    const conn = await this.connection.getClient().connect();
-    await conn.query<any>('BEGIN');
-    try {
-      const res = await conn.query<any>(`
-        SELECT true
-        FROM ${this.lockTable}
-        WHERE stopped_at IS NULL AND started_at >= NOW() - '23 hours'::interval
-        ORDER BY _id DESC
-        LIMIT 1
-        FOR UPDATE
-      `);
-      if (res.rowCount >= 1) {
-        return null;
-      }
-      await conn.query<any>(`
-        UPDATE ${this.lockTable} SET stopped_at = NOW(), success = false WHERE stopped_at IS NULL
-      `);
-      const lock = await conn.query<any>(`
-        INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
-        RETURNING _id, started_at
-      `);
-      if (!lock.rowCount) throw new Error('Failed to acquire lock');
-      await conn.query<any>('COMMIT');
-      return lock.rows[0];
-    } catch (e) {
-      await conn.query<any>('ROLLBACK');
-      throw e;
-    } finally {
-      conn.release();
-    }
-  }
-
-  async releaseLock(lockInformation?: LockInformationInterface): Promise<void> {
-    const data = {
-      ...(lockInformation || {}),
-      error: JSON.parse(
-        lockInformation?.error instanceof Error
-          ? JSON.stringify(lockInformation?.error, Object.getOwnPropertyNames(lockInformation?.error))
-          : null,
-      ),
-    };
-
-    await this.connection.getClient().query<any>({
-      text: `UPDATE ${this.lockTable} SET
-        stopped_at = now(),
-        success = $1,
-        data = $2
-      WHERE stopped_at IS NULL
-      `,
-      values: [lockInformation?.error ? false : true, JSON.stringify(data)],
-    });
-
-    console.info('[campaign:finalize] incentive lock released');
-  }
-
-  async clearDeadLocks(): Promise<void> {
-    console.warn(`Clearing dead locks from ${this.lockTable} table`);
-
-    const res = await this.connection.getClient().query<any>(`
-      UPDATE ${this.lockTable}
-      SET stopped_at = NOW(), success = false, data = '{"command":"campaign:finalize --clear","manual":true}'
-      WHERE stopped_at IS NULL
-      RETURNING _id
-    `);
-
-    console.warn(`Cleared ${res.rowCount} dead locks`);
-  }
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
     const query = {
