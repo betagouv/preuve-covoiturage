@@ -22,6 +22,8 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './GrandPoitiers.html';
 
 // Politique Grands poitiers
+// territory_id: 323
+// aom: 200069854
 export const GrandPoitiers: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
@@ -61,7 +63,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   protected slices: RunnableSlices = [
     {
       start: 5_000,
-      end: 79_999,
+      end: 80_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
     },
   ];
