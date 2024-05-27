@@ -1,6 +1,6 @@
 import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { toISOString } from '@pdc/helpers/date.helper';
+import { toISOString } from '@pdc/helpers/dates.helper';
 import { copyFromContextMiddleware } from '@pdc/providers/middleware';
 import {
   handlerConfigV2,

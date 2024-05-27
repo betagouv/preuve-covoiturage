@@ -7,7 +7,7 @@ import {
   subDaysTz,
   toISOString,
   toTzString,
-} from './date.helper';
+} from './dates.helper';
 
 function toTzStringParis(d: Date): string {
   return toTzString(d, 'Europe/Paris');
@@ -16,7 +16,6 @@ function toTzStringParis(d: Date): string {
 test('marginals', (t) => {
   t.is(castUserStringToUTC('Europe/Paris', undefined), undefined);
   t.is(castUserStringToUTC('Europe/Paris', null), undefined);
-  // @ts-expect-error
   t.is(castUserStringToUTC('Europe/Paris', 'kjahdkjhsad'), undefined);
 });
 

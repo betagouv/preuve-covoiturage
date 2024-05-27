@@ -12,7 +12,16 @@ import { startOfMonth } from "@/pdc/services/trip/helpers/getDefaultDates.ts";
 
 export const defaultTz = "Europe/Paris";
 
-// Regular UTC toISOString
+/**
+ * Regular UTC toISOString.
+ *
+ * The same as native toISOString but safer.
+ *
+ * @example toISOString(new Date())
+ *
+ * @param Date
+ * @returns string
+ */
 export function toISOString(d: Date): string {
   try {
     return d.toISOString();
@@ -21,8 +30,19 @@ export function toISOString(d: Date): string {
   }
 }
 
-// convert a Date to a string in the User timezone
-export function toTzString(d: Date, tz?: Timezone): string {
+/**
+ * Convert a Date to a string in the User timezone
+ *
+ * Default string format is yyyy-MM-dd'T'HH:mm:ssXX
+ *
+ * @example toTzString(new Date(), 'Europe/Paris', 'yyyy-MM-dd')
+ *
+ * @param Date | string | number
+ * @param Timezone
+ * @param string
+ * @returns string
+ */
+export function toTzString(d: Date | string | number, tz = defaultTz, format = "yyyy-MM-dd'T'HH:mm:ssXX"): string {
   try {
     return formatInTimeZone(
       d,
@@ -49,7 +69,7 @@ export function castUserStringToUTC(
   // a short-form date (YYYY-MM-DD) has no timezone
   // the User timezone is applied and the date is converted to UTC
   if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(d)) {
-    return fromZonedTime(d, tz || defaultTz);
+    return fromZonedTime(d, tz);
   }
 
   // a full-short date (YYYY-MM-DDTHH:mm:ssZZ) has a timezone
@@ -67,7 +87,13 @@ export function dateWithTz(date: Date, tz?: Timezone): Date {
   );
 }
 
-export function today(tz?: Timezone): Date {
+/**
+ * Local today
+ *
+ * @example today()
+ * @example today('Europe/Paris')
+ */
+export function today(tz = defaultTz): Date {
   return dateWithTz(new Date(), tz);
 }
 

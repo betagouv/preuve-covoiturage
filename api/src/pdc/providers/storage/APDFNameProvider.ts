@@ -1,5 +1,5 @@
 import { provider, ProviderInterface } from '@ilos/common';
-import { toTzString } from '@pdc/helpers/date.helper';
+import { toTzString } from '@pdc/helpers/dates.helper';
 import { sanitize } from '@pdc/helpers/string.helper';
 import os from 'os';
 import path from 'path';

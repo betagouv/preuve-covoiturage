@@ -1,4 +1,4 @@
-import { toTzString } from '@pdc/helpers/date.helper';
+import { toTzString } from '@pdc/helpers/dates.helper';
 import { Timezone } from '@pdc/providers/validator';
 import {
   OperatorsEnum,
