@@ -25,40 +25,123 @@ export interface ExportRepositoryInterface {
   addRecipient(export_id: number, recipient: ExportRecipient): Promise<void>;
 }
 
-export abstract class ExportRepositoryInterfaceResolver
-  implements ExportRepositoryInterface {
+export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
+  /**
+   * Create an new export in the database
+   *
+   * The export is created with a `pending` status.
+   * Recipients are added to the export if passed in the data and
+   * the creator is added as a recipient if not already in the list.
+   *
+   * @param {ExportCreateData} data
+   * @returns {Promise<Export>}
+   */
   public async create(data: ExportCreateData): Promise<Export> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Get an export by its id
+   *
+   * @param {number} id
+   * @returns {Promise<Export>}
+   */
   public async get(id: number): Promise<Export> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Update an export by its id
+   *
+   * State information can be updated with this method, not the configuration
+   * of the initial export.
+   *
+   * @param {number} id
+   * @param {ExportUpdateData} data
+   * @returns {Promise<void>}
+   */
   public async update(id: number, data: ExportUpdateData): Promise<void> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Hard delete an export by its id
+   *
+   * @param {number} id
+   * @returns {Promise<void>}
+   */
   public async delete(id: number): Promise<void> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * List all exports
+   *
+   * @todo add pagination
+   * @todo add filters (user_id, status, ...)
+   *
+   * @returns {Promise<Export[]>}
+   */
   public async list(): Promise<Export[]> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Set the status of an export
+   *
+   * @param {number} id
+   * @param {ExportStatus} status
+   * @returns {Promise<void>}
+   */
   public async status(id: number, status: ExportStatus): Promise<void> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Set the error context of an export
+   *
+   * @param {number} id
+   * @param {string | Error} error
+   * @returns {Promise<void>}
+   */
   public async error(id: number, error: string): Promise<void> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Progress callback
+   *
+   * to be injected in the carpool repository to be able
+   * to update the `progress` field of the export as the export is running
+   *
+   * @param {number} id
+   * @returns {ExportProgress}
+   */
   public async progress(id: number): Promise<ExportProgress> {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Pick pending exports
+   *
+   * Exports are picked in a FIFO manner (older first).
+   *
+   * @returns {Promise<Export | null>}
+   */
   public async pickPending(): Promise<Export | null> {
     throw new Error("Not implemented");
   }
-  public async addRecipient(
-    export_id: number,
-    recipient: ExportRecipient,
-  ): Promise<void> {
-    throw new Error("Not implemented");
+
+  /**
+   * Add a recipient to an export
+   *
+   * Recipients will receive notifications when the export is done.
+   *
+   * @param {number} export_id
+   * @param {ExportRecipient} recipient
+   */
+  public async addRecipient(export_id: number, recipient: ExportRecipient): Promise<void> {
+    throw new Error('Not implemented');
   }
 }
 
@@ -166,8 +249,6 @@ export class ExportRepository implements ExportRepositoryInterface {
     });
   }
 
-  // progress callback to be injected in the carpool repository
-  // to be able to update the `progress` field of the export as the export is running
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
       await this.connection.getClient().query<any>({

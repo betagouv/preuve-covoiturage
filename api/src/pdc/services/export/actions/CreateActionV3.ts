@@ -72,8 +72,6 @@ export class CreateActionV3 extends AbstractAction {
         start_at: params.start_at,
         end_at: params.end_at,
         operator_id: params.operator_id,
-        // TODO add support for the territory_id (territory_group._id)
-        // TODO add support for the SIREN to select the territory
         geo_selector: params.geo_selector,
       }),
     });

@@ -12,6 +12,13 @@ export type Params = {
   tz: Timezone;
 };
 
+/**
+ * Configure for the export
+ *
+ * @todo add validation
+ * @todo add support for territory_id (territory_group._id)
+ * @todo add support for SIREN
+ */
 export class ExportParams {
   protected params: Params;
 
@@ -30,12 +37,24 @@ export class ExportParams {
     this.params = this.normalize(config);
   }
 
+  /**
+   * Normalize params
+   *
+   * @todo normalize params
+   * @todo apply limits to dates, etc...
+   *
+   * @param {Config} config
+   * @returns {Params}
+   */
   protected normalize(config: Config): Params {
-    // TODO normalize params
-    // apply limits to dates, etc...
     return { ...this.defaultConfig, ...config };
   }
 
+  /**
+   * Getter for params
+   *
+   * @returns {Params}
+   */
   public get(): Params {
     if (!this.params) {
       throw new Error(`${__filename} not initialized`);
@@ -44,9 +63,16 @@ export class ExportParams {
     return this.params;
   }
 
-  // convert geo_selector to SQL WHERE clause
-  // using AND or OR to join start and end positions
-  public geoToSQL(mode: "AND" | "OR" = "OR"): string {
+  /**
+   * Convert geo_selector to SQL WHERE clause
+   *
+   * Using AND or OR to join start and end positions.
+   * Default is OR.
+   *
+   * @param {string} mode
+   * @returns {string}
+   */
+  public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
     const { geo_selector } = this.params;
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
@@ -64,7 +90,11 @@ export class ExportParams {
     return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
   }
 
-  // convert operator_id to SQL WHERE clause
+  /**
+   * convert operator_id to SQL WHERE clause
+   *
+   * @returns {string}
+   */
   public operatorToSQL(): string {
     const { operator_id } = this.params;
     return operator_id.length
@@ -72,15 +102,38 @@ export class ExportParams {
       : "";
   }
 
-  // TODO to AbstractParams class
-  protected validate<T>(config: T): void {
-    // TODO validate params against schema or throw InvalidParamsException
-  }
+  /**
+   * Validate params
+   *
+   * @todo to AbstractParams class
+   * @todo validate params against schema or throw InvalidParamsException
+   *
+   * @param {Config} config
+   */
+  protected validate<T>(config: T): void {}
 
+  /**
+   * Create ExportParams from JSON
+   *
+   * This is needed when gettin configuration from the database.
+   * Specific convert rules can be applied here.
+   *
+   * @param {Config} json
+   * @returns {ExportParams}
+   */
   public static fromJSON(json: Config): ExportParams {
     return new ExportParams(json);
   }
 
+  /**
+   * Convert ExportParams to JSON
+   *
+   * This is needed to store the configuration in the database.
+   * Specific convert rules can be applied here.
+   *
+   * @param {ExportParams} params
+   * @returns {Config}
+   */
   public static toJSON(params: ExportParams): Config {
     return params.get();
   }
