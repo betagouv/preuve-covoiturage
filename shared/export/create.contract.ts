@@ -1,9 +1,13 @@
 import { Timezone } from '@pdc/providers/validator';
+import { ExportStatus, ExportTarget } from '@pdc/services/export/models/Export';
 import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
-import { ExportStatus, ExportTarget } from '../../pdc/services/export/models/Export';
 
-// Legacy API for the Angular frontend to be replaced.
-// Not all features are supported.
+/**
+ * Legacy API for the Angular frontend to be replaced.
+ * Not all features are supported.
+ *
+ * @deprecated
+ */
 export type ParamsInterfaceV2 = {
   tz?: Timezone;
   date: {
@@ -17,6 +21,9 @@ export type ParamsInterfaceV2 = {
   geo_selector?: TerritorySelectorsInterface;
 };
 
+/**
+ * @deprecated
+ */
 export type ResultInterfaceV2 = any; // TODO convert V3 return to V2 return
 
 export type ParamsInterfaceV3 = {
@@ -28,6 +35,7 @@ export type ParamsInterfaceV3 = {
   operator_id: number[];
   geo_selector?: TerritorySelectorsInterface;
 };
+
 export type ResultInterfaceV3 = {
   uuid: string;
   target: ExportTarget;
@@ -36,11 +44,17 @@ export type ResultInterfaceV3 = {
   end_at: Date;
 };
 
+/**
+ * @deprecated
+ */
 export const handlerConfigV2 = {
   service: 'export',
   method: 'createVersionTwo',
 } as const;
 
+/**
+ * @deprecated
+ */
 export const signatureV2 = `${handlerConfigV2.service}:${handlerConfigV2.method}` as const;
 
 export const handlerConfigV3 = {

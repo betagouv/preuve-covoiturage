@@ -26,11 +26,18 @@ test.before((t) => {
 // TESTS
 // ----------------------------------------------------------------------------------------
 
+// AJV requires dates to be strings and checks their format
 type AJVParamsInterfaceV3 = Omit<ParamsInterfaceV3, 'start_at' | 'end_at'> & {
   start_at: string;
   end_at: string;
 };
 
+/**
+ * Setup all tests and their expected results.
+ *
+ * We want to make sure that the CreateActionV2 class
+ * converts the params from V2 to V3 correctly
+ */
 const configs: Array<{ context: ContextType; v2: ParamsInterfaceV2; v3: AJVParamsInterfaceV3 }> = [
   // default call with minimum params
   {

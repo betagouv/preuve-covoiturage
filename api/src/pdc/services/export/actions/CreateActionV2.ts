@@ -13,6 +13,9 @@ import {
 import { aliasV2 } from '@shared/export/create.schema';
 import { DefaultTimezoneMiddleware } from '../middlewares/DefaultTimezoneMiddleware';
 
+/**
+ * @deprecated
+ */
 @handler({
   ...handlerConfigV2,
   middlewares: [
