@@ -15,6 +15,7 @@ export type ExportProgress = (progress: number) => Promise<void>;
 export interface ExportRepositoryInterface {
   create(data: ExportCreateData): Promise<Export>;
   get(id: number): Promise<Export>;
+  get(id: string): Promise<Export>;
   update(id: number, data: ExportUpdateData): Promise<void>;
   delete(id: number): Promise<void>;
   list(): Promise<Export[]>;
@@ -46,8 +47,19 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
    * @param {number} id
    * @returns {Promise<Export>}
    */
-  public async get(id: number): Promise<Export> {
-    throw new Error("Not implemented");
+  public async get(id: number): Promise<Export>;
+
+  /**
+   * Get an export by its UUID
+   *
+   * @param {string} id
+   * @returns {Promise<Export>}
+   */
+  public async get(id: string): Promise<Export>;
+
+  // Method overloading implementation
+  public async get(id: number | string): Promise<Export> {
+    throw new Error('Not implemented');
   }
 
   /**
@@ -181,9 +193,10 @@ export class ExportRepository implements ExportRepositoryInterface {
     return exp;
   }
 
-  public async get(id: number): Promise<Export> {
+  public async get(id: number | string): Promise<Export> {
+    const field = typeof id === 'number' ? '_id' : 'uuid';
     const { rows } = await this.connection.getClient().query<any>({
-      text: `SELECT * FROM ${this.exportsTable} WHERE _id = $1`,
+      text: `SELECT * FROM ${this.exportsTable} WHERE ${field} = $1`,
       values: [id],
     });
     return Export.fromJSON(rows[0]);

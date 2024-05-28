@@ -924,6 +924,24 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
+  /**
+   * Export routes
+   *
+   * Export V2 is using the /rpc route with the following methods:
+   * - trip:export
+   * - trip:publishOpenData
+   *
+   * Export V3 is using a REST API with the following routes:
+   * - POST /v3/exports
+   * - POST /v3/exports/:uuid/notify ???
+   * - GET /v3/exports
+   * - GET /v3/exports/:uuid
+   * - GET /v3/exports/:uuid/status
+   * - GET /v3/exports/:uuid/attachment
+   * - DELETE /v3/exports/:uuid
+   */
+  private registerExportRoutes() {}
+
   private registerObservatoryRoutes() {
     type ObservatoryMethod = string;
     type ObservatoryURL = string;
