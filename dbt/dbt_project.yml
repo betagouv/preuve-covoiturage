@@ -31,4 +31,4 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{{{ config(...) }}}}` macro.
 models:
   covoiturage:
-
+    +dbt-osmosis: "_{model}.yml"
