@@ -31,7 +31,7 @@ clean-targets: # directories to be removed by `dbt clean`
 models:
   covoiturage:
     +dbt-osmosis: "_{model}.yml"
-  analytics:
-    +schema: "analytics"
-  observatoire:
-    +schema: "observatoire"
+    analytics:
+      +schema: "analytics"
+    observatoire:
+      +schema: "observatoire"
