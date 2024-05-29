@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: carpool_old
+    schema: carpool
+    tables:
+      - name: carpools
