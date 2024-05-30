@@ -4,6 +4,7 @@ import {
   InvalidRequestException,
   KernelInterface,
   RPCSingleCallType,
+  RPCResponseType,
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
@@ -123,6 +124,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
+    registerExportRoutes(this);
     this.registerStaticFolder();
   }
 
@@ -924,24 +926,6 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  /**
-   * Export routes
-   *
-   * Export V2 is using the /rpc route with the following methods:
-   * - trip:export
-   * - trip:publishOpenData
-   *
-   * Export V3 is using a REST API with the following routes:
-   * - POST /v3/exports
-   * - POST /v3/exports/:uuid/notify ???
-   * - GET /v3/exports
-   * - GET /v3/exports/:uuid
-   * - GET /v3/exports/:uuid/status
-   * - GET /v3/exports/:uuid/attachment
-   * - DELETE /v3/exports/:uuid
-   */
-  private registerExportRoutes() {}
-
   private registerObservatoryRoutes() {
     type ObservatoryMethod = string;
     type ObservatoryURL = string;
@@ -1112,7 +1096,7 @@ export class HttpTransport implements TransportInterface {
    * - set the status code (converted from an RPC status code)
    * - set the body. Error patterns are parsed
    */
-  private send(
+  public send(
     res: Response,
     response: RPCResponseType,
     headers: { [key: string]: string } = {},
