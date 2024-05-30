@@ -73,7 +73,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.uuid as journey_id,
+          cc.legacy_id as journey_id,
           cs.acquisition_status,
           cs.fraud_status
         FROM ${this.ceeApplicationsTable} AS ce
@@ -97,7 +97,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.uuid as journey_id,
+          cc.legacy_id as journey_id,
           cs.acquisition_status,
           cs.fraud_status
         FROM ${this.ceeApplicationsTable} AS ce
@@ -152,6 +152,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       text: `
         SELECT
           cc.uuid,
+          cc.legacy_id as journey_id,
           CASE
             WHEN cc.driver_phone_trunc IS NULL THEN left(cc.driver_phone, -2)
             ELSE cc.driver_phone_trunc

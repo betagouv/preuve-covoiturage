@@ -56,6 +56,7 @@ export class CreateJourneyAction extends AbstractAction {
 
       if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
         await this.acquisitionService.registerRequest({
+          legacy_id: acquisitions[0]._id,
           api_version,
           operator_id,
           operator_journey_id,

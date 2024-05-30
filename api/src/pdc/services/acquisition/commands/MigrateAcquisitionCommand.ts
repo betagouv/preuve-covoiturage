@@ -125,6 +125,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
 
         const newCarpool = await this.carpool.register(
           {
+            legacy_id: acquisition._id,
             operator_id: carpool.operator_id,
             operator_journey_id: carpool.operator_journey_id,
             operator_trip_id: carpool.operator_trip_id,

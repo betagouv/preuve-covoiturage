@@ -106,12 +106,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
             acquisitions.status = 'error'::acquisition.acquisition_status_enum AND
             acquisitions.error_stage = ANY(ARRAY['acquisition','normalization'])
           )
-        RETURNING journey_id AS operator_journey_id, created_at
+        RETURNING _id, journey_id AS operator_journey_id, created_at
       `,
       values,
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query<AcquisitionCreateResultInterface>(query);
     return result.rows;
   }
 

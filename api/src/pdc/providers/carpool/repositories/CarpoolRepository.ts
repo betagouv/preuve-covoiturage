@@ -19,6 +19,7 @@ export class CarpoolRepository {
 
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
+        legacy_id,
         operator_id,
         operator_journey_id,
         operator_trip_id,
@@ -47,6 +48,7 @@ export class CarpoolRepository {
         passenger_contribution,
         passenger_payments
       ) VALUES(
+        ${data.legacy_id},
         ${data.operator_id},
         ${data.operator_journey_id},
         ${data.operator_trip_id},
