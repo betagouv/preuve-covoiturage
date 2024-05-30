@@ -12,7 +12,7 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ExistingCeeApplication extends RegisteredCeeApplication {
-  journey_id?: string;
+  journey_id?: JourneyId;
   operator_journey_id?: string;
   acquisition_status?: CarpoolAcquisitionStatusEnum;
   fraud_status?: CarpoolFraudStatusEnum;
