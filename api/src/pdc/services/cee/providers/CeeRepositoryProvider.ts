@@ -73,7 +73,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.uuid as journey_id,
+          cc.legacy_id as journey_id,
           cs.acquisition_status,
           cs.fraud_status
         FROM ${this.ceeApplicationsTable} AS ce
@@ -97,7 +97,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.journey_type,
           ce.driving_license,
           op.siret as operator_siret,
-          cc.uuid as journey_id,
+          cc.legacy_id as journey_id,
           cs.acquisition_status,
           cs.fraud_status
         FROM ${this.ceeApplicationsTable} AS ce
@@ -130,7 +130,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     };
 
     const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
-    return result.rows[0];
+    return result.rows.map(this.castOutput<ExistingCeeApplication>)[0];
   }
 
   async searchForShortApplication(
@@ -152,6 +152,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       text: `
         SELECT
           cc.uuid,
+          cc.legacy_id as journey_id,
           CASE
             WHEN cc.driver_phone_trunc IS NULL THEN left(cc.driver_phone, -2)
             ELSE cc.driver_phone_trunc
@@ -191,7 +192,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     if (!result.rows.length) {
       throw new NotFoundException();
     }
-    return result.rows[0];
+    return result.rows.map(this.castOutput<ValidJourney>)[0];
   }
 
   protected async registerApplication(
@@ -446,5 +447,21 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     if (result.rowCount === 0) {
       throw new NotFoundException();
     }
+  }
+
+  /**
+   * Cast database output to method output
+   *
+   * Mostly used to cast BIGINT to number
+   * as node-postgres returns BIGINT as string.
+   *
+   * - journey_id (field: legacy_id)
+   *
+   * The input type has properties overridden as strings.
+   *
+   * @example queryResult.rows.map(this.castOutput<ExistingCeeApplication>);
+   */
+  private castOutput<T extends ExistingCeeApplication | ValidJourney>(r: T & { journey_id: string }): T {
+    return { ...r, journey_id: Number.parseInt(r.journey_id, 10) };
   }
 }

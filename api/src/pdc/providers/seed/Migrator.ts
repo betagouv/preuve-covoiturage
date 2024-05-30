@@ -171,6 +171,7 @@ export class Migrator {
   }
 
   async seedCarpoolV2([driverCarpool, passengerCarpool]: [Carpool, Carpool]) {
+    console.debug('seedCarpoolV2', { acquisition_Id: driverCarpool.acquisition_id });
     const carpoolResult = await this.connection.getClient().query({
       text: `INSERT INTO carpool_v2.carpools (
         operator_id,
@@ -199,7 +200,8 @@ export class Migrator {
         passenger_over_18,
         passenger_seats,
         passenger_contribution,
-        passenger_payments
+        passenger_payments,
+        legacy_id
       ) VALUES(
         $1,
         $2,
@@ -227,7 +229,8 @@ export class Migrator {
         $26,
         $27,
         $28,
-        $29
+        $29,
+        $30
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
       RETURNING _id, uuid, created_at, updated_at
@@ -262,6 +265,7 @@ export class Migrator {
         passengerCarpool.seats,
         passengerCarpool.cost,
         JSON.stringify(passengerCarpool.payments),
+        driverCarpool.acquisition_id,
       ],
     });
 

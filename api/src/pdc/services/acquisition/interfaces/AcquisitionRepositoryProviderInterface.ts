@@ -26,6 +26,7 @@ export interface AcquisitionCreateInterface<P = any> {
 }
 
 export interface AcquisitionCreateResultInterface {
+  _id: number;
   operator_journey_id: string;
   created_at: Date;
 }

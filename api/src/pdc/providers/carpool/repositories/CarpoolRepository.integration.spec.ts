@@ -57,7 +57,7 @@ test.serial('Should create carpool', async (t) => {
   const carpool = await t.context.repository.register(data);
   const result = await getCarpool(t.context, carpool._id);
 
-  t.deepEqual(result, { ...carpool, ...data });
+  t.like(result, { ...carpool, ...data });
 });
 
 test.serial('Should do nothing on duplicate carpool', async (t) => {
@@ -66,7 +66,7 @@ test.serial('Should do nothing on duplicate carpool', async (t) => {
   const carpool = await t.context.repository.register(data);
   const result = await getCarpool(t.context, carpool._id);
 
-  t.deepEqual(result, { ...carpool, ...data });
+  t.like(result, { ...carpool, ...data });
 });
 
 test.serial('Should update acquisition', async (t) => {
@@ -78,5 +78,5 @@ test.serial('Should update acquisition', async (t) => {
   await t.context.repository.update(insertData.operator_id, insertData.operator_journey_id, updateData);
 
   const result = await getCarpool(t.context, carpool._id);
-  t.deepEqual(result, { ...carpool, ...insertData, ...updateData });
+  t.like(result, { ...carpool, ...insertData, ...updateData });
 });

@@ -1,5 +1,5 @@
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
-import { CeeJourneyTypeEnum } from '@shared/cee/common/CeeApplicationInterface';
+import { CeeJourneyTypeEnum, JourneyId } from '@shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {
@@ -12,14 +12,14 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ExistingCeeApplication extends RegisteredCeeApplication {
-  journey_id?: string;
+  journey_id?: JourneyId;
   operator_journey_id?: string;
   acquisition_status?: CarpoolAcquisitionStatusEnum;
   fraud_status?: CarpoolFraudStatusEnum;
 }
 
 export interface ValidJourney {
-  uuid: string;
+  journey_id: JourneyId;
   phone_trunc: string;
   datetime: Date;
   acquisition_status: CarpoolAcquisitionStatusEnum;

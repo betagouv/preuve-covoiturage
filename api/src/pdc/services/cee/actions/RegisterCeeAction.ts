@@ -118,7 +118,7 @@ export class RegisterCeeAction extends AbstractAction {
         uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
         token: await this.sign(application),
-        journey_id: carpoolData.uuid,
+        journey_id: carpoolData.journey_id,
         status: carpoolV2ToV1StatusConverter(carpoolData.acquisition_status, carpoolData.fraud_status),
       };
     } catch (e) {
