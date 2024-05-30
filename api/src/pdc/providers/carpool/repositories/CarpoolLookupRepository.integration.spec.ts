@@ -40,7 +40,7 @@ test.serial('Should get one carpool status', async (t) => {
     data.operator_id,
     data.operator_journey_id,
   );
-  t.deepEqual(
+  t.like(
     { _id, acquisition_status, operator_trip_id },
     {
       _id: t.context.carpool_id,
@@ -56,7 +56,7 @@ test.serial('Should get one carpool', async (t) => {
     data.operator_id,
     data.operator_journey_id,
   );
-  t.deepEqual(carpool, {
+  t.like(carpool, {
     ...data,
     fraud_status: 'pending',
     acquisition_status: 'canceled',

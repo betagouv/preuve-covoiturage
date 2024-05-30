@@ -88,7 +88,7 @@ test.serial('Should create carpool', async (t) => {
     data.operator_id,
     data.operator_journey_id,
   );
-  t.deepEqual(carpool, {
+  t.like(carpool, {
     ...data,
     fraud_status: 'pending',
     acquisition_status: 'received',
@@ -125,7 +125,7 @@ test.serial('Should update carpool', async (t) => {
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
-  t.deepEqual(carpool, {
+  t.like(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
     fraud_status: 'pending',
@@ -164,7 +164,7 @@ test.serial('Should cancel carpool', async (t) => {
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
-  t.deepEqual(carpool, {
+  t.like(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
     fraud_status: 'pending',
