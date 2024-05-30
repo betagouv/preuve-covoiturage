@@ -41,11 +41,6 @@ export class FinalizeCommand implements CommandInterface {
       description: 'resync the max_amount_restriction keys to incentive_sum',
       default: false,
     },
-    {
-      signature: '--clear',
-      description: 'clear dead locks',
-      default: false,
-    },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
@@ -54,7 +49,7 @@ export class FinalizeCommand implements CommandInterface {
     try {
       const { tz, resync: sync_incentive_sum, clear } = options;
       const context: ContextType = { channel: { service: 'campaign' } };
-      const params: ParamsInterface = { tz, sync_incentive_sum, clear };
+      const params: ParamsInterface = { tz, sync_incentive_sum };
 
       if ('from' in options && options.from) {
         const from = castUserStringToUTC(options.from, tz);

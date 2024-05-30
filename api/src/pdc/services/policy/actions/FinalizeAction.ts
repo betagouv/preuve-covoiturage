@@ -38,20 +38,7 @@ export class FinalizeAction extends AbstractAction {
     }
 
     console.time('[campaign:finalize] stateful');
-    const { from, to, sync_incentive_sum, clear } = await this.defaultParams(params);
-
-    // clear dead locks prior to finalization (meant to be used manually, not in CRON)
-    if (clear) {
-      await this.policyRepository.clearDeadLocks();
-    }
-
-    // create a lock to avoid parallel processing
-    const lock = await this.policyRepository.getLock();
-    if (!lock) {
-      return console.warn('[campaign:finalize] stateful already processing');
-    }
-
-    console.info(`[campaign:finalize] Acquired lock #${lock._id} at ${toISOString(lock.started_at)}`);
+    const { from, to, sync_incentive_sum } = await this.defaultParams(params);
 
     // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
@@ -86,16 +73,9 @@ export class FinalizeAction extends AbstractAction {
         console.debug(`[campaign:finalize] set status on incentives`);
         await this.incentiveRepository.setStatus(currentFrom, currentTo);
         console.debug('[campaign:finalize] lock finished');
-
-        // Release the lock
-        await this.policyRepository.releaseLock({ from_date: currentFrom, to_date: currentTo });
       } catch (e) {
         console.debug(`[campaign:finalize] unlock all incentive until ${toTzString(currentTo)} in catch block`);
         await this.incentiveRepository.setStatus(currentFrom, currentTo, true);
-        console.debug('[campaign:finalize] unlock finished in catch block');
-
-        // Release the lock
-        await this.policyRepository.releaseLock({ from_date: currentFrom, to_date: currentTo, error: e });
         throw e;
       }
 
@@ -117,7 +97,7 @@ export class FinalizeAction extends AbstractAction {
       (await this.incentiveRepository.latestDraft()) ||
       subDaysTz(today(tz), this.config.get('policies.finalize.from'));
 
-    return { tz, from, to, sync_incentive_sum: !!params.sync_incentive_sum, clear: !!params.clear };
+    return { tz, from, to, sync_incentive_sum: !!params.sync_incentive_sum };
   }
 
   protected async processStatefulPolicies(
