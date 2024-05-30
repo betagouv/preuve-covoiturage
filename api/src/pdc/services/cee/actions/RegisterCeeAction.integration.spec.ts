@@ -157,6 +157,7 @@ test.serial(
   success,
   defaultShortPayload,
   {
+    journey_id: 1,
     datetime: '2024-03-15T00:15:00.000Z',
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
@@ -186,6 +187,7 @@ test.serial(
     identity_key: '1'.repeat(64),
   },
   {
+    journey_id: 2,
     datetime: '2024-03-16T00:15:00.000Z',
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
@@ -213,6 +215,7 @@ test.serial(
     identity_key: '2'.repeat(64),
   },
   {
+    journey_id: 3,
     datetime: '2024-03-16T00:15:00.000Z',
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
