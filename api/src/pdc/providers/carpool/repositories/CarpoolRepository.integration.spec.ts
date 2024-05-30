@@ -47,7 +47,7 @@ async function getCarpool(context: TestContext, id: Id) {
 
   return {
     // parse bigint to int for comparison
-    ...result.rows.map((r) => ({ ...r, legacy_id: parseInt(r.legacy_id, 10) })).pop(),
+    ...result.rows.map((r) => ({ ...r, legacy_id: Number.parseInt(r.legacy_id, 10) })).pop(),
     incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
   };
 }

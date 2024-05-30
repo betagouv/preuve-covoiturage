@@ -80,7 +80,7 @@ export class CarpoolLookupRepository {
 
     return {
       ...carpool,
-      legacy_id: parseInt(carpool.legacy_id, 10),
+      legacy_id: Number.parseInt(carpool.legacy_id, 10),
       incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
     };
   }
