@@ -14,7 +14,6 @@ import {
 } from '../common';
 
 export interface InsertableCarpool {
-  legacy_id: Id;
   operator_id: Id;
   operator_journey_id: Uuid;
   operator_trip_id: Uuid;

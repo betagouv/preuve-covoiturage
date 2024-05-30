@@ -1,7 +1,6 @@
 import { InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces';
 
 export const insertableCarpool: InsertableCarpool = {
-  legacy_id: 1,
   operator_id: 1,
   operator_journey_id: 'journey_id_1',
   operator_trip_id: 'operator_trip_id_1',
