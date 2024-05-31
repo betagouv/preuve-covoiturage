@@ -20,7 +20,7 @@ import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
 import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
 import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
 import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
-import { PetrLunevilloisS12023 } from './PetrLunevilloisS12023';
+import { PetrLunevilloisS12023 } from './20240108_PetrLunevillois';
 import { Pmgf } from './Pmgf';
 import { Pmgf2023 } from './Pmgf2023';
 import { PmgfLate2023 } from './PmgfLate2023';

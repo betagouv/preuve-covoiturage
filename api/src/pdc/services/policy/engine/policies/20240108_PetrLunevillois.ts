@@ -19,7 +19,7 @@ import {
 } from '../helpers';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PetrLunevilloisS12023.html';
+import { description } from './20240108_PetrLunevillois.html';
 
 /* eslint-disable-next-line */
 export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

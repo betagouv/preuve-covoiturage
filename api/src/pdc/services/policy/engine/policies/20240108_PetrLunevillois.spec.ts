@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { PetrLunevilloisS12023 as Handler } from './PetrLunevilloisS12023';
+import { PetrLunevilloisS12023 as Handler } from './20240108_PetrLunevillois';
 
 const defaultPosition = {
   arr: '54233',
