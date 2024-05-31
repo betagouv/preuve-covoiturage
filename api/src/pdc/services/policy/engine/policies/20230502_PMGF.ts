@@ -7,9 +7,9 @@ import {
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -17,8 +17,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20230502_PMGF.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique Pole Métropolitain du Genevois
 export const PMGF2023: PolicyHandlerStaticInterface = class
@@ -26,7 +27,13 @@ export const PMGF2023: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'pmgf_2023';
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-05-02T00:00:00+0200'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT],
+    },
+  ];
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {
@@ -51,7 +58,7 @@ export const PMGF2023: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -75,7 +82,7 @@ export const PMGF2023: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
