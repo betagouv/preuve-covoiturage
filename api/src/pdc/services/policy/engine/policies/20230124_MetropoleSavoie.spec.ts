@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { MetropoleSavoie as Handler } from './MetropoleSavoie';
+import { MetropoleSavoie as Handler } from './20230124_MetropoleSavoie';
 
 const defaultPosition = {
   arr: '73031',

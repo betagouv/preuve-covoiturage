@@ -17,7 +17,7 @@ import {
 } from '../helpers';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './MetropoleSavoie.html';
+import { description } from './20230124_MetropoleSavoie.html';
 
 /* eslint-disable-next-line */
 export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
