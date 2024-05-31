@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { SMTC2024 as Handler } from './SMTC2024';
+import { SMTC2024 as Handler } from './20240101_SMTC';
 
 const defaultPosition = {
   arr: '74278',

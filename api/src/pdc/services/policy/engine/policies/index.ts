@@ -26,8 +26,7 @@ import { Pmgf2023 } from './20230502_PMGF';
 import { PmgfLate2023 } from './20231001_PMGF';
 import { SMT2022 } from './20220414_SMT';
 import { SMT2023 } from './20230126_SMT';
-import { SMTC2024 } from './SMTC2024';
-import { SMTC2024Passenger } from './SMTC2024Passenger';
+import { SMTC2024 } from './20240101_SMTC';
 import { TerresTouloises2024 } from './TerresTouloises2024';
 import { Vitre2023 } from './Vitre2023';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
@@ -70,7 +69,6 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     SMT2022,
     SMT2023,
     SMTC2024,
-    SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
   ].map((h) => [h.id, h]),
