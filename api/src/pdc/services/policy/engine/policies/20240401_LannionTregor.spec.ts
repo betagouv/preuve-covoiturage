@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { LannionTregor2024 as Handler } from './LannionTregor2024';
+import { LannionTregor2024 as Handler } from './20240401_LannionTregor';
 
 // Perros-Guirec
 const defaultPosition = {
