@@ -24,7 +24,7 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PaysDeLaLoire2024.html';
+import { description } from './20240101_PaysDeLaLoire.html';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */

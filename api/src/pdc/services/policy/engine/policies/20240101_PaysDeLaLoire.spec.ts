@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { PaysDeLaLoire2024 as Handler } from './PaysDeLaLoire2024';
+import { PaysDeLaLoire2024 as Handler } from './20240101_PaysDeLaLoire';
 
 const defaultPosition = {
   arr: '85047',

@@ -19,7 +19,7 @@ import { PMGFxATMB2024 } from './PMGFxATMB2024';
 import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
 import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
 import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
-import { PaysDeLaLoire2024 } from './PaysDeLaLoire2024';
+import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
 import { PetrLunevilloisS12023 } from './PetrLunevilloisS12023';
 import { Pmgf } from './Pmgf';
 import { Pmgf2023 } from './Pmgf2023';
