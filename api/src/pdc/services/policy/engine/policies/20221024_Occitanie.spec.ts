@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Occitanie20232024 as Handler } from './Occitanie20232024';
+import { Occitanie20232024 as Handler } from './20221024_Occitanie';
 
 const defaultPosition = {
   arr: '46240',

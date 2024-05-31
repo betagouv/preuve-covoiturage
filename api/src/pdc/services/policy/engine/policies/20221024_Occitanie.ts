@@ -19,7 +19,7 @@ import {
 } from '../helpers';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Occitanie20232024.html';
+import { description } from './20221024_Occitanie.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return ctx.carpool.passenger_contribution || 0;
