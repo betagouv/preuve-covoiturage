@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,11 +5,12 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isAdultOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -19,8 +19,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20230401_PaysBasqueAdour.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Pays Basque Adour
 export const PaysBasque20232024: PolicyHandlerStaticInterface = class
@@ -28,13 +29,18 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'pays_basque_2023';
-  protected operators = [
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-04-01T00:00:00+0200'),
+      operators: [OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS],
+    },
+    {
+      date: new Date('2024-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS],
+    },
   ];
-  protected operators_for_2024 = [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS];
+
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -43,8 +49,6 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
     },
   ];
-
-  private readonly LAST_DAY_OF_YEAR_DATE = new Date('2023-12-31');
 
   constructor(public max_amount: number) {
     super();
@@ -56,17 +60,13 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.isAfter2023(ctx) ? this.operators_for_2024 : this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, {
       min: 5_000,
-      max: this.isAfter2023(ctx) ? 80_000 : 100_000,
+      max: this.applyRuleChangeFor2024(ctx) ? 80_000 : 100_000,
     });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
-  }
-
-  private isAfter2023(ctx: StatelessContextInterface) {
-    return ctx.carpool.datetime > this.LAST_DAY_OF_YEAR_DATE;
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -88,7 +88,7 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators_for_2024,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
@@ -97,5 +97,9 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
 
   describe(): string {
     return description;
+  }
+
+  private applyRuleChangeFor2024(ctx: StatelessContextInterface) {
+    return ctx.carpool.datetime >= this.operators[1].date;
   }
 };
