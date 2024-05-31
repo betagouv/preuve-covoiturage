@@ -17,9 +17,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { watchForPersonMaxTripByDay } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240101_Cannes.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique Cannes
 export const Cannes2024: PolicyHandlerStaticInterface = class
@@ -27,7 +28,14 @@ export const Cannes2024: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'cannes_2024';
-  protected operators = [OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {
@@ -53,7 +61,7 @@ export const Cannes2024: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_001 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -77,7 +85,7 @@ export const Cannes2024: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
