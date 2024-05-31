@@ -25,7 +25,7 @@ import { Pmgf } from './20221102_PMGF';
 import { Pmgf2023 } from './20230502_PMGF';
 import { PmgfLate2023 } from './20231001_PMGF';
 import { SMT2022 } from './20220414_SMT';
-import { SMT2023 } from './SMT2023';
+import { SMT2023 } from './20230126_SMT';
 import { SMTC2024 } from './SMTC2024';
 import { SMTC2024Passenger } from './SMTC2024Passenger';
 import { TerresTouloises2024 } from './TerresTouloises2024';

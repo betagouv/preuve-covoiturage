@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { SMT2023 as Handler } from './SMT2023';
+import { SMT2023 as Handler } from './20230126_SMT';
 
 const defaultPosition = {
   arr: '37050',
