@@ -19,7 +19,7 @@ import {
 } from '../helpers';
 import { LimitTargetEnum } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Montpellier.html';
+import { description } from './20221206_Montpellier.html';
 
 /* eslint-disable-next-line */
 export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

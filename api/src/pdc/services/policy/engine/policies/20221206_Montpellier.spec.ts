@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Montpellier as Handler } from './Montpellier';
+import { Montpellier as Handler } from './20221206_Montpellier';
 import { generatePartialCarpools } from '../tests/helpers';
 
 const defaultPosition = {
