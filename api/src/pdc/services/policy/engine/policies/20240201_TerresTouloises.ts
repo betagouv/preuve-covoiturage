@@ -20,16 +20,23 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240201_TerresTouloises.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 /* eslint-disable-next-line */
 export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'terres_touloises_2024';
   static readonly tz: Timezone = 'Europe/Paris';
 
-  protected operators = [OperatorsEnum.MOBICOOP];
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2024-02-01T00:00:00+0100'),
+      operators: [OperatorsEnum.MOBICOOP],
+    },
+  ];
+
   protected regularSlices: RunnableSlices = [
     { start: 5_000, end: 10_000, fn: (ctx: StatelessContextInterface) => 100 + perSeat(ctx, 100) },
     { start: 10_000, end: 15_000, fn: (ctx: StatelessContextInterface) => 100 + perSeat(ctx, 150) },
@@ -48,7 +55,7 @@ export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends A
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
     try {
-      isOperatorOrThrow(ctx, this.operators);
+      isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
       onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_000 });
       isOperatorClassOrThrow(ctx, ['B', 'C']);
       isAdultOrThrow(ctx);
@@ -79,7 +86,7 @@ export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends A
     return {
       tz: TerresTouloises2024.tz,
       slices: this.regularSlices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
