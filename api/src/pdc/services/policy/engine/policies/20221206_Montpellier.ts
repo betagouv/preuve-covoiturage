@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,6 +5,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -17,14 +17,20 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { LimitTargetEnum } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20221206_Montpellier.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 /* eslint-disable-next-line */
 export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'montpellier_2022';
-  protected operators = [OperatorsEnum.KLAXIT];
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-01-05T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {
@@ -42,7 +48,7 @@ export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractP
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
@@ -66,7 +72,7 @@ export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractP
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
