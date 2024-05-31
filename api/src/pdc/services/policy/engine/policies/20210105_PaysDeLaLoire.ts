@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,12 +5,13 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
+  LimitTargetEnum,
   endsAt,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -21,19 +21,24 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20210105_PaysDeLaLoire.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Pays de la Loire
-/* eslint-disable-next-line */
-export const PaysDeLaLoire2021: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+export const PaysDeLaLoire2021: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
   static readonly id = '249';
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-01-05T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP],
+    },
   ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -52,7 +57,7 @@ export const PaysDeLaLoire2021: PolicyHandlerStaticInterface = class extends Abs
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
 
@@ -91,7 +96,7 @@ export const PaysDeLaLoire2021: PolicyHandlerStaticInterface = class extends Abs
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
