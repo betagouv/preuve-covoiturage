@@ -17,14 +17,21 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240108_PetrLunevillois.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 /* eslint-disable-next-line */
 export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'petr_lunevillois_s1_2023';
-  protected operators = [OperatorsEnum.MOBICOOP];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2024-01-08T00:00:00+0100'),
+      operators: [OperatorsEnum.MOBICOOP],
+    },
+  ];
 
   // 7 cts per km per passenger
   protected slices: RunnableSlices = [
@@ -44,7 +51,7 @@ export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 60_000 });
     isOperatorClassOrThrow(ctx, ['C']);
     startsAndEndsAtOrThrow(ctx, { aom: ['200051134'] });
@@ -54,7 +61,6 @@ export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
-    // Calcul des incitations par tranche
     let amount = 0;
     for (const { start, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
@@ -69,7 +75,7 @@ export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
