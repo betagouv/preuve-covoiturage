@@ -18,7 +18,7 @@ import {
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pmgf2023.html';
+import { description } from './20230502_PMGF.html';
 
 // Politique Pole Métropolitain du Genevois
 export const Pmgf2023: PolicyHandlerStaticInterface = class
