@@ -19,7 +19,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './LaRochelle20232024.html';
+import { description } from './20230101_LaRochelle.html';
 
 /* eslint-disable-next-line */
 export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

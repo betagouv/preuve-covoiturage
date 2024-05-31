@@ -5,7 +5,7 @@ import { Cotentin2023 } from './20230101_Cotentin';
 import { GrandChatellerault2024 } from './20240201_GrandChatellerault';
 import { GrandPoitiers } from './20230927_GrandPoitiers';
 import { Idfm } from './20210520_IDFM';
-import { LaRochelle20232024 } from './LaRochelle20232024';
+import { LaRochelle20232024 } from './20230101_LaRochelle';
 import { Lannion } from './20230501_Lannion';
 import { LannionTregor2024 } from './20240401_LannionTregor';
 import { Laval } from './Laval';
