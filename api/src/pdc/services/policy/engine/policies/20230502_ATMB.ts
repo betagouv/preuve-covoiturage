@@ -8,9 +8,9 @@ import {
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -18,9 +18,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20230502_ATMB.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len
@@ -29,7 +30,14 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'atmb_2023';
-  protected readonly operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-05-02T00:00:00+0200'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected readonly operator_class = ['B', 'C'];
   protected readonly policy_change_date = new Date('2023-12-18');
 
@@ -70,7 +78,7 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
     startsAndEndsAtOrThrow(ctx, ctx.carpool.datetime >= this.policy_change_date ? this.new_selector : this.selector);
@@ -95,7 +103,7 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
