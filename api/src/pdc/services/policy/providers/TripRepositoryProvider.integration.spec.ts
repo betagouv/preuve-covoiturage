@@ -2,7 +2,7 @@ import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import anyTest, { TestFn } from 'ava';
 import { Policy } from '../engine/entities/Policy';
-import { Idfm } from '../engine/policies/Idfm';
+import { Idfm } from '../engine/policies/20210520_IDFM';
 import { TripRepositoryProvider } from './TripRepositoryProvider';
 
 interface TestContext {

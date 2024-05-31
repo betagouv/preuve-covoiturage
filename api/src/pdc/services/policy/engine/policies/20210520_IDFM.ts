@@ -23,12 +23,14 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { LimitTargetEnum } from '../helpers/limits';
+import { description } from './20210520_IDFM.html';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Idfm.html';
 
 // Politique d'Île-de-France Mobilité
-/* eslint-disable-next-line */
-export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+export const Idfm: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
   static readonly id = '459';
 
   constructor(public max_amount: number) {

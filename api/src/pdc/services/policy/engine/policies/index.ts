@@ -4,7 +4,7 @@ import { Cannes2024 } from './Cannes2024';
 import { Cotentin2023 } from './Cotentin2023';
 import { GrandChatellerault2024 } from './GrandChatellerault2024';
 import { GrandPoitiers } from './GrandPoitiers';
-import { Idfm } from './Idfm';
+import { Idfm } from './20210520_IDFM';
 import { LaRochelle20232024 } from './LaRochelle20232024';
 import { Lannion } from './Lannion';
 import { LannionTregor2024 } from './LannionTregor2024';
