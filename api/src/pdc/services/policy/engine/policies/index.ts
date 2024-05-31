@@ -13,7 +13,7 @@ import { MetropoleSavoie } from './20230124_MetropoleSavoie';
 import { Montpellier } from './20221206_Montpellier';
 import { Mrn } from './20220420_MetropoleRouenNormandie';
 import { NantesMetropole2024 } from './20240101_NantesMetropole';
-import { Nm } from './Nm';
+import { Nm } from './20211202_NantesMetropoleXP';
 import { Occitanie20232024 } from './Occitanie20232024';
 import { PMGFxATMB2024 } from './PMGFxATMB2024';
 import { PaysBasque20232024 } from './PaysBasque20232024';

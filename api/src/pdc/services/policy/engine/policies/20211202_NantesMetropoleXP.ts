@@ -21,7 +21,7 @@ import {
 } from '../helpers';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Nm.html';
+import { description } from './20211202_NantesMetropoleXP.html';
 
 // Politique de Nantes Métropole
 export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

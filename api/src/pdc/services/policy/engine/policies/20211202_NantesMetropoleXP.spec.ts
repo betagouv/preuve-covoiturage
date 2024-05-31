@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Nm as Handler } from './Nm';
+import { Nm as Handler } from './20211202_NantesMetropoleXP';
 
 const defaultPosition = {
   arr: '44026',
