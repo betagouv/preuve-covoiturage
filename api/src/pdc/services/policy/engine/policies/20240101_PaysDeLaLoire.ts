@@ -8,10 +8,10 @@ import {
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
+  LimitTargetEnum,
   endsAt,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -22,20 +22,23 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240101_PaysDeLaLoire.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
 export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pdll_2024';
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2024-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP],
+    },
   ];
+
   protected slices: RunnableSlices = [
     { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },
     {
@@ -59,7 +62,7 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
@@ -105,7 +108,7 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
