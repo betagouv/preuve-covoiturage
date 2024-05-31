@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,11 +5,11 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
-  isAfter,
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -19,8 +18,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20221102_PMGF.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique du Pôle Métropolitain Genevois Français
 // eslint-disable-next-line max-len
@@ -29,11 +29,16 @@ export const PMGF2022: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'pmgf_2022';
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2022-11-02T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT],
+    },
+    {
+      date: new Date('2023-01-02T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP],
+    },
   ];
   protected operator_class = ['B', 'C'];
 
@@ -179,12 +184,7 @@ export const PMGF2022: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    // Ajout de mobicoop à partir du 2 janvier
-    if (isAfter(ctx, { date: new Date('2023-01-02') })) {
-      isOperatorOrThrow(ctx, this.operators);
-    } else {
-      isOperatorOrThrow(ctx, [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT]);
-    }
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -208,7 +208,7 @@ export const PMGF2022: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
