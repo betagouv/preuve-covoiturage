@@ -77,7 +77,7 @@ test(
       { distance: 5_000, seats: 2, driver_identity_key: 'one' },
       { distance: 20_000, driver_identity_key: 'two' },
       { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2022-03-28') },
+      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2023-05-28') },
       { distance: 40_000, driver_identity_key: 'two' },
       { distance: 55_000, driver_identity_key: 'two' },
       { distance: 80_000, driver_identity_key: 'two' },
@@ -101,7 +101,7 @@ test(
         value: 1150,
       },
       {
-        key: 'max_amount_restriction.0-two.month.2-2022',
+        key: 'max_amount_restriction.0-two.month.4-2023',
         value: 150,
       },
     ],
