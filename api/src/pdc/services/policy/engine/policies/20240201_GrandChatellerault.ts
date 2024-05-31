@@ -21,9 +21,10 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240201_GrandChatellerault.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
@@ -31,11 +32,11 @@ export const GrandChatellerault2024: PolicyHandlerStaticInterface = class extend
   static readonly id = 'grand_chatellerault_2024';
   static readonly tz: Timezone = 'Europe/Paris';
 
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2024-02-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP],
+    },
   ];
 
   protected regularSlices: RunnableSlices = [
@@ -53,7 +54,7 @@ export const GrandChatellerault2024: PolicyHandlerStaticInterface = class extend
   }
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_000 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
@@ -91,7 +92,7 @@ export const GrandChatellerault2024: PolicyHandlerStaticInterface = class extend
     return {
       tz: GrandChatellerault2024.tz,
       slices: this.regularSlices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
