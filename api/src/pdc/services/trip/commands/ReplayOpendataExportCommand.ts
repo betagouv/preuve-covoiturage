@@ -1,12 +1,12 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common/index.ts';
 import { add, isBefore } from 'date-fns';
-import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
-import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider';
+import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';
+import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider.ts';
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
   signature as buildExportSignature,
-} from '@shared/trip/buildExport.contract';
+} from '@shared/trip/buildExport.contract.ts';
 
 export interface StartEndDate {
   start: Date;

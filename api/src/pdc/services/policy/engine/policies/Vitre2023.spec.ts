@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { Vitre2023 as Handler } from './Vitre2023';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { Vitre2023 as Handler } from './Vitre2023.ts';
 
 const defaultPosition = {
   arr: '35361',

@@ -1,26 +1,26 @@
-import { ValidatorExtension as ValidatorParentExtension } from '@ilos/validator';
-import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common';
+import { ValidatorExtension as ValidatorParentExtension } from '@ilos/validator/index.ts';
+import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common/index.ts';
 
-import { bicCustomFormat } from './formats/bicCustomFormat';
-import { coordinatesKeyword } from './keywords/coordinatesKeyword';
-import { countryCustomFormat } from './formats/countryCustomFormat';
-import { departmentCustomFormat } from './formats/departmentCustomFormat';
-import { euVatCustomFormat } from './formats/euVatCustomFormat';
-import { ibanCustomFormat } from './formats/ibanCustomFormat';
-import { inseeCustomFormat } from './formats/inseeCustomFormat';
-import { nafCustomFormat } from './formats/nafCustomFormat';
-import { nicCustomFormat } from './formats/nicCustomFormat';
-import { objectidCustomFormat } from './formats/objectidCustomFormat';
-import { phoneCustomFormat } from './formats/phoneCustomFormat';
-import { phonetruncCustomFormat } from './formats/phonetruncCustomFormat';
-import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
-import { rnaCustomFormat } from './formats/rnaCustomFormat';
-import { sirenCustomFormat } from './formats/sirenCustomFormat';
-import { siretCustomFormat } from './formats/siretCustomFormat';
+import { bicCustomFormat } from './formats/bicCustomFormat.ts';
+import { coordinatesKeyword } from './keywords/coordinatesKeyword.ts';
+import { countryCustomFormat } from './formats/countryCustomFormat.ts';
+import { departmentCustomFormat } from './formats/departmentCustomFormat.ts';
+import { euVatCustomFormat } from './formats/euVatCustomFormat.ts';
+import { ibanCustomFormat } from './formats/ibanCustomFormat.ts';
+import { inseeCustomFormat } from './formats/inseeCustomFormat.ts';
+import { nafCustomFormat } from './formats/nafCustomFormat.ts';
+import { nicCustomFormat } from './formats/nicCustomFormat.ts';
+import { objectidCustomFormat } from './formats/objectidCustomFormat.ts';
+import { phoneCustomFormat } from './formats/phoneCustomFormat.ts';
+import { phonetruncCustomFormat } from './formats/phonetruncCustomFormat.ts';
+import { postcodeCustomFormat } from './formats/postcodeCustomFormat.ts';
+import { rnaCustomFormat } from './formats/rnaCustomFormat.ts';
+import { sirenCustomFormat } from './formats/sirenCustomFormat.ts';
+import { siretCustomFormat } from './formats/siretCustomFormat.ts';
 
-import { macroKeyword } from './keywords/macroKeyword';
-import { castKeyword } from './keywords/castKeyword';
-import { sanitizeKeyword } from './keywords/sanitizeKeyword';
+import { macroKeyword } from './keywords/macroKeyword.ts';
+import { castKeyword } from './keywords/castKeyword.ts';
+import { sanitizeKeyword } from './keywords/sanitizeKeyword.ts';
 
 @extension({
   name: 'validator',

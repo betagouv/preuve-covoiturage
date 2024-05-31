@@ -1,6 +1,6 @@
-import { command, KernelInterfaceResolver, CommandOptionType } from '@ilos/common';
+import { command, KernelInterfaceResolver, CommandOptionType } from '@ilos/common/index.ts';
 
-import { Command } from '../parents/Command';
+import { Command } from '../parents/Command.ts';
 
 /**
  * Command that list RPC methods

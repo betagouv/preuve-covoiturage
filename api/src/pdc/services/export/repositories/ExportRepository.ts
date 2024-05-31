@@ -1,8 +1,8 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { Export, ExportStatus } from '../models/Export';
-import { ExportRecipient } from '../models/ExportRecipient';
-import { LogServiceInterfaceResolver } from '../services/LogService';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { Export, ExportStatus } from '../models/Export.ts';
+import { ExportRecipient } from '../models/ExportRecipient.ts';
+import { LogServiceInterfaceResolver } from '../services/LogService.ts';
 
 export type ExportCreateData = Pick<Export, 'created_by' | 'target' | 'params'> & { recipients: ExportRecipient[] };
 export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;

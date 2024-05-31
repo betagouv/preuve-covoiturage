@@ -1,6 +1,6 @@
-import { env } from '@ilos/core';
+import { env } from '@ilos/core/index.ts';
 import path from 'node:path';
-import { BucketName } from '../interfaces/BucketName';
+import { BucketName } from '../interfaces/BucketName.ts';
 
 export function getBucketPrefix(): string {
   return env.or_fail('AWS_BUCKET_PREFIX', '');

@@ -1,4 +1,4 @@
-import { RPCException } from './RPCException';
+import { RPCException } from './RPCException.ts';
 
 export class UnauthorizedException extends RPCException {
   constructor(data?: any) {

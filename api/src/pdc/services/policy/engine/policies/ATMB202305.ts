@@ -5,8 +5,8 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -17,10 +17,10 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './ATMB202305.html';
+} from '../helpers/index.ts';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './ATMB202305.html.ts';
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len

@@ -1,12 +1,12 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 import {
   CompanyRepositoryProviderInterfaceResolver,
   CompanyRepositoryProviderInterface,
-} from '../interfaces/CompanyRepositoryProviderInterface';
+} from '../interfaces/CompanyRepositoryProviderInterface.ts';
 
-import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2.ts';
 
 @provider({
   identifier: CompanyRepositoryProviderInterfaceResolver,

@@ -1,19 +1,19 @@
-import { ContextType, handler } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
+import { ContextType, handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/importApplicationIdentity.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/importApplicationIdentity.contract.ts';
 
-import { alias } from '@shared/cee/importApplicationIdentity.schema';
+import { alias } from '@shared/cee/importApplicationIdentity.schema.ts';
 
-import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
-import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
-import { getDateOrFail } from '../helpers/getDateOrFail';
-import { timestampSchema } from '@shared/cee/common/ceeSchema';
+import { CeeRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError.ts';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail.ts';
+import { getDateOrFail } from '../helpers/getDateOrFail.ts';
+import { timestampSchema } from '@shared/cee/common/ceeSchema.ts';
 import {
   CeeImportSpecificApplicationIdentityInterface,
   CeeImportStandardizedApplicationIdentityInterface,
-} from '@shared/cee/common/CeeApplicationInterface';
+} from '@shared/cee/common/CeeApplicationInterface.ts';
 
 @handler({
   ...handlerConfig,

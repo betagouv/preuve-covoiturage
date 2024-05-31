@@ -1,5 +1,5 @@
-import { PointInterface } from '../../../common/interfaces/PointInterface';
-import { CarpoolInterface } from './CarpoolInterface';
+import { PointInterface } from '../../../common/interfaces/PointInterface.ts';
+import { CarpoolInterface } from './CarpoolInterface.ts';
 
 export interface MetaPersonDisplayInterface {
   datetime: Date;

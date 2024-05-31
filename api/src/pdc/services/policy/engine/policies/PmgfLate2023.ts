@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -16,9 +16,9 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PmgfLate2023.html';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './PmgfLate2023.html.ts';
 
 // Politique Pole Métropolitain du Genevois
 export const PmgfLate2023: PolicyHandlerStaticInterface = class

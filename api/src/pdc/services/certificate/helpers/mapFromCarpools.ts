@@ -1,10 +1,10 @@
-import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface.ts';
 import {
   CertificateMetaInterface,
   MetaPersonInterface,
-} from '@shared/certificate/common/interfaces/CertificateMetaInterface';
-import { PointInterface } from '@shared/common/interfaces/PointInterface';
+} from '@shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+import { PointInterface } from '@shared/common/interfaces/PointInterface.ts';
 
 export interface ParamsInterface {
   person: { uuid: string };

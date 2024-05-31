@@ -1,9 +1,9 @@
-import { provider } from '@ilos/common';
-import { ExportParams } from '../models/ExportParams';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { CampaignRepository } from '../repositories/CampaignRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import { ExportProgress } from '../repositories/ExportRepository';
+import { provider } from '@ilos/common/index.ts';
+import { ExportParams } from '../models/ExportParams.ts';
+import { XLSXWriter } from '../models/XLSXWriter.ts';
+import { CampaignRepository } from '../repositories/CampaignRepository.ts';
+import { CarpoolRepository } from '../repositories/CarpoolRepository.ts';
+import { ExportProgress } from '../repositories/ExportRepository.ts';
 
 export type BuildServiceInterface = {
   write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void>;

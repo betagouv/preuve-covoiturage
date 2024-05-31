@@ -1,6 +1,6 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { InseeCoderInterface, PointInterface } from '../interfaces';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {

@@ -10,10 +10,10 @@ import {
   HandlerInterface,
   serviceProvider,
   handler,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { Kernel as AbstractKernel } from './Kernel';
-import { Action } from './Action';
+import { Kernel as AbstractKernel } from './Kernel.ts';
+import { Action } from './Action.ts';
 
 function setup() {
   const defaultContext = {

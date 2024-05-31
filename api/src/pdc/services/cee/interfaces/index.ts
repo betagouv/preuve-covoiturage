@@ -1,1 +1,1 @@
-export * from './CeeRepositoryProviderInterface';
+export * from './CeeRepositoryProviderInterface.ts';

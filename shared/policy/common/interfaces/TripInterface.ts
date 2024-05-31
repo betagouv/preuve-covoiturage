@@ -1,4 +1,4 @@
-import { PersonInterface } from './PersonInterface';
+import { PersonInterface } from './PersonInterface.ts';
 
 export class TripInterface extends Array<PersonInterface> {
   get datetime(): Date {

@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 import {
   TerritoriesRepositoryInterface,
@@ -8,7 +8,7 @@ import {
   TerritoriesListResultInterface,
   TerritoryNameParamsInterface,
   TerritoryNameResultInterface,
-} from '../interfaces/TerritoriesRepositoryProviderInterface';
+} from '../interfaces/TerritoriesRepositoryProviderInterface.ts';
 
 @provider({
   identifier: TerritoriesRepositoryInterfaceResolver,

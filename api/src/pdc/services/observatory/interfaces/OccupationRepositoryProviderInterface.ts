@@ -1,20 +1,20 @@
 import {
   ParamsInterface as MonthlyOccupationParamsInterface,
   ResultInterface as MonthlyOccupationResultInterface,
-} from '@shared/observatory/occupation/monthlyOccupation.contract';
+} from '@shared/observatory/occupation/monthlyOccupation.contract.ts';
 import {
   ParamsInterface as EvolMonthlyOccupationParamsInterface,
   ResultInterface as EvolMonthlyOccupationResultInterface,
-} from '@shared/observatory/occupation/evolMonthlyOccupation.contract';
+} from '@shared/observatory/occupation/evolMonthlyOccupation.contract.ts';
 
 import {
   ParamsInterface as BestMonthlyTerritoriesParamsInterface,
   ResultInterface as BestMonthlyTerritoriesResultInterface,
-} from '@shared/observatory/occupation/bestMonthlyTerritories.contract';
+} from '@shared/observatory/occupation/bestMonthlyTerritories.contract.ts';
 import {
   ParamsInterface as InsertMonthlyOccupationParamsInterface,
   ParamsInterface as DeleteMonthlyOccupationParamsInterface,
-} from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
+} from '@shared/observatory/occupation/insertMonthlyOccupation.contract.ts';
 
 export {
   MonthlyOccupationParamsInterface,

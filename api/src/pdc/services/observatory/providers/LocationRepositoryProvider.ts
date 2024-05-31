@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import { latLngToCell } from 'h3-js';
 import {
   LocationRepositoryInterface,
@@ -7,8 +7,8 @@ import {
   LocationParamsInterface,
   LocationResultInterface,
   LocationSqlResultInterface,
-} from '../interfaces/LocationRepositoryProviderInterface';
-import { checkTerritoryParam } from '../helpers/checkParams';
+} from '../interfaces/LocationRepositoryProviderInterface.ts';
+import { checkTerritoryParam } from '../helpers/checkParams.ts';
 
 @provider({
   identifier: LocationRepositoryInterfaceResolver,

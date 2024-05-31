@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
-import { Extensions } from '@ilos/core';
-import { HandlebarsTemplateProvider } from '@pdc/providers/template';
+import { Extensions } from '@ilos/core/index.ts';
+import { HandlebarsTemplateProvider } from '@pdc/providers/template/index.ts';
 import Mail from 'nodemailer/lib/mailer';
 
 import {
@@ -9,7 +9,7 @@ import {
   StaticMailTemplateNotificationInterface,
   NotificationMailTransporter,
   DefaultNotification,
-} from '..';
+} from '../index.ts';
 
 interface TestContext {
   transporter: NotificationMailTransporter;

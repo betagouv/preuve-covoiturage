@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { IdentityNormalizerProviderInterface, IdentityParamsInterface, IdentityResultInterface } from '../interfaces';
+import { provider } from '@ilos/common/index.ts';
+import { IdentityNormalizerProviderInterface, IdentityParamsInterface, IdentityResultInterface } from '../interfaces/index.ts';
 
 @provider()
 export class IdentityNormalizerProvider implements IdentityNormalizerProviderInterface {

@@ -1,4 +1,4 @@
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 import { ExecutionContext } from 'ava';
 import {
   CarpoolInterface,
@@ -8,10 +8,10 @@ import {
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
   SerializedStoredMetadataInterface,
-} from '../../interfaces';
-import { MetadataStore } from '../entities/MetadataStore';
-import { Policy } from '../entities/Policy';
-import { generateCarpool } from './helpers';
+} from '../../interfaces/index.ts';
+import { MetadataStore } from '../entities/MetadataStore.ts';
+import { Policy } from '../entities/Policy.ts';
+import { generateCarpool } from './helpers.ts';
 
 interface ProcessParams {
   carpool: Array<Partial<CarpoolInterface>>;

@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler, ContextType } from '@ilos/common/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changeRole.contract';
-import { alias } from '@shared/user/changeRole.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changeRole.contract.ts';
+import { alias } from '@shared/user/changeRole.schema.ts';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 /*
  * Update role of user

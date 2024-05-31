@@ -1,11 +1,11 @@
-import { provider } from '@ilos/common';
-import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/providers/storage';
+import { provider } from '@ilos/common/index.ts';
+import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/providers/storage/index.ts';
 import { subMonths } from 'date-fns';
 import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
-} from '../interfaces/StorageRepositoryProviderInterface';
-import { EnrichedApdfType } from '@shared/apdf/list.contract';
+} from '../interfaces/StorageRepositoryProviderInterface.ts';
+import { EnrichedApdfType } from '@shared/apdf/list.contract.ts';
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,

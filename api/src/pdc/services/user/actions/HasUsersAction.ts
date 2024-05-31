@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ResultInterface } from '@shared/user/hasUsers.contract';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { handlerConfig, ResultInterface } from '@shared/user/hasUsers.contract.ts';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 /*
  * Change password of user by sending old & new password

@@ -1,5 +1,5 @@
-import { AbstractTemplate } from '@pdc/providers/template';
-import { AbstractMailNotification } from '@pdc/providers/notification';
+import { AbstractTemplate } from '@pdc/providers/template/index.ts';
+import { AbstractMailNotification } from '@pdc/providers/notification/index.ts';
 
 export interface ContactFormTemplateData {
   title: string;

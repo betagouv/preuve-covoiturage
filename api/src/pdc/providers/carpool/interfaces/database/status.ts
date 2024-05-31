@@ -1,4 +1,4 @@
-import { CarpoolAcquisitionStatusEnum, Id } from '../common';
+import { CarpoolAcquisitionStatusEnum, Id } from '../common.ts';
 
 export interface InsertableCarpoolAcquisitionStatus {
   carpool_id: Id;

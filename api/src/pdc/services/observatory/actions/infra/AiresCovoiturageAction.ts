@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
 
-import { alias } from '@shared/observatory/infra/airesCovoiturage.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/infra/airesCovoiturage.contract';
-import { InfraRepositoryInterfaceResolver } from '../../interfaces/InfraRepositoryProviderInterface';
+import { alias } from '@shared/observatory/infra/airesCovoiturage.schema.ts';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/infra/airesCovoiturage.contract.ts';
+import { InfraRepositoryInterfaceResolver } from '../../interfaces/InfraRepositoryProviderInterface.ts';
 
 @handler({
   ...handlerConfig,

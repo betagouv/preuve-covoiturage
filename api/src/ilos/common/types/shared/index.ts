@@ -1,3 +1,3 @@
-export { AbstractType } from './AbstractType';
-export { NewableType } from './NewableType';
-export { FactoryType } from './FactoryType';
+export { AbstractType } from './AbstractType.ts';
+export { NewableType } from './NewableType.ts';
+export { FactoryType } from './FactoryType.ts';

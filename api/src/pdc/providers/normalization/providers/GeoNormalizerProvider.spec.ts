@@ -1,7 +1,7 @@
 import test from 'ava';
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo';
-import { PartialGeoInterface, GeoInterface } from '../interfaces';
-import { GeoNormalizerProvider } from './GeoNormalizerProvider';
+import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
+import { PartialGeoInterface, GeoInterface } from '../interfaces/index.ts';
+import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
 
 class GeoProvider extends GeoProviderInterfaceResolver {
   async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {

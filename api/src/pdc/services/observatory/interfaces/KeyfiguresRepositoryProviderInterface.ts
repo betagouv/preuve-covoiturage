@@ -1,7 +1,7 @@
 import {
   ParamsInterface as MonthlyKeyfiguresParamsInterface,
   ResultInterface as MonthlyKeyfiguresResultInterface,
-} from '@shared/observatory/keyfigures/monthlyKeyfigures.contract';
+} from '@shared/observatory/keyfigures/monthlyKeyfigures.contract.ts';
 
 export { MonthlyKeyfiguresParamsInterface, MonthlyKeyfiguresResultInterface };
 

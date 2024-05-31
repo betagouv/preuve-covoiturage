@@ -1,8 +1,8 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface } from '@shared/observatory/distribution/insertMonthlyDistribution.contract';
+import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface.ts';
+import { handlerConfig, ParamsInterface } from '@shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
 
 @handler({
   ...handlerConfig,

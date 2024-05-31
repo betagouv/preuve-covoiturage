@@ -1,8 +1,8 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto/index.ts';
 
-import { ParamsInterface } from '@shared/user/create.contract';
+import { ParamsInterface } from '@shared/user/create.contract.ts';
 
 interface CreateUserInterface extends ParamsInterface {
   password: string;

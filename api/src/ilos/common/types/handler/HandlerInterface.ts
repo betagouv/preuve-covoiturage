@@ -1,4 +1,4 @@
-import { CallType, ResultType, ParamsType, ContextType } from '../call';
+import { CallType, ResultType, ParamsType, ContextType } from '../call/index.ts';
 
 export interface HandlerInterface {
   readonly middlewares?: (string | [string, any])[];

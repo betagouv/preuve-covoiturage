@@ -1,4 +1,4 @@
-import { PersonInterface } from './PersonInterface';
+import { PersonInterface } from './PersonInterface.ts';
 
 export interface JourneyInterface {
   journey_id: string;

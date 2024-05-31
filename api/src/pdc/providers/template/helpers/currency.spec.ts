@@ -1,5 +1,5 @@
 import test from 'ava';
-import { currency } from './currency';
+import { currency } from './currency.ts';
 
 test('should work', (t) => {
   t.is(currency('10.1'), '10,10');

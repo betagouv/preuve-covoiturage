@@ -8,10 +8,10 @@ import {
   ServiceContainerInterface,
   ExtensionInterface,
   NewableType,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { ExtensionRegistry } from './ExtensionRegistry';
-import { ServiceContainer } from '../foundation/ServiceContainer';
+import { ExtensionRegistry } from './ExtensionRegistry.ts';
+import { ServiceContainer } from '../foundation/ServiceContainer.ts';
 
 function setup() {
   @injectable()

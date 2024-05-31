@@ -7,11 +7,11 @@ import {
   handler,
   provider,
   serviceProvider,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { Kernel } from './Kernel';
-import { ServiceProvider } from './ServiceProvider';
-import { Action } from './Action';
+import { Kernel } from './Kernel.ts';
+import { ServiceProvider } from './ServiceProvider.ts';
+import { Action } from './Action.ts';
 
 async function setup() {
   @provider()

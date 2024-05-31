@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/confirmEmail.contract';
-import { alias } from '@shared/user/confirmEmail.schema';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/confirmEmail.contract.ts';
+import { alias } from '@shared/user/confirmEmail.schema.ts';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
+import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware.ts';
 
 /*
  * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'email_token'

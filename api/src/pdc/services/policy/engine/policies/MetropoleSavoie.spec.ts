@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { MetropoleSavoie as Handler } from './MetropoleSavoie';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { MetropoleSavoie as Handler } from './MetropoleSavoie.ts';
 
 const defaultPosition = {
   arr: '73031',

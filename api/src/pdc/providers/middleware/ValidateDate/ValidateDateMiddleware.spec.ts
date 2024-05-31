@@ -1,7 +1,7 @@
 import test from 'ava';
-import { ContextType, InvalidParamsException } from '@ilos/common';
+import { ContextType, InvalidParamsException } from '@ilos/common/index.ts';
 
-import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDateMiddleware';
+import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDateMiddleware.ts';
 
 async function process(
   middlewareParams: ValidateDateMiddlewareParams,

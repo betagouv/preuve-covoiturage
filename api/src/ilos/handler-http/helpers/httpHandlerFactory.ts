@@ -1,6 +1,6 @@
-import { handler, ConfigInterfaceResolver, NewableType, HandlerInterface, InitHookInterface } from '@ilos/common';
+import { handler, ConfigInterfaceResolver, NewableType, HandlerInterface, InitHookInterface } from '@ilos/common/index.ts';
 
-import { HttpHandler } from '../HttpHandler';
+import { HttpHandler } from '../HttpHandler.ts';
 /**
  * httpHandlerFactory - Create a HttpHandler for a remote service
  * @export

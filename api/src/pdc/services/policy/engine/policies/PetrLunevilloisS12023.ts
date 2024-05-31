@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   isOperatorClassOrThrow,
@@ -16,10 +16,10 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PetrLunevilloisS12023.html';
+} from '../helpers/index.ts';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './PetrLunevilloisS12023.html.ts';
 
 /* eslint-disable-next-line */
 export const PetrLunevilloisS12023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

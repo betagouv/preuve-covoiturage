@@ -6,8 +6,8 @@ import {
   StatelessContextInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   isOperatorClassOrThrow,
@@ -19,11 +19,11 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
-import { startsOrEndsAtOrThrow } from '../helpers/startsOrEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './LannionTregor2024.html';
+} from '../helpers/index.ts';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt.ts';
+import { startsOrEndsAtOrThrow } from '../helpers/startsOrEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './LannionTregor2024.html.ts';
 
 // INSERT INTO policy.policies (territory_id, start_date, end_date, name, unit, status, handler, max_amount)
 // VALUES (

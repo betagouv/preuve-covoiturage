@@ -1,23 +1,23 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 import {
   handlerConfig,
   ParamsInterface,
   ParamsInterfaceV3,
   ResultInterface,
-} from '@shared/policy/simulateOnFuture.contract';
-import { alias } from '@shared/policy/simulateOnFuture.schema';
+} from '@shared/policy/simulateOnFuture.contract.ts';
+import { alias } from '@shared/policy/simulateOnFuture.schema.ts';
 import { v4 } from 'uuid';
-import { Policy } from '../engine/entities/Policy';
+import { Policy } from '../engine/entities/Policy.ts';
 import {
   CarpoolInterface,
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
   TerritoryRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+} from '../interfaces/index.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,4 +1,4 @@
-import { stats } from './common/schemas/search';
+import { stats } from './common/schemas/search.ts';
 
 export const alias = 'trip.stats';
 export const schema = stats;

@@ -1,7 +1,7 @@
 import test from 'ava';
-import { MiddlewareInterface, ContextType, ResultType, ParamsType } from '@ilos/common';
+import { MiddlewareInterface, ContextType, ResultType, ParamsType } from '@ilos/common/index.ts';
 
-import { compose } from './compose';
+import { compose } from './compose.ts';
 
 test('Helpers: compose works', async (t) => {
   class MiddlewareOne implements MiddlewareInterface {

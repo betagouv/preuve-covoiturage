@@ -1,4 +1,4 @@
-import { Action } from '@ilos/core';
+import { Action } from '@ilos/core/index.ts';
 import {
   handler,
   ConfigInterfaceResolver,
@@ -6,9 +6,9 @@ import {
   ContextType,
   ResultType,
   InvalidParamsException,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { CustomProvider } from '../../Providers/CustomProvider';
+import { CustomProvider } from '../../Providers/CustomProvider.ts';
 
 @handler({
   service: 'string',

@@ -1,4 +1,4 @@
-import { QRErrorCorrectLevel } from './QRErrorCorrectLevel';
+import { QRErrorCorrectLevel } from './QRErrorCorrectLevel.ts';
 
 function QRRSBlock(totalCount, dataCount) {
   this.totalCount = totalCount;

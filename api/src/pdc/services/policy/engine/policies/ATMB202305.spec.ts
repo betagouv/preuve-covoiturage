@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { ATMB202305 as Handler } from './ATMB202305';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { ATMB202305 as Handler } from './ATMB202305.ts';
 
 const defaultPosition = {
   arr: '74278',

@@ -1,4 +1,4 @@
-import { OperatorInterface } from './common/interfaces/OperatorInterface';
+import { OperatorInterface } from './common/interfaces/OperatorInterface.ts';
 
 export interface ParamsInterface {
   _id: number;

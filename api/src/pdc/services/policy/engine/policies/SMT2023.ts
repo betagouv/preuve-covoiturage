@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -17,10 +17,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './SMT2023.html';
-import { dateWithTz, today } from '../../helpers';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './SMT2023.html.ts';
+import { dateWithTz, today } from '../../helpers/index.ts';
 
 // Politique du Syndicat des Mobilités de Touraine
 export const SMT2023: PolicyHandlerStaticInterface = class

@@ -5,7 +5,7 @@ import {
   ResultType,
   ValidatorInterfaceResolver,
   middleware,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
 @middleware()
 export class ValidatorMiddleware implements MiddlewareInterface {

@@ -1,9 +1,9 @@
 import express from 'express';
 import { get } from 'lodash';
-import { KernelInterface } from '@ilos/common';
-import { mapStatusCode } from '@ilos/transport-http';
+import { KernelInterface } from '@ilos/common/index.ts';
+import { mapStatusCode } from '@ilos/transport-http/index.ts';
 
-import { createRPCPayload } from './createRPCPayload';
+import { createRPCPayload } from './createRPCPayload.ts';
 
 export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
 export type MapResponseType = (result: any, error: any, session?: any) => any;

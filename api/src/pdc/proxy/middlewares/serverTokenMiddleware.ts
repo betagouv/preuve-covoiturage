@@ -1,11 +1,11 @@
 import express from 'express';
 import { set, get } from 'lodash';
-import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
-import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
+import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common/index.ts';
+import { TokenProviderInterfaceResolver } from '@pdc/providers/token/index.ts';
 
-import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
-import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
-import { createRPCPayload } from '../helpers/createRPCPayload';
+import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface.ts';
+import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface.ts';
+import { createRPCPayload } from '../helpers/createRPCPayload.ts';
 
 interface Request extends express.Request {
   operator: string;

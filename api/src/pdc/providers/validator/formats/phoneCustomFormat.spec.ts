@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { phoneCustomFormat } from './phoneCustomFormat';
+import { phoneCustomFormat } from './phoneCustomFormat.ts';
 
 function macro(t, input: string, result: boolean) {
   t.is((phoneCustomFormat as any)(input), result);

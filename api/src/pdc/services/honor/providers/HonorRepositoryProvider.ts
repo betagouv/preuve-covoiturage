@@ -1,11 +1,11 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 import {
   DataSetInterface,
   ParamsInterface as StatsParamsInterface,
   ResultInterface as StatsResultInterface,
-} from '@shared/honor/stats.contract';
+} from '@shared/honor/stats.contract.ts';
 
 type StatsResponseRow = {
   day: string | null;

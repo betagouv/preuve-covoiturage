@@ -1,4 +1,4 @@
-import { Incentive, TimeGeoPoint } from './common/interfaces/CreateJourneyDTO';
+import { Incentive, TimeGeoPoint } from './common/interfaces/CreateJourneyDTO.ts';
 
 export interface ParamsInterface {
   operator_journey_id: string;

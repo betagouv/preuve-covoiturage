@@ -1,10 +1,10 @@
-import { Action } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { copyFromContextMiddleware, internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { copyFromContextMiddleware, internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { alias } from '@shared/carpool/finduuid.schema';
-import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/finduuid.contract';
+import { alias } from '@shared/carpool/finduuid.schema.ts';
+import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/finduuid.contract.ts';
 
 /*
  * Dispatch carpool to other service when ready

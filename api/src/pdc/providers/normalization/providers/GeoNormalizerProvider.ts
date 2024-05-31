@@ -1,6 +1,6 @@
-import { provider } from '@ilos/common';
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo';
-import { GeoNormalizerProviderInterface, GeoParamsInterface, GeoResultInterface } from '../interfaces';
+import { provider } from '@ilos/common/index.ts';
+import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
+import { GeoNormalizerProviderInterface, GeoParamsInterface, GeoResultInterface } from '../interfaces/index.ts';
 
 @provider()
 export class GeoNormalizerProvider implements GeoNormalizerProviderInterface {

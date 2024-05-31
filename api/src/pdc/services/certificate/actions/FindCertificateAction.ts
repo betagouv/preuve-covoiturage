@@ -1,10 +1,10 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { channelServiceWhitelistMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { mapCertForListHelper } from '../helpers/mapCertForListHelper';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/find.contract';
-import { alias } from '@shared/certificate/find.schema';
+import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { channelServiceWhitelistMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { mapCertForListHelper } from '../helpers/mapCertForListHelper.ts';
+import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/find.contract.ts';
+import { alias } from '@shared/certificate/find.schema.ts';
 
 @handler({
   ...handlerConfig,

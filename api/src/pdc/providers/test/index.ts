@@ -1,5 +1,5 @@
-export { serviceProviderMacro, ServiceProviderMacroContext } from './serviceProviderMacro';
-export { handlerMacro, HandlerMacroContext } from './handlerMacro';
-export * from './helpers';
-export * from './httpMacro';
-export * from './dbMacro';
+export { serviceProviderMacro, ServiceProviderMacroContext } from './serviceProviderMacro.ts';
+export { handlerMacro, HandlerMacroContext } from './handlerMacro.ts';
+export * from './helpers.ts';
+export * from './httpMacro.ts';
+export * from './dbMacro.ts';

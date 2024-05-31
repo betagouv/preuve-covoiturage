@@ -1,7 +1,7 @@
-import { ConfigInterface } from '@ilos/common';
+import { ConfigInterface } from '@ilos/common/index.ts';
 import test from 'ava';
-import { CronFrequency, MatviewItem } from '../interfaces/StatsRefreshInterfaces';
-import { filterTables } from './filterTables.helper';
+import { CronFrequency, MatviewItem } from '../interfaces/StatsRefreshInterfaces.ts';
+import { filterTables } from './filterTables.helper.ts';
 
 // helper to generate the db results from an array
 function makeRows(l: string[]): MatviewItem[] {

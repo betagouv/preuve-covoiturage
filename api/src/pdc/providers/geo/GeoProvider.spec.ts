@@ -1,10 +1,10 @@
-import { NotFoundException } from '@ilos/common/exceptions/NotFoundException';
+import { NotFoundException } from '@ilos/common/exceptions/NotFoundException.ts';
 import test from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { GeoProvider } from '.';
-import { GeoInterface } from './interfaces/GeoInterface';
-import { EtalabAPIGeoProvider, EtalabBaseAdresseNationaleProvider } from './providers';
-import { LocalGeoProvider } from './providers/LocalGeoProvider';
+import { GeoProvider } from './index.ts';
+import { GeoInterface } from './interfaces/GeoInterface.ts';
+import { EtalabAPIGeoProvider, EtalabBaseAdresseNationaleProvider } from './providers/index.ts';
+import { LocalGeoProvider } from './providers/LocalGeoProvider.ts';
 
 let geoProvider: GeoProvider;
 

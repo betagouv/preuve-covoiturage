@@ -1,4 +1,4 @@
-import { perimeterTypes, PerimeterType } from '@shared/geo/shared/Perimeter';
+import { perimeterTypes, PerimeterType } from '@shared/geo/shared/Perimeter.ts';
 
 export function checkTerritoryParam(territory: PerimeterType): PerimeterType {
   return perimeterTypes.find((d) => d == territory) || 'com';

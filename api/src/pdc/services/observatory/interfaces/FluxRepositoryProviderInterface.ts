@@ -1,25 +1,25 @@
 import {
   ParamsInterface as MonthlyFluxParamsInterface,
   ResultInterface as MonthlyFluxResultInterface,
-} from '@shared/observatory/flux/monthlyFlux.contract';
+} from '@shared/observatory/flux/monthlyFlux.contract.ts';
 
 // eslint-disable-next-line max-len
-import { ResultInterface as lastRecordMonthlyFluxResultInterface } from '@shared/observatory/flux/lastRecordMonthlyFlux.contract';
+import { ResultInterface as lastRecordMonthlyFluxResultInterface } from '@shared/observatory/flux/lastRecordMonthlyFlux.contract.ts';
 
 import {
   ParamsInterface as EvolMonthlyFluxParamsInterface,
   ResultInterface as EvolMonthlyFluxResultInterface,
-} from '@shared/observatory/flux/evolMonthlyFlux.contract';
+} from '@shared/observatory/flux/evolMonthlyFlux.contract.ts';
 
 import {
   ParamsInterface as BestMonthlyFluxParamsInterface,
   ResultInterface as BestMonthlyFluxResultInterface,
-} from '@shared/observatory/flux/bestMonthlyFlux.contract';
+} from '@shared/observatory/flux/bestMonthlyFlux.contract.ts';
 
 import {
   ParamsInterface as InsertMonthlyFluxParamsInterface,
   ParamsInterface as DeleteMonthlyFluxParamsInterface,
-} from '@shared/observatory/flux/insertMonthlyFlux.contract';
+} from '@shared/observatory/flux/insertMonthlyFlux.contract.ts';
 
 export {
   MonthlyFluxParamsInterface,

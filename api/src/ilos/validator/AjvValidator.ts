@@ -1,4 +1,4 @@
-import * as ajv from 'ajv';
+import { Ajv, ValidateFunction, Format, KeywordDefinition, ErrorObject } from 'ajv';
 import ajvErrors from 'ajv-errors';
 import addFormats from 'ajv-formats';
 import ajvKeywords from 'ajv-keywords';
@@ -10,13 +10,13 @@ import {
   NewableType,
   ValidatorInterface,
   provider,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
-  protected ajv: ajv.default;
-  protected bindings: Map<any, ajv.ValidateFunction> = new Map();
-  protected isSchemaSecure: ajv.ValidateFunction;
+  protected ajv: Ajv;
+  protected bindings: Map<any, ValidateFunction> = new Map();
+  protected isSchemaSecure: ValidateFunction;
 
   constructor(protected config: ConfigInterfaceResolver) {}
 
@@ -32,14 +32,14 @@ export class AjvValidator implements ValidatorInterface {
       allErrors: true, // for all errors for ajv errors plugin
     };
 
-    this.ajv = new ajv.default(ajvConfig);
+    this.ajv = new Ajv(ajvConfig);
 
     // activate ajv-keywords plugin
-    ajvKeywords(this.ajv);
-    addFormats(this.ajv);
-    ajvErrors(this.ajv);
+    ajvKeywords.default(this.ajv);
+    addFormats.default(this.ajv);
+    ajvErrors.default(this.ajv);
 
-    this.isSchemaSecure = new ajv.default({ strict: false }).compile(jsonSchemaSecureJson);
+    this.isSchemaSecure = new Ajv({ strict: false }).compile(jsonSchemaSecureJson);
   }
 
   registerValidator(definition: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
@@ -49,14 +49,14 @@ export class AjvValidator implements ValidatorInterface {
   registerCustomKeyword(def: {
     name?: string;
     type: string;
-    definition: ajv.Format | ajv.KeywordDefinition;
+    definition: Format | KeywordDefinition;
   }): ValidatorInterface {
     const { name, type, definition } = def;
     switch (type) {
       case 'format':
-        return this.addFormat(name, definition as ajv.Format);
+        return this.addFormat(name, definition as Format);
       case 'keyword':
-        return this.addKeyword(definition as ajv.KeywordDefinition);
+        return this.addKeyword(definition as KeywordDefinition);
       default:
         return this;
     }
@@ -110,17 +110,17 @@ export class AjvValidator implements ValidatorInterface {
     return true;
   }
 
-  protected mapErrors(errors: ajv.ErrorObject[]): string[] {
+  protected mapErrors(errors: ErrorObject[]): string[] {
     if (!errors || !Array.isArray(errors)) return [];
     return errors.map((error) => `${error.instancePath}: ${error.message}`);
   }
 
-  protected addFormat(name: string, format: ajv.Format): ValidatorInterface {
+  protected addFormat(name: string, format: Format): ValidatorInterface {
     this.ajv.addFormat(name, format);
     return this;
   }
 
-  protected addKeyword(definition: ajv.KeywordDefinition): ValidatorInterface {
+  protected addKeyword(definition: KeywordDefinition): ValidatorInterface {
     this.ajv.addKeyword(definition);
     return this;
   }

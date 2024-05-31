@@ -11,16 +11,16 @@ import {
 } from 'pdf-lib';
 import { intlFormat } from 'date-fns';
 
-import { provider } from '@ilos/common';
-import { MariannePaths } from './assets/marianne';
+import { provider } from '@ilos/common/index.ts';
+import { MariannePaths } from './assets/marianne.ts';
 
 import {
   PdfCertProviderInterface,
   PdfCertProviderInterfaceResolver,
-} from './interfaces/PdfCertProviderInterfaceResolver';
-import { PdfTemplateData } from './interfaces/PdfTemplateData';
-import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
-import { MetaPersonInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
+} from './interfaces/PdfCertProviderInterfaceResolver.ts';
+import { PdfTemplateData } from './interfaces/PdfTemplateData.ts';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { MetaPersonInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface.ts';
 
 type TextOptions = Partial<PDFPageDrawTextOptions & { align: TextAlignment; maxChars: number; maxLines: number }>;
 

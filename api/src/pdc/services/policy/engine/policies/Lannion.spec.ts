@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { Lannion as Handler } from './Lannion';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { Lannion as Handler } from './Lannion.ts';
 
 const defaultPosition = {
   arr: '22113',

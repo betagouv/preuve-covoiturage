@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { TerritoryCodeEnum } from '../../../interfaces';
-import { makeProcessHelper } from '../../tests/macro';
-import { PolicyTemplateOne as Handler } from './PolicyTemplateOne';
+import { TerritoryCodeEnum } from '../../../interfaces/index.ts';
+import { makeProcessHelper } from '../../tests/macro.ts';
+import { PolicyTemplateOne as Handler } from './PolicyTemplateOne.ts';
 
 const defaultPosition = {
   arr: '91377',

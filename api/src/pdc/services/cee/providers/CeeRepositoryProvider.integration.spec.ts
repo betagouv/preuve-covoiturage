@@ -1,7 +1,7 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
-import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces/index.ts';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test/index.ts';
 import anyTest, { TestFn } from 'ava';
-import { config } from '../config';
+import { config } from '../config/index.ts';
 import {
   CeeApplicationErrorEnum,
   CeeJourneyTypeEnum,
@@ -10,8 +10,8 @@ import {
   SearchJourney,
   ShortCeeApplication,
   ValidJourneyConstraint,
-} from '../interfaces';
-import { CeeRepositoryProvider } from './CeeRepositoryProvider';
+} from '../interfaces/index.ts';
+import { CeeRepositoryProvider } from './CeeRepositoryProvider.ts';
 
 interface TestContext {
   db: DbContext;

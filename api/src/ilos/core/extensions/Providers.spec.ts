@@ -1,8 +1,8 @@
 import test from 'ava';
-import { InitHookInterface, provider, serviceProvider } from '@ilos/common';
+import { InitHookInterface, provider, serviceProvider } from '@ilos/common/index.ts';
 
-import { Providers } from './Providers';
-import { ServiceContainer } from '../foundation/ServiceContainer';
+import { Providers } from './Providers.ts';
+import { ServiceContainer } from '../foundation/ServiceContainer.ts';
 
 test('Providers extension: works', async (t) => {
   abstract class ProviderResolver {

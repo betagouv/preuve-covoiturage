@@ -1,5 +1,5 @@
-import { UserPatchInterface } from './common/interfaces/UserPatchInterface';
-import { UserInterface } from './common/interfaces/UserInterface';
+import { UserPatchInterface } from './common/interfaces/UserPatchInterface.ts';
+import { UserInterface } from './common/interfaces/UserInterface.ts';
 
 export interface ParamsInterface {
   _id: number;

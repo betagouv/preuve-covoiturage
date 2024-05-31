@@ -1,14 +1,14 @@
-import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
-import { RedisConnection } from '@ilos/connection-redis';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/getPastSimulationOrCompute.contract';
+import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common/index.ts';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/getPastSimulationOrCompute.contract.ts';
 import {
   ParamsInterface as SimulateOnPastParams,
   handlerConfig as simulatePastHandler,
   signature as simulatePastSignature,
-} from '@shared/policy/simulateOnPast.contract';
-import { alias } from '@shared/policy/simulateOnPast.schema';
+} from '@shared/policy/simulateOnPast.contract.ts';
+import { alias } from '@shared/policy/simulateOnPast.schema.ts';
 import { RedisKey } from 'ioredis';
 
 @handler({

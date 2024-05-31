@@ -1,8 +1,8 @@
-import { KeywordDefinition } from '@ilos/validator';
+import { KeywordDefinition } from '@ilos/validator/index.ts';
 
-import { dateCast } from './cast/dateCast';
-import { phoneCast } from './cast/phoneCast';
-import { phonetruncCast } from './cast/phonetruncCast';
+import { dateCast } from './cast/dateCast.ts';
+import { phoneCast } from './cast/phoneCast.ts';
+import { phonetruncCast } from './cast/phonetruncCast.ts';
 
 const castStore = {
   date: dateCast(),

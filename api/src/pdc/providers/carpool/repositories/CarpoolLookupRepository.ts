@@ -1,8 +1,8 @@
-import { provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { Id, Uuid } from '../interfaces';
-import { SelectableCarpool, SelectableCarpoolStatus } from '../interfaces/database/lookup';
-import sql, { raw } from '../helpers/sql';
+import { provider } from '@ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { Id, Uuid } from '../interfaces/index.ts';
+import { SelectableCarpool, SelectableCarpoolStatus } from '../interfaces/database/lookup.ts';
+import sql, { raw } from '../helpers/sql.ts';
 
 @provider()
 export class CarpoolLookupRepository {

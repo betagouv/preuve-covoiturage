@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/notify.contract';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/notify.contract.ts';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 
 /*
  * Send email to user

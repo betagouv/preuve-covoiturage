@@ -1,8 +1,8 @@
 // create Redis connection
-import { ForbiddenException } from '@ilos/common';
+import { ForbiddenException } from '@ilos/common/index.ts';
 import { NextFunction, Request, Response } from 'express';
-import { cacheStore } from './cache/redis';
-import { deflate, getKey, inflate } from './cache/transformers';
+import { cacheStore } from './cache/redis.ts';
+import { deflate, getKey, inflate } from './cache/transformers.ts';
 import {
   CacheFlushResponse,
   CacheMiddleware,
@@ -12,8 +12,8 @@ import {
   GlobalCacheConfig,
   RouteCacheConfig,
   StoreConnection,
-} from './cache/types';
-import { validate } from './cache/validators';
+} from './cache/types.ts';
+import { validate } from './cache/validators.ts';
 
 const defaultGlobalConfig: GlobalCacheConfig = {
   authorizedMethods: ['HEAD', 'GET'],

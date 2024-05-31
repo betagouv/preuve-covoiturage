@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -16,10 +16,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { LimitTargetEnum } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Montpellier.html';
+} from '../helpers/index.ts';
+import { LimitTargetEnum } from '../helpers/limits.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Montpellier.html.ts';
 
 /* eslint-disable-next-line */
 export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

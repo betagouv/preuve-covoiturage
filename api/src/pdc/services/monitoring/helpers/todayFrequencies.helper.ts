@@ -1,4 +1,4 @@
-import { CronFrequency } from '../interfaces/StatsRefreshInterfaces';
+import { CronFrequency } from '../interfaces/StatsRefreshInterfaces.ts';
 
 export function todayFrequencies(d?: Date | string): CronFrequency[] {
   const freq: CronFrequency[] = ['daily'];

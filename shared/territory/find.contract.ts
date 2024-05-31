@@ -1,4 +1,4 @@
-import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface.ts';
 
 export interface ParamsInterface {
   _id: number;

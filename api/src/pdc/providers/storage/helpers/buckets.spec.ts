@@ -1,6 +1,6 @@
 import test from 'ava';
-import { BucketName } from '../interfaces/BucketName';
-import { getBucketEndpoint, getBucketName, getBucketPrefix } from './buckets';
+import { BucketName } from '../interfaces/BucketName.ts';
+import { getBucketEndpoint, getBucketName, getBucketPrefix } from './buckets.ts';
 
 test('[getBucketPrefix] returns AWS_BUCKET_PREFIX or empty', (t) => {
   process.env.AWS_BUCKET_PREFIX = '';

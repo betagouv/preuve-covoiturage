@@ -1,4 +1,4 @@
-import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
+import { SerializedIncentiveInterface, IncentiveStatusEnum } from '../index.ts';
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract updateStatefulAmount(

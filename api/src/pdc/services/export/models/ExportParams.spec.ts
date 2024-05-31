@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Config, ExportParams } from './ExportParams';
+import { Config, ExportParams } from './ExportParams.ts';
 
 // ----------------------------------------------------------------------------------------
 // SETUP

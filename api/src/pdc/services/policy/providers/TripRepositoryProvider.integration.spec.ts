@@ -1,9 +1,9 @@
-import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 import anyTest, { TestFn } from 'ava';
-import { Policy } from '../engine/entities/Policy';
-import { Idfm } from '../engine/policies/Idfm';
-import { TripRepositoryProvider } from './TripRepositoryProvider';
+import { Policy } from '../engine/entities/Policy.ts';
+import { Idfm } from '../engine/policies/Idfm.ts';
+import { TripRepositoryProvider } from './TripRepositoryProvider.ts';
 
 interface TestContext {
   db: DbContext;

@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -7,7 +7,7 @@ import {
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
   SerializedMetadataVariableDefinitionInterface,
-} from '../interfaces';
+} from '../interfaces/index.ts';
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,

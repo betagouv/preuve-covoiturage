@@ -1,4 +1,4 @@
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
 import distance from '@turf/distance';
 import { point } from '@turf/helpers';
 

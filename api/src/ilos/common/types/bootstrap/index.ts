@@ -1,1 +1,1 @@
-export { BootstrapType } from './BootstrapType';
+export { BootstrapType } from './BootstrapType.ts';

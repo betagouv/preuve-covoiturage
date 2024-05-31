@@ -19,13 +19,13 @@ import { get } from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
-import { KernelInterface, TransportInterface } from '@ilos/common';
-import { CryptoProvider } from '@pdc/providers/crypto';
-import { TokenProvider } from '@pdc/providers/token';
-import { RedisConnection } from '@ilos/connection-redis';
+import { KernelInterface, TransportInterface } from '@ilos/common/index.ts';
+import { CryptoProvider } from '@pdc/providers/crypto/index.ts';
+import { TokenProvider } from '@pdc/providers/token/index.ts';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
 
-import { HttpTransport } from '../HttpTransport';
-import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
+import { HttpTransport } from '../HttpTransport.ts';
+import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider.ts';
 
 interface ContextType {
   kernel: KernelInterface;
@@ -45,8 +45,8 @@ interface ContextType {
   cookies: string;
 }
 
-import { Kernel } from '../Kernel';
-import { payloadv3 } from './mocks/payloadv3';
+import { Kernel } from '../Kernel.ts';
+import { payloadv3 } from './mocks/payloadv3.ts';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook

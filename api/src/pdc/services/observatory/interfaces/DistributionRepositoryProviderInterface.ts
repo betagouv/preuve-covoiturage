@@ -1,15 +1,15 @@
 import {
   ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
-} from '@shared/observatory/distribution/journeysByHours.contract';
+} from '@shared/observatory/distribution/journeysByHours.contract.ts';
 import {
   ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
-} from '@shared/observatory/distribution/journeysByDistances.contract';
+} from '@shared/observatory/distribution/journeysByDistances.contract.ts';
 import {
   ParamsInterface as InsertMonthlyDistributionParamsInterface,
   ParamsInterface as DeleteMonthlyDistributionParamsInterface,
-} from '@shared/observatory/distribution/insertMonthlyDistribution.contract';
+} from '@shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
 
 export {
   JourneysByHoursParamsInterface,

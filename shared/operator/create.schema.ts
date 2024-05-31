@@ -1,8 +1,8 @@
-import { company } from '../common/schemas/company';
-import { address } from '../common/schemas/address';
-import { bank } from '../common/schemas/bank';
-import { cgu } from '../common/schemas/cgu';
-import { contacts } from '../common/schemas/contacts';
+import { company } from '../common/schemas/company.ts';
+import { address } from '../common/schemas/address.ts';
+import { bank } from '../common/schemas/bank.ts';
+import { cgu } from '../common/schemas/cgu.ts';
+import { contacts } from '../common/schemas/contacts.ts';
 
 export const alias = 'operator.create';
 export const schema = {

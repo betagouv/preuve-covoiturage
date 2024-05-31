@@ -1,18 +1,18 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common/index.ts';
 import anyTest, { ExecutionContext, TestFn } from 'ava';
 import { faker } from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
-import { mapFromCarpools } from '../helpers/mapFromCarpools';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
-import { CertificateMetaInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
-import { ParamsInterface, ResultInterface } from '@shared/certificate/create.contract';
-import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus';
-import { CreateCertificateAction } from './CreateCertificateAction';
+import { mapFromCarpools } from '../helpers/mapFromCarpools.ts';
+import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
+import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface.ts';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface.ts';
+import { CertificateMetaInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+import { ParamsInterface, ResultInterface } from '@shared/certificate/create.contract.ts';
+import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus.ts';
+import { CreateCertificateAction } from './CreateCertificateAction.ts';
 
 interface Context {
   // Injected tokens

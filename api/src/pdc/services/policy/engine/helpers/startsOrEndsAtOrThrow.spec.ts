@@ -1,9 +1,9 @@
 import test from 'ava';
-import { TerritoryCodeInterface } from '../../interfaces';
-import { StatelessContext } from '../entities/Context';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { generateCarpool } from '../tests/helpers';
-import { startsOrEndsAtOrThrow } from './startsOrEndsAtOrThrow';
+import { TerritoryCodeInterface } from '../../interfaces/index.ts';
+import { StatelessContext } from '../entities/Context.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { startsOrEndsAtOrThrow } from './startsOrEndsAtOrThrow.ts';
 
 function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start, end }));

@@ -1,9 +1,9 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/syncIncentiveSum.contract';
-import { alias } from '@shared/policy/syncIncentiveSum.schema';
+import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/syncIncentiveSum.contract.ts';
+import { alias } from '@shared/policy/syncIncentiveSum.schema.ts';
 
 @handler({
   ...handlerConfig,

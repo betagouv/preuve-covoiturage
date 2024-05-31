@@ -1,7 +1,7 @@
-import { ConfigInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonFakeTimers, SinonStub } from 'sinon';
-import { CreateCastParamsInterface, ParamsInterface, createCastParamsHelper } from './createCastParamsHelper';
+import { CreateCastParamsInterface, ParamsInterface, createCastParamsHelper } from './createCastParamsHelper.ts';
 
 interface Context {
   configStub: SinonStub;

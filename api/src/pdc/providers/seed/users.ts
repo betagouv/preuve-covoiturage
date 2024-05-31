@@ -1,5 +1,5 @@
-import { CreateTerritoryGroupInterface, idfm } from './territories';
-import { Operator, maxiCovoit } from './operators';
+import { CreateTerritoryGroupInterface, idfm } from './territories.ts';
+import { Operator, maxiCovoit } from './operators.ts';
 
 export const defaultStatus = 'active';
 export const defaultPassword = '$2a$10$iSm6l7.Yb9n.peL2Sgf8PumUujREjnwfCjL6orAcGN0Iowv4fqPeO';

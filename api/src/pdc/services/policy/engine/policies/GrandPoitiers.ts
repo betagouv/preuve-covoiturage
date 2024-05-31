@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   isOperatorClassOrThrow,
@@ -16,10 +16,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './GrandPoitiers.html';
+} from '../helpers/index.ts';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './GrandPoitiers.html.ts';
 
 // Politique Grands poitiers
 // territory_id: 323

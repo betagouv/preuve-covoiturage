@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from 'ava';
 import { IFilterXSSOptions } from 'xss';
 
-import { sanitizeKeyword } from './sanitizeKeyword';
+import { sanitizeKeyword } from './sanitizeKeyword.ts';
 
 function macro(config: boolean | IFilterXSSOptions) {
   return function macro(t: ExecutionContext, input: any, expected: string) {

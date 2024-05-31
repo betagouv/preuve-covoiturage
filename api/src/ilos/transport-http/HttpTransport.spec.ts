@@ -1,9 +1,9 @@
-import { RPCCallType, RPCResponseType } from '@ilos/common';
-import { Kernel } from '@ilos/core';
+import { RPCCallType, RPCResponseType } from '@ilos/common/index.ts';
+import { Kernel } from '@ilos/core/index.ts';
 import anyTest, { TestFn } from 'ava';
 import supertest, { Test } from 'supertest';
-import TestAgent from 'supertest/lib/agent';
-import { HttpTransport } from './HttpTransport';
+import TestAgent from 'supertest/lib/agent.ts';
+import { HttpTransport } from './HttpTransport.ts';
 
 interface Context {
   request: TestAgent<Test>;

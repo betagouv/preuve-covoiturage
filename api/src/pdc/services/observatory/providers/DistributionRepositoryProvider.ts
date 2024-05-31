@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   DeleteMonthlyDistributionParamsInterface,
   DistributionRepositoryInterface,
@@ -9,7 +9,7 @@ import {
   JourneysByDistancesResultInterface,
   JourneysByHoursParamsInterface,
   JourneysByHoursResultInterface,
-} from '../interfaces/DistributionRepositoryProviderInterface';
+} from '../interfaces/DistributionRepositoryProviderInterface.ts';
 
 @provider({
   identifier: DistributionRepositoryInterfaceResolver,

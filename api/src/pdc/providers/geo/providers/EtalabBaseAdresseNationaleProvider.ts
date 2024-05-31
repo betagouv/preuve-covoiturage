@@ -1,10 +1,10 @@
-import { NotFoundException, provider } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { Agent } from 'https';
 import { get } from 'lodash';
 import { URLSearchParams } from 'url';
-import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces';
+import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()
 export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, InseeCoderInterface {

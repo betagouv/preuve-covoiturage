@@ -1,8 +1,8 @@
 import test, { ExecutionContext } from 'ava';
-import { AjvValidator } from '@ilos/validator';
-import { Extensions } from '@ilos/core';
+import { AjvValidator } from '@ilos/validator/index.ts';
+import { Extensions } from '@ilos/core/index.ts';
 
-import { macroKeyword } from './macroKeyword';
+import { macroKeyword } from './macroKeyword.ts';
 
 test('should return schema if macro exist', (t) => {
   t.true(Reflect.ownKeys((macroKeyword as any).macro('uuid')).length > 0);

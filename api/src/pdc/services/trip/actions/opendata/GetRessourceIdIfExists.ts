@@ -1,7 +1,7 @@
-import { provider } from '@ilos/common';
+import { provider } from '@ilos/common/index.ts';
 import path from 'path';
-import { Dataset } from '../../interfaces/DataGouvInterface';
-import { DataGouvProvider } from '../../providers/DataGouvProvider';
+import { Dataset } from '../../interfaces/DataGouvInterface.ts';
+import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';
 
 @provider()
 export class GetRessourceIdIfExists {

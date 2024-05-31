@@ -7,8 +7,8 @@ import {
   ResultType,
   InvalidParamsException,
   ForbiddenException,
-} from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+} from '@ilos/common/index.ts';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /**
  * Check if user has all listed permission

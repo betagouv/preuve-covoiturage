@@ -7,8 +7,8 @@ import {
   ResultType,
   InvalidParamsException,
   middleware,
-} from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+} from '@ilos/common/index.ts';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*
  * Check date validity

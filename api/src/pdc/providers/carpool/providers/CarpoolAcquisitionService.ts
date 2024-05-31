@@ -1,13 +1,13 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import { CarpoolAcquisitionStatus } from '../status';
-import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
-import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
-import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces';
-import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
-import { GeoProvider } from '@pdc/providers/geo';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository.ts';
+import { CarpoolRepository } from '../repositories/CarpoolRepository.ts';
+import { CarpoolAcquisitionStatus } from '../status/index.ts';
+import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository.ts';
+import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository.ts';
+import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces/index.ts';
+import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository.ts';
+import { GeoProvider } from '@pdc/providers/geo/index.ts';
 
 @provider()
 export class CarpoolAcquisitionService {

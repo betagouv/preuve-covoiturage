@@ -1,8 +1,8 @@
 import rateLimit, { Options as RateLimiterOptions, RateLimitRequestHandler } from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
-import RedisClient from 'ioredis';
-import { env } from '@ilos/core';
-import { config } from '../config';
+import { Redis as RedisClient } from 'ioredis';
+import { env } from '@ilos/core/index.ts';
+import { config } from '../config/index.ts';
 import { Request, Response } from 'express';
 
 const minute = 60000;

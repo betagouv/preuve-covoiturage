@@ -5,12 +5,12 @@ import {
   ContextType,
   KernelInterfaceResolver,
   ResultType,
-} from '@ilos/common';
-import { Timezone } from '@pdc/providers/validator';
-import { signature as apply } from '@shared/policy/apply.contract';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { castUserStringToUTC, toISOString } from '../helpers';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+} from '@ilos/common/index.ts';
+import { Timezone } from '@pdc/providers/validator/index.ts';
+import { signature as apply } from '@shared/policy/apply.contract.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { castUserStringToUTC, toISOString } from '../helpers/index.ts';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 
 interface CommandOptions {
   campaigns: number[];

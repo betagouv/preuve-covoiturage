@@ -8,9 +8,9 @@ import {
   StatefulIncentiveInterface,
   StatelessContextInterface,
   StatelessIncentiveInterface,
-} from '../../interfaces';
-import { Incentive } from './Incentive';
-import { MetadataRegistry } from './MetadataRegistry';
+} from '../../interfaces/index.ts';
+import { Incentive } from './Incentive.ts';
+import { MetadataRegistry } from './MetadataRegistry.ts';
 
 export class StatelessContext implements StatelessContextInterface {
   constructor(

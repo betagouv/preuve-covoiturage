@@ -1,4 +1,4 @@
-import { InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces';
+import { InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces/index.ts';
 
 export const insertableCarpool: InsertableCarpool = {
   operator_id: 1,

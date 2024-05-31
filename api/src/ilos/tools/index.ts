@@ -1,3 +1,3 @@
-export { catchErrors } from './catchErrors';
-export { interceptConsole } from './interceptConsole';
-export { registerGracefulShutdown } from './registerGracefulShutdown';
+export { catchErrors } from './catchErrors.ts';
+export { interceptConsole } from './interceptConsole.ts';
+export { registerGracefulShutdown } from './registerGracefulShutdown.ts';

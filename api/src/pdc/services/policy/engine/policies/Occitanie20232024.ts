@@ -5,8 +5,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   isAfter,
   isOperatorClassOrThrow,
@@ -16,10 +16,10 @@ import {
   onWeekday,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Occitanie20232024.html';
+} from '../helpers/index.ts';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Occitanie20232024.html.ts';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return ctx.carpool.passenger_contribution || 0;

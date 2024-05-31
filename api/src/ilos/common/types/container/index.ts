@@ -1,2 +1,2 @@
-export { IdentifierType } from './IdentifierType';
-export * from './ContainerInterface';
+export { IdentifierType } from './IdentifierType.ts';
+export * from './ContainerInterface.ts';

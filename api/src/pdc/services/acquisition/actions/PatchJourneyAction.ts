@@ -1,16 +1,16 @@
 import { get } from 'lodash';
-import { Action as AbstractAction, env } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
-import { OperatorClass } from '@pdc/providers/carpool/interfaces';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
+import { handler, ContextType } from '@ilos/common/index.ts';
+import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool/index.ts';
+import { OperatorClass } from '@pdc/providers/carpool/interfaces/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/patch.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/patch.contract.ts';
 
-import { alias } from '@shared/acquisition/patch.schema';
+import { alias } from '@shared/acquisition/patch.schema.ts';
 
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 
 @handler({
   ...handlerConfig,

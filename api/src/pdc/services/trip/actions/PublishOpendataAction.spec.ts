@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { faker } from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
-import { UploadedResource } from '../interfaces/DataGouvInterface';
-import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { ParamsInterface } from '@shared/trip/publishOpenData.contract';
-import { BuildResourceDescription } from './opendata/BuildResourceDescription';
-import { PublishOpenDataAction } from './PublishOpenDataAction';
-import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';
+import { UploadedResource } from '../interfaces/DataGouvInterface.ts';
+import { DataGouvProvider } from '../providers/DataGouvProvider.ts';
+import { ParamsInterface } from '@shared/trip/publishOpenData.contract.ts';
+import { BuildResourceDescription } from './opendata/BuildResourceDescription.ts';
+import { PublishOpenDataAction } from './PublishOpenDataAction.ts';
+import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists.ts';
 
 interface Context {
   // Injected tokens

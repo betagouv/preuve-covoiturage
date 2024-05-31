@@ -1,6 +1,6 @@
-import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
-import { Pagination } from '@shared/certificate/list.contract';
+import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface.ts';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface.ts';
+import { Pagination } from '@shared/certificate/list.contract.ts';
 
 export interface CertificateRepositoryProviderInterface {
   find(): Promise<CertificateInterface[]>;

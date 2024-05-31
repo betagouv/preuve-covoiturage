@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
+import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core/index.ts';
 
-import { handlerMacro, HandlerMacroContext } from './handlerMacro';
+import { handlerMacro, HandlerMacroContext } from './handlerMacro.ts';
 
 const handlerConfig = {
   service: 'test',

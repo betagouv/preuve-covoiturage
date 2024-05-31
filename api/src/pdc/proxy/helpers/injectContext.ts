@@ -1,7 +1,7 @@
-import { RPCSingleCallType } from '@ilos/common';
+import { RPCSingleCallType } from '@ilos/common/index.ts';
 
-import { UserInterface } from '@shared/user/common/interfaces/UserInterface';
-import { castContext } from './castContext';
+import { UserInterface } from '@shared/user/common/interfaces/UserInterface.ts';
+import { castContext } from './castContext.ts';
 
 export function injectContext(
   doc: RPCSingleCallType,

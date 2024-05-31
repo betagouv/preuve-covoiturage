@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -15,9 +15,9 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Laval.html';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Laval.html.ts';
 
 // Politique de la Communauté D'Agglomeration De Laval
 export const Laval: PolicyHandlerStaticInterface = class

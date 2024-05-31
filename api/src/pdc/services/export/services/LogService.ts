@@ -1,6 +1,6 @@
-import { provider } from '@ilos/common';
-import { ExportLogEvent } from '../models/ExportLog';
-import { LogRepositoryInterfaceResolver } from '../repositories/LogRepository';
+import { provider } from '@ilos/common/index.ts';
+import { ExportLogEvent } from '../models/ExportLog.ts';
+import { LogRepositoryInterfaceResolver } from '../repositories/LogRepository.ts';
 
 export enum LogLevels {
   INFO = 'info',

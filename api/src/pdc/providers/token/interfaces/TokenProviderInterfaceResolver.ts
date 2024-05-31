@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { ProviderInterface } from '@ilos/common';
+import { ProviderInterface } from '@ilos/common/index.ts';
 
 export interface TokenProviderInterface extends ProviderInterface {
   sign<T extends string | Buffer | object>(payload: T, options?: jwt.SignOptions): Promise<string>;

@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { Cotentin2023 as Handler } from './Cotentin2023';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { Cotentin2023 as Handler } from './Cotentin2023.ts';
 
 const defaultPosition = {
   arr: '22113',

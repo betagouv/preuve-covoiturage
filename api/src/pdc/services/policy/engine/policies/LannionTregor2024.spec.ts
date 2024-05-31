@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { LannionTregor2024 as Handler } from './LannionTregor2024';
+import { CarpoolInterface, OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { LannionTregor2024 as Handler } from './LannionTregor2024.ts';
 
 // Perros-Guirec
 const defaultPosition = {

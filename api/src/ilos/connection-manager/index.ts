@@ -1,1 +1,1 @@
-export { ConnectionManagerExtension } from './ConnectionManagerExtension';
+export { ConnectionManagerExtension } from './ConnectionManagerExtension.ts';

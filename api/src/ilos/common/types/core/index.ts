@@ -1,11 +1,11 @@
-export { KernelInterface, KernelInterfaceResolver } from './KernelInterface';
-export { MiddlewareInterface, FunctionMiddlewareInterface } from './MiddlewareInterface';
-export { ConfigInterface, ConfigInterfaceResolver } from './ConfigInterface';
-export { ProviderInterface } from './ProviderInterface';
+export { KernelInterface, KernelInterfaceResolver } from './KernelInterface.ts';
+export { MiddlewareInterface, FunctionMiddlewareInterface } from './MiddlewareInterface.ts';
+export { ConfigInterface, ConfigInterfaceResolver } from './ConfigInterface.ts';
+export { ProviderInterface } from './ProviderInterface.ts';
 export {
   ServiceContainerInterface,
   ServiceContainerInterfaceResolver,
   ServiceContainerConstructorInterface,
-} from './ServiceContainerInterface';
+} from './ServiceContainerInterface.ts';
 
-export * from './ExtensionInterface';
+export * from './ExtensionInterface.ts';

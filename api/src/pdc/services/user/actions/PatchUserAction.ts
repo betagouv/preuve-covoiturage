@@ -1,13 +1,13 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
-import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common/index.ts';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/patch.contract';
-import { alias } from '@shared/user/patch.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/patch.contract.ts';
+import { alias } from '@shared/user/patch.schema.ts';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
+import { userWhiteListFilterOutput } from '../config/filterOutput.ts';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 
 /*
  * Update properties of user ( firstname, lastname, phone )

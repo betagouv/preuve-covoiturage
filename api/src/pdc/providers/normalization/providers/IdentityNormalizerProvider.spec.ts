@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
-import { LegacyIdentityInterface } from '../interfaces';
+import { IdentityNormalizerProvider } from './IdentityNormalizerProvider.ts';
+import { LegacyIdentityInterface } from '../interfaces/index.ts';
 
 test('Identity normalizer should work', async (t) => {
   const normalizer = new IdentityNormalizerProvider();

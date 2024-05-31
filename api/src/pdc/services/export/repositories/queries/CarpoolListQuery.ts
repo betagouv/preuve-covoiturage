@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Query } from './Query';
+import { Query } from './Query.ts';
 
 export type TemplateKeys = 'geo_selectors' | 'operator_id';
 

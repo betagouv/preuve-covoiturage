@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { GrandChatellerault2024 as Handler } from './GrandChatellerault2024';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { GrandChatellerault2024 as Handler } from './GrandChatellerault2024.ts';
 
 // Châtellerault
 const defaultPosition = {

@@ -1,13 +1,13 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { APDFNameProvider } from '@pdc/providers/storage';
+import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { APDFNameProvider } from '@pdc/providers/storage/index.ts';
 import { stream } from 'exceljs';
-import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
-import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract';
-import { DataRepositoryProvider } from '../APDFRepositoryProvider';
-import { SlicesWorksheetWriter } from './SlicesWorksheetWriter';
-import { TripsWorksheetWriter } from './TripsWorksheetWriter';
-import { wrapSlices } from './wrapSlicesHelper';
+import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
+import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface.ts';
+import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
+import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
+import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
+import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
+import { wrapSlices } from './wrapSlicesHelper.ts';
 
 @provider()
 export class BuildExcel {

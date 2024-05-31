@@ -1,5 +1,5 @@
-import { ConfigInterfaceResolver, provider } from '@ilos/common';
-import { ExportTarget } from '../models/Export';
+import { ConfigInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { ExportTarget } from '../models/Export.ts';
 
 export type Options = {
   uuid: string;

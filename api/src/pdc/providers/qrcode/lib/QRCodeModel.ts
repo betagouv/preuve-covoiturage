@@ -1,8 +1,8 @@
-import { QR8bitByte } from './QR8bitByte';
-import { QRUtil } from './QRUtil';
-import { QRRSBlock } from './QRRSBlock';
-import { QRBitBuffer } from './QRBitBuffer';
-import { QRPolynomial } from './QRPolynomial';
+import { QR8bitByte } from './QR8bitByte.ts';
+import { QRUtil } from './QRUtil.ts';
+import { QRRSBlock } from './QRRSBlock.ts';
+import { QRBitBuffer } from './QRBitBuffer.ts';
+import { QRPolynomial } from './QRPolynomial.ts';
 
 function QRCodeModel(typeNumber, errorCorrectLevel) {
   this.typeNumber = typeNumber;

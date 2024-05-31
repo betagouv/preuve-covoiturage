@@ -1,4 +1,4 @@
-import { env } from '@ilos/core';
+import { env } from '@ilos/core/index.ts';
 import { readFileSync } from 'fs';
 
 function getKey(type: string): string {

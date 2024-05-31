@@ -1,4 +1,4 @@
-import { PositionInterface } from './Carpool';
+import { PositionInterface } from './Carpool.ts';
 
 export interface CrosscheckRepositoryProviderInterface {
   getTripId(data: {

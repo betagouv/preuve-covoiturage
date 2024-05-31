@@ -1,4 +1,4 @@
-import { travelPass } from './travelPass';
+import { travelPass } from './travelPass.ts';
 
 export const identity = {
   type: 'object',

@@ -1,4 +1,4 @@
-import { ExportParams } from './ExportParams';
+import { ExportParams } from './ExportParams.ts';
 
 export enum ExportStatus {
   PENDING = 'pending',

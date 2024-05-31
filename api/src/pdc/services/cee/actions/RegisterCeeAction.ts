@@ -1,10 +1,10 @@
 import { createSign } from 'crypto';
-import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
+import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/registerApplication.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/registerApplication.contract.ts';
 
-import { alias } from '@shared/cee/registerApplication.schema';
+import { alias } from '@shared/cee/registerApplication.schema.ts';
 
 import {
   ApplicationCooldownConstraint,
@@ -15,15 +15,15 @@ import {
   RegisteredCeeApplication,
   TimeRangeConstraint,
   ValidJourneyConstraint,
-} from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
-import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
-import { getDateOrFail } from '../helpers/getDateOrFail';
-import { timestampSchema } from '@shared/cee/common/ceeSchema';
-import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
-import { ConflictException } from '@ilos/common';
-import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface';
-import { carpoolV2ToV1StatusConverter } from '../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter';
+} from '../interfaces/index.ts';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError.ts';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail.ts';
+import { getDateOrFail } from '../helpers/getDateOrFail.ts';
+import { timestampSchema } from '@shared/cee/common/ceeSchema.ts';
+import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail.ts';
+import { ConflictException } from '@ilos/common/index.ts';
+import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface.ts';
+import { carpoolV2ToV1StatusConverter } from '../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 import {
   isAfter,
   isOperatorClassOrThrow,
@@ -18,9 +18,9 @@ import {
   startsAndEndsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pmgf.html';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Pmgf.html.ts';
 
 // Politique du Pôle Métropolitain Genevois Français
 // eslint-disable-next-line max-len

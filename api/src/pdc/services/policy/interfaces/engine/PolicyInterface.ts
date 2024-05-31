@@ -1,5 +1,5 @@
-import { Timezone } from '@pdc/providers/validator';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { Timezone } from '@pdc/providers/validator/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 import { LogFn } from 'ava';
 import {
   BoundedSlices,
@@ -14,7 +14,7 @@ import {
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
   UnboundedSlices,
-} from '.';
+} from '../index.ts';
 
 export interface PolicyInterface {
   _id: number;

@@ -1,18 +1,18 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPastGeo.contract';
-import { alias } from '@shared/policy/simulateOnPastGeo.schema';
+import { handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPastGeo.contract.ts';
+import { alias } from '@shared/policy/simulateOnPastGeo.schema.ts';
 import {
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
   signature as geoSignature,
-} from '@shared/territory/findGeoBySiren.contract';
-import { MetadataStore } from '../engine/entities/MetadataStore';
-import { Policy } from '../engine/entities/Policy';
-import { SerializedPolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider';
+} from '@shared/territory/findGeoBySiren.contract.ts';
+import { MetadataStore } from '../engine/entities/MetadataStore.ts';
+import { Policy } from '../engine/entities/Policy.ts';
+import { SerializedPolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider.ts';
 
 @handler({
   ...handlerConfig,

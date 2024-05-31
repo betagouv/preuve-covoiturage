@@ -1,10 +1,10 @@
-import { QRMaskPattern } from './QRMaskPattern';
+import { QRMaskPattern } from './QRMaskPattern.ts';
 
-import { QRPolynomial } from './QRPolynomial';
+import { QRPolynomial } from './QRPolynomial.ts';
 
-import { QRMath } from './QRMath';
+import { QRMath } from './QRMath.ts';
 
-import { QRMode } from './QRMode';
+import { QRMode } from './QRMode.ts';
 
 export const QRUtil = {
   PATTERN_POSITION_TABLE: [

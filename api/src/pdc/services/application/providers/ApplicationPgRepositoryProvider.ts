@@ -1,15 +1,15 @@
-import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
-import { RepositoryInterface as ListInterface } from '@shared/application/list.contract';
-import { RepositoryInterface as FindInterface } from '@shared/application/find.contract';
-import { RepositoryInterface as CreateInterface } from '@shared/application/create.contract';
-import { RepositoryInterface as RevokeInterface } from '@shared/application/revoke.contract';
-import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
+import { RepositoryInterface as ListInterface } from '@shared/application/list.contract.ts';
+import { RepositoryInterface as FindInterface } from '@shared/application/find.contract.ts';
+import { RepositoryInterface as CreateInterface } from '@shared/application/create.contract.ts';
+import { RepositoryInterface as RevokeInterface } from '@shared/application/revoke.contract.ts';
+import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface.ts';
 import {
   ApplicationRepositoryProviderInterface,
   ApplicationRepositoryProviderInterfaceResolver,
-} from '../interfaces/ApplicationRepositoryProviderInterface';
+} from '../interfaces/ApplicationRepositoryProviderInterface.ts';
 
 @provider({
   identifier: ApplicationRepositoryProviderInterfaceResolver,

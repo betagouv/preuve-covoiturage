@@ -1,11 +1,11 @@
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
-import { RedisConnection } from '@ilos/connection-redis';
-import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
-import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
-import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { QueueTransport } from './QueueTransport';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core/index.ts';
+import { ConnectionManagerExtension } from '@ilos/connection-manager/index.ts';
+import { QueueExtension as ParentQueueExtension } from '@ilos/queue/index.ts';
+import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
+import { QueueTransport } from './QueueTransport.ts';
 
 interface Context {
   sandbox: sinon.SinonSandbox;

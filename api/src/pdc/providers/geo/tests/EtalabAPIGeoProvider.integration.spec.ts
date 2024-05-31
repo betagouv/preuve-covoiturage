@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { EtalabAPIGeoProvider } from '../providers';
-import { NotFoundException } from '@ilos/common';
-import { insee, inseeError, inseeGeo, inseeGeoError } from './data';
+import { EtalabAPIGeoProvider } from '../providers/index.ts';
+import { NotFoundException } from '@ilos/common/index.ts';
+import { insee, inseeError, inseeGeo, inseeGeoError } from './data.ts';
 
 const provider = new EtalabAPIGeoProvider();
 

@@ -1,11 +1,11 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { command, serviceProvider as serviceProviderDecorator, ResultType } from '@ilos/common';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
+import { command, serviceProvider as serviceProviderDecorator, ResultType } from '@ilos/common/index.ts';
 
-import { CommandRegistry } from '../providers/CommandRegistry';
-import { CommandExtension } from './CommandExtension';
-import { Command } from '../parents/Command';
+import { CommandRegistry } from '../providers/CommandRegistry.ts';
+import { CommandExtension } from './CommandExtension.ts';
+import { Command } from '../parents/Command.ts';
 
 function setup() {
   const fake = sinon.fake();

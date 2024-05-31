@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { rnaCustomFormat } from './rnaCustomFormat';
+import { rnaCustomFormat } from './rnaCustomFormat.ts';
 
 test('valid RNA', (t) => {
   const rna = 'W802005251';

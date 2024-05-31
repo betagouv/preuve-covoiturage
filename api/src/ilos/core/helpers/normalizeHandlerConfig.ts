@@ -1,4 +1,4 @@
-import { HandlerConfigType, MethodNotFoundException } from '@ilos/common';
+import { HandlerConfigType, MethodNotFoundException } from '@ilos/common/index.ts';
 
 const regexp = new RegExp('^([a-z]*)@?([.0-9]*|latest):([a-zA-Z]*|\\*)$');
 

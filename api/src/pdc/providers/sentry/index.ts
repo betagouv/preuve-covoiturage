@@ -1,2 +1,2 @@
-export { Sentry } from './Sentry';
-export { SentryProvider } from './SentryProvider';
+export { Sentry } from './Sentry.ts';
+export { SentryProvider } from './SentryProvider.ts';

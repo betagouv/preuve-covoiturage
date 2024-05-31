@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import test from 'ava';
-import { mapCertForListHelper } from './mapCertForListHelper';
-import { RowType, ResultRowInterface } from '@shared/certificate/common/interfaces/ResultRowInterface';
-import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
-import { CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { mapCertForListHelper } from './mapCertForListHelper.ts';
+import { RowType, ResultRowInterface } from '@shared/certificate/common/interfaces/ResultRowInterface.ts';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface.ts';
+import { CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
 
 const newEmptyFormat: CertificateInterface = {
   _id: 2,

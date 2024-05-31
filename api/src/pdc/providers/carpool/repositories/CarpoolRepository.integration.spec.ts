@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { Id } from '../interfaces';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { CarpoolRepository } from './CarpoolRepository.ts';
+import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
+import { Id } from '../interfaces/index.ts';
 
 interface TestContext {
   repository: CarpoolRepository;

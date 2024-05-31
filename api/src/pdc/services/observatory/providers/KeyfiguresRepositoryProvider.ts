@@ -1,11 +1,11 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   KeyfiguresRepositoryInterface,
   KeyfiguresRepositoryInterfaceResolver,
   MonthlyKeyfiguresParamsInterface,
   MonthlyKeyfiguresResultInterface,
-} from '../interfaces/KeyfiguresRepositoryProviderInterface';
+} from '../interfaces/KeyfiguresRepositoryProviderInterface.ts';
 
 @provider({
   identifier: KeyfiguresRepositoryInterfaceResolver,

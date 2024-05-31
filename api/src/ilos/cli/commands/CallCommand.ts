@@ -1,6 +1,6 @@
-import { command, KernelInterfaceResolver, ResultType, CommandOptionType } from '@ilos/common';
+import { command, KernelInterfaceResolver, ResultType, CommandOptionType } from '@ilos/common/index.ts';
 
-import { Command } from '../parents/Command';
+import { Command } from '../parents/Command.ts';
 
 function coerceToJson(s: string): object {
   try {

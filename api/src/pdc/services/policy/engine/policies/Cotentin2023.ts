@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   ensureFreeRide,
@@ -16,11 +16,11 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
-import { onDistanceRangeOrThrow } from '../helpers/onDistanceRange';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cotentin2023.html';
+} from '../helpers/index.ts';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt.ts';
+import { onDistanceRangeOrThrow } from '../helpers/onDistanceRange.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Cotentin2023.html.ts';
 
 // Politique de la Communauté D'Agglomeration du Cotentin
 export const Cotentin2023: PolicyHandlerStaticInterface = class

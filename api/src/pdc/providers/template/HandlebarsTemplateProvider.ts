@@ -1,11 +1,11 @@
 import Handlebars, { HelperDelegate, TemplateDelegate } from 'handlebars';
 
-import { InitHookInterface, provider } from '@ilos/common';
+import { InitHookInterface, provider } from '@ilos/common/index.ts';
 
-import { TemplateInterface, TemplateProviderInterface, TemplateProviderInterfaceResolver } from './interfaces';
-import { currency } from './helpers/currency';
-import { TemplateRenderingException } from './exceptions';
-import { StaticTemplateInterface } from './interfaces/TemplateInterface';
+import { TemplateInterface, TemplateProviderInterface, TemplateProviderInterfaceResolver } from './interfaces/index.ts';
+import { currency } from './helpers/currency.ts';
+import { TemplateRenderingException } from './exceptions/index.ts';
+import { StaticTemplateInterface } from './interfaces/TemplateInterface.ts';
 
 @provider({
   identifier: TemplateProviderInterfaceResolver,

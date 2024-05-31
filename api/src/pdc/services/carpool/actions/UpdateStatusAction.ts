@@ -1,9 +1,9 @@
-import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action } from '@ilos/core/index.ts';
+import { handler, ContextType } from '@ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/updateStatus.contract';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/updateStatus.contract.ts';
+import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 
 /*
  * Import journey in carpool database

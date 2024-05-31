@@ -1,5 +1,5 @@
-import { ContactsInterface } from '../common/interfaces/ContactsInterface';
-import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
+import { ContactsInterface } from '../common/interfaces/ContactsInterface.ts';
+import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface.ts';
 
 export interface ParamsInterface {
   _id: number;

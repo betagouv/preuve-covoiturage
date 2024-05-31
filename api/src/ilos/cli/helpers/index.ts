@@ -1,1 +1,1 @@
-export * from './coerce';
+export * from './coerce.ts';

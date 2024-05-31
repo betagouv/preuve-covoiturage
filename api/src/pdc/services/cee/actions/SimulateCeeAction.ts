@@ -1,18 +1,18 @@
-import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
+import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/simulateApplication.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/simulateApplication.contract.ts';
 
-import { alias } from '@shared/cee/simulateApplication.schema';
+import { alias } from '@shared/cee/simulateApplication.schema.ts';
 
 import {
   ApplicationCooldownConstraint,
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
-} from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
-import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
-import { ConflictException } from '@ilos/common';
+} from '../interfaces/index.ts';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError.ts';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail.ts';
+import { ConflictException } from '@ilos/common/index.ts';
 
 @handler({
   ...handlerConfig,

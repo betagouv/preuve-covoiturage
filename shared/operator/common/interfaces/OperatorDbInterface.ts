@@ -1,4 +1,4 @@
-import { OperatorInterface } from './OperatorInterface';
+import { OperatorInterface } from './OperatorInterface.ts';
 
 export interface OperatorDbInterface extends OperatorInterface {
   _id: number;

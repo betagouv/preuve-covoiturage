@@ -1,9 +1,9 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
-import { CarpoolRepositoryProvider } from './CarpoolRepositoryProvider';
-import { PeopleWithIdInterface } from '../interfaces/Carpool';
-import { IncentiveInterface } from '@shared/common/interfaces/IncentiveInterface';
+import { CarpoolRepositoryProvider } from './CarpoolRepositoryProvider.ts';
+import { PeopleWithIdInterface } from '../interfaces/Carpool.ts';
+import { IncentiveInterface } from '@shared/common/interfaces/IncentiveInterface.ts';
 
 interface TestContext {
   connection: PostgresConnection;

@@ -1,5 +1,5 @@
-import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../../interfaces';
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
+import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../../interfaces/index.ts';
+import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
 
 export enum LimitTargetEnum {
   Driver,

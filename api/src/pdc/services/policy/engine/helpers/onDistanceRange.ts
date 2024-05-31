@@ -1,6 +1,6 @@
-import { InvalidParamsException } from '@ilos/common';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { InvalidParamsException } from '@ilos/common/index.ts';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 
 interface OnDistanceParams {
   min?: number;

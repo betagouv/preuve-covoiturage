@@ -1,12 +1,12 @@
 import test from 'ava';
-import { applyLimitOnStatefulStage, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers';
-import { process } from '../tests/macro';
+import { applyLimitOnStatefulStage, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers/index.ts';
+import { process } from '../tests/macro.ts';
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   StatefulContextInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 
 class TestHandler implements PolicyHandlerInterface {
   load(): Promise<void> {

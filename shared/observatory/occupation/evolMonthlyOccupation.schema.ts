@@ -1,4 +1,4 @@
-import { indicTypes, perimeterTypes } from '../../geo/shared/Perimeter';
+import { indicTypes, perimeterTypes } from '../../geo/shared/Perimeter.ts';
 
 export const alias = 'observatory.evolMonthlyOccupation';
 export const schema = {

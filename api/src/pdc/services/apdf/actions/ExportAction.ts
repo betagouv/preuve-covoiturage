@@ -1,19 +1,19 @@
-import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract';
-import { alias } from '@shared/apdf/export.schema';
-import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { BucketName, S3StorageProvider } from '@pdc/providers/storage/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract.ts';
+import { alias } from '@shared/apdf/export.schema.ts';
+import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract.ts';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
 import fs from 'fs';
 import { get } from 'lodash';
-import { castExportParams } from '../helpers/castExportParams.helper';
-import { getCampaignOperators } from '../helpers/getCampaignOperators.helper';
-import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
-import { CheckCampaign } from '../providers/CheckCampaign';
-import { BuildExcel } from '../providers/excel/BuildExcel';
+import { castExportParams } from '../helpers/castExportParams.helper.ts';
+import { getCampaignOperators } from '../helpers/getCampaignOperators.helper.ts';
+import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
+import { CheckCampaign } from '../providers/CheckCampaign.ts';
+import { BuildExcel } from '../providers/excel/BuildExcel.ts';
 
 @handler({
   ...handlerConfig,

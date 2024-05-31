@@ -1,10 +1,10 @@
-import { InvalidParamsException, ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { InvalidParamsException, ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common/index.ts';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool/index.ts';
 import test from 'ava';
 import sinon, { SinonStubbedInstance } from 'sinon';
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { CreateJourneyAction } from './CreateJourneyAction';
+import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { CreateJourneyAction } from './CreateJourneyAction.ts';
 
 function bootstrap(): {
   action: CreateJourneyAction;

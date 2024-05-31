@@ -1,6 +1,6 @@
-import { ResultType } from './ResultType';
-import { ContextType } from './ContextType';
-import { ParamsType } from './ParamsType';
+import { ResultType } from './ResultType.ts';
+import { ContextType } from './ContextType.ts';
+import { ParamsType } from './ParamsType.ts';
 
 export type CallType<P = ParamsType, C = ContextType, R = ResultType> = {
   method: string;

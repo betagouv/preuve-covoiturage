@@ -1,4 +1,4 @@
-import { ParamsType, ResultType, ContextType } from '../call';
+import { ParamsType, ResultType, ContextType } from '../call/index.ts';
 
 export interface MiddlewareInterface<T = any> {
   process(params: ParamsType, context: ContextType, next?: Function, options?: T): Promise<ResultType>;

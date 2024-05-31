@@ -1,14 +1,14 @@
-import { toTzString } from '@pdc/helpers/dates.helper';
-import { Timezone } from '@pdc/providers/validator';
+import { toTzString } from '@pdc/helpers/dates.helper.ts';
+import { Timezone } from '@pdc/providers/validator/index.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices, TestingLogFn } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { RunnableSlices, TestingLogFn } from '../../interfaces/engine/PolicyInterface.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   LimitTargetEnum,
   endsAt,
@@ -22,11 +22,11 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
-import { watchForPersonMaxAmountByYear } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './NantesMetropole2024.html';
+} from '../helpers/index.ts';
+import { isAdultOrThrow } from '../helpers/isAdultOrThrow.ts';
+import { watchForPersonMaxAmountByYear } from '../helpers/limits.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './NantesMetropole2024.html.ts';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */

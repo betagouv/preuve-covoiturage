@@ -1,6 +1,6 @@
-import { StatelessContextInterface, StatelessRuleHelper, TerritorySelectorsInterface } from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { startsOrEndsAt } from './position';
+import { StatelessContextInterface, StatelessRuleHelper, TerritorySelectorsInterface } from '../../interfaces/index.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { startsOrEndsAt } from './position.ts';
 
 export const startsOrEndsAtOrThrow: StatelessRuleHelper<TerritorySelectorsInterface> = (
   ctx: StatelessContextInterface,

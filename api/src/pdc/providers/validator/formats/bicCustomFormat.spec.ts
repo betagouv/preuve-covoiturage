@@ -1,5 +1,5 @@
 import test from 'ava';
-import { bicCustomFormat } from './bicCustomFormat';
+import { bicCustomFormat } from './bicCustomFormat.ts';
 
 test('valid BIC short string', (t) => {
   const bic = 'ABNANL2A';

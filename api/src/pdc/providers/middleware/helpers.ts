@@ -1,5 +1,5 @@
-import { channelServiceBlacklistMiddleware } from './ChannelService/ChannelServiceBlacklistMiddleware';
-import { ListOfConfiguredMiddlewares } from './interfaces';
+import { channelServiceBlacklistMiddleware } from './ChannelService/ChannelServiceBlacklistMiddleware.ts';
+import { ListOfConfiguredMiddlewares } from './interfaces.ts';
 import {
   ChannelServiceWhitelistMiddlewareParams,
   channelServiceWhitelistMiddleware,
@@ -7,7 +7,7 @@ import {
   copyFromContextMiddleware,
   HasPermissionByScopeMiddlewareParams,
   hasPermissionByScopeMiddleware,
-} from './middlewares';
+} from './middlewares.ts';
 
 function buildPathWithPrefix(key: string, prefix: string | null = null): string {
   if (!prefix) {

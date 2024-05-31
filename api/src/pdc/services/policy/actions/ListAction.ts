@@ -1,17 +1,17 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { SerializedPolicyInterface } from '../interfaces/engine/PolicyInterface';
+import { handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { SerializedPolicyInterface } from '../interfaces/engine/PolicyInterface.ts';
 
-import { Policy } from '../engine/entities/Policy';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { Policy } from '../engine/entities/Policy.ts';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from '@shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '@shared/policy/list.contract';
-import { alias } from '@shared/policy/list.schema';
+} from '@shared/operator/find.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '@shared/policy/list.contract.ts';
+import { alias } from '@shared/policy/list.schema.ts';
 
 @handler({
   ...handlerConfig,

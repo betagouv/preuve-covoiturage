@@ -1,8 +1,8 @@
-import { provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { bulk, join, raw } from '../helpers/sql';
-import { CarpoolIncentive, Id, InsertableCarpool, UpdatableCarpool, Uuid, WrittenCarpool } from '../interfaces';
-import { DatabaseException } from '../exceptions/DatabaseException';
+import { provider } from '@ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import sql, { bulk, join, raw } from '../helpers/sql.ts';
+import { CarpoolIncentive, Id, InsertableCarpool, UpdatableCarpool, Uuid, WrittenCarpool } from '../interfaces/index.ts';
+import { DatabaseException } from '../exceptions/DatabaseException.ts';
 
 @provider()
 export class CarpoolRepository {

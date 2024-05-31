@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -14,10 +14,10 @@ import {
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
-} from '../helpers';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './MetropoleSavoie.html';
+} from '../helpers/index.ts';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './MetropoleSavoie.html.ts';
 
 /* eslint-disable-next-line */
 export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

@@ -1,13 +1,13 @@
-import { provider } from '@ilos/common';
+import { provider } from '@ilos/common/index.ts';
 import { v4 } from 'uuid';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 import {
   CrosscheckRepositoryProviderInterface,
   CrosscheckRepositoryProviderInterfaceResolver,
-} from '../interfaces/CrosscheckRepositoryProviderInterface';
+} from '../interfaces/CrosscheckRepositoryProviderInterface.ts';
 
-import { PositionInterface } from '../interfaces/Carpool';
+import { PositionInterface } from '../interfaces/Carpool.ts';
 
 /*
  * Trip specific repository

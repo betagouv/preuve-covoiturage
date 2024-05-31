@@ -1,14 +1,14 @@
 import { get, omit } from 'lodash';
 import http from 'http';
 import express from 'express';
-import { TransportInterface } from '@ilos/common';
-import { QueueTransport } from '@ilos/transport-redis';
-import { SentryProvider } from '@pdc/providers/sentry';
-import { env } from '@ilos/core';
+import { TransportInterface } from '@ilos/common/index.ts';
+import { QueueTransport } from '@ilos/transport-redis/index.ts';
+import { SentryProvider } from '@pdc/providers/sentry/index.ts';
+import { env } from '@ilos/core/index.ts';
 
-import { healthCheckFactory } from './helpers/healthCheckFactory';
-import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
-import { metricsMiddleware } from './middlewares/metricsMiddleware';
+import { healthCheckFactory } from './helpers/healthCheckFactory.ts';
+import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory.ts';
+import { metricsMiddleware } from './middlewares/metricsMiddleware.ts';
 
 export class MyQueueTransport extends QueueTransport implements TransportInterface {
   server: http.Server;

@@ -1,9 +1,9 @@
 import anyTest, { TestFn } from 'ava';
-import { serviceProvider as serviceProviderDecorator } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { serviceProvider as serviceProviderDecorator } from '@ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
 
-import { serviceProviderMacro } from './serviceProviderMacro';
-import { ServiceProviderMacroContext } from '.';
+import { serviceProviderMacro } from './serviceProviderMacro.ts';
+import { ServiceProviderMacroContext } from './index.ts';
 
 @serviceProviderDecorator({})
 class ServiceProvider extends AbstractServiceProvider {}

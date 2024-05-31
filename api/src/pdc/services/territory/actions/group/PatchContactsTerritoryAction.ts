@@ -1,10 +1,10 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/providers/middleware';
+import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/providers/middleware/index.ts';
 
-import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/patchContacts.contract';
-import { alias } from '@shared/territory/patchContacts.schema';
+import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/patchContacts.contract.ts';
+import { alias } from '@shared/territory/patchContacts.schema.ts';
 
 @handler({
   ...handlerConfig,

@@ -3,8 +3,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../../interfaces';
-import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription';
+} from '../../../interfaces/index.ts';
+import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription.ts';
 import {
   ConfiguredLimitInterface,
   isOperatorClassOrThrow,
@@ -12,8 +12,8 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-} from '../../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers/index.ts';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler.ts';
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

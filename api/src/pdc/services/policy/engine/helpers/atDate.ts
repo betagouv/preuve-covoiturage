@@ -1,6 +1,6 @@
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
-import { toZonedTime } from './toZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
+import { toZonedTime } from './toZonedTime.ts';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
 
 interface AtDateParams {
   dates: string[];

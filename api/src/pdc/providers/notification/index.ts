@@ -1,8 +1,8 @@
-import { HandlebarsTemplateProvider } from '@pdc/providers/template';
-import { NotificationMailTransporter } from './NotificationMailTransporter';
-export { AbstractMailNotification } from './AbstractNotification';
-export * from './interfaces';
-export * from './templates/DefaultNotification';
+import { HandlebarsTemplateProvider } from '@pdc/providers/template/index.ts';
+import { NotificationMailTransporter } from './NotificationMailTransporter.ts';
+export { AbstractMailNotification } from './AbstractNotification.ts';
+export * from './interfaces/index.ts';
+export * from './templates/DefaultNotification.ts';
 
 export const defaultNotificationBindings = [HandlebarsTemplateProvider, NotificationMailTransporter];
 

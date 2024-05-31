@@ -1,9 +1,9 @@
 import test from 'ava';
 import { v4 } from 'uuid';
 import { stub } from 'sinon';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { NantesMetropole2024 as Handler } from './NantesMetropole2024';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { NantesMetropole2024 as Handler } from './NantesMetropole2024.ts';
 
 const defaultPosition = {
   arr: '44109',

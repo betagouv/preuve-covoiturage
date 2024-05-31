@@ -1,5 +1,5 @@
-import { NewableType } from '../shared';
-import { ConnectionInterface } from './ConnectionInterface';
+import { NewableType } from '../shared/index.ts';
+import { ConnectionInterface } from './ConnectionInterface.ts';
 
 export type ConnectionDeclarationType =
   | {

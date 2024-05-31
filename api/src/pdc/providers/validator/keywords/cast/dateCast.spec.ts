@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { dateCast } from './dateCast';
+import { dateCast } from './dateCast.ts';
 
 test('converts date full ISO', (t) => {
   t.is(dateCast()('2019-01-01T00:00:00Z').toISOString(), new Date('2019-01-01T00:00:00Z').toISOString());

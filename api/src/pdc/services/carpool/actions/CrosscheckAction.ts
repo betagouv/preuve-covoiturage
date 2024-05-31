@@ -1,15 +1,15 @@
-import { Action } from '@ilos/core';
-import { handler, ConfigInterfaceResolver } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action } from '@ilos/core/index.ts';
+import { handler, ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { FinalizedPersonInterface } from '@shared/common/interfaces/PersonInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/crosscheck.contract';
-import { alias } from '@shared/carpool/crosscheck.schema';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
-import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
-import { PeopleWithIdInterface } from '../interfaces/Carpool';
-import { getStatus } from '../helpers/getStatus';
+import { FinalizedPersonInterface } from '@shared/common/interfaces/PersonInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/crosscheck.contract.ts';
+import { alias } from '@shared/carpool/crosscheck.schema.ts';
+import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
+import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface.ts';
+import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface.ts';
+import { PeopleWithIdInterface } from '../interfaces/Carpool.ts';
+import { getStatus } from '../helpers/getStatus.ts';
 
 /*
  * Import journey in carpool database

@@ -1,6 +1,6 @@
-import { env } from '@ilos/core';
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import { env } from '@ilos/core/index.ts';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@ilos/common/index.ts';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*
  * Filter call from environment

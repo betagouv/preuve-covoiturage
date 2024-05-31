@@ -1,4 +1,4 @@
-import { CacheValidatorParams, CacheValidatorResponse, HttpVerb } from './types';
+import { CacheValidatorParams, CacheValidatorResponse, HttpVerb } from './types.ts';
 
 const validators = [
   // Skip caching when the request contains a Cache-Control header with 'no-store' value

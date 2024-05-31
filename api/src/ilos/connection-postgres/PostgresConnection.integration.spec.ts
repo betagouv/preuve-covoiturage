@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from './PostgresConnection';
+import { PostgresConnection } from './PostgresConnection.ts';
 
 interface TestContext {
   connection: PostgresConnection;

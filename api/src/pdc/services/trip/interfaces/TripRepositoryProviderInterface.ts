@@ -1,12 +1,12 @@
-import { ResultWithPagination } from '@shared/common/interfaces/ResultWithPagination';
-import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
-import { LightTripInterface } from '@shared/trip/common/interfaces/LightTripInterface';
+import { ResultWithPagination } from '@shared/common/interfaces/ResultWithPagination.ts';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor.ts';
+import { LightTripInterface } from '@shared/trip/common/interfaces/LightTripInterface.ts';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '@shared/trip/common/interfaces/TripSearchInterface';
-import { ExportTripInterface } from './ExportTripInterface';
-import { FinancialStatInterface, StatInterface } from './StatInterface';
+} from '@shared/trip/common/interfaces/TripSearchInterface.ts';
+import { ExportTripInterface } from './ExportTripInterface.ts';
+import { FinancialStatInterface, StatInterface } from './StatInterface.ts';
 
 export interface TzResultInterface {
   name: string;

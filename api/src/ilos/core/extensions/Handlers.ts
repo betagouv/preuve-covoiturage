@@ -4,9 +4,9 @@ import {
   ServiceContainerInterface,
   HandlerInterface,
   extension,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { Middlewares } from './Middlewares';
+import { Middlewares } from './Middlewares.ts';
 
 @extension({
   name: 'handlers',

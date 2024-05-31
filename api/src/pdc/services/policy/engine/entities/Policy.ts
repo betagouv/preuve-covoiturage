@@ -1,5 +1,5 @@
-import { Timezone } from '@pdc/providers/validator';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { Timezone } from '@pdc/providers/validator/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 import {
   CarpoolInterface,
   MetadataStoreInterface,
@@ -13,13 +13,13 @@ import {
   StatelessContextInterface,
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces';
-import { TestingLogFn } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
-import { isSelected } from '../helpers';
-import { policies } from '../policies';
-import { StatefulContext, StatelessContext } from './Context';
+} from '../../interfaces/index.ts';
+import { TestingLogFn } from '../../interfaces/engine/PolicyInterface.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { UnknownHandlerException } from '../exceptions/UnknownHandlerException.ts';
+import { isSelected } from '../helpers/index.ts';
+import { policies } from '../policies/index.ts';
+import { StatefulContext, StatelessContext } from './Context.ts';
 
 export class Policy implements PolicyInterface {
   constructor(

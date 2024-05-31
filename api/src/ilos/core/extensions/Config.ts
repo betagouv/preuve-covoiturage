@@ -1,5 +1,5 @@
 import { get, has } from 'lodash';
-import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterface, extension } from '@ilos/common';
+import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterface, extension } from '@ilos/common/index.ts';
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {

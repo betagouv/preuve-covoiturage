@@ -1,14 +1,14 @@
-import { handler } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware';
-import * as middlewareConfig from '../config/middlewares';
-import { fillWithZeroes } from '../helpers/fillWithZeroesHelper';
-import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface';
-import { StatInterface } from '../interfaces/StatInterface';
-import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/stats.contract';
-import { alias } from '@shared/trip/stats.schema';
+import { handler } from '@ilos/common/index.ts';
+import { Action } from '@ilos/core/index.ts';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware/index.ts';
+import * as middlewareConfig from '../config/middlewares.ts';
+import { fillWithZeroes } from '../helpers/fillWithZeroesHelper.ts';
+import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface.ts';
+import { StatInterface } from '../interfaces/StatInterface.ts';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/stats.contract.ts';
+import { alias } from '@shared/trip/stats.schema.ts';
 
 @handler({
   ...handlerConfig,

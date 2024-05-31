@@ -1,4 +1,4 @@
-import { PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+import { PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter.ts';
 
 export interface ResultInterface {
   territory: PerimeterType;

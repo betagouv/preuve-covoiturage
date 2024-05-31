@@ -1,3 +1,3 @@
-export { ConnectionDeclarationType } from './ConnectionDeclarationType';
-export { ConnectionConfigurationType } from './ConnectionConfigurationType';
-export { ConnectionInterface } from './ConnectionInterface';
+export { ConnectionDeclarationType } from './ConnectionDeclarationType.ts';
+export { ConnectionConfigurationType } from './ConnectionConfigurationType.ts';
+export { ConnectionInterface } from './ConnectionInterface.ts';

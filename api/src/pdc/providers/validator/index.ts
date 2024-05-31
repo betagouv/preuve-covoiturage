@@ -1,7 +1,7 @@
-export { ValidatorMiddleware, AjvValidator } from '@ilos/validator';
+export { ValidatorMiddleware, AjvValidator } from '@ilos/validator/index.ts';
 
-export { ValidatorInterface, ValidatorInterfaceResolver } from '@ilos/common';
+export { ValidatorInterface, ValidatorInterfaceResolver } from '@ilos/common/index.ts';
 
-export { ValidatorExtension } from './ValidatorExtension';
+export { ValidatorExtension } from './ValidatorExtension.ts';
 
-export * from './types';
+export * from './types.ts';

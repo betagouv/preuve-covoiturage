@@ -1,5 +1,5 @@
-import { distanceSchema, incentivesSchema } from './common/schemas/createJourneyCommon';
-import { timeGeoPointSchema } from './common/schemas/createJourneySchemaV3';
+import { distanceSchema, incentivesSchema } from './common/schemas/createJourneyCommon.ts';
+import { timeGeoPointSchema } from './common/schemas/createJourneySchemaV3.ts';
 
 export const alias = 'journey.patch';
 export const schema = {

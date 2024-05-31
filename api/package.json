@@ -4,6 +4,7 @@
   "engines": {
     "node": "20"
   },
+  "type": "module",
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Registre de preuve de covoiturage <contact@covoiturage.beta.gouv.fr>",
   "contributors": [

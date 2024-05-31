@@ -1,6 +1,6 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { ExportLog, ExportLogEvent } from '../models/ExportLog';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { ExportLog, ExportLogEvent } from '../models/ExportLog.ts';
 
 export interface LogRepositoryInterface {
   add(export_id: number, type: ExportLogEvent, message: string): Promise<void>;

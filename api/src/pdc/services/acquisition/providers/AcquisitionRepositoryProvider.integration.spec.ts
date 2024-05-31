@@ -1,15 +1,15 @@
-import { NotFoundException } from '@ilos/common';
-import { Carpool } from '@pdc/providers/seed/carpools';
-import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
+import { NotFoundException } from '@ilos/common/index.ts';
+import { Carpool } from '@pdc/providers/seed/carpools.ts';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { subDays } from 'date-fns';
 import {
   AcquisitionCreateInterface,
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
-} from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { StatusEnum } from '@shared/acquisition/status.contract';
-import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider';
+} from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
+import { StatusEnum } from '@shared/acquisition/status.contract.ts';
+import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider.ts';
 
 interface TestContext {
   repository: AcquisitionRepositoryProvider;

@@ -1,5 +1,5 @@
-import { CommandOptionType } from './CommandOptionType';
-import { ResultType } from '../call';
+import { CommandOptionType } from './CommandOptionType.ts';
+import { ResultType } from '../call/index.ts';
 
 export interface CommandStaticInterface {
   /**

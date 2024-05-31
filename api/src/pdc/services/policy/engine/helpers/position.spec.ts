@@ -1,9 +1,9 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
-import { TerritoryCodeInterface } from '../../interfaces';
-import { startsAt, endsAt } from './position';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { TerritoryCodeInterface } from '../../interfaces/index.ts';
+import { startsAt, endsAt } from './position.ts';
 
 function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start, end }));

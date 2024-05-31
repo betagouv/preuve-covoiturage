@@ -1,13 +1,13 @@
-import { coerceIntList } from '@ilos/cli';
-import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '@ilos/common';
-import { ParamsInterface as ExportParams, signature as exportSignature } from '@shared/apdf/export.contract';
+import { coerceIntList } from '@ilos/cli/index.ts';
+import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '@ilos/common/index.ts';
+import { ParamsInterface as ExportParams, signature as exportSignature } from '@shared/apdf/export.contract.ts';
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from '@shared/policy/list.contract';
+} from '@shared/policy/list.contract.ts';
 import { fromZonedTime } from 'date-fns-tz';
 import { set } from 'lodash';
-import { castExportParams } from '../helpers/castExportParams.helper';
+import { castExportParams } from '../helpers/castExportParams.helper.ts';
 
 interface Options {
   campaigns: number[];

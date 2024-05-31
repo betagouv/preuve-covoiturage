@@ -1,9 +1,9 @@
 import anyTest, { TestFn } from 'ava';
-import { ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/providers/crypto/index.ts';
 
-import { AuthRepositoryProvider } from './AuthRepositoryProvider';
+import { AuthRepositoryProvider } from './AuthRepositoryProvider.ts';
 
 interface TestContext {
   connection: PostgresConnection;

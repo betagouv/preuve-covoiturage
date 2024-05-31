@@ -1,6 +1,6 @@
-import { IdentifierType, HookInterface, ServiceContainerInterface } from '@ilos/common';
+import { IdentifierType, HookInterface, ServiceContainerInterface } from '@ilos/common/index.ts';
 
-import { hasInterface } from '../helpers/types/hasInterface';
+import { hasInterface } from '../helpers/types/hasInterface.ts';
 
 export class HookRegistry<T> {
   protected registry: Set<HookInterface> = new Set();

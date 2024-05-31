@@ -1,5 +1,5 @@
-import { command, CommandInterface, ResultType } from '@ilos/common';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { command, CommandInterface, ResultType } from '@ilos/common/index.ts';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 
 @command()
 export class SyncCommand implements CommandInterface {

@@ -1,4 +1,4 @@
-import { EnvNotFoundException } from '../exceptions';
+import { EnvNotFoundException } from '../exceptions/index.ts';
 
 export function or_int(k: string, fallback: number): number {
   const rawEnv = parseInt(process.env[k], 10);

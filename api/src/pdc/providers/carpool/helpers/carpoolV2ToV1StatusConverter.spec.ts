@@ -1,6 +1,6 @@
 import test from 'ava';
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces';
-import { carpoolV2ToV1StatusConverter } from './carpoolV2ToV1StatusConverter';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces/index.ts';
+import { carpoolV2ToV1StatusConverter } from './carpoolV2ToV1StatusConverter.ts';
 
 type Config = Array<{
   title: string;

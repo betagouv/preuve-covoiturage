@@ -3,9 +3,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../../interfaces';
-import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription';
-import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
+} from '../../../interfaces/index.ts';
+import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription.ts';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException.ts';
 import {
   ConfiguredLimitInterface,
   endsAt,
@@ -14,8 +14,8 @@ import {
   onDistanceRangeOrThrow,
   perSeat,
   startsAt,
-} from '../../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers/index.ts';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler.ts';
 
 export const PolicyTemplateThree: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

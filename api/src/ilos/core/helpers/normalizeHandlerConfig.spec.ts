@@ -1,7 +1,7 @@
 import test from 'ava';
-import { MethodNotFoundException } from '@ilos/common';
+import { MethodNotFoundException } from '@ilos/common/index.ts';
 
-import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig';
+import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig.ts';
 
 test('Helpers: normalize from string works', (t) => {
   const { method, service, version } = getConfigBySignature('service@0.0.1:method');

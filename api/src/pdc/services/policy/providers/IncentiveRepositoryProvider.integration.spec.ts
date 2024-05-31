@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
 
-import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider';
-import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces';
+import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider.ts';
+import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces/index.ts';
 
 interface TestContext {
   db: DbContext;

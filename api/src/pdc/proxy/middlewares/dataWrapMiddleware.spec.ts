@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { mapResults } from './dataWrapMiddleware';
+import { mapResults } from './dataWrapMiddleware.ts';
 
 test('[mapResults] skips on missing results', (t) => {
   const payload = {

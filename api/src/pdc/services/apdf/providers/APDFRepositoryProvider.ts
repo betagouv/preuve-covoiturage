@@ -1,16 +1,16 @@
 /* eslint-disable max-len */
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import { set } from 'lodash';
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
-} from '../interfaces/APDFRepositoryProviderInterface';
-import { APDFTripInterface } from '../interfaces/APDFTripInterface';
-import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
-import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
-import { UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
+} from '../interfaces/APDFRepositoryProviderInterface.ts';
+import { APDFTripInterface } from '../interfaces/APDFTripInterface.ts';
+import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface.ts';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor.ts';
+import { UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {

@@ -1,16 +1,16 @@
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
+import { CarpoolAcquisitionService } from './CarpoolAcquisitionService.ts';
 import Sinon, { SinonSandbox } from 'sinon';
-import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository';
-import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
-import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import sql, { raw } from '../helpers/sql';
-import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
-import { GeoProvider } from '@pdc/providers/geo';
+import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository.ts';
+import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository.ts';
+import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository.ts';
+import { CarpoolRepository } from '../repositories/CarpoolRepository.ts';
+import sql, { raw } from '../helpers/sql.ts';
+import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository.ts';
+import { GeoProvider } from '@pdc/providers/geo/index.ts';
 
 interface TestContext {
   carpoolRepository: CarpoolRepository;

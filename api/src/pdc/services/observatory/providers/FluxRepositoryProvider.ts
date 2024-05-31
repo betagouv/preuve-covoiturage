@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   FluxRepositoryInterface,
   FluxRepositoryInterfaceResolver,
@@ -12,8 +12,8 @@ import {
   BestMonthlyFluxResultInterface,
   InsertMonthlyFluxParamsInterface,
   DeleteMonthlyFluxParamsInterface,
-} from '../interfaces/FluxRepositoryProviderInterface';
-import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
+} from '../interfaces/FluxRepositoryProviderInterface.ts';
+import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams.ts';
 
 @provider({
   identifier: FluxRepositoryInterfaceResolver,

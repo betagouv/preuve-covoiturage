@@ -1,1 +1,1 @@
-export * from '@shared/user/permissions.config';
+export * from '@shared/user/permissions.config.ts';

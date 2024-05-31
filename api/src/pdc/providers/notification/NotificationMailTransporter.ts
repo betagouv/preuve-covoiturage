@@ -1,5 +1,5 @@
-import { ConfigInterfaceResolver, provider } from '@ilos/common';
-import { TemplateInterface, TemplateProviderInterfaceResolver } from '@pdc/providers/template';
+import { ConfigInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { TemplateInterface, TemplateProviderInterfaceResolver } from '@pdc/providers/template/index.ts';
 import { createTransport, Transporter } from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import mjml2html from 'mjml';
@@ -9,7 +9,7 @@ import {
   NotificationTransporterInterfaceResolver,
   MailTemplateNotificationInterface,
   StaticMailTemplateNotificationInterface,
-} from './interfaces';
+} from './interfaces/index.ts';
 
 interface NotificationOptions {
   debug: boolean;

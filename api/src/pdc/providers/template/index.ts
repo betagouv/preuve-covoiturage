@@ -1,4 +1,4 @@
-export { HandlebarsTemplateProvider } from './HandlebarsTemplateProvider';
-export * from './interfaces';
-export * from './exceptions';
-export { AbstractTemplate } from './AbstractTemplate';
+export { HandlebarsTemplateProvider } from './HandlebarsTemplateProvider.ts';
+export * from './interfaces/index.ts';
+export * from './exceptions/index.ts';
+export { AbstractTemplate } from './AbstractTemplate.ts';

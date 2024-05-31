@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
 
-import { MetadataRepositoryProvider } from './MetadataRepositoryProvider';
+import { MetadataRepositoryProvider } from './MetadataRepositoryProvider.ts';
 
 interface TestContext {
   db: DbContext;

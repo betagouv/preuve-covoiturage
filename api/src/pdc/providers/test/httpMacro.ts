@@ -5,12 +5,12 @@ import {
   ResultType,
   ServiceContainerInterface,
   TransportInterface,
-} from '@ilos/common';
-import { Bootstrap } from '@ilos/framework';
+} from '@ilos/common/index.ts';
+import { Bootstrap } from '@ilos/framework/index.ts';
 import test, { ExecutionContext, Macro } from 'ava';
 import spt, { Test } from 'supertest';
-import TestAgent from 'supertest/lib/agent';
-import { makeKernelCtor } from './helpers';
+import TestAgent from 'supertest/lib/agent.ts';
+import { makeKernelCtor } from './helpers.ts';
 
 export interface HttpMacroContext {
   transport: TransportInterface;

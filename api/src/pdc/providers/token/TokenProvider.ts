@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
-import { provider, ProviderInterface, ConfigInterfaceResolver, InitHookInterface } from '@ilos/common';
+import { provider, ProviderInterface, ConfigInterfaceResolver, InitHookInterface } from '@ilos/common/index.ts';
 
-import { TokenProviderInterfaceResolver, TokenProviderInterface } from './interfaces';
+import { TokenProviderInterfaceResolver, TokenProviderInterface } from './interfaces/index.ts';
 
 @provider({
   identifier: TokenProviderInterfaceResolver,

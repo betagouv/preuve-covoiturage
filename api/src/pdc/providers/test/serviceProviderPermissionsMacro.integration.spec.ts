@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
 import { get } from 'lodash';
-import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
+import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core/index.ts';
 import {
   handler as handlerDecorator,
   middleware,
@@ -9,9 +9,9 @@ import {
   ContextType,
   ForbiddenException,
   InvalidParamsException,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { handlerMacro, HandlerMacroContext } from './handlerMacro';
+import { handlerMacro, HandlerMacroContext } from './handlerMacro.ts';
 
 /**
  * Mock the action

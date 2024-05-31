@@ -1,5 +1,5 @@
 import test from 'ava';
-import { coerceIntList, coerceDate } from './coerce';
+import { coerceIntList, coerceDate } from './coerce.ts';
 
 /**
  * String to list of numbers

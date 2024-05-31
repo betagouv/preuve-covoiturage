@@ -1,8 +1,8 @@
-import { ConfigInterfaceResolver, RPCException } from '@ilos/common';
+import { ConfigInterfaceResolver, RPCException } from '@ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 
-import { AjvValidator } from './AjvValidator';
+import { AjvValidator } from './AjvValidator.ts';
 
 interface Context {
   sandbox: sinon.SinonSandbox;

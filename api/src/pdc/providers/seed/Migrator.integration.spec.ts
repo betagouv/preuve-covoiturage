@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { Migrator } from './Migrator';
+import { Migrator } from './Migrator.ts';
 
 interface TestContext {
   db: Migrator;

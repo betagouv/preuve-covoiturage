@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { objectidCustomFormat } from './objectidCustomFormat';
+import { objectidCustomFormat } from './objectidCustomFormat.ts';
 
 test('valid ObjectId', (t) => {
   const id = '5d07eabd57ce4d70ae6a8508';

@@ -1,9 +1,9 @@
-import { InvalidParamsException } from '@ilos/common';
+import { InvalidParamsException } from '@ilos/common/index.ts';
 import test from 'ava';
-import { StatelessContext } from '../entities/Context';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { generateCarpool } from '../tests/helpers';
-import { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange';
+import { StatelessContext } from '../entities/Context.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange.ts';
 
 function distance(distance: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ distance }));

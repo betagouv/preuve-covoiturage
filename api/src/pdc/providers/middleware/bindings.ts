@@ -10,7 +10,7 @@ import {
   hasPermissionByScopeMiddlewareBinding,
   validateDateMiddlewareBinding,
   loggerMiddlewareBinding,
-} from './middlewares';
+} from './middlewares.ts';
 
 export const bindings = [
   channelServiceBlacklistMiddlewareBinding,

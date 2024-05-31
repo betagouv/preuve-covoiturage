@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, NotFoundException } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler, NotFoundException } from '@ilos/common/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { alias } from '@shared/acquisition/status.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/status.contract';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { alias } from '@shared/acquisition/status.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/status.contract.ts';
 
 @handler({
   ...handlerConfig,

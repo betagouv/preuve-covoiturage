@@ -1,5 +1,5 @@
-import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces';
-import { UnknownMetaException } from '../exceptions/UnknownMetaException';
+import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces/index.ts';
+import { UnknownMetaException } from '../exceptions/UnknownMetaException.ts';
 import {
   MetadataAccessorInterface,
   MetadataLifetime,
@@ -8,8 +8,8 @@ import {
   StoredMetadataVariableInterface,
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
-} from '../../interfaces';
-import { MetadataAccessor } from './MetadataAccessor';
+} from '../../interfaces/index.ts';
+import { MetadataAccessor } from './MetadataAccessor.ts';
 
 function getCacheKey(policy_id: number, key: string): string {
   return `${policy_id.toString()}-${key}`;

@@ -6,9 +6,9 @@ import {
   ResultType,
   InvalidParamsException,
   ForbiddenException,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 import { get, includes } from 'lodash';
-import { ConfiguredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /**
  * Check if user has basePermission, if not check if contextPath equals paramsPath and challenge

@@ -1,9 +1,9 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
 import type { GeoJSON } from 'geojson';
-import { isInside } from './isInside';
+import { isInside } from './isInside.ts';
 
 const shape: GeoJSON = {
   type: 'Polygon',

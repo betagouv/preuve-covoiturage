@@ -6,9 +6,9 @@ import {
   CommandInterface,
   extension,
   ResultType,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { CommandRegistry } from '../providers/CommandRegistry';
+import { CommandRegistry } from '../providers/CommandRegistry.ts';
 
 @extension({
   name: 'commands',

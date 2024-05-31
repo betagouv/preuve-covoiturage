@@ -1,7 +1,7 @@
 import { set } from 'lodash';
 
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*
  * Delete properties from model or array of models on output of handler

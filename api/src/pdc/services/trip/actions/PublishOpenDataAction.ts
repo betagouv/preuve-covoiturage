@@ -1,12 +1,12 @@
-import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { UploadedResource } from '../interfaces';
-import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/publishOpenData.contract';
-import { alias } from '@shared/trip/publishOpenData.schema';
-import { BuildResourceDescription } from './opendata/BuildResourceDescription';
-import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';
+import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common/index.ts';
+import { Action } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { UploadedResource } from '../interfaces/index.ts';
+import { DataGouvProvider } from '../providers/DataGouvProvider.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/publishOpenData.contract.ts';
+import { alias } from '@shared/trip/publishOpenData.schema.ts';
+import { BuildResourceDescription } from './opendata/BuildResourceDescription.ts';
+import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists.ts';
 
 @handler({
   ...handlerConfig,

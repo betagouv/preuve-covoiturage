@@ -1,4 +1,4 @@
-import { StatInterface } from './StatInterface';
+import { StatInterface } from './StatInterface.ts';
 
 export interface StatCacheRepositoryProviderInterface {
   getOrBuild(fn: Function, target: any): Promise<StatInterface[]>;

@@ -1,10 +1,10 @@
 import test from 'ava';
-import { Action, ServiceProvider, Extensions } from '@ilos/core';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
-import { RedisConnection } from '@ilos/connection-redis';
-import { handler, serviceProvider } from '@ilos/common';
+import { Action, ServiceProvider, Extensions } from '@ilos/core/index.ts';
+import { ConnectionManagerExtension } from '@ilos/connection-manager/index.ts';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { handler, serviceProvider } from '@ilos/common/index.ts';
 
-import { QueueExtension } from './QueueExtension';
+import { QueueExtension } from './QueueExtension.ts';
 
 @handler({
   service: 'serviceA',

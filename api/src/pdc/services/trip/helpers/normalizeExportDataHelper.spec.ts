@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import { Context } from 'vm';
-import { FlattenTripInterface } from '../actions/BuildExportAction';
-import { ExportTripInterface } from '../interfaces';
-import { normalizeExport, normalizeOpendata } from './normalizeExportDataHelper';
+import { FlattenTripInterface } from '../actions/BuildExportAction.ts';
+import { ExportTripInterface } from '../interfaces/index.ts';
+import { normalizeExport, normalizeOpendata } from './normalizeExportDataHelper.ts';
 
 const test = anyTest as TestFn<Context>;
 

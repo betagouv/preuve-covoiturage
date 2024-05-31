@@ -1,4 +1,4 @@
-import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
+import { ApplicationInterface } from './common/interfaces/ApplicationInterface.ts';
 
 export interface ParamsInterface {
   uuid: string;

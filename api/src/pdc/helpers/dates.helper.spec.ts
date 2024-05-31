@@ -7,7 +7,7 @@ import {
   subDaysTz,
   toISOString,
   toTzString,
-} from './dates.helper';
+} from './dates.helper.ts';
 
 function toTzStringParis(d: Date): string {
   return toTzString(d, 'Europe/Paris');

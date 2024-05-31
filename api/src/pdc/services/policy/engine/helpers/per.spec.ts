@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
-import { perSeat, perKm } from './per';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { perSeat, perKm } from './per.ts';
 
 function setup(distance: number, seats: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ distance, seats }));

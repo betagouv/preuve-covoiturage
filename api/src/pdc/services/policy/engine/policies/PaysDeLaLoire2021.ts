@@ -1,12 +1,12 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   endsAt,
   isOperatorClassOrThrow,
@@ -20,9 +20,9 @@ import {
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PaysDeLaLoire2021.html';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './PaysDeLaLoire2021.html.ts';
 
 // Politique de Pays de la Loire
 /* eslint-disable-next-line */

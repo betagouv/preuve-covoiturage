@@ -1,6 +1,6 @@
-import { ResultType } from './ResultType';
-import { RPCErrorType } from './RPCErrorType';
-import { IdType } from './IdType';
+import { ResultType } from './ResultType.ts';
+import { RPCErrorType } from './RPCErrorType.ts';
+import { IdType } from './IdType.ts';
 
 export type RPCSingleResponseType = {
   id: IdType;

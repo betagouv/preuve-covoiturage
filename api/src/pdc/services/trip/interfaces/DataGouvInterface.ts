@@ -1,4 +1,4 @@
-import { InitHookInterface } from '@ilos/common';
+import { InitHookInterface } from '@ilos/common/index.ts';
 
 export enum Frequency {
   'unknown',

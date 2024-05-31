@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -18,10 +18,10 @@ import {
   watchForGlobalMaxTrip,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Nm.html';
+} from '../helpers/index.ts';
+import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Nm.html.ts';
 
 // Politique de Nantes Métropole
 export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

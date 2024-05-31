@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcryptjs';
-import md5 from 'crypto-js/md5';
-import { provider, ProviderInterface } from '@ilos/common';
+import md5 from 'crypto-js/md5.ts';
+import { provider, ProviderInterface } from '@ilos/common/index.ts';
 
-import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
+import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';
 
 @provider({
   identifier: CryptoProviderInterfaceResolver,

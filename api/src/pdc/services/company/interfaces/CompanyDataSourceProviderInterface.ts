@@ -1,4 +1,4 @@
-import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2.ts';
 
 export interface CompanyDataSourceProviderInterface {
   find(siret: string): Promise<CompanyInterface>;

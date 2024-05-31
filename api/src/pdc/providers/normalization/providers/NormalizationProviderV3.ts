@@ -1,9 +1,9 @@
-import { provider } from '@ilos/common';
+import { provider } from '@ilos/common/index.ts';
 
-import { GeoNormalizerProvider } from './GeoNormalizerProvider';
-import { RouteNormalizerProvider } from './RouteNormalizerProvider';
-import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces';
-import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
+import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
+import { RouteNormalizerProvider } from './RouteNormalizerProvider.ts';
+import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces/index.ts';
+import { IdentityNormalizerProvider } from './IdentityNormalizerProvider.ts';
 
 @provider()
 export class NormalizationProviderV3 implements NormalizationProviderInterface<PayloadV3> {

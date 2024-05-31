@@ -1,6 +1,6 @@
-import { AbstractTemplate } from '@pdc/providers/template';
+import { AbstractTemplate } from '@pdc/providers/template/index.ts';
 
-import { AbstractMailNotification } from '../AbstractNotification';
+import { AbstractMailNotification } from '../AbstractNotification.ts';
 
 export interface DefaultTemplateData {
   app_url: string;

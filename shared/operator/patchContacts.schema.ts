@@ -1,4 +1,4 @@
-import { contacts } from '../common/schemas/contacts';
+import { contacts } from '../common/schemas/contacts.ts';
 
 export const alias = 'operator.patchContacts';
 export const schema = {

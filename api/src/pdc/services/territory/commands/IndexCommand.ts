@@ -1,5 +1,5 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@ilos/common';
-import { signature as indexGeo } from '@shared/territory/indexAllGeo.contract';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@ilos/common/index.ts';
+import { signature as indexGeo } from '@shared/territory/indexAllGeo.contract.ts';
 
 @command()
 export class IndexCommand implements CommandInterface {

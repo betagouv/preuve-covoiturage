@@ -1,12 +1,12 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { CarpoolGeoRepository } from './CarpoolGeoRepository';
-import { insertableCarpool } from '../mocks/database/carpool';
-import { Id } from '../interfaces';
-import sql, { raw } from '../helpers/sql';
-import { upsertableGeoError, upsertableGeoSuccess } from '../mocks/database/geo';
-import { PoolClient } from '@ilos/connection-postgres';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { CarpoolRepository } from './CarpoolRepository.ts';
+import { CarpoolGeoRepository } from './CarpoolGeoRepository.ts';
+import { insertableCarpool } from '../mocks/database/carpool.ts';
+import { Id } from '../interfaces/index.ts';
+import sql, { raw } from '../helpers/sql.ts';
+import { upsertableGeoError, upsertableGeoSuccess } from '../mocks/database/geo.ts';
+import { PoolClient } from '@ilos/connection-postgres/index.ts';
 
 interface TestContext {
   repository: CarpoolGeoRepository;

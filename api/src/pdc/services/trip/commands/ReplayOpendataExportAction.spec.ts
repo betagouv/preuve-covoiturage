@@ -1,10 +1,10 @@
-import { KernelInterfaceResolver } from '@ilos/common';
+import { KernelInterfaceResolver } from '@ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { fromZonedTime } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
-import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
-import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider';
-import { ReplayOpendataExportCommand, StartEndDate } from './ReplayOpendataExportCommand';
+import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';
+import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider.ts';
+import { ReplayOpendataExportCommand, StartEndDate } from './ReplayOpendataExportCommand.ts';
 
 interface Context {
   // Injected tokens

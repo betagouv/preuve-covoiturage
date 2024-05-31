@@ -1,5 +1,5 @@
 import test from 'ava';
-import { getStatus } from './getStatus';
+import { getStatus } from './getStatus.ts';
 
 test('should have ok status', (t) => {
   const created = new Date('2020-05-20T10:00:00.000Z');

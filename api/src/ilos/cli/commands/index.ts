@@ -1,2 +1,2 @@
-export { CallCommand } from './CallCommand';
-export { ListCommand } from './ListCommand';
+export { CallCommand } from './CallCommand.ts';
+export { ListCommand } from './ListCommand.ts';

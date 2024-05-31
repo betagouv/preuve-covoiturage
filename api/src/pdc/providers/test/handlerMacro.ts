@@ -1,6 +1,6 @@
-import { ContextType, NewableType, ServiceContainerInterface } from '@ilos/common';
+import { ContextType, NewableType, ServiceContainerInterface } from '@ilos/common/index.ts';
 import test, { ExecutionContext, Macro } from 'ava';
-import { KernelBeforeAfter, KernelTestFn, makeKernelBeforeAfter } from './helpers';
+import { KernelBeforeAfter, KernelTestFn, makeKernelBeforeAfter } from './helpers.ts';
 
 interface HandlerConfigInterface {
   service: string;

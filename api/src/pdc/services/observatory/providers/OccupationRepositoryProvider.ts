@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   OccupationRepositoryInterface,
   OccupationRepositoryInterfaceResolver,
@@ -11,8 +11,8 @@ import {
   BestMonthlyTerritoriesResultInterface,
   InsertMonthlyOccupationParamsInterface,
   DeleteMonthlyOccupationParamsInterface,
-} from '../interfaces/OccupationRepositoryProviderInterface';
-import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
+} from '../interfaces/OccupationRepositoryProviderInterface.ts';
+import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams.ts';
 
 @provider({
   identifier: OccupationRepositoryInterfaceResolver,

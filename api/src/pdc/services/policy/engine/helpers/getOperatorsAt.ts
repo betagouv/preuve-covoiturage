@@ -1,4 +1,4 @@
-import { OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../interfaces/index.ts';
 
 export type TimestampedOperators = Array<{
   date: Date;

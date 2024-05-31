@@ -1,9 +1,9 @@
 import test from 'ava';
-import { NotFoundException } from '@ilos/common';
+import { NotFoundException } from '@ilos/common/index.ts';
 
-import { CompanyDataSourceProvider } from './CompanyDataSourceProvider';
-import { Extensions } from '@ilos/core';
-import * as dataSource from '../config/dataSource';
+import { CompanyDataSourceProvider } from './CompanyDataSourceProvider.ts';
+import { Extensions } from '@ilos/core/index.ts';
+import * as dataSource from '../config/dataSource.ts';
 
 test('should fetch from data source with a siret id', async (t) => {
   if (!('APP_INSEE_API_KEY' in process.env) || process.env.APP_INSEE_API_KEY === '') {

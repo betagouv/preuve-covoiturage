@@ -1,5 +1,5 @@
-import { ExportTarget } from '../models/Export';
-import { FieldFilter, Fields } from '../models/XLSXWriter';
+import { ExportTarget } from '../models/Export.ts';
+import { FieldFilter, Fields } from '../models/XLSXWriter.ts';
 
 export const prefix = 'RPC';
 

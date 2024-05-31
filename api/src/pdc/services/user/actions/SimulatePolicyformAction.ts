@@ -1,16 +1,16 @@
-import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract.ts';
+import { handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 import {
   ParamsInterface as SimulateOnPasGeoParams,
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastGeoSignature,
-} from '@shared/policy/simulateOnPastGeo.contract';
+} from '@shared/policy/simulateOnPastGeo.contract.ts';
 
-import { handlerConfig, ParamsInterface } from '@shared/user/simulatePolicyform.contract';
-import { alias } from '@shared/user/simulatePolicyform.schema';
+import { handlerConfig, ParamsInterface } from '@shared/user/simulatePolicyform.contract.ts';
+import { alias } from '@shared/user/simulatePolicyform.schema.ts';
 
 @handler({
   ...handlerConfig,

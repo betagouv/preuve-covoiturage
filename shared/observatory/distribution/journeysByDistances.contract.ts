@@ -1,4 +1,4 @@
-import { Direction, INSEECode, PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+import { Direction, INSEECode, PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter.ts';
 
 export interface SingleResultInterface {
   territory: PerimeterType;

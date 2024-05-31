@@ -1,13 +1,13 @@
 import { get } from 'lodash';
 import axios from 'axios';
-import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
+import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common/index.ts';
 
 import {
   CompanyDataSourceProviderInterfaceResolver,
   CompanyDataSourceProviderInterface,
-} from '../interfaces/CompanyDataSourceProviderInterface';
+} from '../interfaces/CompanyDataSourceProviderInterface.ts';
 
-import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2.ts';
 
 @provider({
   identifier: CompanyDataSourceProviderInterfaceResolver,

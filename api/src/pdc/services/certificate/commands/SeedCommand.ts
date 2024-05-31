@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 interface CommandOptions {
   databaseUri: string;

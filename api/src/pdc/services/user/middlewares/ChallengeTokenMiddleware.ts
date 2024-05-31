@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { ConfiguredMiddleware, UnconfiguredMiddleware } from '@pdc/providers/middleware';
+import { ConfiguredMiddleware, UnconfiguredMiddleware } from '@pdc/providers/middleware/index.ts';
 import {
   middleware,
   MiddlewareInterface,
@@ -8,9 +8,9 @@ import {
   ResultType,
   ForbiddenException,
   InvalidParamsException,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 
 @middleware()
 export class ChallengeTokenMiddleware implements MiddlewareInterface<ChallengeTokenMiddlewareParams> {

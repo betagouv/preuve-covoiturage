@@ -1,4 +1,4 @@
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
 import type { GeoJSON } from 'geojson';
 import { Feature, MultiPolygon, Polygon, Properties, multiPolygon, point, polygon } from '@turf/helpers';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';

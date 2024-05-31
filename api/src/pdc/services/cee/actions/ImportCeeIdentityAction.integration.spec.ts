@@ -1,15 +1,15 @@
-import { ContextType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
+import { ContextType } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test/index.ts';
 import {
   ceeJourneyTypeEnumSchema,
   lastNameTruncSchema,
   phoneTruncSchema,
   timestampSchema,
-} from '@shared/cee/common/ceeSchema';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplicationIdentity.contract';
+} from '@shared/cee/common/ceeSchema.ts';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplicationIdentity.contract.ts';
 import anyTest, { TestFn } from 'ava';
-import { ServiceProvider } from '../ServiceProvider';
+import { ServiceProvider } from '../ServiceProvider.ts';
 
 const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();

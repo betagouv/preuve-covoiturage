@@ -12,10 +12,10 @@ import {
   ContextType,
   ResultType,
   MiddlewareInterface,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
-import { compose } from '../helpers';
+import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig.ts';
+import { compose } from '../helpers/index.ts';
 
 export class HandlerRegistry {
   static readonly key: symbol = Symbol.for('handlers');

@@ -1,6 +1,6 @@
 import * as commander from 'commander';
 
-import { provider, ProviderInterface } from '@ilos/common';
+import { provider, ProviderInterface } from '@ilos/common/index.ts';
 
 /**
  * Commander provider

@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
-import { isAfter } from './isAfter';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { isAfter } from './isAfter.ts';
 
 function setup(datetime: Date) {
   return StatelessContext.fromCarpool(1, generateCarpool({ datetime }));

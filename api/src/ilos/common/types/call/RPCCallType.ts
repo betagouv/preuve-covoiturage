@@ -1,3 +1,3 @@
-import { RPCSingleCallType } from './RPCSingleCallType';
+import { RPCSingleCallType } from './RPCSingleCallType.ts';
 
 export type RPCCallType = RPCSingleCallType | RPCSingleCallType[];

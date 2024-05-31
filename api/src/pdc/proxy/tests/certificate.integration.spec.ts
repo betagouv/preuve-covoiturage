@@ -9,13 +9,13 @@ import { get } from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
-import { KernelInterface, TransportInterface } from '@ilos/common';
-import { CryptoProvider } from '@pdc/providers/crypto';
-import { TokenProvider } from '@pdc/providers/token';
-import { Kernel } from '../Kernel';
+import { KernelInterface, TransportInterface } from '@ilos/common/index.ts';
+import { CryptoProvider } from '@pdc/providers/crypto/index.ts';
+import { TokenProvider } from '@pdc/providers/token/index.ts';
+import { Kernel } from '../Kernel.ts';
 
-import { HttpTransport } from '../HttpTransport';
-import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
+import { HttpTransport } from '../HttpTransport.ts';
+import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider.ts';
 
 interface ContextType {
   kernel: KernelInterface;

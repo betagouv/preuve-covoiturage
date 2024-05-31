@@ -1,12 +1,12 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection, PoolClient } from '@ilos/connection-postgres/index.ts';
 
 import {
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
-} from '../interfaces/CarpoolRepositoryProviderInterface';
+} from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 
-import { PeopleWithIdInterface, IncentiveInterface } from '../interfaces/Carpool';
+import { PeopleWithIdInterface, IncentiveInterface } from '../interfaces/Carpool.ts';
 
 /*
  * Trip specific repository

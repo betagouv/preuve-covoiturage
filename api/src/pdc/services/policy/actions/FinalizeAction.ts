@@ -1,9 +1,9 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { MetadataStore } from '../engine/entities/MetadataStore';
-import { Policy } from '../engine/entities/Policy';
-import { castUserStringToUTC, defaultTz, subDaysTz, today, toISOString, toTzString } from '../helpers';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { MetadataStore } from '../engine/entities/MetadataStore.ts';
+import { Policy } from '../engine/entities/Policy.ts';
+import { castUserStringToUTC, defaultTz, subDaysTz, today, toISOString, toTzString } from '../helpers/index.ts';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -11,10 +11,10 @@ import {
   MetadataRepositoryProviderInterfaceResolver,
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
-} from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/finalize.contract';
-import { alias } from '@shared/policy/finalize.schema';
-import { signature as syncincentivesumSignature } from '@shared/policy/syncIncentiveSum.contract';
+} from '../interfaces/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/finalize.contract.ts';
+import { alias } from '@shared/policy/finalize.schema.ts';
+import { signature as syncincentivesumSignature } from '@shared/policy/syncIncentiveSum.contract.ts';
 
 // TOFIX ?
 // from and to props must be strings to pass schema validation

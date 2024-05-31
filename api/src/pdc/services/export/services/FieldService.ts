@@ -1,6 +1,6 @@
-import { ConfigInterfaceResolver, provider } from '@ilos/common';
-import { ExportTarget } from '../models/Export';
-import { FieldFilter, Fields } from '../models/XLSXWriter';
+import { ConfigInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { ExportTarget } from '../models/Export.ts';
+import { FieldFilter, Fields } from '../models/XLSXWriter.ts';
 
 export type FieldServiceInterface = {
   byTarget(type: ExportTarget): Partial<Fields>;

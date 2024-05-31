@@ -1,4 +1,4 @@
-export { hasInterface } from './hasInterface';
-export { hasMultipleCall } from './hasMultipleCall';
-export { isAnRPCException } from './isAnRPCException';
-export { isCallable } from './isCallable';
+export { hasInterface } from './hasInterface.ts';
+export { hasMultipleCall } from './hasMultipleCall.ts';
+export { isAnRPCException } from './isAnRPCException.ts';
+export { isCallable } from './isCallable.ts';

@@ -1,10 +1,10 @@
-export { atDate } from './atDate';
-export { atTime } from './atTime';
-export { isAdultOrThrow } from './isAdultOrThrow';
-export { isAfter } from './isAfter';
-export { isOperatorClassOrThrow } from './isOperatorClassOrThrow';
-export { isOperatorOrThrow } from './isOperatorOrThrow';
-export { isSelected } from './isSelected';
+export { atDate } from './atDate.ts';
+export { atTime } from './atTime.ts';
+export { isAdultOrThrow } from './isAdultOrThrow.ts';
+export { isAfter } from './isAfter.ts';
+export { isOperatorClassOrThrow } from './isOperatorClassOrThrow.ts';
+export { isOperatorOrThrow } from './isOperatorOrThrow.ts';
+export { isSelected } from './isSelected.ts';
 export {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
@@ -18,10 +18,10 @@ export {
   LimitCounterTypeEnum,
   LimitTargetEnum,
   ConfiguredLimitInterface,
-} from './limits';
-export { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange';
-export { onWeekday } from './onWeekday';
-export { perKm, perSeat } from './per';
-export { startsAt, endsAt, startsAndEndsAt } from './position';
-export { toZonedTime } from './toZonedTime';
-export { ensureFreeRide } from './ensureFreeRide';
+} from './limits.ts';
+export { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange.ts';
+export { onWeekday } from './onWeekday.ts';
+export { perKm, perSeat } from './per.ts';
+export { startsAt, endsAt, startsAndEndsAt } from './position.ts';
+export { toZonedTime } from './toZonedTime.ts';
+export { ensureFreeRide } from './ensureFreeRide.ts';

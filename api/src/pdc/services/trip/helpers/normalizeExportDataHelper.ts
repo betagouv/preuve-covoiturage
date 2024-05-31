@@ -1,6 +1,6 @@
 import { get } from 'lodash';
-import { FlattenTripInterface } from '../actions/BuildExportAction';
-import { ExportTripInterface } from '../interfaces';
+import { FlattenTripInterface } from '../actions/BuildExportAction.ts';
+import { ExportTripInterface } from '../interfaces/index.ts';
 import { format, toZonedTime } from 'date-fns-tz';
 
 export function normalizeExport(src: ExportTripInterface, timeZone: string): FlattenTripInterface {

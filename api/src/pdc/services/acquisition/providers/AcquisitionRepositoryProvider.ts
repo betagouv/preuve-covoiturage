@@ -1,6 +1,6 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { castStatus, fromStatus } from '../helpers/castStatus';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { castStatus, fromStatus } from '../helpers/castStatus.ts';
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
@@ -11,7 +11,7 @@ import {
   AcquisitionStatusInterface,
   AcquisitionStatusUpdateInterface,
   StatusSearchInterface,
-} from '../interfaces/AcquisitionRepositoryProviderInterface';
+} from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 
 @provider()
 export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProviderInterface {

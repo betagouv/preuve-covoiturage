@@ -1,2 +1,2 @@
-export { HttpHandler } from './HttpHandler';
-export { httpHandlerFactory } from './helpers/httpHandlerFactory';
+export { HttpHandler } from './HttpHandler.ts';
+export { httpHandlerFactory } from './helpers/httpHandlerFactory.ts';

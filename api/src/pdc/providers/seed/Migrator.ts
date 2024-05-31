@@ -1,15 +1,15 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { createDatabase, dropDatabase, migrate } from '@db/index';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { createDatabase, dropDatabase, migrate } from '@db/index.ts';
 import { parse, Options as ParseOptions } from 'csv-parse';
 import fs from 'fs';
 import path from 'path';
 
 import { URL } from 'url';
-import { Carpool, carpools, carpoolsV2 } from './carpools';
-import { companies, Company } from './companies';
-import { Operator, operators } from './operators';
-import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories';
-import { User, users } from './users';
+import { Carpool, carpools, carpoolsV2 } from './carpools.ts';
+import { companies, Company } from './companies.ts';
+import { Operator, operators } from './operators.ts';
+import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories.ts';
+import { User, users } from './users.ts';
 import { add } from 'date-fns';
 export class Migrator {
   public connection: PostgresConnection;

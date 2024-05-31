@@ -4,9 +4,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   LimitTargetEnum,
   endsAt,
@@ -21,9 +21,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Vitre2023.html';
+} from '../helpers/index.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Vitre2023.html.ts';
 
 // Politique Vitré Communauté
 export const Vitre2023: PolicyHandlerStaticInterface = class

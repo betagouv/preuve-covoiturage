@@ -1,4 +1,4 @@
-import { StatelessContextInterface } from '../../interfaces';
+import { StatelessContextInterface } from '../../interfaces/index.ts';
 
 export interface PerKmParams {
   /**

@@ -1,7 +1,7 @@
 import test from 'ava';
-import { injectable } from '@ilos/common';
-import { AbstractTemplate, HandlebarsTemplateProvider } from '.';
-import { TemplateRenderingException } from './exceptions';
+import { injectable } from '@ilos/common/index.ts';
+import { AbstractTemplate, HandlebarsTemplateProvider } from './index.ts';
+import { TemplateRenderingException } from './exceptions/index.ts';
 
 interface TestTemplateData {
   word: string;

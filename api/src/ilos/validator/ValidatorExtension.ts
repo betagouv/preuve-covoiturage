@@ -1,6 +1,6 @@
-import { RegisterHookInterface, ServiceContainerInterface, ValidatorInterfaceResolver, extension } from '@ilos/common';
+import { RegisterHookInterface, ServiceContainerInterface, ValidatorInterfaceResolver, extension } from '@ilos/common/index.ts';
 
-import { AjvValidator } from './AjvValidator';
+import { AjvValidator } from './AjvValidator.ts';
 
 @extension({
   name: 'validator',

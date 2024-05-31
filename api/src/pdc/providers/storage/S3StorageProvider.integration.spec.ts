@@ -1,12 +1,12 @@
-import { ConfigStore } from '@ilos/core/extensions';
+import { ConfigStore } from '@ilos/core/extensions/index.ts';
 import test from 'ava';
 import axios from 'axios';
 import { writeFile } from 'fs/promises';
 import https from 'https';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { BucketName } from './interfaces/BucketName';
-import { S3StorageProvider } from './S3StorageProvider';
+import { BucketName } from './interfaces/BucketName.ts';
+import { S3StorageProvider } from './S3StorageProvider.ts';
 
 test('should be uploading file with bucket as sub-domain', async (t) => {
   t.log('Start test');

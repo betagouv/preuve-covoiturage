@@ -1,5 +1,5 @@
-import * as ajv from './ajv';
-import * as rules from './rules';
+import * as ajv from './ajv.ts';
+import * as rules from './rules.ts';
 
 export const config = {
   ajv,

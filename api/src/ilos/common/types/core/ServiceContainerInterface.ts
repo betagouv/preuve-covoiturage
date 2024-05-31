@@ -1,6 +1,6 @@
-import { ExtensionInterface } from './ExtensionInterface';
-import { ContainerInterface, IdentifierType } from '../container';
-import { NewableType } from '../shared';
+import { ExtensionInterface } from './ExtensionInterface.ts';
+import { ContainerInterface, IdentifierType } from '../container/index.ts';
+import { NewableType } from '../shared/index.ts';
 
 // export type ServiceContainerConstructorInterface<T = any> = new (parent?: ServiceContainerInterface) => T;
 export type ServiceContainerConstructorInterface<T = any> = new (parent?: ContainerInterface) => T;

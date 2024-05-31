@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider } from '@ilos/common/index.ts';
 
 import {
   GeoCoderInterface,
@@ -11,9 +11,9 @@ import {
   PointInterface,
   RouteMeta,
   RouteMetaProviderInterface,
-} from './interfaces';
+} from './interfaces/index.ts';
 
-import { EtalabBaseAdresseNationaleProvider, EtalabAPIGeoProvider, LocalGeoProvider, OSRMProvider } from './providers';
+import { EtalabBaseAdresseNationaleProvider, EtalabAPIGeoProvider, LocalGeoProvider, OSRMProvider } from './providers/index.ts';
 
 @provider({
   identifier: GeoProviderInterfaceResolver,

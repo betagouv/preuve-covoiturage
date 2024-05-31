@@ -6,22 +6,22 @@ import {
   RPCSingleCallType,
   TransportInterface,
   UnauthorizedException,
-} from '@ilos/common';
-import { env } from '@ilos/core';
-import { mapStatusCode } from '@ilos/transport-http';
-import { Sentry, SentryProvider } from '@pdc/providers/sentry';
-import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
-import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
-import { signature as importCeeSignature } from '@shared/cee/importApplication.contract';
-import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract';
-import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract';
-import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract';
-import { RPCResponseType } from '@shared/common/rpc/RPCResponseType';
+} from '@ilos/common/index.ts';
+import { env } from '@ilos/core/index.ts';
+import { mapStatusCode } from '@ilos/transport-http/index.ts';
+import { Sentry, SentryProvider } from '@pdc/providers/sentry/index.ts';
+import { TokenProviderInterfaceResolver } from '@pdc/providers/token/index.ts';
+import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface.ts';
+import { signature as importCeeSignature } from '@shared/cee/importApplication.contract.ts';
+import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract.ts';
+import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract.ts';
+import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract.ts';
+import { RPCResponseType } from '@shared/common/rpc/RPCResponseType.ts';
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
-} from '@shared/territory/getAuthorizedCodes.contract';
+} from '@shared/territory/getAuthorizedCodes.contract.ts';
 import bodyParser from 'body-parser';
 import RedisStore from 'connect-redis';
 import cors from 'cors';
@@ -29,17 +29,17 @@ import express, { Request, Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import http from 'http';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { get, pick } from 'lodash';
 import path from 'node:path';
-import { asyncHandler } from './helpers/asyncHandler';
-import { createRPCPayload } from './helpers/createRPCPayload';
-import { healthCheckFactory } from './helpers/healthCheckFactory';
-import { injectContext } from './helpers/injectContext';
-import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
-import { dataWrapMiddleware, errorHandlerMiddleware, signResponseMiddleware } from './middlewares';
-import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
-import { metricsMiddleware } from './middlewares/metricsMiddleware';
+import { asyncHandler } from './helpers/asyncHandler.ts';
+import { createRPCPayload } from './helpers/createRPCPayload.ts';
+import { healthCheckFactory } from './helpers/healthCheckFactory.ts';
+import { injectContext } from './helpers/injectContext.ts';
+import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory.ts';
+import { dataWrapMiddleware, errorHandlerMiddleware, signResponseMiddleware } from './middlewares/index.ts';
+import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware.ts';
+import { metricsMiddleware } from './middlewares/metricsMiddleware.ts';
 import {
   acquisitionRateLimiter,
   apiRateLimiter,
@@ -50,8 +50,8 @@ import {
   loginRateLimiter,
   monHonorCertificateRateLimiter,
   rateLimiter,
-} from './middlewares/rateLimiter';
-import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
+} from './middlewares/rateLimiter.ts';
+import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware.ts';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;

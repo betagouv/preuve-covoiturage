@@ -4,9 +4,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   endsAt,
   isOperatorClassOrThrow,
@@ -21,10 +21,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PaysDeLaLoire2024.html';
+} from '../helpers/index.ts';
+import { isAdultOrThrow } from '../helpers/isAdultOrThrow.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './PaysDeLaLoire2024.html.ts';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */

@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
+import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*
  * Extract data from context and copy to request params

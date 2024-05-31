@@ -1,4 +1,4 @@
-import { env } from '@ilos/core';
+import { env } from '@ilos/core/index.ts';
 
 /**
  * Super complicated token to crypt the JWT tokens

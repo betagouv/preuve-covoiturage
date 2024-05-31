@@ -1,12 +1,12 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, InvalidParamsException } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler, InvalidParamsException } from '@ilos/common/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { alias } from '@shared/acquisition/list.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/list.contract';
-import { StatusSearchInterface } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { castUserStringToUTC, subDaysTz, today } from '../helpers';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { alias } from '@shared/acquisition/list.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/list.contract.ts';
+import { StatusSearchInterface } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
+import { castUserStringToUTC, subDaysTz, today } from '../helpers/index.ts';
 import { isAfter, isBefore } from 'date-fns';
 
 @handler({

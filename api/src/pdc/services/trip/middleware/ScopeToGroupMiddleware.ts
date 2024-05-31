@@ -6,10 +6,10 @@ import {
   ResultType,
   InvalidParamsException,
   ForbiddenException,
-} from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { ConfiguredMiddleware } from '@pdc/providers/middleware';
-import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { ConfiguredMiddleware } from '@pdc/providers/middleware/index.ts';
+import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export type ScopeToGroupMiddlewareParams = {
   registry: string;

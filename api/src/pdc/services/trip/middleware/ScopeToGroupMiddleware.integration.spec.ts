@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { ContextType, ForbiddenException } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { ContextType, ForbiddenException } from '@ilos/common/index.ts';
 
-import { ScopeToGroupMiddleware } from './ScopeToGroupMiddleware';
+import { ScopeToGroupMiddleware } from './ScopeToGroupMiddleware.ts';
 
 const test = anyTest as TestFn<{
   connection: PostgresConnection;

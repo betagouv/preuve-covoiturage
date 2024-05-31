@@ -1,12 +1,12 @@
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import { provider, ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto/index.ts';
 
-import { StatInterface } from '../interfaces/StatInterface';
+import { StatInterface } from '../interfaces/StatInterface.ts';
 import {
   StatCacheRepositoryProviderInterface,
   StatCacheRepositoryProviderInterfaceResolver,
-} from '../interfaces/StatCacheRepositoryProviderInterface';
+} from '../interfaces/StatCacheRepositoryProviderInterface.ts';
 
 /*
  * Trip stat repository

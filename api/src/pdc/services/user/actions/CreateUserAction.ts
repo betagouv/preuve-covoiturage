@@ -1,19 +1,19 @@
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
 import {
   handler,
   ContextType,
   InvalidRequestException,
   ConfigInterfaceResolver,
   UnauthorizedException,
-} from '@ilos/common';
-import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+} from '@ilos/common/index.ts';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/create.contract';
-import { alias } from '@shared/user/create.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/create.contract.ts';
+import { alias } from '@shared/user/create.schema.ts';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
+import { userWhiteListFilterOutput } from '../config/filterOutput.ts';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 
 /*
  * Create user and call forgotten password action

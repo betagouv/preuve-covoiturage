@@ -1,13 +1,13 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, UnauthorizedException } from '@ilos/common';
-import { contentWhitelistMiddleware } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler, UnauthorizedException } from '@ilos/common/index.ts';
+import { contentWhitelistMiddleware } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/login.contract';
-import { alias } from '@shared/user/login.schema';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/login.contract.ts';
+import { alias } from '@shared/user/login.schema.ts';
+import { userWhiteListFilterOutput } from '../config/filterOutput.ts';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
+import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware.ts';
 
 /*
  * Authenticate user by email & pwd - else throws forbidden error

@@ -1,5 +1,5 @@
-import { ProviderInterface } from '@ilos/common';
-import { TemplateInterface } from '.';
+import { ProviderInterface } from '@ilos/common/index.ts';
+import { TemplateInterface } from '../index.ts';
 
 export interface TemplateProviderInterface extends ProviderInterface {
   render<T = any>(template: TemplateInterface<T>): string;

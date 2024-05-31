@@ -1,9 +1,9 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { generatePartialCarpools } from '../tests/helpers';
-import { makeProcessHelper } from '../tests/macro';
-import { GrandPoitiers as Handler } from './GrandPoitiers';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { generatePartialCarpools } from '../tests/helpers.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { GrandPoitiers as Handler } from './GrandPoitiers.ts';
 
 // Unit test calculations
 

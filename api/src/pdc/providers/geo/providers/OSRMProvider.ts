@@ -1,9 +1,9 @@
-import { provider } from '@ilos/common';
-import { env } from '@ilos/core';
+import { provider } from '@ilos/common/index.ts';
+import { env } from '@ilos/core/index.ts';
 import axios from 'axios';
 import { Agent } from 'http';
 import { get } from 'lodash';
-import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interfaces';
+import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interfaces/index.ts';
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {

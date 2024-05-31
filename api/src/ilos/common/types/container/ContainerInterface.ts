@@ -1,8 +1,8 @@
 import { interfaces } from 'inversify';
 
-import { NewableType } from '../shared';
-import { HandlerInterface, HandlerConfigType, FunctionalHandlerInterface } from '../handler';
-import { ParamsType, ContextType, ResultType } from '../call';
+import { NewableType } from '../shared/index.ts';
+import { HandlerInterface, HandlerConfigType, FunctionalHandlerInterface } from '../handler/index.ts';
+import { ParamsType, ContextType, ResultType } from '../call/index.ts';
 
 export interface ContainerInterface extends interfaces.Container {
   root: ContainerInterface;

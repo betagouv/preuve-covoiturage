@@ -1,7 +1,7 @@
-import { Action } from '@ilos/core';
-import { handler, ParamsType, ContextType, ResultType, InvalidParamsException } from '@ilos/common';
+import { Action } from '@ilos/core/index.ts';
+import { handler, ParamsType, ContextType, ResultType, InvalidParamsException } from '@ilos/common/index.ts';
 
-import { CustomProvider } from '../../Providers/CustomProvider';
+import { CustomProvider } from '../../Providers/CustomProvider.ts';
 
 @handler({
   service: 'math',

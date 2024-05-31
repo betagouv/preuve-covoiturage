@@ -1,5 +1,5 @@
 import { filterXSS, IFilterXSSOptions } from 'xss';
-import { KeywordDefinition } from '@ilos/validator';
+import { KeywordDefinition } from '@ilos/validator/index.ts';
 
 export type SanitizeInterface = boolean | IFilterXSSOptions;
 

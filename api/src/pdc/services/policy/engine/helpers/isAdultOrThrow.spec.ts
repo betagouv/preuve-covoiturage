@@ -1,9 +1,9 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { generateCarpool } from '../tests/helpers';
-import { isAdultOrThrow } from './isAdultOrThrow';
+import { StatelessContext } from '../entities/Context.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { isAdultOrThrow } from './isAdultOrThrow.ts';
 
 function setup(passenger_is_over_18: boolean) {
   return StatelessContext.fromCarpool(1, generateCarpool({ passenger_is_over_18 }));

@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
-import { onWeekday } from './onWeekday';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { onWeekday } from './onWeekday.ts';
 
 function setup(datetime: Date) {
   return StatelessContext.fromCarpool(1, generateCarpool({ datetime }));

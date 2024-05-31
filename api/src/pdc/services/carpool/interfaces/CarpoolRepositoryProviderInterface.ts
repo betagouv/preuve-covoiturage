@@ -1,4 +1,4 @@
-import { PeopleWithIdInterface } from './Carpool';
+import { PeopleWithIdInterface } from './Carpool.ts';
 
 export interface CarpoolRepositoryProviderInterface {
   importFromAcquisition(

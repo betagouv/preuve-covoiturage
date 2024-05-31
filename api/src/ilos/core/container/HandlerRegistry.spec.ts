@@ -1,9 +1,9 @@
 import test from 'ava';
-import { handler } from '@ilos/common';
+import { handler } from '@ilos/common/index.ts';
 
-import { Container } from '.';
-import { Action } from '../foundation/Action';
-import { HandlerRegistry } from './HandlerRegistry';
+import { Container } from '../index.ts';
+import { Action } from '../foundation/Action.ts';
+import { HandlerRegistry } from './HandlerRegistry.ts';
 
 const defaultCallOptions = {
   method: '',

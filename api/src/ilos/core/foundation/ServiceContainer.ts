@@ -8,10 +8,10 @@ import {
   IdentifierType,
   NewableType,
   ExtensionInterface,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { Container, HookRegistry } from '../container';
-import { ExtensionRegistry } from '../container/ExtensionRegistry';
+import { Container, HookRegistry } from '../container/index.ts';
+import { ExtensionRegistry } from '../container/ExtensionRegistry.ts';
 
 /**
  * Service container parent class

@@ -1,6 +1,6 @@
-import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common';
+import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common/index.ts';
 import { get } from 'lodash';
-import { Sentry } from './Sentry';
+import { Sentry } from './Sentry.ts';
 
 @provider()
 export class SentryProvider implements ProviderInterface {

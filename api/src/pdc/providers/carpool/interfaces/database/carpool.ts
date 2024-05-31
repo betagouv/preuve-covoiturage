@@ -11,7 +11,7 @@ import {
   Position,
   Seat,
   Uuid,
-} from '../common';
+} from '../common.ts';
 
 export interface InsertableCarpool {
   operator_id: Id;

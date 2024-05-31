@@ -1,4 +1,4 @@
-import { ServiceContainerInterface } from '../core/ServiceContainerInterface';
+import { ServiceContainerInterface } from '../core/ServiceContainerInterface.ts';
 
 export interface InitHookInterface {
   /**

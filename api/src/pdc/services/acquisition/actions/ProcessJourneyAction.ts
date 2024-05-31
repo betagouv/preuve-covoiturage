@@ -1,18 +1,18 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { NormalizationProvider } from '@pdc/providers/normalization';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { NormalizationProvider } from '@pdc/providers/normalization/index.ts';
 import { randomUUID } from 'crypto';
 
-import { callContext } from '../config/callContext';
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/process.contract';
+import { callContext } from '../config/callContext.ts';
+import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/process.contract.ts';
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
-} from '@shared/carpool/crosscheck.contract';
+} from '@shared/carpool/crosscheck.contract.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,4 +1,4 @@
-import { contacts } from '../common/schemas/contacts';
+import { contacts } from '../common/schemas/contacts.ts';
 
 export const alias = 'territory.patchContacts';
 export const patchContacts = {

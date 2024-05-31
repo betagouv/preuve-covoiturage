@@ -1,6 +1,6 @@
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
 
-import { UnconfiguredMiddleware } from '../interfaces';
+import { UnconfiguredMiddleware } from '../interfaces.ts';
 
 @middleware()
 export class LoggerMiddleware implements MiddlewareInterface<LoggerMiddlewareParams> {

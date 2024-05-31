@@ -1,18 +1,18 @@
-import { handler } from '@ilos/common';
-import { RedisConnection } from '@ilos/connection-redis';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract';
-import { alias } from '@shared/policy/simulateOnPast.schema';
+import { handler } from '@ilos/common/index.ts';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract.ts';
+import { alias } from '@shared/policy/simulateOnPast.schema.ts';
 import { RedisKey } from 'ioredis';
-import { MetadataStore } from '../engine/entities/MetadataStore';
-import { Policy } from '../engine/entities/Policy';
+import { MetadataStore } from '../engine/entities/MetadataStore.ts';
+import { Policy } from '../engine/entities/Policy.ts';
 import {
   SerializedPolicyInterface,
   TerritoryRepositoryProviderInterfaceResolver,
   TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+} from '../interfaces/index.ts';
 
 @handler({
   ...handlerConfig,

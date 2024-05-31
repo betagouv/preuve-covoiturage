@@ -1,7 +1,7 @@
 import test from 'ava';
 import path from 'path';
 import os from 'os';
-import { APDFNameProvider } from './APDFNameProvider';
+import { APDFNameProvider } from './APDFNameProvider.ts';
 
 test('Stringify APDF: filename', (t) => {
   const provider = new APDFNameProvider();

@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { SMT2022 as Handler } from './SMT2022';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { SMT2022 as Handler } from './SMT2022.ts';
 
 const defaultPosition = {
   arr: '37261',

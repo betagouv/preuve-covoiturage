@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { Action } from '@ilos/core';
-import { handler, ConfigInterfaceResolver, ParamsType, ContextType, ResultType } from '@ilos/common';
+import { Action } from '@ilos/core/index.ts';
+import { handler, ConfigInterfaceResolver, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
 
 @handler({
   service: 'string',

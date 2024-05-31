@@ -1,7 +1,7 @@
 import { Job, Queue, JobsOptions, QueueOptions } from 'bullmq';
 import { get, isString } from 'lodash';
-import { RedisConnection } from '@ilos/connection-redis';
-import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common/index.ts';
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];

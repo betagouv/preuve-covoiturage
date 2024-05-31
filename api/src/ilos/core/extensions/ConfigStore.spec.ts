@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { ConfigStore } from './Config';
+import { ConfigStore } from './Config.ts';
 
 test('Config provider: works with simple object', async (t) => {
   const config = new ConfigStore({

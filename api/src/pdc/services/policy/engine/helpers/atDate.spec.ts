@@ -1,9 +1,9 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
-import { generateCarpool } from '../tests/helpers';
-import { atDate } from './atDate';
+import { StatelessContext } from '../entities/Context.ts';
+import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { atDate } from './atDate.ts';
 
 function setup(datetime: Date) {
   return StatelessContext.fromCarpool(1, generateCarpool({ datetime }));

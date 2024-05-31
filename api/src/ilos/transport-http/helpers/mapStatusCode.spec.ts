@@ -1,5 +1,5 @@
 import test from 'ava';
-import { mapStatusCode } from './mapStatusCode';
+import { mapStatusCode } from './mapStatusCode.ts';
 
 test('RPC/HTTP status codes mapping: regular -> 200', (t) => {
   t.is(

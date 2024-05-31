@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { ConfigInterface } from '@ilos/common';
+import { ConfigInterface } from '@ilos/common/index.ts';
 
 export class MockJWTConfigProvider implements ConfigInterface {
   get(key: string, fallback?: any): any {

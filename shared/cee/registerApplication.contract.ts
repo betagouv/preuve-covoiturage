@@ -1,4 +1,4 @@
-import { CeeApplicationResultInterface, CeeApplicationInterface } from './common/CeeApplicationInterface';
+import { CeeApplicationResultInterface, CeeApplicationInterface } from './common/CeeApplicationInterface.ts';
 
 export type ParamsInterface = CeeApplicationInterface;
 

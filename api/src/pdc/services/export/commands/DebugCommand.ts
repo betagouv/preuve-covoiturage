@@ -1,10 +1,10 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { ExportTarget } from '../models/Export';
-import { ExportParams } from '../models/ExportParams';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { BuildServiceInterfaceResolver } from '../services/BuildService';
-import { FieldServiceInterfaceResolver } from '../services/FieldService';
-import { NameServiceInterfaceResolver } from '../services/NameService';
+import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
+import { ExportTarget } from '../models/Export.ts';
+import { ExportParams } from '../models/ExportParams.ts';
+import { XLSXWriter } from '../models/XLSXWriter.ts';
+import { BuildServiceInterfaceResolver } from '../services/BuildService.ts';
+import { FieldServiceInterfaceResolver } from '../services/FieldService.ts';
+import { NameServiceInterfaceResolver } from '../services/NameService.ts';
 
 @command()
 export class DebugCommand implements CommandInterface {

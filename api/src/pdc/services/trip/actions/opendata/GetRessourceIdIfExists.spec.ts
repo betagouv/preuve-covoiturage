@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { Dataset } from '../../interfaces';
-import { DataGouvProvider } from '../../providers/DataGouvProvider';
-import { GetRessourceIdIfExists } from './GetRessourceIdIfExists';
+import { Dataset } from '../../interfaces/index.ts';
+import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';
+import { GetRessourceIdIfExists } from './GetRessourceIdIfExists.ts';
 
 interface Context {
   // Injected tokens

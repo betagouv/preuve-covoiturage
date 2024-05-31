@@ -1,4 +1,4 @@
-import { InsertableCarpoolCancelRequest, InsertableCarpoolCreateRequest } from '../../interfaces';
+import { InsertableCarpoolCancelRequest, InsertableCarpoolCreateRequest } from '../../interfaces/index.ts';
 
 export const insertableCarpoolCreateRequest: InsertableCarpoolCreateRequest = {
   carpool_id: 1,

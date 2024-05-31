@@ -4,7 +4,7 @@ import {
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 
 const defaultPosition = {
   arr: '91377',

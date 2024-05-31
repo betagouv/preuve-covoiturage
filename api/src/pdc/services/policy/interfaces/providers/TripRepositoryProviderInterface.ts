@@ -1,4 +1,4 @@
-import { CarpoolInterface, PolicyInterface } from '..';
+import { CarpoolInterface, PolicyInterface } from '../index.ts';
 
 export abstract class TripRepositoryProviderInterfaceResolver {
   abstract findTripByPolicy(

@@ -1,4 +1,4 @@
-import { CallType, ResultType, ParamsType, ContextType, HandlerInterface } from '@ilos/common';
+import { CallType, ResultType, ParamsType, ContextType, HandlerInterface } from '@ilos/common/index.ts';
 
 /**
  * Action parent class, must be decorated

@@ -1,5 +1,5 @@
-import { env } from '@ilos/core';
-import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstraint } from '../interfaces';
+import { env } from '@ilos/core/index.ts';
+import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstraint } from '../interfaces/index.ts';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',

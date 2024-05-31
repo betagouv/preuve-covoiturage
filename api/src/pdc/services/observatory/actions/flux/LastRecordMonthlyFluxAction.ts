@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { handlerConfig, ResultInterface } from '@shared/observatory/flux/lastRecordMonthlyFlux.contract';
-import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { handlerConfig, ResultInterface } from '@shared/observatory/flux/lastRecordMonthlyFlux.contract.ts';
+import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface.ts';
 
 @handler({
   ...handlerConfig,

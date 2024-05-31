@@ -1,19 +1,19 @@
 /* eslint-disable max-len */
 import { faker } from '@faker-js/faker';
-import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { uuid } from '@pdc/providers/test';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
+import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { uuid } from '@pdc/providers/test/index.ts';
+import { BucketName, S3StorageProvider } from '@pdc/providers/storage/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper';
-import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
-import { CheckCampaign } from '../providers/CheckCampaign';
-import { BuildExcel } from '../providers/excel/BuildExcel';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract';
-import { ExportAction } from './ExportAction';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper.ts';
+import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
+import { CheckCampaign } from '../providers/CheckCampaign.ts';
+import { BuildExcel } from '../providers/excel/BuildExcel.ts';
+import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
+import { ExportAction } from './ExportAction.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
 
 interface Context {
   // Injected tokens

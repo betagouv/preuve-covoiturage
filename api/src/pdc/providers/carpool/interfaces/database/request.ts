@@ -1,4 +1,4 @@
-import { ApiVersion, CancelCode, CancelMessage, Id, Payload, Uuid } from '../common';
+import { ApiVersion, CancelCode, CancelMessage, Id, Payload, Uuid } from '../common.ts';
 
 export interface InsertableCarpoolCreateRequest {
   carpool_id: Id;

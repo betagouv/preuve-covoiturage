@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { ContextType, ForbiddenException } from '@ilos/common';
+import { ContextType, ForbiddenException } from '@ilos/common/index.ts';
 
-import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware';
+import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware.ts';
 
 const test = anyTest as TestFn<{
   mockSuperAdmin: any;

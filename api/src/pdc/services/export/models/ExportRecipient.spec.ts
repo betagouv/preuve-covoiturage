@@ -1,5 +1,5 @@
 import test from 'ava';
-import { ExportRecipient } from './ExportRecipient';
+import { ExportRecipient } from './ExportRecipient.ts';
 
 test('should parse email with fullname', (t) => {
   t.deepEqual(ExportRecipient.parseEmail('John Doe <jon.doe@example.com>'), {

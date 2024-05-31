@@ -1,16 +1,16 @@
-import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware';
+import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action } from '@ilos/core/index.ts';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware/index.ts';
 import { get } from 'lodash';
-import * as middlewareConfig from '../config/middlewares';
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/export.contract';
-import { alias } from '@shared/trip/export.schema';
+import * as middlewareConfig from '../config/middlewares.ts';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/export.contract.ts';
+import { alias } from '@shared/trip/export.schema.ts';
 import {
   ParamsInterface as SendExportParamsInterface,
   signature as sendExportSignature,
-} from '@shared/trip/sendExport.contract';
+} from '@shared/trip/sendExport.contract.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,7 +1,7 @@
-import { OperatorInterface } from '@shared/operator/common/interfaces/OperatorInterface';
-import { OperatorDbInterface } from '@shared/operator/common/interfaces/OperatorDbInterface';
-import { OperatorListInterface } from '@shared/operator/common/interfaces/OperatorListInterface';
-import { ResultInterface as FindBySiretResultInterface } from '@shared/operator/findbyuuid.contract';
+import { OperatorInterface } from '@shared/operator/common/interfaces/OperatorInterface.ts';
+import { OperatorDbInterface } from '@shared/operator/common/interfaces/OperatorDbInterface.ts';
+import { OperatorListInterface } from '@shared/operator/common/interfaces/OperatorListInterface.ts';
+import { ResultInterface as FindBySiretResultInterface } from '@shared/operator/findbyuuid.contract.ts';
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
   quickFind(

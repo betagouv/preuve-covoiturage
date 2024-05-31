@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changePasswordWithToken.contract';
-import { alias } from '@shared/user/changePasswordWithToken.schema';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changePasswordWithToken.contract.ts';
+import { alias } from '@shared/user/changePasswordWithToken.schema.ts';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
+import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware.ts';
 
 /*
  * Change password using the email and forgotten_token for auth

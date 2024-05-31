@@ -1,9 +1,9 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { Montpellier as Handler } from './Montpellier';
-import { generatePartialCarpools } from '../tests/helpers';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { Montpellier as Handler } from './Montpellier.ts';
+import { generatePartialCarpools } from '../tests/helpers.ts';
 
 const defaultPosition = {
   arr: '34088',

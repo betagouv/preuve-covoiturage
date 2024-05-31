@@ -6,9 +6,9 @@ import {
   ExtensionInterface,
   NewableType,
   FactoryType,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { DependencyTree } from '../helpers/DependencyTree';
+import { DependencyTree } from '../helpers/DependencyTree.ts';
 
 export class ExtensionRegistry {
   static readonly key: symbol = Symbol.for('extensions');

@@ -1,12 +1,12 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   CampaignsParamsInterface,
   CampaignsResultInterface,
   IncentiveCampaignsRepositoryInterfaceResolver,
   IncentiveCampaignsRepositoryInterface
-} from '../interfaces/IncentiveCampaignsRepositoryProviderInterface';
-import { checkTerritoryParam } from '../helpers/checkParams';
+} from '../interfaces/IncentiveCampaignsRepositoryProviderInterface.ts';
+import { checkTerritoryParam } from '../helpers/checkParams.ts';
 
 @provider({
   identifier: IncentiveCampaignsRepositoryInterfaceResolver,

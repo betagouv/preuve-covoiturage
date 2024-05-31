@@ -1,6 +1,6 @@
 import test from 'ava';
-import { BoundedSlices, UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
-import { findBoundary, toBoundedSlices, wrapSlices as wrap } from './wrapSlicesHelper';
+import { BoundedSlices, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
+import { findBoundary, toBoundedSlices, wrapSlices as wrap } from './wrapSlicesHelper.ts';
 
 test('[wrap] No valid slices returns empty array', (t) => {
   t.deepEqual(wrap(undefined), []);

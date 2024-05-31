@@ -1,6 +1,6 @@
 import test from 'ava';
-import { OperatorsEnum } from '../../interfaces';
-import { TimestampedOperators, getOperatorsAt } from './getOperatorsAt';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { TimestampedOperators, getOperatorsAt } from './getOperatorsAt.ts';
 
 // Unit test the getOperators method based on GrandPoitiers configuration
 

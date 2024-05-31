@@ -1,4 +1,4 @@
-import { TerritoryCodeInterface, TerritorySelectorsInterface } from '..';
+import { TerritoryCodeInterface, TerritorySelectorsInterface } from '../index.ts';
 export interface TerritoryRepositoryProviderInterface {
   findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<TerritoryCodeInterface>;
   findUUIDById(_id: number | number[]): Promise<{ _id: number; uuid: string }[]>;

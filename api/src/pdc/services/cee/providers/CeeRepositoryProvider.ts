@@ -1,6 +1,6 @@
-import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { Uuid } from '@pdc/providers/carpool/interfaces';
+import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { Uuid } from '@pdc/providers/carpool/interfaces/index.ts';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -15,7 +15,7 @@ import {
   ShortCeeApplication,
   ValidJourney,
   ValidJourneyConstraint,
-} from '../interfaces';
+} from '../interfaces/index.ts';
 
 @provider({
   identifier: CeeRepositoryProviderInterfaceResolver,

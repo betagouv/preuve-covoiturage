@@ -1,11 +1,11 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '@ilos/common';
-import { HttpTransport } from '@ilos/transport-http';
-import { getPorts } from '@pdc/helpers/ports.helper';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '@ilos/common/index.ts';
+import { HttpTransport } from '@ilos/transport-http/index.ts';
+import { getPorts } from '@pdc/helpers/ports.helper.ts';
 import anyTest, { TestFn } from 'ava';
 import axios from 'axios';
-import { Kernel } from '../Kernel';
-import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
-import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
+import { Kernel } from '../Kernel.ts';
+import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';
+import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider.ts';
 
 interface Context {
   transport: TransportInterface;

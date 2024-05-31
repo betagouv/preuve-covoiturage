@@ -1,18 +1,18 @@
-import { KernelInterfaceResolver } from '@ilos/common';
-import { APDFNameProvider } from '@pdc/providers/storage';
-import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { SliceInterface } from '@shared/policy/common/interfaces/Slices';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract';
+import { KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { APDFNameProvider } from '@pdc/providers/storage/index.ts';
+import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface.ts';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { SliceInterface } from '@shared/policy/common/interfaces/Slices.ts';
+import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
-import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
-import { DataRepositoryProvider } from '../APDFRepositoryProvider';
-import { BuildExcel } from './BuildExcel';
-import { SlicesWorksheetWriter } from './SlicesWorksheetWriter';
-import { TripsWorksheetWriter } from './TripsWorksheetWriter';
-import { wrapSlices } from './wrapSlicesHelper';
+import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
+import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
+import { BuildExcel } from './BuildExcel.ts';
+import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
+import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
+import { wrapSlices } from './wrapSlicesHelper.ts';
 
 interface Context {
   // Injected tokens

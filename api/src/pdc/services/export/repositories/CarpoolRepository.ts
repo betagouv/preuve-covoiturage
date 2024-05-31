@@ -1,11 +1,11 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolRow } from '../models/CarpoolRow';
-import { ExportParams } from '../models/ExportParams';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { ExportProgress } from './ExportRepository';
-import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery';
-import { QueryTemplates } from './queries/Query';
+import { provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { CarpoolRow } from '../models/CarpoolRow.ts';
+import { ExportParams } from '../models/ExportParams.ts';
+import { XLSXWriter } from '../models/XLSXWriter.ts';
+import { ExportProgress } from './ExportRepository.ts';
+import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery.ts';
+import { QueryTemplates } from './queries/Query.ts';
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;

@@ -1,7 +1,7 @@
 import test from 'ava';
-import { ResultType, CommandOptionType } from '@ilos/common';
+import { ResultType, CommandOptionType } from '@ilos/common/index.ts';
 
-import { Command } from './Command';
+import { Command } from './Command.ts';
 
 test('Command: works', async (t) => {
   class BasicCommand extends Command {

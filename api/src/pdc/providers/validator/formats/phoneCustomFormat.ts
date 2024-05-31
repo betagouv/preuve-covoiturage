@@ -1,5 +1,5 @@
-import { Format } from '@ilos/validator';
-import { isValidPhone } from '../lib/phone';
+import { Format } from '@ilos/validator/index.ts';
+import { isValidPhone } from '../lib/phone.ts';
 
 /**
  * validate the phone number.

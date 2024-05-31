@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { generateCarpool } from '../tests/helpers';
-import { isCloseTo } from './isCloseTo';
+import { StatelessContext } from '../entities/Context.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { isCloseTo } from './isCloseTo.ts';
 
 const point1 = {
   lat: 48.85042145787021,

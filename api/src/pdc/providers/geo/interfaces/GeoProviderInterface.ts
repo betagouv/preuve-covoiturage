@@ -1,9 +1,9 @@
-import { GeoInterface, PartialGeoInterface } from './GeoInterface';
-import { GeoCoderInterface } from './GeoCoderInterface';
-import { InseeCoderInterface } from './InseeCoderInterface';
-import { RouteMetaProviderInterface, RouteMeta } from './RouteMetaProviderInterface';
-import { PointInterface } from './PointInterface';
-import { InseeReverseCoderInterface } from './InseeReverseCoderInterface';
+import { GeoInterface, PartialGeoInterface } from './GeoInterface.ts';
+import { GeoCoderInterface } from './GeoCoderInterface.ts';
+import { InseeCoderInterface } from './InseeCoderInterface.ts';
+import { RouteMetaProviderInterface, RouteMeta } from './RouteMetaProviderInterface.ts';
+import { PointInterface } from './PointInterface.ts';
+import { InseeReverseCoderInterface } from './InseeReverseCoderInterface.ts';
 
 export interface GeoProviderInterface
   extends GeoCoderInterface,

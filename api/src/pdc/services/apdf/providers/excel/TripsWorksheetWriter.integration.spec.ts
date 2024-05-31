@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import test from 'ava';
 import { Row, stream, Workbook, Worksheet } from 'exceljs';
-import { APDFTripInterface } from '../../interfaces/APDFTripInterface';
-import { BuildExcel } from './BuildExcel';
-import { TripsWorksheetWriter } from './TripsWorksheetWriter';
+import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
+import { BuildExcel } from './BuildExcel.ts';
+import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
 
 // tool to sort column names to be able to compare them
 function sortRowValues(values: Row['values']): Row['values'] {

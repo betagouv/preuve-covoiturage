@@ -3,12 +3,11 @@ import {
   ConnectionInterface,
   DestroyHookInterface,
   InitHookInterface,
-} from '@ilos/common';
-import { Redis as RedisInterface } from 'ioredis';
-import Redis from 'ioredis';
+} from '@ilos/common/index.ts';
+import { Redis } from 'ioredis';
 
-export class RedisConnection implements ConnectionInterface<RedisInterface>, DestroyHookInterface, InitHookInterface {
-  protected client: RedisInterface;
+export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookInterface, InitHookInterface {
+  protected client: Redis;
   protected connected = false;
 
   constructor(protected readonly config: ConnectionConfigurationType | string) {}
@@ -36,14 +35,14 @@ export class RedisConnection implements ConnectionInterface<RedisInterface>, Des
     }
   }
 
-  getClient(): RedisInterface {
+  getClient(): Redis {
     if (!this.client) {
       this.client = this.buildClient();
     }
     return this.client;
   }
 
-  protected buildClient(): RedisInterface {
+  protected buildClient(): Redis {
     const defaultConfig = {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,

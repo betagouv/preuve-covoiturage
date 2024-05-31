@@ -1,13 +1,13 @@
-import { ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, KernelInterfaceResolver } from '@ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 import {
   signature as simulateOnPastGeoSignature,
   SimulateOnPastGeoRequiredParams,
-} from '@shared/policy/simulateOnPastGeo.contract';
-import { ParamsInterface } from '@shared/user/simulatePolicyform.contract';
-import { SimulatePolicyformAction } from './SimulatePolicyformAction';
+} from '@shared/policy/simulateOnPastGeo.contract.ts';
+import { ParamsInterface } from '@shared/user/simulatePolicyform.contract.ts';
+import { SimulatePolicyformAction } from './SimulatePolicyformAction.ts';
 
 interface Context {
   // Injected tokens

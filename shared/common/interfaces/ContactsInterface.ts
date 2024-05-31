@@ -1,4 +1,4 @@
-import { ContactInterface } from './ContactInterface';
+import { ContactInterface } from './ContactInterface.ts';
 
 export interface ContactsInterface {
   technical?: Partial<ContactInterface>;

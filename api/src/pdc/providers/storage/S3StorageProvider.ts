@@ -9,12 +9,12 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common';
-import { env } from '@ilos/core';
+import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common/index.ts';
+import { env } from '@ilos/core/index.ts';
 import fs from 'fs';
-import { S3ObjectList } from '.';
-import { filenameFromPath, getBucketName } from './helpers/buckets';
-import { BucketName } from './interfaces/BucketName';
+import { S3ObjectList } from './index.ts';
+import { filenameFromPath, getBucketName } from './helpers/buckets.ts';
+import { BucketName } from './interfaces/BucketName.ts';
 
 // @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
 

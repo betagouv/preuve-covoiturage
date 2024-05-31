@@ -1,19 +1,19 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import { Kernel } from '@ilos/core';
+import { Kernel } from '@ilos/core/index.ts';
 import {
   command as commandDecorator,
   kernel as kernelDecorator,
   ResultType,
   NewableType,
   ExtensionInterface,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { CommandExtension } from '../extensions/CommandExtension';
-import { Command } from '../parents/Command';
-import { CommandRegistry } from '../providers/CommandRegistry';
-import { CliTransport } from './CliTransport';
+import { CommandExtension } from '../extensions/CommandExtension.ts';
+import { Command } from '../parents/Command.ts';
+import { CommandRegistry } from '../providers/CommandRegistry.ts';
+import { CliTransport } from './CliTransport.ts';
 
 function setup() {
   @commandDecorator()

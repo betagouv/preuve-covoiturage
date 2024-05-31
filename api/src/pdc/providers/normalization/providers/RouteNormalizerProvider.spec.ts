@@ -1,8 +1,8 @@
 import test from 'ava';
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo';
-import { PointInterface, RouteMeta } from '../interfaces';
+import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
+import { PointInterface, RouteMeta } from '../interfaces/index.ts';
 
-import { RouteNormalizerProvider } from './RouteNormalizerProvider';
+import { RouteNormalizerProvider } from './RouteNormalizerProvider.ts';
 
 test('Route normalizer', async (t) => {
   class GeoProvider extends GeoProviderInterfaceResolver {

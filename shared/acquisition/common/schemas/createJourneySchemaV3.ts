@@ -5,7 +5,7 @@ import {
   incentivesSchema,
   paymentsSchema,
   seatSchema,
-} from './createJourneyCommon';
+} from './createJourneyCommon.ts';
 
 export const timeGeoPointSchema = {
   type: 'object',

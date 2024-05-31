@@ -1,4 +1,4 @@
-import { QueueTargetType } from './QueueTargetType';
+import { QueueTargetType } from './QueueTargetType.ts';
 
 export type QueueConfigType = {
   driver: string;

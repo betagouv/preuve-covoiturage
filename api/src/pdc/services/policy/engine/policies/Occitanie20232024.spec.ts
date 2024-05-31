@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { Occitanie20232024 as Handler } from './Occitanie20232024';
+import { CarpoolInterface, OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { Occitanie20232024 as Handler } from './Occitanie20232024.ts';
 
 const defaultPosition = {
   arr: '46240',

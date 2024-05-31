@@ -1,4 +1,4 @@
-import { UpsertableErrorCarpoolGeo, UpsertableSuccessCarpoolGeo } from '../../interfaces';
+import { UpsertableErrorCarpoolGeo, UpsertableSuccessCarpoolGeo } from '../../interfaces/index.ts';
 
 export const upsertableGeoSuccess: UpsertableSuccessCarpoolGeo = {
   carpool_id: 1,

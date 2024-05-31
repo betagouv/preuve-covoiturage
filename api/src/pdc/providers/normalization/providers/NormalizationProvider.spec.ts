@@ -1,11 +1,11 @@
-import { Container } from '@ilos/core';
+import { Container } from '@ilos/core/index.ts';
 import test from 'ava';
 
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo';
-import { NormalizationProvider } from './NormalizationProvider';
-import { CostNormalizerProvider } from './CostNormalizerProvider';
-import { PartialGeoInterface, PointInterface } from '@pdc/providers/geo/interfaces';
-import { provider } from '@ilos/common';
+import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
+import { NormalizationProvider } from './NormalizationProvider.ts';
+import { CostNormalizerProvider } from './CostNormalizerProvider.ts';
+import { PartialGeoInterface, PointInterface } from '@pdc/providers/geo/interfaces/index.ts';
+import { provider } from '@ilos/common/index.ts';
 import { randomUUID } from 'crypto';
 
 class CostMock extends CostNormalizerProvider {

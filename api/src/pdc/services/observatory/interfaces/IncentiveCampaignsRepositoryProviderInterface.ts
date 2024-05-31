@@ -1,7 +1,7 @@
 import {
   ParamsInterface as CampaignsParamsInterface,
   ResultInterface as CampaignsResultInterface,
-} from '@shared/observatory/incentiveCampaigns/campaigns.contract';
+} from '@shared/observatory/incentiveCampaigns/campaigns.contract.ts';
 
 
 

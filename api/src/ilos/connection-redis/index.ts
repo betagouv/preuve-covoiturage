@@ -1,2 +1,2 @@
 export { Redis as RedisInterface } from 'ioredis';
-export { RedisConnection } from './RedisConnection';
+export { RedisConnection } from './RedisConnection.ts';

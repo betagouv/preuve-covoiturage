@@ -1,9 +1,9 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { Options } from '../commands/CreateCommand';
+import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { Options } from '../commands/CreateCommand.ts';
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export type ResolveParams = Partial<Pick<Options, 'territory_id' | 'geo'>>;
 export type ResolveResults = TerritorySelectorsInterface;

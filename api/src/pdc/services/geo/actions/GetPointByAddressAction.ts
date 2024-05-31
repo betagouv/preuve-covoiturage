@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/geo/getPointByAddress.contract';
-import { alias } from '@shared/geo/getPointByAddress.schema';
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/geo/getPointByAddress.contract.ts';
+import { alias } from '@shared/geo/getPointByAddress.schema.ts';
+import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,7 +1,7 @@
-import { provider } from '@ilos/common';
+import { provider } from '@ilos/common/index.ts';
 
-import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces';
-import { NormalizationProviderV3 } from './NormalizationProviderV3';
+import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces/index.ts';
+import { NormalizationProviderV3 } from './NormalizationProviderV3.ts';
 
 @provider()
 export class NormalizationProvider implements NormalizationProviderInterface<PayloadV3> {

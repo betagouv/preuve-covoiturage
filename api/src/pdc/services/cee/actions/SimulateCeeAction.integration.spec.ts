@@ -1,17 +1,17 @@
 import anyTest, { TestFn } from 'ava';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { ServiceProvider } from '../ServiceProvider';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/simulateApplication.contract';
-import { signature } from '@shared/cee/registerApplication.contract';
-import { config } from '../config';
-import { ContextType } from '@ilos/common';
+import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { ServiceProvider } from '../ServiceProvider.ts';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/simulateApplication.contract.ts';
+import { signature } from '@shared/cee/registerApplication.contract.ts';
+import { config } from '../config/index.ts';
+import { ContextType } from '@ilos/common/index.ts';
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
   lastNameTruncSchema,
   phoneTruncSchema,
-} from '@shared/cee/common/ceeSchema';
-import { PostgresConnection } from '@ilos/connection-postgres';
+} from '@shared/cee/common/ceeSchema.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,

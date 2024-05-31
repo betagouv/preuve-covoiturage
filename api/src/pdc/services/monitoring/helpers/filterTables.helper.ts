@@ -1,5 +1,5 @@
-import { ConfigInterface } from '@ilos/common';
-import { CronFrequency, MatviewItem, CronFrequencies } from '../interfaces/StatsRefreshInterfaces';
+import { ConfigInterface } from '@ilos/common/index.ts';
+import { CronFrequency, MatviewItem, CronFrequencies } from '../interfaces/StatsRefreshInterfaces.ts';
 
 export function filterTables(
   config: ConfigInterface,

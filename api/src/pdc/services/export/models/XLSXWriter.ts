@@ -2,8 +2,8 @@ import AdmZip from 'adm-zip';
 import { AddWorksheetOptions, Worksheet, stream } from 'exceljs';
 import os from 'node:os';
 import path from 'node:path';
-import { ExportTarget } from './Export';
-import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow';
+import { ExportTarget } from './Export.ts';
+import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow.ts';
 
 export type Datasources = Map<string, any>;
 

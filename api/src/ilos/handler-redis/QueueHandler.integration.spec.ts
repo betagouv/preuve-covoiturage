@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { RedisConnection } from '@ilos/connection-redis';
-import { QueueHandler } from './QueueHandler';
-import { queueHandlerFactory } from './helpers/queueHandlerFactory';
-import { ContextType } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { QueueHandler } from './QueueHandler.ts';
+import { queueHandlerFactory } from './helpers/queueHandlerFactory.ts';
+import { ContextType } from '@ilos/common/index.ts';
 
 interface Context {
   handler: QueueHandler;

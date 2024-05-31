@@ -1,5 +1,5 @@
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { SerializedPolicyInterface } from '..';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { SerializedPolicyInterface } from '../index.ts';
 
 export abstract class PolicyRepositoryProviderInterfaceResolver {
   abstract find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined>;

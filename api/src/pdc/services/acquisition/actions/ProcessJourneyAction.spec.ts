@@ -1,14 +1,14 @@
 import test from 'ava';
 import sinon, { SinonStubbedInstance } from 'sinon';
-import { ProcessJourneyAction } from './ProcessJourneyAction';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { KernelInterfaceResolver } from '@ilos/common';
-import { NormalizationProvider } from '@pdc/providers/normalization';
-import { ConfigStore } from '@ilos/core/extensions';
+import { ProcessJourneyAction } from './ProcessJourneyAction.ts';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
+import { KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { NormalizationProvider } from '@pdc/providers/normalization/index.ts';
+import { ConfigStore } from '@ilos/core/extensions/index.ts';
 
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { signature } from '@shared/carpool/crosscheck.contract';
-import { callContext } from '../config/callContext';
+import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
+import { signature } from '@shared/carpool/crosscheck.contract.ts';
+import { callContext } from '../config/callContext.ts';
 
 function bootstrap(): {
   action: ProcessJourneyAction;

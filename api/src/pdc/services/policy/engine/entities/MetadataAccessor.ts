@@ -1,5 +1,5 @@
-import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces';
-import { UnknownMetaException } from '../exceptions/UnknownMetaException';
+import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces/index.ts';
+import { UnknownMetaException } from '../exceptions/UnknownMetaException.ts';
 
 export class MetadataAccessor implements MetadataAccessorInterface {
   constructor(

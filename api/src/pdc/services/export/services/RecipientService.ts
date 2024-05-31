@@ -1,5 +1,5 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { ExportRecipient } from '../models/ExportRecipient';
+import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
+import { ExportRecipient } from '../models/ExportRecipient.ts';
 
 export type RecipientServiceInterface = {
   maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]>;

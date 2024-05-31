@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 
-import { IdentityRepositoryProvider } from './IdentityRepositoryProvider';
+import { IdentityRepositoryProvider } from './IdentityRepositoryProvider.ts';
 
 interface TestContext {
   connection: PostgresConnection;

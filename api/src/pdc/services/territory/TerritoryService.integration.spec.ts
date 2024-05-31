@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
-import { httpMacro, HttpMacroContext } from '@pdc/providers/test';
+import { httpMacro, HttpMacroContext } from '@pdc/providers/test/index.ts';
 
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { ServiceProvider } from './ServiceProvider';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { ServiceProvider } from './ServiceProvider.ts';
 
 const name = 'Toto';
 const territoryGroupTable = 'territory.territory_group';

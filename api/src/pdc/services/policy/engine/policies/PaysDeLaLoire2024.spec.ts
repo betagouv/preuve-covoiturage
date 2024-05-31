@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { PaysDeLaLoire2024 as Handler } from './PaysDeLaLoire2024';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { PaysDeLaLoire2024 as Handler } from './PaysDeLaLoire2024.ts';
 
 const defaultPosition = {
   arr: '85047',

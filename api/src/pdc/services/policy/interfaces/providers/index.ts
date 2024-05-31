@@ -1,10 +1,10 @@
 export {
   PolicyRepositoryProviderInterfaceResolver,
-} from './PolicyRepositoryProviderInterface';
-export { IncentiveRepositoryProviderInterfaceResolver } from './IncentiveRepositoryProviderInterface';
-export { TripRepositoryProviderInterfaceResolver } from './TripRepositoryProviderInterface';
+} from './PolicyRepositoryProviderInterface.ts';
+export { IncentiveRepositoryProviderInterfaceResolver } from './IncentiveRepositoryProviderInterface.ts';
+export { TripRepositoryProviderInterfaceResolver } from './TripRepositoryProviderInterface.ts';
 export {
   TerritoryRepositoryProviderInterface,
   TerritoryRepositoryProviderInterfaceResolver,
-} from './TerritoryRepositoryProviderInterface';
-export { MetadataRepositoryProviderInterfaceResolver } from './MetadataRepositoryProviderInterface';
+} from './TerritoryRepositoryProviderInterface.ts';
+export { MetadataRepositoryProviderInterfaceResolver } from './MetadataRepositoryProviderInterface.ts';

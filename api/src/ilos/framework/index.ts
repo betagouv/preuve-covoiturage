@@ -1,2 +1,2 @@
-export { Bootstrap } from './Bootstrap';
-export { Kernel } from './Kernel';
+export { Bootstrap } from './Bootstrap.ts';
+export { Kernel } from './Kernel.ts';

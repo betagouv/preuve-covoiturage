@@ -10,13 +10,13 @@ import {
   KernelInterface,
   NewableType,
   ServiceContainerInterface,
-} from '@ilos/common';
-import { catchErrors, registerGracefulShutdown, interceptConsole } from '@ilos/tools';
-import { CliTransport } from '@ilos/cli';
-import { HttpTransport } from '@ilos/transport-http';
-import { QueueTransport } from '@ilos/transport-redis';
+} from '@ilos/common/index.ts';
+import { catchErrors, registerGracefulShutdown, interceptConsole } from '@ilos/tools/index.ts';
+import { CliTransport } from '@ilos/cli/index.ts';
+import { HttpTransport } from '@ilos/transport-http/index.ts';
+import { QueueTransport } from '@ilos/transport-redis/index.ts';
 
-import { Kernel } from './Kernel';
+import { Kernel } from './Kernel.ts';
 
 const defaultBootstrapObject: BootstrapType = {
   kernel: () => Kernel,
@@ -87,7 +87,7 @@ export class Bootstrap {
    *
    */
   static interceptConsole(): void {
-    const logger = pino({
+    const logger = pino.default({
       level: process.env.APP_LOG_LEVEL ?? (process.env.NODE_ENV !== 'production' ? 'debug' : 'error'),
     });
 

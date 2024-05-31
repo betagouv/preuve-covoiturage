@@ -1,5 +1,5 @@
-import { CarpoolAcquisitionStatusEnum, Id } from '../interfaces';
-import { AbstractStatus } from './AbstractStatus';
+import { CarpoolAcquisitionStatusEnum, Id } from '../interfaces/index.ts';
+import { AbstractStatus } from './AbstractStatus.ts';
 
 export class CarpoolAcquisitionStatus extends AbstractStatus {
   public status: CarpoolAcquisitionStatusEnum;

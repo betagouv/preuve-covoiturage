@@ -1,7 +1,7 @@
-import { RedisConnection } from '@ilos/connection-redis';
-import { handler, NewableType } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { handler, NewableType } from '@ilos/common/index.ts';
 
-import { QueueHandler } from '../QueueHandler';
+import { QueueHandler } from '../QueueHandler.ts';
 
 export function queueHandlerFactory(service: string, version = 'latest'): NewableType<QueueHandler> {
   @handler({

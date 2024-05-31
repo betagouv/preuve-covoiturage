@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { todayFrequencies } from './todayFrequencies.helper';
+import { todayFrequencies } from './todayFrequencies.helper.ts';
 
 test('On Monday', (t) => {
   const clock = sinon.useFakeTimers(new Date('2023-02-13'));

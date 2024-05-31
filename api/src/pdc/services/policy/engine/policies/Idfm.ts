@@ -4,9 +4,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import {
   atDate,
   endsAt,
@@ -21,10 +21,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { LimitTargetEnum } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Idfm.html';
+} from '../helpers/index.ts';
+import { LimitTargetEnum } from '../helpers/limits.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Idfm.html.ts';
 
 // Politique d'Île-de-France Mobilité
 /* eslint-disable-next-line */

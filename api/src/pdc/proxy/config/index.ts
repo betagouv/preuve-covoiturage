@@ -1,9 +1,9 @@
-import * as cache from './cache';
-import * as connections from '@config/connections';
-import * as jwt from './jwt';
-import * as kernel from './kernel';
-import * as proxy from './proxy';
-import * as sentry from './sentry';
+import * as cache from './cache.ts';
+import * as connections from '@config/connections.ts';
+import * as jwt from './jwt.ts';
+import * as kernel from './kernel.ts';
+import * as proxy from './proxy.ts';
+import * as sentry from './sentry.ts';
 
 export const config = {
   cache,

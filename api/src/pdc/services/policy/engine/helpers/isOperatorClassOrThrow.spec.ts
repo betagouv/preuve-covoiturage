@@ -1,10 +1,10 @@
 import test from 'ava';
 
-import { StatelessContext } from '../entities/Context';
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { generateCarpool } from '../tests/helpers';
-import { isOperatorClassOrThrow } from './isOperatorClassOrThrow';
+import { StatelessContext } from '../entities/Context.ts';
+import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+import { generateCarpool } from '../tests/helpers.ts';
+import { isOperatorClassOrThrow } from './isOperatorClassOrThrow.ts';
 
 function setup(operator_class: string) {
   return StatelessContext.fromCarpool(1, generateCarpool({ operator_class }));

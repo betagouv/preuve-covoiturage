@@ -10,9 +10,9 @@ import {
   ParamsType,
   ContextType,
   ResultType,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { HandlerRegistry } from './HandlerRegistry';
+import { HandlerRegistry } from './HandlerRegistry.ts';
 
 export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);

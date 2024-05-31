@@ -3,7 +3,7 @@ import {
   StatelessRuleHelper,
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces';
+} from '../../interfaces/index.ts';
 
 function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {
   if (!selectors || Object.keys(selectors).length === 0) {

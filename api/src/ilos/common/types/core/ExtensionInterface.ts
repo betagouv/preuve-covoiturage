@@ -1,5 +1,5 @@
-import { InitHookInterface, DestroyHookInterface, RegisterHookInterface } from '../hooks';
-import { NewableType } from '../shared';
+import { InitHookInterface, DestroyHookInterface, RegisterHookInterface } from '../hooks/index.ts';
+import { NewableType } from '../shared/index.ts';
 
 export type ExtensionInterface = InitHookInterface | DestroyHookInterface | RegisterHookInterface;
 

@@ -1,12 +1,12 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
 import {
   TerritoryRepositoryProviderInterface,
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryCodeInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '../interfaces';
+} from '../interfaces/index.ts';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,

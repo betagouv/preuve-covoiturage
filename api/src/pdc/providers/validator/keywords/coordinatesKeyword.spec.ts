@@ -1,5 +1,5 @@
 import test from 'ava';
-import { coordinatesKeyword } from './coordinatesKeyword';
+import { coordinatesKeyword } from './coordinatesKeyword.ts';
 
 function macro(t, input: { lat: number; lon: number }, expected: boolean) {
   const latResult = (coordinatesKeyword as any).compile('lat')(input.lat);

@@ -1,12 +1,12 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
+import { handler } from '@ilos/common/index.ts';
+import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changePassword.contract';
-import { alias } from '@shared/user/changePassword.schema';
-import { UserContextInterface } from '@shared/user/common/interfaces/UserContextInterfaces';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changePassword.contract.ts';
+import { alias } from '@shared/user/changePassword.schema.ts';
+import { UserContextInterface } from '@shared/user/common/interfaces/UserContextInterfaces.ts';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
+import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware.ts';
 
 /*
  * Change password of user by sending old & new password

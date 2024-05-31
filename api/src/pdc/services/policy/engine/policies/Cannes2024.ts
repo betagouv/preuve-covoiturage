@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   isOperatorClassOrThrow,
@@ -16,10 +16,10 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers';
-import { watchForPersonMaxTripByDay } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cannes2024.html';
+} from '../helpers/index.ts';
+import { watchForPersonMaxTripByDay } from '../helpers/limits.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './Cannes2024.html.ts';
 
 // Politique Cannes
 export const Cannes2024: PolicyHandlerStaticInterface = class

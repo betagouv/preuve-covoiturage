@@ -1,11 +1,11 @@
-import { CommandInterface, CommandOptionType, command } from '@ilos/common';
-import { Export, ExportStatus } from '../models/Export';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
-import { BuildServiceInterfaceResolver } from '../services/BuildService';
-import { FieldServiceInterfaceResolver } from '../services/FieldService';
-import { LogServiceInterfaceResolver } from '../services/LogService';
-import { NameServiceInterfaceResolver } from '../services/NameService';
+import { CommandInterface, CommandOptionType, command } from '@ilos/common/index.ts';
+import { Export, ExportStatus } from '../models/Export.ts';
+import { XLSXWriter } from '../models/XLSXWriter.ts';
+import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository.ts';
+import { BuildServiceInterfaceResolver } from '../services/BuildService.ts';
+import { FieldServiceInterfaceResolver } from '../services/FieldService.ts';
+import { LogServiceInterfaceResolver } from '../services/LogService.ts';
+import { NameServiceInterfaceResolver } from '../services/NameService.ts';
 
 export type Options = {};
 

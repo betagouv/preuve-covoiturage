@@ -1,11 +1,11 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { CarpoolStatusRepository } from './CarpoolStatusRepository';
-import { insertableCarpool } from '../mocks/database/carpool';
-import { Id } from '../interfaces';
-import { insertableAcquisitionStatus } from '../mocks/database/status';
-import sql, { raw } from '../helpers/sql';
+import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { CarpoolRepository } from './CarpoolRepository.ts';
+import { CarpoolStatusRepository } from './CarpoolStatusRepository.ts';
+import { insertableCarpool } from '../mocks/database/carpool.ts';
+import { Id } from '../interfaces/index.ts';
+import { insertableAcquisitionStatus } from '../mocks/database/status.ts';
+import sql, { raw } from '../helpers/sql.ts';
 
 interface TestContext {
   repository: CarpoolStatusRepository;

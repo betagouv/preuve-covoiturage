@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { injectable, METADATA_KEY } from 'inversify';
-import { Metadata } from 'inversify/lib/planning/metadata';
+import { Metadata } from 'inversify/lib/planning/metadata.ts';
 
-import { MiddlewareConfigType, HandlerMeta, HandlerConfigType } from './types/handler';
-import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtensionInterface';
+import { MiddlewareConfigType, HandlerMeta, HandlerConfigType } from './types/handler/index.ts';
+import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtensionInterface.ts';
 
 type AnyConfig = { [k: string]: any };
 

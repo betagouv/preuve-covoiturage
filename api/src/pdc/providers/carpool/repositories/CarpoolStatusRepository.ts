@@ -1,7 +1,7 @@
-import { provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { raw } from '../helpers/sql';
-import { Id, InsertableCarpoolAcquisitionStatus } from '../interfaces';
+import { provider } from '@ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import sql, { raw } from '../helpers/sql.ts';
+import { Id, InsertableCarpoolAcquisitionStatus } from '../interfaces/index.ts';
 
 @provider()
 export class CarpoolStatusRepository {

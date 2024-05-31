@@ -1,4 +1,4 @@
-import { timezones } from '../../types';
+import { timezones } from '../../types.ts';
 
 export function tzMacro(): { type: string; enum: string[]; minLength: number; maxLength: number } {
   return {

@@ -1,9 +1,9 @@
-import { NotFoundException, provider } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common/index.ts';
 import axios from 'axios';
 import { Agent } from 'https';
 import { get } from 'lodash';
 import { URLSearchParams } from 'url';
-import { InseeCoderInterface, PointInterface } from '../interfaces';
+import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()
 export class EtalabAPIGeoProvider implements InseeCoderInterface {

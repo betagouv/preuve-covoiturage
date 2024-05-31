@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { RedisConnection } from './RedisConnection';
+import { RedisConnection } from './RedisConnection.ts';
 
 interface Context {
   connection: RedisConnection;

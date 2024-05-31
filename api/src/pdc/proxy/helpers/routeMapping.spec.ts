@@ -1,12 +1,12 @@
 import anyTest, { TestFn } from 'ava';
 import supertest from 'supertest';
-import { Kernel as AbstractKernel } from '@ilos/core';
+import { Kernel as AbstractKernel } from '@ilos/core/index.ts';
 import express from 'express';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
-import { RPCResponseType, KernelInterface } from '@ilos/common';
+import { RPCResponseType, KernelInterface } from '@ilos/common/index.ts';
 
-import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
+import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping.ts';
 
 class Kernel extends AbstractKernel {
   async handle(call): Promise<RPCResponseType> {

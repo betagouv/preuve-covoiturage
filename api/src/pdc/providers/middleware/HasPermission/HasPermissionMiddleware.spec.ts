@@ -1,7 +1,7 @@
 import test from 'ava';
-import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@ilos/common';
+import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@ilos/common/index.ts';
 
-import { HasPermissionMiddleware } from './HasPermissionMiddleware';
+import { HasPermissionMiddleware } from './HasPermissionMiddleware.ts';
 
 const middleware = new HasPermissionMiddleware();
 

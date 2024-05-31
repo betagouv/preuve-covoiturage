@@ -1,6 +1,6 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
-import { coerceDate, coerceInt } from '@ilos/cli';
+import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
+import { CarpoolAcquisitionService } from '@pdc/providers/carpool/index.ts';
+import { coerceDate, coerceInt } from '@ilos/cli/index.ts';
 import { subDays } from 'date-fns';
 
 @command()

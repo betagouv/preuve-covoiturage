@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { LaRochelle20232024 as Handler } from './LaRochelle20232024';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { LaRochelle20232024 as Handler } from './LaRochelle20232024.ts';
 
 const defaultPosition = {
   arr: '73031',

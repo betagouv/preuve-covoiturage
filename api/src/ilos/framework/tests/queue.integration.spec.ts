@@ -1,15 +1,15 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@ilos/common';
-import { RedisConnection } from '@ilos/connection-redis';
-import { HttpTransport } from '@ilos/transport-http';
-import { QueueTransport } from '@ilos/transport-redis';
-import { getPorts } from '@pdc/helpers/ports.helper';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@ilos/common/index.ts';
+import { RedisConnection } from '@ilos/connection-redis/index.ts';
+import { HttpTransport } from '@ilos/transport-http/index.ts';
+import { QueueTransport } from '@ilos/transport-redis/index.ts';
+import { getPorts } from '@pdc/helpers/ports.helper.ts';
 import anyTest, { TestFn } from 'ava';
 import axios from 'axios';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { Kernel } from '../Kernel';
-import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
+import { Kernel } from '../Kernel.ts';
+import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider.ts';
 
 const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
 process.env.APP_LOG_PATH = logPath;

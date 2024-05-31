@@ -1,24 +1,24 @@
-import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@ilos/core/index.ts';
 import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '@pdc/providers/middleware';
+} from '@pdc/providers/middleware/index.ts';
 import { omit } from 'lodash';
-import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper';
-import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper';
-import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper';
-import { mapFromCarpools } from '../helpers/mapFromCarpools';
+import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper.ts';
+import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper.ts';
+import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper.ts';
+import { mapFromCarpools } from '../helpers/mapFromCarpools.ts';
 import {
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
-} from '../interfaces/CarpoolRepositoryProviderInterface';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/create.contract';
-import { alias } from '@shared/certificate/create.schema';
-import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus';
+} from '../interfaces/CarpoolRepositoryProviderInterface.ts';
+import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
+import { CarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/create.contract.ts';
+import { alias } from '@shared/certificate/create.schema.ts';
+import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus.ts';
 
 @handler({
   ...handlerConfig,

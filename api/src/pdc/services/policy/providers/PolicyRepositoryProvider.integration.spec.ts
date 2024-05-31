@@ -1,9 +1,9 @@
-import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test/index.ts';
 import anyTest, { TestFn } from 'ava';
 
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { SerializedPolicyInterface } from '../interfaces';
-import { PolicyRepositoryProvider } from './PolicyRepositoryProvider';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { SerializedPolicyInterface } from '../interfaces/index.ts';
+import { PolicyRepositoryProvider } from './PolicyRepositoryProvider.ts';
 
 interface TestContext {
   repository: PolicyRepositoryProvider;

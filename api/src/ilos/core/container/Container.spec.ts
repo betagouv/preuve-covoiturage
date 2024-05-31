@@ -1,7 +1,7 @@
 import test from 'ava';
-import { HandlerInterface, handler, lib, provider, inject } from '@ilos/common';
+import { HandlerInterface, handler, lib, provider, inject } from '@ilos/common/index.ts';
 
-import { Container } from '.';
+import { Container } from '../index.ts';
 
 test('Container: works', async (t) => {
   @lib()

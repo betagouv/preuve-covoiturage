@@ -1,7 +1,7 @@
-import { CompanyInterface } from '../../../common/interfaces/CompanyInterface';
-import { AddressInterface } from '../../../common/interfaces/AddressInterface';
-import { BankInterface } from '../../../common/interfaces/BankInterface';
-import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
+import { CompanyInterface } from '../../../common/interfaces/CompanyInterface.ts';
+import { AddressInterface } from '../../../common/interfaces/AddressInterface.ts';
+import { BankInterface } from '../../../common/interfaces/BankInterface.ts';
+import { ContactsInterface } from '../../../common/interfaces/ContactsInterface.ts';
 
 export interface OperatorInterface {
   name: string;

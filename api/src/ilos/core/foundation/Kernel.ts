@@ -14,12 +14,12 @@ import {
   HandlerConfigType,
   CallType,
   ConfigInterfaceResolver,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { promiseTimeout } from '../helpers';
-import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
-import { isAnRPCException } from '../helpers/types/isAnRPCException';
-import { ServiceProvider } from './ServiceProvider';
+import { promiseTimeout } from '../helpers/index.ts';
+import { hasMultipleCall } from '../helpers/types/hasMultipleCall.ts';
+import { isAnRPCException } from '../helpers/types/isAnRPCException.ts';
+import { ServiceProvider } from './ServiceProvider.ts';
 
 /**
  * Kernel parent class

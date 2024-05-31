@@ -7,10 +7,10 @@ import {
   ResultType,
   ParamsType,
   ContextType,
-} from '@ilos/common';
+} from '@ilos/common/index.ts';
 
-import { ServiceProvider as ParentServiceProvider } from './ServiceProvider';
-import { Action } from './Action';
+import { ServiceProvider as ParentServiceProvider } from './ServiceProvider.ts';
+import { Action } from './Action.ts';
 
 const defaultContext = { channel: { service: '' } };
 

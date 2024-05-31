@@ -1,4 +1,4 @@
-import { endOfPreviousMonthDate } from './getDefaultDates';
+import { endOfPreviousMonthDate } from './getDefaultDates.ts';
 
 export function getOpenDataExportName(extension: string, inputDate?: Date): string {
   const date = inputDate ?? endOfPreviousMonthDate();

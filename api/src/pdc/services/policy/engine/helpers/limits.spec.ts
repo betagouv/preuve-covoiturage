@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { StatefulContext, StatelessContext } from '../entities/Context';
-import { MetadataStore } from '../entities/MetadataStore';
+import { StatefulContext, StatelessContext } from '../entities/Context.ts';
+import { MetadataStore } from '../entities/MetadataStore.ts';
 import {
   CarpoolInterface,
   IncentiveStateEnum,
@@ -10,8 +10,8 @@ import {
   MetadataStoreInterface,
   SerializedIncentiveInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { generateCarpool, generateIncentive } from '../tests/helpers';
+} from '../../interfaces/index.ts';
+import { generateCarpool, generateIncentive } from '../tests/helpers.ts';
 import {
   applyLimitOnStatefulStage,
   applyLimitsOnStatefulStage,
@@ -24,7 +24,7 @@ import {
   watchForPersonMaxAmountByYear,
   watchForPersonMaxTripByDay,
   watchForPersonMaxTripByMonth,
-} from './limits';
+} from './limits.ts';
 
 function setupStateless(): [StatelessContextInterface, CarpoolInterface] {
   const carpool = generateCarpool();

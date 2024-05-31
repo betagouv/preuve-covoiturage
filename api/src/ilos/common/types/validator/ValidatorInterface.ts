@@ -1,5 +1,5 @@
-import { NewableType } from '../shared';
-import { ProviderInterface } from '../core';
+import { NewableType } from '../shared/index.ts';
+import { ProviderInterface } from '../core/index.ts';
 
 export interface ValidatorInterface extends ProviderInterface {
   registerValidator(definition: any, target?: NewableType<any> | string): ValidatorInterface;

@@ -1,4 +1,4 @@
-import { territoryCodeSchema } from '../territory/common/schema';
+import { territoryCodeSchema } from '../territory/common/schema.ts';
 
 export const schema = {
   anyOf: [

@@ -1,7 +1,7 @@
-import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../call';
-import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';
-import { BootstrapHookInterface } from '../hooks/BootstrapHookInterface';
-import { ShutdownHookInterface } from '../hooks/ShutdownHookInterface';
+import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../call/index.ts';
+import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface.ts';
+import { BootstrapHookInterface } from '../hooks/BootstrapHookInterface.ts';
+import { ShutdownHookInterface } from '../hooks/ShutdownHookInterface.ts';
 
 export interface KernelInterface extends ServiceContainerInterface, BootstrapHookInterface, ShutdownHookInterface {
   /**

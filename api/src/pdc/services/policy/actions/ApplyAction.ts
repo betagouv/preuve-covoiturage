@@ -1,17 +1,17 @@
-import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 import { isAfter, max, min } from 'date-fns';
-import { Policy } from '../engine/entities/Policy';
-import { defaultTz, subDaysTz, today, toTzString } from '../helpers';
+import { Policy } from '../engine/entities/Policy.ts';
+import { defaultTz, subDaysTz, today, toTzString } from '../helpers/index.ts';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/apply.contract';
-import { alias } from '@shared/policy/apply.schema';
+} from '../interfaces/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/apply.contract.ts';
+import { alias } from '@shared/policy/apply.schema.ts';
 
 @handler({
   ...handlerConfig,

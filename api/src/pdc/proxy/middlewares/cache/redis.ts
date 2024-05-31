@@ -1,4 +1,4 @@
-import { CacheKey, CachePattern, CacheStore, CacheTTL, CacheValue, GlobalCacheConfig } from './types';
+import { CacheKey, CachePattern, CacheStore, CacheTTL, CacheValue, GlobalCacheConfig } from './types.ts';
 
 export function cacheStore(config: GlobalCacheConfig): CacheStore {
   const { driver } = config;

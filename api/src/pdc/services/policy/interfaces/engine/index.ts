@@ -1,9 +1,9 @@
-import { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
+import { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
 import {
   TerritoryCodeEnum,
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export {
   CommonIncentiveInterface,
@@ -12,7 +12,7 @@ export {
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-} from './IncentiveInterface';
+} from './IncentiveInterface.ts';
 export {
   MetadataAccessorInterface,
   MetadataLifetime,
@@ -23,8 +23,8 @@ export {
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
   StoredMetadataVariableInterface,
-} from './MetadataInterface';
-export { OperatorsEnum } from './OperatorsEnum';
+} from './MetadataInterface.ts';
+export { OperatorsEnum } from './OperatorsEnum.ts';
 export {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -34,7 +34,7 @@ export {
   StatefulContextInterface,
   StatelessContextInterface,
   StatelessRuleHelper,
-} from './PolicyInterface';
+} from './PolicyInterface.ts';
 export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface };
 export { SliceInterface, BoundedSlices, UnboundedSlices };
 

@@ -1,7 +1,7 @@
 import test from 'ava';
-import { Kernel } from '@ilos/core';
+import { Kernel } from '@ilos/core/index.ts';
 
-import { CallCommand } from './CallCommand';
+import { CallCommand } from './CallCommand.ts';
 
 function setup() {
   class FakeKernel extends Kernel {

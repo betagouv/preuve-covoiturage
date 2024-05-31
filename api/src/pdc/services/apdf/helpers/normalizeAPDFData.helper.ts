@@ -1,5 +1,5 @@
 import { format, toZonedTime } from 'date-fns-tz';
-import { APDFTripInterface } from '../interfaces/APDFTripInterface';
+import { APDFTripInterface } from '../interfaces/APDFTripInterface.ts';
 
 export function normalize(src: APDFTripInterface, booster_dates: Set<string>, timeZone: string): APDFTripInterface {
   const sd = toZonedTime(src.start_datetime, timeZone);
