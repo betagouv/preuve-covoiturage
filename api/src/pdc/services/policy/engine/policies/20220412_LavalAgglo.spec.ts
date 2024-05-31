@@ -64,7 +64,7 @@ test(
       { distance: 5_000, driver_identity_key: 'one' },
       { distance: 5_000, seats: 2, driver_identity_key: 'one' },
       { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2022-05-28') },
+      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2022-04-12') },
     ],
     meta: [],
   },

@@ -11,7 +11,7 @@ export const isOperatorOrThrow: StatelessRuleHelper<Array<string>> = (
   }
 
   if (!operators.length) {
-    throw new NotEligibleTargetException(`No operator allowed`);
+    throw new NotEligibleTargetException('No operator allowed');
   }
 
   if (!operators.includes(ctx.carpool.operator_uuid)) {
