@@ -20,7 +20,7 @@ import {
 } from '../helpers';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './ATMB202305.html';
+import { description } from './20230502_ATMB.html';
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len

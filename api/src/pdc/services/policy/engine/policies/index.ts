@@ -1,5 +1,5 @@
 import { PolicyHandlerStaticInterface } from '../../interfaces';
-import { ATMB202305 } from './ATMB202305';
+import { ATMB202305 } from './20230502_ATMB';
 import { Cannes2024 } from './Cannes2024';
 import { Cotentin2023 } from './Cotentin2023';
 import { GrandChatellerault2024 } from './GrandChatellerault2024';
