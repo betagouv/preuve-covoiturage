@@ -19,7 +19,7 @@ import {
 } from '../helpers';
 import { watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cannes2024.html';
+import { description } from './20240101_Cannes.html';
 
 // Politique Cannes
 export const Cannes2024: PolicyHandlerStaticInterface = class

@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Cannes2024 as Handler } from './Cannes2024';
+import { Cannes2024 as Handler } from './20240101_Cannes';
 
 const defaultPosition = {
   arr: '74278',
