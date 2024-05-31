@@ -22,8 +22,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20230101_Vitre.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique Vitré Communauté
 export const Vitre2023: PolicyHandlerStaticInterface = class
@@ -38,7 +39,14 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
    * A changer avec le nouveau code commune de Beaussais-Vitré
    */
   private readonly vitre_com = '35360';
-  protected operators = [OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
@@ -72,7 +80,7 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     if (isAfter(ctx, { date: this.policy_update_date })) {
       onDistanceRangeOrThrow(ctx, { max: 60_001 });
@@ -114,7 +122,7 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
