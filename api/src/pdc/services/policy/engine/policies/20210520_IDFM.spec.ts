@@ -27,7 +27,7 @@ const defaultCarpool = {
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date('2021-05-21'),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -45,7 +45,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusion',
+  'should work with exclusions',
   process,
   {
     policy: { handler: Handler.id },
@@ -79,7 +79,7 @@ test(
       {
         distance: 5_000,
         operator_uuid: OperatorsEnum.YNSTANT,
-        datetime: new Date('2023-03-22'),
+        datetime: new Date('2023-03-22T00:00:00+0100'),
         driver_identity_key: 'four',
       },
       {
@@ -95,7 +95,7 @@ test(
     incentive: [150, 300, 250, 375, 300, 150, 150],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.4-2021',
         value: 450,
       },
       {
@@ -103,7 +103,7 @@ test(
         value: 1675,
       },
       {
-        key: 'max_amount_restriction.0-two.month.0-2019',
+        key: 'max_amount_restriction.0-two.month.4-2021',
         value: 250,
       },
       {
@@ -111,7 +111,7 @@ test(
         value: 375,
       },
       {
-        key: 'max_amount_restriction.0-three.month.0-2019',
+        key: 'max_amount_restriction.0-three.month.4-2021',
         value: 300,
       },
       {
@@ -119,7 +119,7 @@ test(
         value: 150,
       },
       {
-        key: 'max_amount_restriction.0-four.month.0-2019',
+        key: 'max_amount_restriction.0-four.month.4-2021',
         value: 150,
       },
     ],
@@ -188,7 +188,7 @@ test(
     incentive: [50],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.4-2021',
         value: 150,
       },
       {
@@ -207,7 +207,7 @@ test(
     carpool: [{ distance: 5_000, driver_identity_key: 'one' }],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.4-2021',
         value: 149_00,
       },
     ],
@@ -216,7 +216,7 @@ test(
     incentive: [100],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.4-2021',
         value: 150_00,
       },
       {
@@ -247,7 +247,7 @@ test(
     incentive: [150, 150, 150, 150, 150, 150, 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.4-2021',
         value: 900,
       },
       {
@@ -256,4 +256,165 @@ test(
       },
     ],
   },
+);
+
+/**
+ * Check operators entry dates
+ */
+
+test(
+  'check BLABLACAR_DAILY entry dates',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        datetime: new Date('2017-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2021-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-01-01T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-03-22T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+    ],
+  },
+  { incentive: [0, 150, 150, 150] },
+);
+
+test(
+  'check KAROS entry dates',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        datetime: new Date('2017-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.KAROS,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2021-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.KAROS,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-01-01T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.KAROS,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-03-22T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.KAROS,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+    ],
+  },
+  { incentive: [0, 150, 150, 150] },
+);
+
+test(
+  'check KLAXIT entry dates',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        datetime: new Date('2017-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.KLAXIT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2021-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.KLAXIT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-01-01T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.KLAXIT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-03-22T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.KLAXIT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+    ],
+  },
+  { incentive: [0, 150, 150, 150] },
+);
+
+test(
+  'check MOBICOOP entry dates',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        datetime: new Date('2023-01-01T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.MOBICOOP,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-03-22T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.MOBICOOP,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+    ],
+  },
+  { incentive: [0, 150] },
+);
+
+test(
+  'check YNSTANT entry dates',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        datetime: new Date('2021-05-20T00:00:00+0200'),
+        operator_uuid: OperatorsEnum.YNSTANT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-01-01T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.YNSTANT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+      {
+        datetime: new Date('2023-03-22T00:00:00+0100'),
+        operator_uuid: OperatorsEnum.YNSTANT,
+        driver_identity_key: v4(),
+        passenger_identity_key: v4(),
+      },
+    ],
+  },
+  { incentive: [0, 150, 150] },
 );

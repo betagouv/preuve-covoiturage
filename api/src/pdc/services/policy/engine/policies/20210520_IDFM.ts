@@ -22,6 +22,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { LimitTargetEnum } from '../helpers/limits';
 import { description } from './20210520_IDFM.html';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
@@ -42,12 +43,27 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     ];
   }
 
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.YNSTANT,
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-05-20T00:00:00+0200'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT],
+    },
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.YNSTANT],
+    },
+    {
+      date: new Date('2023-03-22T00:00:00+0100'),
+      operators: [
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KAROS,
+        OperatorsEnum.KLAXIT,
+        OperatorsEnum.YNSTANT,
+        OperatorsEnum.MOBICOOP,
+      ],
+    },
   ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
@@ -84,12 +100,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    // Ajout de mobicoop à partir du 2 janvier
-    if (isAfter(ctx, { date: new Date('2023-03-22') })) {
-      isOperatorOrThrow(ctx, this.operators);
-    } else {
-      isOperatorOrThrow(ctx, [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT]);
-    }
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
 
     // Exclure les trajet Paris-Paris
@@ -139,7 +150,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
