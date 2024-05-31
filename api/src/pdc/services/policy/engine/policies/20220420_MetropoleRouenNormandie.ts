@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,11 +5,12 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -18,8 +18,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20220420_MetropoleRouenNormandie.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Métropole Rouen Normandie
 export const MetropoleRouenNormandie2022: PolicyHandlerStaticInterface = class
@@ -27,7 +28,14 @@ export const MetropoleRouenNormandie2022: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = '766';
-  protected operators = [OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-01-05T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -46,7 +54,7 @@ export const MetropoleRouenNormandie2022: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
@@ -72,7 +80,7 @@ export const MetropoleRouenNormandie2022: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
