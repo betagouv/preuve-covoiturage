@@ -1,7 +1,7 @@
-export * from './GeoCoderInterface.ts';
-export * from './GeoInterface.ts';
-export * from './GeoProviderInterface.ts';
-export * from './InseeCoderInterface.ts';
-export * from './InseeReverseCoderInterface.ts';
-export * from './PointInterface.ts';
-export * from './RouteMetaProviderInterface.ts';
+export type * from './GeoCoderInterface.ts';
+export type * from './GeoInterface.ts';
+export type * from './GeoProviderInterface.ts';
+export type * from './InseeCoderInterface.ts';
+export type * from './InseeReverseCoderInterface.ts';
+export type * from './PointInterface.ts';
+export type * from './RouteMetaProviderInterface.ts';

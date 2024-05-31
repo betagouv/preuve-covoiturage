@@ -1,4 +1,4 @@
-import { createSign } from 'crypto';
+import { createSign } from 'node:crypto';
 import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common/index.ts';
 import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 

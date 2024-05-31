@@ -1,4 +1,4 @@
-import { Feature } from 'geojson';
+import type { Feature } from 'geojson';
 import { INSEECode, PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter.ts';
 
 export interface SingleResultInterface {

@@ -8,7 +8,7 @@ export function castContext(user?: Partial<UserInterface>, metadata?: any): Cont
     call,
     channel: {
       service: 'proxy',
-      transport: 'http',
+      transport: 'node:http',
     },
   };
 }

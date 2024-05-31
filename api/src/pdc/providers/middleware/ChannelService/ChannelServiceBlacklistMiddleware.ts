@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
@@ -14,7 +14,7 @@ export class ChannelServiceBlacklistMiddleware implements MiddlewareInterface<Ch
     next: Function,
     config: ChannelServiceBlacklistMiddlewareParams,
   ): Promise<ResultType> {
-    const service = get(context, 'channel.service', '');
+    const service = _.get(context, 'channel.service', '');
     if (config.indexOf(service) >= 0) {
       throw new ForbiddenException(`Service is not reachable from ${service}`);
     }

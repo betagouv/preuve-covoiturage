@@ -1,5 +1,5 @@
 import { get, omit } from 'lodash';
-import http from 'http';
+import http from 'node:http';
 import express from 'express';
 import { TransportInterface } from '@ilos/common/index.ts';
 import { QueueTransport } from '@ilos/transport-redis/index.ts';

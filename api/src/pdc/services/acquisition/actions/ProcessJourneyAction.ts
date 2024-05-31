@@ -2,7 +2,7 @@ import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos
 import { Action as AbstractAction } from '@ilos/core/index.ts';
 import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 import { NormalizationProvider } from '@pdc/providers/normalization/index.ts';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 import { callContext } from '../config/callContext.ts';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';

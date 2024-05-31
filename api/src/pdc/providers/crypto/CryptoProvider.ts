@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import md5 from 'crypto-js/md5.ts';
+import CryptoJS from 'crypto-js';
 import { provider, ProviderInterface } from '@ilos/common/index.ts';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';
@@ -25,7 +25,7 @@ export class CryptoProvider implements ProviderInterface {
   }
 
   public md5(content: string): string {
-    return md5(content).toString();
+    return CryptoJS.MD5(content).toString();
   }
 
   public generateToken(length = 32): string {

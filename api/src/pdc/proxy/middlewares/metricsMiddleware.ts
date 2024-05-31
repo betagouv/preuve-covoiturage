@@ -1,4 +1,4 @@
-import { hostname as osHostname } from 'os';
+import { hostname as osHostname } from 'node:os';
 import { NextFunction, Request, Response } from 'express';
 import { rateLimiter } from './rateLimiter.ts';
 

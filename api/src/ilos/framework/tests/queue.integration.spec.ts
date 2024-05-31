@@ -5,9 +5,9 @@ import { QueueTransport } from '@ilos/transport-redis/index.ts';
 import { getPorts } from '@pdc/helpers/ports.helper.ts';
 import anyTest, { TestFn } from 'ava';
 import axios from 'axios';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider.ts';
 

@@ -1,6 +1,6 @@
 import test from 'ava';
-import path from 'path';
-import os from 'os';
+import path from 'node:path';
+import os from 'node:os';
 import { APDFNameProvider } from './APDFNameProvider.ts';
 
 test('Stringify APDF: filename', (t) => {

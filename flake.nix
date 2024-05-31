@@ -21,6 +21,7 @@
               dbt
               python311Packages.dbt-postgres
               postgresql_14
+              deno
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"

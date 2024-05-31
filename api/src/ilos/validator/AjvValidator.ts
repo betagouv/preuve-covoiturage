@@ -2,7 +2,7 @@ import { Ajv, ValidateFunction, Format, KeywordDefinition, ErrorObject } from 'a
 import ajvErrors from 'ajv-errors';
 import addFormats from 'ajv-formats';
 import ajvKeywords from 'ajv-keywords';
-import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
+import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json' with { type: "json" };
 
 import {
   ConfigInterfaceResolver,

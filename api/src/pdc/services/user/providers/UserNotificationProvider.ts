@@ -35,7 +35,7 @@ export class UserNotificationProvider {
     call: { user: {} },
     channel: {
       service: 'user',
-      transport: 'http',
+      transport: 'node:http',
     },
   };
 

@@ -7,7 +7,7 @@ import { alias } from '@shared/apdf/export.schema.ts';
 import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract.ts';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
-import fs from 'fs';
+import fs from 'node:fs';
 import { get } from 'lodash';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';
 import { getCampaignOperators } from '../helpers/getCampaignOperators.helper.ts';

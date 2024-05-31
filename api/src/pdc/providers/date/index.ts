@@ -1,2 +1,2 @@
 export { DateProvider } from './DateProvider.ts';
-export { DateProviderInterface, DateProviderInterfaceResolver } from './interfaces/DateProviderInterfaceResolver.ts';
+export type { DateProviderInterface, DateProviderInterfaceResolver } from './interfaces/DateProviderInterfaceResolver.ts';

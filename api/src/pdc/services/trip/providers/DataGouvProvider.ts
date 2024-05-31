@@ -1,7 +1,7 @@
 import { ConfigInterfaceResolver, provider } from '@ilos/common/index.ts';
 import axios, { AxiosInstance } from 'axios';
 import FormData from 'form-data';
-import fs from 'fs';
+import fs from 'node:fs';
 import { DataGouvProviderInterface, Dataset, Resource, UploadedResource } from '../interfaces/index.ts';
 
 @provider()

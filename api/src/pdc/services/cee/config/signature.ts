@@ -1,5 +1,5 @@
 import { env } from '@ilos/core/index.ts';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 function getKey(type: string): string {
   const asVarEnvName = `APP_CEE_${type}_KEY`;

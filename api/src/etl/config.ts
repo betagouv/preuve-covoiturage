@@ -1,5 +1,5 @@
-import os from 'os';
-import { readFileSync } from 'fs';
+import os from 'node:os';
+import { readFileSync } from 'node:fs';
 import { datasets, datastructures } from './datasets.js';
 import { ConfigInterface } from './interfaces/ConfigInterface.js';
 

@@ -1,2 +1,2 @@
 export * from './TokenProviderConfig.ts';
-export * from './TokenProviderInterfaceResolver.ts';
+export type * from './TokenProviderInterfaceResolver.ts';

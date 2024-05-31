@@ -12,7 +12,7 @@ const callFactory = (
   context: {
     channel: {
       service: '',
-      transport: 'http',
+      transport: 'node:http',
     },
     call: {
       user: {

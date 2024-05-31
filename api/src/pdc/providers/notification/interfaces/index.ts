@@ -1,2 +1,2 @@
-export * from './MailTemplateNotificationInterface.ts';
-export * from './NotificationTransporterInterface.ts';
+export type * from './MailTemplateNotificationInterface.ts';
+export type * from './NotificationTransporterInterface.ts';

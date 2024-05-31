@@ -1,4 +1,4 @@
-import { randomBytes, createHash } from 'crypto';
+import { randomBytes, createHash } from 'node:crypto';
 
 export function randomString(length = 16): string {
   return randomBytes(length).toString('hex').substr(0, length);

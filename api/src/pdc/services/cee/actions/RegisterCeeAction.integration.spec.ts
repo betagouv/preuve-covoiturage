@@ -12,7 +12,7 @@ import {
 } from '@shared/cee/common/ceeSchema.ts';
 import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/registerApplication.contract.ts';
 import anyTest, { TestFn } from 'ava';
-import { createSign } from 'crypto';
+import { createSign } from 'node:crypto';
 import { ServiceProvider } from '../ServiceProvider.ts';
 import { config } from '../config/index.ts';
 

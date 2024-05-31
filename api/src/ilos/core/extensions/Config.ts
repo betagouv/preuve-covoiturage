@@ -1,5 +1,6 @@
-import { get, has } from 'lodash';
-import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterface, extension } from '@ilos/common/index.ts';
+import _ from 'lodash';
+import { extension, ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import type { RegisterHookInterface, ServiceContainerInterface } from '@ilos/common/index.ts';
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {
@@ -7,11 +8,11 @@ export class ConfigStore extends ConfigInterfaceResolver {
   }
 
   get(key: string, fallback?: any): any {
-    if (fallback === undefined && !has(this.config, key)) {
+    if (fallback === undefined && !_.has(this.config, key)) {
       throw new Error(`Unknown config key '${key}'`);
     }
 
-    return get(this.config, key, fallback);
+    return _.get(this.config, key, fallback);
   }
 }
 

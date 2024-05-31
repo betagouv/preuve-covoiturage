@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import fs from 'fs';
+import fs from 'node:fs';
 
 export function writeFile(stream: Readable, filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {

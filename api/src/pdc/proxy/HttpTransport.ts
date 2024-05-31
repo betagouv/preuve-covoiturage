@@ -28,7 +28,7 @@ import cors from 'cors';
 import express, { Request, Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
-import http from 'http';
+import http from 'node:http';
 import { Redis } from 'ioredis';
 import { get, pick } from 'lodash';
 import path from 'node:path';
@@ -123,7 +123,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
-    Sentry.setTag('transport', 'http');
+    Sentry.setTag('transport', 'node:http');
     Sentry.setTag('version', this.config.get('sentry.version'));
   }
 

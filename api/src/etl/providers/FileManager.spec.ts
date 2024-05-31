@@ -3,9 +3,9 @@ import { FileManager } from './FileManager.js';
 import sinon, { SinonStub } from 'sinon';
 import axios, { AxiosError } from 'axios';
 import { Readable } from 'stream';
-import { rmSync, readFileSync } from 'fs';
+import { rmSync, readFileSync } from 'node:fs';
 import { hash, writeFile } from '../helpers/index.js';
-import { join } from 'path';
+import { join } from 'node:path';
 import { mkdir } from 'fs/promises';
 
 interface Context {

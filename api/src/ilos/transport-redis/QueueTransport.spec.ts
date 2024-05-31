@@ -124,7 +124,7 @@ test('Queue transport: works', async (t) => {
           add: [1, 2],
         },
         _context: {
-          transport: 'http',
+          transport: 'node:http',
           user: 'me',
           internal: false,
         },

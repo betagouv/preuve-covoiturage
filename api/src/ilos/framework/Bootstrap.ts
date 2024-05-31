@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import pino from 'pino';
-import { isMainThread } from 'worker_threads';
+import { isMainThread } from 'node:worker_threads';
 
 import {
   kernel,

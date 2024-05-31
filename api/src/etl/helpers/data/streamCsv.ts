@@ -1,5 +1,5 @@
 import { CsvOptions } from '../../interfaces/index.js';
-import { createReadStream } from 'fs';
+import { createReadStream } from 'node:fs';
 import { parse } from 'csv-parse';
 
 export async function* streamCsv<T>(filepath: string, sheetOptions: CsvOptions, chunkSize = 100): AsyncIterable<T[]> {

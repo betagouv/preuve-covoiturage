@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core/index.ts';
 import {
   handler as handlerDecorator,
@@ -29,7 +29,7 @@ type ResultInterface = string | string[];
 })
 class Action extends AbstractAction {
   async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    return get(context, params, []);
+    return _.get(context, params, []);
   }
 }
 

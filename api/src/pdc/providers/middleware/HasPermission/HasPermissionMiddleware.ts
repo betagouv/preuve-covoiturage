@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import {
   middleware,
   MiddlewareInterface,
@@ -25,7 +25,7 @@ export class HasPermissionMiddleware implements MiddlewareInterface<HasPermissio
       throw new InvalidParamsException('No permissions defined');
     }
 
-    const permissions = get(context, 'call.user.permissions', []);
+    const permissions = _.get(context, 'call.user.permissions', []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException('Invalid permissions');

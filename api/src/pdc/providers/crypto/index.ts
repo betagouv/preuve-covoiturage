@@ -1,2 +1,2 @@
 export { CryptoProvider } from './CryptoProvider.ts';
-export { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';
+export type { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { access, mkdir } from 'fs/promises';
 import { Readable } from 'stream';
 import mapshaper from 'mapshaper';
-import { basename, join } from 'path';
+import { basename, join } from 'node:path';
 import {
   writeFile,
   hash,

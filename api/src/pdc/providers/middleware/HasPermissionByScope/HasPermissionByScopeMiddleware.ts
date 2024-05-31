@@ -7,7 +7,7 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@ilos/common/index.ts';
-import { get, includes } from 'lodash';
+import _ from 'lodash';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /**
@@ -31,7 +31,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
       throw new InvalidParamsException('No permissions defined');
     }
 
-    const permissions = get(context, 'call.user.permissions', []);
+    const permissions = _.get(context, 'call.user.permissions', []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException('Invalid permissions');
@@ -43,7 +43,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     }
     for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
       if (
-        this.belongsTo(get(params, paramsPath, Symbol()), get(context, contextPath, Symbol())) &&
+        this.belongsTo(_.get(params, paramsPath, Symbol()), _.get(context, contextPath, Symbol())) &&
         permissions.indexOf(scopedPermission) > -1
       ) {
         return next(params, context);
@@ -56,7 +56,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
   private belongsTo(value: any | any[], list: any | any[]): boolean {
     const val = Array.isArray(value) ? value : [value];
     const lst = Array.isArray(list) ? list : [list];
-    return val.reduce((p, c) => p && includes(lst, c), true);
+    return val.reduce((p, c) => p && _.includes(lst, c), true);
   }
 }
 

@@ -1,10 +1,10 @@
 import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { createDatabase, dropDatabase, migrate } from '@db/index.ts';
+import { createDatabase, dropDatabase, migrate } from '@db/index.js';
 import { parse, Options as ParseOptions } from 'csv-parse';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { Carpool, carpools, carpoolsV2 } from './carpools.ts';
 import { companies, Company } from './companies.ts';
 import { Operator, operators } from './operators.ts';

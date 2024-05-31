@@ -1,5 +1,5 @@
 const DBMigrate = require('db-migrate');
-const GeoMigrator = require('@betagouvpdc/evolution-geo');
+const GeoMigrator = require('../etl/index.js');
 
 const instances = new Map();
 

@@ -1,8 +1,8 @@
 import { NotFoundException, provider } from '@ilos/common/index.ts';
 import axios from 'axios';
-import { Agent } from 'https';
-import { get } from 'lodash';
-import { URLSearchParams } from 'url';
+import { Agent } from 'node:https';
+import _ from 'lodash';
+import { URLSearchParams } from 'node:url';
 import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()
@@ -32,7 +32,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       data = data.shift();
     }
 
-    const inseeCode = get(data, 'code', null);
+    const inseeCode = _.get(data, 'code', null);
     if (!inseeCode) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
     }
@@ -59,7 +59,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       data = data.shift();
     }
 
-    const [lon, lat] = get(data, 'centre.coordinates', [null, null]);
+    const [lon, lat] = _.get(data, 'centre.coordinates', [null, null]);
 
     if (!lon || !lat) {
       throw new NotFoundException(`Not found on insee code (${insee})`);

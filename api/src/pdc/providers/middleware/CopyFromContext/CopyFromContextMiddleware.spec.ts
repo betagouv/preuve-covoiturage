@@ -11,7 +11,7 @@ const callFactory = (): { method: string; context: ContextType; params: ParamsTy
   context: {
     channel: {
       service: '',
-      transport: 'http',
+      transport: 'node:http',
     },
     call: {
       user: {

@@ -27,7 +27,7 @@ function contextFactory(permissions: string[]): ContextType {
   return {
     channel: {
       service: 'proxy',
-      transport: 'http',
+      transport: 'node:http',
     },
     call: {
       user: {

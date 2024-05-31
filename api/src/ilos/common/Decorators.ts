@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { injectable, METADATA_KEY } from 'inversify';
-import { Metadata } from 'inversify/lib/planning/metadata.ts';
 
-import { MiddlewareConfigType, HandlerMeta, HandlerConfigType } from './types/handler/index.ts';
-import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtensionInterface.ts';
+import type { MiddlewareConfigType, HandlerConfigType } from './types/handler/index.ts';
+import { HandlerMeta } from './types/handler/index.ts';
+import type { ExtensionConfigurationType } from './types/core/ExtensionInterface.ts';
+import { extensionConfigurationMetadataKey } from './types/core/ExtensionInterface.ts';
 
 type AnyConfig = { [k: string]: any };
 
@@ -15,6 +16,28 @@ function extensionTag(config: AnyConfig) {
     });
     return target;
   };
+}
+
+class Metadata {
+
+  public key: string | number | symbol;
+  public value: unknown;
+
+  public constructor(
+    key: string | number | symbol,
+    value: unknown
+  ) {
+    this.key = key;
+    this.value = value;
+  }
+
+  public toString() {
+    if (this.key === METADATA_KEY.NAMED_TAG) {
+      return `named: ${String(this.value).toString()} `;
+    } else {
+      return `tagged: { key:${this.key.toString()}, value: ${String(this.value)} }`;
+    }
+  }
 }
 
 export function provider(config: AnyConfig = {}) {

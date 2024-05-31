@@ -6,7 +6,7 @@ import { NormalizationProvider } from './NormalizationProvider.ts';
 import { CostNormalizerProvider } from './CostNormalizerProvider.ts';
 import { PartialGeoInterface, PointInterface } from '@pdc/providers/geo/interfaces/index.ts';
 import { provider } from '@ilos/common/index.ts';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 class CostMock extends CostNormalizerProvider {
   protected async getSiret(operatorId: number): Promise<string> {

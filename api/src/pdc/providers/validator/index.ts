@@ -4,4 +4,4 @@ export { ValidatorInterface, ValidatorInterfaceResolver } from '@ilos/common/ind
 
 export { ValidatorExtension } from './ValidatorExtension.ts';
 
-export * from './types.ts';
+export type * from './types.ts';

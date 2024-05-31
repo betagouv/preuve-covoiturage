@@ -4,5 +4,5 @@ export {
   PdfCertProviderInterfaceResolver,
 } from './interfaces/PdfCertProviderInterfaceResolver.ts';
 
-export { PdfCertRow } from './interfaces/PdfCertRow.ts';
-export { PdfTemplateData } from './interfaces/PdfTemplateData.ts';
+export type { PdfCertRow } from './Interfaces/PdfCertRow.ts';
+export type { PdfTemplateData } from './Interfaces/PdfTemplateData.ts';

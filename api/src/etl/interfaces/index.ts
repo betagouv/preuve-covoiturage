@@ -1,6 +1,6 @@
-export * from './ConfigInterface.js';
-export * from './DatasetInterface.js';
-export * from './FileInterface.js';
-export * from './StateManagerInterface.js';
+export type * from './ConfigInterface.js';
+export type * from './DatasetInterface.js';
+export type * from './FileInterface.js';
+export type * from './StateManagerInterface.js';
 export * from './StreamDataOptions.js';
-export * from './FileManagerInterface.js';
+export type * from './FileManagerInterface.js';

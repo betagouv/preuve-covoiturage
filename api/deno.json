@@ -1,0 +1,16 @@
+{
+  "imports": {
+      "@pdc/": "./src/pdc/",
+      "@ilos/": "./src/ilos/",
+      "@config/": "./src/config/",
+      "@shared/": "./src/shared/",
+      "@db/": "./src/db/",
+      "reflect-metadata": "https://cdn.esm.sh/reflect-metadata?deno",
+      "inversify": "https://cdn.esm.sh/inversify?deno"
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["geojson"]
+  }
+}

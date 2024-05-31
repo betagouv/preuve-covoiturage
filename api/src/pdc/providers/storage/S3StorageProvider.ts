@@ -11,7 +11,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigInterfaceResolver, ProviderInterface, provider } from '@ilos/common/index.ts';
 import { env } from '@ilos/core/index.ts';
-import fs from 'fs';
+import fs from 'node:fs';
 import { S3ObjectList } from './index.ts';
 import { filenameFromPath, getBucketName } from './helpers/buckets.ts';
 import { BucketName } from './interfaces/BucketName.ts';

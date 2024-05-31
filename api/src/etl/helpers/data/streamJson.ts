@@ -1,4 +1,4 @@
-import { createReadStream } from 'fs';
+import { createReadStream } from 'node:fs';
 import { JsonOptions } from '../../interfaces/index.js';
 import { withParser } from 'stream-json/filters/Pick.js';
 import { streamArray } from 'stream-json/streamers/StreamArray.js';

@@ -1,5 +1,5 @@
 import { Job, Queue, JobsOptions, QueueOptions } from 'bullmq';
-import { get, isString } from 'lodash';
+import _ from 'lodash';
 import { RedisConnection } from '@ilos/connection-redis/index.ts';
 import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common/index.ts';
 
@@ -46,7 +46,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       }
 
       // protect against char : in jobId
-      if (options.jobId && isString(options.jobId)) {
+      if (options.jobId && _.isString(options.jobId)) {
         if ((options.jobId as string).indexOf(':') > -1) {
           throw new Error('Character ":" is unsupported in jobId');
         }
@@ -63,7 +63,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         }
 
         for (const job of await this.client.getJobs(['delayed'])) {
-          if (get(job, 'opts.repeat.jobId') === options.jobId) {
+          if (_.get(job, 'opts.repeat.jobId') === options.jobId) {
             await job.remove();
             console.debug(`Removed delayed job ${options.jobId}`);
           }

@@ -1,5 +1,5 @@
 import { createGunzip } from 'zlib';
-import { createReadStream, createWriteStream } from 'fs';
+import { createReadStream, createWriteStream } from 'node:fs';
 
 export function ungzFile(filepath: string, extractPath: string): Promise<void> {
   return new Promise((resolve, reject) => {

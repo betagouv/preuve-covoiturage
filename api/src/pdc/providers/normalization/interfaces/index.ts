@@ -1,6 +1,6 @@
 export * from './shared.ts';
-export * from './CostNormalizerProviderInterface.ts';
-export * from './GeoNormalizerProviderInterface.ts';
-export * from './IdentityNormalizerProviderInterface.ts';
-export * from './NormalizationProviderInterface.ts';
-export * from './RouteNormalizerProviderInterface.ts';
+export type * from './CostNormalizerProviderInterface.ts';
+export type * from './GeoNormalizerProviderInterface.ts';
+export type * from './IdentityNormalizerProviderInterface.ts';
+export type * from './NormalizationProviderInterface.ts';
+export type * from './RouteNormalizerProviderInterface.ts';

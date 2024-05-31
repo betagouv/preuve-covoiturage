@@ -49,7 +49,7 @@ test.before(async (t) => {
         },
         channel: {
           service: 'proxy',
-          transport: 'http',
+          transport: 'node:http',
         },
       },
     };

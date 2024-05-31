@@ -1,1 +1,1 @@
-export { ValidatorInterface, ValidatorInterfaceResolver } from './ValidatorInterface.ts';
+export type { ValidatorInterface, ValidatorInterfaceResolver } from './ValidatorInterface.ts';

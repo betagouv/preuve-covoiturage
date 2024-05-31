@@ -1,2 +1,2 @@
-export { CommandInterface, CommandStaticInterface } from './CommandInterface.ts';
-export { CommandOptionType } from './CommandOptionType.ts';
+export type { CommandInterface, CommandStaticInterface } from './CommandInterface.ts';
+export type { CommandOptionType } from './CommandOptionType.ts';

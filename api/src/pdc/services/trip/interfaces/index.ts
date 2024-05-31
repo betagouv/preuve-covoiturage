@@ -1,3 +1,3 @@
-export * from './TripRepositoryProviderInterface.ts';
-export * from './ExportTripInterface.ts';
-export * from './DataGouvInterface.ts';
+export type * from './TripRepositoryProviderInterface.ts';
+export type * from './ExportTripInterface.ts';
+export type * from './DataGouvInterface.ts';

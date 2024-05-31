@@ -1,2 +1,2 @@
-export { QueueTargetType } from './QueueTargetType.ts';
-export { QueueConfigType } from './QueueConfigType.ts';
+export type { QueueTargetType } from './QueueTargetType.ts';
+export type { QueueConfigType } from './QueueConfigType.ts';

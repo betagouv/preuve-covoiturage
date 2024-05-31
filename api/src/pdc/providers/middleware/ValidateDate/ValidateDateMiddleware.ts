@@ -1,4 +1,4 @@
-import { get, set } from 'lodash';
+import _ from 'lodash';
 import { startOfDay, endOfDay } from 'date-fns';
 import {
   MiddlewareInterface,
@@ -29,8 +29,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
     const minStart: Date | undefined = minStartFn ? startOfDay(minStartFn(params, context)) : undefined;
     const maxEnd: Date | undefined = maxEndFn ? endOfDay(maxEndFn(params, context)) : undefined;
     const applyDefault = applyDefaultOpt ?? false;
-    const startDate: Date | undefined = get(params, startPath, undefined);
-    const endDate: Date | undefined = get(params, endPath, undefined);
+    const startDate: Date | undefined = _.get(params, startPath, undefined);
+    const endDate: Date | undefined = _.get(params, endPath, undefined);
 
     if (startDate && endDate && startDate > endDate) {
       throw new InvalidParamsException('Start should be before end');
@@ -46,10 +46,10 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
 
     if (applyDefault) {
       if (!startDate) {
-        set(params, startPath, minStart);
+        _.set(params, startPath, minStart);
       }
       if (!endDate) {
-        set(params, endPath, maxEnd);
+        _.set(params, endPath, maxEnd);
       }
     }
 

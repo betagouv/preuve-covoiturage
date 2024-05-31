@@ -2,7 +2,7 @@ import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@i
 import { env } from '@ilos/core/index.ts';
 import { Pool, PoolConfig } from 'pg';
 import Cursor, { CursorQueryConfig } from 'pg-cursor';
-import { URL } from 'url';
+import { URL } from 'node:url';
 
 export class PostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;

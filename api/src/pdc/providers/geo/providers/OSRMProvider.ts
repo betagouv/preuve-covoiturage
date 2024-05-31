@@ -1,8 +1,8 @@
 import { provider } from '@ilos/common/index.ts';
 import { env } from '@ilos/core/index.ts';
 import axios from 'axios';
-import { Agent } from 'http';
-import { get } from 'lodash';
+import { Agent } from 'node:http';
+import _ from 'lodash';
 import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interfaces/index.ts';
 
 @provider()
@@ -17,8 +17,8 @@ export class OSRMProvider implements RouteMetaProviderInterface {
       const res = await axios.get(`${this.domain}/route/v1/driving/${encodeURIComponent(query)}`, {
         httpAgent: OSRMProvider.agent,
       });
-      const distance = get(res, 'data.routes.0.distance', null);
-      const duration = get(res, 'data.routes.0.duration', null);
+      const distance = _.get(res, 'data.routes.0.distance', null);
+      const duration = _.get(res, 'data.routes.0.duration', null);
 
       if (distance === null || duration === null) {
         throw new Error(

@@ -1,4 +1,4 @@
-import { set } from 'lodash';
+import _ from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
@@ -25,7 +25,7 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWh
     const configKeys = config
       .map((k: string) => k.split('.'))
       .reduce((acc: object, keys: string[]) => {
-        set(acc, keys, true);
+        _.set(acc, keys, true);
         return acc;
       }, {});
 

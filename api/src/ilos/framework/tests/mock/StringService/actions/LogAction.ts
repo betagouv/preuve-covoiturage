@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { Action } from '@ilos/core/index.ts';
 import { handler, ConfigInterfaceResolver, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
 

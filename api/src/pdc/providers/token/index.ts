@@ -1,2 +1,2 @@
 export { TokenProvider } from './TokenProvider.ts';
-export * from './interfaces/index.ts';
+export type * from './Interfaces/index.ts';
