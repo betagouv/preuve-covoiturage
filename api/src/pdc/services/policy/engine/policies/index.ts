@@ -11,7 +11,7 @@ import { LannionTregor2024 } from './20240401_LannionTregor';
 import { Laval } from './20220412_LavalAgglo';
 import { MetropoleSavoie } from './20230124_MetropoleSavoie';
 import { Montpellier } from './20221206_Montpellier';
-import { Mrn } from './Mrn';
+import { Mrn } from './20220420_MetropoleRouenNormandie';
 import { NantesMetropole2024 } from './NantesMetropole2024';
 import { Nm } from './Nm';
 import { Occitanie20232024 } from './Occitanie20232024';

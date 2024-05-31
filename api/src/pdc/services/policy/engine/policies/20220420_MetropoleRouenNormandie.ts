@@ -19,7 +19,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Mrn.html';
+import { description } from './20220420_MetropoleRouenNormandie.html';
 
 // Politique de Métropole Rouen Normandie
 export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
