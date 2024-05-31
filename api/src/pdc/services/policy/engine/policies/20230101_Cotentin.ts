@@ -20,7 +20,7 @@ import {
 import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { onDistanceRangeOrThrow } from '../helpers/onDistanceRange';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Cotentin2023.html';
+import { description } from './20230101_Cotentin.html';
 
 // Politique de la Communauté D'Agglomeration du Cotentin
 export const Cotentin2023: PolicyHandlerStaticInterface = class

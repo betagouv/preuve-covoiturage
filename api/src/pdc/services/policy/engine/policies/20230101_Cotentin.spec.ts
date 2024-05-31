@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Cotentin2023 as Handler } from './Cotentin2023';
+import { Cotentin2023 as Handler } from './20230101_Cotentin';
 
 const defaultPosition = {
   arr: '22113',
