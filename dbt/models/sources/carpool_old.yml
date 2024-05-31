@@ -5,3 +5,76 @@ sources:
     schema: carpool
     tables:
       - name: carpools
+        columns:
+          - name: _id
+            description: ''
+            data_type: integer
+          - name: created_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: acquisition_id
+            description: ''
+            data_type: integer
+          - name: operator_id
+            description: ''
+            data_type: integer
+          - name: trip_id
+            description: ''
+            data_type: character varying
+          - name: operator_trip_id
+            description: ''
+            data_type: character varying
+          - name: is_driver
+            description: ''
+            data_type: boolean
+          - name: operator_class
+            description: ''
+            data_type: character
+          - name: datetime
+            description: ''
+            data_type: timestamp with time zone
+          - name: duration
+            description: ''
+            data_type: integer
+          - name: start_position
+            description: ''
+            data_type: USER-DEFINED
+          - name: end_position
+            description: ''
+            data_type: USER-DEFINED
+          - name: distance
+            description: ''
+            data_type: integer
+          - name: seats
+            description: ''
+            data_type: integer
+          - name: identity_id
+            description: ''
+            data_type: integer
+          - name: operator_journey_id
+            description: ''
+            data_type: character varying
+          - name: cost
+            description: ''
+            data_type: integer
+          - name: meta
+            description: ''
+            data_type: json
+          - name: status
+            description: ''
+            data_type: USER-DEFINED
+          - name: start_territory_id
+            description: ''
+            data_type: integer
+          - name: end_territory_id
+            description: ''
+            data_type: integer
+          - name: start_geo_code
+            description: ''
+            data_type: character varying
+          - name: end_geo_code
+            description: ''
+            data_type: character varying
+          - name: payment
+            description: ''
+            data_type: integer

@@ -1,6 +1,8 @@
 {{ config(materialized='view') }}
 
 SELECT
+  a.uuid,
+  a._id as carpool_id,
   c.start_geo_code,
   c.end_geo_code,
   a.operator_id,
@@ -16,9 +18,11 @@ SELECT
     WHEN c.end_geo_code ~ '^976' THEN a.end_datetime::timestamptz AT TIME ZONE 'Indian/Mayotte'
     ELSE a.end_datetime::timestamptz AT TIME ZONE 'Europe/Paris'
   END AS end_datetime,
+  (a.end_datetime - a.start_datetime) as duration,
   a.distance,
   a.driver_revenue,
   a.passenger_seats,
+  a.passenger_contribution,
   a.passenger_payments
 FROM {{ source('carpool', 'carpools') }} AS a
 LEFT JOIN {{ source('carpool', 'status') }} AS b ON a._id = b.carpool_id

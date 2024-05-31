@@ -5,7 +5,7 @@
 
         {{ default_schema }}
 
-    {% elif custom_schema_name == '' %}
+    {% elif default_schema == '' %}
 
         {{ custom_schema_name | trim }}
 

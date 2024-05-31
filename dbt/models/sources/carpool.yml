@@ -68,6 +68,9 @@ sources:
             data_type: jsonb
           - name: uuid
             data_type: uuid
+          - name: legacy_id
+            description: ''
+            data_type: bigint
       - name: geo
         columns:
           - name: _id
@@ -93,6 +96,22 @@ sources:
           - name: siret
             data_type: character varying
           - name: amount
+            data_type: integer
+      - name: operator_incentive_counterparts
+        columns:
+          - name: _id
+            data_type: integer
+          - name: carpool_id
+            description: ''
+            data_type: integer
+          - name: target_is_driver
+            description: ''
+            data_type: boolean
+          - name: siret
+            description: ''
+            data_type: character varying
+          - name: amount
+            description: ''
             data_type: integer
       - name: status
         columns:
