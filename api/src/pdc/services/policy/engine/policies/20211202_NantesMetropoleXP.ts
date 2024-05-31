@@ -7,9 +7,9 @@ import {
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -19,9 +19,10 @@ import {
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20211202_NantesMetropoleXP.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Nantes Métropole
 export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
@@ -29,7 +30,13 @@ export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = '656';
-  protected operators = [OperatorsEnum.KLAXIT];
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-12-02T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected operatorClass = ['C'];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
@@ -48,7 +55,7 @@ export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, this.operatorClass);
     // Exclure les trajets qui ne sont pas dans l'aom NM
@@ -74,7 +81,7 @@ export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
