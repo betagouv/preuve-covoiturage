@@ -8,18 +8,19 @@ import {
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
+  LimitTargetEnum,
   isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRangeOrThrow,
   onWeekday,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20221024_Occitanie.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return ctx.carpool.passenger_contribution || 0;
@@ -31,13 +32,20 @@ export const Occitanie20232024: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'occitanie_2022';
-  protected operators = [
-    OperatorsEnum.ATCHOUM,
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2021-01-05T00:00:00+0100'),
+      operators: [
+        OperatorsEnum.ATCHOUM,
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KAROS,
+        OperatorsEnum.KLAXIT,
+        OperatorsEnum.MOBICOOP,
+      ],
+    },
   ];
+
   protected operator_class = ['B', 'C'];
   protected slices: BoundedSlices = [
     { start: 0, end: 20_000 },
@@ -54,7 +62,7 @@ export const Occitanie20232024: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { max: 30_001 });
     isOperatorClassOrThrow(ctx, this.operator_class);
     // Pas le dimanche
@@ -94,7 +102,7 @@ export const Occitanie20232024: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
