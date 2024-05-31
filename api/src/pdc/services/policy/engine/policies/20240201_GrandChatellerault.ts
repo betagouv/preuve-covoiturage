@@ -23,7 +23,7 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './GrandChatellerault2024.html';
+import { description } from './20240201_GrandChatellerault.html';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */

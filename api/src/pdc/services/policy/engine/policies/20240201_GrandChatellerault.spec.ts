@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { GrandChatellerault2024 as Handler } from './GrandChatellerault2024';
+import { GrandChatellerault2024 as Handler } from './20240201_GrandChatellerault';
 
 // Châtellerault
 const defaultPosition = {

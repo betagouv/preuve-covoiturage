@@ -2,7 +2,7 @@ import { PolicyHandlerStaticInterface } from '../../interfaces';
 import { ATMB202305 } from './20230502_ATMB';
 import { Cannes2024 } from './20240101_Cannes';
 import { Cotentin2023 } from './20230101_Cotentin';
-import { GrandChatellerault2024 } from './GrandChatellerault2024';
+import { GrandChatellerault2024 } from './20240201_GrandChatellerault';
 import { GrandPoitiers } from './GrandPoitiers';
 import { Idfm } from './20210520_IDFM';
 import { LaRochelle20232024 } from './LaRochelle20232024';
