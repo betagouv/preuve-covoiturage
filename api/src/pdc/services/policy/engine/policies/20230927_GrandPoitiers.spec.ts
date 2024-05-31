@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { generatePartialCarpools } from '../tests/helpers';
 import { makeProcessHelper } from '../tests/macro';
-import { GrandPoitiers as Handler } from './GrandPoitiers';
+import { GrandPoitiers as Handler } from './20230927_GrandPoitiers';
 
 // Unit test calculations
 

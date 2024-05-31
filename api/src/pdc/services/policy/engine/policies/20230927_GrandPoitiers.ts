@@ -19,7 +19,7 @@ import {
 } from '../helpers';
 import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './GrandPoitiers.html';
+import { description } from './20230927_GrandPoitiers.html';
 
 // Politique Grands poitiers
 // territory_id: 323
