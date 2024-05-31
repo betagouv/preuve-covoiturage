@@ -27,7 +27,7 @@ const defaultCarpool = {
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2023-05-15'),
+  datetime: new Date('2023-10-01'),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -74,7 +74,7 @@ test(
     incentive: [100, 200, 150, 300, 600, 300],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.4-2023',
+        key: 'max_amount_restriction.0-one.month.9-2023',
         value: 1650,
       },
       {
@@ -96,7 +96,7 @@ test(
     ],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.4-2023',
+        key: 'max_amount_restriction.0-one.month.9-2023',
         value: 49_00,
       },
     ],
@@ -105,7 +105,7 @@ test(
     incentive: [100, 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.4-2023',
+        key: 'max_amount_restriction.0-one.month.9-2023',
         value: 50_00,
       },
       {

@@ -64,7 +64,7 @@ test(
       { distance: 5_000, driver_identity_key: 'one', operator_trip_id: '1' },
       { distance: 5_000, seats: 2, driver_identity_key: 'one', operator_trip_id: '2' },
       { distance: 25_000, driver_identity_key: 'two', seats: 2, operator_trip_id: '3' },
-      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2022-03-28') },
+      { distance: 25_000, driver_identity_key: 'two', datetime: new Date('2023-03-28') },
     ],
     meta: [],
   },
