@@ -22,7 +22,7 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './TerresTouloises2024.html';
+import { description } from './20240201_TerresTouloises.html';
 
 /* eslint-disable-next-line */
 export const TerresTouloises2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {

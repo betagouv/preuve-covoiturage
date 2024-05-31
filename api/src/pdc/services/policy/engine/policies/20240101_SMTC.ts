@@ -18,7 +18,7 @@ import {
 } from '../helpers';
 import { watchForPersonMaxAmountByYear, watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './SMTC2024.html';
+import { description } from './20240101_SMTC.html';
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
 // aom = 256300120

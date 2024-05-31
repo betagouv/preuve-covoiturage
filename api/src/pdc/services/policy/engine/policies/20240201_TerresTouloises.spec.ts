@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { TerresTouloises2024 as Handler } from './TerresTouloises2024';
+import { TerresTouloises2024 as Handler } from './20240201_TerresTouloises';
 
 // Toul
 const defaultPosition = {
