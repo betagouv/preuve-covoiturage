@@ -20,7 +20,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PaysBasque20232024.html';
+import { description } from './20230401_PaysBasqueAdour.html';
 
 // Pays Basque Adour
 export const PaysBasque20232024: PolicyHandlerStaticInterface = class

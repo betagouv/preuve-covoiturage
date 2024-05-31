@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { PaysBasque20232024 as Handler } from './PaysBasque20232024';
+import { PaysBasque20232024 as Handler } from './20230401_PaysBasqueAdour';
 
 const defaultPosition = {
   arr: '64155',
