@@ -22,7 +22,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PaysDeLaLoire2021.html';
+import { description } from './20210105_PaysDeLaLoire.html';
 
 // Politique de Pays de la Loire
 /* eslint-disable-next-line */
