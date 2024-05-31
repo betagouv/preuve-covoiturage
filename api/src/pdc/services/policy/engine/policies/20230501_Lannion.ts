@@ -20,6 +20,7 @@ import {
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20230501_Lannion.html';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 
 // Politique de la Communauté D'Agglomeration De Lannion-Tregor
 export const Lannion202305: PolicyHandlerStaticInterface = class
@@ -36,7 +37,13 @@ export const Lannion202305: PolicyHandlerStaticInterface = class
     ];
   }
 
-  protected operators = [OperatorsEnum.KLAXIT];
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-05-01T00:00:00+0200'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
+
   protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -47,7 +54,7 @@ export const Lannion202305: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
@@ -72,7 +79,7 @@ export const Lannion202305: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
