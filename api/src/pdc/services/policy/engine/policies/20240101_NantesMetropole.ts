@@ -23,10 +23,11 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { watchForPersonMaxAmountByYear } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20240101_NantesMetropole.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
@@ -44,11 +45,11 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   // pour lesquelles les règles de booster s'appliquent
   protected boosterDates: string[] = [];
 
-  protected operators = [
-    OperatorsEnum.BLABLACAR_DAILY,
-    OperatorsEnum.KAROS,
-    OperatorsEnum.KLAXIT,
-    OperatorsEnum.MOBICOOP,
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2024-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT, OperatorsEnum.MOBICOOP],
+    },
   ];
 
   protected regularSlices: RunnableSlices = [
@@ -86,7 +87,7 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   }
 
   protected processExclusion(ctx: StatelessContextInterface, log?: TestingLogFn) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
@@ -122,7 +123,7 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
       tz: NantesMetropole2024.tz,
       slices: date ? NantesMetropole2024.mode(date, this.regularSlices, this.boosterSlices) : this.regularSlices,
       booster_dates: this.boosterDates,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
