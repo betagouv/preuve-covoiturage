@@ -23,7 +23,7 @@ import {
 import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsOrEndsAtOrThrow } from '../helpers/startsOrEndsAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './PMGFxATMB2024.html';
+import { description } from './20240401_PMGFxATMB.html';
 
 // INSERT INTO policy.policies (territory_id, start_date, end_date, name, unit, status, handler, max_amount)
 // VALUES (

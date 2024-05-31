@@ -15,7 +15,7 @@ import { Mrn } from './20220420_MetropoleRouenNormandie';
 import { NantesMetropole2024 } from './20240101_NantesMetropole';
 import { Nm } from './20211202_NantesMetropoleXP';
 import { Occitanie20232024 } from './20221024_Occitanie';
-import { PMGFxATMB2024 } from './PMGFxATMB2024';
+import { PMGFxATMB2024 } from './20240401_PMGFxATMB';
 import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
 import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
 import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
