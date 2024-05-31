@@ -19,7 +19,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './SMT2022.html';
+import { description } from './20220414_SMT.html';
 
 // Politique du Syndicat des Mobilités de Touraine
 export const SMT2022: PolicyHandlerStaticInterface = class
