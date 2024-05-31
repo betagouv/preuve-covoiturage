@@ -199,14 +199,14 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: generatePartialCarpools(80),
+    carpool: generatePartialCarpools(80, new Date('2023-10-01')),
     meta: [],
   },
   {
     incentive: [...[...Array(80).keys()].map(() => 150), 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-three.month.0-2022',
+        key: 'max_amount_restriction.0-three.month.9-2023',
         value: 120_00,
       },
       {
