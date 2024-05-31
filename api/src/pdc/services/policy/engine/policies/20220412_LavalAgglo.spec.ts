@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Laval as Handler } from './Laval';
+import { Laval as Handler } from './20220412_LavalAgglo';
 
 const defaultPosition = {
   arr: '53130',

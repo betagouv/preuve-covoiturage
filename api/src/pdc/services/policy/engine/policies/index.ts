@@ -8,7 +8,7 @@ import { Idfm } from './20210520_IDFM';
 import { LaRochelle20232024 } from './20230101_LaRochelle';
 import { Lannion } from './20230501_Lannion';
 import { LannionTregor2024 } from './20240401_LannionTregor';
-import { Laval } from './Laval';
+import { Laval } from './20220412_LavalAgglo';
 import { MetropoleSavoie } from './MetropoleSavoie';
 import { Montpellier } from './Montpellier';
 import { Mrn } from './Mrn';
