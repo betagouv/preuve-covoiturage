@@ -26,7 +26,7 @@ import {
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { watchForPersonMaxAmountByYear } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './NantesMetropole2024.html';
+import { description } from './20240101_NantesMetropole.html';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */

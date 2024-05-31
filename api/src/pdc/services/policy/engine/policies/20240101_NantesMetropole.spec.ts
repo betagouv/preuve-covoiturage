@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { stub } from 'sinon';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { NantesMetropole2024 as Handler } from './NantesMetropole2024';
+import { NantesMetropole2024 as Handler } from './20240101_NantesMetropole';
 
 const defaultPosition = {
   arr: '44109',
