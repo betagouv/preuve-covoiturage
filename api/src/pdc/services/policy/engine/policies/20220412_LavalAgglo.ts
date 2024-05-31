@@ -20,7 +20,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20220412_LavalAgglo.html';
 
 // Politique de la Communauté D'Agglomeration De Laval
-export const Laval: PolicyHandlerStaticInterface = class
+export const LavalAgglo2022: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

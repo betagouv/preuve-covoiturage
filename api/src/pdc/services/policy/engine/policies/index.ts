@@ -1,34 +1,34 @@
 import { PolicyHandlerStaticInterface } from '../../interfaces';
-import { ATMB202305 } from './20230502_ATMB';
-import { Cannes2024 } from './20240101_Cannes';
-import { Cotentin2023 } from './20230101_Cotentin';
-import { GrandChatellerault2024 } from './20240201_GrandChatellerault';
-import { GrandPoitiers } from './20230927_GrandPoitiers';
-import { Idfm } from './20210520_IDFM';
-import { LaRochelle20232024 } from './20230101_LaRochelle';
-import { Lannion } from './20230501_Lannion';
-import { LannionTregor2024 } from './20240401_LannionTregor';
-import { Laval } from './20220412_LavalAgglo';
-import { MetropoleSavoie } from './20230124_MetropoleSavoie';
-import { Montpellier } from './20221206_Montpellier';
-import { Mrn } from './20220420_MetropoleRouenNormandie';
-import { NantesMetropole2024 } from './20240101_NantesMetropole';
-import { Nm } from './20211202_NantesMetropoleXP';
-import { Occitanie20232024 } from './20221024_Occitanie';
-import { PMGFxATMB2024 } from './20240401_PMGFxATMB';
-import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
 import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
-import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
-import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
-import { PetrLunevilloisS12023 } from './20240108_PetrLunevillois';
-import { Pmgf } from './20221102_PMGF';
-import { Pmgf2023 } from './20230502_PMGF';
-import { PmgfLate2023 } from './20231001_PMGF';
+import { IDFMPeriodeNormale2021 } from './20210520_IDFM';
+import { NantesMetropoleXPCovoitan2021 } from './20211202_NantesMetropoleXP';
+import { LavalAgglo2022 } from './20220412_LavalAgglo';
 import { SMT2022 } from './20220414_SMT';
-import { SMT2023 } from './20230126_SMT';
-import { SMTC2024 } from './20240101_SMTC';
-import { TerresTouloises2024 } from './20240201_TerresTouloises';
+import { MetropoleRouenNormandie2022 } from './20220420_MetropoleRouenNormandie';
+import { Occitanie20232024 } from './20221024_Occitanie';
+import { PMGF2022 } from './20221102_PMGF';
+import { Montpellier } from './20221206_Montpellier';
+import { Cotentin2023 } from './20230101_Cotentin';
+import { LaRochelle20232024 } from './20230101_LaRochelle';
 import { Vitre2023 } from './20230101_Vitre';
+import { MetropoleSavoie } from './20230124_MetropoleSavoie';
+import { SMT2023 } from './20230126_SMT';
+import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
+import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
+import { Lannion202305 } from './20230501_Lannion';
+import { ATMB202305 } from './20230502_ATMB';
+import { PMGF2023 } from './20230502_PMGF';
+import { GrandPoitiers } from './20230927_GrandPoitiers';
+import { PMGFOctobre2023 } from './20231001_PMGF';
+import { Cannes2024 } from './20240101_Cannes';
+import { NantesMetropole2024 } from './20240101_NantesMetropole';
+import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
+import { SMTC2024 } from './20240101_SMTC';
+import { PetrLunevilloisS12023 } from './20240108_PetrLunevillois';
+import { GrandChatellerault2024 } from './20240201_GrandChatellerault';
+import { TerresTouloises2024 } from './20240201_TerresTouloises';
+import { LannionTregor2024 } from './20240401_LannionTregor';
+import { PMGFxATMB2024 } from './20240401_PMGFxATMB';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
@@ -43,25 +43,25 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Cotentin2023,
     GrandChatellerault2024,
     GrandPoitiers,
-    Idfm,
-    Lannion,
+    IDFMPeriodeNormale2021,
+    Lannion202305,
     LannionTregor2024,
     LaRochelle20232024,
-    Laval,
+    LavalAgglo2022,
+    MetropoleRouenNormandie2022,
     MetropoleSavoie,
     Montpellier,
-    Mrn,
     NantesMetropole2024,
-    Nm,
+    NantesMetropoleXPCovoitan2021,
     Occitanie20232024,
     PaysBasque20232024,
     PaysDeLaLoire2021,
     PaysDeLaLoire2023,
     PaysDeLaLoire2024,
     PetrLunevilloisS12023,
-    Pmgf,
-    Pmgf2023,
-    PmgfLate2023,
+    PMGF2022,
+    PMGF2023,
+    PMGFOctobre2023,
     PMGFxATMB2024,
     PolicyTemplateOne,
     PolicyTemplateThree,

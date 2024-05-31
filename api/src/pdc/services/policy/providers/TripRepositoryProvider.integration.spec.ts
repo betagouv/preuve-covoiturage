@@ -2,7 +2,7 @@ import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
 import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
 import anyTest, { TestFn } from 'ava';
 import { Policy } from '../engine/entities/Policy';
-import { Idfm } from '../engine/policies/20210520_IDFM';
+import { IDFMPeriodeNormale2021 } from '../engine/policies/20210520_IDFM';
 import { TripRepositoryProvider } from './TripRepositoryProvider';
 
 interface TestContext {
@@ -35,7 +35,7 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
     end_date,
     tz: 'Europe/Paris',
     name: 'Policy',
-    handler: Idfm.id,
+    handler: IDFMPeriodeNormale2021.id,
     status: PolicyStatusEnum.ACTIVE,
     incentive_sum: 5000,
     max_amount: 10_000_000_00,

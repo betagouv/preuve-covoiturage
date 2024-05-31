@@ -24,7 +24,10 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20211202_NantesMetropoleXP.html';
 
 // Politique de Nantes Métropole
-export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
   static readonly id = '656';
   protected operators = [OperatorsEnum.KLAXIT];
   protected operatorClass = ['C'];

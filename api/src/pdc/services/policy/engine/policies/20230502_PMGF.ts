@@ -21,7 +21,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20230502_PMGF.html';
 
 // Politique Pole Métropolitain du Genevois
-export const Pmgf2023: PolicyHandlerStaticInterface = class
+export const PMGF2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Mrn as Handler } from './20220420_MetropoleRouenNormandie';
+import { MetropoleRouenNormandie2022 as Handler } from './20220420_MetropoleRouenNormandie';
 
 const defaultPosition = {
   arr: '76540',

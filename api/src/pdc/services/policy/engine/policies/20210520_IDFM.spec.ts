@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Idfm as Handler } from './20210520_IDFM';
+import { IDFMPeriodeNormale2021 as Handler } from './20210520_IDFM';
 
 const defaultPosition = {
   arr: '91377',

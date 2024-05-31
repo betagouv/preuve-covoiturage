@@ -27,7 +27,7 @@ import { description } from './20210520_IDFM.html';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique d'Île-de-France Mobilité
-export const Idfm: PolicyHandlerStaticInterface = class
+export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

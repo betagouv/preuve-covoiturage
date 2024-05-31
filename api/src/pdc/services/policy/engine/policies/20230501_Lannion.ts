@@ -22,7 +22,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20230501_Lannion.html';
 
 // Politique de la Communauté D'Agglomeration De Lannion-Tregor
-export const Lannion: PolicyHandlerStaticInterface = class
+export const Lannion202305: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {

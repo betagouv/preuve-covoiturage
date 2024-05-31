@@ -22,7 +22,10 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20220420_MetropoleRouenNormandie.html';
 
 // Politique de Métropole Rouen Normandie
-export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+export const MetropoleRouenNormandie2022: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
   static readonly id = '766';
   protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [

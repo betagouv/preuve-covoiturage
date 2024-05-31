@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Lannion as Handler } from './20230501_Lannion';
+import { Lannion202305 as Handler } from './20230501_Lannion';
 
 const defaultPosition = {
   arr: '22113',
