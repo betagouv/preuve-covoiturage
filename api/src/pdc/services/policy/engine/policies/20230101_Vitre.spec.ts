@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Vitre2023 as Handler } from './Vitre2023';
+import { Vitre2023 as Handler } from './20230101_Vitre';
 
 const defaultPosition = {
   arr: '35361',

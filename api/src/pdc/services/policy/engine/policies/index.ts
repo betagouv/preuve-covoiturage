@@ -28,7 +28,7 @@ import { SMT2022 } from './20220414_SMT';
 import { SMT2023 } from './20230126_SMT';
 import { SMTC2024 } from './20240101_SMTC';
 import { TerresTouloises2024 } from './20240201_TerresTouloises';
-import { Vitre2023 } from './Vitre2023';
+import { Vitre2023 } from './20230101_Vitre';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';

@@ -23,7 +23,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Vitre2023.html';
+import { description } from './20230101_Vitre.html';
 
 // Politique Vitré Communauté
 export const Vitre2023: PolicyHandlerStaticInterface = class
