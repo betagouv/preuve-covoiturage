@@ -21,7 +21,7 @@ import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
 import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
 import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
 import { PetrLunevilloisS12023 } from './20240108_PetrLunevillois';
-import { Pmgf } from './Pmgf';
+import { Pmgf } from './20221102_PMGF';
 import { Pmgf2023 } from './Pmgf2023';
 import { PmgfLate2023 } from './PmgfLate2023';
 import { SMT2022 } from './SMT2022';

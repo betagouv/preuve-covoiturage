@@ -20,7 +20,7 @@ import {
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pmgf.html';
+import { description } from './20221102_PMGF.html';
 
 // Politique du Pôle Métropolitain Genevois Français
 // eslint-disable-next-line max-len

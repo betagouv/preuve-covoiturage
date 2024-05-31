@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Pmgf as Handler } from './Pmgf';
+import { Pmgf as Handler } from './20221102_PMGF';
 
 const defaultPosition = {
   arr: '74008',
