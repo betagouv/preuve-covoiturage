@@ -18,7 +18,7 @@ import { Occitanie20232024 } from './20221024_Occitanie';
 import { PMGFxATMB2024 } from './PMGFxATMB2024';
 import { PaysBasque20232024 } from './20230401_PaysBasqueAdour';
 import { PaysDeLaLoire2021 } from './20210105_PaysDeLaLoire';
-import { PaysDeLaLoire2023 } from './PaysDeLaLoire2023';
+import { PaysDeLaLoire2023 } from './20230201_PaysDeLaLoire';
 import { PaysDeLaLoire2024 } from './PaysDeLaLoire2024';
 import { PetrLunevilloisS12023 } from './PetrLunevilloisS12023';
 import { Pmgf } from './Pmgf';
