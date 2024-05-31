@@ -1,4 +1,4 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { dateWithTz, today } from '../../helpers';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,10 +6,11 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -18,9 +19,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20230126_SMT.html';
-import { dateWithTz, today } from '../../helpers';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique du Syndicat des Mobilités de Touraine
 export const SMT2023: PolicyHandlerStaticInterface = class
@@ -28,8 +29,17 @@ export const SMT2023: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'smt_2023';
-  protected operators = [OperatorsEnum.KLAXIT];
-  protected new_operators = [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-26T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+    {
+      date: new Date('2024-02-215T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY],
+    },
+  ];
 
   protected relaunch_update_date = new Date('15/02/2024');
 
@@ -62,7 +72,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.isAfter15February2024(ctx.carpool.datetime) ? this.new_operators : this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     isOperatorClassOrThrow(ctx, ['B', 'C']);
     onDistanceRangeOrThrow(
       ctx,
@@ -101,7 +111,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.getSlices(),
-      operators: this.new_operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
