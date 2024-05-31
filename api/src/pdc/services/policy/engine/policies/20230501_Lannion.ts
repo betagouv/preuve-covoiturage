@@ -19,7 +19,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Lannion.html';
+import { description } from './20230501_Lannion.html';
 
 // Politique de la Communauté D'Agglomeration De Lannion-Tregor
 export const Lannion: PolicyHandlerStaticInterface = class
