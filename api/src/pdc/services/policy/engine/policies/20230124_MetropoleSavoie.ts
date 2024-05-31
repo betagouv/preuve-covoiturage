@@ -15,14 +15,22 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
 } from '../helpers';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './20230124_MetropoleSavoie.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 /* eslint-disable-next-line */
 export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'metropole_savoie_2022';
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-24T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
+  ];
+
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -37,7 +45,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
     startsAndEndsAtOrThrow(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] });
@@ -62,7 +70,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
