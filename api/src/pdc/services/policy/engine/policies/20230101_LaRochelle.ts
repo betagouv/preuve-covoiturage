@@ -7,9 +7,9 @@ import {
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -18,13 +18,20 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
 import { description } from './20230101_LaRochelle.html';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 /* eslint-disable-next-line */
 export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'larochelle_2023';
-  protected operators = [OperatorsEnum.KLAXIT];
+
+  protected operators: TimestampedOperators = [
+    {
+      date: new Date('2023-01-01T00:00:00+0100'),
+      operators: [OperatorsEnum.KLAXIT],
+    },
+  ];
   protected slices_before_may: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
@@ -60,7 +67,8 @@ export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends Ab
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
+
     if (this.isBeforeFirstOfMay(ctx)) {
       onDistanceRangeOrThrow(ctx, { min: 2_000 });
     } else {
@@ -92,7 +100,7 @@ export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends Ab
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: getOperatorsAt(this.operators),
       limits: {
         glob: this.max_amount,
       },
