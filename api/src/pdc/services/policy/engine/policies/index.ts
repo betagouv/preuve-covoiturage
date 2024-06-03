@@ -23,12 +23,13 @@ import { PMGFOctobre2023 } from './20231001_PMGF';
 import { Cannes2024 } from './20240101_Cannes';
 import { NantesMetropole2024 } from './20240101_NantesMetropole';
 import { PaysDeLaLoire2024 } from './20240101_PaysDeLaLoire';
-import { SMTC2024 } from './20240101_SMTC';
+import { SMTC2024Driver } from './20240101_SMTCDriver';
 import { PetrLunevilloisS12023 } from './20240108_PetrLunevillois';
 import { GrandChatellerault2024 } from './20240201_GrandChatellerault';
 import { TerresTouloises2024 } from './20240201_TerresTouloises';
 import { LannionTregor2024 } from './20240401_LannionTregor';
 import { PMGFxATMB2024 } from './20240401_PMGFxATMB';
+import { SMTC2024Passenger } from './20240101_SMTC2024Passenger';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
@@ -68,7 +69,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PolicyTemplateTwo,
     SMT2022,
     SMT2023,
-    SMTC2024,
+    SMTC2024Driver,
+    SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
   ].map((h) => [h.id, h]),
