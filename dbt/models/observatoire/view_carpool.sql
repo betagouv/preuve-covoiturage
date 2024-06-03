@@ -1,7 +1,6 @@
 {{ config(materialized='view') }}
 
 SELECT
-  a.uuid,
   a._id as carpool_id,
   c.start_geo_code,
   c.end_geo_code,
@@ -20,7 +19,9 @@ SELECT
   END AS end_datetime,
   (a.end_datetime - a.start_datetime) as duration,
   a.distance,
+  a.driver_identity_key,
   a.driver_revenue,
+  a.passenger_identity_key,
   a.passenger_seats,
   a.passenger_contribution,
   a.passenger_payments
