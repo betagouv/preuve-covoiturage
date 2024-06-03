@@ -1,11 +1,11 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
 <p>
-  Campagne d’incitation au covoiturage du <b> 01 janvier 2024 au 31 décembre 2025</b>
+  Campagne d’incitation au covoiturage du <b>01 janvier 2024 au 31 décembre 2025</b>
 </p>
 
 <p>
-  Cette campagne est limitée à <b>15 000 €</b>.
+  Cette campagne est limitée à <b>15 000,00 €</b>.
 </p>
 
 <p>
@@ -17,21 +17,19 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 </ul>
 
 <p>
-  Les <b> conducteurs </b> effectuant un trajet entre 5 km et 80 km,
+  Les <b> passagers </b> effectuant un trajet entre 5 km et 30 km,
   avec pour origine OU destination le périmètre ci-dessus,
   sont incités selon les règles suivantes :
 </p>
 
 <ul>
-  <li><b>De 5 à 80 km : 1,50 € par trajet par passager transporté</b></li>
+  <li><b>De 5 à 30 km : 0,10 € par kilomètre</b></li>
 </ul>
 
 <p>Les restrictions suivantes seront appliquées :</p>
 
 <ul>
-  <li><b>90,00 € maximum pour le conducteur par mois.</b></li>
-  <li><b>4 trajets par jour maximum par conducteur.</b></li>
-  <li><b>540,00 € maximum pour le conducteur sur la durée de la campagne.</b></li>
+  <li><b>2 trajets par jour maximum.</b></li>
 </ul>
 
 <p>
