@@ -8,7 +8,8 @@ SELECT
   count(distinct driver_identity_key) as drivers,
   count(distinct passenger_identity_key) as passengers,
   sum(passenger_seats) as passenger_seats,
-  sum(distance) as distance
+  sum(distance) as distance,
+  sum(duration) as duration
 FROM {{ ref('view_carpool') }}
 WHERE
   start_geo_code IS NOT null AND end_geo_code IS NOT null
