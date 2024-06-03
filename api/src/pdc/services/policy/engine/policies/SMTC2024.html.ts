@@ -5,7 +5,7 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 </p>
 
 <p>
-  Cette campagne est limitée à <b>30 000 €</b>.
+  Cette campagne est limitée à <b>15 000 €</b>.
 </p>
 
 <p>

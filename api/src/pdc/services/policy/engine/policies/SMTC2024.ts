@@ -26,7 +26,7 @@ export const SMTC2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
-  static readonly id = 'smtc_2024';
+  static readonly id = 'smtc_2024_driver';
   protected operators = [OperatorsEnum.MOV_ICI];
   protected operator_class = ['B', 'C'];
 
