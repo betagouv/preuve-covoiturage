@@ -53,7 +53,7 @@ export class BuildExcel {
     const filepath: string = this.apdfNameProvider.filepath(filename);
 
     // create the Workbook and add Worksheets
-    const wbWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+    const wbWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     if (this.hasSliceTrips(slices)) await this.writeSlices(wbWriter, slices);
     await this.writeTrips(wbWriter, params);
     await wbWriter.commit();
@@ -61,7 +61,7 @@ export class BuildExcel {
     return { filename, filepath };
   }
 
-  private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
+  private async writeTrips(wkw: excel.stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
       const booster_dates = await this.listBoosterDates(params.campaign_id);
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
@@ -73,7 +73,7 @@ export class BuildExcel {
     }
   }
 
-  private async writeSlices(wkw: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
+  private async writeSlices(wkw: excel.stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
     try {
       if (!slices.length) return;
       await this.slicesWsWriter.call(wkw, slices);
