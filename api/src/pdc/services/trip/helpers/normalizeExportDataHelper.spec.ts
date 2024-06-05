@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { Context } from 'vm';
+import { Context } from 'node:vm';
 import { FlattenTripInterface } from '../actions/BuildExportAction.ts';
 import { ExportTripInterface } from '../interfaces/index.ts';
 import { normalizeExport, normalizeOpendata } from './normalizeExportDataHelper.ts';

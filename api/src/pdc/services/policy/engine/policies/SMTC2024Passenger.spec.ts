@@ -1,8 +1,8 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { SMTC2024Passenger as Handler } from './SMTC2024Passenger';
+import { OperatorsEnum } from '../../interfaces/index.ts';
+import { makeProcessHelper } from '../tests/macro.ts';
+import { SMTC2024Passenger as Handler } from './SMTC2024Passenger.ts';
 
 const defaultPosition = {
   arr: '74278',

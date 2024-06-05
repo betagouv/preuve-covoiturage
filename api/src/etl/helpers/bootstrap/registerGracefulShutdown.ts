@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export function registerGracefulShutdown(
   // https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters
   this: any,

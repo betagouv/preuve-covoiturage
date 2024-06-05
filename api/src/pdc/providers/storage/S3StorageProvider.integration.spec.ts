@@ -1,7 +1,7 @@
 import { ConfigStore } from '@ilos/core/extensions/index.ts';
 import test from 'ava';
 import axios from 'axios';
-import { writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import https from 'node:https';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

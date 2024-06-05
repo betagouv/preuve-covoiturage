@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export function catchErrors(
   closeHandlers: Array<() => Promise<any>> = [],
   {

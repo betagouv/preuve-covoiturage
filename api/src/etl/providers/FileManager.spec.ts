@@ -2,11 +2,11 @@ import anyTest, { TestFn } from 'ava';
 import { FileManager } from './FileManager.ts';
 import sinon, { SinonStub } from 'sinon';
 import axios, { AxiosError } from 'axios';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import { rmSync, readFileSync } from 'node:fs';
 import { hash, writeFile } from '../helpers/index.ts';
 import { join } from 'node:path';
-import { mkdir } from 'fs/promises';
+import { mkdir } from 'node:fs/promises';
 
 interface Context {
   // Constants

@@ -68,7 +68,7 @@ const alias = 'has_permission.by_scope';
 export const hasPermissionByScopeMiddlewareBinding = [alias, HasPermissionByScopeMiddleware];
 
 export function hasPermissionByScopeMiddleware(
-  globalPermission: string | null,
+  globalPermission: string | null | undefined,
   ...scopes: ScopeAndPermission[]
 ): ConfiguredMiddleware<HasPermissionByScopeMiddlewareParams> {
   return [alias, [globalPermission, scopes]];
