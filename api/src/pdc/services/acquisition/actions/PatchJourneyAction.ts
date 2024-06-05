@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 import { handler, ContextType } from '@ilos/common/index.ts';
 import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
@@ -25,7 +25,7 @@ export class PatchJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const operator_id = get(context, 'call.user.operator_id');
+    const operator_id = _.get(context, 'call.user.operator_id');
     await this.repository.patchPayload(
       {
         operator_id,

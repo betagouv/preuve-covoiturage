@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
 import { Action as AbstractAction } from '@ilos/core/index.ts';
 import { Sentry } from '@pdc/providers/sentry/index.ts';
@@ -33,7 +33,7 @@ export class DeleteOperatorAction extends AbstractAction {
       console.error(`> Failed to remove associated users`, e);
 
       // We want errors to be non-blocking but they are logged
-      Sentry.setUser(get(context, 'call.user', null));
+      Sentry.setUser(_.get(context, 'call.user', null));
       Sentry.captureException(e);
     }
 
@@ -63,7 +63,7 @@ export class DeleteOperatorAction extends AbstractAction {
       }
     } catch (e) {
       console.error(`> Failed to remove associated applications`, e);
-      Sentry.setUser(get(context, 'call.user', null));
+      Sentry.setUser(_.get(context, 'call.user', null));
       Sentry.captureException(e);
     }
 

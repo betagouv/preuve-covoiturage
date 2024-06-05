@@ -1,9 +1,9 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import { ConfigInterface } from '@ilos/common/index.ts';
 
 export class MockJWTConfigProvider implements ConfigInterface {
   get(key: string, fallback?: any): any {
-    return get(
+    return _.get(
       {
         jwt: {
           secret: process.env.APP_JWT_SECRET,

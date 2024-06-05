@@ -5,7 +5,7 @@
  * - download the PNG
  */
 
-import { get } from 'lodash';
+import _ from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
@@ -85,7 +85,7 @@ test.serial.skip('Download the certificate', async (t) => {
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
   t.is(createResponse.status, 201);
-  const certificate: { uuid: string } = get(createResponse, 'body.result.data', {});
+  const certificate: { uuid: string } = _.get(createResponse, 'body.result.data', {});
 
   // download it
   // !!! works only inside docker. first, up all container, then exec inside and test

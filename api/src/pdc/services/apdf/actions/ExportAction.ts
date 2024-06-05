@@ -8,7 +8,7 @@ import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.co
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
 import fs from 'node:fs';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';
 import { getCampaignOperators } from '../helpers/getCampaignOperators.helper.ts';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
@@ -109,13 +109,13 @@ export class ExportAction extends Action {
   }
 
   private isVerbose(context: ContextType): boolean {
-    return get(context, 'channel.transport') === 'cli' && get(context, 'call.metadata.verbose', false);
+    return _.get(context, 'channel.transport') === 'cli' && _.get(context, 'call.metadata.verbose', false);
   }
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {
     // use the local times
-    const start_date_lc = get(params, 'query.date.start', null);
-    const end_date_lc = get(params, 'query.date.end', null);
+    const start_date_lc = _.get(params, 'query.date.start', null);
+    const end_date_lc = _.get(params, 'query.date.end', null);
 
     // having both
     if (start_date_lc && end_date_lc) {

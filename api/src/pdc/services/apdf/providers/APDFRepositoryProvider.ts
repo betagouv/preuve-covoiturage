@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common/index.ts';
 import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { set } from 'lodash';
+import _ from 'lodash';
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
@@ -128,12 +128,12 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         if (!k.includes('slice_')) return p;
         const [, i, prop] = k.split('_');
         if (prop === 'start') {
-          set(p, `slices.${i}.slice.start`, row[k]);
+          _.set(p, `slices.${i}.slice.start`, row[k]);
         } else if (prop === 'end') {
           // Highest slice can return Infinity as boundary
-          set(p, `slices.${i}.slice.end`, row[k] === 'Infinity' ? undefined : row[k]);
+          _.set(p, `slices.${i}.slice.end`, row[k] === 'Infinity' ? undefined : row[k]);
         } else {
-          set(p, `slices.${i}.${prop}`, row[k]);
+          _.set(p, `slices.${i}.${prop}`, row[k]);
         }
         return p;
       },

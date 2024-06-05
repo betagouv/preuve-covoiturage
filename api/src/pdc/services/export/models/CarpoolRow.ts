@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import _ from 'lodash';
 
 export type AllowedComputedFields = {
   campaign_mode: string;
@@ -106,7 +106,7 @@ export class CarpoolRow {
     // TODO transform if needed (dates, etc...)
 
     // pick fields or return the whole data
-    return fields.length ? pick(this.data, fields) : this.data;
+    return fields.length ? _.pick(this.data, fields) : this.data;
   }
 
   // type makes sure the field exists in the root dataset to avoid having

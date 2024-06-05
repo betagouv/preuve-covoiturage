@@ -1,8 +1,10 @@
 export { PdfCertProvider } from './PdfCertProvider.ts';
-export {
+export type {
   PdfCertProviderInterface,
+} from './interfaces/PdfCertProviderInterfaceResolver.ts';
+export {
   PdfCertProviderInterfaceResolver,
 } from './interfaces/PdfCertProviderInterfaceResolver.ts';
 
-export type { PdfCertRow } from './Interfaces/PdfCertRow.ts';
-export type { PdfTemplateData } from './Interfaces/PdfTemplateData.ts';
+export type { PdfCertRow } from './interfaces/PdfCertRow.ts';
+export type { PdfTemplateData } from './interfaces/PdfTemplateData.ts';

@@ -1,6 +1,6 @@
 import { NotFoundException, provider } from '@ilos/common/index.ts';
 import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { map } from 'lodash';
+import _ from 'lodash';
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
@@ -140,7 +140,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
         WHERE certificate_id = ANY ($1::int[])
         ORDER BY certificate_id
       `,
-      values: [map(certs, '_id')],
+      values: [_.map(certs, '_id')],
     });
 
     // merge access_log as a table in each certificate

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import axios from 'axios';
 import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common/index.ts';
 
@@ -31,19 +31,19 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
       }
 
       const siren = siret.substring(0, 9);
-      const updated_at = get(data, 'etablissement.dateDernierTraitementEtablissement', null);
+      const updated_at = _.get(data, 'etablissement.dateDernierTraitementEtablissement', null);
 
       return {
         siret,
         siren,
-        nic: get(data, 'etablissement.nic', null),
-        legal_name: get(data, 'etablissement.uniteLegale.denominationUniteLegale', null),
-        company_naf_code: this.cleanNaf(get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null)),
+        nic: _.get(data, 'etablissement.nic', null),
+        legal_name: _.get(data, 'etablissement.uniteLegale.denominationUniteLegale', null),
+        company_naf_code: this.cleanNaf(_.get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null)),
         establishment_naf_code: this.cleanNaf(
-          get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null),
+          _.get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null),
         ),
-        legal_nature_code: get(data, 'etablissement.uniteLegale.categorieJuridiqueUniteLegale', null),
-        legal_nature_label: get(data, 'etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale', null),
+        legal_nature_code: _.get(data, 'etablissement.uniteLegale.categorieJuridiqueUniteLegale', null),
+        legal_nature_label: _.get(data, 'etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale', null),
         nonprofit_code: null,
         intra_vat: `FR${`0${((parseInt(siren, 10) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
         address: [
@@ -53,13 +53,13 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
           'etablissement.adresseEtablissement.codePostalEtablissement',
           'etablissement.adresseEtablissement.libelleCommuneEtablissement',
         ]
-          .map((k) => get(data, k, ''))
+          .map((k) => _.get(data, k, ''))
           .join(' '),
-        address_street: get(data, 'etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement', null),
-        address_postcode: get(data, 'etablissement.etablissement.adresseEtablissement.codePostalEtablissement', null),
-        address_cedex: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement', null),
-        address_city: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement', null),
-        headquarter: get(data, 'etablissement.etablissementSiege', null) === true,
+        address_street: _.get(data, 'etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement', null),
+        address_postcode: _.get(data, 'etablissement.etablissement.adresseEtablissement.codePostalEtablissement', null),
+        address_cedex: _.get(data, 'etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement', null),
+        address_city: _.get(data, 'etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement', null),
+        headquarter: _.get(data, 'etablissement.etablissementSiege', null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {

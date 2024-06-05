@@ -1,5 +1,5 @@
 import { Timezone } from '@pdc/providers/validator/index.ts';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { castUserStringToUTC, toTzString } from '../helpers/index.ts';
 import { SingleResultInterface as RawCampaignInterface } from '@shared/policy/list.contract.ts';
 
@@ -18,11 +18,11 @@ export class Campaign {
   constructor(protected raw: RawCampaignInterface) {
     this.start_at = new Date(raw.start_date).getTime();
     this.end_at = new Date(raw.end_date).getTime();
-    this.tz = get(raw, 'params.tz', 'Europe/Paris');
+    this.tz = _.get(raw, 'params.tz', 'Europe/Paris');
 
     // boosters are configured in the campaign timezone
     // convert them to UTC but keep the date only.
-    this.boosters_utc = new Set(get(raw, 'params.booster_dates', []).map((s: string) => this.tzToUTCDate(s)));
+    this.boosters_utc = new Set(_.get(raw, 'params.booster_dates', []).map((s: string) => this.tzToUTCDate(s)));
   }
 
   public get _id(): number {

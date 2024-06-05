@@ -1,4 +1,4 @@
-import { get, omit } from 'lodash';
+import _ from 'lodash';
 import http from 'node:http';
 import express from 'express';
 import { TransportInterface } from '@ilos/common/index.ts';
@@ -18,10 +18,10 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
     const sentry = this.kernel.getContainer().get(SentryProvider).getClient();
     sentry.setTag('transport', 'queue');
     sentry.setTag('status', 'failed');
-    sentry.setExtra('rpc_error', get(err, 'rpcError.data', null));
+    sentry.setExtra('rpc_error', _.get(err, 'rpcError.data', null));
     if (job) {
-      sentry.setExtra('job_payload', get(job, 'data.params.params', null));
-      sentry.setExtra('job', omit(job, ['data', 'stacktrace']));
+      sentry.setExtra('job_payload', _.get(job, 'data.params.params', null));
+      sentry.setExtra('job', _.omit(job, ['data', 'stacktrace']));
     }
     sentry.captureException(err);
   }

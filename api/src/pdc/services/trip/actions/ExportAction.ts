@@ -1,7 +1,7 @@
 import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common/index.ts';
 import { Action } from '@ilos/core/index.ts';
 import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware/index.ts';
-import { get } from 'lodash';
+import _ from 'lodash';
 import * as middlewareConfig from '../config/middlewares.ts';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';
@@ -39,8 +39,8 @@ export class ExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const email = get(context, 'call.user.email');
-    const fullname = `${get(context, 'call.user.firstname', '')} ${get(context, 'call.user.lastname', '')}`;
+    const email = _.get(context, 'call.user.email');
+    const fullname = `${_.get(context, 'call.user.firstname', '')} ${_.get(context, 'call.user.lastname', '')}`;
 
     if (!email) {
       throw new InvalidParamsException('Missing user email');
@@ -49,9 +49,9 @@ export class ExportAction extends Action {
     const tz = await this.tripRepository.validateTz(params.tz);
 
     // use || syntax here in case we get null value from date.{start|end},
-    // which will not use the default value of get()
-    const start = get(params, 'date.start') || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-    const end = get(params, 'date.end') || new Date();
+    // which will not use the default value of _.get()
+    const start = _.get(params, 'date.start') || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+    const end = _.get(params, 'date.end') || new Date();
 
     const buildParams: SendExportParamsInterface = {
       type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',

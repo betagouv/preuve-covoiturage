@@ -15,7 +15,7 @@
  * - wrong permissions
  */
 
-import { get } from 'lodash';
+import _ from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
@@ -125,7 +125,7 @@ test.skip('Application V1', async (t) => {
       })}`,
     );
   t.is(response.status, 200);
-  t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application v3 integer', async (t) => {
@@ -147,7 +147,7 @@ test.skip('Application v3 integer', async (t) => {
       })}`,
     );
   t.is(response.status, 200);
-  t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application v3 varchar (old)', async (t) => {
@@ -169,7 +169,7 @@ test.skip('Application v3 varchar (old)', async (t) => {
       })}`,
     );
   t.is(response.status, 200);
-  t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application Not Found', async (t) => {
@@ -191,7 +191,7 @@ test.skip('Application Not Found', async (t) => {
       })}`,
     );
   t.is(response.status, 401);
-  t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
+  t.is(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
 });
 
 test.skip('Wrong operator', async (t) => {
@@ -213,7 +213,7 @@ test.skip('Wrong operator', async (t) => {
       })}`,
     );
   t.is(response.status, 403);
-  t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
+  t.is(_.get(response, 'body.error.message', ''), 'Forbidden Error');
 });
 
 test.skip('Wrong permissions', async (t) => {
@@ -235,7 +235,7 @@ test.skip('Wrong permissions', async (t) => {
       })}`,
     );
   t.is(response.status, 403);
-  t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
+  t.is(_.get(response, 'body.error.message', ''), 'Forbidden Error');
 });
 
 test.skip('Deleted application', async (t) => {
@@ -265,7 +265,7 @@ test.skip('Deleted application', async (t) => {
       })}`,
     );
   t.is(response.status, 401);
-  t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
+  t.is(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
 
   // un-soft-delete the application
   // await t.context.db.tmpConnection.getClient().query({

@@ -1,21 +1,27 @@
-import { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
+import type { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
 import {
   TerritoryCodeEnum,
+} from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+import type {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
 } from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export {
-  CommonIncentiveInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
+} from './IncentiveInterface.ts';
+export type {
+  CommonIncentiveInterface,
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
 } from './IncentiveInterface.ts';
 export {
-  MetadataAccessorInterface,
   MetadataLifetime,
+} from './MetadataInterface.ts';
+export type {
+  MetadataAccessorInterface,
   MetadataRegistryInterface,
   MetadataStoreInterface,
   MetadataVariableDefinitionInterface,
@@ -25,7 +31,7 @@ export {
   StoredMetadataVariableInterface,
 } from './MetadataInterface.ts';
 export { OperatorsEnum } from './OperatorsEnum.ts';
-export {
+export type {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -35,8 +41,9 @@ export {
   StatelessContextInterface,
   StatelessRuleHelper,
 } from './PolicyInterface.ts';
-export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface };
-export { SliceInterface, BoundedSlices, UnboundedSlices };
+export type { TerritoryCodeEnum };
+export { TerritoryCodeInterface, TerritorySelectorsInterface };
+export type { SliceInterface, BoundedSlices, UnboundedSlices };
 
 export interface CarpoolMetaInterface {
   calc_distance?: number;

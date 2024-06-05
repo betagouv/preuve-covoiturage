@@ -7,7 +7,7 @@ import {
 } from '@pdc/providers/middleware/index.ts';
 import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@pdc/providers/pdfcert/index.ts';
 import { QrcodeProviderInterfaceResolver } from '@pdc/providers/qrcode/index.ts';
-import { get, set } from 'lodash';
+import _ from 'lodash';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/download.contract.ts';
 import { alias } from '@shared/certificate/download.schema.ts';
@@ -75,17 +75,17 @@ export class DownloadCertificateAction extends AbstractAction {
     };
 
     // set header content
-    if (get(params, 'meta.operator.content')) {
-      set(data, 'header.operator.content', get(params, 'meta.operator.content'));
+    if (_.get(params, 'meta.operator.content')) {
+      _.set(data, 'header.operator.content', _.get(params, 'meta.operator.content'));
     }
-    if (get(params, 'meta.identity.name')) {
-      set(data, 'header.identity.name', get(params, 'meta.identity.name'));
+    if (_.get(params, 'meta.identity.name')) {
+      _.set(data, 'header.identity.name', _.get(params, 'meta.identity.name'));
     }
-    if (get(params, 'meta.identity.content')) {
-      set(data, 'header.identity.content', get(params, 'meta.identity.content'));
+    if (_.get(params, 'meta.identity.content')) {
+      _.set(data, 'header.identity.content', _.get(params, 'meta.identity.content'));
     }
-    if (get(params, 'meta.notes')) {
-      set(data, 'header.notes', get(params, 'meta.notes'));
+    if (_.get(params, 'meta.notes')) {
+      _.set(data, 'header.notes', _.get(params, 'meta.notes'));
     }
 
     return {

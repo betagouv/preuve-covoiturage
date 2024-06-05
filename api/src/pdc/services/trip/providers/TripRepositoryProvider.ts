@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common/index.ts';
 import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { map } from 'lodash';
+import _ from 'lodash';
 import {
   ExportTripInterface,
   TripRepositoryInterface,
@@ -373,7 +373,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     let index = 0;
     while (index < data.length) {
       data[index] = result.rows[index];
-      data[index]['campaigns_id'] = [...new Set(map(result.rows[index]['campaigns_id'] || [], 'policy_id'))];
+      data[index]['campaigns_id'] = [...new Set(_.map(result.rows[index]['campaigns_id'] || [], 'policy_id'))];
       index += 1;
     }
 

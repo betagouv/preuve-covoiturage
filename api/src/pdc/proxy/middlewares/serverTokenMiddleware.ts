@@ -1,5 +1,5 @@
 import express from 'express';
-import { set, get } from 'lodash';
+import _ from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common/index.ts';
 import { TokenProviderInterfaceResolver } from '@pdc/providers/token/index.ts';
 
@@ -30,8 +30,8 @@ async function checkApplication(
     ),
   );
 
-  const app_uuid = get(app, 'result.uuid', '');
-  const owner_id = get(app, 'result.owner_id', null);
+  const app_uuid = _.get(app, 'result.uuid', '');
+  const owner_id = _.get(app, 'result.owner_id', null);
   const matchUuid = app_uuid === payload.a;
 
   // V1 tokens have a string owner_id. Check is done on UUID only
@@ -44,8 +44,8 @@ async function checkApplication(
 }
 
 async function logRequest(kernel: KernelInterface, request: Request, payload: TokenPayloadInterface): Promise<void> {
-  if (get(process.env, 'NODE_ENV', '') === 'production') return;
-  if (get(process.env, 'APP_DEBUG_REQUEST', 'false').trim().toLowerCase() !== 'true') {
+  if (_.get(process.env, 'NODE_ENV', '') === 'production') return;
+  if (_.get(process.env, 'APP_DEBUG_REQUEST', 'false').trim().toLowerCase() !== 'true') {
     return;
   }
 
@@ -66,13 +66,13 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     ),
   );
 
-  console.debug(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
+  console.debug(`logRequest [${_.get(request, 'headers.x-request-id', '')}] ${_.get(request, 'body.journey_id', '')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
   return async (req: Request, res: express.Response, next: Function): Promise<void> => {
     try {
-      const token = get(req, 'headers.authorization', null);
+      const token = _.get(req, 'headers.authorization', null);
       if (!token) {
         return next();
       }
@@ -114,7 +114,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      set(req, 'session.user', {
+      _.set(req, 'session.user', {
         application_id: app._id,
         operator_id: app.owner_id,
         permissions: app.permissions,

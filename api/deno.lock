@@ -73,6 +73,7 @@
       "npm:nodemailer@^6.9.13": "npm:nodemailer@6.9.13",
       "npm:nyc@^15.1.0": "npm:nyc@15.1.0",
       "npm:pdf-lib@^1.17.1": "npm:pdf-lib@1.17.1",
+      "npm:pg": "npm:pg@8.11.5",
       "npm:pg-cursor@^2.10.5": "npm:pg-cursor@2.10.5_pg@8.11.5",
       "npm:pg@^8.11.5": "npm:pg@8.11.5",
       "npm:pino-pretty@^11.0.0": "npm:pino-pretty@11.1.0",

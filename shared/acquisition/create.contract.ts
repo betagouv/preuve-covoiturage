@@ -1,4 +1,4 @@
-import { CreateJourneyDTO as PayloadV3 } from './common/interfaces/CreateJourneyDTO.ts';
+import type { CreateJourneyDTO as PayloadV3 } from './common/interfaces/CreateJourneyDTO.ts';
 
 interface Payload {
   api_version: string;

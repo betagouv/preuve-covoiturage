@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import { Action as AbstractAction, env } from '@ilos/core/index.ts';
 import { handler, ContextType, ParseErrorException, ConflictException, ValidatorInterfaceResolver } from '@ilos/common/index.ts';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
@@ -25,15 +25,15 @@ export class CreateJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const request_id = get(context, 'call.metadata.req.headers.x-request-id');
-    const operator_id = get(context, 'call.user.operator_id');
-    const application_id = get(context, 'call.user.application_id');
+    const request_id = _.get(context, 'call.metadata.req.headers.x-request-id');
+    const operator_id = _.get(context, 'call.user.operator_id');
+    const application_id = _.get(context, 'call.user.application_id');
     const { api_version: apiVersionString, ...payload } = params;
     const api_version = parseInt((apiVersionString || '').substring(1), 10);
     if (Number.isNaN(api_version)) {
       throw new ParseErrorException(`Api version should be a number ${apiVersionString}`);
     }
-    const operator_journey_id = api_version === 2 ? get(params, 'journey_id') : get(params, 'operator_journey_id');
+    const operator_journey_id = api_version === 2 ? _.get(params, 'journey_id') : _.get(params, 'operator_journey_id');
 
     // validate the payload manually to log rejected journeys
     try {
@@ -129,8 +129,8 @@ export class CreateJourneyAction extends AbstractAction {
         const v3Journey = journey as PayloadV3;
         await this.validator.validate(v3Journey, v3alias);
         const now = new Date();
-        const start = get(v3Journey, 'start.datetime');
-        const end = get(v3Journey, 'end.datetime');
+        const start = _.get(v3Journey, 'start.datetime');
+        const end = _.get(v3Journey, 'end.datetime');
         if (end > now || start > end) {
           throw new ParseErrorException('Journeys cannot happen in the future');
         }

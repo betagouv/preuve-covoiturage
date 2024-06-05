@@ -4,7 +4,7 @@ import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from '@pdc/providers/middleware/index.ts';
-import { omit } from 'lodash';
+import _ from 'lodash';
 import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper.ts';
 import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper.ts';
 import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper.ts';
@@ -74,7 +74,7 @@ export class CreateCertificateAction extends AbstractAction {
       data: {
         uuid: certificate.uuid,
         created_at: certificate.created_at,
-        meta: omit(certificate.meta, ['identity', 'operator']),
+        meta: _.omit(certificate.meta, ['identity', 'operator']),
       },
     };
   }

@@ -17,6 +17,8 @@ export {
   applyLimitsOnStatelessStage,
   LimitCounterTypeEnum,
   LimitTargetEnum,
+} from './limits.ts';
+export type {
   ConfiguredLimitInterface,
 } from './limits.ts';
 export { onDistanceRange, onDistanceRangeOrThrow } from './onDistanceRange.ts';

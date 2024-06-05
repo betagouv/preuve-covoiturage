@@ -1,18 +1,19 @@
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@ilos/common/index.ts';
 import { env } from '@ilos/core/index.ts';
-import { Pool, PoolConfig } from 'pg';
+import pg from 'pg';
+import type { PoolConfig } from 'pg';
 import Cursor, { CursorQueryConfig } from 'pg-cursor';
 import { URL } from 'node:url';
 
-export class PostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
+export class PostgresConnection implements ConnectionInterface<pg.Pool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
-  protected pool: Pool;
+  protected pool: pg.Pool;
 
   constructor(protected config: PoolConfig) {
     this.pgUrl = config.connectionString || env.or_fail('APP_POSTGRES_URL');
     const timeout = env.or_int('APP_POSTGRES_TIMEOUT', 60000);
 
-    this.pool = new Pool({
+    this.pool = new pg.Pool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
       statement_timeout: timeout,
       query_timeout: timeout,
@@ -38,7 +39,7 @@ export class PostgresConnection implements ConnectionInterface<Pool>, InitHookIn
     await this.pool.end();
   }
 
-  getClient(): Pool {
+  getClient(): pg.Pool {
     return this.pool;
   }
 

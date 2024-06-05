@@ -1,6 +1,6 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
 import { APDFNameProvider } from '@pdc/providers/storage/index.ts';
-import { stream } from 'exceljs';
+import excel from 'exceljs';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
 import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface.ts';
 import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
@@ -19,8 +19,8 @@ export class BuildExcel {
     private apdfNameProvider: APDFNameProvider,
   ) {}
 
-  public static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
-    return new stream.xlsx.WorkbookWriter({ filename: filepath, useStyles: true });
+  public static initWorkbookWriter(filepath: string): excel.stream.xlsx.WorkbookWriter {
+    return new excel.stream.xlsx.WorkbookWriter({ filename: filepath, useStyles: true });
   }
 
   async call(

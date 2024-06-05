@@ -1,2 +1,3 @@
 export { QrcodeProvider } from './QrcodeProvider.ts';
-export type { QrcodeProviderInterface, QrcodeProviderInterfaceResolver } from './interfaces/QrcodeProviderInterfaceResolver.ts';
+export { QrcodeProviderInterfaceResolver } from './interfaces/QrcodeProviderInterfaceResolver.ts';
+export type { QrcodeProviderInterface } from './interfaces/QrcodeProviderInterfaceResolver.ts';

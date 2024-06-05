@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 import { ConfiguredMiddleware, UnconfiguredMiddleware } from '@pdc/providers/middleware/index.ts';
 import {
   middleware,
@@ -23,8 +23,8 @@ export class ChallengeTokenMiddleware implements MiddlewareInterface<ChallengeTo
     options: ChallengeTokenMiddlewareParams = { tokenPath: 'token', emailPath: 'email' },
   ): Promise<ResultType> {
     const { tokenPath, emailPath } = options;
-    const token = get(params, tokenPath);
-    const email = get(params, emailPath);
+    const token = _.get(params, tokenPath);
+    const email = _.get(params, emailPath);
 
     if (!token || !email) {
       throw new InvalidParamsException('Missing data');

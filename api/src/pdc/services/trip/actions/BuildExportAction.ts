@@ -4,7 +4,7 @@ import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
 import { BucketName, S3StorageProvider } from '@pdc/providers/storage/index.ts';
 import AdmZip from 'adm-zip';
 import fs from 'node:fs';
-import { get } from 'lodash';
+import _ from 'lodash';
 import os from 'node:os';
 import path from 'node:path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates.ts';
@@ -223,7 +223,7 @@ export class BuildExportAction extends Action {
   };
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const type = get(params, 'type', 'export');
+    const type = _.get(params, 'type', 'export');
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     const isOpendata: boolean = this.isOpendata(type);
     let excluded_territories: TerritoryTripsInterface[];

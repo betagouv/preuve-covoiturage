@@ -1,4 +1,4 @@
-export type * from './Interfaces/index.js';
+export type * from './interfaces/index.js';
 export * from './buildMigrator.js';
 export * from './common/index.js';
 export * from './Migrator.js';

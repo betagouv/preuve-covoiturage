@@ -6,7 +6,7 @@ import {
   signature as listCampaignsSignature,
 } from '@shared/policy/list.contract.ts';
 import { fromZonedTime } from 'date-fns-tz';
-import { set } from 'lodash';
+import _ from 'lodash';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';
 
 interface Options {
@@ -67,16 +67,16 @@ export class ExportCommand implements CommandInterface {
       call: { user: { permissions: ['registry.apdf.export'] }, metadata: { verbose: options.verbose } },
     };
 
-    if (options.start) set(params, 'query.date.start', fromZonedTime(options.start, options.tz).toISOString());
-    if (options.end) set(params, 'query.date.end', fromZonedTime(options.end, options.tz).toISOString());
-    if (options.operators?.length) set(params, 'query.operator_id', options.operators);
+    if (options.start) _.set(params, 'query.date.start', fromZonedTime(options.start, options.tz).toISOString());
+    if (options.end) _.set(params, 'query.date.end', fromZonedTime(options.end, options.tz).toISOString());
+    if (options.operators?.length) _.set(params, 'query.operator_id', options.operators);
 
     // fetch active campaigns at the given date
     const { start_date, end_date } = castExportParams(params as ExportParams);
     const campaign_list = options.campaigns.length
       ? options.campaigns
       : await this.findActiveCampaigns(start_date.toISOString());
-    set(params, 'query.campaign_id', campaign_list);
+    _.set(params, 'query.campaign_id', campaign_list);
 
     // eslint-disable-next-line max-len,prettier/prettier
     console.info(`Running [${exportSignature}] from ${start_date.toISOString()} to ${end_date.toISOString()} for campaigns: ${campaign_list.join(', ')}`);

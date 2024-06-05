@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import _ from 'lodash';
 
 import {
   middleware,
@@ -28,12 +28,12 @@ export class ChallengePasswordMiddleware implements MiddlewareInterface<Challeng
       throw new InvalidParamsException('Misconfigured middleware');
     }
 
-    const password = get(params, passwordPath);
+    const password = _.get(params, passwordPath);
 
     if (idPath) {
-      await this.challengeById(password, get(params, idPath));
+      await this.challengeById(password, _.get(params, idPath));
     } else if (emailPath) {
-      await this.challengeByEmail(password, get(params, emailPath));
+      await this.challengeByEmail(password, _.get(params, emailPath));
     }
 
     return next(params, context);

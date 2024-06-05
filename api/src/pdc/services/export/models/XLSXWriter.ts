@@ -1,5 +1,5 @@
 import AdmZip from 'adm-zip';
-import { AddWorksheetOptions, Worksheet, stream } from 'exceljs';
+import excel from 'exceljs';
 import os from 'node:os';
 import path from 'node:path';
 import { ExportTarget } from './Export.ts';
@@ -22,18 +22,18 @@ export type ComputedProcessor = {
 export type Options = {
   compress: boolean;
   dataSheetName: string;
-  dataSheetOptions: Partial<AddWorksheetOptions>;
+  dataSheetOptions: Partial<excel.AddWorksheetOptions>;
   helpSheetName: string;
-  helpSheetOptions: Partial<AddWorksheetOptions>;
+  helpSheetOptions: Partial<excel.AddWorksheetOptions>;
   fields: Partial<Fields>;
   computed: ComputedProcessors;
   datasources: Datasources;
 };
 
 export class XLSXWriter {
-  protected workbook: stream.xlsx.WorkbookWriter;
-  protected dataSheet: Worksheet;
-  protected helpSheet: Worksheet;
+  protected workbook: excel.stream.xlsx.WorkbookWriter;
+  protected dataSheet: excel.Worksheet;
+  protected helpSheet: excel.Worksheet;
   protected workbookExt = 'xlsx';
   protected archiveExt = 'zip';
   protected folder: string;
@@ -78,7 +78,7 @@ export class XLSXWriter {
   // TODO create the workbook and the worksheets
   public async create(): Promise<XLSXWriter> {
     // create the Excel file
-    this.workbook = new stream.xlsx.WorkbookWriter({ filename: this.workbookPath, useStyles: true });
+    this.workbook = new excel.stream.xlsx.WorkbookWriter({ filename: this.workbookPath, useStyles: true });
 
     // Add the data sheet and configure the columns
     this.dataSheet = this.workbook.addWorksheet(this.options.dataSheetName, this.options.dataSheetOptions);
