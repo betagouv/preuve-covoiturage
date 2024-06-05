@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export function catchErrors(
   closeHandlers: Array<() => Promise<any>> = [],
   {
@@ -18,7 +20,7 @@ export function catchErrors(
       setTimeout(() => {
         console.error('could not finish in time, forcefully exiting');
         process.exit(1);
-      }, timeout * 1000).unref();
+      }, timeout * 1000);
     }
 
     for (const handler of closeHandlers) {
@@ -43,7 +45,7 @@ export function catchErrors(
       setTimeout(() => {
         console.error('could not finish in time, forcefully exiting');
         process.exit(1);
-      }, timeout * 1000).unref();
+      }, timeout * 1000);
     }
 
     for (const handler of closeHandlers) {

@@ -83,6 +83,7 @@
       "npm:rate-limit-redis@^4.2.0": "npm:rate-limit-redis@4.2.0_express-rate-limit@7.2.0__express@4.19.2_express@4.19.2",
       "npm:reflect-metadata@^0.2.2": "npm:reflect-metadata@0.2.2",
       "npm:sinon@^18.0.0": "npm:sinon@18.0.0",
+      "npm:stream-json": "npm:stream-json@1.8.0",
       "npm:stream-json@^1.8.0": "npm:stream-json@1.8.0",
       "npm:supertest@^7.0.0": "npm:supertest@7.0.0",
       "npm:typescript@^5.4.4": "npm:typescript@5.4.5",

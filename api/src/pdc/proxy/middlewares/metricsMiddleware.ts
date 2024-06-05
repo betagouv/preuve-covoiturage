@@ -1,6 +1,7 @@
 import { hostname as osHostname } from 'node:os';
 import { NextFunction, Request, Response } from 'express';
 import { rateLimiter } from './rateLimiter.ts';
+import process from 'node:process';
 
 export function metricsMiddleware(endpoint: string) {
   const rl = rateLimiter({ windowMs: 60 * 1000 * 5, max: 100 }, `rate-${endpoint}-${osHostname()}`);

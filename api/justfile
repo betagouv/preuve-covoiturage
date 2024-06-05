@@ -126,7 +126,7 @@ api *command:
   npm run {{ command }}
 
 deno *command:
-  deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys src/main.ts
+  deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys --allow-run src/main.ts {{ command }}
 
 # Start the HTTP API server on port 8080
 serve:

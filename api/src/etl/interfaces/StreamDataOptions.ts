@@ -1,7 +1,7 @@
-import { Options as CsvOptions } from 'csv-parse';
-import type { FilterOptions as JsonOptions } from 'stream-json/filters/FilterBase.ts';
-export { CsvOptions };
-export { JsonOptions };
+import type { Options as CsvOptions } from 'csv-parse';
+import type { FilterOptions as JsonOptions } from 'stream-json/filters/FilterBase.js';
+export type { CsvOptions };
+export type { JsonOptions };
 
 export interface XlsxOptions {
   name?: string;

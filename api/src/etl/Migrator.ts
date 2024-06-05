@@ -11,9 +11,9 @@ import {
   StaticAbstractDataset,
 } from './interfaces/index.ts';
 import { createStateManager } from './helpers/index.ts';
-import { EventEmitter } from 'node:stream';
+import Stream from 'node:stream';
 
-export class Migrator extends EventEmitter {
+export class Migrator extends Stream.EventEmitter {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();
 
   constructor(

@@ -5,6 +5,9 @@ import {
   InitHookInterface,
 } from '@ilos/common/index.ts';
 import { Redis } from 'ioredis';
+// FIXME
+import process from 'node:process'
+window.process = process
 
 export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookInterface, InitHookInterface {
   protected client: Redis;

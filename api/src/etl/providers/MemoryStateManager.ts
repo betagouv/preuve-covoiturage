@@ -1,4 +1,5 @@
-import { StateManagerInterface, StaticMigrable, State, flow } from '../interfaces/index.ts';
+import type { StateManagerInterface, StaticMigrable } from '../interfaces/index.ts';
+import { State, flow } from '../interfaces/index.ts';
 
 export class MemoryStateManager implements StateManagerInterface {
   protected migrableOrder: Array<StaticMigrable> = [];

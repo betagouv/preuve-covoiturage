@@ -858,6 +858,7 @@ export class HttpTransport implements TransportInterface {
    * Files must be copied to dist/public folder
    */
   private registerStaticFolder() {
+    const __dirname = new URL('.', import.meta.url).pathname;
     console.debug(`registerStaticFolder: ${path.join(__dirname, 'public/.well-known')}`);
     this.app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known')));
   }
@@ -930,8 +931,8 @@ export class HttpTransport implements TransportInterface {
     this.server = this.app.listen(port, () =>
       console.info(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
     );
-
-    this.server.setTimeout(timeout);
+    // FIXME
+    // this.server.setTimeout(timeout);
   }
 
   /**

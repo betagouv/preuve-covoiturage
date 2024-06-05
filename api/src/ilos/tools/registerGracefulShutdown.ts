@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export function registerGracefulShutdown(
   // https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters
   this: any,
@@ -16,7 +18,7 @@ export function registerGracefulShutdown(
       setTimeout(() => {
         console.error('could not finish in time, forcefully exiting');
         process.exit(1);
-      }, timeout * 1000).unref();
+      }, timeout * 1000);
     }
 
     // release resources

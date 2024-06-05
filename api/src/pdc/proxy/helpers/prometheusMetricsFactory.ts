@@ -4,7 +4,7 @@ import * as promClient from 'prom-client';
 
 export function prometheusMetricsFactory({
   client = promClient,
-  collectDefaultMetrics = true,
+  collectDefaultMetrics = false,
   defaultLabels = {},
 } = {}): RequestHandler {
   if (collectDefaultMetrics) {
