@@ -1,6 +1,6 @@
-import { Console } from 'console';
-import { LoggerConfigInterface } from '../interfaces/index.js';
-import { config as defaultConfig } from '../config.js';
+import { Console } from 'node:console';
+import { LoggerConfigInterface } from '../interfaces/index.ts';
+import { config as defaultConfig } from '../config.ts';
 
 export function createLogger(config: LoggerConfigInterface = defaultConfig.logger): Console {
   const logger = new Console({ stdout: process.stdout, stderr: process.stderr });

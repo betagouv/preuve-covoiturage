@@ -1,4 +1,4 @@
-import { AbstractDatafunction } from '../common/AbstractDatafunction.js';
+import { AbstractDatafunction } from '../common/AbstractDatafunction.ts';
 
 export class CreateGetLatestByCodeFunction extends AbstractDatafunction {
   static uuid = 'create_get_latest_by_code_function';

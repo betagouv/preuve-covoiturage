@@ -1,30 +1,30 @@
-import {
+import type {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
 } from '@shared/territory/create.contract.ts';
 
-import {
+import type {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
 } from '@shared/territory/list.contract.ts';
 
-import {
+import type {
   ParamsInterface as FindParamsInterface,
   ResultInterface as FindResultInterface,
 } from '@shared/territory/find.contract.ts';
 
-import {
+import type {
   ParamsInterface as UpdateParamsInterface,
   ResultInterface as UpdateResultInterface,
 } from '@shared/territory/update.contract.ts';
 
-import {
+import type {
   ParamsInterface as PatchContactsParamsInterface,
   ResultInterface as PatchContactsResultInterface,
 } from '@shared/territory/patchContacts.contract.ts';
-import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+import type { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
-export {
+export type {
   CreateParamsInterface,
   CreateResultInterface,
   ListParamsInterface,

@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
-import { JsonOptions } from '../../interfaces/index.js';
-import { withParser } from 'stream-json/filters/Pick.js';
-import { streamArray } from 'stream-json/streamers/StreamArray.js';
+import type { JsonOptions } from '../../interfaces/index.ts';
+import { withParser } from 'stream-json/filters/Pick.ts';
+import { streamArray } from 'stream-json/streamers/StreamArray.ts';
 
 export async function* streamJson<T>(filepath: string, sheetOptions: JsonOptions, chunkSize = 100): AsyncIterable<T[]> {
   const pipe = createReadStream(filepath, { encoding: 'utf-8' }).pipe(withParser(sheetOptions)).pipe(streamArray());

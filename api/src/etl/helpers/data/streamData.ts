@@ -1,7 +1,7 @@
-import { FileTypeEnum, XlsxOptions, CsvOptions, JsonOptions, StreamDataOptions } from '../../interfaces/index.js';
-import { streamJson } from './streamJson.js';
-import { streamXlsx } from './streamXlsx.js';
-import { streamCsv } from './streamCsv.js';
+import { FileTypeEnum, XlsxOptions, CsvOptions, JsonOptions, StreamDataOptions } from '../../interfaces/index.ts';
+import { streamJson } from './streamJson.ts';
+import { streamXlsx } from './streamXlsx.ts';
+import { streamCsv } from './streamCsv.ts';
 
 export function streamData<T>(
   filepath: string,

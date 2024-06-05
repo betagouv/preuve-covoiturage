@@ -1,4 +1,4 @@
-import { AbstractDatafunction } from '../common/AbstractDatafunction.js';
+import { AbstractDatafunction } from '../common/AbstractDatafunction.ts';
 
 export class CreateGetByPointFunction extends AbstractDatafunction {
   static uuid = 'create_get_by_point_function';

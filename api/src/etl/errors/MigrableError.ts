@@ -1,4 +1,4 @@
-import { DatasetInterface, StaticAbstractDataset } from '../interfaces/index.js';
+import { DatasetInterface, StaticAbstractDataset } from '../interfaces/index.ts';
 
 export class MigrableError extends Error {
   constructor(migrable: DatasetInterface, message: string) {

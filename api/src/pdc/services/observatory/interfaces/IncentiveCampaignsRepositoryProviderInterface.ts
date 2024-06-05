@@ -1,11 +1,9 @@
-import {
+import type {
   ParamsInterface as CampaignsParamsInterface,
   ResultInterface as CampaignsResultInterface,
 } from '@shared/observatory/incentiveCampaigns/campaigns.contract.ts';
 
-
-
-export {
+export type {
   CampaignsParamsInterface,
   CampaignsResultInterface,
 };

@@ -1,10 +1,10 @@
-import {
+import type {
   ParamsInterface as LocationParamsInterface,
   ResultInterface as LocationResultInterface,
   SqlResultInterface as LocationSqlResultInterface,
 } from '@shared/observatory/location/location.contract.ts';
 
-export { LocationParamsInterface, LocationResultInterface, LocationSqlResultInterface };
+export type { LocationParamsInterface, LocationResultInterface, LocationSqlResultInterface };
 
 export interface LocationRepositoryInterface {
   getLocation(params: LocationParamsInterface): Promise<LocationResultInterface>;

@@ -1,5 +1,5 @@
 import { extractFull } from 'node-7z';
-import { config } from '../../config.js';
+import { config } from '../../config.ts';
 
 export function un7zFile(filepath: string, extractPath: string): Promise<void> {
   let sevenZipOptions;

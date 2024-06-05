@@ -1,4 +1,4 @@
-import { AbstractDatastructure } from '../common/AbstractDatastructure.js';
+import { AbstractDatastructure } from '../common/AbstractDatastructure.ts';
 
 export class CreateGeoTable extends AbstractDatastructure {
   static uuid = 'create_geo_table';

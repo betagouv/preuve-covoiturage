@@ -1,4 +1,4 @@
-import { AbstractDatatreatment } from '../common/AbstractDatatreatment.js';
+import { AbstractDatatreatment } from '../common/AbstractDatatreatment.ts';
 
 export class PopulateGeoCentroid extends AbstractDatatreatment {
   static uuid = 'populate_geo_centroid';

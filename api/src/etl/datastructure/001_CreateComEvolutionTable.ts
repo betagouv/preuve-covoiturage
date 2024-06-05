@@ -1,4 +1,4 @@
-import { AbstractDatastructure } from '../common/AbstractDatastructure.js';
+import { AbstractDatastructure } from '../common/AbstractDatastructure.ts';
 
 export class CreateComEvolutionTable extends AbstractDatastructure {
   static uuid = 'create_com_evolution_table';

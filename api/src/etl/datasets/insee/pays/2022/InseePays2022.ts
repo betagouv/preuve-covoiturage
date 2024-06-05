@@ -1,7 +1,7 @@
-import { EurostatCountries2020 } from '../../../eurostat/countries/2020/EurostatCountries2020.js';
-import { EurostatSimplifiedCountries2020 } from '../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.js';
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.js';
+import { EurostatCountries2020 } from '../../../eurostat/countries/2020/EurostatCountries2020.ts';
+import { EurostatSimplifiedCountries2020 } from '../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.ts';
 
 export class InseePays2022 extends AbstractDataset {
   static producer = 'insee';

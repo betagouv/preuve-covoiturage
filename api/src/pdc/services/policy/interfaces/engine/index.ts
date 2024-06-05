@@ -41,7 +41,7 @@ export type {
   StatelessContextInterface,
   StatelessRuleHelper,
 } from './PolicyInterface.ts';
-export type { TerritoryCodeEnum };
+export { TerritoryCodeEnum };
 export { TerritoryCodeInterface, TerritorySelectorsInterface };
 export type { SliceInterface, BoundedSlices, UnboundedSlices };
 

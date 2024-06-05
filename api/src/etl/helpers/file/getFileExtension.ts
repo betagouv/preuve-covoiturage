@@ -1,4 +1,4 @@
-import { FileTypeEnum } from '../../interfaces/index.js';
+import { FileTypeEnum } from '../../interfaces/index.ts';
 
 export function getFileExtensions(filetype: FileTypeEnum): string[] {
   switch (filetype) {
@@ -9,7 +9,7 @@ export function getFileExtensions(filetype: FileTypeEnum): string[] {
     case FileTypeEnum.Xls:
       return ['.xls', '.xlsx'];
     case FileTypeEnum.Geojson:
-      return ['.json', '.geojson'];
+      return ['.tson', '.geojson'];
     case FileTypeEnum.Shp:
       return ['.shp'];
     default:

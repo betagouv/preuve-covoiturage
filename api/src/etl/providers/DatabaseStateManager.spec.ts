@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import { Pool } from 'pg';
-import { StaticMigrable } from '../interfaces/index.js';
-import { createPool } from '../helpers/index.js';
-import { DatabaseStateManager as StateManager } from './DatabaseStateManager.js';
+import { StaticMigrable } from '../interfaces/index.ts';
+import { createPool } from '../helpers/index.ts';
+import { DatabaseStateManager as StateManager } from './DatabaseStateManager.ts';
 
 interface TestContext {
   connection: Pool;

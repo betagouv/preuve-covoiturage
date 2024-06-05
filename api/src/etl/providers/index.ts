@@ -1,3 +1,3 @@
-export { DatabaseStateManager } from './DatabaseStateManager.js';
-export { FileManager } from './FileManager.js';
-export { MemoryStateManager } from './MemoryStateManager.js';
+export { DatabaseStateManager } from './DatabaseStateManager.ts';
+export { FileManager } from './FileManager.ts';
+export { MemoryStateManager } from './MemoryStateManager.ts';

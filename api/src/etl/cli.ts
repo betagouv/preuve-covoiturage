@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command, InvalidArgumentError } from 'commander';
 import { Console } from 'console';
-import { buildMigrator, defaultConfig, Migrator, PartialConfigInterface, State } from './index.js';
-import { hash } from './helpers/index.js';
+import { buildMigrator, defaultConfig, Migrator, PartialConfigInterface, State } from './index.ts';
+import { hash } from './helpers/index.ts';
 
 interface Options {
   url: string;

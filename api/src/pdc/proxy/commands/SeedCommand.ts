@@ -1,5 +1,6 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
 import { Migrator } from '@pdc/providers/seed/index.ts';
+import process from 'node:process';
 
 @command()
 export class SeedCommand implements CommandInterface {

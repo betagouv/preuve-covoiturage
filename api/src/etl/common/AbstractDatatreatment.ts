@@ -5,9 +5,9 @@ import {
   StaticAbstractDataset,
   StateManagerInterface,
   State,
-} from '../interfaces/index.js';
+} from '../interfaces/index.ts';
 import { Pool } from 'pg';
-import { SqlError, ValidationError } from '../errors/index.js';
+import { SqlError, ValidationError } from '../errors/index.ts';
 
 export abstract class AbstractDatatreatment implements DatasetInterface {
   static skipStatePersistence = true;

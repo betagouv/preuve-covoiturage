@@ -1,6 +1,6 @@
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
 import { SqlError } from '../../../../errors/SqlError.ts';
-import { ArchiveFileTypeEnum } from '../../../../interfaces/index.js';
+import { ArchiveFileTypeEnum } from '../../../../interfaces/index.ts';
 
 export abstract class InseePerimDataset extends AbstractDataset {
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.Zip;

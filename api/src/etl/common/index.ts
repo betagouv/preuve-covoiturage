@@ -1,2 +1,2 @@
-export { AbstractDataset } from './AbstractDataset.js';
-export { AbstractDatastructure } from './AbstractDatastructure.js';
+export { AbstractDataset } from './AbstractDataset.ts';
+export { AbstractDatastructure } from './AbstractDatastructure.ts';

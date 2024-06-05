@@ -9,9 +9,9 @@ import {
   DatasetInterface,
   flow,
   StaticAbstractDataset,
-} from './interfaces/index.js';
-import { createStateManager } from './helpers/index.js';
-import { EventEmitter } from 'stream';
+} from './interfaces/index.ts';
+import { createStateManager } from './helpers/index.ts';
+import { EventEmitter } from 'node:stream';
 
 export class Migrator extends EventEmitter {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();

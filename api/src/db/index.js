@@ -1,5 +1,5 @@
-const DBMigrate = require('db-migrate');
-const GeoMigrator = require('../etl/index.js');
+import DBMigrate from 'db-migrate';
+import GeoMigrator from '../etl/index.ts';
 
 const instances = new Map();
 
@@ -57,4 +57,4 @@ async function dropDatabase(config, name) {
     return instance.dropDatabase(name);
 }
 
-module.exports = { migrate, createDatabase, dropDatabase };
+export { migrate, createDatabase, dropDatabase };

@@ -1,7 +1,7 @@
 import os from 'node:os';
 import { readFileSync } from 'node:fs';
-import { datasets, datastructures } from './datasets.js';
-import { ConfigInterface } from './interfaces/ConfigInterface.js';
+import { datasets, datastructures } from './datasets.ts';
+import { ConfigInterface } from './interfaces/ConfigInterface.ts';
 
 function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   const asVarEnvName = baseEnvKey;

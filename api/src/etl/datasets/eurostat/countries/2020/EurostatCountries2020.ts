@@ -1,6 +1,6 @@
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { streamData } from '../../../../helpers/index.js';
-import { ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.js';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { streamData } from '../../../../helpers/index.ts';
+import { ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.ts';
 
 export class EurostatCountries2020 extends AbstractDataset {
   static producer = 'eurostat';

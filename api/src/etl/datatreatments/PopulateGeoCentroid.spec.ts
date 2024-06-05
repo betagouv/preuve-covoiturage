@@ -1,12 +1,12 @@
 import anyTest, { TestFn } from 'ava';
 import { Pool } from 'pg';
-import { MemoryStateManager } from '../providers/MemoryStateManager.js';
-import { AbstractDatatreatment } from '../common/AbstractDatatreatment.js';
-import { createPool, createFileManager } from '../helpers/index.js';
-import { PopulateGeoCentroid as Dataset } from './PopulateGeoCentroid.js';
-import { Migrator } from '../Migrator.js';
-import { CreateGeoTable } from '../datastructure/000_CreateGeoTable.js';
-import { CreateGeoCentroidTable } from '../datastructure/002_CreateGeoCentroidTable.js';
+import { MemoryStateManager } from '../providers/MemoryStateManager.ts';
+import { AbstractDatatreatment } from '../common/AbstractDatatreatment.ts';
+import { createPool, createFileManager } from '../helpers/index.ts';
+import { PopulateGeoCentroid as Dataset } from './PopulateGeoCentroid.ts';
+import { Migrator } from '../Migrator.ts';
+import { CreateGeoTable } from '../datastructure/000_CreateGeoTable.ts';
+import { CreateGeoCentroidTable } from '../datastructure/002_CreateGeoCentroidTable.ts';
 
 interface TestContext {
   migrator: Migrator;

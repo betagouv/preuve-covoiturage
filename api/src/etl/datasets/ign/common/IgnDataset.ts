@@ -1,8 +1,8 @@
-import { AbstractDataset } from '../../../common/AbstractDataset.js';
+import { AbstractDataset } from '../../../common/AbstractDataset.ts';
 import { SqlError } from '../../../errors/SqlError.ts';
 import { TransformError } from '../../../errors/TransformError.ts';
-import { streamData } from '../../../helpers/index.js';
-import { FileTypeEnum, ArchiveFileTypeEnum } from '../../../interfaces/index.js';
+import { streamData } from '../../../helpers/index.ts';
+import { FileTypeEnum, ArchiveFileTypeEnum } from '../../../interfaces/index.ts';
 
 export interface TransformationParamsInterface {
   key: string;

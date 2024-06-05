@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { access, mkdir } from 'fs/promises';
-import { Readable } from 'stream';
+import { access, mkdir } from 'node:fs/promises';
+import { Readable } from 'node:stream';
 import mapshaper from 'mapshaper';
 import { basename, join } from 'node:path';
 import {
@@ -12,9 +12,9 @@ import {
   un7zFile,
   getAllFiles,
   getFileExtensions,
-} from '../helpers/index.js';
+} from '../helpers/index.ts';
 
-import { FileManagerInterface, FileManagerConfigInterface, ArchiveFileTypeEnum, FileTypeEnum } from '../interfaces/index.js';
+import { FileManagerInterface, FileManagerConfigInterface, ArchiveFileTypeEnum, FileTypeEnum } from '../interfaces/index.ts';
 
 export class FileManager implements FileManagerInterface {
   readonly basePath: string;

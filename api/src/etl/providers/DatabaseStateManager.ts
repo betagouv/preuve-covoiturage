@@ -5,8 +5,8 @@ import {
   AppConfigInterface,
   StaticMigrable,
   State,
-} from '../interfaces/index.js';
-import { MemoryStateManager } from './MemoryStateManager.js';
+} from '../interfaces/index.ts';
+import { MemoryStateManager } from './MemoryStateManager.ts';
 
 export class DatabaseStateManager implements DatabaseStateManagerInterface {
   readonly table: string = 'dataset_migration';

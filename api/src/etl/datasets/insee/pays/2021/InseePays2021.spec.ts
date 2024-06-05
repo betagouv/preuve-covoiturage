@@ -1,13 +1,13 @@
 import anyTest, { TestFn } from 'ava';
 import { access } from 'fs/promises';
 import { Pool } from 'pg';
-import { MemoryStateManager } from '../../../../providers/MemoryStateManager.js';
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { createPool, createFileManager } from '../../../../helpers/index.js';
-import { InseePays2021 as Dataset } from './InseePays2021.js';
-import { Migrator } from '../../../../Migrator.js';
-import { CreateGeoTable } from '../../../../datastructure/000_CreateGeoTable.js';
-import { CreateComEvolutionTable } from '../../../../datastructure/001_CreateComEvolutionTable.js';
+import { MemoryStateManager } from '../../../../providers/MemoryStateManager.ts';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { createPool, createFileManager } from '../../../../helpers/index.ts';
+import { InseePays2021 as Dataset } from './InseePays2021.ts';
+import { Migrator } from '../../../../Migrator.ts';
+import { CreateGeoTable } from '../../../../datastructure/000_CreateGeoTable.ts';
+import { CreateComEvolutionTable } from '../../../../datastructure/001_CreateComEvolutionTable.ts';
 
 interface TestContext {
   migrator: Migrator;

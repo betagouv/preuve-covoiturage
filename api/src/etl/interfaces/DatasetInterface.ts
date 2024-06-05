@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { FileManagerInterface, StateManagerInterface } from './index.js';
+import { FileManagerInterface, StateManagerInterface } from './index.ts';
 
 export interface StaticMigrable {
   readonly uuid: string;

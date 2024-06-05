@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+} from '../../interfaces/index.ts';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
 import {
   LimitTargetEnum,
   isOperatorClassOrThrow,
@@ -15,10 +15,10 @@ import {
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
-} from '../helpers';
-import { watchForPersonMaxTripByDay } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './SMTC2024Passenger.html';
+} from '../helpers/index.ts';
+import { watchForPersonMaxTripByDay } from '../helpers/limits.ts';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
+import { description } from './SMTC2024Passenger.html.ts';
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
 // aom = 256300120

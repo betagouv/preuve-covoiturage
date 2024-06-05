@@ -45,7 +45,7 @@ Vous pouvez étendre `AbstractDatatreatment` en créant de nouvelles classes pou
 
 ## Jouer tous les datasets
 ```typescript=
-import { datasets, StaticMigrable } from '@betagouvpdc/perimeters.js';
+import { datasets, StaticMigrable } from '@betagouvpdc/perimeters.ts';
 
 async function main(): Promise<void> {
     const allDatasets:Set<StaticMigrable> = datasets.datasets;
@@ -57,8 +57,8 @@ async function main(): Promise<void> {
 ## Personnaliser la liste des datasets
 Attention, les datasets créant les tables finales doivent se positionner avant les datasets de tables intermédiaires les alimentants.
 ```typescript=
-import { StaticMigrable } from '@betagouvpdc/perimeters.js';
-import { CreateGeoTable } from '@betagouvpdc/perimeters/dist/datastructure/000_CreateGeoTable.js';
+import { StaticMigrable } from '@betagouvpdc/perimeters.ts';
+import { CreateGeoTable } from '@betagouvpdc/perimeters/dist/datastructure/000_CreateGeoTable.ts';
 
 async function main(): Promise<void> {
     const allDatasets:Set<StaticMigrable> = new Set([
@@ -73,7 +73,7 @@ async function main(): Promise<void> {
 Pour faciliter l'implémentation, il existe deux classes abstraites qui gèrent la plupart des cas, vous pouvez les étendre de la façon suivante :
 ### Pour la classe abstraite `AbstractDataset` :
 ```typescript=
-import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum } from '@betagouvpdc/evolution-geo.js';
+import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum } from '@betagouvpdc/evolution-geo.ts';
 
 export class MyDataset extends AbstractDataset {
   // nom du producteur de la donnée
@@ -135,7 +135,7 @@ export class MyDataset extends AbstractDataset {
 
 ### Pour la classe abstraite `AbstractDatastructure` :
 ```typescript=
-import { AbstractDatastructure } from '@betagouvpdc/evolution-geo.js';
+import { AbstractDatastructure } from '@betagouvpdc/evolution-geo.ts';
 export class MyDataset extends AbstractDatastructure {
   // identifiant unique de la table pour l'orchestrateur
   static uuid = 'create_my_table';
@@ -188,7 +188,7 @@ export class MyDataset extends AbstractDatastructure {
 ### Cas d'un dataset avec des données geographiques
 Vous pouvez vous inspirer ou étendre la classe abstraite [IgnDataset](/src/datasets/ign/common/IgnDataset.ts) de la façon suivante :
 ```typescript=
-import { IgnDataset } from '@betagouvpdc/perimeters/dist/datasets/ign/common/IgnDataset.js';
+import { IgnDataset } from '@betagouvpdc/perimeters/dist/datasets/ign/common/IgnDataset.ts';
 export class MyGeoDataset extends IgnDataset {
   // nom du producteur de la donnée
   static producer = 'ign'; 
@@ -258,8 +258,8 @@ export class MyGeoDataset extends IgnDataset {
 
 ## Utiliser le nouveau dataset
 ```typescript=
-import { buildMigrator, datasets } from '@betagouvpdc/perimeters.js';
-import { MyDataset } from './MyDataset.js';
+import { buildMigrator, datasets } from '@betagouvpdc/perimeters.ts';
+import { MyDataset } from './MyDataset.ts';
 
 async function main(): Promise<void> {
     datasets.datasets.add(MyDataset);

@@ -1,10 +1,10 @@
 import anyTest, { TestFn } from 'ava';
 import { access } from 'fs/promises';
 import { Pool } from 'pg';
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { MemoryStateManager } from '../../../../providers/MemoryStateManager.js';
-import { createPool, createFileManager } from '../../../../helpers/index.js';
-import { CeremaAom2022 as Dataset } from './CeremaAom2022.js';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { MemoryStateManager } from '../../../../providers/MemoryStateManager.ts';
+import { createPool, createFileManager } from '../../../../helpers/index.ts';
+import { CeremaAom2022 as Dataset } from './CeremaAom2022.ts';
 
 interface TestContext {
   connection: Pool;

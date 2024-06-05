@@ -7160,6 +7160,7 @@
     "https://esm.sh/reflect-metadata?deno": "https://esm.sh/reflect-metadata@0.2.2?deno"
   },
   "remote": {
+    "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs": "a09fb310fce98bc4f53e75ae4854384b49d790bb3b0c15a38e9a93014020dc96",
     "https://esm.sh/inversify@6.0.2?deno": "52f10c4dcfc465e1994383ffb2c198d5c9a99711d1687d00d8961f143aaa57d6",
     "https://esm.sh/reflect-metadata@0.2.2?deno": "95d40700ab094fc431e1fa886914201d160c8b61d22b2edcea30c11dbcfdbb99",
     "https://esm.sh/v135/inversify@6.0.2/denonext/inversify.mjs": "5d0b0431179e455c6911ca05fae0203897c2c8e301132c88041d909eb0e35280",

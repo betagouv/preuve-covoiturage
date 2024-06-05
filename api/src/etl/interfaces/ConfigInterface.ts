@@ -1,5 +1,5 @@
 import { PoolConfig } from 'pg';
-import { StaticAbstractDataset, StaticMigrable } from './index.js';
+import { StaticAbstractDataset, StaticMigrable } from './index.ts';
 
 export interface AppConfigInterface {
   targetSchema: string;

@@ -5,7 +5,7 @@ L'utilisation du programme en ligne de commande peut se faire de deux façons :
   yarn start [options] [commande]
 ```
 
-Si vous utilisez le paquet comme dépendance de votre projet, il suffit d'ajouter un script npm dans votre fichier package.json de la façon suivante  :
+Si vous utilisez le paquet comme dépendance de votre projet, il suffit d'ajouter un script npm dans votre fichier package.tson de la façon suivante  :
 ```json
 {
   "scripts": {

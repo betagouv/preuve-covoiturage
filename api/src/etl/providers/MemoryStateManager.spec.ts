@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
-import { StaticMigrable, State, flow } from '../interfaces/index.js';
-import { MemoryStateManager } from './index.js';
+import { StaticMigrable, State, flow } from '../interfaces/index.ts';
+import { MemoryStateManager } from './index.ts';
 
 interface TestContext {
   state: MemoryStateManager;

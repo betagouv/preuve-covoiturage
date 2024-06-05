@@ -1,9 +1,9 @@
 import anyTest, { TestFn } from 'ava';
 import { Pool } from 'pg';
-import { Migrator } from './Migrator.js';
-import { buildMigrator } from './buildMigrator.js';
-import { createPool } from './helpers/index.js';
-import { config } from './config.js';
+import { Migrator } from './Migrator.ts';
+import { buildMigrator } from './buildMigrator.ts';
+import { createPool } from './helpers/index.ts';
+import { config } from './config.ts';
 
 interface TestContext {
   connection: Pool;

@@ -1,5 +1,5 @@
-import { FileTypeEnum } from '../../../../interfaces/index.js';
-import { InseePerimDataset } from '../common/InseePerimDataset.js';
+import { FileTypeEnum } from '../../../../interfaces/index.ts';
+import { InseePerimDataset } from '../common/InseePerimDataset.ts';
 
 export class InseePerim2019 extends InseePerimDataset {
   static producer = 'insee';

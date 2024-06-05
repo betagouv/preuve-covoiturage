@@ -1,4 +1,4 @@
-import { loadFileAsString, streamData, getDatasetUuid } from '../helpers/index.js';
+import { loadFileAsString, streamData, getDatasetUuid } from '../helpers/index.ts';
 import {
   ArchiveFileTypeEnum,
   DatasetInterface,
@@ -6,10 +6,10 @@ import {
   StaticAbstractDataset,
   StaticMigrable,
   FileManagerInterface,
-} from '../interfaces/index.js';
+} from '../interfaces/index.ts';
 import { Pool } from 'pg';
-import { StreamDataOptions, StateManagerInterface, State } from '../interfaces/index.js';
-import { DownloadError, SqlError, ValidationError } from '../errors/index.js';
+import { StreamDataOptions, StateManagerInterface, State } from '../interfaces/index.ts';
+import { DownloadError, SqlError, ValidationError } from '../errors/index.ts';
 
 export abstract class AbstractDataset implements DatasetInterface {
   static get uuid(): string {

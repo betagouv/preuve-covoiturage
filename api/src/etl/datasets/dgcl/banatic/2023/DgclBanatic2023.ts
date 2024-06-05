@@ -1,5 +1,5 @@
-import { DgclBanaticDataset } from '../common/DgclBanaticDataset.js';
-import { FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.js';
+import { DgclBanaticDataset } from '../common/DgclBanaticDataset.ts';
+import { FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.ts';
 import { CeremaAom2023 } from '../../../../datasets.ts';
 
 export class DgclBanatic2023 extends DgclBanaticDataset {

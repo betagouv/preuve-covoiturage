@@ -1,9 +1,9 @@
-import {
+import type {
   ParamsInterface as MonthlyKeyfiguresParamsInterface,
   ResultInterface as MonthlyKeyfiguresResultInterface,
 } from '@shared/observatory/keyfigures/monthlyKeyfigures.contract.ts';
 
-export { MonthlyKeyfiguresParamsInterface, MonthlyKeyfiguresResultInterface };
+export type { MonthlyKeyfiguresParamsInterface, MonthlyKeyfiguresResultInterface };
 
 export interface KeyfiguresRepositoryInterface {
   getMonthlyKeyfigures(params: MonthlyKeyfiguresParamsInterface): Promise<MonthlyKeyfiguresResultInterface>;

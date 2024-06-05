@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import fs from 'node:fs';
 
 export function writeFile(stream: Readable, filepath: string): Promise<void> {

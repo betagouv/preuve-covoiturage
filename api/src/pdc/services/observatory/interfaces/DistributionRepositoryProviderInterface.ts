@@ -1,17 +1,17 @@
-import {
+import type {
   ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
 } from '@shared/observatory/distribution/journeysByHours.contract.ts';
-import {
+import type {
   ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
 } from '@shared/observatory/distribution/journeysByDistances.contract.ts';
-import {
+import type {
   ParamsInterface as InsertMonthlyDistributionParamsInterface,
   ParamsInterface as DeleteMonthlyDistributionParamsInterface,
 } from '@shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
 
-export {
+export type {
   JourneysByHoursParamsInterface,
   JourneysByHoursResultInterface,
   JourneysByDistancesParamsInterface,

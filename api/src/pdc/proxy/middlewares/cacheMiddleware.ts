@@ -4,11 +4,13 @@ import { NextFunction, Request, Response } from 'express';
 import { cacheStore } from './cache/redis.ts';
 import { deflate, getKey, inflate } from './cache/transformers.ts';
 import {
+  CacheTTL,
+} from './cache/types.ts';
+import type {
   CacheFlushResponse,
   CacheMiddleware,
   CachePrefix,
   CacheStore,
-  CacheTTL,
   GlobalCacheConfig,
   RouteCacheConfig,
   StoreConnection,

@@ -1,4 +1,4 @@
-import { StaticMigrable } from './index.js';
+import { StaticMigrable } from './index.ts';
 
 export interface StateManagerInterface {
   plan(migrables: StaticMigrable[]): void;

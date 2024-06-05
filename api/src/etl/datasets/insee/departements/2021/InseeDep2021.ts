@@ -1,5 +1,5 @@
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { StaticAbstractDataset, ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.js';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { StaticAbstractDataset, ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.ts';
 
 export class InseeDep2021 extends AbstractDataset {
   static producer = 'insee';

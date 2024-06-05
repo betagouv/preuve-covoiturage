@@ -1,7 +1,7 @@
-import { Migrator } from './Migrator.js';
-import { PartialConfigInterface } from './interfaces/index.js';
-import { config as defaultConfig } from './config.js';
-import { bootstrap, createPool, createLogger, createFileManager, createStateManager } from './helpers/index.js';
+import { Migrator } from './Migrator.ts';
+import { PartialConfigInterface } from './interfaces/index.ts';
+import { config as defaultConfig } from './config.ts';
+import { bootstrap, createPool, createLogger, createFileManager, createStateManager } from './helpers/index.ts';
 
 export function buildMigrator(userConfig: Partial<PartialConfigInterface>): Migrator {
   const logger = createLogger({ ...defaultConfig.logger, ...userConfig.logger });

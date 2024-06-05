@@ -1,3 +1,3 @@
-import { MigrableError } from './MigrableError.js';
+import { MigrableError } from './MigrableError.ts';
 
 export class TransformError extends MigrableError {}

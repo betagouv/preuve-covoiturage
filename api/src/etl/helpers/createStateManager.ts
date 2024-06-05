@@ -1,6 +1,6 @@
-import { AppConfigInterface, DatabaseStateManagerInterface } from '../interfaces/index.js';
-import { config as defaultConfig } from '../config.js';
-import { DatabaseStateManager } from '../providers/index.js';
+import { AppConfigInterface, DatabaseStateManagerInterface } from '../interfaces/index.ts';
+import { config as defaultConfig } from '../config.ts';
+import { DatabaseStateManager } from '../providers/index.ts';
 import { Pool } from 'pg';
 
 export function createStateManager(

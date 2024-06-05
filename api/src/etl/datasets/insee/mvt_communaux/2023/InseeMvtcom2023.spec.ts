@@ -1,10 +1,10 @@
 import anyTest, { TestFn } from 'ava';
 import { access } from 'fs/promises';
 import { Pool } from 'pg';
-import { MemoryStateManager } from '../../../../providers/MemoryStateManager.js';
-import { AbstractDataset } from '../../../../common/AbstractDataset.js';
-import { createPool, createFileManager } from '../../../../helpers/index.js';
-import { InseeMvtcom2023 as Dataset } from './InseeMvtcom2023.js';
+import { MemoryStateManager } from '../../../../providers/MemoryStateManager.ts';
+import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
+import { createPool, createFileManager } from '../../../../helpers/index.ts';
+import { InseeMvtcom2023 as Dataset } from './InseeMvtcom2023.ts';
 
 interface TestContext {
   connection: Pool;

@@ -1,4 +1,4 @@
-import { CsvOptions } from '../../interfaces/index.js';
+import { CsvOptions } from '../../interfaces/index.ts';
 import { createReadStream } from 'node:fs';
 import { parse } from 'csv-parse';
 

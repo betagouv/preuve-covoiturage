@@ -1,4 +1,4 @@
-import { ArchiveFileTypeEnum, FileTypeEnum } from './index.js';
+import { ArchiveFileTypeEnum, FileTypeEnum } from './index.ts';
 
 export interface FileManagerInterface {
   install(): Promise<void>;

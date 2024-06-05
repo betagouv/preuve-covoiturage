@@ -1,4 +1,4 @@
-import { AbstractDatafunction } from '../common/AbstractDatafunction.js';
+import { AbstractDatafunction } from '../common/AbstractDatafunction.ts';
 
 export class CreateGetClosestComFunction extends AbstractDatafunction {
   static uuid = 'create_get_closest_com_function';
