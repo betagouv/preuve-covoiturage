@@ -1,10 +1,10 @@
 import { createSign } from 'node:crypto';
-import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '/ilos/common/index.ts';
-import { Action as AbstractAction, env } from '/ilos/core/index.ts';
+import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@/ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/cee/registerApplication.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/cee/registerApplication.contract.ts';
 
-import { alias } from '/shared/cee/registerApplication.schema.ts';
+import { alias } from '@/shared/cee/registerApplication.schema.ts';
 
 import {
   ApplicationCooldownConstraint,
@@ -19,10 +19,10 @@ import {
 import { ServiceDisabledError } from '../errors/ServiceDisabledError.ts';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail.ts';
 import { getDateOrFail } from '../helpers/getDateOrFail.ts';
-import { timestampSchema } from '/shared/cee/common/ceeSchema.ts';
+import { timestampSchema } from '@/shared/cee/common/ceeSchema.ts';
 import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail.ts';
-import { ConflictException } from '/ilos/common/index.ts';
-import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '/shared/cee/common/CeeApplicationInterface.ts';
+import { ConflictException } from '@/ilos/common/index.ts';
+import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@/shared/cee/common/CeeApplicationInterface.ts';
 import { carpoolV2ToV1StatusConverter } from '../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter.ts';
 
 @handler({

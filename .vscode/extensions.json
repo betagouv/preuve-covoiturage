@@ -7,7 +7,8 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "eamodio.gitlens",
-    "github.vscode-pull-request-github"
+    "github.vscode-pull-request-github",
+    "denoland.vscode-deno"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []

@@ -1,5 +1,5 @@
-import { ServiceContainerInterface, NewableType } from '/ilos/common/index.ts';
-import anyTest, { Macro, TestFn } from 'ava';
+import { ServiceContainerInterface, NewableType } from '@/ilos/common/index.ts';
+import anyTest, { Macro, TestFn } from '@/dev_deps.ts';
 
 import { KernelTestFn, KernelBeforeAfter, makeKernelBeforeAfter } from './helpers.ts';
 

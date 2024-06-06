@@ -1,5 +1,5 @@
-import test from 'ava';
-import { InitHookInterface, provider, serviceProvider } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { InitHookInterface, provider, serviceProvider } from '@/ilos/common/index.ts';
 
 import { Providers } from './Providers.ts';
 import { ServiceContainer } from '../foundation/ServiceContainer.ts';

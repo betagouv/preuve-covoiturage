@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, provider } from '/ilos/common/index.ts';
+import { ConfigInterfaceResolver, provider } from '@/ilos/common/index.ts';
 import { ExportTarget } from '../models/Export.ts';
 
 export type Options = {

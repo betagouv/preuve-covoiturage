@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { handler } from '/ilos/common/index.ts';
-import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/user/list.contract.ts';
-import { alias } from '/shared/user/list.schema.ts';
-import { UserContextInterface } from '/shared/user/common/interfaces/UserContextInterfaces.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/list.contract.ts';
+import { alias } from '@/shared/user/list.schema.ts';
+import { UserContextInterface } from '@/shared/user/common/interfaces/UserContextInterfaces.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 const whiteList = [

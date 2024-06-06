@@ -1,4 +1,4 @@
-import { KernelInterfaceResolver, provider } from '/ilos/common/index.ts';
+import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
 import { ExportRecipient } from '../models/ExportRecipient.ts';
 
 export type RecipientServiceInterface = {

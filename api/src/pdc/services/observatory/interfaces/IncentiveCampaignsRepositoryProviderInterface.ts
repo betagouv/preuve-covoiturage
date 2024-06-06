@@ -1,7 +1,7 @@
 import type {
   ParamsInterface as CampaignsParamsInterface,
   ResultInterface as CampaignsResultInterface,
-} from '/shared/observatory/incentiveCampaigns/campaigns.contract.ts';
+} from '@/shared/observatory/incentiveCampaigns/campaigns.contract.ts';
 
 export type {
   CampaignsParamsInterface,

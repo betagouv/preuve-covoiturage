@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { Row, stream, Workbook, Worksheet } from 'exceljs';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
 import { BuildExcel } from './BuildExcel.ts';

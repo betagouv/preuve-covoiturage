@@ -6,7 +6,7 @@ import {
   StateManagerInterface,
   State,
 } from '../interfaces/index.ts';
-import { Pool } from 'pg';
+import { Pool } from '@/deps.ts';
 import { SqlError, ValidationError } from '../errors/index.ts';
 
 export abstract class AbstractDatafunction implements DatasetInterface {

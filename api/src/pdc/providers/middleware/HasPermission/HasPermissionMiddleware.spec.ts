@@ -1,5 +1,5 @@
-import test from 'ava';
-import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@/ilos/common/index.ts';
 
 import { HasPermissionMiddleware } from './HasPermissionMiddleware.ts';
 

@@ -1,10 +1,10 @@
-import { hasPermissionMiddleware, contentBlacklistMiddleware } from '/pdc/providers/middleware/index.ts';
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { handler } from '/ilos/common/index.ts';
+import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
 
 import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/territory/findGeoBySiren.contract.ts';
-import { alias } from '/shared/territory/findGeoBySiren.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/territory/findGeoBySiren.contract.ts';
+import { alias } from '@/shared/territory/findGeoBySiren.schema.ts';
 import { blacklist } from '../../config/filterOutput.ts';
 
 @handler({

@@ -1,4 +1,4 @@
-import { ParamsInterface } from '/shared/apdf/export.contract.ts';
+import { ParamsInterface } from '@/shared/apdf/export.contract.ts';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
 import _ from 'lodash';

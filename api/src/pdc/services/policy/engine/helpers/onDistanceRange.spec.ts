@@ -1,5 +1,5 @@
-import { InvalidParamsException } from '/ilos/common/index.ts';
-import test from 'ava';
+import { InvalidParamsException } from '@/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import { StatelessContext } from '../entities/Context.ts';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 import { generateCarpool } from '../tests/helpers.ts';

@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import { Action as AbstractAction, env } from '/ilos/core/index.ts';
-import { handler, ContextType, ParseErrorException, ConflictException, ValidatorInterfaceResolver } from '/ilos/common/index.ts';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '/pdc/providers/middleware/index.ts';
-import { CarpoolAcquisitionService } from '/pdc/providers/carpool/index.ts';
+import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
+import { handler, ContextType, ParseErrorException, ConflictException, ValidatorInterfaceResolver } from '@/ilos/common/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { CarpoolAcquisitionService } from '@/pdc/providers/carpool/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/acquisition/create.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/acquisition/create.contract.ts';
 
-import { PayloadV3 } from '/shared/acquisition/create.contract.ts';
-import { v3alias } from '/shared/acquisition/create.schema.ts';
+import { PayloadV3 } from '@/shared/acquisition/create.contract.ts';
+import { v3alias } from '@/shared/acquisition/create.schema.ts';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 

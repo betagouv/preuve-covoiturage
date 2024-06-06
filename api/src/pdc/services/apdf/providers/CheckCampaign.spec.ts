@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { ContextType, KernelInterfaceResolver, NotFoundException } from '/ilos/common/index.ts';
-import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
-import { ResultInterface as GetCampaignResultInterface } from '/shared/policy/find.contract.ts';
-import anyTest, { TestFn } from 'ava';
+import { ContextType, KernelInterfaceResolver, NotFoundException } from '@/ilos/common/index.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { ResultInterface as GetCampaignResultInterface } from '@/shared/policy/find.contract.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper.ts';
 import { CheckCampaign } from './CheckCampaign.ts';

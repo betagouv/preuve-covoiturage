@@ -1,10 +1,10 @@
-import { ResultWithPagination } from '/shared/common/interfaces/ResultWithPagination.ts';
-import { PgCursorHandler } from '/shared/common/PromisifiedPgCursor.ts';
-import { LightTripInterface } from '/shared/trip/common/interfaces/LightTripInterface.ts';
+import { ResultWithPagination } from '@/shared/common/interfaces/ResultWithPagination.ts';
+import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
+import { LightTripInterface } from '@/shared/trip/common/interfaces/LightTripInterface.ts';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '/shared/trip/common/interfaces/TripSearchInterface.ts';
+} from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
 import { ExportTripInterface } from './ExportTripInterface.ts';
 import { FinancialStatInterface, StatInterface } from './StatInterface.ts';
 

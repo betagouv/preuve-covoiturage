@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { URL } from 'node:url';
-import { env } from '/ilos/core/index.ts';
-import process from 'node:process';
+import { readFileSync, URL, process } from '@/deps.ts';
+import { env } from '@/ilos/core/index.ts';
 
 function unnestRedisConnectionString(connectionString: string): {
   host?: string;

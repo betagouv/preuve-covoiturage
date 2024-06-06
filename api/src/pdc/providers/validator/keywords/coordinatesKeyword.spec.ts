@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { coordinatesKeyword } from './coordinatesKeyword.ts';
 
 function macro(t, input: { lat: number; lon: number }, expected: boolean) {

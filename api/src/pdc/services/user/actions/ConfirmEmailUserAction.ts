@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { handler } from '/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/user/confirmEmail.contract.ts';
-import { alias } from '/shared/user/confirmEmail.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/confirmEmail.contract.ts';
+import { alias } from '@/shared/user/confirmEmail.schema.ts';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware.ts';
 

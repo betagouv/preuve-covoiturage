@@ -1,5 +1,5 @@
-import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '/pdc/providers/test/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { CarpoolRepository } from './CarpoolRepository.ts';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
 import { Id } from '../interfaces/index.ts';

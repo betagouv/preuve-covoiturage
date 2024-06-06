@@ -1,5 +1,5 @@
-import anyTest, { TestFn } from 'ava';
-import { Pool } from 'pg';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { Pool } from '@/deps.ts';
 import { buildMigrator } from './buildMigrator.ts';
 import { Migrator } from './Migrator.ts';
 import { EurostatCountries2020 } from './datasets/eurostat/countries/2020/EurostatCountries2020.ts';

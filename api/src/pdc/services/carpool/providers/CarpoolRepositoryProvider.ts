@@ -1,5 +1,5 @@
-import { provider } from '/ilos/common/index.ts';
-import { PostgresConnection, PoolClient } from '/ilos/connection-postgres/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { PostgresConnection, PoolClient } from '@/ilos/connection-postgres/index.ts';
 
 import {
   CarpoolRepositoryProviderInterface,

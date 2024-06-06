@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool } from '@/deps.ts';
 import {
   DatabaseStateManagerInterface,
   StateManagerInterface,

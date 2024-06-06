@@ -1,19 +1,19 @@
-import { KernelInterfaceResolver, provider } from '/ilos/common/index.ts';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import {
   ResultInterface as AllGeoResultInterface,
   SingleResultInterface as GeoResultInterface,
-} from '/shared/territory/allGeo.contract.ts';
-import { TerritoryCodeEnum } from '/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+} from '@/shared/territory/allGeo.contract.ts';
+import { TerritoryCodeEnum } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from '/shared/territory/findGeoBySiren.contract.ts';
+} from '@/shared/territory/findGeoBySiren.contract.ts';
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
   SingleResultInterface as ListGeoSingleResultInterface,
-} from '/shared/territory/listGeo.contract.ts';
+} from '@/shared/territory/listGeo.contract.ts';
 import { FindBySiretRawResultInterface } from '../interfaces/FindBySiretRawResultInterface.ts';
 import {
   GeoRepositoryProviderInterface,

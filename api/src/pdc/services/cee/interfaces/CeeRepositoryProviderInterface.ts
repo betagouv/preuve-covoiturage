@@ -1,5 +1,5 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '/pdc/providers/carpool/interfaces/index.ts';
-import { CeeJourneyTypeEnum, JourneyId } from '/shared/cee/common/CeeApplicationInterface.ts';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
+import { CeeJourneyTypeEnum, JourneyId } from '@/shared/cee/common/CeeApplicationInterface.ts';
 export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {

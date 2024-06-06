@@ -1,14 +1,14 @@
-import { KernelInterfaceResolver, NotFoundException } from '/ilos/common/index.ts';
+import { KernelInterfaceResolver, NotFoundException } from '@/ilos/common/index.ts';
 import {
   ParamsInterface as FindByUuidParamsInterface,
   ResultInterface as FindByUuidResultInterface,
   signature as findByUuidSignature,
-} from '/shared/operator/findbyuuid.contract.ts';
+} from '@/shared/operator/findbyuuid.contract.ts';
 import {
   ParamsInterface as PolicyParamsInterface,
   ResultInterface as PolicyResultInterface,
   signature as policyFindSignature,
-} from '/shared/policy/find.contract.ts';
+} from '@/shared/policy/find.contract.ts';
 
 export async function getCampaignOperators(
   kernel: KernelInterfaceResolver,

@@ -1,6 +1,6 @@
-import { RPCCallType, RPCResponseType } from '/ilos/common/index.ts';
-import { Kernel } from '/ilos/core/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { RPCCallType, RPCResponseType } from '@/ilos/common/index.ts';
+import { Kernel } from '@/ilos/core/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import supertest, { Test } from 'supertest';
 import TestAgent from 'supertest/lib/agent.ts';
 import { HttpTransport } from './HttpTransport.ts';

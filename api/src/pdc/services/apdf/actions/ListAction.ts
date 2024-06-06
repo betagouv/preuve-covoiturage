@@ -4,16 +4,16 @@ import {
   handler,
   KernelInterfaceResolver,
   NotFoundException,
-} from '/ilos/common/index.ts';
-import { Action } from '/ilos/core/index.ts';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '/pdc/providers/middleware/index.ts';
+} from '@/ilos/common/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
 import { StorageRepositoryProviderInterfaceResolver } from '../interfaces/StorageRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface, ResultsInterface } from '/shared/apdf/list.contract.ts';
-import { alias } from '/shared/apdf/list.schema.ts';
+import { handlerConfig, ParamsInterface, ResultsInterface } from '@/shared/apdf/list.contract.ts';
+import { alias } from '@/shared/apdf/list.schema.ts';
 import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
-} from '/shared/policy/find.contract.ts';
+} from '@/shared/policy/find.contract.ts';
 
 @handler({
   ...handlerConfig,

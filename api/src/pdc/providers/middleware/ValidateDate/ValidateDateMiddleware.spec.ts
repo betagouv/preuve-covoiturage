@@ -1,5 +1,5 @@
-import test from 'ava';
-import { ContextType, InvalidParamsException } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { ContextType, InvalidParamsException } from '@/ilos/common/index.ts';
 
 import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDateMiddleware.ts';
 

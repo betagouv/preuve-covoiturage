@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { BucketName } from '../interfaces/BucketName.ts';
 import { getBucketEndpoint, getBucketName, getBucketPrefix } from './buckets.ts';
 

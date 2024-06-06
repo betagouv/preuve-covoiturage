@@ -1,8 +1,8 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon, { SinonStub } from 'sinon';
-import { TerritoryCodeEnum } from '/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+import { TerritoryCodeEnum } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 import { TerritoryService } from './TerritoryService.ts';
-import { KernelInterfaceResolver } from '/ilos/common/index.ts';
+import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
 
 // ----------------------------------------------------------------------------------------
 // SETUP

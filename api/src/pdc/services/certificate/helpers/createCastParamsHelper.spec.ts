@@ -1,5 +1,5 @@
-import { ConfigInterfaceResolver } from '/ilos/common/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon, { SinonFakeTimers, SinonStub } from 'sinon';
 import { CreateCastParamsInterface, ParamsInterface, createCastParamsHelper } from './createCastParamsHelper.ts';
 

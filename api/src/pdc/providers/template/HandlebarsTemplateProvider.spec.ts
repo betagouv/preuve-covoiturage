@@ -1,5 +1,5 @@
-import test from 'ava';
-import { injectable } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { injectable } from '@/ilos/common/index.ts';
 import { AbstractTemplate, HandlebarsTemplateProvider } from './index.ts';
 import { TemplateRenderingException } from './exceptions/index.ts';
 

@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon, { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider.ts';
-import { TerritoryTripsInterface } from '/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
-import { TripSearchInterface } from '/shared/trip/common/interfaces/TripSearchInterface.ts';
+import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
+import { TripSearchInterface } from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
 import { BuildResourceDescription } from './BuildResourceDescription.ts';
 
 interface Context {

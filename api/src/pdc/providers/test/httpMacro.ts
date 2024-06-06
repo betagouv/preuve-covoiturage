@@ -5,9 +5,9 @@ import {
   ResultType,
   ServiceContainerInterface,
   TransportInterface,
-} from '/ilos/common/index.ts';
-import { Bootstrap } from '/ilos/framework/index.ts';
-import test, { ExecutionContext, Macro } from 'ava';
+} from '@/ilos/common/index.ts';
+import { Bootstrap } from '@/ilos/framework/index.ts';
+import test, { ExecutionContext, Macro } from '@/dev_deps.ts';
 import spt, { Test } from 'supertest';
 import TestAgent from 'supertest/lib/agent.ts';
 import { makeKernelCtor } from './helpers.ts';

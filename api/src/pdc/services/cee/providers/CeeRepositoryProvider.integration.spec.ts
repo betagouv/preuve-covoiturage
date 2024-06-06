@@ -1,6 +1,6 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '/pdc/providers/carpool/interfaces/index.ts';
-import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
+import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { config } from '../config/index.ts';
 import {
   CeeApplicationErrorEnum,

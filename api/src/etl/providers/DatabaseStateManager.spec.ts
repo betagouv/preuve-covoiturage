@@ -1,5 +1,5 @@
-import anyTest, { TestFn } from 'ava';
-import { Pool } from 'pg';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { Pool } from '@/deps.ts';
 import { StaticMigrable } from '../interfaces/index.ts';
 import { createPool } from '../helpers/index.ts';
 import { DatabaseStateManager as StateManager } from './DatabaseStateManager.ts';

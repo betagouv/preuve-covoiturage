@@ -7,7 +7,7 @@ import {
   StaticMigrable,
   FileManagerInterface,
 } from '../interfaces/index.ts';
-import { Pool } from 'pg';
+import { Pool } from '@/deps.ts';
 import { StreamDataOptions, StateManagerInterface, State } from '../interfaces/index.ts';
 import { DownloadError, SqlError, ValidationError } from '../errors/index.ts';
 

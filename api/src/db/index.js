@@ -1,4 +1,4 @@
-import DBMigrate from 'db-migrate';
+import DBMigrate from '@/deps.ts';
 import * as GeoMigrator from '../etl/index.ts';
 
 const instances = new Map();

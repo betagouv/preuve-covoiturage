@@ -1,12 +1,12 @@
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { handler } from '/ilos/common/index.ts';
-import { hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface.ts';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/company/fetch.contract.ts';
-import { alias } from '/shared/company/fetch.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/company/fetch.contract.ts';
+import { alias } from '@/shared/company/fetch.schema.ts';
 
 @handler({
   ...handlerConfig,

@@ -4,7 +4,7 @@ import {
   ServiceContainerInterface,
   RegisterHookInterface,
   extension,
-} from '/ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 @extension({
   name: 'middlewares',

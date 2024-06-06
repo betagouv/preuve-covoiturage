@@ -1,10 +1,10 @@
-import { handler } from '/ilos/common/index.ts';
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { copyFromContextMiddleware, hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { copyFromContextMiddleware, hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface.ts';
-import { handlerConfig, ResultInterface, ParamsInterface } from '/shared/territory/listGeo.contract.ts';
-import { alias } from '/shared/territory/listGeo.schema.ts';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@/shared/territory/listGeo.contract.ts';
+import { alias } from '@/shared/territory/listGeo.schema.ts';
 
 @handler({
   ...handlerConfig,

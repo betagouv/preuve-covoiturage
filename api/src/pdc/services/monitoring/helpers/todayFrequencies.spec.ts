@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import sinon from 'sinon';
 import { todayFrequencies } from './todayFrequencies.helper.ts';
 

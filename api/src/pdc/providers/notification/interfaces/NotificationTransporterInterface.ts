@@ -1,4 +1,4 @@
-import { InitHookInterface, DestroyHookInterface } from '/ilos/common/index.ts';
+import { InitHookInterface, DestroyHookInterface } from '@/ilos/common/index.ts';
 
 export interface NotificationTransporterInterface<D, O = { [key: string]: any }>
   extends InitHookInterface,

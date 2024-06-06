@@ -1,6 +1,6 @@
-import { InvalidParamsException, ParseErrorException, ValidatorInterfaceResolver } from '/ilos/common/index.ts';
-import { CarpoolAcquisitionService } from '/pdc/providers/carpool/index.ts';
-import test from 'ava';
+import { InvalidParamsException, ParseErrorException, ValidatorInterfaceResolver } from '@/ilos/common/index.ts';
+import { CarpoolAcquisitionService } from '@/pdc/providers/carpool/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';

@@ -1,5 +1,5 @@
-import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
-import { ExecutionContext } from 'ava';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { ExecutionContext } from '@/dev_deps.ts';
 import {
   CarpoolInterface,
   MetadataLifetime,

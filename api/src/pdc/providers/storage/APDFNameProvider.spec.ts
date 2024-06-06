@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import path from 'node:path';
 import os from 'node:os';
 import { APDFNameProvider } from './APDFNameProvider.ts';

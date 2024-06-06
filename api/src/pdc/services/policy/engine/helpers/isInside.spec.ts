@@ -1,8 +1,8 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { generateCarpool } from '../tests/helpers.ts';
-import type { GeoJSON } from '/shared/geo/GeoJson.ts';
+import type { GeoJSON } from '@/shared/geo/GeoJson.ts';
 import { isInside } from './isInside.ts';
 
 const shape: GeoJSON = {

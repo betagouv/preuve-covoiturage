@@ -1,14 +1,14 @@
-import { NotFoundException } from '/ilos/common/index.ts';
-import { Carpool } from '/pdc/providers/seed/carpools.ts';
-import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { NotFoundException } from '@/ilos/common/index.ts';
+import { Carpool } from '@/pdc/providers/seed/carpools.ts';
+import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { subDays } from 'date-fns';
 import {
   AcquisitionCreateInterface,
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
 } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
-import { StatusEnum } from '/shared/acquisition/status.contract.ts';
+import { StatusEnum } from '@/shared/acquisition/status.contract.ts';
 import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider.ts';
 
 interface TestContext {

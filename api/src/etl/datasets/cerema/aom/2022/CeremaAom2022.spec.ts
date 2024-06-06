@@ -1,6 +1,6 @@
-import anyTest, { TestFn } from 'ava';
-import { access } from 'node:fs/promises';
-import { Pool } from 'pg';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { access } from '@/deps.ts';
+import { Pool } from '@/deps.ts';
 import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
 import { MemoryStateManager } from '../../../../providers/MemoryStateManager.ts';
 import { createPool, createFileManager } from '../../../../helpers/index.ts';

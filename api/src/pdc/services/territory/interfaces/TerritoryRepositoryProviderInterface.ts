@@ -1,28 +1,28 @@
 import type {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
-} from '/shared/territory/create.contract.ts';
+} from '@/shared/territory/create.contract.ts';
 
 import type {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
-} from '/shared/territory/list.contract.ts';
+} from '@/shared/territory/list.contract.ts';
 
 import type {
   ParamsInterface as FindParamsInterface,
   ResultInterface as FindResultInterface,
-} from '/shared/territory/find.contract.ts';
+} from '@/shared/territory/find.contract.ts';
 
 import type {
   ParamsInterface as UpdateParamsInterface,
   ResultInterface as UpdateResultInterface,
-} from '/shared/territory/update.contract.ts';
+} from '@/shared/territory/update.contract.ts';
 
 import type {
   ParamsInterface as PatchContactsParamsInterface,
   ResultInterface as PatchContactsResultInterface,
-} from '/shared/territory/patchContacts.contract.ts';
-import type { TerritorySelectorsInterface } from '/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+} from '@/shared/territory/patchContacts.contract.ts';
+import type { TerritorySelectorsInterface } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export type {
   CreateParamsInterface,

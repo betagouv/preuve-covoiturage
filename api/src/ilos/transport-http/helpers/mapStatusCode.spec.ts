@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { mapStatusCode } from './mapStatusCode.ts';
 
 test('RPC/HTTP status codes mapping: regular -> 200', (t) => {

@@ -1,5 +1,5 @@
-import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { Id } from '../interfaces/index.ts';
 import { insertableCarpool } from '../mocks/database/carpool.ts';
 import { insertableAcquisitionStatus } from '../mocks/database/status.ts';

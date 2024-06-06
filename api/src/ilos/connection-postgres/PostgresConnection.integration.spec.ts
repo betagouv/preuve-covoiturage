@@ -1,4 +1,4 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { PostgresConnection } from './PostgresConnection.ts';
 
 interface TestContext {

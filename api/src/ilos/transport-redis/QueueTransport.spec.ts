@@ -1,10 +1,10 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon from 'sinon';
-import { RedisConnection } from '/ilos/connection-redis/index.ts';
-import { Extensions, Action, ServiceProvider, Kernel } from '/ilos/core/index.ts';
-import { ConnectionManagerExtension } from '/ilos/connection-manager/index.ts';
-import { QueueExtension as ParentQueueExtension } from '/ilos/queue/index.ts';
-import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '/ilos/common/index.ts';
+import { RedisConnection } from '@/ilos/connection-redis/index.ts';
+import { Extensions, Action, ServiceProvider, Kernel } from '@/ilos/core/index.ts';
+import { ConnectionManagerExtension } from '@/ilos/connection-manager/index.ts';
+import { QueueExtension as ParentQueueExtension } from '@/ilos/queue/index.ts';
+import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@/ilos/common/index.ts';
 import { QueueTransport } from './QueueTransport.ts';
 
 interface Context {

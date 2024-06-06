@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon, { SinonStub } from 'sinon';
 import { Dataset } from '../../interfaces/index.ts';
 import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';

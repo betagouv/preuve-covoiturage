@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-import { Command, InvalidArgumentError } from 'commander';
-import { Console } from 'console';
+import { Command, InvalidArgumentError, Console } from '@/deps.ts';
 import { buildMigrator, defaultConfig, Migrator, PartialConfigInterface, State } from './index.ts';
 import { hash } from './helpers/index.ts';
 

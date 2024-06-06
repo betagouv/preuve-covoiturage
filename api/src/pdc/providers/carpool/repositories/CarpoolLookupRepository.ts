@@ -1,5 +1,5 @@
-import { provider } from '/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { Id, Uuid } from '../interfaces/index.ts';
 import { SelectableCarpool, SelectableCarpoolStatus } from '../interfaces/database/lookup.ts';
 import sql, { raw } from '../helpers/sql.ts';

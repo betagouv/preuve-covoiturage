@@ -1,5 +1,5 @@
-import anyTest, { TestFn } from 'ava';
-import { Pool } from 'pg';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { Pool } from '@/deps.ts';
 import { MemoryStateManager } from '../providers/MemoryStateManager.ts';
 import { AbstractDatatreatment } from '../common/AbstractDatatreatment.ts';
 import { createPool, createFileManager } from '../helpers/index.ts';

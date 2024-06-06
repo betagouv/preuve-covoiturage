@@ -1,17 +1,17 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '/ilos/common/index.ts';
-import anyTest, { ExecutionContext, TestFn } from 'ava';
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import anyTest, { ExecutionContext, TestFn } from '@/dev_deps.ts';
 import { faker } from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { mapFromCarpools } from '../helpers/mapFromCarpools.ts';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
-import { CarpoolInterface, CarpoolTypeEnum } from '/shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { CertificateBaseInterface } from '/shared/certificate/common/interfaces/CertificateBaseInterface.ts';
-import { CertificateInterface } from '/shared/certificate/common/interfaces/CertificateInterface.ts';
-import { CertificateMetaInterface } from '/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
-import { ParamsInterface, ResultInterface } from '/shared/certificate/create.contract.ts';
-import { WithHttpStatus } from '/shared/common/handler/WithHttpStatus.ts';
+import { CarpoolInterface, CarpoolTypeEnum } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { CertificateBaseInterface } from '@/shared/certificate/common/interfaces/CertificateBaseInterface.ts';
+import { CertificateInterface } from '@/shared/certificate/common/interfaces/CertificateInterface.ts';
+import { CertificateMetaInterface } from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+import { ParamsInterface, ResultInterface } from '@/shared/certificate/create.contract.ts';
+import { WithHttpStatus } from '@/shared/common/handler/WithHttpStatus.ts';
 import { CreateCertificateAction } from './CreateCertificateAction.ts';
 
 interface Context {

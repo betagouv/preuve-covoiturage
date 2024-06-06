@@ -1,5 +1,5 @@
-import { Timezone } from '/pdc/providers/validator/index.ts';
-import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
+import { Timezone } from '@/pdc/providers/validator/index.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import {
   CarpoolInterface,
   MetadataStoreInterface,

@@ -1,4 +1,4 @@
-import { provider } from '/ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { FormatOptionsWithTZ, format, toZonedTime } from 'date-fns-tz';
 import { fr } from 'date-fns/locale/fr';
 import { DateProviderInterface, DateProviderInterfaceResolver } from './interfaces/DateProviderInterfaceResolver.ts';

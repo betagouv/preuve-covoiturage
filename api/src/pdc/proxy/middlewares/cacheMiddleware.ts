@@ -1,5 +1,5 @@
 // create Redis connection
-import { ForbiddenException } from '/ilos/common/index.ts';
+import { ForbiddenException } from '@/ilos/common/index.ts';
 import { NextFunction, Request, Response } from 'express';
 import { cacheStore } from './cache/redis.ts';
 import { deflate, getKey, inflate } from './cache/transformers.ts';

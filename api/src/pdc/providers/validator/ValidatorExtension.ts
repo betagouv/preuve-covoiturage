@@ -1,5 +1,5 @@
-import { ValidatorExtension as ValidatorParentExtension } from '/ilos/validator/index.ts';
-import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '/ilos/common/index.ts';
+import { ValidatorExtension as ValidatorParentExtension } from '@/ilos/validator/index.ts';
+import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@/ilos/common/index.ts';
 
 import { bicCustomFormat } from './formats/bicCustomFormat.ts';
 import { coordinatesKeyword } from './keywords/coordinatesKeyword.ts';

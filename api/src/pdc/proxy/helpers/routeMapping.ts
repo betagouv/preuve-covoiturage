@@ -1,7 +1,7 @@
 import express from 'express';
 import _ from 'lodash';
-import { KernelInterface } from '/ilos/common/index.ts';
-import { mapStatusCode } from '/ilos/transport-http/index.ts';
+import { KernelInterface } from '@/ilos/common/index.ts';
+import { mapStatusCode } from '@/ilos/transport-http/index.ts';
 
 import { createRPCPayload } from './createRPCPayload.ts';
 

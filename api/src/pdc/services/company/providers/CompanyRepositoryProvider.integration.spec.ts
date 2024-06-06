@@ -1,8 +1,8 @@
-import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { CompanyRepositoryProvider } from './CompanyRepositoryProvider.ts';
-import { CompanyInterface } from '/shared/common/interfaces/CompanyInterface2.ts';
+import { CompanyInterface } from '@/shared/common/interfaces/CompanyInterface2.ts';
 
 interface RepositoryTestFn {
   connection: PostgresConnection;

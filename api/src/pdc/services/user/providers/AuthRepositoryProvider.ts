@@ -1,6 +1,6 @@
-import { provider, ConfigInterfaceResolver } from '/ilos/common/index.ts';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
-import { CryptoProviderInterfaceResolver } from '/pdc/providers/crypto/index.ts';
+import { provider, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { CryptoProviderInterfaceResolver } from '@/pdc/providers/crypto/index.ts';
 
 import {
   AuthRepositoryProviderInterface,

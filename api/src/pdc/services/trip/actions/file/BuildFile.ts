@@ -1,4 +1,4 @@
-import { provider } from '/ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { Stringifier, stringify } from 'csv-stringify';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -7,8 +7,8 @@ import { v4 } from 'uuid';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName.ts';
 import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper.ts';
 import { ExportTripInterface } from '../../interfaces/index.ts';
-import { PgCursorHandler } from '/shared/common/PromisifiedPgCursor.ts';
-import { FormatInterface, ParamsInterface } from '/shared/trip/buildExport.contract.ts';
+import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
+import { FormatInterface, ParamsInterface } from '@/shared/trip/buildExport.contract.ts';
 import { BuildExportAction } from '../BuildExportAction.ts';
 
 @provider()

@@ -1,7 +1,7 @@
-import anyTest, { TestFn } from 'ava';
-import { env, Extensions } from '/ilos/core/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { env, Extensions } from '@/ilos/core/index.ts';
 import { NotificationMailTransporter } from './NotificationMailTransporter.ts';
-import { AbstractTemplate, HandlebarsTemplateProvider } from '/pdc/providers/template/index.ts';
+import { AbstractTemplate, HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
 import { AbstractMailNotification } from './AbstractNotification.ts';
 
 interface TestContext {

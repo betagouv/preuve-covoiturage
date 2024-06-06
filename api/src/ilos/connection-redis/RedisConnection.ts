@@ -3,7 +3,7 @@ import {
   ConnectionInterface,
   DestroyHookInterface,
   InitHookInterface,
-} from '/ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 import { Redis } from 'ioredis';
 // FIXME
 import process from 'node:process'

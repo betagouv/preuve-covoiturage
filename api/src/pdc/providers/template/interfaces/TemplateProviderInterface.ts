@@ -1,4 +1,4 @@
-import { ProviderInterface } from '/ilos/common/index.ts';
+import { ProviderInterface } from '@/ilos/common/index.ts';
 import { TemplateInterface } from '../index.ts';
 
 export interface TemplateProviderInterface extends ProviderInterface {

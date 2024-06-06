@@ -1,15 +1,15 @@
-import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
-import { Action } from '/ilos/core/index.ts';
-import { handler, ContextType, KernelInterfaceResolver } from '/ilos/common/index.ts';
-import { BucketName, S3StorageProvider } from '/pdc/providers/storage/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { handler, ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/trip/sendExport.contract.ts';
-import { alias } from '/shared/trip/sendExport.schema.ts';
-import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '/shared/user/notify.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/trip/sendExport.contract.ts';
+import { alias } from '@/shared/trip/sendExport.schema.ts';
+import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '@/shared/user/notify.contract.ts';
 import {
   signature as buildExportSignature,
   ParamsInterface as BuildExportParamsInterface,
-} from '/shared/trip/buildExport.contract.ts';
+} from '@/shared/trip/buildExport.contract.ts';
 
 @handler({
   ...handlerConfig,

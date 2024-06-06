@@ -1,11 +1,11 @@
 import type {
   ParamsInterface as TerritoriesListParamsInterface,
   ResultInterface as TerritoriesListResultInterface,
-} from '/shared/observatory/territories/list.contract.ts';
+} from '@/shared/observatory/territories/list.contract.ts';
 import type {
   ParamsInterface as TerritoryNameParamsInterface,
   ResultInterface as TerritoryNameResultInterface,
-} from '/shared/observatory/territories/name.contract.ts';
+} from '@/shared/observatory/territories/name.contract.ts';
 
 export type {
   TerritoriesListParamsInterface,

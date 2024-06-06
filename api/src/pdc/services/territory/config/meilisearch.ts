@@ -1,4 +1,4 @@
-import { env } from '/ilos/core/index.ts';
+import { env } from '@/ilos/core/index.ts';
 
 export const host = env.or_fail('APP_MEILISEARCH_HOST', 'http://localhost');
 export const apiKey = env.or_fail('APP_MEILISEARCH_APIKEY', '');

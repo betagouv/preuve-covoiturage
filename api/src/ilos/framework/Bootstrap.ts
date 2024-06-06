@@ -11,11 +11,11 @@ import {
   KernelInterface,
   NewableType,
   ServiceContainerInterface,
-} from '/ilos/common/index.ts';
-import { catchErrors, registerGracefulShutdown, interceptConsole } from '/ilos/tools/index.ts';
-import { CliTransport } from '/ilos/cli/index.ts';
-import { HttpTransport } from '/ilos/transport-http/index.ts';
-import { QueueTransport } from '/ilos/transport-redis/index.ts';
+} from '@/ilos/common/index.ts';
+import { catchErrors, registerGracefulShutdown, interceptConsole } from '@/ilos/tools/index.ts';
+import { CliTransport } from '@/ilos/cli/index.ts';
+import { HttpTransport } from '@/ilos/transport-http/index.ts';
+import { QueueTransport } from '@/ilos/transport-redis/index.ts';
 
 import { Kernel } from './Kernel.ts';
 

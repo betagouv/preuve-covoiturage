@@ -1,5 +1,5 @@
-import { NotFoundException } from '/ilos/common/exceptions/NotFoundException.ts';
-import test from 'ava';
+import { NotFoundException } from '@/ilos/common/exceptions/NotFoundException.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import sinon, { SinonStub } from 'sinon';
 import { GeoProvider } from './index.ts';
 import { GeoInterface } from './interfaces/GeoInterface.ts';

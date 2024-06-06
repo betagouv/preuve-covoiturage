@@ -1,4 +1,4 @@
-import { env } from '/ilos/core/index.ts';
+import { env } from '@/ilos/core/index.ts';
 import { readFileSync } from 'node:fs';
 import process from 'node:process';
 

@@ -1,4 +1,4 @@
-import { HandlebarsTemplateProvider } from '/pdc/providers/template/index.ts';
+import { HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
 import { NotificationMailTransporter } from './NotificationMailTransporter.ts';
 export { AbstractMailNotification } from './AbstractNotification.ts';
 export type * from './interfaces/index.ts';

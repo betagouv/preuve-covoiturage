@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool, Stream  } from '@/deps.ts';
 import {
   FileManagerInterface,
   DatabaseStateManagerInterface,
@@ -11,7 +11,6 @@ import {
   StaticAbstractDataset,
 } from './interfaces/index.ts';
 import { createStateManager } from './helpers/index.ts';
-import Stream from 'node:stream';
 
 export class Migrator extends Stream.EventEmitter {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();

@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from 'ava';
+import test, { ExecutionContext } from '@/dev_deps.ts';
 import { IFilterXSSOptions } from 'xss';
 
 import { sanitizeKeyword } from './sanitizeKeyword.ts';

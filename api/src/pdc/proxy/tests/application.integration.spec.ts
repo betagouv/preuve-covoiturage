@@ -17,12 +17,12 @@
 
 import _ from 'lodash';
 import supertest from 'supertest';
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 
-import { KernelInterface, TransportInterface } from '/ilos/common/index.ts';
-import { CryptoProvider } from '/pdc/providers/crypto/index.ts';
-import { TokenProvider } from '/pdc/providers/token/index.ts';
-import { RedisConnection } from '/ilos/connection-redis/index.ts';
+import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
+import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';
+import { TokenProvider } from '@/pdc/providers/token/index.ts';
+import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 
 import { HttpTransport } from '../HttpTransport.ts';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider.ts';

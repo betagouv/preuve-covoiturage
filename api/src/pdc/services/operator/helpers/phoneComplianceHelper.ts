@@ -1,4 +1,4 @@
-import { ContactsInterface } from '/shared/common/interfaces/ContactsInterface.ts';
+import { ContactsInterface } from '@/shared/common/interfaces/ContactsInterface.ts';
 
 /**
  * Check the operator's contacts compliance

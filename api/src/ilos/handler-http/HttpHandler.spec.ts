@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import nock from 'nock';
 
 import { httpHandlerFactory } from './helpers/httpHandlerFactory.ts';

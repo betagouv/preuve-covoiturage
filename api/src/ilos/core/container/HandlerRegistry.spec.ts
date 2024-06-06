@@ -1,5 +1,5 @@
-import test from 'ava';
-import { handler } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { handler } from '@/ilos/common/index.ts';
 
 import { Container } from '../index.ts';
 import { Action } from '../foundation/Action.ts';

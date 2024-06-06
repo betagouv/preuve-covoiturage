@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { extension, ConfigInterfaceResolver } from '/ilos/common/index.ts';
-import type { RegisterHookInterface, ServiceContainerInterface } from '/ilos/common/index.ts';
+import { extension, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
+import type { RegisterHookInterface, ServiceContainerInterface } from '@/ilos/common/index.ts';
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {

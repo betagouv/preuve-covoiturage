@@ -1,6 +1,6 @@
-import { provider } from '/ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { v4 } from 'uuid';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import {
   CrosscheckRepositoryProviderInterface,

@@ -1,4 +1,4 @@
-import { PoolConfig } from 'pg';
+import { PoolConfig } from '@/deps.ts';
 import { StaticAbstractDataset, StaticMigrable } from './index.ts';
 
 export interface AppConfigInterface {

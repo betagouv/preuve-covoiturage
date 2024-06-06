@@ -1,5 +1,5 @@
-import { ConfigInterface } from '/ilos/common/index.ts';
-import test from 'ava';
+import { ConfigInterface } from '@/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import { CronFrequency, MatviewItem } from '../interfaces/StatsRefreshInterfaces.ts';
 import { filterTables } from './filterTables.helper.ts';
 

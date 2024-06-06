@@ -1,5 +1,5 @@
-import { KernelInterfaceResolver } from '/ilos/common/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { fromZonedTime } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';

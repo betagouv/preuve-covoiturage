@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces/index.ts';
 import { carpoolV2ToV1StatusConverter } from './carpoolV2ToV1StatusConverter.ts';
 

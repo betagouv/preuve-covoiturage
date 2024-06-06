@@ -1,4 +1,4 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { RedisConnection } from './RedisConnection.ts';
 
 interface Context {

@@ -1,8 +1,8 @@
 import { Worker, QueueScheduler, Processor, Job, WorkerOptions, QueueSchedulerOptions } from 'bullmq';
 
-import { QueueExtension } from '/ilos/queue/index.ts';
-import { TransportInterface, KernelInterface } from '/ilos/common/index.ts';
-import { RedisConnection, RedisInterface } from '/ilos/connection-redis/index.ts';
+import { QueueExtension } from '@/ilos/queue/index.ts';
+import { TransportInterface, KernelInterface } from '@/ilos/common/index.ts';
+import { RedisConnection, RedisInterface } from '@/ilos/connection-redis/index.ts';
 
 interface WorkerWithScheduler {
   worker: Worker;

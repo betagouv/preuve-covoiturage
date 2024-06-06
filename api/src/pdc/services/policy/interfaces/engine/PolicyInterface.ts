@@ -1,6 +1,6 @@
-import { Timezone } from '/pdc/providers/validator/index.ts';
-import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
-import { LogFn } from 'ava';
+import { Timezone } from '@/pdc/providers/validator/index.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { LogFn } from '@/dev_deps.ts';
 import {
   BoundedSlices,
   CarpoolInterface,

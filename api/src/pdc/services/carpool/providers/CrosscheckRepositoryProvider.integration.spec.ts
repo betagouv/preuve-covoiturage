@@ -1,5 +1,5 @@
-import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { CrosscheckRepositoryProvider } from './CrosscheckRepositoryProvider.ts';
 

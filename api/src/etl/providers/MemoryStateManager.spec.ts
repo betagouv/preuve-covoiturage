@@ -1,4 +1,4 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { StaticMigrable, State, flow } from '../interfaces/index.ts';
 import { MemoryStateManager } from './index.ts';
 

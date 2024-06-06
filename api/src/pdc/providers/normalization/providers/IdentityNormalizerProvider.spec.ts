@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 
 import { IdentityNormalizerProvider } from './IdentityNormalizerProvider.ts';
 import { LegacyIdentityInterface } from '../interfaces/index.ts';

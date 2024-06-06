@@ -1,6 +1,6 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import sinon from 'sinon';
-import { makeDbBeforeAfter, DbContext } from '/pdc/providers/test/index.ts';
+import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService.ts';
 import Sinon, { SinonSandbox } from 'sinon';
@@ -10,7 +10,7 @@ import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository
 import { CarpoolRepository } from '../repositories/CarpoolRepository.ts';
 import sql, { raw } from '../helpers/sql.ts';
 import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository.ts';
-import { GeoProvider } from '/pdc/providers/geo/index.ts';
+import { GeoProvider } from '@/pdc/providers/geo/index.ts';
 
 interface TestContext {
   carpoolRepository: CarpoolRepository;

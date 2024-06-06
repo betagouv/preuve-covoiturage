@@ -1,7 +1,7 @@
-import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
-import anyTest, { TestFn } from 'ava';
+import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 
-import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { SerializedPolicyInterface } from '../interfaces/index.ts';
 import { PolicyRepositoryProvider } from './PolicyRepositoryProvider.ts';
 

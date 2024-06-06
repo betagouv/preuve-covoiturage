@@ -1,6 +1,6 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import _ from 'lodash';
-import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '/ilos/core/index.ts';
+import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@/ilos/core/index.ts';
 import {
   handler as handlerDecorator,
   middleware,
@@ -9,7 +9,7 @@ import {
   ContextType,
   ForbiddenException,
   InvalidParamsException,
-} from '/ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { handlerMacro, HandlerMacroContext } from './handlerMacro.ts';
 

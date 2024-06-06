@@ -1,4 +1,4 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { Context } from 'node:vm';
 import { FlattenTripInterface } from '../actions/BuildExportAction.ts';
 import { ExportTripInterface } from '../interfaces/index.ts';

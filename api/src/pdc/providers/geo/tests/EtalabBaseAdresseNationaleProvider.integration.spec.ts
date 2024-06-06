@@ -1,7 +1,7 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 
 import { EtalabBaseAdresseNationaleProvider } from '../providers/index.ts';
-import { NotFoundException } from '/ilos/common/index.ts';
+import { NotFoundException } from '@/ilos/common/index.ts';
 import { insee, inseeError, geo, geoError } from './data.ts';
 
 const provider = new EtalabBaseAdresseNationaleProvider();

@@ -1,9 +1,9 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '/ilos/common/index.ts';
-import { ServiceProvider } from '/ilos/core/index.ts';
-import { httpHandlerFactory } from '/ilos/handler-http/index.ts';
-import { HttpTransport } from '/ilos/transport-http/index.ts';
-import { getPorts } from '/pdc/helpers/ports.helper.ts';
-import anyTest, { TestFn } from 'ava';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@/ilos/common/index.ts';
+import { ServiceProvider } from '@/ilos/core/index.ts';
+import { httpHandlerFactory } from '@/ilos/handler-http/index.ts';
+import { HttpTransport } from '@/ilos/transport-http/index.ts';
+import { getPorts } from '@/pdc/helpers/ports.helper.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import axios from 'axios';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';

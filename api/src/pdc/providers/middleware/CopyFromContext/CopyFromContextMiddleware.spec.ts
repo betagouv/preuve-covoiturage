@@ -1,5 +1,5 @@
-import { ContextType, ParamsType, ResultType } from '/ilos/common/index.ts';
-import test from 'ava';
+import { ContextType, ParamsType, ResultType } from '@/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import { CopyFromContextMiddleware } from './CopyFromContextMiddleware.ts';
 
 const middleware = new CopyFromContextMiddleware();

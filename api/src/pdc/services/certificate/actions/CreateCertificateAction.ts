@@ -1,9 +1,9 @@
-import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '/ilos/common/index.ts';
-import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
 import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '/pdc/providers/middleware/index.ts';
+} from '@/pdc/providers/middleware/index.ts';
 import _ from 'lodash';
 import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper.ts';
 import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper.ts';
@@ -14,11 +14,11 @@ import {
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
-import { CarpoolInterface } from '/shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { CertificateInterface } from '/shared/certificate/common/interfaces/CertificateInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/certificate/create.contract.ts';
-import { alias } from '/shared/certificate/create.schema.ts';
-import { WithHttpStatus } from '/shared/common/handler/WithHttpStatus.ts';
+import { CarpoolInterface } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { CertificateInterface } from '@/shared/certificate/common/interfaces/CertificateInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/certificate/create.contract.ts';
+import { alias } from '@/shared/certificate/create.schema.ts';
+import { WithHttpStatus } from '@/shared/common/handler/WithHttpStatus.ts';
 
 @handler({
   ...handlerConfig,

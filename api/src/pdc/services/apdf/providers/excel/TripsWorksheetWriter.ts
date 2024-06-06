@@ -1,8 +1,8 @@
-import { provider } from '/ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { Column, stream, Worksheet } from 'exceljs';
 import { normalize } from '../../helpers/normalizeAPDFData.helper.ts';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
-import { PgCursorHandler } from '/shared/common/PromisifiedPgCursor.ts';
+import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
 import { AbstractWorksheetWriter } from './AbstractWorksheetWriter.ts';
 
 @provider()

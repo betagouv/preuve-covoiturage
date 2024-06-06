@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { v4 } from 'uuid';
 import { stub } from 'sinon';
 import { OperatorsEnum } from '../../interfaces/index.ts';

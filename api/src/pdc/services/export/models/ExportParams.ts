@@ -1,6 +1,6 @@
-import { Timezone } from '/pdc/providers/validator/index.ts';
+import { Timezone } from '@/pdc/providers/validator/index.ts';
 import { subMonthsTz, today } from '../helpers/index.ts';
-import { TerritorySelectorsInterface } from '/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+import { TerritorySelectorsInterface } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export type Config = Partial<Params>;
 

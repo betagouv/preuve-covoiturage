@@ -1,5 +1,5 @@
-import { provider } from '/ilos/common/index.ts';
-import { GeoProviderInterfaceResolver } from '/pdc/providers/geo/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
 import { GeoNormalizerProviderInterface, GeoParamsInterface, GeoResultInterface } from '../interfaces/index.ts';
 
 @provider()

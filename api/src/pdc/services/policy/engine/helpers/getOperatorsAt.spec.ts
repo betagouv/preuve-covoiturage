@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { TimestampedOperators, getOperatorsAt } from './getOperatorsAt.ts';
 

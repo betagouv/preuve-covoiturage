@@ -1,9 +1,9 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '/ilos/common/index.ts';
-import { RedisConnection } from '/ilos/connection-redis/index.ts';
-import { HttpTransport } from '/ilos/transport-http/index.ts';
-import { QueueTransport } from '/ilos/transport-redis/index.ts';
-import { getPorts } from '/pdc/helpers/ports.helper.ts';
-import anyTest, { TestFn } from 'ava';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@/ilos/common/index.ts';
+import { RedisConnection } from '@/ilos/connection-redis/index.ts';
+import { HttpTransport } from '@/ilos/transport-http/index.ts';
+import { QueueTransport } from '@/ilos/transport-redis/index.ts';
+import { getPorts } from '@/pdc/helpers/ports.helper.ts';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import axios from 'axios';
 import fs from 'node:fs';
 import os from 'node:os';

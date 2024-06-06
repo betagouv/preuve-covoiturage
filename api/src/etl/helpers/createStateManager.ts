@@ -1,7 +1,7 @@
 import { AppConfigInterface, DatabaseStateManagerInterface } from '../interfaces/index.ts';
 import { config as defaultConfig } from '../config.ts';
 import { DatabaseStateManager } from '../providers/index.ts';
-import { Pool } from 'pg';
+import { Pool } from '@/deps.ts';
 
 export function createStateManager(
   pool: Pool,

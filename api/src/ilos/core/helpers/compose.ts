@@ -1,4 +1,4 @@
-import { MiddlewareInterface, FunctionMiddlewareInterface, ParamsType, ResultType, ContextType } from '/ilos/common/index.ts';
+import { MiddlewareInterface, FunctionMiddlewareInterface, ParamsType, ResultType, ContextType } from '@/ilos/common/index.ts';
 
 type middlewareInstancesWithOptionsType = (MiddlewareInterface | [MiddlewareInterface, any])[];
 export function compose(

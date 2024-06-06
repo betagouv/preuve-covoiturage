@@ -1,5 +1,5 @@
-import { ConfigStore } from '/ilos/core/extensions/index.ts';
-import test from 'ava';
+import { ConfigStore } from '@/ilos/core/extensions/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
 import axios from 'axios';
 import { writeFile } from 'node:fs/promises';
 import https from 'node:https';

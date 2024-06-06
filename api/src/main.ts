@@ -1,6 +1,5 @@
-// import 'module-alias/register';
+import { process } from '@/deps.ts';
 import { bootstrap as app } from './pdc/proxy/bootstrap.ts';
-import process from 'node:process';
 
 const [, , command, ...opts] = process.argv;
 

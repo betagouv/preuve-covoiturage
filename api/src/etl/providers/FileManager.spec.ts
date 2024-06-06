@@ -1,4 +1,4 @@
-import anyTest, { TestFn } from 'ava';
+import { anyTest, TestFn } from '@/dev_deps.ts';
 import { FileManager } from './FileManager.ts';
 import sinon, { SinonStub } from 'sinon';
 import axios, { AxiosError } from 'axios';

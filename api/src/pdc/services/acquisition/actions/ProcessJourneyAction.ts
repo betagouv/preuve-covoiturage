@@ -1,18 +1,18 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '/ilos/common/index.ts';
-import { Action as AbstractAction } from '/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
-import { NormalizationProvider } from '/pdc/providers/normalization/index.ts';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { NormalizationProvider } from '@/pdc/providers/normalization/index.ts';
 import { randomUUID } from 'node:crypto';
 
 import { callContext } from '../config/callContext.ts';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/acquisition/process.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/acquisition/process.contract.ts';
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
-} from '/shared/carpool/crosscheck.contract.ts';
+} from '@/shared/carpool/crosscheck.contract.ts';
 
 @handler({
   ...handlerConfig,

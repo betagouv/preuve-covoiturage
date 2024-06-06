@@ -1,8 +1,8 @@
-import test from 'ava';
-import { NotFoundException } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { NotFoundException } from '@/ilos/common/index.ts';
 
 import { CompanyDataSourceProvider } from './CompanyDataSourceProvider.ts';
-import { Extensions } from '/ilos/core/index.ts';
+import { Extensions } from '@/ilos/core/index.ts';
 import * as dataSource from '../config/dataSource.ts';
 
 test('should fetch from data source with a siret id', async (t) => {

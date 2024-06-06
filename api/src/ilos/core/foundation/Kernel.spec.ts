@@ -1,4 +1,4 @@
-import test from 'ava';
+import { anyTest as test } from '@/dev_deps.ts';
 import {
   ProviderInterface,
   ResultType,
@@ -7,7 +7,7 @@ import {
   handler,
   provider,
   serviceProvider,
-} from '/ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { Kernel } from './Kernel.ts';
 import { ServiceProvider } from './ServiceProvider.ts';

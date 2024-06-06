@@ -1,10 +1,10 @@
-import { Action } from '/ilos/core/index.ts';
-import { handler, ConfigInterfaceResolver } from '/ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { handler, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 
-import { FinalizedPersonInterface } from '/shared/common/interfaces/PersonInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/carpool/crosscheck.contract.ts';
-import { alias } from '/shared/carpool/crosscheck.schema.ts';
+import { FinalizedPersonInterface } from '@/shared/common/interfaces/PersonInterface.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/carpool/crosscheck.contract.ts';
+import { alias } from '@/shared/carpool/crosscheck.schema.ts';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface.ts';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface.ts';

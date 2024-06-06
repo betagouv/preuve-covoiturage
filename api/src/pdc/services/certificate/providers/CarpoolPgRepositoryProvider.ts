@@ -1,12 +1,12 @@
-import { provider } from '/ilos/common/index.ts';
-import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import {
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
-import { CarpoolInterface, DBCarpoolInterface } from '/shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { PointInterface } from '/shared/common/interfaces/PointInterface.ts';
+import { CarpoolInterface, DBCarpoolInterface } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { PointInterface } from '@/shared/common/interfaces/PointInterface.ts';
 
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,

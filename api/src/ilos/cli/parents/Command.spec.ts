@@ -1,5 +1,5 @@
-import test from 'ava';
-import { ResultType, CommandOptionType } from '/ilos/common/index.ts';
+import { anyTest as test } from '@/dev_deps.ts';
+import { ResultType, CommandOptionType } from '@/ilos/common/index.ts';
 
 import { Command } from './Command.ts';
 
