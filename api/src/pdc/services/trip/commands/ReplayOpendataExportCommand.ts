@@ -1,5 +1,4 @@
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { add, isBefore } from 'date-fns';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';
 import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider.ts';
 import {
@@ -7,6 +6,7 @@ import {
   ResultInterface as BuildExportResultInterface,
   signature as buildExportSignature,
 } from '@/shared/trip/buildExport.contract.ts';
+import { date } from "@/deps.ts";
 
 export interface StartEndDate {
   start: Date;
@@ -55,12 +55,12 @@ export class ReplayOpendataExportCommand implements CommandInterface {
     const dateEnd: Date = endOfMonth(end);
     let dateCursor: Date = new Date(start);
 
-    while (isBefore(dateCursor, dateEnd)) {
+    while (date.isBefore(dateCursor, dateEnd)) {
       intervals.push({
         start: startOfMonth(dateCursor, 'Europe/Paris'),
         end: endOfMonth(dateCursor, 'Europe/Paris'),
       });
-      dateCursor = add(dateCursor, { months: 1 });
+      dateCursor = date.add(dateCursor, { months: 1 });
     }
     return intervals;
   }

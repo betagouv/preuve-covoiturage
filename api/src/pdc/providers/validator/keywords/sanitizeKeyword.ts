@@ -1,4 +1,4 @@
-import { filterXSS, IFilterXSSOptions } from 'xss';
+import { IFilterXSSOptions } from '@/deps.ts';
 import { KeywordDefinition } from '@/ilos/validator/index.ts';
 
 export type SanitizeInterface = boolean | IFilterXSSOptions;

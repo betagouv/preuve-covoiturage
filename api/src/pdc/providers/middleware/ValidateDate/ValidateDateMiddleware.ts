@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import { startOfDay, endOfDay } from 'date-fns';
+import { _, date } from '@/deps.ts';
 import {
   MiddlewareInterface,
   ContextType,
@@ -26,8 +25,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
     }
 
     const { startPath, endPath, minStart: minStartFn, maxEnd: maxEndFn, applyDefault: applyDefaultOpt } = options;
-    const minStart: Date | undefined = minStartFn ? startOfDay(minStartFn(params, context)) : undefined;
-    const maxEnd: Date | undefined = maxEndFn ? endOfDay(maxEndFn(params, context)) : undefined;
+    const minStart: Date | undefined = minStartFn ? date.startOfDay(minStartFn(params, context)) : undefined;
+    const maxEnd: Date | undefined = maxEndFn ? date.endOfDay(maxEndFn(params, context)) : undefined;
     const applyDefault = applyDefaultOpt ?? false;
     const startDate: Date | undefined = _.get(params, startPath, undefined);
     const endDate: Date | undefined = _.get(params, endPath, undefined);

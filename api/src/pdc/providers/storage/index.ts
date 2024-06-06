@@ -1,4 +1,4 @@
-import { _Object } from '@aws-sdk/client-s3';
+import { _Object } from '@/deps.ts';
 
 export { APDFNameProvider } from './APDFNameProvider.ts';
 export type { APDFNameParamsInterface, APDFNameResultsInterface } from './APDFNameProvider.ts';

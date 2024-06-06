@@ -1,5 +1,5 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { Extensions, Action, ServiceProvider, Kernel } from '@/ilos/core/index.ts';
 import { ConnectionManagerExtension } from '@/ilos/connection-manager/index.ts';

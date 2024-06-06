@@ -5,7 +5,7 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/m
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/simulateOnPast.contract.ts';
 import { alias } from '@/shared/policy/simulateOnPast.schema.ts';
-import { RedisKey } from 'ioredis';
+import { RedisKey } from '@/deps.ts';
 import { MetadataStore } from '../engine/entities/MetadataStore.ts';
 import { Policy } from '../engine/entities/Policy.ts';
 import {

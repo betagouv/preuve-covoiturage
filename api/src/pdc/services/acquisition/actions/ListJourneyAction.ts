@@ -7,7 +7,7 @@ import { alias } from '@/shared/acquisition/list.schema.ts';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/acquisition/list.contract.ts';
 import { StatusSearchInterface } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 import { castUserStringToUTC, subDaysTz, today } from '../helpers/index.ts';
-import { isAfter, isBefore } from 'date-fns';
+import { date } from "@/deps.ts";
 
 @handler({
   ...handlerConfig,
@@ -44,14 +44,14 @@ export class ListJourneyAction extends AbstractAction {
   }
 
   protected validateStartEnd(startDate: Date, endDate: Date, todayDate: Date) {
-    if (isAfter(startDate, endDate)) {
+    if (date.isAfter(startDate, endDate)) {
       throw new InvalidParamsException('Start should be before end');
     }
-    if (isAfter(endDate, todayDate)) {
+    if (date.isAfter(endDate, todayDate)) {
       throw new InvalidParamsException('End should be before now');
     }
     const maxStartDate = subDaysTz(todayDate, 90);
-    if (isBefore(startDate, maxStartDate)) {
+    if (date.isBefore(startDate, maxStartDate)) {
       throw new InvalidParamsException(`Start should be after ${maxStartDate.toISOString()}`);
     }
   }

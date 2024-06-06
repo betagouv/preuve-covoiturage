@@ -1,5 +1,4 @@
-import express from 'express';
-import _ from 'lodash';
+import { _, Request, Response, NextFunction, Router } from '@/deps.ts';
 import { KernelInterface } from '@/ilos/common/index.ts';
 import { mapStatusCode } from '@/ilos/transport-http/index.ts';
 
@@ -41,14 +40,14 @@ export type ArrayRouteMapType = [
 ];
 
 export type RouteHandlerType = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => Promise<void>;
 
 export function routeMapping(
   definitions: (ObjectRouteMapType | ArrayRouteMapType)[],
-  router: express.Router,
+  router: Router,
   kernel: KernelInterface,
 ): void {
   const routes: Map<string, Map<string, ObjectRouteMapType>> = new Map();
@@ -102,7 +101,7 @@ export function routeMapping(
 
         router[verb](
           route,
-          async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+          async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             try {
               const response = await kernel.handle(
                 createRPCPayload(

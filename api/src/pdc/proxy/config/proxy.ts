@@ -1,4 +1,4 @@
-import { hostname as osHostname } from 'node:os';
+import { hostname as osHostname } from '@/deps.ts';
 import { env } from '@/ilos/core/index.ts';
 
 export const appUrl = env.or_fail('APP_APP_URL', 'http://localhost:4200');

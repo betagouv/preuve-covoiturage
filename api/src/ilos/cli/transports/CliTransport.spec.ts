@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 
 import { Kernel } from '@/ilos/core/index.ts';
 import {

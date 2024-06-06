@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { ConfiguredMiddleware, UnconfiguredMiddleware } from '@/pdc/providers/middleware/index.ts';
 import {
   middleware,

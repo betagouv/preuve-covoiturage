@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, RPCException } from '@/ilos/common/index.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 
 import { AjvValidator } from './AjvValidator.ts';
 

@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import { v4 } from 'uuid';
+import { v4 } from '@/deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
 import { Cotentin2023 as Handler } from './Cotentin2023.ts';

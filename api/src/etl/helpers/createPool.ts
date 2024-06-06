@@ -1,9 +1,9 @@
-import pg from '@/deps.ts';
+import { Pool } from '@/deps.ts';
 import type { PoolConfig } from '@/deps.ts';
 import { config as defaultConfig } from '../config.ts';
 
-export function createPool(config: PoolConfig = defaultConfig.pool): pg.Pool {
-  return new pg.Pool({
+export function createPool(config: PoolConfig = defaultConfig.pool): Pool {
+  return new Pool({
     ...config,
   });
 }

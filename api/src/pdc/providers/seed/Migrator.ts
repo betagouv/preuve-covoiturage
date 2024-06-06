@@ -1,16 +1,12 @@
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { createDatabase, dropDatabase, migrate } from '@/db/index.js';
-import { parse, Options as ParseOptions } from 'csv-parse';
-import fs from 'node:fs';
-import path from 'node:path';
+import { fs, date, path, URL, parse, CsvOptions as ParseOptions } from '@/deps.ts';
 
-import { URL } from 'node:url';
 import { Carpool, carpools, carpoolsV2 } from './carpools.ts';
 import { companies, Company } from './companies.ts';
 import { Operator, operators } from './operators.ts';
 import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories.ts';
 import { User, users } from './users.ts';
-import { add } from 'date-fns';
 export class Migrator {
   public connection: PostgresConnection;
   public currentConnectionString: string;
@@ -243,7 +239,7 @@ export class Migrator {
         driverCarpool.datetime,
         driverCarpool.start_position.lon,
         driverCarpool.start_position.lat,
-        add(driverCarpool.datetime, { seconds: driverCarpool.duration }),
+        date.add(driverCarpool.datetime, { seconds: driverCarpool.duration }),
         driverCarpool.end_position.lon,
         driverCarpool.end_position.lat,
         driverCarpool.distance,

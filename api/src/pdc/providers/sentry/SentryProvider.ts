@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, ProviderInterface, provider } from '@/ilos/common/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { Sentry } from './Sentry.ts';
 
 @provider()

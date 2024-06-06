@@ -1,10 +1,6 @@
 import { ConfigStore } from '@/ilos/core/extensions/index.ts';
 import { anyTest as test } from '@/dev_deps.ts';
-import axios from 'axios';
-import { writeFile } from 'node:fs/promises';
-import https from 'node:https';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { axios, writeFile, process, https, tmpdir, join } from '@/deps.ts';
 import { BucketName } from './interfaces/BucketName.ts';
 import { S3StorageProvider } from './S3StorageProvider.ts';
 

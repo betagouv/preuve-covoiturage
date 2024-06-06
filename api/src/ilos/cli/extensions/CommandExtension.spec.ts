@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
 import { command, serviceProvider as serviceProviderDecorator, ResultType } from '@/ilos/common/index.ts';
 

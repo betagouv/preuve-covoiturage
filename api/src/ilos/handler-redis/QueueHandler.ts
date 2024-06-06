@@ -1,5 +1,5 @@
-import { Job, Queue, JobsOptions, QueueOptions } from 'bullmq';
-import _ from 'lodash';
+import { Job, Queue, JobsOptions, QueueOptions } from '@/deps.ts';
+import { _ } from '@/deps.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { HandlerInterface, InitHookInterface, CallType } from '@/ilos/common/index.ts';
 

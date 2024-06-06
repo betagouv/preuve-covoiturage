@@ -7,14 +7,12 @@ import {
   TransportInterface,
 } from '@/ilos/common/index.ts';
 import { Bootstrap } from '@/ilos/framework/index.ts';
-import test, { ExecutionContext, Macro } from '@/dev_deps.ts';
-import spt, { Test } from 'supertest';
-import TestAgent from 'supertest/lib/agent.ts';
+import { anyTest as test, ExecutionContext, Macro, SuperTestAgent, supertest as spt} from '@/dev_deps.ts';
 import { makeKernelCtor } from './helpers.ts';
 
 export interface HttpMacroContext {
   transport: TransportInterface;
-  supertest: TestAgent<Test>;
+  supertest: SuperTestAgent;
   request: <P = ParamsType, R = ResultType>(method: string, params: P, context: Partial<ContextType>) => Promise<R>;
 }
 

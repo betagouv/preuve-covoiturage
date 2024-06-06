@@ -1,7 +1,7 @@
 import { command, CommandInterface, CommandOptionType } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { CryptoProviderInterfaceResolver } from '@/pdc/providers/crypto/index.ts';
-import process from 'node:process';
+import { process } from '@/deps.ts';
 
 import { ParamsInterface } from '@/shared/user/create.contract.ts';
 

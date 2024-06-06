@@ -1,5 +1,5 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import { stream, Workbook, Worksheet } from 'exceljs';
+import { excel } from '@/deps.ts';
 import { SliceStatInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
 import { BuildExcel } from './BuildExcel.ts';
 import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
@@ -34,13 +34,13 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   ];
 
   // Act
-  const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(t.context.FILEPATH!);
+  const workbookWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(t.context.FILEPATH!);
   await t.context.slicesWorksheetWriter!.call(workbookWriter, slices);
   await workbookWriter.commit();
 
   // Assert
-  const workbook: Workbook = await new Workbook().xlsx.readFile(t.context.FILEPATH!);
-  const worksheet: Worksheet = workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME);
+  const workbook: excel.Workbook = await new excel.Workbook().xlsx.readFile(t.context.FILEPATH!);
+  const worksheet: excel.Worksheet = workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME);
 
   // Header 'normale'
   t.is(worksheet.getCell('A1').value, t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL[0]);

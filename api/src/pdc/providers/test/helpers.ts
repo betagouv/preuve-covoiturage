@@ -1,6 +1,6 @@
 import { ServiceContainerInterface, NewableType, KernelInterface, kernel as kernelDecorator } from '@/ilos/common/index.ts';
 import { Kernel as AbstractKernel } from '@/ilos/framework/index.ts';
-import { v4 } from 'uuid';
+import { v4 } from '@/deps.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import * as connections from '@/config/connections.ts';

@@ -1,5 +1,4 @@
-import type { Options as CsvOptions } from 'csv-parse';
-import type { FilterOptions as JsonOptions } from 'stream-json/filters/FilterBase.js';
+import type { CsvOptions, StreamJsonOptions as JsonOptions } from '@/deps.ts';
 export type { CsvOptions };
 export type { JsonOptions };
 

@@ -1,8 +1,5 @@
-import axios from 'axios';
-import { access, mkdir } from 'node:fs/promises';
-import { Readable } from 'node:stream';
-import mapshaper from 'mapshaper';
-import { basename, join } from 'node:path';
+import { axios, mapshaper } from '@/deps.ts';
+import { access, mkdir, Readable, basename, join } from '@/deps.ts'
 import {
   writeFile,
   hash,

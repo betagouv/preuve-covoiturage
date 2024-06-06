@@ -1,8 +1,7 @@
 import { provider } from '@/ilos/common/index.ts';
 import { env } from '@/ilos/core/index.ts';
-import axios from 'axios';
-import { Agent } from 'node:http';
-import _ from 'lodash';
+import { axios, HttpsAgent as Agent } from '@/deps.ts';
+import { _ } from '@/deps.ts';
 import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interfaces/index.ts';
 
 @provider()

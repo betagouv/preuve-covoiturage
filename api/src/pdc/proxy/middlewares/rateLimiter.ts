@@ -1,9 +1,7 @@
-import rateLimit, { Options as RateLimiterOptions, RateLimitRequestHandler } from 'express-rate-limit';
-import RedisStore from 'rate-limit-redis';
-import { Redis as RedisClient } from 'ioredis';
+import { Redis as RedisClient, RateLimitRedisStore, rateLimit, RateLimiterOptions, RateLimitRequestHandler } from '@/deps.ts';
 import { env } from '@/ilos/core/index.ts';
 import { config } from '../config/index.ts';
-import { Request, Response } from 'express';
+import { Request, Response } from '@/deps.ts';
 
 const minute = 60000;
 
@@ -11,7 +9,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
   const redisConfig = config.connections.redis;
   const client = new RedisClient(redisConfig);
   const options = {
-    store: new RedisStore({
+    store: new RateLimitRedisStore({
       prefix,
       // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
       sendCommand: (...args: string[]) => client.call(...args),

@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import { v4 } from 'uuid';
+import { v4 } from '@/deps.ts';
 import { CarpoolInterface, OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
 import { Occitanie20232024 as Handler } from './Occitanie20232024.ts';

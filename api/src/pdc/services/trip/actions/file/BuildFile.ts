@@ -1,9 +1,5 @@
 import { provider } from '@/ilos/common/index.ts';
-import { Stringifier, stringify } from 'csv-stringify';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { v4 } from 'uuid';
+import { fs, os, path, v4, Stringifier, stringify } from '@/deps.ts';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName.ts';
 import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper.ts';
 import { ExportTripInterface } from '../../interfaces/index.ts';

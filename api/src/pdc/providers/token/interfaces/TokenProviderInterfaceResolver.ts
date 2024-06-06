@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import { jwt } from '@/deps.ts';
 import { ProviderInterface } from '@/ilos/common/index.ts';
 
 export interface TokenProviderInterface extends ProviderInterface {

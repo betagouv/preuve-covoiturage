@@ -1,5 +1,4 @@
-import * as commander from 'commander';
-
+import { Command } from "@/deps.ts";
 import { provider, ProviderInterface } from '@/ilos/common/index.ts';
 
 /**
@@ -10,7 +9,7 @@ import { provider, ProviderInterface } from '@/ilos/common/index.ts';
  * @implements {ProviderInterface}
  */
 @provider()
-export class CommandRegistry extends commander.Command implements ProviderInterface {
+export class CommandRegistry extends Command implements ProviderInterface {
   output(...args: any[]) {
     console.info(...args);
   }

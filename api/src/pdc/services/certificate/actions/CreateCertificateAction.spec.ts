@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import anyTest, { ExecutionContext, TestFn } from '@/dev_deps.ts';
-import { faker } from '@faker-js/faker';
-import sinon, { SinonStub } from 'sinon';
+import { anyTest ExecutionContext, TestFn } from '@/dev_deps.ts';
+import { faker } from '@/deps.ts';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { mapFromCarpools } from '../helpers/mapFromCarpools.ts';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';

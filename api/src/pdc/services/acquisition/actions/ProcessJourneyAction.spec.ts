@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import sinon, { SinonStubbedInstance } from 'sinon';
+import { sinon,  SinonStubbedInstance  } from '@/dev_deps.ts';
 import { ProcessJourneyAction } from './ProcessJourneyAction.ts';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';

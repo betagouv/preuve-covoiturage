@@ -1,10 +1,10 @@
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import { fromZonedTime } from 'date-fns-tz';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';
 import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider.ts';
 import { ReplayOpendataExportCommand, StartEndDate } from './ReplayOpendataExportCommand.ts';
+import { datetz } from "@/deps.ts";
 
 interface Context {
   // Injected tokens
@@ -49,16 +49,16 @@ test('ReplayOpendataExportCommand: should call n times BuildExport from 08 Octob
   // Assert
   const today: Date = new Date();
   t.deepEqual(result[0], {
-    start: fromZonedTime(new Date('2020-10-01T00:00:00'), 'Europe/Paris'),
-    end: fromZonedTime(new Date('2020-10-31T23:59:59.999'), 'Europe/Paris'),
+    start: datetz.fromZonedTime(new Date('2020-10-01T00:00:00'), 'Europe/Paris'),
+    end: datetz.fromZonedTime(new Date('2020-10-31T23:59:59.999'), 'Europe/Paris'),
   });
   t.deepEqual(result[7], {
-    start: fromZonedTime(new Date('2021-05-01T00:00:00'), 'Europe/Paris'),
-    end: fromZonedTime(new Date('2021-05-31T23:59:59.999'), 'Europe/Paris'),
+    start: datetz.fromZonedTime(new Date('2021-05-01T00:00:00'), 'Europe/Paris'),
+    end: datetz.fromZonedTime(new Date('2021-05-31T23:59:59.999'), 'Europe/Paris'),
   });
   t.deepEqual(result[12], {
-    start: fromZonedTime(new Date('2021-10-01T00:00:00'), 'Europe/Paris'),
-    end: fromZonedTime(new Date('2021-10-31T23:59:59.999'), 'Europe/Paris'),
+    start: datetz.fromZonedTime(new Date('2021-10-01T00:00:00'), 'Europe/Paris'),
+    end: datetz.fromZonedTime(new Date('2021-10-31T23:59:59.999'), 'Europe/Paris'),
   });
   t.is(
     result[result.length - 1].start.toISOString().split('T')[0],

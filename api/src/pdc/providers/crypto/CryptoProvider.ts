@@ -1,5 +1,4 @@
-import * as bcrypt from 'bcryptjs';
-import CryptoJS from 'crypto-js';
+import { CryptoJS, bcrypt } from '@/deps.ts';
 import { provider, ProviderInterface } from '@/ilos/common/index.ts';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';

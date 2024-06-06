@@ -1,5 +1,4 @@
-import express from 'express';
-import _ from 'lodash';
+import { _, Request as ExpressRequest, Response, process } from '@/deps.ts';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@/ilos/common/index.ts';
 import { TokenProviderInterfaceResolver } from '@/pdc/providers/token/index.ts';
 
@@ -7,7 +6,7 @@ import { ApplicationInterface } from '@/shared/application/common/interfaces/App
 import { TokenPayloadInterface } from '@/shared/application/common/interfaces/TokenPayloadInterface.ts';
 import { createRPCPayload } from '../helpers/createRPCPayload.ts';
 
-interface Request extends express.Request {
+interface Request extends ExpressRequest {
   operator: string;
   permissions: string[];
 }
@@ -70,7 +69,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
-  return async (req: Request, res: express.Response, next: Function): Promise<void> => {
+  return async (req: Request, res: Response, next: Function): Promise<void> => {
     try {
       const token = _.get(req, 'headers.authorization', null);
       if (!token) {

@@ -1,4 +1,4 @@
-import { Worker, QueueScheduler, Processor, Job, WorkerOptions, QueueSchedulerOptions } from 'bullmq';
+import { Worker, QueueScheduler, Processor, Job, WorkerOptions, QueueSchedulerOptions } from '@/deps.ts';
 
 import { QueueExtension } from '@/ilos/queue/index.ts';
 import { TransportInterface, KernelInterface } from '@/ilos/common/index.ts';

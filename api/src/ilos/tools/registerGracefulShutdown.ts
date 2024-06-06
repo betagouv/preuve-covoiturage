@@ -1,4 +1,4 @@
-import process from 'node:process';
+import { process } from "@/deps.ts";
 
 export function registerGracefulShutdown(
   // https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters

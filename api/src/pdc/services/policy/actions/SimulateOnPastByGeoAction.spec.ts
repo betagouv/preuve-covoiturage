@@ -1,10 +1,10 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
 import { ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction.ts';
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 import { ResultInterface } from '@/shared/policy/simulateOnPastGeo.contract.ts';
-import { faker } from '@faker-js/faker';
+import { faker } from '@/deps.ts';
 
 interface Context {
   // Injected tokens

@@ -1,8 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import pino from 'pino';
-import { isMainThread } from 'node:worker_threads';
-import process from 'node:process';
+import { process, pino, path, fs, isMainThread } from '@/deps.ts';
 
 import {
   kernel,

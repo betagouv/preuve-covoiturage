@@ -1,7 +1,7 @@
 import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { Action } from '@/ilos/core/index.ts';
 import { copyFromContextMiddleware, validateDateMiddleware } from '@/pdc/providers/middleware/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import * as middlewareConfig from '../config/middlewares.ts';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';

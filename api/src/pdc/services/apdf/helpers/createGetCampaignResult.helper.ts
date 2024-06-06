@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { faker } from '@faker-js/faker';
+import { faker } from '@/deps.ts';
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { ResultInterface as GetCampaignResultInterface } from '@/shared/policy/find.contract.ts';
 

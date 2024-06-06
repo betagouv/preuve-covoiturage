@@ -1,8 +1,5 @@
 import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import axios from 'axios';
-import { Agent } from 'node:https';
-import _ from 'lodash';
-import { URLSearchParams } from 'node:url';
+import { axios, HttpsAgent as Agent, _, URLSearchParams } from '@/deps.ts';
 import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()

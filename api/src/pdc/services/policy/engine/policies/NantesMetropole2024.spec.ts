@@ -1,6 +1,6 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import { v4 } from 'uuid';
-import { stub } from 'sinon';
+import { v4 } from '@/deps.ts';
+import { stub } from '@/dev_deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
 import { NantesMetropole2024 as Handler } from './NantesMetropole2024.ts';

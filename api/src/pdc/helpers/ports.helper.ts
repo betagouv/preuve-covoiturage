@@ -1,8 +1,7 @@
 // source: https://github.com/sindresorhus/get-port/blob/main/index.js
 // from v7.1.0 - modified to Typescript + fixing imports
 
-import net from 'node:net';
-import os from 'node:os';
+import { os, net } from '@/deps.ts';
 
 class Locked extends Error {
   constructor(port) {

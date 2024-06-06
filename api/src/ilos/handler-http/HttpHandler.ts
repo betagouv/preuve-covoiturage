@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import { axios, AxiosInstance } from '@/deps.ts';
 
 import { CallType, ResultType, HandlerInterface, InitHookInterface, ServiceException } from '@/ilos/common/index.ts';
 

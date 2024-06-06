@@ -1,6 +1,4 @@
-import 'reflect-metadata';
-import { Container as InversifyContainer, interfaces } from 'inversify';
-
+import { ContainerOptions, Container as InversifyContainer } from "@/deps.ts";
 import {
   FunctionalHandlerInterface,
   HandlerInterface,
@@ -27,10 +25,10 @@ export class Container extends InversifyContainer implements ContainerInterface 
 
   /**
    * Creates an instance of Container.
-   * @param {interfaces.ContainerOptions} [containerOptions]
+   * @param {ContainerOptions} [containerOptions]
    * @memberof Container
    */
-  constructor(containerOptions?: interfaces.ContainerOptions) {
+  constructor(containerOptions?: ContainerOptions) {
     super({
       defaultScope: 'Singleton',
       autoBindInjectable: true,
@@ -39,7 +37,7 @@ export class Container extends InversifyContainer implements ContainerInterface 
     });
   }
 
-  createChild(containerOptions: interfaces.ContainerOptions = {}): Container {
+  createChild(containerOptions: ContainerOptions = {}): Container {
     const container = new Container(containerOptions);
     container.parent = this;
     return container;

@@ -1,12 +1,8 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
 import { FileManager } from './FileManager.ts';
-import sinon, { SinonStub } from 'sinon';
-import axios, { AxiosError } from 'axios';
-import { Readable } from 'node:stream';
-import { rmSync, readFileSync } from 'node:fs';
 import { hash, writeFile } from '../helpers/index.ts';
-import { join } from 'node:path';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, join, Readable, axios, rmSync, readFileSync, AxiosError } from '@/deps.ts';
+import { sinon, SinonStub } from '@/dev_deps.ts';
 
 interface Context {
   // Constants

@@ -1,13 +1,17 @@
-import express from 'express';
+import {
+  Request,
+  Response,
+  NextFunction
+} from '@/deps.ts';
 
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
 // https://expressjs.com/en/guide/error-handling.html
 export function errorHandlerMiddleware(
   err: Error,
-  _req: express.Request,
-  res: express.Response,
-  _next: express.NextFunction,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
 ): void {
   let code: number;
 

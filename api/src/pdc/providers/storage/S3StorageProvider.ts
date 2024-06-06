@@ -7,11 +7,11 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+  getSignedUrl,
+} from '@/deps.ts'
 import { ConfigInterfaceResolver, ProviderInterface, provider } from '@/ilos/common/index.ts';
 import { env } from '@/ilos/core/index.ts';
-import fs from 'node:fs';
+import { fs } from '@/deps.ts';
 import { S3ObjectList } from './index.ts';
 import { filenameFromPath, getBucketName } from './helpers/buckets.ts';
 import { BucketName } from './interfaces/BucketName.ts';

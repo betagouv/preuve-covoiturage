@@ -1,5 +1,5 @@
 import { provider } from '@/ilos/common/index.ts';
-import { v4 } from 'uuid';
+import { v4 } from '@/deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import {

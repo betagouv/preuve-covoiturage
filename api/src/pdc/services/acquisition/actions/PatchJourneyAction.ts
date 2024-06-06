@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
 import { handler, ContextType } from '@/ilos/common/index.ts';
 import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';

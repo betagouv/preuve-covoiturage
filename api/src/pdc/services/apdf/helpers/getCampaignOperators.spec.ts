@@ -6,7 +6,7 @@ import {
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { ResultInterface as PolicyFindResult } from '@/shared/policy/find.contract.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { getCampaignOperators, getPolicyUuidList, uuidToOperatorId } from './getCampaignOperators.helper.ts';
 
 interface Context {

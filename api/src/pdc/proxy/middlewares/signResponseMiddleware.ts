@@ -1,11 +1,10 @@
-import crypto from 'node:crypto';
-import expressMung from 'express-mung';
+import { expressMung, createHash } from "@/deps.ts";
 
 /**
  * Hash the payload
  */
 const hashPayload = (payload): string => {
-  const hash = crypto.createHash('SHA256');
+  const hash = createHash('SHA256');
   hash.update(JSON.stringify(payload) || '');
   return hash.digest('hex');
 };

@@ -1,6 +1,6 @@
 import { NotFoundException, provider } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,

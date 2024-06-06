@@ -5,8 +5,7 @@ import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
 } from '@/shared/policy/list.contract.ts';
-import { fromZonedTime } from 'date-fns-tz';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';
 
 interface Options {
@@ -67,8 +66,8 @@ export class ExportCommand implements CommandInterface {
       call: { user: { permissions: ['registry.apdf.export'] }, metadata: { verbose: options.verbose } },
     };
 
-    if (options.start) _.set(params, 'query.date.start', fromZonedTime(options.start, options.tz).toISOString());
-    if (options.end) _.set(params, 'query.date.end', fromZonedTime(options.end, options.tz).toISOString());
+    if (options.start) _.set(params, 'query.date.start', datetz.fromZonedTime(options.start, options.tz).toISOString());
+    if (options.end) _.set(params, 'query.date.end', datetz.fromZonedTime(options.end, options.tz).toISOString());
     if (options.operators?.length) _.set(params, 'query.operator_id', options.operators);
 
     // fetch active campaigns at the given date

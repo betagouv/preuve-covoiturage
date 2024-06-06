@@ -1,8 +1,8 @@
-import { extractFull } from 'node-7z';
+import { SevenZipOptions, extractFull } from "@/deps.ts";
 import { config } from '../../config.ts';
 
 export function un7zFile(filepath: string, extractPath: string): Promise<void> {
-  let sevenZipOptions;
+  let sevenZipOptions: SevenZipOptions;
 
   if (config.app.sevenZipBinPath) {
     sevenZipOptions = { $bin: config.app.sevenZipBinPath };

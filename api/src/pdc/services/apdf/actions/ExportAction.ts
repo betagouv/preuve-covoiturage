@@ -5,10 +5,8 @@ import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts'
 import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/apdf/export.contract.ts';
 import { alias } from '@/shared/apdf/export.schema.ts';
 import { ResultInterface as PolicyResultInterface } from '@/shared/policy/find.contract.ts';
-import { addMonths, startOfMonth, subMonths } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
-import fs from 'node:fs';
-import _ from 'lodash';
+import { fs, date, datetz } from '@/deps.ts';
+import { _ } from '@/deps.ts';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';
 import { getCampaignOperators } from '../helpers/getCampaignOperators.helper.ts';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
@@ -124,22 +122,22 @@ export class ExportAction extends Action {
 
     // make a 1 month date range from start_date
     if (start_date_lc && !end_date_lc) {
-      return { start_date: new Date(start_date_lc), end_date: addMonths(start_date_lc, 1) };
+      return { start_date: new Date(start_date_lc), end_date: date.addMonths(start_date_lc, 1) };
     }
 
     // make a 1 month date range from end_date
     if (!start_date_lc && end_date_lc) {
-      return { start_date: subMonths(end_date_lc, 1), end_date: new Date(end_date_lc) };
+      return { start_date: date.subMonths(end_date_lc, 1), end_date: new Date(end_date_lc) };
     }
 
     // defaults
-    const start = startOfMonth(subMonths(new Date(), 1));
-    const end = startOfMonth(new Date());
+    const start = date.startOfMonth(date.subMonths(new Date(), 1));
+    const end = date.startOfMonth(new Date());
 
     // timezoned
     return {
-      start_date: fromZonedTime(start, params.format?.tz),
-      end_date: fromZonedTime(end, params.format?.tz),
+      start_date: datetz.fromZonedTime(start, params.format?.tz),
+      end_date: datetz.fromZonedTime(end, params.format?.tz),
     };
   }
 }

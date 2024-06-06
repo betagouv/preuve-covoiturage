@@ -1,5 +1,5 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@/ilos/core/index.ts';
 import {
   handler as handlerDecorator,

@@ -1,8 +1,6 @@
 import { ConfigInterfaceResolver, provider } from '@/ilos/common/index.ts';
 import { TemplateInterface, TemplateProviderInterfaceResolver } from '@/pdc/providers/template/index.ts';
-import { createTransport, Transporter } from 'nodemailer';
-import Mail from 'nodemailer/lib/mailer';
-import mjml2html from 'mjml';
+import { mailer, mjml2html, MailOptions, process } from '@/deps.ts';
 
 import {
   NotificationTransporterInterface,
@@ -21,9 +19,9 @@ interface NotificationOptions {
   identifier: NotificationTransporterInterfaceResolver,
 })
 export class NotificationMailTransporter
-  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<Mail.Options>>
+  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<MailOptions>>
 {
-  transporter: Transporter;
+  transporter: mailer.Transporter;
   protected options: NotificationOptions;
 
   constructor(
@@ -54,7 +52,7 @@ export class NotificationMailTransporter
 
   protected async createTransport(verify = false): Promise<void> {
     if (!this.transporter) {
-      this.transporter = createTransport(this.config.get('notification.mail.smtp'));
+      this.transporter = mailer.createTransport(this.config.get('notification.mail.smtp'));
       if (verify) {
         try {
           await this.transporter.verify();

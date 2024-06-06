@@ -5,8 +5,8 @@ import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterf
 import { SliceInterface } from '@/shared/policy/common/interfaces/Slices.ts';
 import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import { stream } from 'exceljs';
-import sinon, { SinonStub } from 'sinon';
+import { excel } from '@/deps.ts';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
 import { BuildExcel } from './BuildExcel.ts';
@@ -102,7 +102,7 @@ test.before((t) => {
 
   t.context.workbookWriterStub = sinon
     .stub(BuildExcel, 'initWorkbookWriter')
-    .returns(t.context.workbookWriterMock as stream.xlsx.WorkbookWriter);
+    .returns(t.context.workbookWriterMock as excel.stream.xlsx.WorkbookWriter);
 });
 
 test.afterEach((t) => {

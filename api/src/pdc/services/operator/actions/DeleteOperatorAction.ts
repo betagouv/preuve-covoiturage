@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { Action as AbstractAction } from '@/ilos/core/index.ts';
 import { Sentry } from '@/pdc/providers/sentry/index.ts';

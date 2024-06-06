@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import {
   ExportTripInterface,
   TripRepositoryInterface,

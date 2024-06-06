@@ -4,7 +4,7 @@ import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from '@/pdc/providers/middleware/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper.ts';
 import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper.ts';
 import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper.ts';

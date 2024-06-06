@@ -1,8 +1,8 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 import { Extensions } from '@/ilos/core/index.ts';
 import { HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
-import Mail from 'nodemailer/lib/mailer';
+import { Mail } from "@/deps.ts";
 
 import {
   DefaultTemplateData,

@@ -1,13 +1,13 @@
-import { AddWorksheetOptions, Column, stream, Worksheet } from 'exceljs';
+import { excel } from '@/deps.ts';
 
 export abstract class AbstractWorksheetWriter {
   protected initWorkSheet(
-    workbook: stream.xlsx.WorkbookWriter,
+    workbook: excel.stream.xlsx.WorkbookWriter,
     worksheetName: string,
-    columns?: Partial<Column>[],
-    worksheetOptions?: Partial<AddWorksheetOptions>,
+    columns?: Partial<excel.Column>[],
+    worksheetOptions?: Partial<excel.AddWorksheetOptions>,
   ) {
-    const worksheet: Worksheet = workbook.addWorksheet(worksheetName, worksheetOptions);
+    const worksheet: excel.Worksheet = workbook.addWorksheet(worksheetName, worksheetOptions);
     if (columns) worksheet.columns = columns;
     return worksheet;
   }

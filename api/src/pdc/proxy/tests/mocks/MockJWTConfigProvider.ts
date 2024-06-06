@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { ConfigInterface } from '@/ilos/common/index.ts';
 
 export class MockJWTConfigProvider implements ConfigInterface {

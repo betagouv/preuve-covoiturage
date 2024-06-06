@@ -1,4 +1,4 @@
-import { Console } from 'node:console';
+import { Console, process } from '@/deps.ts'
 import { LoggerConfigInterface } from '../interfaces/index.ts';
 import { config as defaultConfig } from '../config.ts';
 

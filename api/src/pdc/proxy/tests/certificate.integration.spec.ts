@@ -5,9 +5,8 @@
  * - download the PNG
  */
 
-import _ from 'lodash';
-import supertest from 'supertest';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { _ } from '@/deps.ts';
+import { anyTest, TestFn, supertest } from '@/dev_deps.ts';
 
 import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
 import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';

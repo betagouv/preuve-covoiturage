@@ -1,5 +1,5 @@
 import { anyTest as test } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 import { todayFrequencies } from './todayFrequencies.helper.ts';
 
 test('On Monday', (t) => {

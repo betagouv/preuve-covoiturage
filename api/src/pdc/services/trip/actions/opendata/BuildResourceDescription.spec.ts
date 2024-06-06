@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider.ts';
 import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
 import { TripSearchInterface } from '@/shared/trip/common/interfaces/TripSearchInterface.ts';

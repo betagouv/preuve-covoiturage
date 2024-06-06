@@ -1,9 +1,6 @@
 import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
-import { Agent } from 'node:https';
-import _ from 'lodash';
-import { URLSearchParams } from 'node:url';
+import { axios } from '@/deps.ts';
+import { _, HttpsAgent as Agent, axiosRetry, URLSearchParams } from '@/deps.ts';
 import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
 
 @provider()

@@ -1,5 +1,5 @@
 import { provider } from '@/ilos/common/index.ts';
-import { AddWorksheetOptions, Borders, stream, Worksheet } from 'exceljs';
+import { excel } from '@/deps.ts';
 import { SliceStatInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
 import { SliceInterface } from '@/shared/policy/common/interfaces/Slices.ts';
 import { AbstractWorksheetWriter } from './AbstractWorksheetWriter.ts';
@@ -20,11 +20,11 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     'Trajets incités',
   ];
 
-  async call(wbWriter: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
+  async call(wbWriter: excel.stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
     /* eslint-disable prettier/prettier,max-len */
 
-    const options: Partial<AddWorksheetOptions> = { views: [{ showGridLines: false }] };
-    const ws: Worksheet = this.initWorkSheet(wbWriter, this.WORKSHEET_NAME, undefined, options);
+    const options: Partial<excel.AddWorksheetOptions> = { views: [{ showGridLines: false }] };
+    const ws: excel.Worksheet = this.initWorkSheet(wbWriter, this.WORKSHEET_NAME, undefined, options);
 
     // --------------------------------------------------------------------------------
     // Layout
@@ -201,7 +201,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
   }
 
   private drawSliceTable(
-    ws: Worksheet,
+    ws: excel.Worksheet,
     slices: SliceStatInterface[],
     columns: string[],
     mode: 'normale' | 'booster',
@@ -245,7 +245,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     // add some totals at the bottom of the table
     const first = offset + margin + 2;
     const last = offset + margin + slices.length + 1;
-    const border: Partial<Borders> = { top: { style: 'thin' } };
+    const border: Partial<excel.Borders> = { top: { style: 'thin' } };
     ws.getCell(`A${last + 1}`).border = border;
     ws.getCell(`B${last + 1}`).value = { formula: `SUM(B${first}:B${last})`, date1904: false };
     ws.getCell(`B${last + 1}`).border = border;
@@ -255,7 +255,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.getCell(`D${last + 1}`).border = border;
   }
 
-  private pad(ws: Worksheet, n: number): void {
+  private pad(ws: excel.Worksheet, n: number): void {
     for (let i = 0; i < n; i++) {
       ws.addRow([]);
     }

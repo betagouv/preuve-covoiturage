@@ -1,6 +1,6 @@
 // from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/prometheus-metrics.ts
-import { Request, RequestHandler, Response } from 'express';
-import * as promClient from 'prom-client';
+import { Request, RequestHandler, Response } from '@/deps.ts';
+import { promClient } from "@/deps.ts";
 
 export function prometheusMetricsFactory({
   client = promClient,

@@ -1,12 +1,11 @@
-import { faker } from '@faker-js/faker';
+import { faker, excel } from '@/deps.ts';
 import { anyTest as test } from '@/dev_deps.ts';
-import { Row, stream, Workbook, Worksheet } from 'exceljs';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
 import { BuildExcel } from './BuildExcel.ts';
 import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
 
 // tool to sort column names to be able to compare them
-function sortRowValues(values: Row['values']): Row['values'] {
+function sortRowValues(values: excel.Row['values']): excel.Row['values'] {
   if (Array.isArray(values)) return values.sort();
   if ('object' === typeof values) return Object.keys(values).sort();
   return values;
@@ -72,15 +71,15 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
 
   // Act
   const booster_dates = new Set<string>();
-  const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+  const workbookWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
   await dataWorkBookWriter.call({ read: cursorCallback, release: async () => {} }, booster_dates, workbookWriter);
   await workbookWriter.commit();
 
   // Assert
-  const workbook: Workbook = await new Workbook().xlsx.readFile(filepath);
-  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME);
+  const workbook: excel.Workbook = await new excel.Workbook().xlsx.readFile(filepath);
+  const worksheet: excel.Worksheet = workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
-  t.deepEqual<Row['values'], Row['values']>(
+  t.deepEqual<excel.Row['values'], excel.Row['values']>(
     sortRowValues(workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(1).values),
     [undefined, ...Object.keys(exportTripInterface)].sort(),
   );

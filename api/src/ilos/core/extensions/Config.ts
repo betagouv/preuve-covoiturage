@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { extension, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 import type { RegisterHookInterface, ServiceContainerInterface } from '@/ilos/common/index.ts';
 

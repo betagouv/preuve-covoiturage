@@ -1,4 +1,4 @@
-import http from 'node:http';
+import { http } from '@/deps.ts';
 
 import { TransportInterface, KernelInterface, RPCCallType, RPCResponseType } from '@/ilos/common/index.ts';
 

@@ -8,7 +8,7 @@ import {
   CarpoolStatusRepository,
 } from '@/pdc/providers/carpool/index.ts';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
-import { addSeconds } from 'date-fns';
+import { date } from "@/deps.ts";
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -134,7 +134,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
               lat: start_lat,
               lon: start_lon,
             },
-            end_datetime: addSeconds(new Date(carpool.datetime), carpool.duration || carpool.meta.calc_duration || 0),
+            end_datetime: date.addSeconds(new Date(carpool.datetime), carpool.duration || carpool.meta.calc_duration || 0),
             end_position: {
               lat: end_lat,
               lon: end_lon,

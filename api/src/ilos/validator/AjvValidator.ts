@@ -1,8 +1,4 @@
-import { Ajv, ValidateFunction, Format, KeywordDefinition, ErrorObject } from 'ajv';
-import ajvErrors from 'ajv-errors';
-import addFormats from 'ajv-formats';
-import ajvKeywords from 'ajv-keywords';
-import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json' with { type: "json" };
+import { Ajv, ValidateFunction, Format, KeywordDefinition, ErrorObject, ajvErrors, addFormats, ajvKeywords, jsonSchemaSecureJson  } from '@/deps.ts';
 
 import {
   ConfigInterfaceResolver,

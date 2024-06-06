@@ -1,11 +1,11 @@
-import { toZonedTime as toZonedTimeOriginal, FormatOptionsWithTZ } from 'date-fns-tz';
+import { datetz } from "@/deps.ts";
 
 const defaultTz = 'Europe/Paris';
 
 export function toZonedTime(
   date: Date | string | number,
   timeZone: string = defaultTz,
-  options?: FormatOptionsWithTZ,
+  options?: datetz.FormatOptionsWithTZ,
 ): Date {
-  return toZonedTimeOriginal(date, timeZone, options);
+  return datetz.toZonedTime(date, timeZone, options);
 }

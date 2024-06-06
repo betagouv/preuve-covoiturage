@@ -1,5 +1,4 @@
-import { readdir, stat } from 'node:fs/promises';
-import { extname, join } from 'node:path';
+import { readdir, stat, extname, join } from '@/deps.ts';
 
 export async function getAllFiles(
   baseDirectory: string,

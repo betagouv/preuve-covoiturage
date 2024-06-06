@@ -2,11 +2,9 @@ import { ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/ind
 import { Action } from '@/ilos/core/index.ts';
 import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
-import AdmZip from 'adm-zip';
-import fs from 'node:fs';
-import _ from 'lodash';
-import os from 'node:os';
-import path from 'node:path';
+import { AdmZip, fs } from '@/deps.ts';
+import { _ } from '@/deps.ts';
+import { path, os } from '@/deps.ts';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates.ts';
 import { ExportTripInterface } from '../interfaces/index.ts';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider.ts';

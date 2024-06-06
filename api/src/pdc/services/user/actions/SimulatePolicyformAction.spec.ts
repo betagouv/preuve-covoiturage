@@ -1,6 +1,6 @@
 import { ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon, SinonStub } from '@/dev_deps.ts';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 import {
   signature as simulateOnPastGeoSignature,

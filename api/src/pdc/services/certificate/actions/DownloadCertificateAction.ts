@@ -7,7 +7,7 @@ import {
 } from '@/pdc/providers/middleware/index.ts';
 import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@/pdc/providers/pdfcert/index.ts';
 import { QrcodeProviderInterfaceResolver } from '@/pdc/providers/qrcode/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/certificate/download.contract.ts';
 import { alias } from '@/shared/certificate/download.schema.ts';

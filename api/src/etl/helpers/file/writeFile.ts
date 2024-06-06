@@ -1,5 +1,4 @@
-import { Readable } from 'node:stream';
-import fs from 'node:fs';
+import { Readable, fs } from '@/deps.ts';
 
 export function writeFile(stream: Readable, filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {

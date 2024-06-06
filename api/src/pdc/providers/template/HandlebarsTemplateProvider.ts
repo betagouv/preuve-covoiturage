@@ -1,4 +1,4 @@
-import Handlebars, { HelperDelegate, TemplateDelegate } from 'handlebars';
+import { Handlebars, HbsHelperDelegate as HelperDelegate, HbsTemplateDelegate as TemplateDelegate } from '@/deps.ts';
 
 import { InitHookInterface, provider } from '@/ilos/common/index.ts';
 

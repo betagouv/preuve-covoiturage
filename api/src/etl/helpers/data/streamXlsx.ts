@@ -1,6 +1,4 @@
-// @deno-types="https://cdn.sheetjs.com/xlsx-0.20.2/package/types/index.d.ts"
-import * as xlsx from 'https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs';
-
+import { xlsx } from "@/deps.ts";
 import { XlsxOptions } from '../../interfaces/index.ts';
 
 export async function* streamXlsx<T>(filepath: string, sheetOptions: XlsxOptions, chunkSize = 100): AsyncIterable<T[]> {

@@ -1,7 +1,5 @@
 import { ParamsInterface } from '@/shared/apdf/export.contract.ts';
-import { addMonths, startOfMonth, subMonths } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
-import _ from 'lodash';
+import { _, date, datetz } from '@/deps.ts';
 
 export function castExportParams(params: ParamsInterface): { start_date: Date; end_date: Date } {
   // use the local times
@@ -15,21 +13,21 @@ export function castExportParams(params: ParamsInterface): { start_date: Date; e
 
   // make a 1 month date range from start_date
   if (start_date_lc && !end_date_lc) {
-    return { start_date: new Date(start_date_lc), end_date: addMonths(start_date_lc, 1) };
+    return { start_date: new Date(start_date_lc), end_date: date.addMonths(start_date_lc, 1) };
   }
 
   // make a 1 month date range from end_date
   if (!start_date_lc && end_date_lc) {
-    return { start_date: subMonths(end_date_lc, 1), end_date: new Date(end_date_lc) };
+    return { start_date: date.subMonths(end_date_lc, 1), end_date: new Date(end_date_lc) };
   }
 
   // defaults
-  const start = startOfMonth(subMonths(new Date(), 1));
-  const end = startOfMonth(new Date());
+  const start = date.startOfMonth(date.subMonths(new Date(), 1));
+  const end = date.startOfMonth(new Date());
 
   // timezoned
   return {
-    start_date: fromZonedTime(start, params.format?.tz),
-    end_date: fromZonedTime(end, params.format?.tz),
+    start_date: datetz.fromZonedTime(start, params.format?.tz),
+    end_date: datetz.fromZonedTime(end, params.format?.tz),
   };
 }

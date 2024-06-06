@@ -1,6 +1,4 @@
-import _ from 'lodash';
-import http from 'node:http';
-import express from 'express';
+import { _, http, express } from '@/deps.ts';
 import { TransportInterface } from '@/ilos/common/index.ts';
 import { QueueTransport } from '@/ilos/transport-redis/index.ts';
 import { SentryProvider } from '@/pdc/providers/sentry/index.ts';

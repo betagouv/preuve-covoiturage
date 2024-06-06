@@ -1,5 +1,5 @@
 import test, { ExecutionContext } from '@/dev_deps.ts';
-import { IFilterXSSOptions } from 'xss';
+import { IFilterXSSOptions } from '@/deps.ts';
 
 import { sanitizeKeyword } from './sanitizeKeyword.ts';
 

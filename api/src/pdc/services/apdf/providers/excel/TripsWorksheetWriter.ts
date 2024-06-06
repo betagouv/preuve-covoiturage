@@ -1,5 +1,5 @@
 import { provider } from '@/ilos/common/index.ts';
-import { Column, stream, Worksheet } from 'exceljs';
+import { excel } from '@/deps.ts';
 import { normalize } from '../../helpers/normalizeAPDFData.helper.ts';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
 import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
@@ -10,7 +10,7 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   public readonly CURSOR_BATCH_SIZE = 100;
   public readonly WORKSHEET_NAME = 'Trajets';
   // TODO improve listing of columns
-  public readonly WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
+  public readonly WORKSHEET_COLUMN_HEADERS: Partial<excel.Column>[] = [
     'rpc_journey_id',
     'operator_journey_id',
     'operator_trip_id',
@@ -35,9 +35,9 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   async call(
     cursor: PgCursorHandler<APDFTripInterface>,
     booster_dates: Set<string>,
-    workbookWriter: stream.xlsx.WorkbookWriter,
+    workbookWriter: excel.stream.xlsx.WorkbookWriter,
   ): Promise<void> {
-    const worksheet: Worksheet = this.initWorkSheet(workbookWriter, this.WORKSHEET_NAME, this.WORKSHEET_COLUMN_HEADERS);
+    const worksheet: excel.Worksheet = this.initWorkSheet(workbookWriter, this.WORKSHEET_NAME, this.WORKSHEET_COLUMN_HEADERS);
 
     // style columns and apply optimised width
     const font = { name: 'Courier', family: 3, size: 9 };

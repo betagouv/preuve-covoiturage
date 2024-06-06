@@ -1,4 +1,4 @@
-import process from 'node:process';
+import { process } from "@/deps.ts";
 
 export function catchErrors(
   closeHandlers: Array<() => Promise<any>> = [],

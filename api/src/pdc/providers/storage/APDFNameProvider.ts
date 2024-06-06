@@ -1,7 +1,6 @@
 import { provider, ProviderInterface } from '@/ilos/common/index.ts';
 import { toTzString } from '@/pdc/helpers/dates.helper.ts';
-import os from 'node:os';
-import path from 'node:path';
+import { path, os } from '@/deps.ts';
 
 export interface APDFNameParamsInterface {
   name: string;

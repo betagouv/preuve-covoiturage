@@ -2,7 +2,7 @@ import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '
 import { HttpTransport } from '@/ilos/transport-http/index.ts';
 import { getPorts } from '@/pdc/helpers/ports.helper.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import axios from 'axios';
+import { axios } from '@/deps.ts';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider.ts';

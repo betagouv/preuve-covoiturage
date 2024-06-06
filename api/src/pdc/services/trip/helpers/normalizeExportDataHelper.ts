@@ -1,7 +1,6 @@
-import _ from 'lodash';
+import { _, datetz } from '@/deps.ts';
 import { FlattenTripInterface } from '../actions/BuildExportAction.ts';
 import { ExportTripInterface } from '../interfaces/index.ts';
-import { format, toZonedTime } from 'date-fns-tz';
 
 export function normalizeExport(src: ExportTripInterface, timeZone: string): FlattenTripInterface {
   const { data, driver_incentive_raw, passenger_incentive_raw } = normalize(src, timeZone);
@@ -43,20 +42,20 @@ function normalize(
   src: ExportTripInterface,
   timeZone: string,
 ): { data: FlattenTripInterface; driver_incentive_raw; passenger_incentive_raw } {
-  const jsd = toZonedTime(src.journey_start_datetime, timeZone);
-  const jed = toZonedTime(src.journey_end_datetime, timeZone);
+  const jsd = datetz.toZonedTime(src.journey_start_datetime, timeZone);
+  const jed = datetz.toZonedTime(src.journey_end_datetime, timeZone);
 
   const data: FlattenTripInterface = {
     ...src,
 
     // format and convert to user timezone
-    journey_start_datetime: format(jsd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
-    journey_start_date: format(jsd, 'yyyy-MM-dd', { timeZone }),
-    journey_start_time: format(jsd, 'HH:mm:ss', { timeZone }),
+    journey_start_datetime: datetz.format(jsd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+    journey_start_date: datetz.format(jsd, 'yyyy-MM-dd', { timeZone }),
+    journey_start_time: datetz.format(jsd, 'HH:mm:ss', { timeZone }),
 
-    journey_end_datetime: format(jed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
-    journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
-    journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
+    journey_end_datetime: datetz.format(jed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+    journey_end_date: datetz.format(jed, 'yyyy-MM-dd', { timeZone }),
+    journey_end_time: datetz.format(jed, 'HH:mm:ss', { timeZone }),
 
     // distance in meters
     journey_distance: src.journey_distance,

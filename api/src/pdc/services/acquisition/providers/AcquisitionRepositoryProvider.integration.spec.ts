@@ -2,7 +2,6 @@ import { NotFoundException } from '@/ilos/common/index.ts';
 import { Carpool } from '@/pdc/providers/seed/carpools.ts';
 import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import { subDays } from 'date-fns';
 import {
   AcquisitionCreateInterface,
   AcquisitionErrorStageEnum,
@@ -10,6 +9,7 @@ import {
 } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
 import { StatusEnum } from '@/shared/acquisition/status.contract.ts';
 import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider.ts';
+import { date } from "@/deps.ts";
 
 interface TestContext {
   repository: AcquisitionRepositoryProvider;
@@ -425,7 +425,7 @@ test.serial('Should list acquisition status', async (t) => {
   const search = {
     operator_id: 1,
     status: StatusEnum.Pending,
-    start: subDays(new Date(), 7),
+    start: date.subDays(new Date(), 7),
     end: new Date(),
     offset: 0,
     limit: 3,

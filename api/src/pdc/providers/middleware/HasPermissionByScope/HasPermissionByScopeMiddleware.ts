@@ -7,7 +7,7 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@/ilos/common/index.ts';
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /**

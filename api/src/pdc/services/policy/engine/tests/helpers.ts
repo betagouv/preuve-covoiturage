@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { v4 } from '@/deps.ts';
 import {
   CarpoolInterface,
   IncentiveStateEnum,

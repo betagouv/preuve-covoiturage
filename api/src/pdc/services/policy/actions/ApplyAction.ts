@@ -1,7 +1,6 @@
 import { ContextType, handler, InvalidParamsException, NotFoundException } from '@/ilos/common/index.ts';
 import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
 import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { isAfter, max, min } from 'date-fns';
 import { Policy } from '../engine/entities/Policy.ts';
 import { defaultTz, subDaysTz, today, toTzString } from '../helpers/index.ts';
 import {
@@ -12,6 +11,7 @@ import {
 } from '../interfaces/index.ts';
 import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/apply.contract.ts';
 import { alias } from '@/shared/policy/apply.schema.ts';
+import { date } from "@/deps.ts";
 
 @handler({
   ...handlerConfig,
@@ -77,14 +77,14 @@ export class ApplyAction extends AbstractAction {
 
     // 2. Start a cursor to find trips
     // handle date boundaries
-    const start = max([from, policy.start_date]);
-    const end = min([to, policy.end_date]);
+    const start = date.max([from, policy.start_date]);
+    const end = date.min([to, policy.end_date]);
     const s = toTzString(start);
     const e = toTzString(end);
     const pe = toTzString(policy.end_date);
 
     // throw if campaign start date is after policy end date
-    if (isAfter(start, policy.end_date)) {
+    if (date.isAfter(start, policy.end_date)) {
       throw new InvalidParamsException(`[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`);
     }
 

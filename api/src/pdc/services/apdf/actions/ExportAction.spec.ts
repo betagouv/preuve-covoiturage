@@ -1,12 +1,10 @@
 /* eslint-disable max-len */
-import { faker } from '@faker-js/faker';
+import { date, datetz, faker } from '@/deps.ts';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { uuid } from '@/pdc/providers/test/index.ts';
 import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import { startOfMonth, subMonths } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub } from '@/dev_deps.ts';
 import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper.ts';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
 import { CheckCampaign } from '../providers/CheckCampaign.ts';
@@ -111,8 +109,8 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
   );
 
   // Assert
-  const startDate = fromZonedTime(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
-  const endDate = fromZonedTime(startOfMonth(new Date()), 'Europe/Paris');
+  const startDate = datetz.fromZonedTime(date.startOfMonth(date.subMonths(new Date(), 1)), 'Europe/Paris');
+  const endDate = datetz.fromZonedTime(date.startOfMonth(new Date()), 'Europe/Paris');
 
   t.deepEqual(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub!, campaign._id);

@@ -1,5 +1,5 @@
 import { EnvNotFoundException } from '../exceptions/index.ts';
-import process from 'node:process';
+import { process } from '@/deps.ts';
 
 export function or_int(k: string, fallback: number): number {
   const rawEnv = parseInt(process.env[k], 10);

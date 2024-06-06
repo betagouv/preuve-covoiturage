@@ -4,7 +4,7 @@ import { httpHandlerFactory } from '@/ilos/handler-http/index.ts';
 import { HttpTransport } from '@/ilos/transport-http/index.ts';
 import { getPorts } from '@/pdc/helpers/ports.helper.ts';
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import axios from 'axios';
+import { axios } from '@/deps.ts';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider.ts';

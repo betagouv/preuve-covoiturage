@@ -1,9 +1,9 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon from 'sinon';
+import { sinon } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService.ts';
-import Sinon, { SinonSandbox } from 'sinon';
+import { Sinon, SinonSandbox } from '@/dev_deps.ts';
 import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository.ts';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository.ts';
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository.ts';

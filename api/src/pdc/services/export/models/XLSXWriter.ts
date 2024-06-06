@@ -1,7 +1,6 @@
-import AdmZip from 'adm-zip';
-import excel from 'exceljs';
-import os from 'node:os';
-import path from 'node:path';
+import { 
+  excel, os, path, AdmZip
+} from '@/deps.ts';
 import { ExportTarget } from './Export.ts';
 import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow.ts';
 

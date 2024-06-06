@@ -22,16 +22,8 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from '@/shared/territory/getAuthorizedCodes.contract.ts';
-import bodyParser from 'body-parser';
-import RedisStore from 'connect-redis';
-import cors from 'cors';
-import express, { Request, Response } from 'express';
-import expressSession from 'express-session';
-import helmet from 'helmet';
-import http from 'node:http';
-import { Redis } from 'ioredis';
-import _ from 'lodash';
-import path from 'node:path';
+import { Redis } from '@/deps.ts';
+import { _, bodyParser, RedisStore, cors, express, Request, Response, http, helmet, path, expressSession } from '@/deps.ts';
 import { asyncHandler } from './helpers/asyncHandler.ts';
 import { createRPCPayload } from './helpers/createRPCPayload.ts';
 import { healthCheckFactory } from './helpers/healthCheckFactory.ts';

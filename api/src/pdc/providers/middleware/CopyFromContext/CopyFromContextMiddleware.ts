@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { _ } from '@/deps.ts';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@/ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 

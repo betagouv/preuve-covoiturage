@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { Dataset } from '../../interfaces/index.ts';
 import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';
 import { GetRessourceIdIfExists } from './GetRessourceIdIfExists.ts';

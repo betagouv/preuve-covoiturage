@@ -1,6 +1,6 @@
 import { provider } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { latLngToCell } from 'h3-js';
+import { latLngToCell } from '@/deps.ts';
 import {
   LocationRepositoryInterface,
   LocationRepositoryInterfaceResolver,

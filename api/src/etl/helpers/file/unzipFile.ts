@@ -1,5 +1,5 @@
-import extract from 'extract-zip';
+import { extractZip } from "@/deps.ts";
 
 export function unzipFile(filepath: string, extractPath: string): Promise<void> {
-  return extract(filepath, { dir: extractPath });
+  return extractZip(filepath, { dir: extractPath });
 }

@@ -1,19 +1,17 @@
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@/ilos/common/index.ts';
 import { env } from '@/ilos/core/index.ts';
-import pg from '@/deps.ts';
-import type { PoolConfig } from '@/deps.ts';
-import Cursor, { CursorQueryConfig } from 'pg-cursor';
-import { URL } from 'node:url';
+import type { CursorQueryConfig, PoolConfig } from '@/deps.ts';
+import { Pool, Cursor } from '@/deps.ts';
 
-export class PostgresConnection implements ConnectionInterface<pg.Pool>, InitHookInterface, DestroyHookInterface {
+export class PostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
-  protected pool: pg.Pool;
+  protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
     this.pgUrl = config.connectionString || env.or_fail('APP_POSTGRES_URL');
     const timeout = env.or_int('APP_POSTGRES_TIMEOUT', 60000);
 
-    this.pool = new pg.Pool({
+    this.pool = new Pool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
       statement_timeout: timeout,
       query_timeout: timeout,
@@ -39,14 +37,14 @@ export class PostgresConnection implements ConnectionInterface<pg.Pool>, InitHoo
     await this.pool.end();
   }
 
-  getClient(): pg.Pool {
+  getClient(): Pool {
     return this.pool;
   }
 
   async getCursor<T = any>(
     text: string,
     values: any[],
-    config: CursorQueryConfig = undefined,
+    config: CursorQueryConfig | undefined = undefined,
   ): Promise<{ read: Cursor['read']; release: () => Promise<void> }> {
     const client = await this.pool.connect();
     const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));

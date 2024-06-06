@@ -1,6 +1,6 @@
 import { NotFoundException } from '@/ilos/common/exceptions/NotFoundException.ts';
 import { anyTest as test } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { GeoProvider } from './index.ts';
 import { GeoInterface } from './interfaces/GeoInterface.ts';
 import { EtalabAPIGeoProvider, EtalabBaseAdresseNationaleProvider } from './providers/index.ts';

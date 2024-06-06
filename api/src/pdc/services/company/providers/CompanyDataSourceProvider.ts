@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import axios from 'axios';
+import { _ } from '@/deps.ts';
+import { axios } from '@/deps.ts';
 import { provider, NotFoundException, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 
 import {

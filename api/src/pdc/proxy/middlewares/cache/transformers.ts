@@ -1,6 +1,4 @@
-import { Request, Response } from 'express';
-import { createHash } from 'node:crypto';
-import { gunzipSync, gzipSync } from 'node:zlib';
+import { gunzipSync, gzipSync, createHash, Request, Response } from '@/deps.ts';
 import { CacheKey, GlobalCacheConfig, RouteCacheConfig } from './types.ts';
 
 export function getKey(

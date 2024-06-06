@@ -1,5 +1,5 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
-import sinon, { SinonStub } from 'sinon';
+import { sinon,  SinonStub  } from '@/dev_deps.ts';
 import { TerritoryCodeEnum } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 import { TerritoryService } from './TerritoryService.ts';
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
