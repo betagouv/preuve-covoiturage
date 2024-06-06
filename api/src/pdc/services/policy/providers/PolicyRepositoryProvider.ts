@@ -1,8 +1,8 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { NotFoundException, provider } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import { toISOString } from '../helpers/index.ts';
 
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
 import {
   PolicyRepositoryProviderInterfaceResolver,
   SerializedPolicyInterface,

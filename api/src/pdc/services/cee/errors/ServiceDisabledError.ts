@@ -1,4 +1,4 @@
-import { RPCException } from '@/ilos/common/index.ts';
+import { RPCException } from '/ilos/common/index.ts';
 
 export class ServiceDisabledError extends RPCException {
   constructor() {

@@ -1,4 +1,4 @@
-import { InvalidParamsException } from '@/ilos/common/index.ts';
+import { InvalidParamsException } from '/ilos/common/index.ts';
 import test from 'ava';
 import { StatelessContext } from '../entities/Context.ts';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';

@@ -1,5 +1,5 @@
-import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@/ilos/common/index.ts';
-import { env } from '@/ilos/core/index.ts';
+import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '/ilos/common/index.ts';
+import { env } from '/ilos/core/index.ts';
 import pg from 'pg';
 import type { PoolConfig } from 'pg';
 import Cursor, { CursorQueryConfig } from 'pg-cursor';

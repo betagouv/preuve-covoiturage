@@ -1,12 +1,12 @@
-import { ConfigInterfaceResolver, handler } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { ConfigInterfaceResolver, handler } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { Action as AbstractAction, env } from '/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
 import { filterTables } from '../helpers/filterTables.helper.ts';
 import { todayFrequencies } from '../helpers/todayFrequencies.helper.ts';
 import { MatviewItem } from '../interfaces/StatsRefreshInterfaces.ts';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@/shared/monitoring/statsrefresh.contract.ts';
-import { alias } from '@/shared/monitoring/statsrefresh.schema.ts';
+import { ParamsInterface, ResultInterface, handlerConfig } from '/shared/monitoring/statsrefresh.contract.ts';
+import { alias } from '/shared/monitoring/statsrefresh.schema.ts';
 
 @handler({
   ...handlerConfig,

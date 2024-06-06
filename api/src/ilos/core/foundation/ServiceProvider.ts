@@ -1,4 +1,4 @@
-import { NewableType, ExtensionInterface } from '@/ilos/common/index.ts';
+import { NewableType, ExtensionInterface } from '/ilos/common/index.ts';
 
 import { ServiceContainer } from './ServiceContainer.ts';
 import { Providers, Middlewares, Handlers, Config } from '../extensions/index.ts';

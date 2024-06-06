@@ -1,4 +1,4 @@
-import { provider } from '@/ilos/common/index.ts';
+import { provider } from '/ilos/common/index.ts';
 
 import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces/index.ts';
 import { NormalizationProviderV3 } from './NormalizationProviderV3.ts';

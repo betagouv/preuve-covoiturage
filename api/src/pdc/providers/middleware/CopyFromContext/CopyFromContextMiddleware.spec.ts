@@ -1,4 +1,4 @@
-import { ContextType, ParamsType, ResultType } from '@/ilos/common/index.ts';
+import { ContextType, ParamsType, ResultType } from '/ilos/common/index.ts';
 import test from 'ava';
 import { CopyFromContextMiddleware } from './CopyFromContextMiddleware.ts';
 

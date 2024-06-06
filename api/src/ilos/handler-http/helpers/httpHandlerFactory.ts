@@ -1,4 +1,4 @@
-import { handler, ConfigInterfaceResolver, NewableType, HandlerInterface, InitHookInterface } from '@/ilos/common/index.ts';
+import { handler, ConfigInterfaceResolver, NewableType, HandlerInterface, InitHookInterface } from '/ilos/common/index.ts';
 
 import { HttpHandler } from '../HttpHandler.ts';
 /**

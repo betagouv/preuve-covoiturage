@@ -1,5 +1,5 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { NotFoundException, provider } from '/ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import { castStatus, fromStatus } from '../helpers/castStatus.ts';
 import {
   AcquisitionCreateInterface,

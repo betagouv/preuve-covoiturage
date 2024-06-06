@@ -1,4 +1,4 @@
-import { Format } from '@/ilos/validator/index.ts';
+import { Format } from '/ilos/validator/index.ts';
 import { isValidPhone } from '../lib/phone.ts';
 
 /**

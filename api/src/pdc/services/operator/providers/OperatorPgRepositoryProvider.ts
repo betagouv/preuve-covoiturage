@@ -1,20 +1,20 @@
-import { KernelInterfaceResolver, NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { KernelInterfaceResolver, NotFoundException, provider } from '/ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '/ilos/connection-postgres/index.ts';
 
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface.ts';
-import { OperatorDbInterface } from '@/shared/operator/common/interfaces/OperatorDbInterface.ts';
-import { OperatorInterface } from '@/shared/operator/common/interfaces/OperatorInterface.ts';
-import { OperatorListInterface } from '@/shared/operator/common/interfaces/OperatorListInterface.ts';
+import { OperatorDbInterface } from '/shared/operator/common/interfaces/OperatorDbInterface.ts';
+import { OperatorInterface } from '/shared/operator/common/interfaces/OperatorInterface.ts';
+import { OperatorListInterface } from '/shared/operator/common/interfaces/OperatorListInterface.ts';
 
-import { signature as companyFetchSignature } from '@/shared/company/fetch.contract.ts';
+import { signature as companyFetchSignature } from '/shared/company/fetch.contract.ts';
 import {
   signature as companyFindSignature,
   ParamsInterface as CompanyParamsInterface,
   ResultInterface as CompanyResultInterface,
-} from '@/shared/company/find.contract.ts';
+} from '/shared/company/find.contract.ts';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,

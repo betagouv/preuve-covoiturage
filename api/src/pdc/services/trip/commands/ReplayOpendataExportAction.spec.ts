@@ -1,4 +1,4 @@
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { KernelInterfaceResolver } from '/ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { fromZonedTime } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';

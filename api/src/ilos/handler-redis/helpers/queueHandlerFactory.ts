@@ -1,5 +1,5 @@
-import { RedisConnection } from '@/ilos/connection-redis/index.ts';
-import { handler, NewableType } from '@/ilos/common/index.ts';
+import { RedisConnection } from '/ilos/connection-redis/index.ts';
+import { handler, NewableType } from '/ilos/common/index.ts';
 
 import { QueueHandler } from '../QueueHandler.ts';
 

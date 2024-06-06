@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from '/ilos/core/index.ts';
 
 export const collectionName = env.or_fail('APP_JOURNEY_DB', 'journeys');
 export const costByKm = 0.558;

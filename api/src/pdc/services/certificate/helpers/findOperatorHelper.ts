@@ -1,4 +1,4 @@
-import { ContextType, KernelInterface } from '@/ilos/common/index.ts';
+import { ContextType, KernelInterface } from '/ilos/common/index.ts';
 
 export interface ParamsInterface {
   operator_id: number;

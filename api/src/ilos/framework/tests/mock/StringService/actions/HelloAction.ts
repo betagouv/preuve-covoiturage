@@ -1,4 +1,4 @@
-import { Action } from '@/ilos/core/index.ts';
+import { Action } from '/ilos/core/index.ts';
 import {
   handler,
   ConfigInterfaceResolver,
@@ -6,7 +6,7 @@ import {
   ContextType,
   ResultType,
   InvalidParamsException,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { CustomProvider } from '../../Providers/CustomProvider.ts';
 

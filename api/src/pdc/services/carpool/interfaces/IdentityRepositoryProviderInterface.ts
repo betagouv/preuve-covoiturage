@@ -1,4 +1,4 @@
-import { IdentityInterface } from '@/shared/common/interfaces/IdentityInterface.ts';
+import { IdentityInterface } from '/shared/common/interfaces/IdentityInterface.ts';
 
 export interface IdentityMetaInterface {
   operator_id: number;

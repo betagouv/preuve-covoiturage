@@ -1,4 +1,4 @@
-import { InvalidParamsException } from '@/ilos/common/index.ts';
+import { InvalidParamsException } from '/ilos/common/index.ts';
 import { isAfter, isBefore, sub } from 'date-fns';
 
 export function isBeforeOrFail(date: Date, days: number): void {

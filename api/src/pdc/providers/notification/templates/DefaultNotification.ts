@@ -1,4 +1,4 @@
-import { AbstractTemplate } from '@/pdc/providers/template/index.ts';
+import { AbstractTemplate } from '/pdc/providers/template/index.ts';
 
 import { AbstractMailNotification } from '../AbstractNotification.ts';
 

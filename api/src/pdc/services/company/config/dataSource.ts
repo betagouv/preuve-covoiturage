@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from '/ilos/core/index.ts';
 
 export const url = env.or_fail('APP_INSEE_API_URL', 'https://api.insee.fr/entreprises/sirene/V3');
 export const token = env.or_fail('APP_INSEE_API_KEY', '');

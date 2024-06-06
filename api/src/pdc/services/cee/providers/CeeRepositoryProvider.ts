@@ -1,6 +1,6 @@
-import { ConflictException, InvalidRequestException, NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { Uuid } from '@/pdc/providers/carpool/interfaces/index.ts';
+import { ConflictException, InvalidRequestException, NotFoundException, provider } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { Uuid } from '/pdc/providers/carpool/interfaces/index.ts';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,

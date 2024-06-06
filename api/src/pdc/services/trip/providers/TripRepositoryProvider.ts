@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import _ from 'lodash';
 import {
   ExportTripInterface,
@@ -9,15 +9,15 @@ import {
   TzResultInterface,
 } from '../interfaces/index.ts';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface.ts';
-import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
-import { ResultWithPagination } from '@/shared/common/interfaces/ResultWithPagination.ts';
-import { LightTripInterface } from '@/shared/trip/common/interfaces/LightTripInterface.ts';
-import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
+import { PgCursorHandler } from '/shared/common/PromisifiedPgCursor.ts';
+import { ResultWithPagination } from '/shared/common/interfaces/ResultWithPagination.ts';
+import { LightTripInterface } from '/shared/trip/common/interfaces/LightTripInterface.ts';
+import { TerritoryTripsInterface } from '/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
-import { TripStatInterface } from '@/shared/trip/common/interfaces/TripStatInterface.ts';
+} from '/shared/trip/common/interfaces/TripSearchInterface.ts';
+import { TripStatInterface } from '/shared/trip/common/interfaces/TripStatInterface.ts';
 
 /*
  * Trip specific repository

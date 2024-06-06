@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import { CostNormalizerProvider } from './CostNormalizerProvider.ts';
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { KernelInterfaceResolver } from '/ilos/common/index.ts';
 
 class MockedNormalizerCostAction extends CostNormalizerProvider {
   constructor() {

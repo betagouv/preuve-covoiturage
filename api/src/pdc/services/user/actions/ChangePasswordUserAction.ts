@@ -1,10 +1,10 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { copyFromContextMiddleware, hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { copyFromContextMiddleware, hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/changePassword.contract.ts';
-import { alias } from '@/shared/user/changePassword.schema.ts';
-import { UserContextInterface } from '@/shared/user/common/interfaces/UserContextInterfaces.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/user/changePassword.contract.ts';
+import { alias } from '/shared/user/changePassword.schema.ts';
+import { UserContextInterface } from '/shared/user/common/interfaces/UserContextInterfaces.ts';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware.ts';
 

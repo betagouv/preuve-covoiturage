@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, provider } from '@/ilos/common/index.ts';
+import { ConfigInterfaceResolver, provider } from '/ilos/common/index.ts';
 import axios, { AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import fs from 'node:fs';

@@ -1,10 +1,10 @@
 import anyTest, { TestFn } from 'ava';
-import { Kernel as AbstractKernel } from '@/ilos/framework/index.ts';
-import { kernel as kernelDecorator } from '@/ilos/common/index.ts';
+import { Kernel as AbstractKernel } from '/ilos/framework/index.ts';
+import { kernel as kernelDecorator } from '/ilos/common/index.ts';
 
 import { ServiceProvider } from '../ServiceProvider.ts';
 import { OperatorPgRepositoryProvider } from './OperatorPgRepositoryProvider.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 
 interface TestContext {
   connection: PostgresConnection;

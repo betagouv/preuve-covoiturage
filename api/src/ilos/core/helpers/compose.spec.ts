@@ -1,5 +1,5 @@
 import test from 'ava';
-import { MiddlewareInterface, ContextType, ResultType, ParamsType } from '@/ilos/common/index.ts';
+import { MiddlewareInterface, ContextType, ResultType, ParamsType } from '/ilos/common/index.ts';
 
 import { compose } from './compose.ts';
 

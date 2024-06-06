@@ -10,7 +10,7 @@ import {
   HandlerInterface,
   serviceProvider,
   handler,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { Kernel as AbstractKernel } from './Kernel.ts';
 import { Action } from './Action.ts';

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { BoundedSlices, UnboundedSlices } from '@/shared/policy/common/interfaces/Slices.ts';
+import { BoundedSlices, UnboundedSlices } from '/shared/policy/common/interfaces/Slices.ts';
 import { findBoundary, toBoundedSlices, wrapSlices as wrap } from './wrapSlicesHelper.ts';
 
 test('[wrap] No valid slices returns empty array', (t) => {

@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
 
-import { alias } from '@/shared/observatory/location/location.schema.ts';
-import { handlerConfig, ResultInterface, ParamsInterface } from '@/shared/observatory/location/location.contract.ts';
+import { alias } from '/shared/observatory/location/location.schema.ts';
+import { handlerConfig, ResultInterface, ParamsInterface } from '/shared/observatory/location/location.contract.ts';
 import { LocationRepositoryInterfaceResolver } from '../../interfaces/LocationRepositoryProviderInterface.ts';
 
 @handler({

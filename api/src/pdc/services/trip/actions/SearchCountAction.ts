@@ -1,12 +1,12 @@
-import { ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { Action } from '@/ilos/core/index.ts';
-import { copyFromContextMiddleware, validateDateMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { ContextType, handler, KernelInterfaceResolver } from '/ilos/common/index.ts';
+import { Action } from '/ilos/core/index.ts';
+import { copyFromContextMiddleware, validateDateMiddleware } from '/pdc/providers/middleware/index.ts';
 
 import * as middlewareConfig from '../config/middlewares.ts';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/trip/searchcount.contract.ts';
-import { alias } from '@/shared/trip/searchcount.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/trip/searchcount.contract.ts';
+import { alias } from '/shared/trip/searchcount.schema.ts';
 
 @handler({
   ...handlerConfig,

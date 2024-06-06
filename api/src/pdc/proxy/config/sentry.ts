@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from '/ilos/core/index.ts';
 
 export const dsn = env.or_fail('APP_SENTRY_DSN', '');
 export const environment = env.or_fail('APP_SENTRY_ENV', env.or_fail('NODE_ENV', 'local'));

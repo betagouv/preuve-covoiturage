@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { ContextType, ForbiddenException } from '@/ilos/common/index.ts';
+import { ContextType, ForbiddenException } from '/ilos/common/index.ts';
 
 import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware.ts';
 

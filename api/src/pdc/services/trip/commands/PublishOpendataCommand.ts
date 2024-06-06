@@ -1,9 +1,9 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '/ilos/common/index.ts';
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
   signature as buildExportSignature,
-} from '@/shared/trip/buildExport.contract.ts';
+} from '/shared/trip/buildExport.contract.ts';
 
 export interface StartEndDate {
   start: Date;

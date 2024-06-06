@@ -1,4 +1,4 @@
-import { Action } from '@/ilos/core/index.ts';
+import { Action } from '/ilos/core/index.ts';
 import {
   handler,
   ParamsType,
@@ -7,7 +7,7 @@ import {
   RPCSingleResponseType,
   KernelInterfaceResolver,
   InvalidParamsException,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { CustomProvider } from '../../Providers/CustomProvider.ts';
 

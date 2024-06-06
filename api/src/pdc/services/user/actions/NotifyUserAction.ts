@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/notify.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/user/notify.contract.ts';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 
 /*

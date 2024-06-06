@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, RPCException } from '@/ilos/common/index.ts';
+import { ConfigInterfaceResolver, RPCException } from '/ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 

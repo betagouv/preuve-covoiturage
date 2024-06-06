@@ -1,13 +1,13 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
 
-import { alias } from '@/shared/observatory/distribution/journeysByDistances.schema.ts';
+import { alias } from '/shared/observatory/distribution/journeysByDistances.schema.ts';
 import {
   handlerConfig,
   ResultInterface,
   ParamsInterface,
-} from '@/shared/observatory/distribution/journeysByDistances.contract.ts';
+} from '/shared/observatory/distribution/journeysByDistances.contract.ts';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface.ts';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams.ts';
 

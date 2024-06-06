@@ -1,10 +1,10 @@
-import { ConfigInterfaceResolver, KernelInterfaceResolver, ContextType, provider } from '@/ilos/common/index.ts';
+import { ConfigInterfaceResolver, KernelInterfaceResolver, ContextType, provider } from '/ilos/common/index.ts';
 
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
   StaticMailTemplateNotificationInterface,
-} from '@/pdc/providers/notification/index.ts';
+} from '/pdc/providers/notification/index.ts';
 
 import {
   ConfirmEmailNotification,
@@ -16,11 +16,11 @@ import {
   InviteNotification,
   SimulatePolicyNotification,
 } from '../notifications/index.ts';
-import { ParamsInterface as SimulationPolicyParamsInterface } from '@/shared/user/simulatePolicyform.contract.ts';
-import { ResultInterface as SimulateOnPastResult } from '@/shared/policy/simulateOnPastGeo.contract.ts';
-import { PolicyTemplateDescriptions } from '@/shared/policy/common/classes/PolicyTemplateDescription.ts';
+import { ParamsInterface as SimulationPolicyParamsInterface } from '/shared/user/simulatePolicyform.contract.ts';
+import { ResultInterface as SimulateOnPastResult } from '/shared/policy/simulateOnPastGeo.contract.ts';
+import { PolicyTemplateDescriptions } from '/shared/policy/common/classes/PolicyTemplateDescription.ts';
 
-import { ParamsInterface as SendMailParamsInterface } from '@/shared/user/notify.contract.ts';
+import { ParamsInterface as SendMailParamsInterface } from '/shared/user/notify.contract.ts';
 
 @provider()
 export class UserNotificationProvider {

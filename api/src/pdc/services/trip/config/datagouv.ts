@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from '/ilos/core/index.ts';
 
 export const apiKeyHeader = 'X-API-KEY';
 export const baseURL = env.or_fail('APP_DATAGOUV_URL');

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@/ilos/common/index.ts';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '/ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*

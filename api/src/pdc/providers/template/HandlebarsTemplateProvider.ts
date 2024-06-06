@@ -1,6 +1,6 @@
 import Handlebars, { HelperDelegate, TemplateDelegate } from 'handlebars';
 
-import { InitHookInterface, provider } from '@/ilos/common/index.ts';
+import { InitHookInterface, provider } from '/ilos/common/index.ts';
 
 import { TemplateInterface, TemplateProviderInterface, TemplateProviderInterfaceResolver } from './interfaces/index.ts';
 import { currency } from './helpers/currency.ts';

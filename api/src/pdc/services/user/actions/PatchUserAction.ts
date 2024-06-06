@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler, ContextType, ConflictException, UnauthorizedException } from '@/ilos/common/index.ts';
-import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler, ContextType, ConflictException, UnauthorizedException } from '/ilos/common/index.ts';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/patch.contract.ts';
-import { alias } from '@/shared/user/patch.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/user/patch.contract.ts';
+import { alias } from '/shared/user/patch.schema.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 import { userWhiteListFilterOutput } from '../config/filterOutput.ts';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';

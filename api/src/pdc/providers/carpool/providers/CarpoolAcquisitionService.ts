@@ -1,5 +1,5 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { NotFoundException, provider } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository.ts';
 import { CarpoolRepository } from '../repositories/CarpoolRepository.ts';
 import { CarpoolAcquisitionStatus } from '../status/index.ts';
@@ -7,7 +7,7 @@ import { CarpoolRequestRepository } from '../repositories/CarpoolRequestReposito
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository.ts';
 import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces/index.ts';
 import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository.ts';
-import { GeoProvider } from '@/pdc/providers/geo/index.ts';
+import { GeoProvider } from '/pdc/providers/geo/index.ts';
 
 @provider()
 export class CarpoolAcquisitionService {

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
+import { GeoProviderInterfaceResolver } from '/pdc/providers/geo/index.ts';
 import { PointInterface, RouteMeta } from '../interfaces/index.ts';
 
 import { RouteNormalizerProvider } from './RouteNormalizerProvider.ts';

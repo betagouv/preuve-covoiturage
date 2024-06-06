@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { CallType, ResultType, HandlerInterface, InitHookInterface, ServiceException } from '@/ilos/common/index.ts';
+import { CallType, ResultType, HandlerInterface, InitHookInterface, ServiceException } from '/ilos/common/index.ts';
 
 /**
  * Http handler

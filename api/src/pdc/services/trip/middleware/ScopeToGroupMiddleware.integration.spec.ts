@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { ContextType, ForbiddenException } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
+import { ContextType, ForbiddenException } from '/ilos/common/index.ts';
 
 import { ScopeToGroupMiddleware } from './ScopeToGroupMiddleware.ts';
 

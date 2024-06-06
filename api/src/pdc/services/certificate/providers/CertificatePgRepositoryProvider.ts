@@ -1,13 +1,13 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { NotFoundException, provider } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import _ from 'lodash';
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
 } from '../interfaces/CertificateRepositoryProviderInterface.ts';
-import { CertificateBaseInterface } from '@/shared/certificate/common/interfaces/CertificateBaseInterface.ts';
-import { CertificateInterface } from '@/shared/certificate/common/interfaces/CertificateInterface.ts';
-import { Pagination } from '@/shared/certificate/list.contract.ts';
+import { CertificateBaseInterface } from '/shared/certificate/common/interfaces/CertificateBaseInterface.ts';
+import { CertificateInterface } from '/shared/certificate/common/interfaces/CertificateInterface.ts';
+import { Pagination } from '/shared/certificate/list.contract.ts';
 
 type QueryConfig = { text: string; values: any[] };
 

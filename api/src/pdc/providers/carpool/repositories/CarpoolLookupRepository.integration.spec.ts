@@ -1,4 +1,4 @@
-import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { Id } from '../interfaces/index.ts';
 import { insertableCarpool } from '../mocks/database/carpool.ts';

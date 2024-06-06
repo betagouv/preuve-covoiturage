@@ -1,5 +1,5 @@
-import { env } from '@/ilos/core/index.ts';
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@/ilos/common/index.ts';
+import { env } from '/ilos/core/index.ts';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '/ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /*

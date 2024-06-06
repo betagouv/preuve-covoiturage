@@ -1,4 +1,4 @@
-import { IdentifierType, HookInterface, ServiceContainerInterface } from '@/ilos/common/index.ts';
+import { IdentifierType, HookInterface, ServiceContainerInterface } from '/ilos/common/index.ts';
 
 import { hasInterface } from '../helpers/types/hasInterface.ts';
 

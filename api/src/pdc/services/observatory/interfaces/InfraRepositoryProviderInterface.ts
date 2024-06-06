@@ -1,7 +1,7 @@
 import type {
   ParamsInterface as AiresCovoiturageParamsInterface,
   ResultInterface as AiresCovoiturageResultInterface,
-} from '@/shared/observatory/infra/airesCovoiturage.contract.ts';
+} from '/shared/observatory/infra/airesCovoiturage.contract.ts';
 
 export type { AiresCovoiturageParamsInterface, AiresCovoiturageResultInterface };
 

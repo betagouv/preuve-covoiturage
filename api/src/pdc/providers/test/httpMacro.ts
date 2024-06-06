@@ -5,8 +5,8 @@ import {
   ResultType,
   ServiceContainerInterface,
   TransportInterface,
-} from '@/ilos/common/index.ts';
-import { Bootstrap } from '@/ilos/framework/index.ts';
+} from '/ilos/common/index.ts';
+import { Bootstrap } from '/ilos/framework/index.ts';
 import test, { ExecutionContext, Macro } from 'ava';
 import spt, { Test } from 'supertest';
 import TestAgent from 'supertest/lib/agent.ts';

@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
 
-import { alias } from '@/shared/honor/save.schema.ts';
-import { handlerConfig, ResultInterface, ParamsInterface } from '@/shared/honor/save.contract.ts';
+import { alias } from '/shared/honor/save.schema.ts';
+import { handlerConfig, ResultInterface, ParamsInterface } from '/shared/honor/save.contract.ts';
 import { HonorRepositoryInterfaceResolver } from '../providers/HonorRepositoryProvider.ts';
 
 @handler({

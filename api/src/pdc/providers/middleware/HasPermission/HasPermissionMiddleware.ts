@@ -7,7 +7,7 @@ import {
   ResultType,
   InvalidParamsException,
   ForbiddenException,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 
 /**

@@ -1,10 +1,10 @@
-import { coerceIntList } from '@/ilos/cli/index.ts';
-import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '@/ilos/common/index.ts';
-import { ParamsInterface as ExportParams, signature as exportSignature } from '@/shared/apdf/export.contract.ts';
+import { coerceIntList } from '/ilos/cli/index.ts';
+import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '/ilos/common/index.ts';
+import { ParamsInterface as ExportParams, signature as exportSignature } from '/shared/apdf/export.contract.ts';
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from '@/shared/policy/list.contract.ts';
+} from '/shared/policy/list.contract.ts';
 import { fromZonedTime } from 'date-fns-tz';
 import _ from 'lodash';
 import { castExportParams } from '../helpers/castExportParams.helper.ts';

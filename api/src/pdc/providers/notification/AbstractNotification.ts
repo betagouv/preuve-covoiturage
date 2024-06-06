@@ -1,4 +1,4 @@
-import { StaticTemplateInterface } from '@/pdc/providers/template/index.ts';
+import { StaticTemplateInterface } from '/pdc/providers/template/index.ts';
 import { MailTemplateNotificationInterface } from './interfaces/index.ts';
 
 export abstract class AbstractMailNotification<Data = any> implements MailTemplateNotificationInterface<Data> {

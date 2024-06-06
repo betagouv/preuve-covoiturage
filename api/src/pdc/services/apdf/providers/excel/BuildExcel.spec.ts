@@ -1,9 +1,9 @@
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { APDFNameProvider } from '@/pdc/providers/storage/index.ts';
-import { PolicyStatsInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { SliceInterface } from '@/shared/policy/common/interfaces/Slices.ts';
-import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
+import { KernelInterfaceResolver } from '/ilos/common/index.ts';
+import { APDFNameProvider } from '/pdc/providers/storage/index.ts';
+import { PolicyStatsInterface } from '/shared/apdf/interfaces/PolicySliceStatInterface.ts';
+import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
+import { SliceInterface } from '/shared/policy/common/interfaces/Slices.ts';
+import { ResultInterface as Campaign } from '/shared/policy/find.contract.ts';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';

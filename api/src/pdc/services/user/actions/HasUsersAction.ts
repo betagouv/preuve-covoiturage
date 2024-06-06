@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ResultInterface } from '@/shared/user/hasUsers.contract.ts';
+import { handlerConfig, ResultInterface } from '/shared/user/hasUsers.contract.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 /*

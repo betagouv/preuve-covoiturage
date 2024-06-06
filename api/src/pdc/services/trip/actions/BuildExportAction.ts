@@ -1,7 +1,7 @@
-import { ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { Action } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
+import { ContextType, handler, KernelInterfaceResolver } from '/ilos/common/index.ts';
+import { Action } from '/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
+import { BucketName, S3StorageProvider } from '/pdc/providers/storage/index.ts';
 import AdmZip from 'adm-zip';
 import fs from 'node:fs';
 import _ from 'lodash';
@@ -10,16 +10,16 @@ import path from 'node:path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates.ts';
 import { ExportTripInterface } from '../interfaces/index.ts';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider.ts';
-import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/trip/buildExport.contract.ts';
-import { alias } from '@/shared/trip/buildExport.schema.ts';
-import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
-import { TripSearchInterface } from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
+import { PgCursorHandler } from '/shared/common/PromisifiedPgCursor.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '/shared/trip/buildExport.contract.ts';
+import { alias } from '/shared/trip/buildExport.schema.ts';
+import { TerritoryTripsInterface } from '/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
+import { TripSearchInterface } from '/shared/trip/common/interfaces/TripSearchInterface.ts';
 import {
   ParamsInterface as PublishOpenDataParamsInterface,
   signature as publishOpenDataSignature,
-} from '@/shared/trip/publishOpenData.contract.ts';
-import { ExportType } from '@/shared/trip/sendExport.contract.ts';
+} from '/shared/trip/publishOpenData.contract.ts';
+import { ExportType } from '/shared/trip/sendExport.contract.ts';
 import { BuildFile } from './file/BuildFile.ts';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {

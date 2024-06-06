@@ -1,4 +1,4 @@
-import { provider } from '@/ilos/common/index.ts';
+import { provider } from '/ilos/common/index.ts';
 
 import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
 import { RouteNormalizerProvider } from './RouteNormalizerProvider.ts';

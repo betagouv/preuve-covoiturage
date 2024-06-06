@@ -4,7 +4,7 @@ import {
   ServiceContainerInterface,
   HandlerInterface,
   extension,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { Middlewares } from './Middlewares.ts';
 

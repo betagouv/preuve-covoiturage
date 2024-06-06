@@ -1,4 +1,4 @@
-import { ProviderInterface } from '@/ilos/common/index.ts';
+import { ProviderInterface } from '/ilos/common/index.ts';
 import { FormatOptionsWithTZ } from 'date-fns-tz';
 
 export interface DateProviderInterface extends ProviderInterface {

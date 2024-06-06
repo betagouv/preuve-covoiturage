@@ -1,9 +1,9 @@
 import anyTest, { TestFn } from 'ava';
-import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { ConfigInterfaceResolver } from '/ilos/common/index.ts';
+import { PostgresConnection } from '/ilos/connection-postgres/index.ts';
 
 import { UserPgRepositoryProvider } from './UserPgRepositoryProvider.ts';
-import { UserCreateInterface } from '@/shared/user/common/interfaces/UserCreateInterface.ts';
+import { UserCreateInterface } from '/shared/user/common/interfaces/UserCreateInterface.ts';
 
 interface TestContext {
   connection: PostgresConnection;

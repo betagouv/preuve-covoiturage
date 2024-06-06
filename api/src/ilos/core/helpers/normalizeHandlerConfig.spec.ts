@@ -1,5 +1,5 @@
 import test from 'ava';
-import { MethodNotFoundException } from '@/ilos/common/index.ts';
+import { MethodNotFoundException } from '/ilos/common/index.ts';
 
 import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig.ts';
 

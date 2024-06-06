@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from '/ilos/core/index.ts';
 import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstraint } from '../interfaces/index.ts';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {

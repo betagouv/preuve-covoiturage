@@ -1,4 +1,4 @@
-import { StaticTemplateInterface } from '@/pdc/providers/template/index.ts';
+import { StaticTemplateInterface } from '/pdc/providers/template/index.ts';
 
 export interface MailTemplateNotificationInterface<Data = any> {
   readonly data: Partial<Data>;

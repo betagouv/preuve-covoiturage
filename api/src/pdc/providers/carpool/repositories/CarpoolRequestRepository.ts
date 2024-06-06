@@ -1,5 +1,5 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from '/ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import { InsertableCarpoolRequest, WrittenCarpoolRequest } from '../interfaces/index.ts';
 import sql, { raw, join } from '../helpers/sql.ts';
 import { DatabaseException } from '../exceptions/DatabaseException.ts';

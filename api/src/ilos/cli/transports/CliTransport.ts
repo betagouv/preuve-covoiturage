@@ -1,4 +1,4 @@
-import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
+import { KernelInterface, TransportInterface } from '/ilos/common/index.ts';
 
 import { CommandRegistry } from '../providers/CommandRegistry.ts';
 

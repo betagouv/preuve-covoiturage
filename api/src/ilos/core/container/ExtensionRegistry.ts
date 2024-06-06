@@ -6,7 +6,7 @@ import {
   ExtensionInterface,
   NewableType,
   FactoryType,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { DependencyTree } from '../helpers/DependencyTree.ts';
 

@@ -1,4 +1,4 @@
-import { KeywordDefinition } from '@/ilos/validator/index.ts';
+import { KeywordDefinition } from '/ilos/validator/index.ts';
 
 export const coordinatesKeyword: KeywordDefinition = {
   keyword: 'coordinates',

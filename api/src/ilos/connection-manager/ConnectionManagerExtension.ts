@@ -1,4 +1,4 @@
-import { RegisterHookInterface, NewableType, ServiceContainerInterface, extension } from '@/ilos/common/index.ts';
+import { RegisterHookInterface, NewableType, ServiceContainerInterface, extension } from '/ilos/common/index.ts';
 
 @extension({
   name: 'connections',

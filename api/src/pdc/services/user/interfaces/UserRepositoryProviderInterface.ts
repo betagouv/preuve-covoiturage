@@ -1,12 +1,12 @@
-import { PaginationParamsInterface } from '@/shared/common/interfaces/PaginationParamsInterface.ts';
-import { UserCreateInterface } from '@/shared/user/common/interfaces/UserCreateInterface.ts';
-import { UserPatchInterface } from '@/shared/user/common/interfaces/UserPatchInterface.ts';
-import { UserFindInterface } from '@/shared/user/common/interfaces/UserFindInterface.ts';
-import { UserLastLoginInterface } from '@/shared/user/common/interfaces/UserLastLoginInterface.ts';
-import { UserListInterface } from '@/shared/user/common/interfaces/UserListInterface.ts';
-import { UserListFiltersInterface } from '@/shared/user/common/interfaces/UserListFiltersInterface.ts';
-import { UserPatchInterfaceBy } from '@/shared/user/common/interfaces/UserPatchInterfaceBy.ts';
-import { ResultInterface as HasUsersResultsInterface } from '@/shared/user/hasUsers.contract.ts';
+import { PaginationParamsInterface } from '/shared/common/interfaces/PaginationParamsInterface.ts';
+import { UserCreateInterface } from '/shared/user/common/interfaces/UserCreateInterface.ts';
+import { UserPatchInterface } from '/shared/user/common/interfaces/UserPatchInterface.ts';
+import { UserFindInterface } from '/shared/user/common/interfaces/UserFindInterface.ts';
+import { UserLastLoginInterface } from '/shared/user/common/interfaces/UserLastLoginInterface.ts';
+import { UserListInterface } from '/shared/user/common/interfaces/UserListInterface.ts';
+import { UserListFiltersInterface } from '/shared/user/common/interfaces/UserListFiltersInterface.ts';
+import { UserPatchInterfaceBy } from '/shared/user/common/interfaces/UserPatchInterfaceBy.ts';
+import { ResultInterface as HasUsersResultsInterface } from '/shared/user/hasUsers.contract.ts';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserCreateInterface): Promise<UserFindInterface>;

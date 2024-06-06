@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { handler } from '/ilos/common/index.ts';
+import { hasPermissionMiddleware } from '/pdc/providers/middleware/index.ts';
 
-import { alias } from '@/shared/observatory/territories/list.schema.ts';
-import { handlerConfig, ResultInterface, ParamsInterface } from '@/shared/observatory/territories/list.contract.ts';
+import { alias } from '/shared/observatory/territories/list.schema.ts';
+import { handlerConfig, ResultInterface, ParamsInterface } from '/shared/observatory/territories/list.contract.ts';
 import { TerritoriesRepositoryInterfaceResolver } from '../../interfaces/TerritoriesRepositoryProviderInterface.ts';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams.ts';
 

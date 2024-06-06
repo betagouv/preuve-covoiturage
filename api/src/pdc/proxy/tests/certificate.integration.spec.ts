@@ -9,9 +9,9 @@ import _ from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
-import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
-import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';
-import { TokenProvider } from '@/pdc/providers/token/index.ts';
+import { KernelInterface, TransportInterface } from '/ilos/common/index.ts';
+import { CryptoProvider } from '/pdc/providers/crypto/index.ts';
+import { TokenProvider } from '/pdc/providers/token/index.ts';
 import { Kernel } from '../Kernel.ts';
 
 import { HttpTransport } from '../HttpTransport.ts';

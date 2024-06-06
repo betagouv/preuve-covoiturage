@@ -1,4 +1,4 @@
-import { InvalidParamsException } from '@/ilos/common/index.ts';
+import { InvalidParamsException } from '/ilos/common/index.ts';
 import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
 

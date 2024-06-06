@@ -1,4 +1,4 @@
-import { RPCResponseType, RPCSingleResponseType } from '@/ilos/common/index.ts';
+import { RPCResponseType, RPCSingleResponseType } from '/ilos/common/index.ts';
 
 // https://www.jsonrpc.org/historical/json-rpc-over-http.html#response-codes
 export function mapStatusCode(results: RPCResponseType): number {

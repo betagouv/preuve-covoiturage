@@ -7,7 +7,7 @@ import {
   ResultType,
   ParamsType,
   ContextType,
-} from '@/ilos/common/index.ts';
+} from '/ilos/common/index.ts';
 
 import { ServiceProvider as ParentServiceProvider } from './ServiceProvider.ts';
 import { Action } from './Action.ts';

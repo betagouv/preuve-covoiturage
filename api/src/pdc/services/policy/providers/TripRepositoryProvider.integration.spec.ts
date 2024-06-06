@@ -1,5 +1,5 @@
-import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { DbContext, makeDbBeforeAfter } from '/pdc/providers/test/index.ts';
+import { PolicyStatusEnum } from '/shared/policy/common/interfaces/PolicyInterface.ts';
 import anyTest, { TestFn } from 'ava';
 import { Policy } from '../engine/entities/Policy.ts';
 import { Idfm } from '../engine/policies/Idfm.ts';

@@ -1,10 +1,10 @@
-import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
+import { KernelInterfaceResolver, provider } from '/ilos/common/index.ts';
 
 import {
   signature as operatorFindSignature,
   ParamsInterface as OperatorFindParamsInterface,
   ResultInterface as OperatorFindResultInterface,
-} from '@/shared/operator/find.contract.ts';
+} from '/shared/operator/find.contract.ts';
 
 import {
   CostParamsInterface,

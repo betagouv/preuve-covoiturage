@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
-import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@/ilos/common/index.ts';
-import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '/ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '/ilos/core/index.ts';
 
 import { handlerMacro, HandlerMacroContext } from './handlerMacro.ts';
 

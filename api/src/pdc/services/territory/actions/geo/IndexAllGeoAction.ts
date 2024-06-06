@@ -1,8 +1,8 @@
-import { ConfigInterfaceResolver, handler } from '@/ilos/common/index.ts';
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { SingleResultInterface as AllGeoResultInterface } from '@/shared/territory/allGeo.contract.ts';
-import { handlerConfig } from '@/shared/territory/indexAllGeo.contract.ts';
+import { ConfigInterfaceResolver, handler } from '/ilos/common/index.ts';
+import { Action as AbstractAction } from '/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '/pdc/providers/middleware/index.ts';
+import { SingleResultInterface as AllGeoResultInterface } from '/shared/territory/allGeo.contract.ts';
+import { handlerConfig } from '/shared/territory/indexAllGeo.contract.ts';
 import { indexData } from '../../helpers/meilisearch.ts';
 import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface.ts';
 

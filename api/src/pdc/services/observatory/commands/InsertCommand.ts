@@ -1,7 +1,7 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@/ilos/common/index.ts';
-import { signature as distrib } from '@/shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
-import { signature as flux } from '@/shared/observatory/flux/insertMonthlyFlux.contract.ts';
-import { signature as occupation } from '@/shared/observatory/occupation/insertMonthlyOccupation.contract.ts';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '/ilos/common/index.ts';
+import { signature as distrib } from '/shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
+import { signature as flux } from '/shared/observatory/flux/insertMonthlyFlux.contract.ts';
+import { signature as occupation } from '/shared/observatory/occupation/insertMonthlyOccupation.contract.ts';
 
 @command()
 export class InsertCommand implements CommandInterface {

@@ -1,5 +1,5 @@
-import { KernelInterfaceResolver, NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { KernelInterfaceResolver, NotFoundException, provider } from '/ilos/common/index.ts';
+import { PoolClient, PostgresConnection } from '/ilos/connection-postgres/index.ts';
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -14,7 +14,7 @@ import {
   UpdateParamsInterface,
   UpdateResultInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface.ts';
-import { TerritorySelectorsInterface } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+import { TerritorySelectorsInterface } from '/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,

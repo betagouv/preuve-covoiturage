@@ -1,4 +1,4 @@
-import { Format } from '@/ilos/validator/index.ts';
+import { Format } from '/ilos/validator/index.ts';
 
 export const departmentCustomFormat: Format = (data: string): boolean => {
   try {

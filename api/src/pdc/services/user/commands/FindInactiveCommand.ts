@@ -1,4 +1,4 @@
-import { command, CommandInterface, CommandOptionType } from '@/ilos/common/index.ts';
+import { command, CommandInterface, CommandOptionType } from '/ilos/common/index.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 @command()

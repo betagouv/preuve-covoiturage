@@ -1,5 +1,5 @@
-import { Action } from '@/ilos/core/index.ts';
-import { handler, ParamsType, ContextType, ResultType, InvalidParamsException } from '@/ilos/common/index.ts';
+import { Action } from '/ilos/core/index.ts';
+import { handler, ParamsType, ContextType, ResultType, InvalidParamsException } from '/ilos/common/index.ts';
 
 import { CustomProvider } from '../../Providers/CustomProvider.ts';
 
