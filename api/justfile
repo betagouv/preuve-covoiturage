@@ -14,10 +14,10 @@ test-integration:
 
 # Run test:unit
 test-unit:
-  deno test '**/*[!.integration].spec.ts'
+  deno test --no-check '**/*.unit.spec.ts'
 
 # Run test
-test pattern:
+test *pattern:
   deno test {{ pattern }}
 
 # Start docker services (detached)

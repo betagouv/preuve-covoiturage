@@ -1,5 +1,3 @@
-import anyTest, { TestFn, ExecutionContext } from 'npm:ava@^5';
-export type { Macro } from 'npm:ava@^5';
 import sinon, { SinonStub, SinonSandbox, stub } from 'npm:sinon@^18';
 // @deno-types="npm:@types/supertest@^6"
 import supertest from 'npm:supertest@^7';
@@ -7,12 +5,13 @@ import supertest from 'npm:supertest@^7';
 export type { Agent as SuperTestAgent } from 'npm:supertest@^7';
 
 import nock from 'npm:nock@^13.5';
-export { anyTest, sinon, nock, supertest, stub };
-export type { TestFn, SinonStub, SinonSandbox, ExecutionContext };
+export { sinon, nock, supertest, stub };
+export type { SinonStub, SinonSandbox };
 export {
   assertEquals,
   assertStrictEquals,
   assertThrows,
+  assertRejects,
   assertObjectMatch,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 export {
