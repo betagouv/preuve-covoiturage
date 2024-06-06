@@ -1,10 +1,6 @@
 {
   "imports": {
-      "@pdc/": "./src/pdc/",
-      "@ilos/": "./src/ilos/",
-      "@config/": "./src/config/",
-      "@shared/": "./src/shared/",
-      "@db/": "./src/db/",
+      "@/": "./src/",
       "reflect-metadata": "https://cdn.esm.sh/reflect-metadata?deno",
       "inversify": "https://cdn.esm.sh/inversify?deno"
   },

@@ -1,5 +1,5 @@
 import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
-import type { GeoJSON } from '@shared/geo/GeoJson.ts';
+import type { GeoJSON } from '@/shared/geo/GeoJson.ts';
 import { Feature, MultiPolygon, Polygon, Properties, multiPolygon, point, polygon } from '@turf/helpers';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 

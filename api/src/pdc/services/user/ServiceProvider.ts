@@ -1,26 +1,26 @@
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common/index.ts';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator/index.ts';
-import { CryptoProvider } from '@pdc/providers/crypto/index.ts';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware/index.ts';
-import { defaultNotificationBindings } from '@pdc/providers/notification/index.ts';
+import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
+import { serviceProvider, NewableType, ExtensionInterface } from '@/ilos/common/index.ts';
+import { ValidatorExtension, ValidatorMiddleware } from '@/pdc/providers/validator/index.ts';
+import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';
+import { defaultMiddlewareBindings } from '@/pdc/providers/middleware/index.ts';
+import { defaultNotificationBindings } from '@/pdc/providers/notification/index.ts';
 
-import { changePassword } from '@shared/user/changePassword.schema.ts';
-import { changePasswordWithToken } from '@shared/user/changePasswordWithToken.schema.ts';
-import { changeRole } from '@shared/user/changeRole.schema.ts';
-import { checkForgottenToken } from '@shared/user/checkForgottenToken.schema.ts';
-import { confirmEmail } from '@shared/user/confirmEmail.schema.ts';
-import { contactform } from '@shared/user/contactform.schema.ts';
-import { deleteUser } from '@shared/user/delete.schema.ts';
-import { deleteAssociatedUser } from '@shared/user/deleteAssociated.schema.ts';
-import { find } from '@shared/user/find.schema.ts';
-import { create } from '@shared/user/create.schema.ts';
-import { forgottenPassword } from '@shared/user/forgottenPassword.schema.ts';
-import { list } from '@shared/user/list.schema.ts';
-import { login } from '@shared/user/login.schema.ts';
-import { patch } from '@shared/user/patch.schema.ts';
-import { sendConfirmEmail } from '@shared/user/sendConfirmEmail.schema.ts';
-import { sendInvitationEmail } from '@shared/user/sendInvitationEmail.schema.ts';
+import { changePassword } from '@/shared/user/changePassword.schema.ts';
+import { changePasswordWithToken } from '@/shared/user/changePasswordWithToken.schema.ts';
+import { changeRole } from '@/shared/user/changeRole.schema.ts';
+import { checkForgottenToken } from '@/shared/user/checkForgottenToken.schema.ts';
+import { confirmEmail } from '@/shared/user/confirmEmail.schema.ts';
+import { contactform } from '@/shared/user/contactform.schema.ts';
+import { deleteUser } from '@/shared/user/delete.schema.ts';
+import { deleteAssociatedUser } from '@/shared/user/deleteAssociated.schema.ts';
+import { find } from '@/shared/user/find.schema.ts';
+import { create } from '@/shared/user/create.schema.ts';
+import { forgottenPassword } from '@/shared/user/forgottenPassword.schema.ts';
+import { list } from '@/shared/user/list.schema.ts';
+import { login } from '@/shared/user/login.schema.ts';
+import { patch } from '@/shared/user/patch.schema.ts';
+import { sendConfirmEmail } from '@/shared/user/sendConfirmEmail.schema.ts';
+import { sendInvitationEmail } from '@/shared/user/sendInvitationEmail.schema.ts';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider.ts';
 
 import { config } from './config/index.ts';
@@ -50,7 +50,7 @@ import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePassw
 import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware.ts';
 import { ContactformAction } from './actions/ContactformAction.ts';
 import { SimulatePolicyformAction } from './actions/SimulatePolicyformAction.ts';
-import { sendSimulationEmail } from '@shared/user/simulatePolicyform.schema.ts';
+import { sendSimulationEmail } from '@/shared/user/simulatePolicyform.schema.ts';
 
 @serviceProvider({
   config,

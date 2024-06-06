@@ -5,8 +5,8 @@ import {
   ResultType,
   KernelInterfaceResolver,
   ContextType,
-} from '@ilos/common/index.ts';
-import { signature } from '@shared/monitoring/statsrefresh.contract.ts';
+} from '@/ilos/common/index.ts';
+import { signature } from '@/shared/monitoring/statsrefresh.contract.ts';
 
 interface CommandOptions {
   schema: string;

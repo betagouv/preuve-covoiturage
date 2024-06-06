@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider.ts';
-import { TerritoryTripsInterface } from '@shared/trip/common/interfaces/TerritoryTripsInterface.ts';
-import { TripSearchInterface } from '@shared/trip/common/interfaces/TripSearchInterface.ts';
+import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
+import { TripSearchInterface } from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
 
 @provider()
 export class BuildResourceDescription {

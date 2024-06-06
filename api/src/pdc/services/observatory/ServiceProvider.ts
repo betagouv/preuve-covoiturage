@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
-import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common/index.ts';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware/index.ts';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator/index.ts';
+import { ExtensionInterface, NewableType, serviceProvider } from '@/ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
+import { defaultMiddlewareBindings } from '@/pdc/providers/middleware/index.ts';
+import { ValidatorExtension, ValidatorMiddleware } from '@/pdc/providers/validator/index.ts';
 import { InsertLastMonthDistributionAction } from './actions/distribution/InsertLastMonthDistributionAction.ts';
 import { JourneysByDistancesAction } from './actions/distribution/JourneysByDistancesAction.ts';
 import { JourneysByHoursAction } from './actions/distribution/JourneysByHoursAction.ts';
@@ -34,20 +34,20 @@ import { LocationRepositoryProvider } from './providers/LocationRepositoryProvid
 import { OccupationRepositoryProvider } from './providers/OccupationRepositoryProvider.ts';
 import { TerritoriesRepositoryProvider } from './providers/TerritoriesRepositoryProvider.ts';
 import { IncentiveCampaignsRepositoryProvider } from './providers/IncentiveCampaignsRepositoryProvider.ts';
-import { binding as JourneysByDistancesBinding } from '@shared/observatory/distribution/journeysByDistances.schema.ts';
-import { binding as JourneysByHoursBinding } from '@shared/observatory/distribution/journeysByHours.schema.ts';
-import { binding as BestMonthlyFluxBinding } from '@shared/observatory/flux/bestMonthlyFlux.schema.ts';
-import { binding as EvolMonthlyFluxBinding } from '@shared/observatory/flux/evolMonthlyFlux.schema.ts';
-import { binding as MonthlyFluxBinding } from '@shared/observatory/flux/monthlyFlux.schema.ts';
-import { binding as AiresCovoiturageBinding } from '@shared/observatory/infra/airesCovoiturage.schema.ts';
-import { binding as MonthlyKeyfiguresBinding } from '@shared/observatory/keyfigures/monthlyKeyfigures.schema.ts';
-import { binding as LocationBinding } from '@shared/observatory/location/location.schema.ts';
-import { binding as BestMonthlyTerritoriesBinding } from '@shared/observatory/occupation/bestMonthlyTerritories.schema.ts';
-import { binding as EvolMonthlyOccupationBinding } from '@shared/observatory/occupation/evolMonthlyOccupation.schema.ts';
-import { binding as MonthlyOccupationBinding } from '@shared/observatory/occupation/monthlyOccupation.schema.ts';
-import { binding as TerritoriesListBinding } from '@shared/observatory/territories/list.schema.ts';
-import { binding as TerritoryNameBinding } from '@shared/observatory/territories/name.schema.ts';
-import { binding as CampaignsBinding } from '@shared/observatory/incentiveCampaigns/campaigns.schema.ts';
+import { binding as JourneysByDistancesBinding } from '@/shared/observatory/distribution/journeysByDistances.schema.ts';
+import { binding as JourneysByHoursBinding } from '@/shared/observatory/distribution/journeysByHours.schema.ts';
+import { binding as BestMonthlyFluxBinding } from '@/shared/observatory/flux/bestMonthlyFlux.schema.ts';
+import { binding as EvolMonthlyFluxBinding } from '@/shared/observatory/flux/evolMonthlyFlux.schema.ts';
+import { binding as MonthlyFluxBinding } from '@/shared/observatory/flux/monthlyFlux.schema.ts';
+import { binding as AiresCovoiturageBinding } from '@/shared/observatory/infra/airesCovoiturage.schema.ts';
+import { binding as MonthlyKeyfiguresBinding } from '@/shared/observatory/keyfigures/monthlyKeyfigures.schema.ts';
+import { binding as LocationBinding } from '@/shared/observatory/location/location.schema.ts';
+import { binding as BestMonthlyTerritoriesBinding } from '@/shared/observatory/occupation/bestMonthlyTerritories.schema.ts';
+import { binding as EvolMonthlyOccupationBinding } from '@/shared/observatory/occupation/evolMonthlyOccupation.schema.ts';
+import { binding as MonthlyOccupationBinding } from '@/shared/observatory/occupation/monthlyOccupation.schema.ts';
+import { binding as TerritoriesListBinding } from '@/shared/observatory/territories/list.schema.ts';
+import { binding as TerritoryNameBinding } from '@/shared/observatory/territories/name.schema.ts';
+import { binding as CampaignsBinding } from '@/shared/observatory/incentiveCampaigns/campaigns.schema.ts';
 /* eslint-enable */
 @serviceProvider({
   config,

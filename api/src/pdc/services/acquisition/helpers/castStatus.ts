@@ -1,4 +1,4 @@
-import { StatusEnum } from '@shared/acquisition/status.contract.ts';
+import { StatusEnum } from '@/shared/acquisition/status.contract.ts';
 
 export function castStatus(carpoolStatus: string, acquisitionStatus: string, acquisitionError?: string): StatusEnum {
   switch (acquisitionStatus) {

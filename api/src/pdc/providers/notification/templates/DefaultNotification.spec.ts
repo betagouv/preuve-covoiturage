@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
-import { Extensions } from '@ilos/core/index.ts';
-import { HandlebarsTemplateProvider } from '@pdc/providers/template/index.ts';
+import { Extensions } from '@/ilos/core/index.ts';
+import { HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
 import Mail from 'nodemailer/lib/mailer';
 
 import {

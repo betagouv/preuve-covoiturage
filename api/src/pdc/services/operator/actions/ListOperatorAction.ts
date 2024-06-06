@@ -1,9 +1,9 @@
-import { handler } from '@ilos/common/index.ts';
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/providers/middleware/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/list.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/operator/list.contract.ts';
 
 @handler({
   ...handlerConfig,

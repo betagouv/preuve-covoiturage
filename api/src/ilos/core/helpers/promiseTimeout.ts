@@ -1,4 +1,4 @@
-import { TimeoutException } from '@ilos/common/index.ts';
+import { TimeoutException } from '@/ilos/common/index.ts';
 
 export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: string): Promise<T> {
   const s = new Date();

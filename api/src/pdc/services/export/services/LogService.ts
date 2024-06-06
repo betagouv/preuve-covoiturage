@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { ExportLogEvent } from '../models/ExportLog.ts';
 import { LogRepositoryInterfaceResolver } from '../repositories/LogRepository.ts';
 

@@ -1,11 +1,11 @@
-import type { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
+import type { BoundedSlices, SliceInterface, UnboundedSlices } from '@/shared/policy/common/interfaces/Slices.ts';
 import {
   TerritoryCodeEnum,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+} from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 import type {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+} from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export {
   IncentiveStateEnum,

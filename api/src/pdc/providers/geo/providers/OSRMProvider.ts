@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common/index.ts';
-import { env } from '@ilos/core/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { env } from '@/ilos/core/index.ts';
 import axios from 'axios';
 import { Agent } from 'node:http';
 import _ from 'lodash';

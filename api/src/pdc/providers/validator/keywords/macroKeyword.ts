@@ -1,4 +1,4 @@
-import { KeywordDefinition } from '@ilos/validator/index.ts';
+import { KeywordDefinition } from '@/ilos/validator/index.ts';
 
 import { base64Macro } from './macros/base64Macro.ts';
 import { lonMacro } from './macros/lonMacro.ts';

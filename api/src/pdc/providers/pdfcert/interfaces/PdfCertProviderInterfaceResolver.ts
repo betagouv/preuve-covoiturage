@@ -1,4 +1,4 @@
-import { ProviderInterface } from '@ilos/common/index.ts';
+import { ProviderInterface } from '@/ilos/common/index.ts';
 import { PdfTemplateData } from './PdfTemplateData.ts';
 
 export interface PdfCertProviderInterface extends ProviderInterface {

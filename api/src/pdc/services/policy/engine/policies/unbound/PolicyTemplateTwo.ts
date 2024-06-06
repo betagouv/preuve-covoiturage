@@ -4,7 +4,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../../interfaces/index.ts';
-import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription.ts';
+import { PolicyTemplateDescriptions } from '@/shared/policy/common/classes/PolicyTemplateDescription.ts';
 import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException.ts';
 import {
   ConfiguredLimitInterface,

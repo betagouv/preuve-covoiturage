@@ -1,5 +1,5 @@
 import test from 'ava';
-import { HandlerInterface, handler, lib, provider, inject } from '@ilos/common/index.ts';
+import { HandlerInterface, handler, lib, provider, inject } from '@/ilos/common/index.ts';
 
 import { Container } from '../index.ts';
 

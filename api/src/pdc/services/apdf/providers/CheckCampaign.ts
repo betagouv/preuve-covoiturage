@@ -1,10 +1,10 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
-import { handlerConfig } from '@shared/apdf/export.contract.ts';
+import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
+import { handlerConfig } from '@/shared/apdf/export.contract.ts';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
-} from '@shared/policy/find.contract.ts';
+} from '@/shared/policy/find.contract.ts';
 
 @provider()
 export class CheckCampaign {

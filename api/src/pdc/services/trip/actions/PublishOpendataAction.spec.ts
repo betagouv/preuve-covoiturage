@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { faker } from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { UploadedResource } from '../interfaces/DataGouvInterface.ts';
 import { DataGouvProvider } from '../providers/DataGouvProvider.ts';
-import { ParamsInterface } from '@shared/trip/publishOpenData.contract.ts';
+import { ParamsInterface } from '@/shared/trip/publishOpenData.contract.ts';
 import { BuildResourceDescription } from './opendata/BuildResourceDescription.ts';
 import { PublishOpenDataAction } from './PublishOpenDataAction.ts';
 import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists.ts';

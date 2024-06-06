@@ -1,4 +1,4 @@
-import { env } from '@ilos/core/index.ts';
+import { env } from '@/ilos/core/index.ts';
 
 export const s3UploadEnabled = env.or_fail('APP_APDF_S3_UPLOAD_ENABLED', 'true') === 'true';
 

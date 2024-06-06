@@ -1,5 +1,5 @@
-import { ParamsType, RPCSingleCallType } from '@ilos/common/index.ts';
-import { UserInterface } from '@shared/user/common/interfaces/UserInterface.ts';
+import { ParamsType, RPCSingleCallType } from '@/ilos/common/index.ts';
+import { UserInterface } from '@/shared/user/common/interfaces/UserInterface.ts';
 import { injectContext } from './injectContext.ts';
 
 export function createRPCPayload(

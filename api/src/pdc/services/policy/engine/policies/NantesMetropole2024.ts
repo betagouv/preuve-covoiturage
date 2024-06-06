@@ -1,5 +1,5 @@
-import { toTzString } from '@pdc/helpers/dates.helper.ts';
-import { Timezone } from '@pdc/providers/validator/index.ts';
+import { toTzString } from '@/pdc/helpers/dates.helper.ts';
+import { Timezone } from '@/pdc/providers/validator/index.ts';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,

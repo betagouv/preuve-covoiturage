@@ -14,7 +14,7 @@ import {
   HandlerConfigType,
   CallType,
   ConfigInterfaceResolver,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { promiseTimeout } from '../helpers/index.ts';
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall.ts';

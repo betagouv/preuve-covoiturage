@@ -6,7 +6,7 @@ import {
   ResultType,
   InvalidParamsException,
   ForbiddenException,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 import _ from 'lodash';
 import { ConfiguredMiddleware } from '../interfaces.ts';
 

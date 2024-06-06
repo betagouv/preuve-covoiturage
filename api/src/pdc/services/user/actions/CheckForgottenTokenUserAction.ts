@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { handler } from '@ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
 
-import { handlerConfig, ResultInterface } from '@shared/user/checkForgottenToken.contract.ts';
-import { alias } from '@shared/user/checkForgottenToken.schema.ts';
+import { handlerConfig, ResultInterface } from '@/shared/user/checkForgottenToken.contract.ts';
+import { alias } from '@/shared/user/checkForgottenToken.schema.ts';
 import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware.ts';
 
 /*

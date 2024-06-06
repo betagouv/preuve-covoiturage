@@ -1,9 +1,9 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common/index.ts';
-import { APDFNameProvider } from '@pdc/providers/storage/index.ts';
+import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
+import { APDFNameProvider } from '@/pdc/providers/storage/index.ts';
 import excel from 'exceljs';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
-import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface.ts';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
+import { SliceStatInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
+import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
 import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
 import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';

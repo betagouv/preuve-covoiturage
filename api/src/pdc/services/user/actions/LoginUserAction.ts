@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { handler, UnauthorizedException } from '@ilos/common/index.ts';
-import { contentWhitelistMiddleware } from '@pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler, UnauthorizedException } from '@/ilos/common/index.ts';
+import { contentWhitelistMiddleware } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/login.contract.ts';
-import { alias } from '@shared/user/login.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/login.contract.ts';
+import { alias } from '@/shared/user/login.schema.ts';
 import { userWhiteListFilterOutput } from '../config/filterOutput.ts';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';

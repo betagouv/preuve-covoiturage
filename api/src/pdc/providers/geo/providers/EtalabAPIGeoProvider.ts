@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from '@ilos/common/index.ts';
+import { NotFoundException, provider } from '@/ilos/common/index.ts';
 import axios from 'axios';
 import { Agent } from 'node:https';
 import _ from 'lodash';

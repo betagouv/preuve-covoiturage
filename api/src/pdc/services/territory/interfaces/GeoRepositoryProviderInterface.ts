@@ -1,12 +1,12 @@
-import { ResultInterface as AllGeoResultInterface } from '@shared/territory/allGeo.contract.ts';
+import { ResultInterface as AllGeoResultInterface } from '@/shared/territory/allGeo.contract.ts';
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from '@shared/territory/findGeoBySiren.contract.ts';
+} from '@/shared/territory/findGeoBySiren.contract.ts';
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
-} from '@shared/territory/listGeo.contract.ts';
+} from '@/shared/territory/listGeo.contract.ts';
 
 export interface GeoRepositoryProviderInterface {
   getAllGeo(): Promise<AllGeoResultInterface>;

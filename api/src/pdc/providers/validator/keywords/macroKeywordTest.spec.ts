@@ -1,6 +1,6 @@
 import test, { ExecutionContext } from 'ava';
-import { AjvValidator } from '@ilos/validator/index.ts';
-import { Extensions } from '@ilos/core/index.ts';
+import { AjvValidator } from '@/ilos/validator/index.ts';
+import { Extensions } from '@/ilos/core/index.ts';
 
 import { macroKeyword } from './macroKeyword.ts';
 

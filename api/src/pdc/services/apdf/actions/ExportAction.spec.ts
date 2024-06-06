@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { faker } from '@faker-js/faker';
-import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common/index.ts';
-import { uuid } from '@pdc/providers/test/index.ts';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage/index.ts';
+import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { uuid } from '@/pdc/providers/test/index.ts';
+import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
@@ -11,9 +11,9 @@ import { createGetCampaignResult } from '../helpers/createGetCampaignResult.help
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
 import { CheckCampaign } from '../providers/CheckCampaign.ts';
 import { BuildExcel } from '../providers/excel/BuildExcel.ts';
-import { ResultInterface as Campaign } from '@shared/policy/find.contract.ts';
+import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
 import { ExportAction } from './ExportAction.ts';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 
 interface Context {
   // Injected tokens

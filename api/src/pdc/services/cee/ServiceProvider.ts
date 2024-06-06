@@ -1,13 +1,13 @@
-import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common/index.ts';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware/index.ts';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator/index.ts';
+import { ExtensionInterface, NewableType, serviceProvider } from '@/ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
+import { defaultMiddlewareBindings } from '@/pdc/providers/middleware/index.ts';
+import { ValidatorExtension, ValidatorMiddleware } from '@/pdc/providers/validator/index.ts';
 
 import { config } from './config/index.ts';
-import { binding as importIdentityCeeBinding } from '@shared/cee/importApplicationIdentity.schema.ts';
-import { binding as importCeeBinding } from '@shared/cee/importApplication.schema.ts';
-import { binding as registerCeeBinding } from '@shared/cee/registerApplication.schema.ts';
-import { binding as simulateCeeBinding } from '@shared/cee/simulateApplication.schema.ts';
+import { binding as importIdentityCeeBinding } from '@/shared/cee/importApplicationIdentity.schema.ts';
+import { binding as importCeeBinding } from '@/shared/cee/importApplication.schema.ts';
+import { binding as registerCeeBinding } from '@/shared/cee/registerApplication.schema.ts';
+import { binding as simulateCeeBinding } from '@/shared/cee/simulateApplication.schema.ts';
 
 import { CeeRepositoryProvider } from './providers/CeeRepositoryProvider.ts';
 import { ImportCeeAction } from './actions/ImportCeeAction.ts';

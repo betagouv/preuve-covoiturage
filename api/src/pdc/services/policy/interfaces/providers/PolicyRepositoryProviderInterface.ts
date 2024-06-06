@@ -1,4 +1,4 @@
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface.ts';
+import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { SerializedPolicyInterface } from '../index.ts';
 
 export abstract class PolicyRepositoryProviderInterfaceResolver {

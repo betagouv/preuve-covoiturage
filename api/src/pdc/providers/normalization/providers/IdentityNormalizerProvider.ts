@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { IdentityNormalizerProviderInterface, IdentityParamsInterface, IdentityResultInterface } from '../interfaces/index.ts';
 
 @provider()

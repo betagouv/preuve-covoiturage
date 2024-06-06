@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { httpMacro, HttpMacroContext } from '@pdc/providers/test/index.ts';
+import { httpMacro, HttpMacroContext } from '@/pdc/providers/test/index.ts';
 
-import { ContextType } from '@ilos/common/index.ts';
+import { ContextType } from '@/ilos/common/index.ts';
 import { ServiceProvider } from './ServiceProvider.ts';
 
 interface TestContext extends HttpMacroContext {

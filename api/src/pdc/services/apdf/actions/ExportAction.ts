@@ -1,10 +1,10 @@
-import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
-import { Action } from '@ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage/index.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract.ts';
-import { alias } from '@shared/apdf/export.schema.ts';
-import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract.ts';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/apdf/export.contract.ts';
+import { alias } from '@/shared/apdf/export.schema.ts';
+import { ResultInterface as PolicyResultInterface } from '@/shared/policy/find.contract.ts';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
 import fs from 'node:fs';

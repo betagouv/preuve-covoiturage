@@ -1,18 +1,18 @@
-import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
-import { UserFindInterface } from '@shared/user/common/interfaces/UserFindInterface.ts';
-import { UserLastLoginInterface } from '@shared/user/common/interfaces/UserLastLoginInterface.ts';
-import { UserListFiltersInterface } from '@shared/user/common/interfaces/UserListFiltersInterface.ts';
-import { UserListInterface } from '@shared/user/common/interfaces/UserListInterface.ts';
-import { UserPatchInterface } from '@shared/user/common/interfaces/UserPatchInterface.ts';
+import { UserFindInterface } from '@/shared/user/common/interfaces/UserFindInterface.ts';
+import { UserLastLoginInterface } from '@/shared/user/common/interfaces/UserLastLoginInterface.ts';
+import { UserListFiltersInterface } from '@/shared/user/common/interfaces/UserListFiltersInterface.ts';
+import { UserListInterface } from '@/shared/user/common/interfaces/UserListInterface.ts';
+import { UserPatchInterface } from '@/shared/user/common/interfaces/UserPatchInterface.ts';
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface.ts';
-import { PaginationParamsInterface } from '@shared/common/interfaces/PaginationParamsInterface.ts';
-import { UserCreateInterface } from '@shared/user/common/interfaces/UserCreateInterface.ts';
-import { ResultInterface as HasUsersResultInterface } from '@shared/user/hasUsers.contract.ts';
+import { PaginationParamsInterface } from '@/shared/common/interfaces/PaginationParamsInterface.ts';
+import { UserCreateInterface } from '@/shared/user/common/interfaces/UserCreateInterface.ts';
+import { ResultInterface as HasUsersResultInterface } from '@/shared/user/hasUsers.contract.ts';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,

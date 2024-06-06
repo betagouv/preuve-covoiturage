@@ -1,8 +1,8 @@
-import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface.ts';
-import { RepositoryInterface as ListInterface } from '@shared/application/list.contract.ts';
-import { RepositoryInterface as FindInterface } from '@shared/application/find.contract.ts';
-import { RepositoryInterface as CreateInterface } from '@shared/application/create.contract.ts';
-import { RepositoryInterface as RevokeInterface } from '@shared/application/revoke.contract.ts';
+import { ApplicationInterface } from '@/shared/application/common/interfaces/ApplicationInterface.ts';
+import { RepositoryInterface as ListInterface } from '@/shared/application/list.contract.ts';
+import { RepositoryInterface as FindInterface } from '@/shared/application/find.contract.ts';
+import { RepositoryInterface as CreateInterface } from '@/shared/application/create.contract.ts';
+import { RepositoryInterface as RevokeInterface } from '@/shared/application/revoke.contract.ts';
 
 export interface ApplicationRepositoryProviderInterface {
   list(data: ListInterface): Promise<ApplicationInterface[]>;

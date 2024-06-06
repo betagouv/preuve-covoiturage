@@ -1,5 +1,5 @@
 import { QRCode } from './lib/QRCode.ts';
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 
 import { QrcodeProviderInterface, QrcodeProviderInterfaceResolver } from './interfaces/QrcodeProviderInterfaceResolver.ts';
 

@@ -1,4 +1,4 @@
-import { command, CommandInterface, ResultType } from '@ilos/common/index.ts';
+import { command, CommandInterface, ResultType } from '@/ilos/common/index.ts';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 
 @command()

@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { Sentry } from '@pdc/providers/sentry/index.ts';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware/index.ts';
+import { ContextType, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { Sentry } from '@/pdc/providers/sentry/index.ts';
+import { hasPermissionMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/delete.contract.ts';
-import { alias } from '@shared/operator/delete.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/operator/delete.contract.ts';
+import { alias } from '@/shared/operator/delete.schema.ts';
 
 @handler({
   ...handlerConfig,

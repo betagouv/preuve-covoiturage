@@ -1,5 +1,5 @@
 import test from 'ava';
-import { GeoProviderInterfaceResolver } from '@pdc/providers/geo/index.ts';
+import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
 import { PartialGeoInterface, GeoInterface } from '../interfaces/index.ts';
 import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
 

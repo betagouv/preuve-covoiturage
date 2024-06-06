@@ -2,7 +2,7 @@ import type {
   ParamsInterface as LocationParamsInterface,
   ResultInterface as LocationResultInterface,
   SqlResultInterface as LocationSqlResultInterface,
-} from '@shared/observatory/location/location.contract.ts';
+} from '@/shared/observatory/location/location.contract.ts';
 
 export type { LocationParamsInterface, LocationResultInterface, LocationSqlResultInterface };
 

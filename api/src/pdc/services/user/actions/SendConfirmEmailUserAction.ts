@@ -1,13 +1,13 @@
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { handler, ContextType, UnauthorizedException } from '@ilos/common/index.ts';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler, ContextType, UnauthorizedException } from '@/ilos/common/index.ts';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/sendConfirmEmail.contract.ts';
-import { alias } from '@shared/user/sendConfirmEmail.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/sendConfirmEmail.contract.ts';
+import { alias } from '@/shared/user/sendConfirmEmail.schema.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
-import { UserFindInterface } from '@shared/user/common/interfaces/UserFindInterface.ts';
+import { UserFindInterface } from '@/shared/user/common/interfaces/UserFindInterface.ts';
 
 /*
  * send the confirmation email to a user by _id

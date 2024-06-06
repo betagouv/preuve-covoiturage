@@ -1,6 +1,6 @@
 import http from 'node:http';
 
-import { TransportInterface, KernelInterface, RPCCallType, RPCResponseType } from '@ilos/common/index.ts';
+import { TransportInterface, KernelInterface, RPCCallType, RPCResponseType } from '@/ilos/common/index.ts';
 
 import { mapStatusCode } from './helpers/mapStatusCode.ts';
 

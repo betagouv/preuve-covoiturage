@@ -1,4 +1,4 @@
-import { env } from '@ilos/core/index.ts';
+import { env } from '@/ilos/core/index.ts';
 
 export const mail = {
   smtp: {

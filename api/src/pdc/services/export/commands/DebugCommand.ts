@@ -1,4 +1,4 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common/index.ts';
+import { command, CommandInterface, CommandOptionType } from '@/ilos/common/index.ts';
 import { ExportTarget } from '../models/Export.ts';
 import { ExportParams } from '../models/ExportParams.ts';
 import { XLSXWriter } from '../models/XLSXWriter.ts';

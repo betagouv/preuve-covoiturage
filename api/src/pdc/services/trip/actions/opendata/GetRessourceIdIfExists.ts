@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import path from 'node:path';
 import { Dataset } from '../../interfaces/DataGouvInterface.ts';
 import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';

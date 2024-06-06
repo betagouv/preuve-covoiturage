@@ -1,4 +1,4 @@
-import { ProviderInterface, provider } from '@ilos/common/index.ts';
+import { ProviderInterface, provider } from '@/ilos/common/index.ts';
 
 @provider()
 export class CustomProvider implements ProviderInterface {

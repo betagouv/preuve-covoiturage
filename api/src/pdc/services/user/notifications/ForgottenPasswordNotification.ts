@@ -1,4 +1,4 @@
-import { DefaultNotification, DefaultTemplateData } from '@pdc/providers/notification/index.ts';
+import { DefaultNotification, DefaultTemplateData } from '@/pdc/providers/notification/index.ts';
 
 const defaultData: Partial<DefaultTemplateData> = {
   hero_alt: 'Mot de passe oublié',

@@ -1,6 +1,6 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '@ilos/common/index.ts';
-import { HttpTransport } from '@ilos/transport-http/index.ts';
-import { getPorts } from '@pdc/helpers/ports.helper.ts';
+import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '@/ilos/common/index.ts';
+import { HttpTransport } from '@/ilos/transport-http/index.ts';
+import { getPorts } from '@/pdc/helpers/ports.helper.ts';
 import anyTest, { TestFn } from 'ava';
 import axios from 'axios';
 import { Kernel } from '../Kernel.ts';

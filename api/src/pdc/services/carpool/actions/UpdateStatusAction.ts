@@ -1,8 +1,8 @@
-import { Action } from '@ilos/core/index.ts';
-import { handler, ContextType } from '@ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { handler, ContextType } from '@/ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/updateStatus.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/carpool/updateStatus.contract.ts';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 
 /*

@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test/index.ts';
+import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 
 import { MetadataRepositoryProvider } from './MetadataRepositoryProvider.ts';
 

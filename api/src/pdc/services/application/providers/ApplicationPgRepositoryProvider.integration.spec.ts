@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 
 import { ApplicationPgRepositoryProvider } from './ApplicationPgRepositoryProvider.ts';
 

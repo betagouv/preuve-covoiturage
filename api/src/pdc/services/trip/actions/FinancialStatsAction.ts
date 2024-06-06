@@ -1,13 +1,13 @@
-import { ContextType, handler } from '@ilos/common/index.ts';
-import { Action } from '@ilos/core/index.ts';
-import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware/index.ts';
+import { ContextType, handler } from '@/ilos/common/index.ts';
+import { Action } from '@/ilos/core/index.ts';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 import * as middlewareConfig from '../config/middlewares.ts';
 import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface.ts';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper.ts';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/financialStats.contract.ts';
-import { alias } from '@shared/trip/stats.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/trip/financialStats.contract.ts';
+import { alias } from '@/shared/trip/stats.schema.ts';
 
 @handler({
   ...handlerConfig,

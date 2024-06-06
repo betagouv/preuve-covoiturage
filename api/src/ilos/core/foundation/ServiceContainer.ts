@@ -8,7 +8,7 @@ import {
   IdentifierType,
   NewableType,
   ExtensionInterface,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { Container, HookRegistry } from '../container/index.ts';
 import { ExtensionRegistry } from '../container/ExtensionRegistry.ts';

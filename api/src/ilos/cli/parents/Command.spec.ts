@@ -1,5 +1,5 @@
 import test from 'ava';
-import { ResultType, CommandOptionType } from '@ilos/common/index.ts';
+import { ResultType, CommandOptionType } from '@/ilos/common/index.ts';
 
 import { Command } from './Command.ts';
 

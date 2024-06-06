@@ -1,4 +1,4 @@
-import { ConfigStore } from '@ilos/core/extensions/index.ts';
+import { ConfigStore } from '@/ilos/core/extensions/index.ts';
 import test from 'ava';
 import axios from 'axios';
 import { writeFile } from 'node:fs/promises';

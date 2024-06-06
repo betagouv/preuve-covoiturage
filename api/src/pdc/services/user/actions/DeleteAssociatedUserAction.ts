@@ -1,9 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { handler } from '@ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/deleteAssociated.contract.ts';
-import { alias } from '@shared/user/deleteAssociated.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/user/deleteAssociated.contract.ts';
+import { alias } from '@/shared/user/deleteAssociated.schema.ts';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface.ts';
 
 /*

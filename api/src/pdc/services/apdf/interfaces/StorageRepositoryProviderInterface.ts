@@ -1,5 +1,5 @@
-import { S3ObjectList } from '@pdc/providers/storage/index.ts';
-import { EnrichedApdfType } from '@shared/apdf/list.contract.ts';
+import { S3ObjectList } from '@/pdc/providers/storage/index.ts';
+import { EnrichedApdfType } from '@/shared/apdf/list.contract.ts';
 
 // TODO fix
 export type SerializedPolicyInterface = any;

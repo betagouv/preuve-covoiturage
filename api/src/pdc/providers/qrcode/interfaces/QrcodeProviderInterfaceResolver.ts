@@ -1,4 +1,4 @@
-import { ProviderInterface } from '@ilos/common/index.ts';
+import { ProviderInterface } from '@/ilos/common/index.ts';
 
 export interface QrcodeProviderInterface extends ProviderInterface {
   svgPath(url: string): string;

@@ -8,10 +8,10 @@ import {
   ResultType,
   ForbiddenException,
   InvalidParamsException,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface.ts';
-import { ConfiguredMiddleware } from '@pdc/providers/middleware/index.ts';
+import { ConfiguredMiddleware } from '@/pdc/providers/middleware/index.ts';
 
 @middleware()
 export class ChallengePasswordMiddleware implements MiddlewareInterface<ChallengePasswordMiddlewareParams> {

@@ -1,14 +1,14 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import { Kernel } from '@ilos/core/index.ts';
+import { Kernel } from '@/ilos/core/index.ts';
 import {
   command as commandDecorator,
   kernel as kernelDecorator,
   ResultType,
   NewableType,
   ExtensionInterface,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { CommandExtension } from '../extensions/CommandExtension.ts';
 import { Command } from '../parents/Command.ts';

@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { Export, ExportStatus } from '../models/Export.ts';
 import { ExportRecipient } from '../models/ExportRecipient.ts';
 import { LogServiceInterfaceResolver } from '../services/LogService.ts';

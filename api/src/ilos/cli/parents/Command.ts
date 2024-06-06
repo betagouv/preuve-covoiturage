@@ -1,4 +1,4 @@
-import { CommandInterface, CommandOptionType, ResultType } from '@ilos/common/index.ts';
+import { CommandInterface, CommandOptionType, ResultType } from '@/ilos/common/index.ts';
 
 /**
  * Command parent class, must be decorated

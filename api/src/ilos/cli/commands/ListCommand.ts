@@ -1,6 +1,6 @@
 
-import { command, CommandOptionType } from '@ilos/common/index.ts';
-import { KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { command, CommandOptionType } from '@/ilos/common/index.ts';
+import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
 
 import { Command } from '../parents/Command.ts';
 

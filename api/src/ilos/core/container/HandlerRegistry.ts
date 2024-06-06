@@ -12,7 +12,7 @@ import {
   ContextType,
   ResultType,
   MiddlewareInterface,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig.ts';
 import { compose } from '../helpers/index.ts';

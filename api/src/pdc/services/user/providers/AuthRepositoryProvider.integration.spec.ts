@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { ConfigInterfaceResolver } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/providers/crypto/index.ts';
+import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { CryptoProvider, CryptoProviderInterfaceResolver } from '@/pdc/providers/crypto/index.ts';
 
 import { AuthRepositoryProvider } from './AuthRepositoryProvider.ts';
 

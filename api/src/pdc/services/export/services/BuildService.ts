@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { ExportParams } from '../models/ExportParams.ts';
 import { XLSXWriter } from '../models/XLSXWriter.ts';
 import { CampaignRepository } from '../repositories/CampaignRepository.ts';

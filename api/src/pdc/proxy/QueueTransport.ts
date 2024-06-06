@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import http from 'node:http';
 import express from 'express';
-import { TransportInterface } from '@ilos/common/index.ts';
-import { QueueTransport } from '@ilos/transport-redis/index.ts';
-import { SentryProvider } from '@pdc/providers/sentry/index.ts';
-import { env } from '@ilos/core/index.ts';
+import { TransportInterface } from '@/ilos/common/index.ts';
+import { QueueTransport } from '@/ilos/transport-redis/index.ts';
+import { SentryProvider } from '@/pdc/providers/sentry/index.ts';
+import { env } from '@/ilos/core/index.ts';
 
 import { healthCheckFactory } from './helpers/healthCheckFactory.ts';
 import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory.ts';

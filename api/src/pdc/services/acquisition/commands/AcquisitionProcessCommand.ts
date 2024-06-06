@@ -1,4 +1,4 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common/index.ts';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 
 @command()
 export class AcquisitionProcessCommand implements CommandInterface {

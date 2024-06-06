@@ -11,7 +11,7 @@ import {
 } from 'pdf-lib';
 import { intlFormat } from 'date-fns';
 
-import { provider } from '@ilos/common/index.ts';
+import { provider } from '@/ilos/common/index.ts';
 import { MariannePaths } from './assets/marianne.ts';
 
 import {
@@ -19,8 +19,8 @@ import {
   PdfCertProviderInterfaceResolver,
 } from './interfaces/PdfCertProviderInterfaceResolver.ts';
 import { PdfTemplateData } from './interfaces/PdfTemplateData.ts';
-import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { MetaPersonInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+import { CarpoolInterface, CarpoolTypeEnum } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
+import { MetaPersonInterface } from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
 
 type TextOptions = Partial<PDFPageDrawTextOptions & { align: TextAlignment; maxChars: number; maxLines: number }>;
 

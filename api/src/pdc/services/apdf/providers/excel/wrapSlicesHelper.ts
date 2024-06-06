@@ -1,4 +1,4 @@
-import { BoundedSlices, UnboundedSlices } from '@shared/policy/common/interfaces/Slices.ts';
+import { BoundedSlices, UnboundedSlices } from '@/shared/policy/common/interfaces/Slices.ts';
 
 export function wrapSlices(slices: BoundedSlices | UnboundedSlices | undefined | null): UnboundedSlices | [] {
   if (!slices || !Array.isArray(slices) || !slices.length) return [];

@@ -1,8 +1,8 @@
-import { handler } from '@ilos/common/index.ts';
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { handler } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface } from '@shared/observatory/flux/insertMonthlyFlux.contract.ts';
+import { handlerConfig, ParamsInterface } from '@/shared/observatory/flux/insertMonthlyFlux.contract.ts';
 
 @handler({
   ...handlerConfig,

@@ -1,4 +1,4 @@
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common/index.ts';
+import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@/ilos/common/index.ts';
 
 import { UnconfiguredMiddleware } from '../interfaces.ts';
 

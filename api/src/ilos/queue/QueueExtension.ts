@@ -7,10 +7,10 @@ import {
   QueueConfigType,
   QueueTargetType,
   extension,
-} from '@ilos/common/index.ts';
-import { env } from '@ilos/core/index.ts';
-import { Extensions } from '@ilos/core/index.ts';
-import { queueHandlerFactory } from '@ilos/handler-redis/index.ts';
+} from '@/ilos/common/index.ts';
+import { env } from '@/ilos/core/index.ts';
+import { Extensions } from '@/ilos/core/index.ts';
+import { queueHandlerFactory } from '@/ilos/handler-redis/index.ts';
 
 @extension({
   name: 'queues',

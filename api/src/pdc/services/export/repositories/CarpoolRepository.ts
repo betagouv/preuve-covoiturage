@@ -1,5 +1,5 @@
-import { provider } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { provider } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { CarpoolRow } from '../models/CarpoolRow.ts';
 import { ExportParams } from '../models/ExportParams.ts';
 import { XLSXWriter } from '../models/XLSXWriter.ts';

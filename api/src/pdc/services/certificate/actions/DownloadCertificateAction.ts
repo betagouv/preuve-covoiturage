@@ -1,16 +1,16 @@
-import { ConfigInterfaceResolver, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common/index.ts';
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { DateProviderInterfaceResolver } from '@pdc/providers/date/index.ts';
+import { ConfigInterfaceResolver, handler, InvalidParamsException, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { DateProviderInterfaceResolver } from '@/pdc/providers/date/index.ts';
 import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '@pdc/providers/middleware/index.ts';
-import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@pdc/providers/pdfcert/index.ts';
-import { QrcodeProviderInterfaceResolver } from '@pdc/providers/qrcode/index.ts';
+} from '@/pdc/providers/middleware/index.ts';
+import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@/pdc/providers/pdfcert/index.ts';
+import { QrcodeProviderInterfaceResolver } from '@/pdc/providers/qrcode/index.ts';
 import _ from 'lodash';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/download.contract.ts';
-import { alias } from '@shared/certificate/download.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/certificate/download.contract.ts';
+import { alias } from '@/shared/certificate/download.schema.ts';
 
 @handler({
   ...handlerConfig,

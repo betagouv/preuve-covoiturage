@@ -1,6 +1,6 @@
-import { ServiceProvider as BaseServiceProvider, env } from '@ilos/core/index.ts';
-import { RedisConnection } from '@ilos/connection-redis/index.ts';
-import { serviceProvider } from '@ilos/common/index.ts';
+import { ServiceProvider as BaseServiceProvider, env } from '@/ilos/core/index.ts';
+import { RedisConnection } from '@/ilos/connection-redis/index.ts';
+import { serviceProvider } from '@/ilos/common/index.ts';
 
 import { HelloAction } from './actions/HelloAction.ts';
 import { ResultAction } from './actions/ResultAction.ts';

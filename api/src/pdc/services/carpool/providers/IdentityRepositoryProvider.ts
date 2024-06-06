@@ -1,12 +1,12 @@
-import { NotFoundException, provider } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { NotFoundException, provider } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import {
   findUuidOptions,
   IdentityMetaInterface,
   IdentityRepositoryProviderInterface,
   IdentityRepositoryProviderInterfaceResolver,
 } from '../interfaces/IdentityRepositoryProviderInterface.ts';
-import { IdentityInterface } from '@shared/common/interfaces/IdentityInterface.ts';
+import { IdentityInterface } from '@/shared/common/interfaces/IdentityInterface.ts';
 
 /*
  * Trip specific repository

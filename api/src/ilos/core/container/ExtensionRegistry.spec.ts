@@ -8,7 +8,7 @@ import {
   ServiceContainerInterface,
   ExtensionInterface,
   NewableType,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 import { ExtensionRegistry } from './ExtensionRegistry.ts';
 import { ServiceContainer } from '../foundation/ServiceContainer.ts';

@@ -10,7 +10,7 @@ import {
   NewableType,
   ValidatorInterface,
   provider,
-} from '@ilos/common/index.ts';
+} from '@/ilos/common/index.ts';
 
 @provider()
 export class AjvValidator implements ValidatorInterface {

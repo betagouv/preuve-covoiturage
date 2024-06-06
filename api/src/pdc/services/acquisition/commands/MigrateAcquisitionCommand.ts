@@ -1,13 +1,13 @@
-import { coerceDate, coerceInt } from '@ilos/cli/index.ts';
-import { CommandInterface, CommandOptionType, command } from '@ilos/common/index.ts';
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
+import { coerceDate, coerceInt } from '@/ilos/cli/index.ts';
+import { CommandInterface, CommandOptionType, command } from '@/ilos/common/index.ts';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import {
   CarpoolGeoRepository,
   CarpoolRepository,
   CarpoolRequestRepository,
   CarpoolStatusRepository,
-} from '@pdc/providers/carpool/index.ts';
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces/index.ts';
+} from '@/pdc/providers/carpool/index.ts';
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
 import { addSeconds } from 'date-fns';
 
 @command()

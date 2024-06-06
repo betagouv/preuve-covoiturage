@@ -1,5 +1,5 @@
-import { PostgresConnection } from '@ilos/connection-postgres/index.ts';
-import { createDatabase, dropDatabase, migrate } from '@db/index.js';
+import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { createDatabase, dropDatabase, migrate } from '@/db/index.js';
 import { parse, Options as ParseOptions } from 'csv-parse';
 import fs from 'node:fs';
 import path from 'node:path';

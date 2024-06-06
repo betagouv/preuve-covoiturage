@@ -1,12 +1,12 @@
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common/index.ts';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core/index.ts';
-import { ValidatorMiddleware, ValidatorExtension } from '@pdc/providers/validator/index.ts';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware/index.ts';
+import { serviceProvider, NewableType, ExtensionInterface } from '@/ilos/common/index.ts';
+import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
+import { ValidatorMiddleware, ValidatorExtension } from '@/pdc/providers/validator/index.ts';
+import { defaultMiddlewareBindings } from '@/pdc/providers/middleware/index.ts';
 
 import { config } from './config/index.ts';
-import { binding as crosscheckBinding } from '@shared/carpool/crosscheck.schema.ts';
-import { binding as findUuidBinding } from '@shared/carpool/finduuid.schema.ts';
-import { binding as findIdentitiesBinding } from '@shared/carpool/findidentities.schema.ts';
+import { binding as crosscheckBinding } from '@/shared/carpool/crosscheck.schema.ts';
+import { binding as findUuidBinding } from '@/shared/carpool/finduuid.schema.ts';
+import { binding as findIdentitiesBinding } from '@/shared/carpool/findidentities.schema.ts';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider.ts';
 import { CrosscheckAction } from './actions/CrosscheckAction.ts';
 import { FindUuidAction } from './actions/FindUuidAction.ts';

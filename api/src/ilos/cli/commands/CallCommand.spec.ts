@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Kernel } from '@ilos/core/index.ts';
+import { Kernel } from '@/ilos/core/index.ts';
 
 import { CallCommand } from './CallCommand.ts';
 

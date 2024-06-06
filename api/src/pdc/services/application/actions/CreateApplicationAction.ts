@@ -1,9 +1,9 @@
-import { handler, ContextType } from '@ilos/common/index.ts';
-import { Action as AbstractAction } from '@ilos/core/index.ts';
-import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/providers/middleware/index.ts';
+import { handler, ContextType } from '@/ilos/common/index.ts';
+import { Action as AbstractAction } from '@/ilos/core/index.ts';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@/pdc/providers/middleware/index.ts';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/application/create.contract.ts';
-import { alias } from '@shared/application/create.schema.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/application/create.contract.ts';
+import { alias } from '@/shared/application/create.schema.ts';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface.ts';
 
 @handler({

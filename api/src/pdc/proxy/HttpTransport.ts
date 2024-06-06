@@ -6,22 +6,22 @@ import {
   RPCSingleCallType,
   TransportInterface,
   UnauthorizedException,
-} from '@ilos/common/index.ts';
-import { env } from '@ilos/core/index.ts';
-import { mapStatusCode } from '@ilos/transport-http/index.ts';
-import { Sentry, SentryProvider } from '@pdc/providers/sentry/index.ts';
-import { TokenProviderInterfaceResolver } from '@pdc/providers/token/index.ts';
-import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface.ts';
-import { signature as importCeeSignature } from '@shared/cee/importApplication.contract.ts';
-import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract.ts';
-import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract.ts';
-import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract.ts';
-import { RPCResponseType } from '@shared/common/rpc/RPCResponseType.ts';
+} from '@/ilos/common/index.ts';
+import { env } from '@/ilos/core/index.ts';
+import { mapStatusCode } from '@/ilos/transport-http/index.ts';
+import { Sentry, SentryProvider } from '@/pdc/providers/sentry/index.ts';
+import { TokenProviderInterfaceResolver } from '@/pdc/providers/token/index.ts';
+import { TokenPayloadInterface } from '@/shared/application/common/interfaces/TokenPayloadInterface.ts';
+import { signature as importCeeSignature } from '@/shared/cee/importApplication.contract.ts';
+import { signature as importIdentityCeeSignature } from '@/shared/cee/importApplicationIdentity.contract.ts';
+import { signature as registerCeeSignature } from '@/shared/cee/registerApplication.contract.ts';
+import { signature as simulateCeeSignature } from '@/shared/cee/simulateApplication.contract.ts';
+import { RPCResponseType } from '@/shared/common/rpc/RPCResponseType.ts';
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
-} from '@shared/territory/getAuthorizedCodes.contract.ts';
+} from '@/shared/territory/getAuthorizedCodes.contract.ts';
 import bodyParser from 'body-parser';
 import RedisStore from 'connect-redis';
 import cors from 'cors';

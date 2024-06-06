@@ -1,4 +1,4 @@
-import { KeywordDefinition } from '@ilos/validator/index.ts';
+import { KeywordDefinition } from '@/ilos/validator/index.ts';
 
 import { dateCast } from './cast/dateCast.ts';
 import { phoneCast } from './cast/phoneCast.ts';

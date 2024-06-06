@@ -1,6 +1,6 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common/index.ts';
-import { Action as AbstractAction, env } from '@ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware/index.ts';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
+import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
+import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
 import { MetadataStore } from '../engine/entities/MetadataStore.ts';
 import { Policy } from '../engine/entities/Policy.ts';
 import { castUserStringToUTC, defaultTz, subDaysTz, today, toISOString, toTzString } from '../helpers/index.ts';
@@ -12,9 +12,9 @@ import {
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
 } from '../interfaces/index.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/finalize.contract.ts';
-import { alias } from '@shared/policy/finalize.schema.ts';
-import { signature as syncincentivesumSignature } from '@shared/policy/syncIncentiveSum.contract.ts';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/finalize.contract.ts';
+import { alias } from '@/shared/policy/finalize.schema.ts';
+import { signature as syncincentivesumSignature } from '@/shared/policy/syncIncentiveSum.contract.ts';
 
 // TOFIX ?
 // from and to props must be strings to pass schema validation
