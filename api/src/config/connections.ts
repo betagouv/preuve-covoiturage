@@ -12,8 +12,8 @@ function unnestRedisConnectionString(connectionString: string): {
   return {
     host: connectionURL.hostname,
     port: parseInt(connectionURL.port, 10) || 6379,
-    username: connectionURL.username || null,
-    password: connectionURL.password || null,
+    username: connectionURL.username || undefined,
+    password: connectionURL.password || undefined,
     db: parseInt(connectionURL.pathname.replace(/\//g, ''), 10) || 0,
   };
 }
