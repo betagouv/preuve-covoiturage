@@ -27,9 +27,9 @@ export interface UserRepositoryProviderInterface {
   findByEmail(email: string): Promise<UserFindInterface | undefined>;
   findInactive(months?: number): Promise<UserLastLoginInterface[]>;
 
-  patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface>;
-  patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface>;
-  patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface>;
+  patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface|undefined>;
+  patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface|undefined>;
+  patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface|undefined>;
 
   touchLastLogin(_id: number): Promise<void>;
 }
@@ -86,15 +86,15 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
-  async patch(_id: number, data: UserPatchInterfaceBy): Promise<UserFindInterface> {
+  async patch(_id: number, data: UserPatchInterfaceBy): Promise<UserFindInterface|undefined> {
     throw new Error();
   }
 
-  async patchByOperator(_id: number, data: UserPatchInterfaceBy, operator_id: number): Promise<UserFindInterface> {
+  async patchByOperator(_id: number, data: UserPatchInterfaceBy, operator_id: number): Promise<UserFindInterface|undefined> {
     throw new Error();
   }
 
-  async patchByTerritory(_id: number, data: UserPatchInterfaceBy, territory_id: number): Promise<UserFindInterface> {
+  async patchByTerritory(_id: number, data: UserPatchInterfaceBy, territory_id: number): Promise<UserFindInterface|undefined> {
     throw new Error();
   }
   async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {

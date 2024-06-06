@@ -1,5 +1,6 @@
 import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { _ } from "@/deps.ts";
 
 import { UserFindInterface } from '@/shared/user/common/interfaces/UserFindInterface.ts';
 import { UserLastLoginInterface } from '@/shared/user/common/interfaces/UserLastLoginInterface.ts';
@@ -77,7 +78,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   private coerceHidden(data: UserCreateInterface): boolean {
     const [group] = data.role.split('.');
-    return group === 'registry' ? false : data.hidden;
+    return group === 'registry' ? false : !!data.hidden;
   }
 
   async create(data: UserCreateInterface): Promise<UserFindInterface> {
@@ -134,7 +135,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
 
     if (where) {
-      query.values.push(where.operator_id ? where.operator_id : where.territory_id);
+      query.values.push((where.operator_id ? where.operator_id : where.territory_id) || 0);
     }
 
     const result = await this.connection.getClient().query<any>(query);
@@ -176,7 +177,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     filters: UserListFiltersInterface,
     pagination: PaginationParamsInterface,
   ): Promise<{ users: UserListInterface[]; total: number }> {
-    const whereClauses = this.buildWhereClauses(filters);
+    const whereClauses = this.buildWhereClauses({ ...filters });
 
     const totalQuery = {
       text: `
@@ -251,7 +252,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  protected buildWhereClauses(filters: any, join = 'AND'): { text: string; values: any[] } {
+  protected buildWhereClauses(filters: Record<string, unknown>, join = 'AND'): { text: string; values: unknown[] } {
     // no filters -> no clauses
     if (!filters || Object.keys(filters).length === 0) {
       return { text: '', values: [] };
@@ -268,7 +269,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       .map((key) => ({ key, value: filters[key] }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
-        (acc, current) => {
+        (acc: { text: Array<string>, values: Array<unknown> }, current) => {
           acc.text.push(current.text);
           acc.values.push(...current.values);
           return acc;
@@ -289,7 +290,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     email?: string;
   }): Promise<UserFindInterface> {
     if (!where || Object.keys(where).length === 0) {
-      return undefined;
+      throw new Error('Need to have a where clause');
     }
 
     const whereClauses = this.buildWhereClauses(where);
@@ -327,7 +328,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
-      return undefined;
+      throw new Error('No change');
     }
 
     return {
@@ -380,9 +381,9 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rowCount ? result.rows : [];
   }
 
-  protected buildSetClauses(sets: any): {
+  protected buildSetClauses(sets: UserPatchInterface): {
     text: string;
-    values: any[];
+    values: unknown[];
   } {
     const setToProcess = this.availableSets.filter((key) => key in sets);
 
@@ -391,10 +392,10 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     }
 
     const finalSets = setToProcess
-      .map((key) => ({ key, value: sets[key] }))
+      .map((key) => ({ key, value: _.get(sets, key) }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
-        (acc, current) => {
+        (acc: { text: Array<string>, values: Array<unknown> }, current) => {
           acc.text.push(current.text);
           acc.values.push(...current.values);
           return acc;
@@ -413,9 +414,9 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   protected async patchWhere(
     data: UserPatchInterface,
     where: { _id: number; operator_id?: number; territory_id?: number },
-  ): Promise<UserFindInterface> {
+  ): Promise<UserFindInterface | undefined> {
     if (!data || !where || Object.keys(data).length === 0 || Object.keys(where).length === 0) {
-      return undefined;
+      throw new Error('Patch need to have a where clause');
     }
 
     const setClauses = this.buildSetClauses(data);
@@ -460,7 +461,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount !== 1) {
-      return undefined;
+      return;
     }
 
     return {
@@ -469,11 +470,11 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
+  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id });
   }
 
-  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void> {
+  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void | undefined> {
     let finalRole = role;
     if (roleSuffixOnly) {
       const user = await this.find(_id);
@@ -505,11 +506,11 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     await this.connection.getClient().query<any>(query);
   }
 
-  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {
+  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id, operator_id });
   }
 
-  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
+  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id, territory_id });
   }
 

@@ -5,7 +5,7 @@ export interface ParamsInterface {
   firstname: string;
   job: string;
   email: string;
-  territory_name;
+  territory_name: string;
   simulation: SimulateOnPastGeoRequiredParams;
 }
 

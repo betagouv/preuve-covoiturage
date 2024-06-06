@@ -1,4 +1,5 @@
 import { anyTest, TestFn } from '@/dev_deps.ts';
+import { process, _ } from "@/deps.ts";
 import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
@@ -35,10 +36,10 @@ test.before.skip(async (t) => {
 });
 
 test.after.always.skip(async (t) => {
-  const ids = [];
+  const ids: Array<number> = [];
   for (const id_type of ['territory_id', 'operator_id', 'registry_id']) {
-    if (t.context[id_type]) {
-      ids.push(t.context[id_type]);
+    if (id_type in t.context) {
+      ids.push(_.get(t.context, id_type));
     }
   }
 
@@ -78,8 +79,8 @@ function isSame(keysType: 'list' | 'find', input: (string | number | symbol)[]):
   return setCompare.size === setInput.size && setCompare.size === setBoth.size;
 }
 
-function hasFindKeys(input: { [k: string]: any }): boolean {
-  return isSame('find', Reflect.ownKeys(input));
+function hasFindKeys(input?: { [k: string]: any }): boolean {
+  return isSame('find', Reflect.ownKeys(input || {}));
 }
 
 function hasListKeys(input: { [k: string]: any }): boolean {
@@ -132,7 +133,7 @@ test.serial.skip('should patch a user', async (t) => {
     phone: '0203040506',
   };
   const result = await t.context.repository.patch(t.context.operator_id, data);
-  t.is(result.phone, data.phone);
+  t.is(result?.phone, data.phone);
   t.true(hasFindKeys(result));
 });
 
@@ -142,7 +143,7 @@ test.serial.skip('should patch the user if group matches', async (t) => {
   };
 
   const result = await t.context.repository.patchByTerritory(t.context.territory_id, data, 1);
-  t.is(result.phone, data.phone);
+  t.is(result?.phone, data.phone);
   t.true(hasFindKeys(result));
 });
 
@@ -191,13 +192,13 @@ test.serial.skip('should list users with filters', async (t) => {
 
 test.serial.skip('should find user by id', async (t) => {
   const result = await t.context.repository.find(t.context.registry_id);
-  t.is(result._id, t.context.registry_id);
+  t.is(result?._id, t.context.registry_id);
   t.true(hasFindKeys(result));
 });
 
 test.serial.skip('should find user by id if group match', async (t) => {
   const result = await t.context.repository.findByOperator(t.context.operator_id, 1);
-  t.is(result._id, t.context.operator_id);
+  t.is(result?._id, t.context.operator_id);
   t.true(hasFindKeys(result));
 });
 
