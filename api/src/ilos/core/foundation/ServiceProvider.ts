@@ -1,7 +1,11 @@
-import { NewableType, ExtensionInterface } from '@/ilos/common/index.ts';
-
-import { ServiceContainer } from './ServiceContainer.ts';
-import { Providers, Middlewares, Handlers, Config } from '../extensions/index.ts';
+import { ExtensionInterface, NewableType } from "@/ilos/common/index.ts";
+import {
+  Config,
+  Handlers,
+  Middlewares,
+  Providers,
+} from "../extensions/index.ts";
+import { ServiceContainer } from "./ServiceContainer.ts";
 
 /**
  * Service provider parent class
@@ -11,5 +15,10 @@ import { Providers, Middlewares, Handlers, Config } from '../extensions/index.ts
  * @implements {ServiceProviderInterface}
  */
 export abstract class ServiceProvider extends ServiceContainer {
-  readonly extensions: NewableType<ExtensionInterface>[] = [Config, Middlewares, Providers, Handlers];
+  readonly extensions: NewableType<ExtensionInterface>[] = [
+    Config,
+    Middlewares,
+    Providers,
+    Handlers,
+  ];
 }

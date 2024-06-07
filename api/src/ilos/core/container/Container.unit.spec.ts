@@ -8,7 +8,7 @@ import {
 import { Container } from "../index.ts";
 
 describe("Container", () => {
-  it("should define a handler and call it using a generic lib()", async (t) => {
+  it("should define a handler and call it using a generic lib()", async () => {
     @lib()
     class _Hello {
       public world = "!!";
@@ -44,7 +44,7 @@ describe("Container", () => {
     assertEquals(hBis, "!!");
   });
 
-  it("should inject a provider", async (t) => {
+  it("should inject a provider", async () => {
     @lib()
     class _HelloLib {
       public world = "yeah";
@@ -88,7 +88,7 @@ describe("Container", () => {
     assertEquals(hbis, "yeah");
   });
 
-  it("should work without a boot provider", async (t) => {
+  it("should work without a boot provider", async () => {
     @provider()
     class _Hello {
       public world = "yeah";

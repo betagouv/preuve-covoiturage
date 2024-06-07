@@ -1,18 +1,18 @@
-import { ContainerOptions, Container as InversifyContainer } from "@/deps.ts";
+import { Container as InversifyContainer, ContainerOptions } from "@/deps.ts";
 import {
+  ContainerInterface,
+  ContextType,
   FunctionalHandlerInterface,
+  HandlerConfigType,
   HandlerInterface,
   NewableType,
-  HandlerConfigType,
-  ContainerInterface,
   ParamsType,
-  ContextType,
   ResultType,
-} from '@/ilos/common/index.ts';
+} from "@/ilos/common/index.ts";
+import { HandlerRegistry } from "./HandlerRegistry.ts";
 
-import { HandlerRegistry } from './HandlerRegistry.ts';
-
-export class Container extends InversifyContainer implements ContainerInterface {
+export class Container extends InversifyContainer
+  implements ContainerInterface {
   protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);
   declare parent: Container | null;
 
@@ -30,7 +30,7 @@ export class Container extends InversifyContainer implements ContainerInterface 
    */
   constructor(containerOptions?: ContainerOptions) {
     super({
-      defaultScope: 'Singleton',
+      defaultScope: "Singleton",
       autoBindInjectable: true,
       skipBaseClassChecks: true,
       ...containerOptions,

@@ -1,25 +1,24 @@
 import {
+  CallType,
+  ConfigInterfaceResolver,
   ContainerInterface,
-  ParamsType,
   ContextType,
-  ResultType,
+  HandlerConfigType,
+  InvalidRequestException,
   KernelInterface,
   KernelInterfaceResolver,
+  MethodNotFoundException,
+  ParamsType,
+  ResultType,
   RPCCallType,
   RPCResponseType,
   RPCSingleCallType,
   RPCSingleResponseType,
-  MethodNotFoundException,
-  InvalidRequestException,
-  HandlerConfigType,
-  CallType,
-  ConfigInterfaceResolver,
-} from '@/ilos/common/index.ts';
-
-import { promiseTimeout } from '../helpers/index.ts';
-import { hasMultipleCall } from '../helpers/types/hasMultipleCall.ts';
-import { isAnRPCException } from '../helpers/types/isAnRPCException.ts';
-import { ServiceProvider } from './ServiceProvider.ts';
+} from "@/ilos/common/index.ts";
+import { promiseTimeout } from "../helpers/index.ts";
+import { hasMultipleCall } from "../helpers/types/hasMultipleCall.ts";
+import { isAnRPCException } from "../helpers/types/isAnRPCException.ts";
+import { ServiceProvider } from "./ServiceProvider.ts";
 
 /**
  * Kernel parent class
@@ -29,7 +28,8 @@ import { ServiceProvider } from './ServiceProvider.ts';
  * @extends {ServiceProvider}
  * @implements {KernelInterface}
  */
-export abstract class Kernel extends ServiceProvider implements KernelInterface {
+export abstract class Kernel extends ServiceProvider
+  implements KernelInterface {
   protected callTimeout = 0;
   protected notifyTimeout = 0;
 
@@ -51,9 +51,9 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
 
     try {
       const cfg = this.container.get(ConfigInterfaceResolver);
-      this.callTimeout = cfg ? cfg.get('kernel.timeout', 0) : 0;
-      this.notifyTimeout = cfg ? cfg.get('kernel.notifyTimeout', 0) : 0;
-    } catch (e) {}
+      this.callTimeout = cfg ? cfg.get("kernel.timeout", 0) : 0;
+      this.notifyTimeout = cfg ? cfg.get("kernel.notifyTimeout", 0) : 0;
+    } catch (_e) {}
   }
 
   async shutdown() {
@@ -62,44 +62,71 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
 
   /**
    * Validate a call, check if JSON RPC standart is fulfilled properly
+   *
    * @protected
    * @param {RPCSingleCallType} call
    * @returns {void}
    * @memberof Kernel
    */
   protected validate(call: RPCSingleCallType): void {
-    const keys = Reflect.ownKeys(call).filter((k: string) => ['jsonrpc', 'method', 'id', 'params'].indexOf(k) < 0);
+    const keys = Reflect
+      .ownKeys(call)
+      .filter((k: string | symbol): boolean => {
+        if (typeof k === "symbol") {
+          return false;
+        }
+
+        return ["jsonrpc", "method", "id", "params"].indexOf(k) < 0;
+      }) as unknown as keyof RPCSingleCallType;
+
     if (keys.length > 0) {
-      throw new InvalidRequestException('Illegal property');
+      throw new InvalidRequestException("Illegal property");
     }
 
-    if (!('jsonrpc' in call) || call.jsonrpc !== '2.0') {
-      throw new InvalidRequestException('jsonrpc must be equal to 2.0');
+    if (!("jsonrpc" in call) || call.jsonrpc !== "2.0") {
+      throw new InvalidRequestException("jsonrpc must be equal to 2.0");
     }
 
-    if (!('method' in call) || typeof call.method !== 'string' || call.method === null || !call.method.length) {
-      throw new InvalidRequestException('jsonrpc call must have a method property');
+    if (
+      !("method" in call) || typeof call.method !== "string" ||
+      call.method === null || !call.method.length
+    ) {
+      throw new InvalidRequestException(
+        "jsonrpc call must have a method property",
+      );
     }
 
-    if ('id' in call && typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null) {
-      throw new InvalidRequestException('id property should be either a string, a number or null');
+    if (
+      "id" in call && typeof call.id !== "string" &&
+      typeof call.id !== "number" && call.id !== null
+    ) {
+      throw new InvalidRequestException(
+        "id property should be either a string, a number or null",
+      );
     }
-    return;
   }
 
   /**
    * Get the targeted handler and call. May throw an MethodNotFoundException
+   *
    * @protected
-   * @param {*} config
-   * @param {*} call
+   * @param {HandlerConfigType} config
+   * @param {CallType} call
    * @param {number} timeout
    * @returns
    * @memberof Kernel
    */
-  protected async getHandlerAndCall(config: HandlerConfigType, call: CallType, timeout = 0) {
+  protected async getHandlerAndCall(
+    config: HandlerConfigType,
+    call: CallType,
+    timeout = 0,
+  ) {
     const handler = this.getContainer().getHandler(config);
+
     if (!handler) {
-      throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
+      throw new MethodNotFoundException(
+        `Unknown method or service ${config.signature}`,
+      );
     }
 
     // console.debug(`[kernel] ${config.signature} ${timeout}ms`);
@@ -119,7 +146,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @returns {Promise<ResultType>}
    * @memberof Kernel
    */
-  public async call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R> {
+  public async call<P = ParamsType, R = ResultType>(
+    method: string,
+    params: P,
+    context: ContextType,
+  ): Promise<R> {
     return this.getHandlerAndCall(
       { signature: method },
       { method, params, context },
@@ -135,7 +166,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @returns {Promise<void>}
    * @memberof Kernel
    */
-  public async notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void> {
+  public async notify<P = ParamsType>(
+    method: string,
+    params: P,
+    context: ContextType,
+  ): Promise<void> {
     return this.getHandlerAndCall(
       { signature: method, queue: true },
       { method, params, context },
@@ -150,15 +185,25 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @returns {(Promise<RPCSingleResponseType | void>)}
    * @memberof Kernel
    */
-  protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType | void> {
+  protected async resolve(
+    call: RPCSingleCallType,
+  ): Promise<RPCSingleResponseType | void> {
     try {
       this.validate(call);
       let context = null;
       let params = null;
 
-      if ('params' in call) {
+      if (
+        typeof call.params !== "undefined" &&
+        call.params !== null &&
+        typeof call.params === "object"
+      ) {
         params = call.params;
-        if ('_context' in call.params) {
+        if (
+          typeof call.params._context !== "undefined" &&
+          call.params._context !== null &&
+          typeof call.params._context === "object"
+        ) {
           context = call.params._context;
           params = call.params.params;
         }
@@ -167,33 +212,32 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       // clone with a clean prototype to avoid pollution
       params = JSON.parse(JSON.stringify(params));
 
-      if ('id' in call) {
+      if (typeof call.id !== "undefined" && call.id !== null) {
         const response = await this.call(call.method, params, context);
 
         return {
           id: call.id,
           result: response,
-          jsonrpc: '2.0',
+          jsonrpc: "2.0",
         };
       }
       await this.notify(call.method, params, context);
-      return;
     } catch (e) {
       if (isAnRPCException(e)) {
         return {
-          id: call.id,
+          id: call.id || 0,
           error: e.rpcError,
-          jsonrpc: '2.0',
+          jsonrpc: "2.0",
         };
       }
       return {
-        id: call.id,
+        id: call.id || 0,
         error: {
           code: -32000,
-          message: 'Server error',
+          message: "Server error",
           data: e.message,
         },
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
       };
     }
   }
@@ -205,7 +249,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   async handle(call: RPCCallType): Promise<RPCResponseType> {
-    if (!Array.isArray(call) && typeof call !== 'object') {
+    if (!Array.isArray(call) && typeof call !== "object") {
       throw new InvalidRequestException();
     }
 
@@ -227,7 +271,10 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * Get the timeout from context (channel.metadata.timeout)
    */
   private getTimeout(context: ContextType, defaultTimeout = 0): number {
-    if (context && 'channel' in context && 'metadata' in context.channel && 'timeout' in context.channel.metadata) {
+    if (
+      context && "channel" in context && "metadata" in context.channel &&
+      "timeout" in context.channel.metadata
+    ) {
       const { timeout } = context.channel.metadata;
       return timeout ?? defaultTimeout;
     }

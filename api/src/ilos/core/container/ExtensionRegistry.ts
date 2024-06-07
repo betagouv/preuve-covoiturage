@@ -1,17 +1,16 @@
 import {
-  ExtensionConfigurationType,
-  extensionConfigurationMetadataKey,
-  ServiceContainerInterface,
   ContainerInterface,
+  extensionConfigurationMetadataKey,
+  ExtensionConfigurationType,
   ExtensionInterface,
-  NewableType,
   FactoryType,
-} from '@/ilos/common/index.ts';
-
-import { DependencyTree } from '../helpers/DependencyTree.ts';
+  NewableType,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { DependencyTree } from "../helpers/DependencyTree.ts";
 
 export class ExtensionRegistry {
-  static readonly key: symbol = Symbol.for('extensions');
+  static readonly key: symbol = Symbol.for("extensions");
   protected registry: Map<symbol, ExtensionConfigurationType> = new Map();
   protected container: ContainerInterface;
 
@@ -20,12 +19,11 @@ export class ExtensionRegistry {
   }
 
   importFromParent() {
-    let extensions = [];
+    let extensions: any[] = []; // FIXME type
     try {
       extensions = this.container.getAll(ExtensionRegistry.key);
-    } catch {
-      //
-    }
+    } catch {}
+
     extensions.forEach((config) => {
       this.registry.set(config.key, config);
     });
@@ -40,16 +38,25 @@ export class ExtensionRegistry {
   }
 
   get(): ExtensionConfigurationType[] {
-    const isConfigured = (key: symbol): boolean => Reflect.hasMetadata(key, this.serviceContainer.constructor);
+    const isConfigured = (key: symbol): boolean =>
+      Reflect.hasMetadata(key, this.serviceContainer.constructor);
 
     const tree = new DependencyTree();
     this.all()
-      .filter((config: ExtensionConfigurationType) => config.autoload || isConfigured(config.decoratorKey))
+      .filter((config: ExtensionConfigurationType) =>
+        config.autoload ||
+        (config.decoratorKey && isConfigured(config.decoratorKey))
+      )
       .map((config) => ({
         ...config,
-        require: config.require.map((extensionConstructor) => this.getExtensionConfig(extensionConstructor).key),
+        require: config.require &&
+          config.require.map((extensionConstructor) =>
+            this.getExtensionConfig(extensionConstructor).key
+          ),
       }))
-      .forEach((cfg) => tree.add(cfg.key, cfg, cfg.require));
+      .forEach((cfg) =>
+        cfg.key && cfg.require && tree.add(cfg.key, cfg, cfg.require)
+      );
 
     return tree.resolve();
   }
@@ -69,32 +76,58 @@ export class ExtensionRegistry {
       this.registry.delete(config.key);
     }
 
-    this.container.bind(config.key).toFactory(() => (cfg) => new extensionConstructor(cfg));
+    this.container.bind(config.key).toFactory(() => (cfg) =>
+      new extensionConstructor(cfg)
+    );
     this.container.bind(ExtensionRegistry.key).toConstantValue(config);
     this.registry.set(config.key, config);
   }
 
-  protected getExtensionConfig(extensionConstructor: NewableType<ExtensionInterface>) {
-    if (!Reflect.hasMetadata(extensionConfigurationMetadataKey, extensionConstructor)) {
-      throw new Error(`Wrong configuration for extension ${extensionConstructor}`);
+  protected getExtensionConfig(
+    extensionConstructor: NewableType<ExtensionInterface>,
+  ) {
+    if (
+      !Reflect.hasMetadata(
+        extensionConfigurationMetadataKey,
+        extensionConstructor,
+      )
+    ) {
+      throw new Error(
+        `Wrong configuration for extension ${extensionConstructor}`,
+      );
     }
 
-    return Reflect.getMetadata(extensionConfigurationMetadataKey, extensionConstructor);
+    return Reflect.getMetadata(
+      extensionConfigurationMetadataKey,
+      extensionConstructor,
+    );
   }
 
   apply() {
     const extensions = this.get();
     for (const extensionConfig of extensions) {
       let extensionCtorConfig: any;
-      if (Reflect.hasMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor)) {
-        extensionCtorConfig = Reflect.getMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor);
+      if (
+        Reflect.hasMetadata(
+          extensionConfig.decoratorKey,
+          this.serviceContainer.constructor,
+        )
+      ) {
+        extensionCtorConfig = Reflect.getMetadata(
+          extensionConfig.decoratorKey,
+          this.serviceContainer.constructor,
+        );
       }
 
       if (!extensionConfig.autoload && extensionCtorConfig === undefined) {
-        throw new Error(`Missing config for extension ${extensionCtorConfig.name}`);
+        throw new Error(
+          `Missing config for extension ${extensionCtorConfig.name}`,
+        );
       }
 
-      const extension = this.container.get<FactoryType<ExtensionInterface>>(extensionConfig.key)(extensionCtorConfig);
+      const extension = this.container.get<FactoryType<ExtensionInterface>>(
+        extensionConfig.key,
+      )(extensionCtorConfig);
       this.serviceContainer.registerHooks(extension);
     }
   }

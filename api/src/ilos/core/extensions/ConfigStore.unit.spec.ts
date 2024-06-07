@@ -1,24 +1,31 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertObjectMatch, assertThrows, describe, it } from "@/dev_deps.ts";
+import { ConfigStore } from "./Config.ts";
 
-import { ConfigStore } from './Config.ts';
-
-it('Config provider: works with simple object', async (t) => {
-  const config = new ConfigStore({
-    helloWorld: { hello: 'world' },
+describe("Config provider", () => {
+  it("works with simple object", async () => {
+    const config = new ConfigStore({
+      helloWorld: { hello: "world" },
+    });
+    assertObjectMatch(config.get("helloWorld"), { hello: "world" });
   });
-  assertObjectMatch(config.get('helloWorld'), { hello: 'world' });
-});
 
-it('Config provider: fails if not found without fallback', async (t) => {
-  const config = new ConfigStore({
-    helloWorld: { hello: 'world' },
+  it("fails if not found without fallback", async () => {
+    const config = new ConfigStore({
+      helloWorld: { hello: "world" },
+    });
+    assertThrows(
+      () => config.get("helloMissing"),
+      Error,
+      "Unknown config key 'helloMissing'",
+    );
   });
-  t.throws(() => config.get('helloMissing'), { instanceOf: Error }, "Unknown config key 'helloMissing'");
-});
 
-it('Config provider: works if not found with fallback', async (t) => {
-  const config = new ConfigStore({
-    helloWorld: { hello: 'world' },
+  it("works if not found with fallback", async () => {
+    const config = new ConfigStore({
+      helloWorld: { hello: "world" },
+    });
+    assertObjectMatch(config.get("helloMissing", { hello: "fallback" }), {
+      hello: "fallback",
+    });
   });
-  assertObjectMatch(config.get('helloMissing', { hello: 'fallback' }), { hello: 'fallback' });
 });
