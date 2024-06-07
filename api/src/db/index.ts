@@ -4,6 +4,7 @@ import { join } from "@/deps.ts";
 import { readFileSync } from "@/deps.ts";
 import { PgPool } from "@/deps.ts";
 import { PgClient } from "@/deps.ts";
+import type { PoolConfig } from "@/deps.ts";
 
 const __dirname = import.meta.dirname;
 
@@ -19,6 +20,12 @@ async function getPossibleMigrationsFilePath(): Promise<Map<string, string>> {
   );
 }
 
+async function createMigrationTable(client: PgClient) {
+  await client.queryArray(
+    `CREATE TABLE IF NOT EXISTS migrations (id serial PRIMARY KEY, name varchar NOT NULL, run_on TIMESTAMP NOT NULL)`,
+  );
+}
+
 async function getDoneMigrations(client: PgClient): Promise<Set<string>> {
   const result = await client.queryObject<{ name: string }>(
     `SELECT name FROM migrations`,
@@ -26,9 +33,10 @@ async function getDoneMigrations(client: PgClient): Promise<Set<string>> {
   return new Set(result.rows.map((r) => r.name));
 }
 
-export async function migrate(connectionString: string) {
-  const pool = new PgPool(connectionString, 20);
+export async function migrate(config: string) {
+  const pool = new PgPool(config, 20);
   const conn = await pool.connect();
+  await createMigrationTable(conn);
   const possible = await getPossibleMigrationsFilePath();
   const done = await getDoneMigrations(conn);
   const todo = new Set(possible.keys()).difference(done);
@@ -40,14 +48,15 @@ export async function migrate(connectionString: string) {
     const transaction = conn.createTransaction(`migration-${td}`);
     await transaction.begin();
     try {
-      const sql = readFileSync(filepath, "utf8");
+      const sql: string = readFileSync(filepath, "utf8");
       await transaction.queryArray(sql);
       await transaction.queryArray(
         `INSERT INTO migrations (name, run_on) VALUES ($NAME, NOW())`,
         { NAME: td },
       );
       await transaction.commit();
-    } catch {
+    } catch (e) {
+      console.log(e);
       await transaction.rollback({ chain: true });
     }
   }

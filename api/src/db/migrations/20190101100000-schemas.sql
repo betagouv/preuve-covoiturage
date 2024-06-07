@@ -13,8 +13,6 @@ CREATE SCHEMA geo;
 CREATE SCHEMA honor;
 CREATE SCHEMA operator;
 CREATE SCHEMA policy;
-CREATE SCHEMA public;
-COMMENT ON SCHEMA public IS 'standard public schema';
 CREATE SCHEMA territory;
 CREATE SCHEMA trip;
 CREATE TYPE acquisition.acquisition_status_enum AS ENUM (
@@ -146,6 +144,16 @@ CREATE TYPE trip.incentive AS (
 	policy_name character varying,
 	type character varying
 );
+CREATE FUNCTION fraudcheck.result_to_json(_ti fraudcheck.result) RETURNS json
+    LANGUAGE sql
+    AS $_$
+  select json_build_object(
+    'method', $1.method
+  , 'status', $1.status
+  , 'karma', $1.karma
+  , 'meta', $1.meta
+  );
+$_$;
 CREATE FUNCTION fraudcheck.result_array_to_json(_ti fraudcheck.result[]) RETURNS json
     LANGUAGE sql
     AS $_$
@@ -217,16 +225,6 @@ CREATE FUNCTION fraudcheck.json_to_result(_ti json) RETURNS fraudcheck.result
     ($1->>'status')::fraudcheck.status_enum,
     ($1->>'karma')::float,
     ($1->>'meta')::json)::fraudcheck.result;
-$_$;
-CREATE FUNCTION fraudcheck.result_to_json(_ti fraudcheck.result) RETURNS json
-    LANGUAGE sql
-    AS $_$
-  select json_build_object(
-    'method', $1.method
-  , 'status', $1.status
-  , 'karma', $1.karma
-  , 'meta', $1.meta
-  );
 $_$;
 CREATE FUNCTION common.touch_updated_at() RETURNS trigger
     LANGUAGE plpgsql
