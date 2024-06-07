@@ -12,15 +12,15 @@
     "./api"
   ],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.organizeImports": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "files.exclude": {
     "**/*.d.ts": true,
     "**/*.postman_collection.json": true,
-    "**/node_modules": true,
     "**/dist": true,
+    "**/node_modules": true,
     "db": true
   },
   "files.watcherExclude": {
