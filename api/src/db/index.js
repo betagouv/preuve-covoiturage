@@ -1,18 +1,19 @@
-import { DBMigrate } from '@/deps.ts';
-import * as GeoMigrator from '../etl/index.ts';
+import { DBMigrate, process } from "@/deps.ts";
+import * as GeoMigrator from "../etl/index.ts";
+const __dirname = import.meta.dirname;
 
 const instances = new Map();
 
 async function createInstance(config) {
-  const silent = !('APP_MIGRATOR_VERBOSE' in process.env);
+  const silent = !("APP_MIGRATOR_VERBOSE" in process.env);
   const instance = DBMigrate.getInstance(true, {
-        config: { dev: config },
-        cwd: __dirname,
-        throwUncatched: true,
-    });
-    instance.silence(silent);
-    await instance.registerAPIHook();
-    return instance;
+    config: { dev: config },
+    cwd: __dirname,
+    throwUncatched: true,
+  });
+  instance.silence(silent);
+  await instance.registerAPIHook();
+  return instance;
 }
 
 function getInstance(config) {
@@ -25,36 +26,41 @@ function setInstance(config, instance) {
 }
 
 async function migrate(config, skipDatasets = true, ...args) {
-    if(!('SKIP_GEO_MIGRATIONS' in process.env)) {
-      const geoInstance = GeoMigrator.buildMigrator({
-        pool: config,
-        ...(
-          skipDatasets ? {
+  if (!("SKIP_GEO_MIGRATIONS" in process.env)) {
+    const geoInstance = GeoMigrator.buildMigrator({
+      pool: config,
+      ...(
+        skipDatasets
+          ? {
             app: {
-              targetSchema: 'geo',
+              targetSchema: "geo",
               datasets: [],
             },
-          } : {}
-        ),
-      });
-      await geoInstance.prepare();
-      await geoInstance.run();
-      await geoInstance.pool.end();
-    }
-    if(!('SKIP_SQL_MIGRATIONS' in process.env)) {
-      const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-      await instance.up(...args);
-    }
+          }
+          : {}
+      ),
+    });
+    await geoInstance.prepare();
+    await geoInstance.run();
+    await geoInstance.pool.end();
+  }
+  if (!("SKIP_SQL_MIGRATIONS" in process.env)) {
+    const instance = getInstance(config) ??
+      setInstance(config, await createInstance(config));
+    await instance.up(...args);
+  }
 }
 
 async function createDatabase(config, name) {
-    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-    return instance.createDatabase(name);
+  const instance = getInstance(config) ??
+    setInstance(config, await createInstance(config));
+  return instance.createDatabase(name);
 }
 
 async function dropDatabase(config, name) {
-    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-    return instance.dropDatabase(name);
+  const instance = getInstance(config) ??
+    setInstance(config, await createInstance(config));
+  return instance.dropDatabase(name);
 }
 
-export { migrate, createDatabase, dropDatabase };
+export { createDatabase, dropDatabase, migrate };
