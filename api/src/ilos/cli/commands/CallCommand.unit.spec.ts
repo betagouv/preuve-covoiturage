@@ -1,8 +1,10 @@
-import { describe, it, assertObjectMatch, assertRejects } from "@/test_deps.ts";
-import { Kernel } from '@/ilos/core/index.ts';
-
-import { CallCommand } from './CallCommand.ts';
-import { RPCSingleCallType, RPCSingleResponseType } from "@/ilos/common/index.ts";
+import { assertObjectMatch, assertRejects, describe, it } from "@/dev_deps.ts";
+import {
+  RPCSingleCallType,
+  RPCSingleResponseType,
+} from "@/ilos/common/index.ts";
+import { Kernel } from "@/ilos/core/index.ts";
+import { CallCommand } from "./CallCommand.ts";
 
 function setup() {
   class FakeKernel extends Kernel {
@@ -10,8 +12,8 @@ function setup() {
       return;
     }
     async handle(call: RPCSingleCallType): Promise<RPCSingleResponseType> {
-      if (call.method === 'nope') {
-        throw new Error('This is not working');
+      if (call.method === "nope") {
+        throw new Error("This is not working");
       }
       return { ...call } as unknown as RPCSingleResponseType;
     }
@@ -23,19 +25,19 @@ function setup() {
   return { kernel, command };
 }
 
-describe('command', () => {
+describe("command", () => {
   it('Command "call": should work', async () => {
     const { command } = setup();
-    const response = await command.call('method');
+    const response = await command.call("method");
     assertObjectMatch(response, {
       id: 1,
-      jsonrpc: '2.0',
-      method: 'method',
+      jsonrpc: "2.0",
+      method: "method",
       params: {
         _context: {
           channel: {
-            service: '',
-            transport: 'cli',
+            service: "",
+            transport: "cli",
           },
         },
         params: undefined,
@@ -45,19 +47,22 @@ describe('command', () => {
 
   it('Command "call": should work with options', async () => {
     const { command } = setup();
-    const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
+    const response = await command.call("method", {
+      params: [1, 2],
+      context: { call: { user: "michou" } },
+    });
     assertObjectMatch(response, {
       id: 1,
-      jsonrpc: '2.0',
-      method: 'method',
+      jsonrpc: "2.0",
+      method: "method",
       params: {
         _context: {
           channel: {
-            service: '',
-            transport: 'cli',
+            service: "",
+            transport: "cli",
           },
           call: {
-            user: 'michou',
+            user: "michou",
           },
         },
         params: [1, 2],
@@ -67,6 +72,9 @@ describe('command', () => {
 
   it('Command "call": should throw exception on error', async () => {
     const { command } = setup();
-    await assertRejects(async () => await command.call('nope'), 'This is not working');
+    await assertRejects(
+      async () => await command.call("nope"),
+      "This is not working",
+    );
   });
 });

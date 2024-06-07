@@ -1,20 +1,21 @@
 import {
-  ServiceContainerInterface,
+  CommandInterface,
+  CommandStaticInterface,
+  extension,
   InitHookInterface,
   RegisterHookInterface,
-  CommandStaticInterface,
-  CommandInterface,
-  extension,
   ResultType,
-} from '@/ilos/common/index.ts';
-
-import { CommandRegistry } from '../providers/CommandRegistry.ts';
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import process from "node:process";
+import { CommandRegistry } from "../providers/CommandRegistry.ts";
 
 @extension({
-  name: 'commands',
+  name: "commands",
   autoload: true,
 })
-export class CommandExtension implements RegisterHookInterface, InitHookInterface {
+export class CommandExtension
+  implements RegisterHookInterface, InitHookInterface {
   constructor(readonly commands: CommandStaticInterface[] = []) {
     //
   }
@@ -28,7 +29,9 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const commandRegistry = serviceContainer.get<CommandRegistry>(CommandRegistry);
+    const commandRegistry = serviceContainer.get<CommandRegistry>(
+      CommandRegistry,
+    );
 
     for (const command of this.commands) {
       const processCommand = async (...args: any[]): Promise<ResultType> =>
@@ -50,7 +53,7 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
     for (const option of cmd.options) {
       const { signature, description, coerce, default: def } = option;
       const args = [];
-      if (typeof coerce === 'function') {
+      if (typeof coerce === "function") {
         args.push(coerce);
       }
       if (def !== undefined) {
@@ -64,13 +67,6 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
       try {
         const result = await processCommand(...args);
         result && logger(result);
-
-        // exit(0) only when not running AVA tests as it overrides
-        // the process.exit function and crashes tests with a warning.
-        // If we don't process.exit(0) in regular commands, it will wait forever
-        if (/^ava /.test(process.env['npm_lifecycle_script']) === false) {
-          process.exit(0);
-        }
       } catch (e) {
         logger(e.message);
         throw e;
