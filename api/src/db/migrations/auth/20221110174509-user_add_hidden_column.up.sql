@@ -1,1 +1,0 @@
-ALTER TABLE auth.users ADD COLUMN hidden boolean DEFAULT false;

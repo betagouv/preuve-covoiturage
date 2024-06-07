@@ -4,7 +4,13 @@ export { readFileSync } from "node:fs";
 export { URL, URLSearchParams } from "node:url";
 export { Command, InvalidArgumentError } from "npm:commander@^12.1";
 export { Console } from "node:console";
-export { access, mkdir, readFile, writeFile } from "node:fs/promises";
+export {
+  access,
+  mkdir,
+  readdir as readdirAsync,
+  readFile,
+  writeFile,
+} from "node:fs/promises";
 export { Redis } from "npm:ioredis@^5.3";
 export type { RedisKey } from "npm:ioredis@^5.3";
 import Stream from "node:stream";
@@ -187,6 +193,10 @@ export type {
   HelperDelegate as HbsHelperDelegate,
   TemplateDelegate as HbsTemplateDelegate,
 } from "npm:handlebars@^4.7";
+export {
+  Client as PgClient,
+  Pool as PgPool,
+} from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 export {
   _,
   addFormats,

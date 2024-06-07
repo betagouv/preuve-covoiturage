@@ -102,6 +102,9 @@ ci_test_unit: (test-unit)
 api *command:
   deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys --allow-run src/main.ts {{ command }}
 
+migrate:
+  deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys --allow-run  src/db/main.ts
+
 # Start the HTTP API server on port 8080
 serve:
   just api http 8080

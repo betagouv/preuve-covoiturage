@@ -1,1 +1,0 @@
-DROP SCHEMA IF EXISTS carpool_v2;
