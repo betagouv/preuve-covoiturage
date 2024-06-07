@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'auth/20221110174509-user_add_hidden_column',
+  "auth/20221110174509-user_add_hidden_column",
 ], __dirname);
 
 exports.setup = setup;

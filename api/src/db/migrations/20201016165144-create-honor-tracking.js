@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration(
-  ['honor/20201016165144-create-schema', 'honor/20201016165316-create-table'],
+  ["honor/20201016165144-create-schema", "honor/20201016165316-create-table"],
   __dirname,
 );
 

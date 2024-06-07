@@ -1,7 +1,9 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
-var { setup, up, down } = createMigration(['trip/20210923075129_fix_hydrate_trip_fn'], __dirname);
+import { createMigration } from "../helpers/createMigration.js";
+var { setup, up, down } = createMigration([
+  "trip/20210923075129_fix_hydrate_trip_fn",
+], __dirname);
 
 exports.setup = setup;
 exports.up = up;

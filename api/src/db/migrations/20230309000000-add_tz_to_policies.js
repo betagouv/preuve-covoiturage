@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'policy/20230309000000-add_tz_to_policies',
+  "policy/20230309000000-add_tz_to_policies",
 ], __dirname);
 exports.setup = setup;
 exports.up = up;

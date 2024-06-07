@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration(
   [
-    'arch_carpool/20230920000000-create_carpool_v2',
+    "arch_carpool/20230920000000-create_carpool_v2",
   ],
   __dirname,
 );

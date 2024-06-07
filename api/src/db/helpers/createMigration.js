@@ -1,20 +1,22 @@
-'use strict';
+"use strict";
+import { fs, path } from "@/deps.ts";
 
-const fs = require('fs');
-const path = require('path');
-
-exports.createMigration = function (files, basePath = __dirname, extracb = async function () {}) {
+export const createMigration = function (
+  files,
+  basePath = __dirname,
+  extracb = async function () {},
+) {
   let dbm;
   let type;
   let seed;
   let Promise;
 
-  function resolveFile(file, extension = 'sql') {
+  function resolveFile(file, extension = "sql") {
     const filepath = path.join(basePath, `${file}.${extension}`);
     if (!fs.existsSync(filepath)) {
       throw new Error(`File not found (${filepath})`);
     }
-    return fs.readFileSync(filepath, { encoding: 'utf-8' });
+    return fs.readFileSync(filepath, { encoding: "utf-8" });
   }
 
   return {
@@ -25,9 +27,9 @@ exports.createMigration = function (files, basePath = __dirname, extracb = async
       Promise = options.Promise;
     },
     up: function (db, cb) {
-      let data = '';
+      let data = "";
       for (const file of files) {
-        data += `${resolveFile(file, 'up.sql')}\n`;
+        data += `${resolveFile(file, "up.sql")}\n`;
       }
       db.runSql(data, (err) => {
         if (err) {
@@ -39,9 +41,9 @@ exports.createMigration = function (files, basePath = __dirname, extracb = async
       });
     },
     down: function (db, cb) {
-      let data = '';
+      let data = "";
       for (const file of files.reverse()) {
-        data += `${resolveFile(file, 'down.sql')}\n`;
+        data += `${resolveFile(file, "down.sql")}\n`;
       }
       db.runSql(data, (err) => {
         if (err) {

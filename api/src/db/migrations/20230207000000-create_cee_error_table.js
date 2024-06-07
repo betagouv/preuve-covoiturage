@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'cee/20230207000000-create_cee_error_table',
+  "cee/20230207000000-create_cee_error_table",
 ], __dirname);
 exports.setup = setup;
 exports.up = up;

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'policy/20221215000000_create_policy_lock_table',
+  "policy/20221215000000_create_policy_lock_table",
 ], __dirname);
 
 exports.setup = setup;

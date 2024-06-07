@@ -1,6 +1,8 @@
-'use strict';
-var { createMigration } = require('../helpers/createMigration');
-var { setup, up, down } = createMigration(['acquisition/20200401091213_alter_logerrors'], __dirname);
+"use strict";
+import { createMigration } from "../helpers/createMigration.js";
+var { setup, up, down } = createMigration([
+  "acquisition/20200401091213_alter_logerrors",
+], __dirname);
 
 exports.setup = setup;
 exports.up = up;

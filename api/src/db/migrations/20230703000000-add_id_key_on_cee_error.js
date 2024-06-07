@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'cee/20230703000000-update_identity_key_error',
+  "cee/20230703000000-update_identity_key_error",
 ], __dirname);
 exports.setup = setup;
 exports.up = up;

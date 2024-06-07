@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'operator/20221207163054-operators-add-support-column',
+  "operator/20221207163054-operators-add-support-column",
 ], __dirname);
 
 exports.setup = setup;

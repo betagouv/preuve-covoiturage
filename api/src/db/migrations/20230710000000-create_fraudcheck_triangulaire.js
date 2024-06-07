@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'fraudcheck/20230710000000_create_triangulaire',
+  "fraudcheck/20230710000000_create_triangulaire",
 ], __dirname);
 exports.setup = setup;
 exports.up = up;

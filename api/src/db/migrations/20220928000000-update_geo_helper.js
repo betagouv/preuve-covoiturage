@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'geo/20220928000000_update_geo_helper',
+  "geo/20220928000000_update_geo_helper",
 ], __dirname);
 
 exports.setup = setup;

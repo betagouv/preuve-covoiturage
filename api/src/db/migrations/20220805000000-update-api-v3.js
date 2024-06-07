@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'acquisition/20220905000000-add_api_version',
+  "acquisition/20220905000000-add_api_version",
 ], __dirname);
 
 exports.setup = setup;

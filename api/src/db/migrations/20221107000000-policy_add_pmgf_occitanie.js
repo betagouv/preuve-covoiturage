@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration([
-  'policy/20221107000000-policy_add_pmgf_occitanie',
+  "policy/20221107000000-policy_add_pmgf_occitanie",
 ], __dirname);
 
 exports.setup = setup;

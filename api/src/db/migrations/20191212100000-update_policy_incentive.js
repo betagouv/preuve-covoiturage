@@ -1,8 +1,11 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration(
-  ['policy/20191212100000_update_policy_incentive_table', 'policy/20191212100000_create_policy_trip_view'],
+  [
+    "policy/20191212100000_update_policy_incentive_table",
+    "policy/20191212100000_create_policy_trip_view",
+  ],
   __dirname,
 );
 

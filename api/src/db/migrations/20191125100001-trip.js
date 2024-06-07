@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-var { createMigration } = require('../helpers/createMigration');
+import { createMigration } from "../helpers/createMigration.js";
 var { setup, up, down } = createMigration(
   [
-    'trip/20191125100001_create_trip_schema',
-    'trip/20191125100001_create_trip_view',
-    'trip/20191125100001_create_export_view',
+    "trip/20191125100001_create_trip_schema",
+    "trip/20191125100001_create_trip_view",
+    "trip/20191125100001_create_export_view",
   ],
   __dirname,
 );
