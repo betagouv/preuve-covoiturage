@@ -41,7 +41,7 @@ function setup() {
 }
 
 describe("CommandExtension", () => {
-  it("should register", async (t) => {
+  it("should register", async () => {
     const { serviceProvider } = setup();
     await serviceProvider.register();
     await serviceProvider.init();
@@ -52,7 +52,7 @@ describe("CommandExtension", () => {
     assertEquals(basicCommand.description(), "toto");
   });
 
-  it("should work", async (t) => {
+  it("should work", async () => {
     const { serviceProvider, fake } = setup();
     const container = serviceProvider.getContainer();
     await serviceProvider.register();
