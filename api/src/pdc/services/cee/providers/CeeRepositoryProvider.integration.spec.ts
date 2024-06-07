@@ -1,6 +1,6 @@
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
 import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { config } from '../config/index.ts';
 import {
   CeeApplicationErrorEnum,
@@ -31,7 +31,7 @@ test.serial.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should find a valid journey', async (t) => {
+it('Should find a valid journey', async (t) => {
   const search: SearchJourney = {
     operator_id: 1,
     operator_journey_id: 'operator_journey_id-1',
@@ -44,10 +44,10 @@ test.serial('Should find a valid journey', async (t) => {
 
   const result = await t.context.repository.searchForValidJourney(search, constraint);
   t.not(result, undefined);
-  t.is(result.phone_trunc, '+336000000');
+  assertEquals(result.phone_trunc, '+336000000');
 });
 
-test.serial('Should throw error is no valid journey found', async (t) => {
+it('Should throw error is no valid journey found', async (t) => {
   const search: SearchJourney = {
     operator_id: 1,
     operator_journey_id: 'operator_journey_id-1',
@@ -59,11 +59,11 @@ test.serial('Should throw error is no valid journey found', async (t) => {
     max_distance: 0,
   };
 
-  const error = await t.throwsAsync(async () => t.context.repository.searchForValidJourney(search, constraint));
+  const error = await assertThrows(async () => t.context.repository.searchForValidJourney(search, constraint));
   t.not(error, undefined);
 });
 
-test.serial('Should find a carpool and checks its registered state', async (t) => {
+it('Should find a carpool and checks its registered state', async (t) => {
   // Search and make sure the journey is not registered
   const search: SearchJourney = {
     operator_id: 1,
@@ -77,8 +77,8 @@ test.serial('Should find a carpool and checks its registered state', async (t) =
 
   const resultBefore = await t.context.repository.searchForValidJourney(search, constraint);
   t.not(resultBefore, undefined);
-  t.is(resultBefore.phone_trunc, '+336000000');
-  t.is(resultBefore.already_registered, false);
+  assertEquals(resultBefore.phone_trunc, '+336000000');
+  assertEquals(resultBefore.already_registered, false);
 
   // Register a journey
   const application: ShortCeeApplication = {
@@ -96,11 +96,11 @@ test.serial('Should find a carpool and checks its registered state', async (t) =
   // Search for the journey and check if it is already registered
   const resultAfter = await t.context.repository.searchForValidJourney(search, constraint);
   t.not(resultAfter, undefined);
-  t.is(resultAfter.phone_trunc, '+336000000');
-  t.is(resultAfter.already_registered, true);
+  assertEquals(resultAfter.phone_trunc, '+336000000');
+  assertEquals(resultAfter.already_registered, true);
 });
 
-test.serial('Should create short application', async (t) => {
+it('Should create short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
     operator_journey_id: 'operator_journey_id-1',
@@ -120,11 +120,11 @@ test.serial('Should create short application', async (t) => {
     values: [1, 'AAA'],
   });
 
-  t.is(applicationResults.rowCount, 1);
-  t.deepEqual(applicationResults.rows[0], { journey_type: 'short', ...application });
+  assertEquals(applicationResults.rowCount, 1);
+  assertObjectMatch(applicationResults.rows[0], { journey_type: 'short', ...application });
 });
 
-test.serial('Should create long application', async (t) => {
+it('Should create long application', async (t) => {
   const application: LongCeeApplication = {
     operator_id: 1,
     last_name_trunc: 'BBB',
@@ -144,12 +144,12 @@ test.serial('Should create long application', async (t) => {
     values: [1, 'BBB'],
   });
 
-  t.is(applicationResults.rowCount, 1);
-  t.is(applicationResults.rows[0]?.journey_type, 'long');
+  assertEquals(applicationResults.rowCount, 1);
+  assertEquals(applicationResults.rows[0]?.journey_type, 'long');
   t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
-test.serial('Search should be equal to the new registration', async (t) => {
+it('Search should be equal to the new registration', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
     operator_journey_id: 'operator_journey_id-2',
@@ -176,13 +176,13 @@ test.serial('Search should be equal to the new registration', async (t) => {
 
   const { journey_id, operator_journey_id, acquisition_status, fraud_status, ...match } = searchResult || {};
 
-  t.deepEqual(createResult, match);
-  t.is(operator_journey_id, 'operator_journey_id-2');
-  t.is(acquisition_status, CarpoolAcquisitionStatusEnum.Processed);
-  t.is(fraud_status, CarpoolFraudStatusEnum.Pending);
+  assertObjectMatch(createResult, match);
+  assertEquals(operator_journey_id, 'operator_journey_id-2');
+  assertEquals(acquisition_status, CarpoolAcquisitionStatusEnum.Processed);
+  assertEquals(fraud_status, CarpoolFraudStatusEnum.Pending);
 });
 
-test.serial('Should raise error if conflict short application', async (t) => {
+it('Should raise error if conflict short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
     operator_journey_id: 'operator_journey_id-1',
@@ -193,14 +193,14 @@ test.serial('Should raise error if conflict short application', async (t) => {
     driving_license: 'driving_license_1',
   };
 
-  const error = await t.throwsAsync(
+  const error = await assertThrows(
     async () =>
       await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint),
   );
-  t.true(error instanceof Error);
+  assert(error instanceof Error);
 });
 
-test.serial('Should raise error if conflict id key long application', async (t) => {
+it('Should raise error if conflict id key long application', async (t) => {
   const application: LongCeeApplication = {
     operator_id: 1,
     last_name_trunc: 'CCC',
@@ -211,11 +211,11 @@ test.serial('Should raise error if conflict id key long application', async (t) 
     identity_key: 'test',
   };
 
-  const error = await t.throwsAsync(
+  const error = await assertThrows(
     async () =>
       await t.context.repository.registerLongApplication(application, config.rules.applicationCooldownConstraint),
   );
-  t.true(error instanceof Error);
+  assert(error instanceof Error);
 
   const application2: LongCeeApplication = {
     operator_id: 1,
@@ -233,7 +233,7 @@ test.serial('Should raise error if conflict id key long application', async (t) 
   );
 });
 
-test.serial('Should raise error if missing fields in short application', async (t) => {
+it('Should raise error if missing fields in short application', async (t) => {
   const application: any = {
     operator_id: 1,
     last_name_trunc: 'AAA',
@@ -242,14 +242,14 @@ test.serial('Should raise error if missing fields in short application', async (
     driving_license: 'driving_license_1',
   };
 
-  const error = await t.throwsAsync(
+  const error = await assertThrows(
     async () =>
       await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint),
   );
-  t.true(error instanceof Error);
+  assert(error instanceof Error);
 });
 
-test.serial('Should find short application with id if exists', async (t) => {
+it('Should find short application with id if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
@@ -261,10 +261,10 @@ test.serial('Should find short application with id if exists', async (t) => {
     config.rules.applicationCooldownConstraint,
   );
   t.not(result, undefined);
-  t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
+  assertObjectMatch((result || {}).datetime, new Date('2022-11-01'));
 });
 
-test.serial('Should find short application with driver license if exists', async (t) => {
+it('Should find short application with driver license if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
@@ -277,10 +277,10 @@ test.serial('Should find short application with driver license if exists', async
     config.rules.applicationCooldownConstraint,
   );
   t.not(result, undefined);
-  t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
+  assertObjectMatch((result || {}).datetime, new Date('2022-11-01'));
 });
 
-test.serial('Should not find long application with name match if id key is not null', async (t) => {
+it('Should not find long application with name match if id key is not null', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000000',
@@ -293,10 +293,10 @@ test.serial('Should not find long application with name match if id key is not n
     search,
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  assertEquals(result, undefined);
 });
 
-test.serial('Should find long application with id key if exists', async (t) => {
+it('Should find long application with id key if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'EEE',
     phone_trunc: '+336000000777',
@@ -310,10 +310,10 @@ test.serial('Should find long application with id key if exists', async (t) => {
     config.rules.applicationCooldownConstraint,
   );
   t.not(result, undefined);
-  t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
+  assertObjectMatch((result || {}).datetime, new Date('2022-11-01'));
 });
 
-test.serial('Should not find short application if criterias dont match', async (t) => {
+it('Should not find short application if criterias dont match', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
@@ -325,10 +325,10 @@ test.serial('Should not find short application if criterias dont match', async (
     search,
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  assertEquals(result, undefined);
 });
 
-test.serial('Should match cooldown criteria', async (t) => {
+it('Should match cooldown criteria', async (t) => {
   const app1 = {
     application_timestamp: new Date('2014-01-01T00:00:00.000Z'),
     operator_id: 1,
@@ -359,7 +359,7 @@ test.serial('Should match cooldown criteria', async (t) => {
     },
     config.rules.applicationCooldownConstraint,
   );
-  t.is(result, undefined);
+  assertEquals(result, undefined);
 
   const result2 = await t.context.repository.searchForLongApplication(
     {
@@ -369,7 +369,7 @@ test.serial('Should match cooldown criteria', async (t) => {
     },
     config.rules.applicationCooldownConstraint,
   );
-  t.like(result2, { datetime: new Date('2016-01-01T00:00:00.000Z') });
+  assertObjectMatch(result2, { datetime: new Date('2016-01-01T00:00:00.000Z') });
 
   await t.notThrowsAsync(async () => {
     await t.context.repository.registerLongApplication(
@@ -377,7 +377,7 @@ test.serial('Should match cooldown criteria', async (t) => {
       config.rules.applicationCooldownConstraint,
     );
   });
-  await t.throwsAsync(async () => {
+  await assertThrows(async () => {
     await t.context.repository.registerLongApplication(
       { ...app2, driving_license: 'toto2' },
       config.rules.applicationCooldownConstraint,
@@ -385,7 +385,7 @@ test.serial('Should match cooldown criteria', async (t) => {
   });
 });
 
-test.serial('Should register application error', async (t) => {
+it('Should register application error', async (t) => {
   const uuidResult = await t.context.db.connection
     .getClient()
     .query<any>(`SELECT _id FROM ${t.context.repository.ceeApplicationsTable} LIMIT 1`);
@@ -414,12 +414,12 @@ test.serial('Should register application error', async (t) => {
     values: [],
   });
 
-  t.is(errorResults.rowCount, 2);
-  t.like(errorResults.rows[0], { ...data1 });
-  t.like(errorResults.rows[1], { ...data2 });
+  assertEquals(errorResults.rowCount, 2);
+  assertObjectMatch(errorResults.rows[0], { ...data1 });
+  assertObjectMatch(errorResults.rows[1], { ...data2 });
 });
 
-test.serial('Should import identity_key', async (t) => {
+it('Should import identity_key', async (t) => {
   const app1 = {
     application_timestamp: new Date('2014-01-01T00:00:00.000Z'),
     operator_id: 1,
@@ -435,9 +435,9 @@ test.serial('Should import identity_key', async (t) => {
     text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE phone_trunc = $1`,
     values: [app1.phone_trunc],
   });
-  t.is(result1.rows[0].identity_key, app1.identity_key);
+  assertEquals(result1.rows[0].identity_key, app1.identity_key);
 
-  await t.throwsAsync(async () => t.context.repository.importSpecificApplicationIdentity(app1));
+  await assertThrows(async () => t.context.repository.importSpecificApplicationIdentity(app1));
 
   const uuidResult = await t.context.db.connection.getClient().query<any>(
     `SELECT
@@ -456,6 +456,6 @@ test.serial('Should import identity_key', async (t) => {
     text: `SELECT identity_key FROM ${t.context.repository.ceeApplicationsTable} WHERE _id = $1`,
     values: [app2.cee_application_uuid],
   });
-  t.is(result2.rows[0].identity_key, app2.identity_key);
-  await t.throwsAsync(async () => t.context.repository.importStandardizedApplicationIdentity(app2));
+  assertEquals(result2.rows[0].identity_key, app2.identity_key);
+  await assertThrows(async () => t.context.repository.importStandardizedApplicationIdentity(app2));
 });

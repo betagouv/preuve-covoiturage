@@ -88,12 +88,12 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
       const statefulIncentive = await policy.processStateful(store, statelessIncentive.export(), t.log);
       incentives.push(statefulIncentive.export());
     }
-    t.deepEqual(
+    assertObjectMatch(
       incentives.map((i) => i.statefulAmount),
       expected.incentive,
     );
     if (expected.meta) {
-      t.deepEqual(
+      assertObjectMatch(
         (await store.store(input.lifetime || MetadataLifetime.Day)).map((m) => ({ key: m.key, value: m.value })),
         expected.meta.map((m) => ({ key: m.key, value: m.value })),
       );

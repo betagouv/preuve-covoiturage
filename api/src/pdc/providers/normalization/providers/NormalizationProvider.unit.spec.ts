@@ -1,5 +1,5 @@
 import { Container } from '@/ilos/core/index.ts';
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
 import { NormalizationProvider } from './NormalizationProvider.ts';
@@ -41,16 +41,16 @@ function setup() {
   return container.get(NormalizationProvider);
 }
 
-test('Should throw if data has no version', async (t) => {
+it('Should throw if data has no version', async (t) => {
   const provider = setup();
   const data = {} as any;
-  const err = await t.throwsAsync(async () => {
+  const err = await assertThrows(async () => {
     await provider.handle(data);
   });
-  t.is(err.message, '[normalization] Unknown API version undefined');
+  assertEquals(err.message, '[normalization] Unknown API version undefined');
 });
 
-test('Should normalize v3', async (t) => {
+it('Should normalize v3', async (t) => {
   const provider = setup();
   const data = {
     _id: 1,
@@ -111,7 +111,7 @@ test('Should normalize v3', async (t) => {
     },
   };
   const normalizedData = await provider.handle(data);
-  t.deepEqual(normalizedData, {
+  assertObjectMatch(normalizedData, {
     acquisition_id: data._id,
     created_at: data.created_at,
     incentives: data.payload.incentives,

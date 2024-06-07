@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { httpMacro, HttpMacroContext } from '@/pdc/providers/test/index.ts';
 import { ServiceProvider } from './ServiceProvider.ts';
 
@@ -10,7 +10,7 @@ interface TestContext extends HttpMacroContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const { transport, supertest, request } = await before();
   t.context.transport = transport;
   t.context.supertest = supertest;
@@ -25,7 +25,7 @@ test.after.always(async (t) => {
 
 let application_test_context: any;
 
-test.serial('#1 - Creates an application', async (t) => {
+it('#1 - Creates an application', async (t) => {
   const response = await t.context.request(
     'application:create',
     {
@@ -41,14 +41,14 @@ test.serial('#1 - Creates an application', async (t) => {
     },
   );
 
-  t.true('uuid' in response.result);
-  t.is(response.result.name, 'Application');
-  t.is(response.result.owner_id, t.context.operator_id);
-  t.is(response.result.owner_service, 'operator');
+  assert('uuid' in response.result);
+  assertEquals(response.result.name, 'Application');
+  assertEquals(response.result.owner_id, t.context.operator_id);
+  assertEquals(response.result.owner_service, 'operator');
   application_test_context = response.result;
 });
 
-test.serial('#2.0 - Find the application by id', async (t) => {
+it('#2.0 - Find the application by id', async (t) => {
   const response = await t.context.request(
     'application:find',
     {
@@ -65,13 +65,13 @@ test.serial('#2.0 - Find the application by id', async (t) => {
       },
     },
   );
-  t.is(response.result.uuid, application_test_context.uuid);
-  t.is(response.result.name, 'Application');
-  t.is(response.result.owner_id, t.context.operator_id);
-  t.is(response.result.owner_service, 'operator');
+  assertEquals(response.result.uuid, application_test_context.uuid);
+  assertEquals(response.result.name, 'Application');
+  assertEquals(response.result.owner_id, t.context.operator_id);
+  assertEquals(response.result.owner_service, 'operator');
 });
 
-test.serial('#2.1 - Fails if no owner set', async (t) => {
+it('#2.1 - Fails if no owner set', async (t) => {
   const response = await t.context.request(
     'application:find',
     {
@@ -87,10 +87,10 @@ test.serial('#2.1 - Fails if no owner set', async (t) => {
     },
   );
 
-  t.true('error' in response);
-  t.is(response.error.code, -32503);
-  t.is(response.error.message, 'Forbidden Error');
-  t.is(response.error.data, 'Invalid permissions');
+  assert('error' in response);
+  assertEquals(response.error.code, -32503);
+  assertEquals(response.error.message, 'Forbidden Error');
+  assertEquals(response.error.data, 'Invalid permissions');
 });
 
 test.serial.skip("#3.0 - Cannot revoke another op's app", async (t) => {
@@ -108,10 +108,10 @@ test.serial.skip("#3.0 - Cannot revoke another op's app", async (t) => {
       },
     },
   );
-  t.true('error' in result);
+  assert('error' in result);
 });
 
-test.serial('#3.1 - Revoke the application OK', async (t) => {
+it('#3.1 - Revoke the application OK', async (t) => {
   const result = await t.context.request(
     'application:revoke',
     {
@@ -126,10 +126,10 @@ test.serial('#3.1 - Revoke the application OK', async (t) => {
       },
     },
   );
-  t.is(result.result, undefined);
+  assertEquals(result.result, undefined);
 });
 
-test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
+it('#3.2 - Cannot revoke twice the same app', async (t) => {
   const result = await t.context.request(
     'application:revoke',
     { uuid: application_test_context.uuid },
@@ -142,10 +142,10 @@ test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
       },
     },
   );
-  t.true('error' in result);
+  assert('error' in result);
 });
 
-test.serial('#4 - List applications', async (t) => {
+it('#4 - List applications', async (t) => {
   await t.context.request(
     'application:create',
     {
@@ -186,9 +186,9 @@ test.serial('#4 - List applications', async (t) => {
       },
     },
   );
-  t.true(Array.isArray(result.result));
-  t.is(result.result.length, 2);
+  assert(Array.isArray(result.result));
+  assertEquals(result.result.length, 2);
   const sortedResults = result.result.sort((a, b) => (a._id > b._id ? 1 : -1));
-  t.is(sortedResults[0].name, 'Application A');
-  t.is(sortedResults[1].name, 'Application B');
+  assertEquals(sortedResults[0].name, 'Application A');
+  assertEquals(sortedResults[1].name, 'Application B');
 });

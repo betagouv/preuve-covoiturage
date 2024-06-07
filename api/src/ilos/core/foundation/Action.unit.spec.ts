@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import {
   FunctionalHandlerInterface,
   MiddlewareInterface,
@@ -72,7 +72,7 @@ function setup() {
   };
 }
 
-test('Action: works', async (t) => {
+it('Action: works', async (t) => {
   const { defaultContext, build } = setup();
   @handler({
     service: 'action',
@@ -101,10 +101,10 @@ test('Action: works', async (t) => {
     },
     context: defaultContext,
   });
-  t.is(result, 2);
+  assertEquals(result, 2);
 });
 
-test('Action: should work with middleware', async (t) => {
+it('Action: should work with middleware', async (t) => {
   const { defaultContext, build } = setup();
   @handler({
     service: 'action',
@@ -133,10 +133,10 @@ test('Action: should work with middleware', async (t) => {
     context: defaultContext,
   });
 
-  t.is(result, 1);
+  assertEquals(result, 1);
 });
 
-test('Action: should work with ordered middleware', async (t) => {
+it('Action: should work with ordered middleware', async (t) => {
   const { defaultContext, build } = setup();
   @handler({
     service: 'action',
@@ -161,10 +161,10 @@ test('Action: should work with ordered middleware', async (t) => {
     },
     context: defaultContext,
   });
-  t.is(result, 'hello world Sam!?');
+  assertEquals(result, 'hello world Sam!?');
 });
 
-test('should raise an error if no handle method is defined', async (t) => {
+it('should raise an error if no handle method is defined', async (t) => {
   const { defaultContext, build } = setup();
   @handler({
     service: 'action',
@@ -173,7 +173,7 @@ test('should raise an error if no handle method is defined', async (t) => {
   })
   class BasicAction extends Action {}
   const action = await build(BasicAction);
-  const err = await t.throwsAsync(async () =>
+  const err = await assertThrows(async () =>
     action({
       result: {},
       method: 'action:test',
@@ -185,6 +185,6 @@ test('should raise an error if no handle method is defined', async (t) => {
       context: defaultContext,
     }),
   );
-  t.true(err instanceof Error);
-  t.is(err.message, 'No implementation found');
+  assert(err instanceof Error);
+  assertEquals(err.message, 'No implementation found');
 });

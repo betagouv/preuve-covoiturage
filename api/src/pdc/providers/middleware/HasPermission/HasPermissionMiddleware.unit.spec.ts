@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@/ilos/common/index.ts';
 
 import { HasPermissionMiddleware } from './HasPermissionMiddleware.ts';
@@ -24,42 +24,42 @@ const callFactory = (
   result: null,
 });
 
-test('Permission middleware: matching 1 permission', async (t) => {
+it('Permission middleware: matching 1 permission', async (t) => {
   const permissions = ['test.ok'];
   const { params, context } = callFactory(permissions);
-  t.is(await middleware.process(params, context, () => {}, permissions), undefined);
+  assertEquals(await middleware.process(params, context, () => {}, permissions), undefined);
 });
 
-test('Permission middleware: no method permissions', async (t) => {
+it('Permission middleware: no method permissions', async (t) => {
   const permissions = ['test.ok'];
   const { params, context } = callFactory(permissions);
-  await t.throwsAsync(
+  await assertThrows(
     middleware.process(params, context, () => {}, []),
     { instanceOf: InvalidParamsException },
   );
 });
 
-test('Permission middleware: no user permissions', async (t) => {
+it('Permission middleware: no user permissions', async (t) => {
   const { params, context } = callFactory([]);
-  await t.throwsAsync(
+  await assertThrows(
     middleware.process(params, context, () => {}, ['not-ok']),
     { instanceOf: ForbiddenException },
   );
 });
 
-test('Permission middleware: different permission', async (t) => {
+it('Permission middleware: different permission', async (t) => {
   const permissions: string[] = ['test.ok'];
   const { params, context } = callFactory(permissions);
-  await t.throwsAsync(
+  await assertThrows(
     middleware.process(params, context, () => {}, ['not-ok']),
     { instanceOf: ForbiddenException },
   );
 });
 
-test('Permission middleware: not matching all permissions', async (t) => {
+it('Permission middleware: not matching all permissions', async (t) => {
   const permissions: string[] = ['perm1'];
   const { params, context } = callFactory(permissions);
-  await t.throwsAsync(
+  await assertThrows(
     middleware.process(params, context, () => {}, ['perm1', 'perm2']),
     {
       instanceOf: ForbiddenException,

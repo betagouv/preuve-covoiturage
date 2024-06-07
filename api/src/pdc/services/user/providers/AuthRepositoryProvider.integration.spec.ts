@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { CryptoProvider, CryptoProviderInterfaceResolver } from '@/pdc/providers/crypto/index.ts';
@@ -76,31 +76,31 @@ test.after.always.skip(async (t) => {
 test.serial.skip('should create token by email', async (t) => {
   await t.context.provider.createTokenByEmail(t.context.email, 'confirmation');
   const user = await t.context.getUser();
-  t.true(/^\$2a\$10\$/.test(user.token));
-  t.is(user.status, 'pending');
-  t.true(user.token_expires_at instanceof Date);
+  assert(/^\$2a\$10\$/.test(user.token));
+  assertEquals(user.status, 'pending');
+  assert(user.token_expires_at instanceof Date);
 });
 
 test.serial.skip('should clear token by email', async (t) => {
   const success = await t.context.provider.clearTokenByEmail(t.context.email);
   const user = await t.context.getUser();
 
-  t.true(success);
-  t.is(user.token, null);
-  t.is(user.token_expires_at, null);
-  t.is(user.status, 'pending');
+  assert(success);
+  assertEquals(user.token, null);
+  assertEquals(user.token_expires_at, null);
+  assertEquals(user.status, 'pending');
 });
 
 test.serial.skip('should challenge token by email', async (t) => {
   const token = await t.context.provider.createTokenByEmail(t.context.email, 'confirmation');
   const success = await t.context.provider.challengeTokenByEmail(t.context.email, token);
-  t.true(success);
+  assert(success);
 });
 
 test.serial.skip('should update password by id', async (t) => {
   const password = '12345';
   const result = await t.context.provider.updatePasswordById(t.context.id, password);
-  t.true(result);
+  assert(result);
 
   const user = await t.context.getUser();
   t.not(user.password, null);
@@ -109,7 +109,7 @@ test.serial.skip('should update password by id', async (t) => {
 test.serial.skip('should update password by email', async (t) => {
   const password = '12345';
   const result = await t.context.provider.updatePasswordByEmail(t.context.email, password);
-  t.true(result);
+  assert(result);
 
   const user = await t.context.getUser();
   t.not(user.password, null);
@@ -118,25 +118,25 @@ test.serial.skip('should update password by email', async (t) => {
 test.serial.skip('should challenge password by id', async (t) => {
   const password = '12345';
   const result = await t.context.provider.updatePasswordById(t.context.id, password);
-  t.true(result);
+  assert(result);
 
   const success = await t.context.provider.challengePasswordById(t.context.id, password);
-  t.true(success);
+  assert(success);
 
   const failure = await t.context.provider.challengePasswordById(t.context.id, 'not_the_password');
-  t.false(failure);
+  assertFalse(failure);
 });
 
 test.serial.skip('should challenge password by email', async (t) => {
   const password = '12345';
   const result = await t.context.provider.updatePasswordById(t.context.id, password);
-  t.true(result);
+  assert(result);
 
   const success = await t.context.provider.challengePasswordByEmail(t.context.email, password);
-  t.true(success);
+  assert(success);
 
   const failure = await t.context.provider.challengePasswordByEmail(t.context.email, 'not_the_password');
-  t.true(failure);
+  assert(failure);
 });
 
 test.serial.skip('should update email by id', async (t) => {
@@ -144,6 +144,6 @@ test.serial.skip('should update email by id', async (t) => {
   await t.context.provider.updateEmailById(t.context.id, courriel);
 
   const user = await t.context.getUser(courriel);
-  t.true(/\$2a\$10/.test(user.token));
-  t.is(user.status, 'pending');
+  assert(/\$2a\$10/.test(user.token));
+  assertEquals(user.status, 'pending');
 });

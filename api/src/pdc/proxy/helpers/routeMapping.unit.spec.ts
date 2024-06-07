@@ -1,4 +1,4 @@
-import { anyTest, TestFn, supertest } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Kernel as AbstractKernel } from '@/ilos/core/index.ts';
 import { RPCResponseType, KernelInterface } from '@/ilos/common/index.ts';
 
@@ -27,7 +27,7 @@ const test = anyTest as TestFn<{
   responseFactory: Function;
 }>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.app = express();
 
   t.context.fakeUser = {
@@ -106,10 +106,10 @@ test.before(async (t) => {
   ];
 
   routeMapping(t.context.routeMap, t.context.app, t.context.kernel);
-  t.context.request = supertest(t.context.app);
+  t.context.request = superit(t.context.app);
 });
 
-test.serial('[Route mapping] works', async (t) => {
+it('[Route mapping] works', async (t) => {
   const response = await t.context.request
     .post('/user')
     .send({
@@ -119,8 +119,8 @@ test.serial('[Route mapping] works', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 200);
-  t.deepEqual(
+  assertEquals(response.status, 200);
+  assertObjectMatch(
     response.body,
     t.context.responseFactory('user:create', {
       firstName: 'John',
@@ -129,7 +129,7 @@ test.serial('[Route mapping] works', async (t) => {
   );
 });
 
-test.serial('[Route mapping] works with url params', async (t) => {
+it('[Route mapping] works with url params', async (t) => {
   const response = await t.context.request
     .post('/user/1')
     .send({
@@ -139,8 +139,8 @@ test.serial('[Route mapping] works with url params', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 200);
-  t.deepEqual(
+  assertEquals(response.status, 200);
+  assertObjectMatch(
     response.body,
     t.context.responseFactory('user:update', {
       id: '1',
@@ -150,14 +150,14 @@ test.serial('[Route mapping] works with url params', async (t) => {
   );
 });
 
-test.serial('[Route mapping] works with query params', async (t) => {
+it('[Route mapping] works with query params', async (t) => {
   const response = await t.context.request
     .get('/user/?orderBy=date')
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 200);
-  t.deepEqual(
+  assertEquals(response.status, 200);
+  assertObjectMatch(
     response.body,
     t.context.responseFactory('user:list', {
       orderBy: 'date',
@@ -165,14 +165,14 @@ test.serial('[Route mapping] works with query params', async (t) => {
   );
 });
 
-test.serial('[Route mapping] works with response mapping', async (t) => {
+it('[Route mapping] works with response mapping', async (t) => {
   const response = await t.context.request
     .get('/user/1')
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 200);
-  t.deepEqual(
+  assertEquals(response.status, 200);
+  assertObjectMatch(
     response.body,
     t.context.responseFactory('user:read', {
       ...t.context.fakeUser,

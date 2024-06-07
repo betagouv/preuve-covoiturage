@@ -1,10 +1,10 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { InitHookInterface, provider, serviceProvider } from '@/ilos/common/index.ts';
 
 import { Providers } from './Providers.ts';
 import { ServiceContainer } from '../foundation/ServiceContainer.ts';
 
-test('Providers extension: works', async (t) => {
+it('Providers extension: works', async (t) => {
   abstract class ProviderResolver {
     scream(): string {
       throw new Error();
@@ -31,10 +31,10 @@ test('Providers extension: works', async (t) => {
   await test.register();
 
   const screamer = test.getContainer().get(ProviderResolver);
-  t.is(screamer.scream(), 'AAA');
+  assertEquals(screamer.scream(), 'AAA');
 });
 
-test('Provider extension: works with multiple bindings', async (t) => {
+it('Provider extension: works with multiple bindings', async (t) => {
   abstract class ProviderResolver {
     screamed = 0;
     scream(): string {
@@ -65,12 +65,12 @@ test('Provider extension: works with multiple bindings', async (t) => {
   await test.register();
   const container = test.getContainer();
   const screamer = container.get(ProviderResolver);
-  t.is(screamer.scream(), 'AAA');
+  assertEquals(screamer.scream(), 'AAA');
   const screamer1 = container.get<ProviderResolver>('aaa');
-  t.is(screamer1.screamed, 1);
+  assertEquals(screamer1.screamed, 1);
 });
 
-test('works with init hook', async (t) => {
+it('works with init hook', async (t) => {
   abstract class ProviderResolver {
     scream(): string {
       throw new Error();
@@ -102,5 +102,5 @@ test('works with init hook', async (t) => {
   await test.init();
 
   const screamer = test.getContainer().get(ProviderResolver);
-  t.is(screamer.scream(), 'BBB');
+  assertEquals(screamer.scream(), 'BBB');
 });

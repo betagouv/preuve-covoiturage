@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { generateCarpool } from '../tests/helpers.ts';
@@ -23,14 +23,14 @@ function setup(lat: number, lon: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start_lat: lat, start_lon: lon }));
 }
 
-test('should return true if in range', async (t) => {
+it('should return true if in range', async (t) => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isCloseTo(ctx, { position: point1, radius: 500 });
-  t.is(res, true);
+  assertEquals(res, true);
 });
 
-test('should return false if not in range', async (t) => {
+it('should return false if not in range', async (t) => {
   const ctx = setup(point3.lat, point3.lon);
   const res = isCloseTo(ctx, { position: point1, radius: 500 });
-  t.is(res, false);
+  assertEquals(res, false);
 });

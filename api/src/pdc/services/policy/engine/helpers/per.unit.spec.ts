@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { generateCarpool } from '../tests/helpers.ts';
@@ -8,44 +8,44 @@ function setup(distance: number, seats: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ distance, seats }));
 }
 
-test('should multiply by seats', async (t) => {
+it('should multiply by seats', async (t) => {
   const ctx = setup(1, 2);
   const res = perSeat(ctx, 20);
-  t.is(res, 2 * 20);
+  assertEquals(res, 2 * 20);
 });
 
-test('should multiply by seats or one', async (t) => {
+it('should multiply by seats or one', async (t) => {
   const ctx = setup(1, 0);
   const res = perSeat(ctx, 20);
-  t.is(res, 1 * 20);
+  assertEquals(res, 1 * 20);
 });
 
-test('should multiply by km', async (t) => {
+it('should multiply by km', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20 });
-  t.is(res, 10 * 20);
+  assertEquals(res, 10 * 20);
 });
 
-test('should multiply by 0 km', async (t) => {
+it('should multiply by 0 km', async (t) => {
   const ctx = setup(0, 1);
   const res = perKm(ctx, { amount: 20 });
-  t.is(res, 0);
+  assertEquals(res, 0);
 });
 
-test('should multiply by km with offset', async (t) => {
+it('should multiply by km with offset', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20, offset: 3000 });
-  t.is(res, 7 * 20);
+  assertEquals(res, 7 * 20);
 });
 
-test('should multiply by km with limit', async (t) => {
+it('should multiply by km with limit', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20, limit: 2000 });
-  t.is(res, 2 * 20);
+  assertEquals(res, 2 * 20);
 });
 
-test('should multiply by km with offset and limit', async (t) => {
+it('should multiply by km with offset and limit', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20, offset: 1000, limit: 8000 });
-  t.is(res, 7 * 20);
+  assertEquals(res, 7 * 20);
 });

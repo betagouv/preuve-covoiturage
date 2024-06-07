@@ -1,10 +1,10 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { path, os } from '@/deps.ts';
 import { APDFNameProvider } from './APDFNameProvider.ts';
 
-test('Stringify APDF: filename', (t) => {
+it('Stringify APDF: filename', (t) => {
   const provider = new APDFNameProvider();
-  t.is(
+  assertEquals(
     provider.filename({
       name: 'YOLO',
       datetime: new Date('2022-01-01T00:00:00Z'),
@@ -18,9 +18,9 @@ test('Stringify APDF: filename', (t) => {
   );
 });
 
-test('Stringify APDF: filename null trips and amount', (t) => {
+it('Stringify APDF: filename null trips and amount', (t) => {
   const provider = new APDFNameProvider();
-  t.is(
+  assertEquals(
     provider.filepath({
       name: 'YOLO',
       datetime: new Date('2022-01-01T00:00:00Z'),
@@ -34,9 +34,9 @@ test('Stringify APDF: filename null trips and amount', (t) => {
   );
 });
 
-test('Stringify APDF: filename rounded amount', (t) => {
+it('Stringify APDF: filename rounded amount', (t) => {
   const provider = new APDFNameProvider();
-  t.is(
+  assertEquals(
     provider.filepath({
       name: 'YOLO',
       datetime: new Date('2022-01-01T00:00:00Z'),
@@ -50,14 +50,14 @@ test('Stringify APDF: filename rounded amount', (t) => {
   );
 });
 
-test('Stringify APDF: filepath with string', (t) => {
+it('Stringify APDF: filepath with string', (t) => {
   const provider = new APDFNameProvider();
-  t.is(provider.filepath('APDF-2022-01-1-2-3-4-yolo.xlsx'), path.join(os.tmpdir(), 'APDF-2022-01-1-2-3-4-yolo.xlsx'));
+  assertEquals(provider.filepath('APDF-2022-01-1-2-3-4-yolo.xlsx'), path.join(os.tmpdir(), 'APDF-2022-01-1-2-3-4-yolo.xlsx'));
 });
 
-test('Stringify APDF: filepath with object', (t) => {
+it('Stringify APDF: filepath with object', (t) => {
   const provider = new APDFNameProvider();
-  t.is(
+  assertEquals(
     provider.filepath({
       name: 'YOLO',
       datetime: new Date('2022-01-01T00:00:00Z'),
@@ -71,9 +71,9 @@ test('Stringify APDF: filepath with object', (t) => {
   );
 });
 
-test('Parse APDF: filename', (t) => {
+it('Parse APDF: filename', (t) => {
   const provider = new APDFNameProvider();
-  t.deepEqual(provider.parse('APDF-2022-01-1-2-111-100-22200-abc123.xlsx'), {
+  assertObjectMatch(provider.parse('APDF-2022-01-1-2-111-100-22200-abc123.xlsx'), {
     name: 'abc123',
     datetime: new Date('2022-01-01T00:00:00Z'),
     campaign_id: 1,
@@ -84,9 +84,9 @@ test('Parse APDF: filename', (t) => {
   });
 });
 
-test('Parse APDF: filename with prefix', (t) => {
+it('Parse APDF: filename with prefix', (t) => {
   const provider = new APDFNameProvider();
-  t.deepEqual(provider.parse('1/APDF-2022-01-1-2-111-100-22200-abc123.xlsx'), {
+  assertObjectMatch(provider.parse('1/APDF-2022-01-1-2-111-100-22200-abc123.xlsx'), {
     name: 'abc123',
     datetime: new Date('2022-01-01T00:00:00Z'),
     campaign_id: 1,
@@ -125,8 +125,8 @@ const list = [
 ];
 
 for (const [src, trg] of list) {
-  test(`Sanitize ${src}`, (t) => {
+  it(`Sanitize ${src}`, (t) => {
     const provider = new APDFNameProvider();
-    t.is(provider.sanitize(src), trg);
+    assertEquals(provider.sanitize(src), trg);
   });
 }

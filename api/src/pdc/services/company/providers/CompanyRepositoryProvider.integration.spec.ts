@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { CompanyRepositoryProvider } from './CompanyRepositoryProvider.ts';
@@ -45,7 +45,7 @@ test.after.always.skip(async (t) => {
 
 test.serial.skip('should return undefined on unknow siret', async (t) => {
   const res = await t.context.repository.findBySiret('12000101100010');
-  t.is(res, undefined);
+  assertEquals(res, undefined);
 });
 
 test.serial.skip('should insert data on db when siret not found', async (t) => {
@@ -54,9 +54,9 @@ test.serial.skip('should insert data on db when siret not found', async (t) => {
     text: `SELECT siren from company.companies WHERE siret = $1`,
     values: [t.context.data.siret],
   });
-  t.true(Array.isArray(res.rows));
-  t.is(res.rows.length, 1);
-  t.is(res.rows[0].siren, t.context.data.siren);
+  assert(Array.isArray(res.rows));
+  assertEquals(res.rows.length, 1);
+  assertEquals(res.rows[0].siren, t.context.data.siren);
 });
 
 test.serial.skip('should update data if siret alread exists', async (t) => {
@@ -69,16 +69,16 @@ test.serial.skip('should update data if siret alread exists', async (t) => {
     text: `SELECT headquarter, updated_at from company.companies WHERE siret = $1`,
     values: [t.context.data.siret],
   });
-  t.true(Array.isArray(res.rows));
-  t.is(res.rows.length, 1);
-  t.is(res.rows[0].headquarter, !t.context.data.headquarter);
-  t.true(res.rows[0].updated_at > t.context.data.updated_at);
+  assert(Array.isArray(res.rows));
+  assertEquals(res.rows.length, 1);
+  assertEquals(res.rows[0].headquarter, !t.context.data.headquarter);
+  assert(res.rows[0].updated_at > t.context.data.updated_at);
 });
 
 test.serial.skip('should return a company on known siret', async (t) => {
   const res = await t.context.repository.findBySiret('12000101100010');
-  t.true(typeof res === 'object');
-  t.deepEqual(
+  assert(typeof res === 'object');
+  assertObjectMatch(
     Reflect.ownKeys(res).sort(),
     [
       '_id',
@@ -104,19 +104,19 @@ test.serial.skip('should return a company on known siret', async (t) => {
     ].sort(),
   );
 
-  t.is(res.siret, t.context.data.siret);
-  t.is(res.siren, t.context.data.siren);
-  t.is(res.nic, t.context.data.nic);
-  t.is(res.legal_name, t.context.data.legal_name);
-  t.is(res.company_naf_code, t.context.data.company_naf_code);
-  t.is(res.establishment_naf_code, t.context.data.establishment_naf_code);
-  t.is(res.legal_nature_code, t.context.data.legal_nature_code);
-  t.is(res.legal_nature_label, t.context.data.legal_nature_label);
-  t.is(res.nonprofit_code, null);
-  t.is(res.intra_vat, null);
-  t.is(res.address, t.context.data.address);
-  t.is(res.lon, t.context.data.lon);
-  t.is(res.lat, t.context.data.lat);
-  t.is(res.headquarter, !true);
-  t.true(res.updated_at instanceof Date);
+  assertEquals(res.siret, t.context.data.siret);
+  assertEquals(res.siren, t.context.data.siren);
+  assertEquals(res.nic, t.context.data.nic);
+  assertEquals(res.legal_name, t.context.data.legal_name);
+  assertEquals(res.company_naf_code, t.context.data.company_naf_code);
+  assertEquals(res.establishment_naf_code, t.context.data.establishment_naf_code);
+  assertEquals(res.legal_nature_code, t.context.data.legal_nature_code);
+  assertEquals(res.legal_nature_label, t.context.data.legal_nature_label);
+  assertEquals(res.nonprofit_code, null);
+  assertEquals(res.intra_vat, null);
+  assertEquals(res.address, t.context.data.address);
+  assertEquals(res.lon, t.context.data.lon);
+  assertEquals(res.lat, t.context.data.lat);
+  assertEquals(res.headquarter, !true);
+  assert(res.updated_at instanceof Date);
 });

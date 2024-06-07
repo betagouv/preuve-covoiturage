@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { handler } from '@/ilos/common/index.ts';
 
 import { Container } from '../index.ts';
@@ -11,7 +11,7 @@ const defaultCallOptions = {
   context: null,
 };
 
-test('Handler registry: works', async (t) => {
+it('Handler registry: works', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
@@ -87,7 +87,7 @@ test('Handler registry: works', async (t) => {
   handlerRegistry.set(HelloRemoteQueue);
   handlerRegistry.set(HelloRemoteStar);
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -95,7 +95,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloLocal',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -104,7 +104,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloLocalQueue',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: '*',
@@ -112,7 +112,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloLocalStar',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
@@ -120,7 +120,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloLocalStar',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -128,7 +128,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloRemote',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -137,7 +137,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloRemote',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: '*',
@@ -145,7 +145,7 @@ test('Handler registry: works', async (t) => {
     })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
@@ -154,7 +154,7 @@ test('Handler registry: works', async (t) => {
   );
 });
 
-test('Handler registry: fallback to remote', async (t) => {
+it('Handler registry: fallback to remote', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
@@ -183,7 +183,7 @@ test('Handler registry: fallback to remote', async (t) => {
   handlerRegistry.set(HelloRemote);
   handlerRegistry.set(HelloRemoteStar);
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -191,7 +191,7 @@ test('Handler registry: fallback to remote', async (t) => {
     })(defaultCallOptions)) === 'HelloRemote',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
@@ -200,7 +200,7 @@ test('Handler registry: fallback to remote', async (t) => {
     })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 });
-test('Handler registry: fallback to sync', async (t) => {
+it('Handler registry: fallback to sync', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
@@ -228,7 +228,7 @@ test('Handler registry: fallback to sync', async (t) => {
   handlerRegistry.set(HelloLocal);
   handlerRegistry.set(HelloRemoteStar);
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
@@ -237,7 +237,7 @@ test('Handler registry: fallback to sync', async (t) => {
     })(defaultCallOptions)) === 'HelloLocal',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
@@ -246,7 +246,7 @@ test('Handler registry: fallback to sync', async (t) => {
     })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 
-  t.true(
+  assert(
     (await handlerRegistry.get({
       service: 'hello',
       method: 'world',

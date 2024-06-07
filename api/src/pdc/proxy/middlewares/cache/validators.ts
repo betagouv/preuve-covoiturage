@@ -45,7 +45,7 @@ export async function validate(params: CacheValidatorParams): Promise<CacheValid
 
   for (const validator of validators) {
     const result = await validator(params);
-    isValid = isValid && (result.isValid ?? true);
+    isValid = isValid && (resulassertEqualsValid ?? true);
     if (result.errors) errors = new Set([...errors, ...result.errors]);
     if (result.warnings) warnings = new Set([...warnings, ...result.warnings]);
     if (result.headers) headers = new Map([...headers, ...result.headers]);

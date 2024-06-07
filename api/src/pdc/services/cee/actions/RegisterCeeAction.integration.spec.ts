@@ -11,7 +11,7 @@ import {
   timestampSchema,
 } from '@/shared/cee/common/ceeSchema.ts';
 import { ParamsInterface, ResultInterface, handlerConfig } from '@/shared/cee/registerApplication.contract.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { createSign } from '@/deps.ts';
 import { ServiceProvider } from '../ServiceProvider.ts';
 import { config } from '../config/index.ts';
@@ -27,7 +27,7 @@ interface TestContext extends HandlerMacroContext {
 }
 
 const test = anyTest as TestFn<TestContext>;
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await dbBefore();
   config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
   const { kernel } = await before();
@@ -38,7 +38,7 @@ test.before(async (t) => {
   t.context = { db, kernel };
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await after(t.context);
   await dbAfter(t.context.db);
 });
@@ -67,46 +67,46 @@ const defaultLongPayload: any = {
   identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
 };
 
-test.serial(
+it(
   'Invalid last_name_trunc param',
   error,
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid journey_type param',
   error,
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid driving_license param',
   error,
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid operator_journey_id param',
   error,
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [
+    assertEquals(e.message, 'Invalid params');
+    assertObjectMatch(e.rpcError?.data, [
       `/operator_journey_id: ${operatorJourneyIdSchema.errorMessage}`,
       ': must match "then" schema',
     ]);
@@ -114,45 +114,45 @@ test.serial(
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid identity_key param',
   error,
   { ...defaultLongPayload, datetime: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [`/datetime: ${timestampSchema.errorMessage}`, ': must match "then" schema']);
+    assertEquals(e.message, 'Invalid params');
+    assertObjectMatch(e.rpcError?.data, [`/datetime: ${timestampSchema.errorMessage}`, ': must match "then" schema']);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid phone_trunc param',
   error,
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [`/phone_trunc: ${phoneTruncSchema.errorMessage}`, ': must match "then" schema']);
+    assertEquals(e.message, 'Invalid params');
+    assertObjectMatch(e.rpcError?.data, [`/phone_trunc: ${phoneTruncSchema.errorMessage}`, ': must match "then" schema']);
   },
   defaultContext,
 );
 
-test.serial('Unauthorized user', error, defaultShortPayload, 'Unauthorized Error', {
+it('Unauthorized user', error, defaultShortPayload, 'Unauthorized Error', {
   ...defaultContext,
   call: { user: {} },
 });
 
-test.serial(
+it(
   'Invalid datetime param',
   error,
   { ...defaultLongPayload, datetime: new Date().toISOString() },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `Date should be before 7 days from now`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data, `Date should be before 7 days from now`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Successful registration 1',
   success,
   defaultShortPayload,
@@ -176,7 +176,7 @@ test.serial(
 /**
  * @deprecated [carpool_v2_migration]
  */
-test.serial(
+it(
   'Successful registration 2',
   success,
   {
@@ -204,7 +204,7 @@ test.serial(
 /**
  * @deprecated [carpool_v2_migration]
  */
-test.serial(
+it(
   'Successful registration 3',
   success,
   {
@@ -232,45 +232,45 @@ test.serial(
 /**
  * @deprecated [carpool_v2_migration]
  */
-test.serial('Ensure deprecated carpool_id are properly inserted', async (t) => {
+it('Ensure deprecated carpool_id are properly inserted', async (t) => {
   const result = await t.context.db.connection.getClient().query<any>(`
     SELECT carpool_id, operator_id, operator_journey_id
     FROM cee.cee_applications
     ORDER BY operator_journey_id
   `);
-  t.is(result.rowCount, 3);
-  t.deepEqual(result.rows[0], { carpool_id: 1, operator_id: 1, operator_journey_id: 'operator_journey_id-1' });
-  t.deepEqual(result.rows[1], { carpool_id: 3, operator_id: 1, operator_journey_id: 'operator_journey_id-2' });
-  t.deepEqual(result.rows[2], { carpool_id: 5, operator_id: 1, operator_journey_id: 'operator_journey_id-3' });
+  assertEquals(result.rowCount, 3);
+  assertObjectMatch(result.rows[0], { carpool_id: 1, operator_id: 1, operator_journey_id: 'operator_journey_id-1' });
+  assertObjectMatch(result.rows[1], { carpool_id: 3, operator_id: 1, operator_journey_id: 'operator_journey_id-2' });
+  assertObjectMatch(result.rows[2], { carpool_id: 5, operator_id: 1, operator_journey_id: 'operator_journey_id-3' });
 });
 
-test.serial(
+it(
   'Conflict',
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
   (e: any, t) => {
-    t.is(e.message, 'Conflict');
-    t.like(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
+    assertEquals(e.message, 'Conflict');
+    assertObjectMatch(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Not found',
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
   (e: any, t) => {
-    t.is(e.message, 'Not found');
+    assertEquals(e.message, 'Not found');
   },
   defaultContext,
 );
 
-test.serial('Should have register errors', async (t) => {
+it('Should have register errors', async (t) => {
   const result = await t.context.db.connection.getClient().query(`
     SELECT * FROM cee.cee_application_errors ORDER BY created_at
   `);
-  t.is(result.rowCount, 3);
-  t.like(result.rows[0], { error_type: 'date' });
-  t.like(result.rows[1], { error_type: 'conflict' });
-  t.like(result.rows[2], { error_type: 'non-eligible' });
+  assertEquals(result.rowCount, 3);
+  assertObjectMatch(result.rows[0], { error_type: 'date' });
+  assertObjectMatch(result.rows[1], { error_type: 'conflict' });
+  assertObjectMatch(result.rows[2], { error_type: 'non-eligible' });
 });

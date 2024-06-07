@@ -8,7 +8,7 @@ import {
   timestampSchema,
 } from '@/shared/cee/common/ceeSchema.ts';
 import { ParamsInterface, ResultInterface, handlerConfig } from '@/shared/cee/importApplicationIdentity.contract.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ServiceProvider } from '../ServiceProvider.ts';
 
 const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
@@ -19,7 +19,7 @@ interface TestContext extends HandlerMacroContext {
 }
 
 const test = anyTest as TestFn<TestContext>;
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await dbBefore();
   const { kernel } = await before();
   kernel
@@ -29,7 +29,7 @@ test.before(async (t) => {
   t.context = { db, kernel };
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await after(t.context);
   await dbAfter(t.context.db);
 });
@@ -48,59 +48,59 @@ const defaultPayload: any = {
   datetime: '2023-01-02T00:00:00.000Z',
 };
 
-test.serial(
+it(
   'Invalid params empty',
   error,
   [],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], ': must NOT have fewer than 1 items');
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], ': must NOT have fewer than 1 items');
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid params last_name_trunc',
   error,
   [{ ...defaultPayload, last_name_trunc: 'abcd' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/0/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid params unsupported journey type',
   error,
   [{ ...defaultPayload, journey_type: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/0/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid params datetime',
   error,
   [{ ...defaultPayload, datetime: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/datetime: ${timestampSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/0/datetime: ${timestampSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial(
+it(
   'Invalid params phone_trunc',
   error,
   [{ ...defaultPayload, phone_trunc: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/phone_trunc: ${phoneTruncSchema.errorMessage}`);
+    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.rpcError?.data[0], `/0/phone_trunc: ${phoneTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
 
-test.serial('Unauthorized', error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+it('Unauthorized', error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });

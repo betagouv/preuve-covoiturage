@@ -4,9 +4,9 @@ import { PolicyStatsInterface } from '@/shared/apdf/interfaces/PolicySliceStatIn
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { SliceInterface } from '@/shared/policy/common/interfaces/Slices.ts';
 import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { excel } from '@/deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
 import { BuildExcel } from './BuildExcel.ts';
@@ -52,7 +52,7 @@ interface Context {
 
 const test = anyTest as TestFn<Partial<Context>>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.createSlicesSheetToWorkbook = new SlicesWorksheetWriter();
   t.context.apdfRepositoryProvider = new DataRepositoryProvider(null as any);
@@ -74,7 +74,7 @@ test.beforeEach((t) => {
   t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.campaign = {
     _id: 458,
     name: 'IDFM normal',
@@ -105,7 +105,7 @@ test.before((t) => {
     .returns(t.context.workbookWriterMock as excel.stream.xlsx.WorkbookWriter);
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.filenameStub!.restore();
   t.context.filepathStub!.restore();
   t.context.kernelStub!.restore();
@@ -115,7 +115,7 @@ test.afterEach((t) => {
   t.context.workbookWriterStub!.restore();
 });
 
-test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
+it('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
   // Arrange
   const cursorCallback = () => {};
   t.context.getPolicyCursorStub!.returns(cursorCallback);
@@ -182,11 +182,11 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
-  t.is(filename, t.context.filename!);
-  t.is(filepath, t.context.filepath!);
+  assertEquals(filename, t.context.filename!);
+  assertEquals(filepath, t.context.filepath!);
 });
 
-test('BuildExcel: should call stream data and return filepath even if create slice error occurs', async (t) => {
+it('BuildExcel: should call stream data and return filepath even if create slice error occurs', async (t) => {
   // Arrange
   const cursorCallback = () => {};
   t.context.getPolicyCursorStub!.returns(cursorCallback);
@@ -253,11 +253,11 @@ test('BuildExcel: should call stream data and return filepath even if create sli
   );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
-  t.is(filename, t.context.filename!);
-  t.is(filepath, t.context.filepath!);
+  assertEquals(filename, t.context.filename!);
+  assertEquals(filepath, t.context.filepath!);
 });
 
-test('BuildExcel: should call stream data and return excel filepath without slices', async (t) => {
+it('BuildExcel: should call stream data and return excel filepath without slices', async (t) => {
   // Arrange
   t.context.campaign = { ...t.context.campaign!, params: { slices: [] } };
 
@@ -319,6 +319,6 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);
-  t.is(filename, t.context.filename!);
-  t.is(filepath, t.context.filepath!);
+  assertEquals(filename, t.context.filename!);
+  assertEquals(filepath, t.context.filepath!);
 });

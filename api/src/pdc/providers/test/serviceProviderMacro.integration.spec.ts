@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { serviceProvider as serviceProviderDecorator } from '@/ilos/common/index.ts';
 import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
 
@@ -16,18 +16,18 @@ const { before, after, boot } = serviceProviderMacro<CustomInterface>(ServicePro
 
 const test = anyTest as TestFn<CustomInterface & ServiceProviderMacroContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const { kernel } = await before();
   t.context.kernel = kernel;
   t.context.hi = 'you';
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await after({ kernel: t.context.kernel });
 });
 
-test(boot);
+it(boot);
 
-test('should preserve context type and before hook', (t) => {
-  t.is(t.context.hi, 'you');
+it('should preserve context type and before hook', (t) => {
+  assertEquals(t.context.hi, 'you');
 });

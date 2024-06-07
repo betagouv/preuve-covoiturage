@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { CarpoolRepository } from './CarpoolRepository.ts';
 import { insertableCarpool } from '../mocks/database/carpool.ts';
@@ -17,7 +17,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new CarpoolRequestRepository(t.context.db.connection);
@@ -30,7 +30,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should save create request', async (t) => {
+it('Should save create request', async (t) => {
   const data = { ...insertableCarpoolCreateRequest, carpool_id: t.context.carpool_id };
 
   await t.context.repository.save(data);
@@ -39,10 +39,10 @@ test.serial('Should save create request', async (t) => {
     WHERE carpool_id = ${t.context.carpool_id}
   `);
 
-  t.deepEqual(result.rows.pop(), data);
+  assertObjectMatch(result.rows.pop(), data);
 });
 
-test.serial('Should save cancel request', async (t) => {
+it('Should save cancel request', async (t) => {
   const data = { ...insertableCarpoolCancelRequest, carpool_id: t.context.carpool_id };
 
   await t.context.repository.save(data);
@@ -52,5 +52,5 @@ test.serial('Should save cancel request', async (t) => {
     )}
     WHERE carpool_id = ${t.context.carpool_id} ORDER BY created_at DESC
   `);
-  t.deepEqual(result.rows.pop(), data);
+  assertObjectMatch(result.rows.pop(), data);
 });

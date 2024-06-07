@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces/index.ts';
 import { carpoolV2ToV1StatusConverter } from './carpoolV2ToV1StatusConverter.ts';
 
@@ -108,7 +108,7 @@ const failedFraud: Config = [
 ];
 
 for (const { title, args, expected } of [...pendingFraud, ...passedFraud, ...failedFraud]) {
-  test(title, (t) => {
-    t.is(carpoolV2ToV1StatusConverter(args[0], args[1]), expected);
+  it(title, (t) => {
+    assertEquals(carpoolV2ToV1StatusConverter(args[0], args[1]), expected);
   });
 }

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { httpMacro, HttpMacroContext } from '@/pdc/providers/test/index.ts';
 
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
@@ -19,7 +19,7 @@ function getDb(context: TestContext): PostgresConnection {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const { transport, supertest, request } = await before();
   t.context.transport = transport;
   t.context.supertest = supertest;
@@ -44,7 +44,7 @@ test.after.always(async (t) => {
   await after({ transport, supertest, request });
 });
 
-test.serial('Create a territory', async (t) => {
+it('Create a territory', async (t) => {
   const response = await t.context.request(
     'territory:create',
     {
@@ -70,7 +70,7 @@ test.serial('Create a territory', async (t) => {
       },
     },
   );
-  t.is(response.result.name, name);
+  assertEquals(response.result.name, name);
 
   const dbResult = await getDb(t.context)
     .getClient()
@@ -81,11 +81,11 @@ test.serial('Create a territory', async (t) => {
       values: [name],
     });
 
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
+  assert(dbResult.rowCount >= 1);
+  assertEquals(dbResult.rows[0].name, name);
 });
 
-test.serial('Find a territory', async (t) => {
+it('Find a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -95,8 +95,8 @@ test.serial('Find a territory', async (t) => {
       values: [name],
     });
 
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
+  assert(dbResult.rowCount >= 1);
+  assertEquals(dbResult.rows[0].name, name);
   const _id = dbResult.rows[0]._id;
 
   const response = await t.context.request(
@@ -110,10 +110,10 @@ test.serial('Find a territory', async (t) => {
       },
     },
   );
-  t.is(response.result.name, 'Toto');
+  assertEquals(response.result.name, 'Toto');
 });
 
-test.serial('Update a territory', async (t) => {
+it('Update a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -123,8 +123,8 @@ test.serial('Update a territory', async (t) => {
       values: [name],
     });
 
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
+  assert(dbResult.rowCount >= 1);
+  assertEquals(dbResult.rows[0].name, name);
   const _id = dbResult.rows[0]._id;
 
   const initResponse = await t.context.request(
@@ -138,7 +138,7 @@ test.serial('Update a territory', async (t) => {
       },
     },
   );
-  t.is(initResponse.result.name, name);
+  assertEquals(initResponse.result.name, name);
 
   const updateData = {
     ...initResponse.result,
@@ -154,7 +154,7 @@ test.serial('Update a territory', async (t) => {
     },
   });
 
-  t.is(response.result.selector.com.length, 2);
+  assertEquals(response.result.selector.com.length, 2);
 
   const finalResponse = await t.context.request(
     'territory:find',
@@ -169,10 +169,10 @@ test.serial('Update a territory', async (t) => {
   );
   const { updated_at: u1, ...t1 } = finalResponse.result;
   const { updated_at: u2, ...t2 } = updateData;
-  t.deepEqual(t1, t2);
+  assertObjectMatch(t1, t2);
 });
 
-test.serial('Patch contact on a territory', async (t) => {
+it('Patch contact on a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -181,8 +181,8 @@ test.serial('Patch contact on a territory', async (t) => {
     `,
       values: [name],
     });
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
+  assert(dbResult.rowCount >= 1);
+  assertEquals(dbResult.rows[0].name, name);
   const _id = dbResult.rows[0]._id;
 
   const response = await t.context.request(
@@ -204,11 +204,11 @@ test.serial('Patch contact on a territory', async (t) => {
       },
     },
   );
-  t.is(response.result._id, _id);
-  t.is(response.result.contacts.technical.firstname, 'Nicolas');
+  assertEquals(response.result._id, _id);
+  assertEquals(response.result.contacts.technical.firstname, 'Nicolas');
 });
 
-test.serial('Get authorized codes', async (t) => {
+it('Get authorized codes', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -217,8 +217,8 @@ test.serial('Get authorized codes', async (t) => {
     `,
       values: [name],
     });
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
+  assert(dbResult.rowCount >= 1);
+  assertEquals(dbResult.rows[0].name, name);
   const _id = dbResult.rows[0]._id;
 
   await getDb(t.context)
@@ -245,12 +245,12 @@ test.serial('Get authorized codes', async (t) => {
       },
     },
   );
-  t.true(Array.isArray(response.result.com));
-  t.true(response.result.com.length === 3);
-  t.deepEqual(response.result.com.sort(), ['91377', '91471', '91477']);
+  assert(Array.isArray(response.result.com));
+  assert(response.result.com.length === 3);
+  assertObjectMatch(response.result.com.sort(), ['91377', '91471', '91477']);
 });
 
-test.serial('Lists all territories', async (t) => {
+it('Lists all territories', async (t) => {
   const response = await t.context.request(
     'territory:list',
     {
@@ -264,13 +264,13 @@ test.serial('Lists all territories', async (t) => {
       },
     },
   );
-  t.true('data' in response.result);
-  t.true(Array.isArray(response.result.data));
+  assert('data' in response.result);
+  assert(Array.isArray(response.result.data));
   const territory = response.result.data.filter((r) => r.name === name);
-  t.is(territory.length, 1);
+  assertEquals(territory.length, 1);
 });
 
-test.serial('Lists all geo zones', async (t) => {
+it('Lists all geo zones', async (t) => {
   const response = await t.context.request(
     'territory:listGeo',
     {
@@ -284,10 +284,10 @@ test.serial('Lists all geo zones', async (t) => {
       },
     },
   );
-  t.true('data' in response.result);
-  t.true(Array.isArray(response.result.data));
-  t.is(response.result.data.length, 1);
-  t.is(response.result.meta.pagination.total, 1);
-  t.is(response.result.meta.pagination.offset, 0);
-  t.is(response.result.meta.pagination.limit, 100);
+  assert('data' in response.result);
+  assert(Array.isArray(response.result.data));
+  assertEquals(response.result.data.length, 1);
+  assertEquals(response.result.meta.pagination.total, 1);
+  assertEquals(response.result.meta.pagination.offset, 0);
+  assertEquals(response.result.meta.pagination.limit, 100);
 });

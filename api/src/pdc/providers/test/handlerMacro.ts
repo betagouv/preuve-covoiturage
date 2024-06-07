@@ -81,9 +81,9 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
           await response(result, t);
         } else {
           if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
-            t.like(result, response as Awaited<ActionResult>);
+            assertObjectMatch(result, response as Awaited<ActionResult>);
           } else {
-            t.deepEqual(result, response as Awaited<ActionResult>);
+            assertObjectMatch(result, response as Awaited<ActionResult>);
           }
         }
       } catch (e) {
@@ -113,7 +113,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
           : params;
 
       const kernel = t.context.kernel;
-      const err = await t.throwsAsync<ActionError>(
+      const err = await assertThrows<ActionError>(
         async () =>
           await kernel.call<ActionParams>(`${handlerConfig.service}:${handlerConfig.method}`, finalParams, context),
       );
@@ -121,7 +121,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
       if (typeof message === 'function') {
         await message(err as any, t);
       } else {
-        t.is(err.message, message);
+        assertEquals(err.message, message);
       }
     },
     title,

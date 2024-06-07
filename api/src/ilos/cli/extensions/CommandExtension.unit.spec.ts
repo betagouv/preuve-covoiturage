@@ -1,5 +1,5 @@
-import { anyTest as test } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ServiceProvider as AbstractServiceProvider } from '@/ilos/core/index.ts';
 import { command, serviceProvider as serviceProviderDecorator, ResultType } from '@/ilos/common/index.ts';
 
@@ -38,22 +38,22 @@ function setup() {
   return { serviceProvider, fake };
 }
 
-test('Command "call": should register', async (t) => {
+it('Command "call": should register', async (t) => {
   const { serviceProvider } = setup();
   await serviceProvider.register();
   await serviceProvider.init();
 
   const basicCommand = serviceProvider.getContainer().get(CommandRegistry).commands[0];
-  t.is(basicCommand.name(), 'hello');
-  t.is(basicCommand.description(), 'toto');
+  assertEquals(basicCommand.name(), 'hello');
+  assertEquals(basicCommand.description(), 'toto');
 });
 
-test('Command "call": should work', async (t) => {
+it('Command "call": should work', async (t) => {
   const { serviceProvider, fake } = setup();
   const container = serviceProvider.getContainer();
   await serviceProvider.register();
   await serviceProvider.init();
   const commander = container.get<CommandRegistry>(CommandRegistry);
   commander.parse(['', '', 'hello', 'john']);
-  t.deepEqual(fake.getCalls().pop().args, ['john', {}]);
+  assertObjectMatch(fake.getCalls().pop().args, ['john', {}]);
 });

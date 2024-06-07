@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { env, Extensions } from '@/ilos/core/index.ts';
 import { NotificationMailTransporter } from './NotificationMailTransporter.ts';
 import { AbstractTemplate, HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
@@ -10,7 +10,7 @@ interface TestContext {
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const config = {
     notification: {
       mail: {
@@ -43,11 +43,11 @@ test.before(async (t) => {
   t.context.transporter = transporter;
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.transporter.destroy();
 });
 
-test('should work', async (t) => {
+it('should work', async (t) => {
   class TemplateText extends AbstractTemplate<{ word: string }> {
     static template = 'Hello {{word}}';
   }

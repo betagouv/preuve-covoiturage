@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
@@ -9,19 +9,19 @@ function setup(datetime: Date) {
   return StatelessContext.fromCarpool(1, generateCarpool({ datetime }));
 }
 
-test('should return false if not in list', async (t) => {
+it('should return false if not in list', async (t) => {
   const ctx = setup(new Date('2022-01-01'));
   const res = atDate(ctx, { dates: [] });
-  t.is(res, false);
+  assertEquals(res, false);
 });
 
-test('should return true if in list', async (t) => {
+it('should return true if in list', async (t) => {
   const ctx = setup(new Date('2022-01-01'));
   const res = atDate(ctx, { dates: ['2022-01-01'] });
-  t.is(res, true);
+  assertEquals(res, true);
 });
 
-test('should throw if not an array', async (t) => {
+it('should throw if not an array', async (t) => {
   const ctx = setup(new Date('2022-01-01'));
   t.throws(
     () => {

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { StaticMigrable, State, flow } from '../interfaces/index.ts';
 import { MemoryStateManager } from './index.ts';
 
@@ -14,22 +14,22 @@ const migrable5 = Symbol('5') as unknown as StaticMigrable;
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.state = new MemoryStateManager(new Set([migrable1]));
 });
 
-test.serial('Should get done', (t) => {
+it('Should get done', (t) => {
   const result = t.context.state.get();
-  t.deepEqual(result, new Set([migrable1]));
+  assertObjectMatch(result, new Set([migrable1]));
 });
 
-test.serial('Should plan', (t) => {
+it('Should plan', (t) => {
   t.context.state.plan([migrable2, migrable3, migrable4]);
   const result = t.context.state.get(State.Planned);
-  t.deepEqual(result, new Set([migrable2, migrable3, migrable4]));
+  assertObjectMatch(result, new Set([migrable2, migrable3, migrable4]));
 });
 
-test.serial('Should get todo', (t) => {
+it('Should get todo', (t) => {
   const iter = t.context.state.todo();
   let done = false;
   let i = 0;
@@ -43,59 +43,59 @@ test.serial('Should get todo', (t) => {
       const [migrableCtor, migrableState] = value;
       switch (i) {
         case 1:
-          t.is(migrableCtor, migrable2);
-          t.is(migrableState, State.Planned);
+          assertEquals(migrableCtor, migrable2);
+          assertEquals(migrableState, State.Planned);
           t.context.state.plan([migrable5], migrable2);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 2:
-          t.is(migrableCtor, migrable5);
-          t.is(migrableState, State.Planned);
+          assertEquals(migrableCtor, migrable5);
+          assertEquals(migrableState, State.Planned);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 3:
-          t.is(migrableCtor, migrable3);
-          t.is(migrableState, State.Planned);
+          assertEquals(migrableCtor, migrable3);
+          assertEquals(migrableState, State.Planned);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 4:
-          t.is(migrableCtor, migrable4);
-          t.is(migrableState, State.Planned);
+          assertEquals(migrableCtor, migrable4);
+          assertEquals(migrableState, State.Planned);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 5:
-          t.is(migrableCtor, migrable5);
-          t.is(migrableState, State.Validated);
+          assertEquals(migrableCtor, migrable5);
+          assertEquals(migrableState, State.Validated);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 6:
-          t.is(migrableCtor, migrable2);
-          t.is(migrableState, State.Validated);
+          assertEquals(migrableCtor, migrable2);
+          assertEquals(migrableState, State.Validated);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 7:
-          t.is(migrableCtor, migrable3);
-          t.is(migrableState, State.Validated);
+          assertEquals(migrableCtor, migrable3);
+          assertEquals(migrableState, State.Validated);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 8:
-          t.is(migrableCtor, migrable4);
-          t.is(migrableState, State.Validated);
+          assertEquals(migrableCtor, migrable4);
+          assertEquals(migrableState, State.Validated);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 9:
-          t.is(migrableCtor, migrable5);
-          t.is(migrableState, State.Created);
+          assertEquals(migrableCtor, migrable5);
+          assertEquals(migrableState, State.Created);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 10:
-          t.is(migrableCtor, migrable2);
-          t.is(migrableState, State.Created);
+          assertEquals(migrableCtor, migrable2);
+          assertEquals(migrableState, State.Created);
           t.context.state.set(migrableCtor, flow[flow.indexOf(migrableState) + 1]);
           break;
         case 11:
-          t.is(migrableCtor, migrable3);
-          t.is(migrableState, State.Created);
+          assertEquals(migrableCtor, migrable3);
+          assertEquals(migrableState, State.Created);
           t.context.state.set(migrable3, State.Failed);
           t.context.state.unplanAfter(migrableCtor);
           break;

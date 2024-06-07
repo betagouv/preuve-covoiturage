@@ -3,8 +3,8 @@ import { date, datetz, faker } from '@/deps.ts';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@/ilos/common/index.ts';
 import { uuid } from '@/pdc/providers/test/index.ts';
 import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon,  SinonStub } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper.ts';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface.ts';
 import { CheckCampaign } from '../providers/CheckCampaign.ts';
@@ -42,14 +42,14 @@ interface Context {
 class TR extends DataRepositoryProviderInterfaceResolver {}
 const test = anyTest as TestFn<Context>;
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.START_DATE = new Date('2020-01-08T00:00:00Z');
   t.context.END_DATE = new Date('2020-02-08T00:00:00Z');
   t.context.START_DATE_STRING = t.context.START_DATE.toISOString();
   t.context.END_DATE_STRING = t.context.END_DATE.toISOString();
 });
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.checkCampaign = new CheckCampaign(null as any);
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
@@ -76,12 +76,12 @@ test.beforeEach((t) => {
   t.context.apdfRepositoryStub = sinon.stub(t.context.apdfRepository, 'getPolicyActiveOperators');
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.checkCampaignStub!.restore();
   t.context.s3StorageProviderStub!.restore();
 });
 
-test('ExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
+it('ExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const filename = `campaign-${uuid()}.xlsx`;
@@ -112,14 +112,14 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
   const startDate = datetz.fromZonedTime(date.startOfMonth(date.subMonths(new Date(), 1)), 'Europe/Paris');
   const endDate = datetz.fromZonedTime(date.startOfMonth(new Date()), 'Europe/Paris');
 
-  t.deepEqual(result, [filename]);
+  assertObjectMatch(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub!, campaign._id);
   sinon.assert.called(t.context.s3StorageProviderStub!);
-  t.deepEqual(new Date(t.context.checkCampaignStub!.args[0][1]), startDate);
-  t.deepEqual(new Date(t.context.checkCampaignStub!.args[0][2]), endDate);
+  assertObjectMatch(new Date(t.context.checkCampaignStub!.args[0][1]), startDate);
+  assertObjectMatch(new Date(t.context.checkCampaignStub!.args[0][2]), endDate);
 });
 
-test('ExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
+it('ExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const filename = `campaign-${uuid()}.xlsx`;
@@ -174,10 +174,10 @@ test('ExportAction: should create 1 xlsx file if date range provided and 1 campa
     t.context.START_DATE,
     t.context.END_DATE,
   );
-  t.deepEqual(result, [s3_key]);
+  assertObjectMatch(result, [s3_key]);
 });
 
-test('ExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
+it('ExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const campaign2: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
@@ -227,12 +227,12 @@ test('ExportAction: should create 4 xlsx file if date range provided and 2 campa
     t.context.START_DATE,
     t.context.END_DATE,
   );
-  t.deepEqual(result, expectedFiles);
-  t.is(t.context.checkCampaignStub!.args[0][0], campaign1._id);
-  t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
+  assertObjectMatch(result, expectedFiles);
+  assertEquals(t.context.checkCampaignStub!.args[0][0], campaign1._id);
+  assertEquals(t.context.checkCampaignStub!.args[1][0], campaign2._id);
 });
 
-test('ExportAction: should send error and process other if 1 export failed', async (t) => {
+it('ExportAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
   const campaign2: Campaign = createGetCampaignResult(PolicyStatusEnum.ACTIVE);
@@ -280,10 +280,10 @@ test('ExportAction: should send error and process other if 1 export failed', asy
     t.context.START_DATE,
     t.context.END_DATE,
   );
-  t.deepEqual(
+  assertObjectMatch(
     result.sort(),
     [filename, filename, `[apdf:export] (campaign: ${campaign2.name}, operator_id: 5) Export failed`, filename].sort(),
   );
-  t.is(t.context.checkCampaignStub!.args[0][0], campaign1._id);
-  t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
+  assertEquals(t.context.checkCampaignStub!.args[0][0], campaign1._id);
+  assertEquals(t.context.checkCampaignStub!.args[1][0], campaign2._id);
 });

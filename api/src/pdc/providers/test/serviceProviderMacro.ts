@@ -26,7 +26,7 @@ export function serviceProviderMacro<C = unknown>(
 
   const test = anyTest as TestFn<KernelTestFn>;
 
-  test.before(async (t) => {
+  beforeAll(async (t) => {
     const { kernel } = await before();
     t.context.kernel = kernel;
   });

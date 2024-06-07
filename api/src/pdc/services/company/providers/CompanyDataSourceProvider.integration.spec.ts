@@ -1,11 +1,11 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { NotFoundException } from '@/ilos/common/index.ts';
 
 import { CompanyDataSourceProvider } from './CompanyDataSourceProvider.ts';
 import { Extensions } from '@/ilos/core/index.ts';
 import * as dataSource from '../config/dataSource.ts';
 
-test('should fetch from data source with a siret id', async (t) => {
+it('should fetch from data source with a siret id', async (t) => {
   if (!('APP_INSEE_API_KEY' in process.env) || process.env.APP_INSEE_API_KEY === '') {
     t.pass();
     return;
@@ -17,23 +17,23 @@ test('should fetch from data source with a siret id', async (t) => {
   );
   const data = await provider.find('12000101100010');
 
-  t.is(data.siret, '12000101100010');
-  t.is(data.siren, '120001011');
-  t.is(data.nic, '00010');
-  t.is(data.legal_name, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
-  t.is(data.company_naf_code, '8411Z');
-  t.is(data.establishment_naf_code, '8411Z');
-  t.is(data.legal_nature_code, '7120');
-  // t.is(data.legal_nature_label, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
-  t.is(data.intra_vat, 'FR58120001011');
-  t.is(data.address, '57 RUE DE VARENNE 75007 PARIS 7');
-  // t.is(data.lon, 2.320884);
-  // t.is(data.lat, 48.854634);
-  t.is(data.headquarter, true);
-  t.true(data.updated_at instanceof Date);
+  assertEquals(data.siret, '12000101100010');
+  assertEquals(data.siren, '120001011');
+  assertEquals(data.nic, '00010');
+  assertEquals(data.legal_name, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
+  assertEquals(data.company_naf_code, '8411Z');
+  assertEquals(data.establishment_naf_code, '8411Z');
+  assertEquals(data.legal_nature_code, '7120');
+  // assertEquals(data.legal_nature_label, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
+  assertEquals(data.intra_vat, 'FR58120001011');
+  assertEquals(data.address, '57 RUE DE VARENNE 75007 PARIS 7');
+  // assertEquals(data.lon, 2.320884);
+  // assertEquals(data.lat, 48.854634);
+  assertEquals(data.headquarter, true);
+  assert(data.updated_at instanceof Date);
 });
 
-test('should fail with a wrong siret id', async (t) => {
+it('should fail with a wrong siret id', async (t) => {
   if (!('APP_INSEE_API_KEY' in process.env) || process.env.APP_INSEE_API_KEY === '') {
     t.pass();
     return;
@@ -43,5 +43,5 @@ test('should fail with a wrong siret id', async (t) => {
       dataSource,
     }),
   );
-  await t.throwsAsync<NotFoundException>(async () => provider.find('this_is_not_a_siret'));
+  await assertThrows<NotFoundException>(async () => provider.find('this_is_not_a_siret'));
 });

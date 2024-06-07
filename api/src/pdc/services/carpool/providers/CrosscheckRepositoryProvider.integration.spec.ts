@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { CrosscheckRepositoryProvider } from './CrosscheckRepositoryProvider.ts';
@@ -44,9 +44,9 @@ test.serial.skip('Should get a new uuid', async (t) => {
     identity_uuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
   };
   const uuid = await t.context.repository.getTripId(data);
-  t.is(typeof uuid, 'string');
+  assertEquals(typeof uuid, 'string');
 
   const uuid2 = await t.context.repository.getTripId(data);
-  t.is(typeof uuid2, 'string');
+  assertEquals(typeof uuid2, 'string');
   t.not(uuid, uuid2);
 });

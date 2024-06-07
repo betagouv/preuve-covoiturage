@@ -1,5 +1,5 @@
 import { ContextType, ParamsType, ResultType } from '@/ilos/common/index.ts';
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CopyFromContextMiddleware } from './CopyFromContextMiddleware.ts';
 
 const middleware = new CopyFromContextMiddleware();
@@ -27,18 +27,18 @@ const nextReturnNewParams: Function = (newParams, context) => {
   return newParams;
 };
 
-test('Copy from context middleware: should not copy territory context if params set and preserve true', async (t) => {
+it('Copy from context middleware: should not copy territory context if params set and preserve true', async (t) => {
   const mappings: [string, string, boolean] = ['call.user.territory_id', 'territory_id', true];
   const { context } = callFactory();
 
   const params = { territory_id: [41, 42] };
-  t.deepEqual(await middleware.process(params, context, nextReturnNewParams, mappings), params);
+  assertObjectMatch(await middleware.process(params, context, nextReturnNewParams, mappings), params);
 });
 
-test('Copy from context middleware: should copy territory context if params not set or empty', async (t) => {
+it('Copy from context middleware: should copy territory context if params not set or empty', async (t) => {
   const mappings: [string, string, boolean] = ['call.user.territory_id', 'territory_id', true];
   const { context } = callFactory();
 
   const params = {};
-  t.deepEqual(await middleware.process(params, context, nextReturnNewParams, mappings), { territory_id: TERRITORY_ID });
+  assertObjectMatch(await middleware.process(params, context, nextReturnNewParams, mappings), { territory_id: TERRITORY_ID });
 });

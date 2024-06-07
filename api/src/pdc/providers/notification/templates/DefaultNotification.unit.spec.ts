@@ -1,5 +1,5 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Extensions } from '@/ilos/core/index.ts';
 import { HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
 import { Mail } from "@/deps.ts";
@@ -18,7 +18,7 @@ interface TestContext {
 
 const test = anyTest as TestFn<TestContext>;
 
-test.beforeEach(async (t) => {
+beforeEach(async (t) => {
   class NotificationOverride extends NotificationMailTransporter {
     async init() {
       super.setOptionsFromConfig();
@@ -51,7 +51,7 @@ test.beforeEach(async (t) => {
   t.context.transporter = transporter;
 });
 
-test('should work', async (t) => {
+it('should work', async (t) => {
   const sendTo = 'toto <toto@example.com>';
   const sendMessage = 'Tout va bien.';
   const notification = new DefaultNotification(sendTo, {
@@ -60,21 +60,21 @@ test('should work', async (t) => {
   const notificationCtor = notification.constructor as StaticMailTemplateNotificationInterface;
 
   await t.context.transporter.send(notification);
-  t.true(t.context.stub.sendMail.calledOnce);
+  assert(t.context.stub.sendMail.calledOnce);
   const { text, html, subject, to } = t.context.stub.sendMail.getCall(0).args[0];
-  t.is(subject, notificationCtor.subject);
-  t.is(to, sendTo);
-  t.true((text as string).search(sendMessage) > -1);
-  t.true((html as string).search(sendMessage) > -1);
+  assertEquals(subject, notificationCtor.subject);
+  assertEquals(to, sendTo);
+  assert((text as string).search(sendMessage) > -1);
+  assert((html as string).search(sendMessage) > -1);
 
-  t.true((text as string).search('https://covoiturage.beta.gouv.fr') > -1);
-  t.true((html as string).search('https://covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search('https://covoiturage.beta.gouv.fr') > -1);
+  assert((html as string).search('https://covoiturage.beta.gouv.fr') > -1);
 
-  t.true((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
-  t.true((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
 });
 
-test('should work with overriding', async (t) => {
+it('should work with overriding', async (t) => {
   class TestNotification extends DefaultNotification {
     constructor(to: string, data: Partial<DefaultTemplateData>) {
       super(to, {
@@ -91,18 +91,18 @@ test('should work with overriding', async (t) => {
   const notificationCtor = notification.constructor as StaticMailTemplateNotificationInterface;
 
   await t.context.transporter.send(notification);
-  t.true(t.context.stub.sendMail.calledOnce);
+  assert(t.context.stub.sendMail.calledOnce);
   const { text, html, subject, to } = t.context.stub.sendMail.getCall(0).args[0];
-  t.is(subject, notificationCtor.subject);
+  assertEquals(subject, notificationCtor.subject);
 
-  t.is(to, sendTo);
+  assertEquals(to, sendTo);
 
-  t.true((text as string).search(sendMessage) > -1);
-  t.true((html as string).search(sendMessage) > -1);
+  assert((text as string).search(sendMessage) > -1);
+  assert((html as string).search(sendMessage) > -1);
 
-  t.true((text as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
-  t.true((html as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
+  assert((html as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
 
-  t.true((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
-  t.true((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
 });

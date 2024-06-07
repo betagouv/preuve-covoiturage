@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import {
   handler,
   provider,
@@ -14,7 +14,7 @@ import { Action } from './Action.ts';
 
 const defaultContext = { channel: { service: '' } };
 
-test('ServiceProvider: should register handler', async (t) => {
+it('ServiceProvider: should register handler', async (t) => {
   @handler({
     service: 'test',
     method: 'add',
@@ -41,7 +41,7 @@ test('ServiceProvider: should register handler', async (t) => {
   await sp.init();
 
   const container = sp.getContainer();
-  t.is(
+  assertEquals(
     await container.getHandler({ service: 'test', method: 'add' })({
       params: {},
       context: defaultContext,
@@ -51,7 +51,7 @@ test('ServiceProvider: should register handler', async (t) => {
   );
 });
 
-test('ServiceProvider: should register handler with extension', async (t) => {
+it('ServiceProvider: should register handler with extension', async (t) => {
   abstract class TestResolver {
     hello(name) {
       throw new Error();
@@ -98,10 +98,10 @@ test('ServiceProvider: should register handler with extension', async (t) => {
   const container = sp.getContainer();
   const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
   const response = await handlerInstance({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
-  t.is(response, 'Hello Sam');
+  assertEquals(response, 'Hello Sam');
 });
 
-test('ServiceProvider: should register handler with alias and nested service providers', async (t) => {
+it('ServiceProvider: should register handler with alias and nested service providers', async (t) => {
   abstract class TestResolver {
     hello(name) {
       throw new Error();
@@ -179,7 +179,7 @@ test('ServiceProvider: should register handler with alias and nested service pro
   const container = sp.getContainer();
   const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
   const response = await handlerInstance({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
-  t.is(response, 'Hello Sam');
+  assertEquals(response, 'Hello Sam');
 
   const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
   const responseTwo = await handlerTwoInstance({
@@ -187,12 +187,12 @@ test('ServiceProvider: should register handler with alias and nested service pro
     params: { add: [21, 21] },
     context: defaultContext,
   });
-  t.is(responseTwo, 'Hello 42');
+  assertEquals(responseTwo, 'Hello 42');
 
   const responseTwoBis = await handlerTwoInstance({
     method: 'fake',
     params: { add: [21, 21] },
     context: defaultContext,
   });
-  t.is(responseTwoBis, 'Hi 42');
+  assertEquals(responseTwoBis, 'Hi 42');
 });

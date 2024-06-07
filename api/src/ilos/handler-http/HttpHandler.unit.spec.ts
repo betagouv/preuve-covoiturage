@@ -1,4 +1,4 @@
-import { anyTest as test, nock } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { httpHandlerFactory } from './helpers/httpHandlerFactory.ts';
 
@@ -38,14 +38,14 @@ function setup(
   };
 }
 
-test.afterEach(() => {
+afterEach(() => {
   nock.cleanAll();
 });
 
-test.serial('Http handler: works', async (t) => {
+it('Http handler: works', async (t) => {
   t.plan(3);
   const { call } = setup(function (_, req) {
-    t.deepEqual(req, {
+    assertObjectMatch(req, {
       id: 1,
       jsonrpc: '2.0',
       method: 'service@latest:method',
@@ -56,8 +56,8 @@ test.serial('Http handler: works', async (t) => {
         },
       },
     });
-    t.is(this.req.headers.accept, 'application/json');
-    t.is(this.req.headers['content-type'], 'application/json');
+    assertEquals(this.req.headers.accept, 'application/json');
+    assertEquals(this.req.headers['content-type'], 'application/json');
     return [
       200,
       {
@@ -75,7 +75,7 @@ test.serial('Http handler: works', async (t) => {
   await call();
 });
 
-test.serial('throw error on status code error', async (t) => {
+it('throw error on status code error', async (t) => {
   const { call } = setup(() => [
     500,
     {
@@ -89,11 +89,11 @@ test.serial('throw error on status code error', async (t) => {
     },
   ]);
 
-  const err = await t.throwsAsync<Error>(async () => call());
-  t.is(err.message, 'An error occured');
+  const err = await assertThrows<Error>(async () => call());
+  assertEquals(err.message, 'An error occured');
 });
 
-test.serial('throw error on object error', async (t) => {
+it('throw error on object error', async (t) => {
   const { call } = setup(() => [
     200,
     {
@@ -107,6 +107,6 @@ test.serial('throw error on object error', async (t) => {
     },
   ]);
 
-  const err = await t.throwsAsync<Error>(async () => call());
-  t.is(err.message, 'wrong!');
+  const err = await assertThrows<Error>(async () => call());
+  assertEquals(err.message, 'wrong!');
 });

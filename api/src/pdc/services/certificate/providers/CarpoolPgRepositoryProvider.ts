@@ -57,7 +57,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(
+          GREAit(
             COALESCE(meta_payments.sum, 0)::int,
             payment
           ) AS payment
@@ -83,7 +83,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(
+          GREAit(
             COALESCE(meta_payments.sum, 0)::int,
             payment
           ) AS payment

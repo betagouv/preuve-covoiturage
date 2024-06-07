@@ -1,5 +1,5 @@
-import { anyTest as test } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { Kernel } from '@/ilos/core/index.ts';
 import {
@@ -46,7 +46,7 @@ function setup() {
   return { kernel };
 }
 
-test('Cli transport: should work', async (t) => {
+it('Cli transport: should work', async (t) => {
   t.plan(1);
   const { kernel } = setup();
   await kernel.bootstrap();
@@ -54,7 +54,7 @@ test('Cli transport: should work', async (t) => {
   const container = kernel.getContainer();
   const commander = container.get<CommandRegistry>(CommandRegistry);
   sinon.stub(commander, 'output').callsFake((...args: any[]) => {
-    t.is(args[0], 'Hello john');
+    assertEquals(args[0], 'Hello john');
   });
   container.unbind(CommandRegistry);
   container.bind(CommandRegistry).toConstantValue(commander);

@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import {
   injectable,
   extension,
@@ -57,7 +57,7 @@ function setup() {
   };
 }
 
-test('Extension registry: register extension', async (t) => {
+it('Extension registry: register extension', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
     name: 'hello',
@@ -69,11 +69,11 @@ test('Extension registry: register extension', async (t) => {
 
   const [extensionRegistry] = createExtensionRegistry([extension1, extension2], {});
   const extensions = extensionRegistry.all();
-  t.true(Array.isArray(extensions));
-  t.is(extensions.length, 2);
+  assert(Array.isArray(extensions));
+  assertEquals(extensions.length, 2);
 });
 
-test('Extension registry: override extension', async (t) => {
+it('Extension registry: override extension', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const extension2 = createExtension({
     name: 'world',
@@ -87,12 +87,12 @@ test('Extension registry: override extension', async (t) => {
 
   const [extensionRegistry] = createExtensionRegistry([extension2, extension2bis], {});
   const extensions = extensionRegistry.all();
-  t.true(Array.isArray(extensions));
-  t.is(extensions.length, 1);
-  t.is(extensions[0].autoload, true);
+  assert(Array.isArray(extensions));
+  assertEquals(extensions.length, 1);
+  assertEquals(extensions[0].autoload, true);
 });
 
-test('Extension registry: get appliable', async (t) => {
+it('Extension registry: get appliable', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
     name: 'hello',
@@ -113,12 +113,12 @@ test('Extension registry: get appliable', async (t) => {
   });
 
   const extensions = extensionRegistry.get();
-  t.true(Array.isArray(extensions));
-  t.is(extensions.length, 2);
-  t.is(extensions.find((cfg) => cfg.name === 'world').autoload, true);
+  assert(Array.isArray(extensions));
+  assertEquals(extensions.length, 2);
+  assertEquals(extensions.find((cfg) => cfg.name === 'world').autoload, true);
 });
 
-test('Extension registry: get ordered', async (t) => {
+it('Extension registry: get ordered', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
     name: 'hello',
@@ -140,13 +140,13 @@ test('Extension registry: get ordered', async (t) => {
   });
 
   const extensions = extensionRegistry.get();
-  t.true(Array.isArray(extensions));
-  t.is(extensions.length, 2);
-  t.is(extensions[0].name, 'hello');
-  t.is(extensions[1].name, 'world');
+  assert(Array.isArray(extensions));
+  assertEquals(extensions.length, 2);
+  assertEquals(extensions[0].name, 'hello');
+  assertEquals(extensions[1].name, 'world');
 });
 
-test('Extension registry: get complex ordered', async (t) => {
+it('Extension registry: get complex ordered', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const ext6 = createExtension({
     name: 'six',
@@ -183,15 +183,15 @@ test('Extension registry: get complex ordered', async (t) => {
   });
 
   const extensions = extensionRegistry.get();
-  t.true(Array.isArray(extensions));
-  t.is(extensions.length, 6);
-  t.deepEqual(
+  assert(Array.isArray(extensions));
+  assertEquals(extensions.length, 6);
+  assertObjectMatch(
     extensions.map((e) => e.name),
     ['six', 'five', 'one', 'two', 'four', 'three'],
   );
 });
 
-test('Extension registry: apply extension', async (t) => {
+it('Extension registry: apply extension', async (t) => {
   const { Registry, createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
     name: 'hello',
@@ -216,10 +216,10 @@ test('Extension registry: apply extension', async (t) => {
   serviceProvider.bind(Registry, 'registry');
   await serviceProvider.init();
   const registry = [...serviceProvider.get<any>('registry').db];
-  t.true(Array.isArray(registry));
-  t.is(registry.length, 2);
-  t.is(registry[0].config.name, 'hello');
-  t.is(registry[0].data, true);
-  t.is(registry[1].config.name, 'world');
-  t.is(registry[1].data, undefined);
+  assert(Array.isArray(registry));
+  assertEquals(registry.length, 2);
+  assertEquals(registry[0].config.name, 'hello');
+  assertEquals(registry[0].data, true);
+  assertEquals(registry[1].config.name, 'world');
+  assertEquals(registry[1].data, undefined);
 });

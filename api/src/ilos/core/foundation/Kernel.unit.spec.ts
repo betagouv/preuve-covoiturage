@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import {
   ProviderInterface,
   ResultType,
@@ -94,7 +94,7 @@ async function setup() {
     kernel,
   };
 }
-test('Kernel: should work with single call', async (t) => {
+it('Kernel: should work with single call', async (t) => {
   const { kernel } = await setup();
 
   const response = await kernel.handle({
@@ -105,14 +105,14 @@ test('Kernel: should work with single call', async (t) => {
       add: [1, 2],
     },
   });
-  t.deepEqual(response, {
+  assertObjectMatch(response, {
     jsonrpc: '2.0',
     id: 1,
     result: 'Hello 3',
   });
 });
 
-test('Kernel: should work with a batch', async (t) => {
+it('Kernel: should work with a batch', async (t) => {
   const { kernel } = await setup();
   const response = await kernel.handle([
     {
@@ -132,7 +132,7 @@ test('Kernel: should work with a batch', async (t) => {
       },
     },
   ]);
-  t.deepEqual(response, [
+  assertObjectMatch(response, [
     {
       jsonrpc: '2.0',
       id: 1,
@@ -146,7 +146,7 @@ test('Kernel: should work with a batch', async (t) => {
   ]);
 });
 
-test('Kernel: should return an error if service is unknown', async (t) => {
+it('Kernel: should return an error if service is unknown', async (t) => {
   const { kernel } = await setup();
   const response = await kernel.handle({
     jsonrpc: '2.0',
@@ -156,7 +156,7 @@ test('Kernel: should return an error if service is unknown', async (t) => {
       add: [1, 2],
     },
   });
-  t.deepEqual(response, {
+  assertObjectMatch(response, {
     jsonrpc: '2.0',
     id: 1,
     error: {
@@ -167,7 +167,7 @@ test('Kernel: should return an error if service is unknown', async (t) => {
   });
 });
 
-test('Kernel: should return an error if method throw an error', async (t) => {
+it('Kernel: should return an error if method throw an error', async (t) => {
   const { kernel } = await setup();
   const response = await kernel.handle({
     jsonrpc: '2.0',
@@ -175,7 +175,7 @@ test('Kernel: should return an error if method throw an error', async (t) => {
     method: 'math:add',
     params: {},
   });
-  t.deepEqual(response, {
+  assertObjectMatch(response, {
     jsonrpc: '2.0',
     id: 1,
     error: {
@@ -186,7 +186,7 @@ test('Kernel: should return an error if method throw an error', async (t) => {
   });
 });
 
-test('Kernel: should work with contexted call', async (t) => {
+it('Kernel: should work with contexted call', async (t) => {
   const { kernel } = await setup();
   await kernel.bootstrap();
   const response = await kernel.handle({
@@ -209,14 +209,14 @@ test('Kernel: should work with contexted call', async (t) => {
       },
     },
   });
-  t.deepEqual(response, {
+  assertObjectMatch(response, {
     jsonrpc: '2.0',
     id: 1,
     result: 'Hello Jon from Nicolas',
   });
 });
 
-test('Kernel: should work with notify call', async (t) => {
+it('Kernel: should work with notify call', async (t) => {
   const { kernel } = await setup();
 
   const response = await kernel.handle({
@@ -238,5 +238,5 @@ test('Kernel: should work with notify call', async (t) => {
       },
     },
   });
-  t.is(response, undefined);
+  assertEquals(response, undefined);
 });

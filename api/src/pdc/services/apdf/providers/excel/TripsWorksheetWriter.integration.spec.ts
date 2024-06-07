@@ -1,5 +1,5 @@
 import { faker, excel } from '@/deps.ts';
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface.ts';
 import { BuildExcel } from './BuildExcel.ts';
 import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
@@ -35,11 +35,11 @@ const exportTripInterface: APDFTripInterface = {
   start_location: faker.location.city(),
 };
 
-test.before((t) => {
+beforeAll((t) => {
   dataWorkBookWriter = new TripsWorksheetWriter();
 });
 
-test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
+it('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   // Arrange
   const tripCursor = new Promise<APDFTripInterface[]>((resolve, reject) => {
     resolve([
@@ -78,16 +78,16 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   // Assert
   const workbook: excel.Workbook = await new excel.Workbook().xlsx.readFile(filepath);
   const worksheet: excel.Worksheet = workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME);
-  t.is(worksheet.actualRowCount, 21);
-  t.deepEqual<excel.Row['values'], excel.Row['values']>(
+  assertEquals(worksheet.actualRowCount, 21);
+  assertObjectMatch<excel.Row['values'], excel.Row['values']>(
     sortRowValues(workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(1).values),
     [undefined, ...Object.keys(exportTripInterface)].sort(),
   );
-  t.is(
+  assertEquals(
     workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).values.length,
     Object.keys(exportTripInterface).length + 1,
   );
-  t.is(
+  assertEquals(
     workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).getCell(1).value,
     exportTripInterface.rpc_journey_id,
   );

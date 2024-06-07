@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { applyLimitOnStatefulStage, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers/index.ts';
 import { process } from '../tests/macro.ts';
 import {
@@ -31,21 +31,21 @@ class TestHandler implements PolicyHandlerInterface {
   }
 }
 
-test(
+it(
   'should work if class C',
   process,
   { handler: new TestHandler(), carpool: [{ distance: 1000 }, { distance: 2000 }], meta: [] },
   { incentive: [10, 20], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 30 }] },
 );
 
-test(
+it(
   'should work if not class C',
   process,
   { handler: new TestHandler(), carpool: [{ distance: 1000, operator_class: 'B' }], meta: [] },
   { incentive: [0], meta: [] },
 );
 
-test(
+it(
   'should work with initial meta',
   process,
   {
@@ -56,7 +56,7 @@ test(
   { incentive: [50], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 2000 }] },
 );
 
-test(
+it(
   'should work with dates',
   process,
   {
@@ -99,7 +99,7 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
   }
 }
 
-test(
+it(
   'should use constructor max amount',
   process,
   {

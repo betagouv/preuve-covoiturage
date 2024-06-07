@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { TimestampedOperators, getOperatorsAt } from './getOperatorsAt.ts';
 
@@ -19,22 +19,22 @@ const list: TimestampedOperators = [
   },
 ];
 
-test('missing operators returns empty array', (t) => {
-  t.deepEqual(getOperatorsAt(undefined), []);
+it('missing operators returns empty array', (t) => {
+  assertObjectMatch(getOperatorsAt(undefined), []);
 });
 
-test('missing operators property returns empty array', (t) => {
+it('missing operators property returns empty array', (t) => {
   // @ts-expect-error
-  t.deepEqual(getOperatorsAt([{ date: new Date() }]), []);
+  assertObjectMatch(getOperatorsAt([{ date: new Date() }]), []);
 });
 
-test('missing date property returns empty array', (t) => {
+it('missing date property returns empty array', (t) => {
   // @ts-expect-error
-  t.deepEqual(getOperatorsAt([{ operators: [] }]), []);
+  assertObjectMatch(getOperatorsAt([{ operators: [] }]), []);
 });
 
-test('should return the last operators if no datetime is provided', (t) => {
-  t.deepEqual(getOperatorsAt(list), [
+it('should return the last operators if no datetime is provided', (t) => {
+  assertObjectMatch(getOperatorsAt(list), [
     OperatorsEnum.KAROS,
     OperatorsEnum.MOBICOOP,
     OperatorsEnum.BLABLACAR_DAILY,
@@ -42,16 +42,16 @@ test('should return the last operators if no datetime is provided', (t) => {
   ]);
 });
 
-test('should return Karos only if datetime is before 16/10/2023', (t) => {
-  t.deepEqual(getOperatorsAt(list, new Date('2023-10-15')), [OperatorsEnum.KAROS]);
+it('should return Karos only if datetime is before 16/10/2023', (t) => {
+  assertObjectMatch(getOperatorsAt(list, new Date('2023-10-15')), [OperatorsEnum.KAROS]);
 });
 
-test('should return Karos and Mobicoop if datetime is after 16/10/2023', (t) => {
-  t.deepEqual(getOperatorsAt(list, new Date('2023-10-17')), [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP]);
+it('should return Karos and Mobicoop if datetime is after 16/10/2023', (t) => {
+  assertObjectMatch(getOperatorsAt(list, new Date('2023-10-17')), [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP]);
 });
 
-test('should return all operators if datetime is after 22/12/2023', (t) => {
-  t.deepEqual(getOperatorsAt(list, new Date('2023-12-23')), [
+it('should return all operators if datetime is after 22/12/2023', (t) => {
+  assertObjectMatch(getOperatorsAt(list, new Date('2023-12-23')), [
     OperatorsEnum.KAROS,
     OperatorsEnum.MOBICOOP,
     OperatorsEnum.BLABLACAR_DAILY,
@@ -59,7 +59,7 @@ test('should return all operators if datetime is after 22/12/2023', (t) => {
   ]);
 });
 
-test('should sort operators in chronological order: sorted', (t) => {
+it('should sort operators in chronological order: sorted', (t) => {
   const list: TimestampedOperators = [
     {
       date: new Date('2023-01-01T00:00:00+0100'),
@@ -76,10 +76,10 @@ test('should sort operators in chronological order: sorted', (t) => {
   ];
 
   const sorted = getOperatorsAt(list);
-  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
+  assertObjectMatch([OperatorsEnum.BLABLACAR_DAILY], sorted);
 });
 
-test('should sort operators in chronological order: reverse', (t) => {
+it('should sort operators in chronological order: reverse', (t) => {
   const list: TimestampedOperators = [
     {
       date: new Date('2023-03-01T00:00:00+0100'),
@@ -96,10 +96,10 @@ test('should sort operators in chronological order: reverse', (t) => {
   ];
 
   const sorted = getOperatorsAt(list);
-  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
+  assertObjectMatch([OperatorsEnum.BLABLACAR_DAILY], sorted);
 });
 
-test('should sort operators in chronological order: random', (t) => {
+it('should sort operators in chronological order: random', (t) => {
   const list: TimestampedOperators = [
     {
       date: new Date('2023-03-01T00:00:00+0100'),
@@ -120,5 +120,5 @@ test('should sort operators in chronological order: random', (t) => {
   ];
 
   const sorted = getOperatorsAt(list);
-  t.deepEqual([OperatorsEnum.BLABLACAR_DAILY], sorted);
+  assertObjectMatch([OperatorsEnum.BLABLACAR_DAILY], sorted);
 });

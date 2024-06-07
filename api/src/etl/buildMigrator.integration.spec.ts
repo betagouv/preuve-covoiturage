@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Pool } from '@/deps.ts';
 import { buildMigrator } from './buildMigrator.ts';
 import { Migrator } from './Migrator.ts';
@@ -50,7 +50,7 @@ interface TestContext {
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.connection = createPool();
   t.context.migrator = buildMigrator(config);
   await t.context.migrator.prepare();
@@ -69,362 +69,362 @@ test.after.always(async (t) => {
     `);
   }
 });
-test.serial('should create com_evolution table', async (t) => {
+it('should create com_evolution table', async (t) => {
   await t.context.migrator.process(CreateComEvolutionTable, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM com_evolution`);
-  t.is(count.rows[0].count, '0');
+  assertEquals(count.rows[0].count, '0');
 });
 
-test.serial('should do migration InseeMvtcom2021', async (t) => {
+it('should do migration InseeMvtcom2021', async (t) => {
   await t.context.migrator.process(InseeMvtcom2021, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM com_evolution where year = 2021`);
-  t.is(count.rows[0].count, '638');
+  assertEquals(count.rows[0].count, '638');
 });
 
-test.serial('should do migration InseeMvtcom2022', async (t) => {
+it('should do migration InseeMvtcom2022', async (t) => {
   await t.context.migrator.process(InseeMvtcom2022, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM com_evolution where year = 2022`);
-  t.is(count.rows[0].count, '638');
+  assertEquals(count.rows[0].count, '638');
 });
 
-test.serial('should do migration InseeMvtcom2023', async (t) => {
+it('should do migration InseeMvtcom2023', async (t) => {
   await t.context.migrator.process(InseeMvtcom2023, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM com_evolution where year = 2023`);
-  t.is(count.rows[0].count, '638');
+  assertEquals(count.rows[0].count, '638');
 });
 
-test.serial('should create perimeters table', async (t) => {
+it('should create perimeters table', async (t) => {
   await t.context.migrator.process(CreateGeoTable, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters`);
-  t.is(count.rows[0].count, '0');
+  assertEquals(count.rows[0].count, '0');
 });
 
-test.serial('should do migration IgnAe2019', async (t) => {
+it('should do migration IgnAe2019', async (t) => {
   await t.context.migrator.process(IgnAe2019, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr asc limit 1`);
-  t.is(first.rows[0].arr, '01001');
-  t.is(first.rows[0].pop, 767);
+  assertEquals(first.rows[0].arr, '01001');
+  assertEquals(first.rows[0].pop, 767);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr desc limit 1`);
-  t.is(last.rows[0].arr, '97617');
-  t.is(last.rows[0].pop, 13934);
+  assertEquals(last.rows[0].arr, '97617');
+  assertEquals(last.rows[0].pop, 13934);
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters where year = 2019`);
-  t.is(count.rows[0].count, '35015');
+  assertEquals(count.rows[0].count, '35015');
 });
 
-test.serial('should do migration IgnAe2020', async (t) => {
+it('should do migration IgnAe2020', async (t) => {
   await t.context.migrator.process(IgnAe2020, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr asc limit 1`);
-  t.is(first.rows[0].arr, '01001');
-  t.is(first.rows[0].pop, 776);
+  assertEquals(first.rows[0].arr, '01001');
+  assertEquals(first.rows[0].pop, 776);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr desc limit 1`);
-  t.is(last.rows[0].arr, '97617');
-  t.is(last.rows[0].pop, 13934);
+  assertEquals(last.rows[0].arr, '97617');
+  assertEquals(last.rows[0].pop, 13934);
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters where year = 2020`);
-  t.is(count.rows[0].count, '35013');
+  assertEquals(count.rows[0].count, '35013');
 });
 
-test.serial('should do migration IgnAe2021', async (t) => {
+it('should do migration IgnAe2021', async (t) => {
   await t.context.migrator.process(IgnAe2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].arr, '01001');
-  t.is(first.rows[0].pop, 771);
+  assertEquals(first.rows[0].arr, '01001');
+  assertEquals(first.rows[0].pop, 771);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].arr, '97617');
-  t.is(last.rows[0].pop, 13934);
+  assertEquals(last.rows[0].arr, '97617');
+  assertEquals(last.rows[0].pop, 13934);
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters where year = 2021`);
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration IgnAe2022', async (t) => {
+it('should do migration IgnAe2022', async (t) => {
   await t.context.migrator.process(IgnAe2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].arr, '01001');
-  t.is(first.rows[0].pop, 771);
+  assertEquals(first.rows[0].arr, '01001');
+  assertEquals(first.rows[0].pop, 771);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].arr, '97617');
-  t.is(last.rows[0].pop, 13934);
+  assertEquals(last.rows[0].arr, '97617');
+  assertEquals(last.rows[0].pop, 13934);
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters where year = 2022`);
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration IgnAe2023', async (t) => {
+it('should do migration IgnAe2023', async (t) => {
   await t.context.migrator.process(IgnAe2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].arr, '01001');
-  t.is(first.rows[0].pop, 771);
+  assertEquals(first.rows[0].arr, '01001');
+  assertEquals(first.rows[0].pop, 771);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].arr, '97617');
-  t.is(last.rows[0].pop, 13934);
+  assertEquals(last.rows[0].arr, '97617');
+  assertEquals(last.rows[0].pop, 13934);
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters where year = 2023`);
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration EurostatCountries2020', async (t) => {
+it('should do migration EurostatCountries2020', async (t) => {
   await t.context.migrator.process(EurostatCountries2020, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM eurostat_countries_2020`);
-  t.is(count.rows[0].count, '257');
+  assertEquals(count.rows[0].count, '257');
 });
 
-test.serial('should do migration EurostatSimplifiedCountries2020', async (t) => {
+it('should do migration EurostatSimplifiedCountries2020', async (t) => {
   await t.context.migrator.process(EurostatSimplifiedCountries2020, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(*) FROM eurostat_simplified_countries_2020`);
-  t.is(count.rows[0].count, '257');
+  assertEquals(count.rows[0].count, '257');
 });
 
-test.serial('should do migration InseePays2021', async (t) => {
+it('should do migration InseePays2021', async (t) => {
   await t.context.migrator.process(InseePays2021, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(distinct country) 
   FROM public.perimeters where year = 2021`);
-  t.is(count.rows[0].count, '208');
+  assertEquals(count.rows[0].count, '208');
 });
 
-test.serial('should do migration InseePays2022', async (t) => {
+it('should do migration InseePays2022', async (t) => {
   await t.context.migrator.process(InseePays2022, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(distinct country) FROM public.perimeters 
   where year = 2022`);
-  t.is(count.rows[0].count, '208');
+  assertEquals(count.rows[0].count, '208');
 });
 
-test.serial('should do migration InseePays2023', async (t) => {
+it('should do migration InseePays2023', async (t) => {
   await t.context.migrator.process(InseePays2023, new MemoryStateManager());
   const count = await t.context.connection.query(`SELECT count(distinct country) FROM public.perimeters 
   where year = 2023`);
-  t.is(count.rows[0].count, '208');
+  assertEquals(count.rows[0].count, '208');
 });
 
-test.serial('should do migration Inseecom2021', async (t) => {
+it('should do migration Inseecom2021', async (t) => {
   await t.context.migrator.process(InseeCom2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where arr='75101' 
   and year=2021 order by arr asc limit 1`);
-  t.is(first.rows[0].com, '75056');
+  assertEquals(first.rows[0].com, '75056');
 });
 
-test.serial('should do migration Inseecom2022', async (t) => {
+it('should do migration Inseecom2022', async (t) => {
   await t.context.migrator.process(InseeCom2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where arr='75101' 
   and year=2022 order by arr asc limit 1`);
-  t.is(first.rows[0].com, '75056');
+  assertEquals(first.rows[0].com, '75056');
 });
 
-test.serial('should do migration Inseecom2023', async (t) => {
+it('should do migration Inseecom2023', async (t) => {
   await t.context.migrator.process(InseeCom2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where arr='75101' 
   and year=2023 order by arr asc limit 1`);
-  t.is(first.rows[0].com, '75056');
+  assertEquals(first.rows[0].com, '75056');
 });
 
-test.serial('should do migration InseePerim2019', async (t) => {
+it('should do migration InseePerim2019', async (t) => {
   await t.context.migrator.process(InseePerim2019, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr asc limit 1`);
-  t.is(first.rows[0].dep, '01');
-  t.is(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, '01');
+  assertEquals(first.rows[0].epci, '200069193');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr desc limit 1`);
-  t.is(last.rows[0].dep, '976');
-  t.is(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, '976');
+  assertEquals(last.rows[0].epci, '200059871');
   const count = await t.context.connection.query(
     `SELECT count(*) FROM perimeters where l_arr IS NOT NULL AND year = 2019`,
   );
-  t.is(count.rows[0].count, '35015');
+  assertEquals(count.rows[0].count, '35015');
 });
 
-test.serial('should do migration InseePerim2020', async (t) => {
+it('should do migration InseePerim2020', async (t) => {
   await t.context.migrator.process(InseePerim2020, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr asc limit 1`);
-  t.is(first.rows[0].dep, '01');
-  t.is(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, '01');
+  assertEquals(first.rows[0].epci, '200069193');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr desc limit 1`);
-  t.is(last.rows[0].dep, '976');
-  t.is(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, '976');
+  assertEquals(last.rows[0].epci, '200059871');
   const count = await t.context.connection.query(
     `SELECT count(*) FROM perimeters where l_arr IS NOT NULL AND year = 2020`,
   );
-  t.is(count.rows[0].count, '35013');
+  assertEquals(count.rows[0].count, '35013');
 });
 
-test.serial('should do migration InseePerim2021', async (t) => {
+it('should do migration InseePerim2021', async (t) => {
   await t.context.migrator.process(InseePerim2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].dep, '01');
-  t.is(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, '01');
+  assertEquals(first.rows[0].epci, '200069193');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].dep, '976');
-  t.is(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, '976');
+  assertEquals(last.rows[0].epci, '200059871');
   const count = await t.context.connection.query(
     `SELECT count(*) FROM perimeters where l_arr IS NOT NULL AND year = 2021`,
   );
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration InseePerim2022', async (t) => {
+it('should do migration InseePerim2022', async (t) => {
   await t.context.migrator.process(InseePerim2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].dep, '01');
-  t.is(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, '01');
+  assertEquals(first.rows[0].epci, '200069193');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].dep, '976');
-  t.is(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, '976');
+  assertEquals(last.rows[0].epci, '200059871');
   const count = await t.context.connection.query(
     `SELECT count(*) FROM perimeters where l_arr IS NOT NULL AND year = 2022`,
   );
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration InseePerim2023', async (t) => {
+it('should do migration InseePerim2023', async (t) => {
   await t.context.migrator.process(InseePerim2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].dep, '01');
-  t.is(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, '01');
+  assertEquals(first.rows[0].epci, '200069193');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].dep, '976');
-  t.is(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, '976');
+  assertEquals(last.rows[0].epci, '200059871');
   const count = await t.context.connection.query(
     `SELECT count(*) FROM perimeters where l_arr IS NOT NULL AND year = 2023`,
   );
-  t.is(count.rows[0].count, '35010');
+  assertEquals(count.rows[0].count, '35010');
 });
 
-test.serial('should do migration InseeDep2021', async (t) => {
+it('should do migration InseeDep2021', async (t) => {
   await t.context.migrator.process(InseeDep2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].l_dep, 'Ain');
+  assertEquals(first.rows[0].l_dep, 'Ain');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].l_dep, 'Mayotte');
+  assertEquals(last.rows[0].l_dep, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_dep) FROM perimeters where year = 2021`);
-  t.is(count.rows[0].count, '101');
+  assertEquals(count.rows[0].count, '101');
 });
 
-test.serial('should do migration InseeDep2022', async (t) => {
+it('should do migration InseeDep2022', async (t) => {
   await t.context.migrator.process(InseeDep2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].l_dep, 'Ain');
+  assertEquals(first.rows[0].l_dep, 'Ain');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].l_dep, 'Mayotte');
+  assertEquals(last.rows[0].l_dep, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_dep) FROM perimeters where year = 2022`);
-  t.is(count.rows[0].count, '101');
+  assertEquals(count.rows[0].count, '101');
 });
 
-test.serial('should do migration InseeDep2023', async (t) => {
+it('should do migration InseeDep2023', async (t) => {
   await t.context.migrator.process(InseeDep2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].l_dep, 'Ain');
+  assertEquals(first.rows[0].l_dep, 'Ain');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].l_dep, 'Mayotte');
+  assertEquals(last.rows[0].l_dep, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_dep) FROM perimeters where year = 2023`);
-  t.is(count.rows[0].count, '101');
+  assertEquals(count.rows[0].count, '101');
 });
 
-test.serial('should do migration InseeReg2021', async (t) => {
+it('should do migration InseeReg2021', async (t) => {
   await t.context.migrator.process(InseeReg2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
+  assertEquals(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].l_reg, 'Mayotte');
+  assertEquals(last.rows[0].l_reg, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_reg) FROM perimeters where year = 2021`);
-  t.is(count.rows[0].count, '18');
+  assertEquals(count.rows[0].count, '18');
 });
 
-test.serial('should do migration InseeReg2022', async (t) => {
+it('should do migration InseeReg2022', async (t) => {
   await t.context.migrator.process(InseeReg2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
+  assertEquals(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].l_reg, 'Mayotte');
+  assertEquals(last.rows[0].l_reg, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_reg) FROM perimeters where year = 2022`);
-  t.is(count.rows[0].count, '18');
+  assertEquals(count.rows[0].count, '18');
 });
 
-test.serial('should do migration InseeReg2023', async (t) => {
+it('should do migration InseeReg2023', async (t) => {
   await t.context.migrator.process(InseeReg2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
+  assertEquals(first.rows[0].l_reg, 'Auvergne-Rhône-Alpes');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].l_reg, 'Mayotte');
+  assertEquals(last.rows[0].l_reg, 'Mayotte');
   const count = await t.context.connection.query(`SELECT count(distinct l_reg) FROM perimeters where year = 2023`);
-  t.is(count.rows[0].count, '18');
+  assertEquals(count.rows[0].count, '18');
 });
 
-test.serial('should do migration CeremaAom2019', async (t) => {
+it('should do migration CeremaAom2019', async (t) => {
   await t.context.migrator.process(CeremaAom2019, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, null);
+  assertEquals(first.rows[0].aom, null);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2019 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, null);
+  assertEquals(last.rows[0].aom, null);
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2019`);
-  t.is(count.rows[0].count, '336');
+  assertEquals(count.rows[0].count, '336');
 });
 
-test.serial('should do migration CeremaAom2020', async (t) => {
+it('should do migration CeremaAom2020', async (t) => {
   await t.context.migrator.process(CeremaAom2020, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, null);
+  assertEquals(first.rows[0].aom, null);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2020 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, null);
+  assertEquals(last.rows[0].aom, null);
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2020`);
-  t.is(count.rows[0].count, '273');
+  assertEquals(count.rows[0].count, '273');
 });
 
-test.serial('should do migration CeremaAom2021', async (t) => {
+it('should do migration CeremaAom2021', async (t) => {
   await t.context.migrator.process(CeremaAom2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, null);
+  assertEquals(first.rows[0].aom, null);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, null);
+  assertEquals(last.rows[0].aom, null);
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2021`);
-  t.is(count.rows[0].count, '334');
+  assertEquals(count.rows[0].count, '334');
 });
 
-test.serial('should do migration CeremaAom2022', async (t) => {
+it('should do migration CeremaAom2022', async (t) => {
   await t.context.migrator.process(CeremaAom2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, null);
+  assertEquals(first.rows[0].aom, null);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, null);
+  assertEquals(last.rows[0].aom, null);
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2022`);
-  t.is(count.rows[0].count, '334');
+  assertEquals(count.rows[0].count, '334');
 });
 
-test.serial('should do migration CeremaAom2023', async (t) => {
+it('should do migration CeremaAom2023', async (t) => {
   await t.context.migrator.process(CeremaAom2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, null);
+  assertEquals(first.rows[0].aom, null);
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, null);
+  assertEquals(last.rows[0].aom, null);
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2023`);
-  t.is(count.rows[0].count, '334');
+  assertEquals(count.rows[0].count, '334');
 });
 
-test.serial('should do migration DgclBanatic2021', async (t) => {
+it('should do migration DgclBanatic2021', async (t) => {
   await t.context.migrator.process(DgclBanatic2021, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, '200053767');
+  assertEquals(first.rows[0].aom, '200053767');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2021 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, '229850003');
+  assertEquals(last.rows[0].aom, '229850003');
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2021`);
-  t.is(count.rows[0].count, '739');
+  assertEquals(count.rows[0].count, '739');
 });
 
-test.serial('should do migration DgclBanatic2022', async (t) => {
+it('should do migration DgclBanatic2022', async (t) => {
   await t.context.migrator.process(DgclBanatic2022, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, '200053767');
+  assertEquals(first.rows[0].aom, '200053767');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2022 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, '229850003');
+  assertEquals(last.rows[0].aom, '229850003');
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2022`);
-  t.is(count.rows[0].count, '739');
+  assertEquals(count.rows[0].count, '739');
 });
 
-test.serial('should do migration DgclBanatic2023', async (t) => {
+it('should do migration DgclBanatic2023', async (t) => {
   await t.context.migrator.process(DgclBanatic2023, new MemoryStateManager());
   const first = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr asc limit 1`);
-  t.is(first.rows[0].aom, '200053767');
+  assertEquals(first.rows[0].aom, '200053767');
   const last = await t.context.connection.query(`SELECT * FROM perimeters where year = 2023 order by arr desc limit 1`);
-  t.is(last.rows[0].aom, '229850003');
+  assertEquals(last.rows[0].aom, '229850003');
   const count = await t.context.connection.query(`SELECT count(distinct l_aom) FROM perimeters where year = 2023`);
-  t.is(count.rows[0].count, '739');
+  assertEquals(count.rows[0].count, '739');
 });
 
 test.serial.skip('should import', async (t) => {
   await t.context.migrator.run();
   const count = await t.context.connection.query(`SELECT count(*) FROM perimeters`);
-  t.is(count.rows[0].count, '404');
+  assertEquals(count.rows[0].count, '404');
 });

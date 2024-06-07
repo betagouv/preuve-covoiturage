@@ -1,9 +1,9 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { HandlerInterface, handler, lib, provider, inject } from '@/ilos/common/index.ts';
 
 import { Container } from '../index.ts';
 
-test('Container: works', async (t) => {
+it('Container: works', async (t) => {
   @lib()
   class Hello {
     public world = '!!';
@@ -24,7 +24,7 @@ test('Container: works', async (t) => {
 
   const container = new Container();
   const h = container.resolve(Test);
-  t.is(h.hello.world, '!!');
+  assertEquals(h.hello.world, '!!');
 
   container.setHandler(Test);
 
@@ -36,10 +36,10 @@ test('Container: works', async (t) => {
     params: null,
     context: null,
   });
-  t.is(hBis, '!!');
+  assertEquals(hBis, '!!');
 });
 
-test('Container: works with provider', async (t) => {
+it('Container: works with provider', async (t) => {
   @lib()
   class HelloLib {
     public world = 'yeah';
@@ -70,7 +70,7 @@ test('Container: works with provider', async (t) => {
 
   const container = new Container();
   const h = container.resolve(Test);
-  t.is(h.hello.world, 'yeah');
+  assertEquals(h.hello.world, 'yeah');
 
   container.setHandler(Test);
   const hbis = await container.getHandler<null, null, string>({
@@ -81,9 +81,9 @@ test('Container: works with provider', async (t) => {
     params: null,
     context: null,
   });
-  t.is(hbis, 'yeah');
+  assertEquals(hbis, 'yeah');
 });
-test('Container: works with no boot provider', async (t) => {
+it('Container: works with no boot provider', async (t) => {
   @provider()
   class Hello {
     public world = 'yeah';
@@ -104,7 +104,7 @@ test('Container: works with no boot provider', async (t) => {
 
   const container = new Container();
   const h = container.resolve(Test);
-  t.is(h.hello.world, 'yeah');
+  assertEquals(h.hello.world, 'yeah');
 
   container.setHandler(Test);
 
@@ -116,5 +116,5 @@ test('Container: works with no boot provider', async (t) => {
     params: null,
     context: null,
   });
-  t.is(hbis, 'yeah');
+  assertEquals(hbis, 'yeah');
 });

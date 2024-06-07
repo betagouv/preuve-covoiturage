@@ -1,10 +1,10 @@
 import { ConfigStore } from '@/ilos/core/extensions/index.ts';
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { axios, writeFile, process, https, tmpdir, join } from '@/deps.ts';
 import { BucketName } from './interfaces/BucketName.ts';
 import { S3StorageProvider } from './S3StorageProvider.ts';
 
-test('should be uploading file with bucket as sub-domain', async (t) => {
+it('should be uploading file with bucket as sub-domain', async (t) => {
   t.log('Start test');
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -38,5 +38,5 @@ test('should be uploading file with bucket as sub-domain', async (t) => {
   const response = await axios.get(url, { httpsAgent });
   t.log(`Response: ${JSON.stringify(response.data)}`);
 
-  t.deepEqual(filecontent, response.data);
+  assertObjectMatch(filecontent, response.data);
 });

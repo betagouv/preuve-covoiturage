@@ -1,5 +1,5 @@
 import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { SerializedPolicyInterface } from '../interfaces/index.ts';
@@ -36,7 +36,7 @@ function makePolicy(data: Partial<SerializedPolicyInterface> = {}): Omit<Seriali
 }
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.territory_id = 1;
   const db = await before();
   t.context.db = db;
@@ -49,7 +49,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should create policy', async (t) => {
+it('Should create policy', async (t) => {
   const { _id, ...policyData } = t.context.policy;
   const policy = await t.context.repository.create(policyData);
 
@@ -58,39 +58,39 @@ test.serial('Should create policy', async (t) => {
     values: [policy._id],
   });
 
-  t.is(result.rowCount, 1);
-  t.is(result.rows[0].name, policyData.name);
-  t.is(result.rows[0].status, 'draft');
+  assertEquals(result.rowCount, 1);
+  assertEquals(result.rows[0].name, policyData.name);
+  assertEquals(result.rows[0].status, 'draft');
   t.context.policy._id = policy._id;
 });
 
-test.serial('Should find policy', async (t) => {
+it('Should find policy', async (t) => {
   const policy = await t.context.repository.find(t.context.policy._id);
-  t.is(policy?.name, t.context.policy.name);
-  t.is(policy?.status, t.context.policy.status);
+  assertEquals(policy?.name, t.context.policy.name);
+  assertEquals(policy?.status, t.context.policy.status);
 });
 
-test.serial('Should find policy by territory', async (t) => {
+it('Should find policy by territory', async (t) => {
   const policy = await t.context.repository.find(t.context.policy._id, t.context.territory_id);
-  t.is(policy?.name, t.context.policy.name);
-  t.is(policy?.status, t.context.policy.status);
+  assertEquals(policy?.name, t.context.policy.name);
+  assertEquals(policy?.status, t.context.policy.status);
 });
 
-test.serial('Should find policy where territory', async (t) => {
+it('Should find policy where territory', async (t) => {
   const policies = await t.context.repository.findWhere({ territory_id: t.context.territory_id });
-  t.true(Array.isArray(policies));
-  t.is(policies.length, 1);
+  assert(Array.isArray(policies));
+  assertEquals(policies.length, 1);
   const policy = policies.pop();
-  t.is(policy?.name, t.context.policy.name);
-  t.is(policy?.status, t.context.policy.status);
+  assertEquals(policy?.name, t.context.policy.name);
+  assertEquals(policy?.status, t.context.policy.status);
 });
 
-test.serial('Should not find policy by territory', async (t) => {
+it('Should not find policy by territory', async (t) => {
   const policy = await t.context.repository.find(t.context.policy._id, 2);
-  t.is(policy, undefined);
+  assertEquals(policy, undefined);
 });
 
-test.serial('Should patch policy', async (t) => {
+it('Should patch policy', async (t) => {
   const name = 'Awesome policy';
   const policy = await t.context.repository.patch({ ...t.context.policy, name });
 
@@ -100,13 +100,13 @@ test.serial('Should patch policy', async (t) => {
   });
 
   t.not(policy.name, t.context.policy.name);
-  t.is(policy.name, name);
-  t.is(result.rowCount, 1);
-  t.is(result.rows[0].name, name);
+  assertEquals(policy.name, name);
+  assertEquals(result.rowCount, 1);
+  assertEquals(result.rows[0].name, name);
   t.context.policy.name = name;
 });
 
-test.serial('Should delete policy', async (t) => {
+it('Should delete policy', async (t) => {
   await t.context.repository.delete(t.context.policy._id);
 
   const result = await t.context.db.connection.getClient().query({
@@ -114,6 +114,6 @@ test.serial('Should delete policy', async (t) => {
     values: [t.context.policy._id],
   });
 
-  t.is(result.rowCount, 1);
+  assertEquals(result.rowCount, 1);
   t.not(result.rows[0].deleted_at, null);
 });

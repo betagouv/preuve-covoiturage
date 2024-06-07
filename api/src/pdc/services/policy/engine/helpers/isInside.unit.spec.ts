@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { generateCarpool } from '../tests/helpers.ts';
@@ -33,14 +33,14 @@ function setup(lat: number, lon: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start_lat: lat, start_lon: lon }));
 }
 
-test('Should return true if point is in shape', (t) => {
+it('Should return true if point is in shape', (t) => {
   const ctx = setup(point1.lat, point1.lon);
   const res = isInside(ctx, { shape });
-  t.is(res, true);
+  assertEquals(res, true);
 });
 
-test('Should return false if point is not in shape', (t) => {
+it('Should return false if point is not in shape', (t) => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isInside(ctx, { shape });
-  t.is(res, false);
+  assertEquals(res, false);
 });

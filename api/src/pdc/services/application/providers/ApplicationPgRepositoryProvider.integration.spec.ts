@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 
@@ -47,7 +47,7 @@ test.serial.skip('should create an application', async (t) => {
   });
 
   t.context.uuid = result.uuid;
-  t.is(result.name, 'Dummy Application');
+  assertEquals(result.name, 'Dummy Application');
 });
 
 test.serial.skip("should list owner's applications", async (t) => {
@@ -55,9 +55,9 @@ test.serial.skip("should list owner's applications", async (t) => {
     owner_id: 12345,
     owner_service: 'operator',
   });
-  t.true(Array.isArray(result));
+  assert(Array.isArray(result));
 
-  t.is(result.filter((r) => r.uuid === t.context.uuid).length, 1);
+  assertEquals(result.filter((r) => r.uuid === t.context.uuid).length, 1);
 });
 
 test.serial.skip('should find an application', async (t) => {
@@ -67,7 +67,7 @@ test.serial.skip('should find an application', async (t) => {
     owner_service: 'operator',
   });
 
-  t.is(result.uuid, t.context.uuid);
+  assertEquals(result.uuid, t.context.uuid);
 });
 
 test.serial.skip('should revoke application by id', async (t) => {
@@ -77,6 +77,6 @@ test.serial.skip('should revoke application by id', async (t) => {
     values: [t.context.uuid],
   });
 
-  t.is(result.rows[0].uuid, t.context.uuid);
-  t.true(result.rows[0].deleted_at instanceof Date);
+  assertEquals(result.rows[0].uuid, t.context.uuid);
+  assert(result.rows[0].deleted_at instanceof Date);
 });

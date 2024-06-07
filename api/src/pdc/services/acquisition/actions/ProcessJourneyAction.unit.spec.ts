@@ -1,5 +1,5 @@
-import { anyTest as test } from '@/dev_deps.ts';
-import { sinon,  SinonStubbedInstance  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ProcessJourneyAction } from './ProcessJourneyAction.ts';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
@@ -33,7 +33,7 @@ function bootstrap(): {
   return { action, repository, kernel, normalizer };
 }
 
-test('should process if normalization ok', async (t) => {
+it('should process if normalization ok', async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.resolves(normalizedPayload);
@@ -77,19 +77,19 @@ test('should process if normalization ok', async (t) => {
       },
       { kernelSignature: '', kernelParams: [], kernelContext: {} },
     );
-  t.is(kernelSignature, signature);
-  t.deepEqual(kernelContext, callContext);
-  t.deepEqual(kernelParams, [normalizedPayload]);
-  t.true(updateCallbackStub.calledOnce);
-  t.true(commitCallbackStub.calledOnce);
+  assertEquals(kernelSignature, signature);
+  assertObjectMatch(kernelContext, callContext);
+  assertObjectMatch(kernelParams, [normalizedPayload]);
+  assert(updateCallbackStub.calledOnce);
+  assert(commitCallbackStub.calledOnce);
   const cbParams = updateCallbackStub.getCall(0).args[0];
-  t.deepEqual(cbParams, {
+  assertObjectMatch(cbParams, {
     acquisition_id: 1,
     status: AcquisitionStatusEnum.Ok,
   });
 });
 
-test('should fail if normalization fail', async (t) => {
+it('should fail if normalization fail', async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   const normalizationError = new Error('normalization');
@@ -146,11 +146,11 @@ test('should fail if normalization fail', async (t) => {
       },
       { kernelSignature: '', kernelParams: [], kernelContext: {} },
     );
-  t.is(kernelSignature, signature);
-  t.deepEqual(kernelContext, callContext);
-  t.deepEqual(kernelParams, [normalizedPayload]);
+  assertEquals(kernelSignature, signature);
+  assertObjectMatch(kernelContext, callContext);
+  assertObjectMatch(kernelParams, [normalizedPayload]);
   const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
-  t.deepEqual(calls, [
+  assertObjectMatch(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,
@@ -164,7 +164,7 @@ test('should fail if normalization fail', async (t) => {
   ]);
 });
 
-test('should fail if carpool fail', async (t) => {
+it('should fail if carpool fail', async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.callsFake((data) => ({ ...normalizedPayload, acquisition_id: data._id }));
@@ -206,7 +206,7 @@ test('should fail if carpool fail', async (t) => {
   await action.call(inputData);
 
   const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
-  t.deepEqual(calls, [
+  assertObjectMatch(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,

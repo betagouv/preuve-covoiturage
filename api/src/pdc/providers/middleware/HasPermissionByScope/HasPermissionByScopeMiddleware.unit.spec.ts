@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ContextType, ForbiddenException } from '@/ilos/common/index.ts';
 
 import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware.ts';
@@ -15,7 +15,7 @@ const test = anyTest as TestFn<{
   middleware: HasPermissionByScopeMiddleware;
 }>;
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.contextFactory = (params): ContextType => {
     return {
       call: {
@@ -93,7 +93,7 @@ test.before((t) => {
   t.context.middleware = new HasPermissionByScopeMiddleware();
 });
 
-test('Middleware Scopetoself: has permission to create user', async (t) => {
+it('Middleware Scopetoself: has permission to create user', async (t) => {
   const result = await t.context.middleware.process(
     t.context.mockCreateUserParameters,
     t.context.contextFactory({ permissions: ['registry.user.create'] }),
@@ -101,10 +101,10 @@ test('Middleware Scopetoself: has permission to create user', async (t) => {
     t.context.middlewareConfigUserCreate,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetoself: has permission to create territory user', async (t) => {
+it('Middleware Scopetoself: has permission to create territory user', async (t) => {
   const result = await t.context.middleware.process(
     t.context.mockCreateUserParameters,
     t.context.contextFactory({
@@ -115,11 +115,11 @@ test('Middleware Scopetoself: has permission to create territory user', async (t
     t.context.middlewareConfigUserCreate,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetoself: territory admin - has no permission to create territory user', async (t) => {
-  await t.throwsAsync(
+it('Middleware Scopetoself: territory admin - has no permission to create territory user', async (t) => {
+  await assertThrows(
     t.context.middleware.process(
       t.context.mockCreateUserParameters,
       t.context.contextFactory({ permissions: [], territory: t.context.mockCreateUserParameters.territory }),
@@ -130,8 +130,8 @@ test('Middleware Scopetoself: territory admin - has no permission to create terr
   );
 });
 
-test('Middleware Scopetoself: registry admin - wrong territory', async (t) => {
-  await t.throwsAsync(
+it('Middleware Scopetoself: registry admin - wrong territory', async (t) => {
+  await assertThrows(
     t.context.middleware.process(
       t.context.mockCreateUserParameters,
       t.context.contextFactory({ permissions: ['territory.users.add'], territory: 0 }),
@@ -142,7 +142,7 @@ test('Middleware Scopetoself: registry admin - wrong territory', async (t) => {
   );
 });
 
-test('Middleware Scopetoself: super-admin can trip.stats', async (t) => {
+it('Middleware Scopetoself: super-admin can trip.stats', async (t) => {
   const result = await t.context.middleware.process(
     t.context.mockAllStatsParams,
     t.context.contextFactory({ permissions: ['registry.trip.stats'] }),
@@ -150,10 +150,10 @@ test('Middleware Scopetoself: super-admin can trip.stats', async (t) => {
     t.context.middlewareConfigTripStats,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetoself: super-admin can trip.stats with town filter', async (t) => {
+it('Middleware Scopetoself: super-admin can trip.stats with town filter', async (t) => {
   const result = await t.context.middleware.process(
     t.context.mockTownStatsParams,
     t.context.contextFactory({ permissions: ['registry.trip.stats'] }),
@@ -161,10 +161,10 @@ test('Middleware Scopetoself: super-admin can trip.stats with town filter', asyn
     t.context.middlewareConfigTripStats,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetoself: territory-admin can trip.stats', async (t) => {
+it('Middleware Scopetoself: territory-admin can trip.stats', async (t) => {
   // mock territory_id being added by copy.from_context middleware
   const params = { ...t.context.mockAllStatsParams, territory_id: t.context.mockTerritoryAdmin.territory_id };
 
@@ -177,10 +177,10 @@ test('Middleware Scopetoself: territory-admin can trip.stats', async (t) => {
     t.context.middlewareConfigTripStats,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetoself: territory-admin can trip.stats w/ town filter', async (t) => {
+it('Middleware Scopetoself: territory-admin can trip.stats w/ town filter', async (t) => {
   // mock territory_id being added by copy.from_context middleware
   const params = t.context.mockTownStatsParams;
   const context = t.context.contextFactory(t.context.mockTerritoryAdmin);
@@ -192,5 +192,5 @@ test('Middleware Scopetoself: territory-admin can trip.stats w/ town filter', as
     t.context.middlewareConfigTripStats,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { CarpoolRepositoryProvider } from './CarpoolRepositoryProvider.ts';
@@ -120,8 +120,8 @@ test.serial.skip('Should create carpool', async (t) => {
     text: `SELECT * from ${t.context.repository.table} WHERE acquisition_id = $1`,
     values: [0],
   });
-  t.is(result.rowCount, 2);
-  t.deepEqual(
+  assertEquals(result.rowCount, 2);
+  assertObjectMatch(
     result.rows.map((r) => r.operator_journey_id),
     [data.operator_journey_id, data.operator_journey_id],
   );
@@ -130,6 +130,6 @@ test.serial.skip('Should create carpool', async (t) => {
     text: `SELECT idx as index, siret, amount from ${t.context.repository.incentiveTable} WHERE acquisition_id = $1`,
     values: [0],
   });
-  t.is(incentiveResult.rowCount, 1);
-  t.deepEqual(incentiveResult.rows, data.incentives);
+  assertEquals(incentiveResult.rowCount, 1);
+  assertObjectMatch(incentiveResult.rows, data.incentives);
 });

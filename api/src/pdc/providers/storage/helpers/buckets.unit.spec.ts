@@ -1,39 +1,39 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { BucketName } from '../interfaces/BucketName.ts';
 import { getBucketEndpoint, getBucketName, getBucketPrefix } from './buckets.ts';
 
-test('[getBucketPrefix] returns AWS_BUCKET_PREFIX or empty', (t) => {
+it('[getBucketPrefix] returns AWS_BUCKET_PREFIX or empty', (t) => {
   process.env.AWS_BUCKET_PREFIX = '';
-  t.is(getBucketPrefix(), '');
+  assertEquals(getBucketPrefix(), '');
 
   process.env.AWS_BUCKET_PREFIX = 'test';
-  t.is(getBucketPrefix(), 'test');
+  assertEquals(getBucketPrefix(), 'test');
 });
 
-test('[getBucketEndpoint] no var, no prefix', (t) => {
+it('[getBucketEndpoint] no var, no prefix', (t) => {
   delete process.env.AWS_BUCKET_PREFIX;
   delete process.env.AWS_BUCKET_EXPORT_ENDPOINT;
-  t.is(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://s3.test');
+  assertEquals(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://s3.test');
 });
 
-test('[getBucketEndpoint] no var, with prefix', (t) => {
+it('[getBucketEndpoint] no var, with prefix', (t) => {
   process.env.AWS_BUCKET_PREFIX = 'url-prefix';
   delete process.env.AWS_BUCKET_EXPORT_ENDPOINT;
-  t.is(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://s3.test');
+  assertEquals(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://s3.test');
 });
 
-test('[getBucketEndpoint] var override, no prefix', (t) => {
+it('[getBucketEndpoint] var override, no prefix', (t) => {
   delete process.env.AWS_BUCKET_PREFIX;
   process.env.AWS_BUCKET_EXPORT_ENDPOINT = 'https://override-export.s3.test';
-  t.is(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://override-export.s3.test');
+  assertEquals(getBucketEndpoint('https://s3.test', BucketName.Export), 'https://override-export.s3.test');
 });
 
-test('[getBucketName] no prefix', (t) => {
+it('[getBucketName] no prefix', (t) => {
   delete process.env.AWS_BUCKET_PREFIX;
-  t.is(getBucketName(BucketName.Export), 'export');
+  assertEquals(getBucketName(BucketName.Export), 'export');
 });
 
-test('[getBucketName] prefix', (t) => {
+it('[getBucketName] prefix', (t) => {
   process.env.AWS_BUCKET_PREFIX = 'name-prefix';
-  t.is(getBucketName(BucketName.Export), 'name-prefix-export');
+  assertEquals(getBucketName(BucketName.Export), 'name-prefix-export');
 });

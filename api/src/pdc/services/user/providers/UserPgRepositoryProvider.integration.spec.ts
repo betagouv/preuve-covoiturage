@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { process, _ } from "@/deps.ts";
 import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
@@ -114,18 +114,18 @@ test.serial.skip('should create a user', async (t) => {
   };
   const territoryData = await t.context.repository.create(territoryInput);
   t.context.territory_id = territoryData._id;
-  t.is(territoryData.email, territoryInput.email);
-  t.true(hasFindKeys(territoryData));
+  assertEquals(territoryData.email, territoryInput.email);
+  assert(hasFindKeys(territoryData));
 
   const operatorData = await t.context.repository.create(operatorInput);
   t.context.operator_id = operatorData._id;
-  t.is(operatorData.email, operatorInput.email);
-  t.true(hasFindKeys(operatorData));
+  assertEquals(operatorData.email, operatorInput.email);
+  assert(hasFindKeys(operatorData));
 
   const registryData = await t.context.repository.create(registryInput);
   t.context.registry_id = registryData._id;
-  t.is(registryData.email, registryInput.email);
-  t.true(hasFindKeys(registryData));
+  assertEquals(registryData.email, registryInput.email);
+  assert(hasFindKeys(registryData));
 });
 
 test.serial.skip('should patch a user', async (t) => {
@@ -133,8 +133,8 @@ test.serial.skip('should patch a user', async (t) => {
     phone: '0203040506',
   };
   const result = await t.context.repository.patch(t.context.operator_id, data);
-  t.is(result?.phone, data.phone);
-  t.true(hasFindKeys(result));
+  assertEquals(result?.phone, data.phone);
+  assert(hasFindKeys(result));
 });
 
 test.serial.skip('should patch the user if group matches', async (t) => {
@@ -143,8 +143,8 @@ test.serial.skip('should patch the user if group matches', async (t) => {
   };
 
   const result = await t.context.repository.patchByTerritory(t.context.territory_id, data, 1);
-  t.is(result?.phone, data.phone);
-  t.true(hasFindKeys(result));
+  assertEquals(result?.phone, data.phone);
+  assert(hasFindKeys(result));
 });
 
 test.serial.skip('should not patch the user if group does not match', async (t) => {
@@ -153,58 +153,58 @@ test.serial.skip('should not patch the user if group does not match', async (t) 
   };
 
   const result = await t.context.repository.patchByOperator(t.context.operator_id, data, 111);
-  t.is(result, undefined);
+  assertEquals(result, undefined);
 });
 
 test.serial.skip('should list users', async (t) => {
   const result = await t.context.repository.list({}, { offset: 0, limit: 1000 });
-  t.true('users' in result);
-  t.true(Array.isArray(result.users));
+  assert('users' in result);
+  assert(Array.isArray(result.users));
 
   // weird behaviour. Not all users are listed by the .list() command
   const insertedUsers = result.users.filter((u) => /@toto.com$/.test(u.email));
   for (const r of insertedUsers) {
-    t.true(hasListKeys(r));
+    assert(hasListKeys(r));
   }
 });
 
 test.serial.skip('should list users with pagination', async (t) => {
   const result = await t.context.repository.list({}, { limit: 1, offset: 1 });
-  t.true('users' in result);
-  t.true(Array.isArray(result.users));
-  t.is(result.users.length, 1);
+  assert('users' in result);
+  assert(Array.isArray(result.users));
+  assertEquals(result.users.length, 1);
   for (const r of result.users) {
-    t.true(hasListKeys(r));
+    assert(hasListKeys(r));
   }
 });
 
 test.serial.skip('should list users with filters', async (t) => {
   const result = await t.context.repository.list({ operator_id: 1 }, { limit: 10, offset: 0 });
-  t.true('total' in result);
-  t.is(result.total, 1);
-  t.true('users' in result);
-  t.true(Array.isArray(result.users));
-  t.is(result.users.length, 1);
+  assert('total' in result);
+  assertEquals(result.total, 1);
+  assert('users' in result);
+  assert(Array.isArray(result.users));
+  assertEquals(result.users.length, 1);
   for (const r of result.users) {
-    t.true(hasListKeys(r));
+    assert(hasListKeys(r));
   }
 });
 
 test.serial.skip('should find user by id', async (t) => {
   const result = await t.context.repository.find(t.context.registry_id);
-  t.is(result?._id, t.context.registry_id);
-  t.true(hasFindKeys(result));
+  assertEquals(result?._id, t.context.registry_id);
+  assert(hasFindKeys(result));
 });
 
 test.serial.skip('should find user by id if group match', async (t) => {
   const result = await t.context.repository.findByOperator(t.context.operator_id, 1);
-  t.is(result?._id, t.context.operator_id);
-  t.true(hasFindKeys(result));
+  assertEquals(result?._id, t.context.operator_id);
+  assert(hasFindKeys(result));
 });
 
 test.serial.skip('should not find user by id if group dont match', async (t) => {
   const result = await t.context.repository.findByTerritory(t.context.territory_id, 111);
-  t.is(result, undefined);
+  assertEquals(result, undefined);
 });
 
 test.serial.skip('should delete user by id', async (t) => {
@@ -213,10 +213,10 @@ test.serial.skip('should delete user by id', async (t) => {
     text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
     values: [t.context.registry_id],
   });
-  t.is(result.rowCount, 0);
+  assertEquals(result.rowCount, 0);
 
   const resultFromRepository = await t.context.repository.find(t.context.registry_id);
-  t.is(resultFromRepository, undefined);
+  assertEquals(resultFromRepository, undefined);
 });
 
 test.serial.skip('should delete user by id if group match', async (t) => {
@@ -225,10 +225,10 @@ test.serial.skip('should delete user by id if group match', async (t) => {
     text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
     values: [t.context.territory_id],
   });
-  t.is(result.rowCount, 0);
+  assertEquals(result.rowCount, 0);
 
   const resultFromRepository = await t.context.repository.find(t.context.territory_id);
-  t.is(resultFromRepository, undefined);
+  assertEquals(resultFromRepository, undefined);
 });
 
 test.serial.skip('should not delete user by id if group dont match', async (t) => {
@@ -237,7 +237,7 @@ test.serial.skip('should not delete user by id if group dont match', async (t) =
     text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
     values: [t.context.operator_id],
   });
-  t.is(result.rows[0]._id, t.context.operator_id);
+  assertEquals(result.rows[0]._id, t.context.operator_id);
 
   const resultFromRepository = await t.context.repository.find(t.context.operator_id);
   t.not(resultFromRepository, undefined);

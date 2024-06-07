@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { httpMacro, HttpMacroContext } from '@/pdc/providers/test/index.ts';
 
 import { ContextType } from '@/ilos/common/index.ts';
@@ -11,14 +11,14 @@ const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const { transport, supertest, request } = await before();
   t.context.transport = transport;
   t.context.supertest = supertest;
   t.context.request = request;
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   const { transport, supertest, request } = t.context;
   await after({ transport, supertest, request });
 });
@@ -37,7 +37,7 @@ function contextFactory(permissions: string[]): ContextType {
   };
 }
 
-test.serial('Fails on wrong permissions', async (t) => {
+it('Fails on wrong permissions', async (t) => {
   const result = await t.context.request(
     'operator:create',
     {
@@ -46,8 +46,8 @@ test.serial('Fails on wrong permissions', async (t) => {
     },
     contextFactory(['wrong.permission']),
   );
-  t.true('error' in result);
-  t.is(result.error.data, 'Invalid permissions');
+  assert('error' in result);
+  assertEquals(result.error.data, 'Invalid permissions');
 });
 
 test.serial.skip('Create an operator', async (t) => {
@@ -61,9 +61,9 @@ test.serial.skip('Create an operator', async (t) => {
     contextFactory(['registry.operator.create']),
   );
   t.log(result);
-  t.true('_id' in result.result);
-  t.is(result.result.name, 'Toto');
-  t.is(result.result.legal_name, 'Toto inc.');
+  assert('_id' in result.result);
+  assertEquals(result.result.name, 'Toto');
+  assertEquals(result.result.legal_name, 'Toto inc.');
   t.context._id = result.result._id;
 });
 
@@ -75,9 +75,9 @@ test.serial.skip('Find an operator', async (t) => {
     },
     contextFactory(['operator.read']),
   );
-  t.true('_id' in result);
-  t.is(result.name, 'Toto');
-  t.is(result.legal_name, 'Toto inc.');
+  assert('_id' in result);
+  assertEquals(result.name, 'Toto');
+  assertEquals(result.legal_name, 'Toto inc.');
 });
 
 test.serial.skip('Update the operator', async (t) => {
@@ -89,18 +89,18 @@ test.serial.skip('Update the operator', async (t) => {
     },
     contextFactory(['operator.update']),
   );
-  t.true('_id' in result);
-  t.is(result.name, 'Yop');
-  t.is(result.legal_name, 'Toto inc.');
+  assert('_id' in result);
+  assertEquals(result.name, 'Yop');
+  assertEquals(result.legal_name, 'Toto inc.');
 });
 
 test.serial.skip('List all operators', async (t) => {
   const result = await t.context.request('operator:list', {}, contextFactory(['operator.list']));
-  t.true(Array.isArray(result));
+  assert(Array.isArray(result));
   const operator = result.filter((r) => r._id === t.context._id);
-  t.is(operator.length, 1);
-  t.is(operator[0]._id, t.context._id);
-  t.is(operator[0].name, 'Yop');
+  assertEquals(operator.length, 1);
+  assertEquals(operator[0]._id, t.context._id);
+  assertEquals(operator[0].name, 'Yop');
 });
 
 test.serial.skip('Delete the operator', async (t) => {
@@ -109,5 +109,5 @@ test.serial.skip('Delete the operator', async (t) => {
     { _id: t.context._id },
     contextFactory(['operator.delete']),
   );
-  t.is(result, null);
+  assertEquals(result, null);
 });

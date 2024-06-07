@@ -1,5 +1,5 @@
 import { ConfigInterface } from '@/ilos/common/index.ts';
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CronFrequency, MatviewItem } from '../interfaces/StatsRefreshInterfaces.ts';
 import { filterTables } from './filterTables.helper.ts';
 
@@ -20,72 +20,72 @@ function makeConfig(s: Set<string>): ConfigInterface {
 
 const views = ['daily_view_1', 'daily_view_2', 'weekly_view_1', 'weekly_view_2', 'monthly_view_1', 'monthly_view_2'];
 
-test('filter monthly, no skips', (t) => {
+it('filter monthly, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['monthly'];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['monthly_view_1', 'monthly_view_2'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter weekly, no skips', (t) => {
+it('filter weekly, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['weekly'];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['weekly_view_1', 'weekly_view_2'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter daily, no skips', (t) => {
+it('filter daily, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['daily'];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['daily_view_1', 'daily_view_2'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter monthly with non prefixed views, no skips', (t) => {
+it('filter monthly with non prefixed views, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['monthly'];
   const rows = makeRows([...views, 'no_prefix_table']);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['monthly_view_1', 'monthly_view_2'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter daily with non prefixed views, no skips', (t) => {
+it('filter daily with non prefixed views, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['daily'];
   const rows = makeRows([...views, 'no_prefix_table']);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['daily_view_1', 'daily_view_2', 'no_prefix_table'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter monthly, daily with non prefixed views, no skips', (t) => {
+it('filter monthly, daily with non prefixed views, no skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ['daily', 'monthly'];
   const rows = makeRows([...views, 'no_prefix_table']);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['daily_view_1', 'daily_view_2', 'monthly_view_1', 'monthly_view_2', 'no_prefix_table'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });
 
-test('filter daily, monthly with skips', (t) => {
+it('filter daily, monthly with skips', (t) => {
   const schema = 'test';
   const config = makeConfig(new Set(['test.monthly_view_1']));
   const frequencies: CronFrequency[] = ['daily', 'monthly'];
   const rows = makeRows([...views, 'no_prefix_table']);
   const actual = filterTables(config, frequencies, schema, rows);
   const expected = ['daily_view_1', 'daily_view_2', 'monthly_view_2', 'no_prefix_table'];
-  t.deepEqual(actual, expected);
+  assertObjectMatch(actual, expected);
 });

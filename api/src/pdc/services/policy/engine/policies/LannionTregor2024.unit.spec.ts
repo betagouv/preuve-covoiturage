@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { v4 } from '@/deps.ts';
 import { CarpoolInterface, OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
@@ -45,7 +45,7 @@ const defaultCarpool: CarpoolInterface = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   'should work with exclusions',
   process,
   {
@@ -96,7 +96,7 @@ test(
   { incentive: [0, 0, 0, 0, 0, 0] },
 );
 
-test(
+it(
   'validate calculations',
   process,
   {
@@ -114,7 +114,7 @@ test(
   { incentive: [150, 300, 150, 240, 250, 500, 0] },
 );
 
-test(
+it(
   'should work with driver month limits',
   process,
   {
@@ -145,7 +145,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with driver daily limits',
   process,
   {

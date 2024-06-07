@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { injectable } from '@/ilos/common/index.ts';
 import { AbstractTemplate, HandlebarsTemplateProvider } from './index.ts';
 import { TemplateRenderingException } from './exceptions/index.ts';
@@ -17,7 +17,7 @@ class TestErrorTemplate extends AbstractTemplate<TestTemplateData> {
   static template = `Hello {{#not_exists}}!`;
 }
 
-test('should work', (t) => {
+it('should work', (t) => {
   const processor = new HandlebarsTemplateProvider();
   processor.init();
   const template = new TestTemplate({
@@ -25,9 +25,9 @@ test('should work', (t) => {
   });
 
   const rendered = processor.render(template);
-  t.is(rendered, 'Hello world!');
+  assertEquals(rendered, 'Hello world!');
 });
-test('should work with cache', (t) => {
+it('should work with cache', (t) => {
   const processor = new HandlebarsTemplateProvider();
   processor.init();
   const template = new TestTemplate({
@@ -37,10 +37,10 @@ test('should work with cache', (t) => {
   processor.render(template);
   const rendered = processor.render(template);
 
-  t.is(rendered, 'Hello world!');
+  assertEquals(rendered, 'Hello world!');
 });
 
-test('should throw if template has error', async (t) => {
+it('should throw if template has error', async (t) => {
   const processor = new HandlebarsTemplateProvider();
   processor.init();
   const template = new TestErrorTemplate({

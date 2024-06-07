@@ -1,9 +1,9 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService.ts';
-import { Sinon, SinonSandbox } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository.ts';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository.ts';
 import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository.ts';
@@ -26,7 +26,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   const geoStub = sinon.createStubInstance(GeoProvider);
 
@@ -55,7 +55,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.sinon = Sinon.createSandbox();
 });
 
@@ -63,7 +63,7 @@ test.afterEach.always((t) => {
   t.context.sinon.restore();
 });
 
-test.serial('Should create carpool', async (t) => {
+it('Should create carpool', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
   const statusRepository = t.context.sinon.spy(t.context.statusRepository);
@@ -78,24 +78,24 @@ test.serial('Should create carpool', async (t) => {
   await service.registerRequest({ ...data, api_version: 3 });
 
   // t.log(carpoolRepository.register.getCalls());
-  t.true(carpoolRepository.register.calledOnce);
+  assert(carpoolRepository.register.calledOnce);
   // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
+  assert(requestRepository.save.calledOnce);
   // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
+  assert(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     data.operator_id,
     data.operator_journey_id,
   );
-  t.like(carpool, {
+  assertObjectMatch(carpool, {
     ...data,
     fraud_status: 'pending',
     acquisition_status: 'received',
   });
 });
 
-test.serial('Should update carpool', async (t) => {
+it('Should update carpool', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
   const statusRepository = t.context.sinon.spy(t.context.statusRepository);
@@ -115,17 +115,17 @@ test.serial('Should update carpool', async (t) => {
   });
 
   // t.log(carpoolRepository.update.getCalls());
-  t.true(carpoolRepository.update.calledOnce);
+  assert(carpoolRepository.update.calledOnce);
   // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
+  assert(requestRepository.save.calledOnce);
   // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
+  assert(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
-  t.like(carpool, {
+  assertObjectMatch(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
     fraud_status: 'pending',
@@ -133,7 +133,7 @@ test.serial('Should update carpool', async (t) => {
   });
 });
 
-test.serial('Should cancel carpool', async (t) => {
+it('Should cancel carpool', async (t) => {
   const lookupRepository = t.context.sinon.spy(t.context.lookupRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
   const statusRepository = t.context.sinon.spy(t.context.statusRepository);
@@ -154,17 +154,17 @@ test.serial('Should cancel carpool', async (t) => {
   await service.cancelRequest(data);
 
   // t.log(lookupRepository.findOneStatus.getCalls());
-  t.true(lookupRepository.findOneStatus.calledOnce);
+  assert(lookupRepository.findOneStatus.calledOnce);
   // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
+  assert(requestRepository.save.calledOnce);
   // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
+  assert(statusRepository.saveAcquisitionStatus.calledOnce);
 
   const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
     insertableCarpool.operator_id,
     insertableCarpool.operator_journey_id,
   );
-  t.like(carpool, {
+  assertObjectMatch(carpool, {
     ...insertableCarpool,
     ...updatableCarpool,
     fraud_status: 'pending',
@@ -172,7 +172,7 @@ test.serial('Should cancel carpool', async (t) => {
   });
 });
 
-test.serial('Should rollback if something fail', async (t) => {
+it('Should rollback if something fail', async (t) => {
   const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
   const requestRepository = t.context.sinon.spy(t.context.requestRepository);
   t.context.sinon.replace(
@@ -187,10 +187,10 @@ test.serial('Should rollback if something fail', async (t) => {
   });
 
   const data = { ...insertableCarpool, operator_journey_id: 'operator_journey_id_2' };
-  await t.throwsAsync(async () => await service.registerRequest({ ...data, api_version: 3 }));
+  await assertThrows(async () => await service.registerRequest({ ...data, api_version: 3 }));
 
-  t.true(carpoolRepository.register.calledOnce);
-  t.true(requestRepository.save.calledOnce);
+  assert(carpoolRepository.register.calledOnce);
+  assert(requestRepository.save.calledOnce);
 
   const result = await t.context.db.connection
     .getClient()
@@ -199,5 +199,5 @@ test.serial('Should rollback if something fail', async (t) => {
         data.operator_id
       } AND operator_journey_id = ${data.operator_journey_id}`,
     );
-  t.deepEqual(result.rows, []);
+  assertObjectMatch(result.rows, []);
 });

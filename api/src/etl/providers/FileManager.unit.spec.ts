@@ -1,8 +1,8 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { FileManager } from './FileManager.ts';
 import { hash, writeFile } from '../helpers/index.ts';
 import { mkdir, join, Readable, axios, rmSync, readFileSync, AxiosError } from '@/deps.ts';
-import { sinon, SinonStub } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 interface Context {
   // Constants
@@ -21,19 +21,19 @@ const test = anyTest as TestFn<Context>;
 
 const FILE_CONTENT_STRING = '{}';
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.GEO_PERIMETER_TMP_DIR = '/tmp/perimeter-geo-test';
   t.context.RESSOURCE_URL = 'http://www.get.domaine.fr/system/files/documents/2022/09/file';
 
   t.context.axiosStub = sinon.stub(axios, 'get');
 });
 
-test.after((t) => {
+afterAll((t) => {
   rmSync(t.context.GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
   t.context.axiosStub.restore();
 });
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   rmSync(t.context.GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
 
   t.context.fileManager = new FileManager({
@@ -49,7 +49,7 @@ test.beforeEach((t) => {
   t.context.READABLE_STREAM.push(null);
 });
 
-test.serial('should return ressource file if available', async (t) => {
+it('should return ressource file if available', async (t) => {
   // Arrange
   const existingFilepath = join(t.context.fileManager.downloadPath, hash(t.context.RESSOURCE_URL));
   await mkdir(t.context.fileManager.downloadPath, { recursive: true });
@@ -60,10 +60,10 @@ test.serial('should return ressource file if available', async (t) => {
 
   // Assert
   sinon.assert.notCalled(t.context.axiosStub);
-  t.deepEqual(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
+  assertObjectMatch(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
 });
 
-test.serial('should download ressource url if not on fs', async (t) => {
+it('should download ressource url if not on fs', async (t) => {
   // Arrange
   t.context.axiosStub.resolves({ data: t.context.READABLE_STREAM });
 
@@ -72,10 +72,10 @@ test.serial('should download ressource url if not on fs', async (t) => {
 
   // Assert
   sinon.assert.calledOnceWithExactly(t.context.axiosStub, t.context.RESSOURCE_URL, { responseType: 'stream' });
-  t.deepEqual(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
+  assertObjectMatch(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
 });
 
-test.serial('should fallback to miror if any error code with download ressource', async (t) => {
+it('should fallback to miror if any error code with download ressource', async (t) => {
   // Arrange
   t.context.axiosStub.onCall(0).callsFake(() => {
     throw new AxiosError('Invalid URL', '403');
@@ -87,13 +87,13 @@ test.serial('should fallback to miror if any error code with download ressource'
 
   // Assert
   sinon.assert.calledTwice(t.context.axiosStub);
-  t.true(t.context.axiosStub.getCall(0).calledWithExactly(t.context.RESSOURCE_URL, { responseType: 'stream' }));
-  t.true(
+  assert(t.context.axiosStub.getCall(0).calledWithExactly(t.context.RESSOURCE_URL, { responseType: 'stream' }));
+  assert(
     t.context.axiosStub
       .getCall(1)
       .calledWithExactly(`${t.context.fileManager.mirrorUrl}/${hash(t.context.RESSOURCE_URL)}`, {
         responseType: 'stream',
       }),
   );
-  t.deepEqual(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
+  assertObjectMatch(readFileSync(filepath, 'utf8'), FILE_CONTENT_STRING);
 });

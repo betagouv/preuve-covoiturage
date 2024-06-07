@@ -6,7 +6,7 @@
  */
 
 import { _ } from '@/deps.ts';
-import { anyTest, TestFn, supertest } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
 import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';
@@ -52,7 +52,7 @@ test.before.skip(async (t) => {
 
   await t.context.kernel.bootstrap();
   await t.context.app.up(['0']);
-  t.context.request = supertest(t.context.app.getInstance());
+  t.context.request = superit(t.context.app.getInstance());
 });
 test.after.always.skip(async (t) => {
   // shutdown app and connections
@@ -70,7 +70,7 @@ test.serial.skip('Generate a certificate', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  t.is(response.status, 201);
+  assertEquals(response.status, 201);
 });
 
 test.serial.skip('Download the certificate', async (t) => {
@@ -83,7 +83,7 @@ test.serial.skip('Download the certificate', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  t.is(createResponse.status, 201);
+  assertEquals(createResponse.status, 201);
   const certificate: { uuid: string } = _.get(createResponse, 'body.result.data', {});
 
   // download it
@@ -93,5 +93,5 @@ test.serial.skip('Download the certificate', async (t) => {
     .set('Accept', 'application/pdf')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  t.is(response.status, 200);
+  assertEquals(response.status, 200);
 });

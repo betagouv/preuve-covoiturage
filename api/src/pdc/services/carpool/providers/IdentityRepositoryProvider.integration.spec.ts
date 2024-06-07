@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 
 import { IdentityRepositoryProvider } from './IdentityRepositoryProvider.ts';
@@ -42,15 +42,15 @@ test.serial.skip('Should save identity', async (t) => {
     },
     { operator_id: 1 },
   );
-  t.is(typeof uuid, 'string');
-  t.is(typeof _id, 'number');
+  assertEquals(typeof uuid, 'string');
+  assertEquals(typeof _id, 'number');
 
   const r = await t.context.connection.getClient().query({
     text: `SELECT _id, uuid from ${t.context.repository.table} WHERE _id = $1`,
     values: [_id],
   });
-  t.is(r.rowCount, 1);
-  t.is(r.rows[0].uuid, uuid);
+  assertEquals(r.rowCount, 1);
+  assertEquals(r.rows[0].uuid, uuid);
 });
 
 test.serial.skip('Should delete identity', async (t) => {
@@ -65,7 +65,7 @@ test.serial.skip('Should delete identity', async (t) => {
     text: `SELECT * from ${t.context.repository.table} WHERE _id = $1`,
     values: [id],
   });
-  t.is(r.rowCount, 0);
+  assertEquals(r.rowCount, 0);
 });
 
 test.serial.skip('Should share uuid when phone is the same', async (t) => {
@@ -90,7 +90,7 @@ test.serial.skip('Should share uuid when phone is the same', async (t) => {
     { operator_id: 1 },
   );
 
-  t.is(uuid1, uuid2);
+  assertEquals(uuid1, uuid2);
   t.not(uuid1, uuidt);
 });
 
@@ -104,7 +104,7 @@ test.serial.skip('Should share uuid when phone trunc and operator user id is the
     { operator_id: 1 },
   );
 
-  t.is(typeof idt, 'number');
+  assertEquals(typeof idt, 'number');
 
   await t.context.connection.getClient().query({
     text: 'INSERT INTO carpool.carpools (identity_id, operator_id, cost) VALUES ($1::int, $2::int, 0::int)',
@@ -120,7 +120,7 @@ test.serial.skip('Should share uuid when phone trunc and operator user id is the
     { operator_id: 2 },
   );
 
-  t.is(typeof id1, 'number');
+  assertEquals(typeof id1, 'number');
 
   await t.context.connection.getClient().query({
     text: 'INSERT INTO carpool.carpools (identity_id, operator_id, cost) VALUES ($1::int, $2::int, 0::int)',
@@ -136,7 +136,7 @@ test.serial.skip('Should share uuid when phone trunc and operator user id is the
     { operator_id: 2 },
   );
 
-  t.is(uuid1, uuid2);
+  assertEquals(uuid1, uuid2);
   t.not(uuid1, uuidt);
 });
 
@@ -171,6 +171,6 @@ test.serial.skip('Should share uuid when phone trunc and pass user id is the sam
     { operator_id: 1 },
   );
 
-  t.is(uuid1, uuid2);
+  assertEquals(uuid1, uuid2);
   t.not(uuid1, uuidt);
 });

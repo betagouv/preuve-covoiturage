@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Action, ServiceProvider, Extensions } from '@/ilos/core/index.ts';
 import { ConnectionManagerExtension } from '@/ilos/connection-manager/index.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
@@ -18,7 +18,7 @@ class ServiceOneHandler extends Action {}
 })
 class ServiceTwoHandler extends Action {}
 
-test('Queue extension: should register queue name in container as worker', async (t) => {
+it('Queue extension: should register queue name in container as worker', async (t) => {
   @serviceProvider({
     queues: ['serviceA', 'serviceB'],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
@@ -39,16 +39,16 @@ test('Queue extension: should register queue name in container as worker', async
 
   const container = service.getContainer();
   const queueRegistrySymbol = QueueExtension.containerKey;
-  t.true(container.isBound(queueRegistrySymbol));
+  assert(container.isBound(queueRegistrySymbol));
 
   const queueRegistry = container.getAll(queueRegistrySymbol);
 
-  t.true(queueRegistry.indexOf('serviceA') > -1);
-  t.true(queueRegistry.indexOf('serviceB') > -1);
-  t.is(container.getHandlers().length, 4);
+  assert(queueRegistry.indexOf('serviceA') > -1);
+  assert(queueRegistry.indexOf('serviceB') > -1);
+  assertEquals(container.getHandlers().length, 4);
 });
 
-test('should register queue name in container and handlers', async (t) => {
+it('should register queue name in container and handlers', async (t) => {
   @serviceProvider({
     env: null,
     queues: ['serviceA', 'serviceB'],
@@ -64,10 +64,10 @@ test('should register queue name in container and handlers', async (t) => {
 
   const container = service.getContainer();
   const queueRegistrySymbol = QueueExtension.containerKey;
-  t.true(container.isBound(queueRegistrySymbol));
+  assert(container.isBound(queueRegistrySymbol));
 
   const queueRegistry = container.getAll(queueRegistrySymbol);
-  t.true(queueRegistry.indexOf('serviceA') > -1);
-  t.true(queueRegistry.indexOf('serviceB') > -1);
-  t.is(container.getHandlers().length, 4);
+  assert(queueRegistry.indexOf('serviceA') > -1);
+  assert(queueRegistry.indexOf('serviceB') > -1);
+  assertEquals(container.getHandlers().length, 4);
 });

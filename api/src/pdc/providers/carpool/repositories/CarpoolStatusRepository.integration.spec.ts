@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { CarpoolRepository } from './CarpoolRepository.ts';
 import { CarpoolStatusRepository } from './CarpoolStatusRepository.ts';
@@ -17,7 +17,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new CarpoolStatusRepository(t.context.db.connection);
@@ -30,7 +30,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should create acquisition status', async (t) => {
+it('Should create acquisition status', async (t) => {
   const data = { ...insertableAcquisitionStatus, carpool_id: t.context.carpool_id };
 
   await t.context.repository.saveAcquisitionStatus(data);
@@ -39,5 +39,5 @@ test.serial('Should create acquisition status', async (t) => {
     WHERE carpool_id = ${t.context.carpool_id}
   `);
 
-  t.is(result.rows.pop()?.acquisition_status, data.status);
+  assertEquals(result.rows.pop()?.acquisition_status, data.status);
 });

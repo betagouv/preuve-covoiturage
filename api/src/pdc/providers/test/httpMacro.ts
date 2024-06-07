@@ -72,7 +72,7 @@ export function httpMacro<TestContext = unknown>(
       result: any,
     ) {
       const response = await t.context.request(method, params, context);
-      t.like(response, result);
+      assertObjectMatch(response, result);
     },
     title(providedTitle = '', method: string) {
       return `${providedTitle}: calling ${method}`;

@@ -1,6 +1,6 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { v4 } from '@/deps.ts';
-import { stub } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
 import { NantesMetropole2024 as Handler } from './NantesMetropole2024.ts';
@@ -51,7 +51,7 @@ stub(Handler, 'mode').callsFake((date: Date, regular: any, booster: any) => {
   return boosterDates.includes(ymd) ? booster : regular;
 });
 
-test(
+it(
   'should work with exclusion',
   process,
   {
@@ -80,7 +80,7 @@ test(
   { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
-test(
+it(
   'should work basic',
   process,
   {
@@ -123,7 +123,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with global limits',
   process,
   {
@@ -155,7 +155,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with day limits',
   process,
   {
@@ -190,7 +190,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with driver month limits of 84 €',
   process,
   {
@@ -233,7 +233,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with driver year limits of 1008.00 €',
   process,
   {
@@ -276,7 +276,7 @@ test(
   },
 );
 
-test(
+it(
   'should use boosterSlices on booster dates',
   process,
   {

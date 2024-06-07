@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { anyTest, ExecutionContext, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { faker } from '@/deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { mapFromCarpools } from '../helpers/mapFromCarpools.ts';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface.ts';
@@ -55,7 +55,7 @@ const carpoolData: CarpoolInterface[] = [
   /* eslint-enable prettier/prettier */
 ];
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   /* eslint-disable prettier/prettier */
   const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
@@ -97,13 +97,13 @@ test.beforeEach((t) => {
     .resolves({ uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME, support: t.context.OPERATOR_SUPPORT });
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.certificateRepositoryCreateStub.restore();
   t.context.carpoolRepositoryFindStub.restore();
   t.context.kernelCallStub.restore();
 });
 
-test('CreateCertificateAction: should generate certificate payload', async (t) => {
+it('CreateCertificateAction: should generate certificate payload', async (t) => {
   // Arrange
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves(carpoolData);
@@ -124,11 +124,11 @@ test('CreateCertificateAction: should generate certificate payload', async (t) =
   sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
-  t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, t.context.CERTIFICATE_UUID as string);
+  assertEquals(result.meta.httpStatus, 201);
+  assertEquals(result.data.uuid, t.context.CERTIFICATE_UUID as string);
 });
 
-test('CreateCertificateAction: should return empty cert if no trips', async (t) => {
+it('CreateCertificateAction: should return empty cert if no trips', async (t) => {
   // Arrange
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves([]);
@@ -150,8 +150,8 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
   sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
-  t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
+  assertEquals(result.meta.httpStatus, 201);
+  assertEquals(result.data.uuid, t.context.CERTIFICATE_UUID);
 });
 
 function getExpectedCertificateParams(

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@/ilos/common/index.ts';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@/ilos/core/index.ts';
 
@@ -43,19 +43,19 @@ const { before, after, success, error } = handlerMacro<ParamsInterface, ResultIn
 
 const test = anyTest as TestFn<CustomInterface>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const { kernel } = await before();
   t.context.kernel = kernel;
   t.context.hi = 'you';
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await after({ kernel: t.context.kernel });
 });
 
-test('Success', success, 'toto', 'hello toto');
-test('Error', error, 'error', 'custom:test');
+it('Success', success, 'toto', 'hello toto');
+it('Error', error, 'error', 'custom:test');
 
-test('should preserve context type and before hook', (t) => {
-  t.is(t.context.hi, 'you');
+it('should preserve context type and before hook', (t) => {
+  assertEquals(t.context.hi, 'you');
 });

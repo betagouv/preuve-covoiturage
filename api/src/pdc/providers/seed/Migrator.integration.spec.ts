@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Migrator } from './Migrator.ts';
 
 interface TestContext {
@@ -7,7 +7,7 @@ interface TestContext {
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.db = new Migrator(process.env.APP_POSTGRES_URL);
   await t.context.db.create();
   await t.context.db.up();
@@ -20,9 +20,9 @@ test.after.always(async (t) => {
   await t.context.db.drop();
 });
 
-test('should seed territories', async (t) => {
+it('should seed territories', async (t) => {
   const result = await t.context.db.connection.getClient().query({
     text: 'SELECT count(*) FROM geo.perimeters',
   });
-  t.is(result.rows[0].count, '17');
+  assertEquals(result.rows[0].count, '17');
 });

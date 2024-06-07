@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { EtalabAPIGeoProvider } from '../providers/index.ts';
 import { NotFoundException } from '@/ilos/common/index.ts';
@@ -6,20 +6,20 @@ import { insee, inseeError, inseeGeo, inseeGeoError } from './data.ts';
 
 const provider = new EtalabAPIGeoProvider();
 
-test('EtalabAPIGeoProvider: positionToInsee', async (t) => {
-  t.is(await provider.positionToInsee(insee.position), insee.code);
+it('EtalabAPIGeoProvider: positionToInsee', async (t) => {
+  assertEquals(await provider.positionToInsee(insee.position), insee.code);
 });
 
-test('EtalabAPIGeoProvider: positionToInsee not found', async (t) => {
-  await t.throwsAsync(provider.positionToInsee(inseeError.position), { instanceOf: NotFoundException });
+it('EtalabAPIGeoProvider: positionToInsee not found', async (t) => {
+  await assertThrows(provider.positionToInsee(inseeError.position), { instanceOf: NotFoundException });
 });
 
-test('EtalabAPIGeoProvider: inseeToPosition', async (t) => {
+it('EtalabAPIGeoProvider: inseeToPosition', async (t) => {
   const { lat, lon } = await provider.inseeToPosition(inseeGeo.code);
-  t.is(lon, inseeGeo.position.lon);
-  t.is(lat, inseeGeo.position.lat);
+  assertEquals(lon, inseeGeo.position.lon);
+  assertEquals(lat, inseeGeo.position.lat);
 });
 
-test('EtalabAPIGeoProvider: inseeToPosition error', async (t) => {
-  await t.throwsAsync(provider.inseeToPosition(inseeGeoError.code), { instanceOf: NotFoundException });
+it('EtalabAPIGeoProvider: inseeToPosition error', async (t) => {
+  await assertThrows(provider.inseeToPosition(inseeGeoError.code), { instanceOf: NotFoundException });
 });

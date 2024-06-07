@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from './PostgresConnection.ts';
 
 interface TestContext {
@@ -6,34 +6,34 @@ interface TestContext {
 }
 
 const test = anyTest as TestFn<TestContext>;
-test.before(async (t) => {
+beforeAll(async (t) => {
   const connection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
   await connection.up();
   t.context = { connection };
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.connection.down();
   t.log('PostgresConnection closed');
 });
 
-test.serial('Cursor 10 entries', async (t) => {
+it('Cursor 10 entries', async (t) => {
   const cursor = await t.context.connection.getCursor('SELECT * FROM generate_series(1, 20)', []);
-  t.true('read' in cursor);
-  t.true('release' in cursor);
+  assert('read' in cursor);
+  assert('release' in cursor);
 
   const count = 10;
   const parts = await cursor.read(count);
-  t.is(parts.length, count);
+  assertEquals(parts.length, count);
 
   await cursor.release();
 });
 
-test.serial('Cursor loop through all entries', async (t) => {
+it('Cursor loop through all entries', async (t) => {
   const rowCount = 1000;
   const cursor = await t.context.connection.getCursor(`SELECT * FROM generate_series(1, ${rowCount})`, []);
-  t.true('read' in cursor);
-  t.true('release' in cursor);
+  assert('read' in cursor);
+  assert('release' in cursor);
 
   let total = 0;
   let count = 100;
@@ -43,7 +43,7 @@ test.serial('Cursor loop through all entries', async (t) => {
     total += parts.length;
   } while (count > 0);
 
-  t.is(total, rowCount);
+  assertEquals(total, rowCount);
 
   await cursor.release();
 });

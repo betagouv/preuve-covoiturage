@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
 import { ContextType, ForbiddenException } from '@/ilos/common/index.ts';
 
@@ -35,7 +35,7 @@ const middlewareConfig = {
   operator: 'operator.trip.list',
 };
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.connection = new PostgresConnection({
     connectionString:
       'APP_POSTGRES_URL' in process.env
@@ -64,7 +64,7 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test('Middleware Scopetogroup: has global permission', async (t) => {
+it('Middleware Scopetogroup: has global permission', async (t) => {
   const result = await t.context.middleware.process(
     mockTripParameters,
     t.context.contextFactory({ permissions: ['trip.list'] }),
@@ -72,10 +72,10 @@ test('Middleware Scopetogroup: has global permission', async (t) => {
     middlewareConfig,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetogroup: has territory permission', async (t) => {
+it('Middleware Scopetogroup: has territory permission', async (t) => {
   const result = await t.context.middleware.process(
     mockTripParameters,
     t.context.contextFactory({
@@ -87,10 +87,10 @@ test('Middleware Scopetogroup: has territory permission', async (t) => {
     middlewareConfig,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetogroup: has territory permission autoscope', async (t) => {
+it('Middleware Scopetogroup: has territory permission autoscope', async (t) => {
   const result = await t.context.middleware.process(
     {},
     t.context.contextFactory({
@@ -101,10 +101,10 @@ test('Middleware Scopetogroup: has territory permission autoscope', async (t) =>
     (params) => params.geo_selector,
     middlewareConfig,
   );
-  t.deepEqual(result, { com: geo_selector.com });
+  assertObjectMatch(result, { com: geo_selector.com });
 });
 
-test('Middleware Scopetogroup: has territory permission unnest selector', async (t) => {
+it('Middleware Scopetogroup: has territory permission unnest selector', async (t) => {
   const result = await t.context.middleware.process(
     { aom: geo_selector.aom },
     t.context.contextFactory({
@@ -115,10 +115,10 @@ test('Middleware Scopetogroup: has territory permission unnest selector', async 
     (params) => params.geo_selector,
     middlewareConfig,
   );
-  t.deepEqual(result, { com: geo_selector.com });
+  assertObjectMatch(result, { com: geo_selector.com });
 });
 
-test('Middleware Scopetogroup: has territory permission and search on authorized', async (t) => {
+it('Middleware Scopetogroup: has territory permission and search on authorized', async (t) => {
   const result = await t.context.middleware.process(
     mockTripParameters,
     t.context.contextFactory({
@@ -130,11 +130,11 @@ test('Middleware Scopetogroup: has territory permission and search on authorized
     middlewareConfig,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetogroup: has territory permission and search on unauthorized', async (t) => {
-  await t.throwsAsync(
+it('Middleware Scopetogroup: has territory permission and search on unauthorized', async (t) => {
+  await assertThrows(
     t.context.middleware.process(
       mockTripParameters,
       t.context.contextFactory({
@@ -149,7 +149,7 @@ test('Middleware Scopetogroup: has territory permission and search on unauthoriz
   );
 });
 
-test('Middleware Scopetogroup: has operator permission', async (t) => {
+it('Middleware Scopetogroup: has operator permission', async (t) => {
   const result = await t.context.middleware.process(
     { operator_id: 2 },
     t.context.contextFactory({
@@ -160,10 +160,10 @@ test('Middleware Scopetogroup: has operator permission', async (t) => {
     middlewareConfig,
   );
 
-  t.is(result, 'next() called');
+  assertEquals(result, 'next() called');
 });
 
-test('Middleware Scopetogroup: has operator permission autoscope', async (t) => {
+it('Middleware Scopetogroup: has operator permission autoscope', async (t) => {
   const result = await t.context.middleware.process(
     {},
     t.context.contextFactory({
@@ -174,12 +174,12 @@ test('Middleware Scopetogroup: has operator permission autoscope', async (t) => 
     middlewareConfig,
   );
 
-  t.is(result.length, 1);
-  t.is(result[0], 2);
+  assertEquals(result.length, 1);
+  assertEquals(result[0], 2);
 });
 
-test('Middleware Scopetogroup: has operator permission and search on unauthorized', async (t) => {
-  await t.throwsAsync(
+it('Middleware Scopetogroup: has operator permission and search on unauthorized', async (t) => {
+  await assertThrows(
     t.context.middleware.process(
       { operator_id: [1] },
       t.context.contextFactory({
@@ -193,8 +193,8 @@ test('Middleware Scopetogroup: has operator permission and search on unauthorize
   );
 });
 
-test('Middleware Scopetogroup: has no permission', async (t) => {
-  await t.throwsAsync(
+it('Middleware Scopetogroup: has no permission', async (t) => {
+  await assertThrows(
     t.context.middleware.process(
       {},
       t.context.contextFactory({

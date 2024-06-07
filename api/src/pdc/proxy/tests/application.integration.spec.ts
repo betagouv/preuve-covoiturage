@@ -16,7 +16,7 @@
  */
 
 import { _ } from '@/deps.ts';
-import { anyTest, TestFn, supertest } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { KernelInterface, TransportInterface } from '@/ilos/common/index.ts';
 import { CryptoProvider } from '@/pdc/providers/crypto/index.ts';
@@ -54,7 +54,7 @@ const test = anyTest as TestFn<ContextType>;
 // const config = getDbMacroConfig();
 // process.env.APP_POSTGRES_URL = config.tmpConnectionString;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   // t.context.db = await dbBeforeMacro(config);
   t.context.redis = new RedisConnection({
     connectionString: process.env.APP_REDIS_URL,
@@ -86,7 +86,7 @@ test.before(async (t) => {
 
   await t.context.kernel.bootstrap();
   await t.context.app.up(['0']);
-  t.context.request = supertest(t.context.app.getInstance());
+  t.context.request = superit(t.context.app.getInstance());
 });
 
 test.after.always.skip(async (t) => {
@@ -99,7 +99,7 @@ test.after.always.skip(async (t) => {
   // await dbAfterMacro(t.context.db);
 });
 
-// test.beforeEach(async (t) => {
+// beforeEach(async (t) => {
 //   // login with the operator admin
 //   t.context.cookies = await cookieLoginHelper(t.context.request, 'maxicovoit.admin@example.com', 'admin1234');
 // });
@@ -123,8 +123,8 @@ test.skip('Application V1', async (t) => {
         app: t.context.application.uuid,
       })}`,
     );
-  t.is(response.status, 200);
-  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  assertEquals(response.status, 200);
+  assertEquals(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application v3 integer', async (t) => {
@@ -145,8 +145,8 @@ test.skip('Application v3 integer', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 200);
-  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  assertEquals(response.status, 200);
+  assertEquals(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application v3 varchar (old)', async (t) => {
@@ -167,8 +167,8 @@ test.skip('Application v3 varchar (old)', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 200);
-  t.is(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+  assertEquals(response.status, 200);
+  assertEquals(_.get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
 test.skip('Application Not Found', async (t) => {
@@ -189,8 +189,8 @@ test.skip('Application Not Found', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 401);
-  t.is(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
+  assertEquals(response.status, 401);
+  assertEquals(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
 });
 
 test.skip('Wrong operator', async (t) => {
@@ -211,8 +211,8 @@ test.skip('Wrong operator', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 403);
-  t.is(_.get(response, 'body.error.message', ''), 'Forbidden Error');
+  assertEquals(response.status, 403);
+  assertEquals(_.get(response, 'body.error.message', ''), 'Forbidden Error');
 });
 
 test.skip('Wrong permissions', async (t) => {
@@ -233,8 +233,8 @@ test.skip('Wrong permissions', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 403);
-  t.is(_.get(response, 'body.error.message', ''), 'Forbidden Error');
+  assertEquals(response.status, 403);
+  assertEquals(_.get(response, 'body.error.message', ''), 'Forbidden Error');
 });
 
 test.skip('Deleted application', async (t) => {
@@ -263,8 +263,8 @@ test.skip('Deleted application', async (t) => {
         v: 2,
       })}`,
     );
-  t.is(response.status, 401);
-  t.is(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
+  assertEquals(response.status, 401);
+  assertEquals(_.get(response, 'body.error.message', ''), 'Unauthorized Error');
 
   // un-soft-delete the application
   // await t.context.db.tmpConnection.getClient().query({

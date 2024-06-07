@@ -1,5 +1,5 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { Extensions, Action, ServiceProvider, Kernel } from '@/ilos/core/index.ts';
 import { ConnectionManagerExtension } from '@/ilos/connection-manager/index.ts';
@@ -14,7 +14,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach(async (t) => {
+beforeEach(async (t) => {
   t.context.sandbox = sinon.createSandbox();
   process.env.APP_WORKER = 'true';
 
@@ -104,15 +104,15 @@ test.beforeEach(async (t) => {
   t.context.sandbox.stub(t.context.transport, 'getScheduler').callsFake(fake);
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.sandbox.restore();
 });
 
-test('Queue transport: works', async (t) => {
+it('Queue transport: works', async (t) => {
   const queueTransport = t.context.transport;
   await queueTransport.up();
-  t.is(queueTransport.queues.length, 1);
-  t.is(queueTransport.queues[0].worker.name, 'math');
+  assertEquals(queueTransport.queues.length, 1);
+  assertEquals(queueTransport.queues[0].worker.name, 'math');
   // @ts-ignore
   const response = await queueTransport.queues[0].worker.add({
     data: {
@@ -131,6 +131,6 @@ test('Queue transport: works', async (t) => {
       },
     },
   });
-  t.is(response as any, 3);
+  assertEquals(response as any, 3);
   await queueTransport.down();
 });

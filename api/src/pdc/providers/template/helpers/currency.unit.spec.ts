@@ -1,7 +1,7 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { currency } from './currency.ts';
 
-test('should work', (t) => {
-  t.is(currency('10.1'), '10,10');
-  t.is(currency('not_a_number'), '0,00');
+it('should work', (t) => {
+  assertEquals(currency('10.1'), '10,10');
+  assertEquals(currency('not_a_number'), '0,00');
 });

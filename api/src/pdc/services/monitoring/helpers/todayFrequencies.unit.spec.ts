@@ -1,27 +1,27 @@
-import { anyTest as test } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { todayFrequencies } from './todayFrequencies.helper.ts';
 
-test('On Monday', (t) => {
+it('On Monday', (t) => {
   const clock = sinon.useFakeTimers(new Date('2023-02-13'));
-  t.deepEqual(todayFrequencies(), ['daily', 'weekly']);
+  assertObjectMatch(todayFrequencies(), ['daily', 'weekly']);
   clock.restore();
 });
 
-test('On Tuesday', (t) => {
+it('On Tuesday', (t) => {
   const clock = sinon.useFakeTimers(new Date('2023-02-14'));
-  t.deepEqual(todayFrequencies(), ['daily']);
+  assertObjectMatch(todayFrequencies(), ['daily']);
   clock.restore();
 });
 
-test('On 1st day of the month (not a Monday)', (t) => {
+it('On 1st day of the month (not a Monday)', (t) => {
   const clock = sinon.useFakeTimers(new Date('2023-02-01'));
-  t.deepEqual(todayFrequencies(), ['daily', 'monthly']);
+  assertObjectMatch(todayFrequencies(), ['daily', 'monthly']);
   clock.restore();
 });
 
-test('On 1st day of the month (a Monday)', (t) => {
+it('On 1st day of the month (a Monday)', (t) => {
   const clock = sinon.useFakeTimers(new Date('2022-08-01'));
-  t.deepEqual(todayFrequencies(), ['daily', 'weekly', 'monthly']);
+  assertObjectMatch(todayFrequencies(), ['daily', 'weekly', 'monthly']);
   clock.restore();
 });

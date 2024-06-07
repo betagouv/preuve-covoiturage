@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { CostNormalizerProvider } from './CostNormalizerProvider.ts';
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
@@ -12,7 +12,7 @@ class MockedNormalizerCostAction extends CostNormalizerProvider {
   }
 }
 
-test('Cost normalization should work', async (t) => {
+it('Cost normalization should work', async (t) => {
   const action = new MockedNormalizerCostAction();
   const data = {
     operator_id: 1,
@@ -36,7 +36,7 @@ test('Cost normalization should work', async (t) => {
   };
 
   const result = await action.handle(data);
-  t.deepEqual(result, {
+  assertObjectMatch(result, {
     cost: 20,
     payment: 10,
     payments: [

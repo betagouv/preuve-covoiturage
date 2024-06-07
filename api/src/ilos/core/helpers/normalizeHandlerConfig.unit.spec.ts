@@ -1,23 +1,23 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { MethodNotFoundException } from '@/ilos/common/index.ts';
 
 import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig.ts';
 
-test('Helpers: normalize from string works', (t) => {
+it('Helpers: normalize from string works', (t) => {
   const { method, service, version } = getConfigBySignature('service@0.0.1:method');
-  t.is(method, 'method');
-  t.is(service, 'service');
-  t.is(version, '0.0.1');
+  assertEquals(method, 'method');
+  assertEquals(service, 'service');
+  assertEquals(version, '0.0.1');
 });
 
-test('Helpers: normalize from string works with default version', (t) => {
+it('Helpers: normalize from string works with default version', (t) => {
   const { method, service, version } = getConfigBySignature('service:method');
-  t.is(method, 'method');
-  t.is(service, 'service');
-  t.is(version, 'latest');
+  assertEquals(method, 'method');
+  assertEquals(service, 'service');
+  assertEquals(version, 'latest');
 });
 
-test('Helpers: normalize from string works raise error', (t) => {
+it('Helpers: normalize from string works raise error', (t) => {
   // Invalid method string (:method)
   t.throws<MethodNotFoundException>(() => getConfigBySignature(':method'));
   // Invalid method string (service:)
@@ -26,17 +26,17 @@ test('Helpers: normalize from string works raise error', (t) => {
   t.throws<MethodNotFoundException>(() => getConfigBySignature('service:0.0.1'));
 });
 
-test('Helpers: normalize from object works', (t) => {
+it('Helpers: normalize from object works', (t) => {
   const method = getSignatureByConfig({ service: 'service', method: 'method', version: '0.0.1' });
-  t.is(method, 'service@0.0.1:method');
+  assertEquals(method, 'service@0.0.1:method');
 });
 
-test('Helpers: normalize from object works with default version', (t) => {
+it('Helpers: normalize from object works with default version', (t) => {
   const method = getSignatureByConfig({ service: 'service', method: 'method' });
-  t.is(method, 'service@latest:method');
+  assertEquals(method, 'service@latest:method');
 });
 
-test('Helpers: normalize from object works raise error', (t) => {
+it('Helpers: normalize from object works raise error', (t) => {
   t.throws<MethodNotFoundException>(() => getSignatureByConfig({ service: 'service', method: '' }));
   t.throws<MethodNotFoundException>(() => getSignatureByConfig({ service: '', method: 'method' }));
 });

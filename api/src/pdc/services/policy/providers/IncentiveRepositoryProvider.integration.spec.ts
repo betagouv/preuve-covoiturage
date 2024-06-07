@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 
 import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider.ts';
@@ -12,7 +12,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new IncentiveRepositoryProvider(t.context.db.connection);
@@ -22,7 +22,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should create many incentives', async (t) => {
+it('Should create many incentives', async (t) => {
   const incentives = [
     {
       _id: undefined,
@@ -76,12 +76,12 @@ test.serial('Should create many incentives', async (t) => {
     text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
-  t.is(incentiveResults.rowCount, 2);
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 100);
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 200);
+  assertEquals(incentiveResults.rowCount, 2);
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 100);
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 200);
 });
 
-test.serial('Should update many incentives', async (t) => {
+it('Should update many incentives', async (t) => {
   const incentives = [
     // update
     {
@@ -138,14 +138,14 @@ test.serial('Should update many incentives', async (t) => {
     values: [0],
   });
 
-  t.is(incentiveResults.rowCount, 3);
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 0);
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').state, 'null');
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 500);
-  t.is(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-3').result, 100);
+  assertEquals(incentiveResults.rowCount, 3);
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 0);
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').state, 'null');
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 500);
+  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-3').result, 100);
 });
 
-test.serial('Should update many incentives amount', async (t) => {
+it('Should update many incentives amount', async (t) => {
   const incentives = await t.context.db.connection.getClient().query({
     text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
@@ -159,22 +159,22 @@ test.serial('Should update many incentives amount', async (t) => {
     values: [0],
   });
 
-  t.is(incentiveResults.rowCount, 3);
-  t.is(incentiveResults.rows.filter((i) => i.state === 'null').length, 3);
+  assertEquals(incentiveResults.rowCount, 3);
+  assertEquals(incentiveResults.rows.filter((i) => i.state === 'null').length, 3);
 });
 
-test.serial('Should list draft incentive', async (t) => {
+it('Should list draft incentive', async (t) => {
   const cursor = t.context.repository.findDraftIncentive(new Date());
   const { value } = await cursor.next();
   await cursor.next();
-  t.true(Array.isArray(value));
+  assert(Array.isArray(value));
   const incentives = (Array.isArray(value) ? value : []).map((v) => ({
     operator_id: v.operator_id,
     operator_journey_id: v.operator_journey_id,
     statefulAmount: v.statefulAmount,
     statelessAmount: v.statelessAmount,
   }));
-  t.deepEqual(incentives, [
+  assertObjectMatch(incentives, [
     {
       operator_id: 1,
       operator_journey_id: 'operator_journey_id-1',

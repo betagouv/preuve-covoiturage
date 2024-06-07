@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, RPCException } from '@/ilos/common/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { AjvValidator } from './AjvValidator.ts';
 
@@ -11,7 +11,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {
     get() {
       return {};
@@ -22,7 +22,7 @@ test.beforeEach((t) => {
   t.context.provider.boot();
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   sinon.restore();
 });
 
@@ -34,7 +34,7 @@ class FakeObject {
   }
 }
 
-test('should work', async (t) => {
+it('should work', async (t) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema',
@@ -49,10 +49,10 @@ test('should work', async (t) => {
 
   t.context.provider.registerValidator(schema, FakeObject);
   const result = await t.context.provider.validate(new FakeObject({ hello: 'world' }));
-  t.true(result);
+  assert(result);
 });
 
-test('should raise exception on invalid data', async (t) => {
+it('should raise exception on invalid data', async (t) => {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema',
@@ -66,12 +66,12 @@ test('should raise exception on invalid data', async (t) => {
   };
 
   t.context.provider.registerValidator(schema, FakeObject);
-  const err: RPCException = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
-  t.is(err.message, 'Invalid params');
-  t.is(err.rpcError.data[0], '/hello: must be string');
+  const err: RPCException = await assertThrows(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
+  assertEquals(err.message, 'Invalid params');
+  assertEquals(err.rpcError.data[0], '/hello: must be string');
 });
 
-test('should work with ref', async (t) => {
+it('should work with ref', async (t) => {
   const subSchema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema.world',
@@ -97,10 +97,10 @@ test('should work with ref', async (t) => {
   t.context.provider.registerValidator(subSchema);
   t.context.provider.registerValidator(schema, FakeObject);
   const result = await t.context.provider.validate(new FakeObject({ hello: { world: '!!!' } }));
-  t.true(result);
+  assert(result);
 });
 
-test('should work with inheritance', async (t) => {
+it('should work with inheritance', async (t) => {
   class FakeObjectExtended extends FakeObject {}
 
   const schema = {
@@ -131,7 +131,7 @@ test('should work with inheritance', async (t) => {
   t.context.provider.registerValidator(schemaExtended, FakeObjectExtended);
 
   const resultExtended = await t.context.provider.validate(new FakeObjectExtended({ hello: 'world' }));
-  t.true(resultExtended);
+  assert(resultExtended);
   const result = await t.context.provider.validate(new FakeObject({ hello: true }));
-  t.true(result);
+  assert(result);
 });

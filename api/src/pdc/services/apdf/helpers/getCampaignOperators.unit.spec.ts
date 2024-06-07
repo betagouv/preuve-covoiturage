@@ -5,8 +5,8 @@ import {
 } from '@/shared/operator/findbyuuid.contract.ts';
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
 import { ResultInterface as PolicyFindResult } from '@/shared/policy/find.contract.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { getCampaignOperators, getPolicyUuidList, uuidToOperatorId } from './getCampaignOperators.helper.ts';
 
 interface Context {
@@ -16,37 +16,37 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
 });
 
-test('getPolicyUuidList: success', async (t) => {
+it('getPolicyUuidList: success', async (t) => {
   const response: PolicyFindResult = fakePolicy(1, ['12345678900001', '98765432100001']);
   t.context.kernelStub.resolves(response);
   const result = await getPolicyUuidList(t.context.kernel, 'apdf', 1);
-  t.deepEqual(result, ['12345678900001', '98765432100001']);
+  assertObjectMatch(result, ['12345678900001', '98765432100001']);
 });
 
-test('getPolicyUuidList: no policy found', async (t) => {
+it('getPolicyUuidList: no policy found', async (t) => {
   const message = 'policy:find not found';
   t.context.kernelStub.throws(new NotFoundException(message));
-  const error: RPCException = await t.throwsAsync(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
+  const error: RPCException = await assertThrows(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
     instanceOf: NotFoundException,
   });
-  t.is(error.rpcError?.data || '', message);
+  assertEquals(error.rpcError?.data || '', message);
 });
 
-test('getPolicyUuidList: no operators', async (t) => {
+it('getPolicyUuidList: no operators', async (t) => {
   const response: PolicyFindResult = fakePolicy(1, []);
   t.context.kernelStub.resolves(response);
-  const error: RPCException = await t.throwsAsync(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
+  const error: RPCException = await assertThrows(getPolicyUuidList(t.context.kernel, 'apdf', 1), {
     instanceOf: NotFoundException,
   });
-  t.is(error.rpcError?.data || '', 'No UUID declared in policy 1');
+  assertEquals(error.rpcError?.data || '', 'No UUID declared in policy 1');
 });
 
-test('uuidToOperatorId: success', async (t) => {
+it('uuidToOperatorId: success', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const query: FindByUuidParams['uuid'] = policy.params.operators;
   const response: FindByUuidResult = [
@@ -55,28 +55,28 @@ test('uuidToOperatorId: success', async (t) => {
   ];
   t.context.kernelStub.resolves(response);
   const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
-  t.deepEqual(result, [1, 2]);
+  assertObjectMatch(result, [1, 2]);
 });
 
-test('uuidToOperatorId: empty', async (t) => {
+it('uuidToOperatorId: empty', async (t) => {
   const policy = fakePolicy(1, []);
   const query: FindByUuidParams['uuid'] = policy.params.operators;
   const response: FindByUuidResult = [];
   t.context.kernelStub.resolves(response);
   const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
-  t.deepEqual(result, []);
+  assertObjectMatch(result, []);
 });
 
-test('uuidToOperatorId: no matching UUID', async (t) => {
+it('uuidToOperatorId: no matching UUID', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const query: FindByUuidParams['uuid'] = policy.params.operators;
   const response: FindByUuidResult = [];
   t.context.kernelStub.resolves(response);
   const result = await uuidToOperatorId(t.context.kernel, 'apdf', query);
-  t.deepEqual(result, []);
+  assertObjectMatch(result, []);
 });
 
-test('getDeclaredOperators: success', async (t) => {
+it('getDeclaredOperators: success', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const operators = [
     { _id: 1, uuid: '12345678900001' },
@@ -87,10 +87,10 @@ test('getDeclaredOperators: success', async (t) => {
   t.context.kernelStub.onSecondCall().resolves(operators);
 
   const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
-  t.deepEqual(result, [1, 2]);
+  assertObjectMatch(result, [1, 2]);
 });
 
-test('getDeclaredOperators: no matching UUID', async (t) => {
+it('getDeclaredOperators: no matching UUID', async (t) => {
   const policy = fakePolicy(1, ['12345678900001', '98765432100001']);
   const operators = [];
 
@@ -98,10 +98,10 @@ test('getDeclaredOperators: no matching UUID', async (t) => {
   t.context.kernelStub.onSecondCall().resolves(operators);
 
   const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
-  t.deepEqual(result, []);
+  assertObjectMatch(result, []);
 });
 
-test('getDeclaredOperators: empty', async (t) => {
+it('getDeclaredOperators: empty', async (t) => {
   const policy = fakePolicy(1, []);
   const operators = [];
 
@@ -109,7 +109,7 @@ test('getDeclaredOperators: empty', async (t) => {
   t.context.kernelStub.onSecondCall().resolves(operators);
 
   const result = await getCampaignOperators(t.context.kernel, 'apdf', policy._id);
-  t.deepEqual(result, []);
+  assertObjectMatch(result, []);
 });
 
 function fakePolicy(id: number, operators: string[]): PolicyFindResult {

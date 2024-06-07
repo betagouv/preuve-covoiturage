@@ -1,6 +1,6 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction.ts';
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
 import { ResultInterface } from '@/shared/policy/simulateOnPastGeo.contract.ts';
@@ -45,7 +45,7 @@ class FakeTripRepositoryProvider extends TripRepositoryProviderInterfaceResolver
   }
 }
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.tripRepository = new FakeTripRepositoryProvider();
   t.context.simulateOnPasGeoAction = new SimulateOnPastByGeoAction(
@@ -60,16 +60,16 @@ test.beforeEach((t) => {
   t.context.todayMinusSizMonthes.setMonth(t.context.todayMinusSizMonthes.getMonth() - 6);
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.kernelInterfaceResolverStub!.restore();
 });
 
-test('SimulateOnPastByGeoAction: should fails if geo not found', async (t) => {
+it('SimulateOnPastByGeoAction: should fails if geo not found', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub!.resolves({ coms: [] });
 
   // Act
-  const err = await t.throwsAsync(
+  const err = await assertThrows(
     async () =>
       await t.context.simulateOnPasGeoAction!.handle({
         territory_insee: '45612333333',
@@ -78,11 +78,11 @@ test('SimulateOnPastByGeoAction: should fails if geo not found', async (t) => {
   );
 
   // Assert
-  t.is(err?.message, 'Could not find any coms for territory_insee 45612333333');
+  assertEquals(err?.message, 'Could not find any coms for territory_insee 45612333333');
   sinon.assert.notCalled(t.context.tripRepositoryResolverStub!);
 });
 
-test('SimulateOnPastByGeoAction: should process trip with default time frame', async (t) => {
+it('SimulateOnPastByGeoAction: should process trip with default time frame', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub!.resolves({
     aom_siren: '200041630',
@@ -110,11 +110,11 @@ test('SimulateOnPastByGeoAction: should process trip with default time frame', a
   });
 
   // Assert
-  t.is(result.amount, 1000);
-  t.is(result.trip_subsidized, 4);
+  assertEquals(result.amount, 1000);
+  assertEquals(result.trip_subsidized, 4);
 });
 
-test('SimulateOnPastByGeoAction: should exclude trip with start and end not in 200070340 epci perimeter', async (t) => {
+it('SimulateOnPastByGeoAction: should exclude trip with start and end not in 200070340 epci perimeter', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub!.resolves({
     aom_siren: '84',
@@ -143,6 +143,6 @@ test('SimulateOnPastByGeoAction: should exclude trip with start and end not in 2
   });
 
   // Assert
-  t.is(result.amount, 0);
-  t.is(result.trip_subsidized, 0);
+  assertEquals(result.amount, 0);
+  assertEquals(result.trip_subsidized, 0);
 });

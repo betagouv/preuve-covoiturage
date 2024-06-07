@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { EtalabBaseAdresseNationaleProvider } from '../providers/index.ts';
 import { NotFoundException } from '@/ilos/common/index.ts';
@@ -6,20 +6,20 @@ import { insee, inseeError, geo, geoError } from './data.ts';
 
 const provider = new EtalabBaseAdresseNationaleProvider();
 
-test('EtalabBaseAdresseNationaleProvider: positionToInsee', async (t) => {
-  t.is(await provider.positionToInsee(insee.position), insee.code);
+it('EtalabBaseAdresseNationaleProvider: positionToInsee', async (t) => {
+  assertEquals(await provider.positionToInsee(insee.position), insee.code);
 });
 
-test('EtalabBaseAdresseNationaleProvider: positionToInsee not found', async (t) => {
-  await t.throwsAsync(provider.positionToInsee(inseeError.position), { instanceOf: NotFoundException });
+it('EtalabBaseAdresseNationaleProvider: positionToInsee not found', async (t) => {
+  await assertThrows(provider.positionToInsee(inseeError.position), { instanceOf: NotFoundException });
 });
 
-test('EtalabBaseAdresseNationaleProvider: literalToPosition', async (t) => {
+it('EtalabBaseAdresseNationaleProvider: literalToPosition', async (t) => {
   const { lat, lon } = await provider.literalToPosition(geo.literal);
-  t.is(lon, geo.position.lon);
-  t.is(lat, geo.position.lat);
+  assertEquals(lon, geo.position.lon);
+  assertEquals(lat, geo.position.lat);
 });
 
-test('EtalabBaseAdresseNationaleProvider: literalToPosition error', async (t) => {
-  await t.throwsAsync(provider.literalToPosition(geoError.literal), { instanceOf: NotFoundException });
+it('EtalabBaseAdresseNationaleProvider: literalToPosition error', async (t) => {
+  await assertThrows(provider.literalToPosition(geoError.literal), { instanceOf: NotFoundException });
 });

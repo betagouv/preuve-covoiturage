@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { mapCertForListHelper } from './mapCertForListHelper.ts';
 import { RowType, ResultRowInterface } from '@/shared/certificate/common/interfaces/ResultRowInterface.ts';
 import { CertificateInterface } from '@/shared/certificate/common/interfaces/CertificateInterface.ts';
@@ -55,7 +55,7 @@ const newFormat: CertificateInterface = {
 };
 /* eslint-enable prettier/prettier */
 
-test('new empty format returns empty values with OK status', (t) => {
+it('new empty format returns empty values with OK status', (t) => {
   const res: ResultRowInterface = mapCertForListHelper(newEmptyFormat);
   const exp: ResultRowInterface = {
     type: RowType.OK,
@@ -71,11 +71,11 @@ test('new empty format returns empty values with OK status', (t) => {
     positions: [],
   };
 
-  t.is(res.type, RowType.OK);
-  t.deepEqual(exp, res);
+  assertEquals(res.type, RowType.OK);
+  assertObjectMatch(exp, res);
 });
 
-test('new format returns mapped values and OK status', (t) => {
+it('new format returns mapped values and OK status', (t) => {
   const res: ResultRowInterface = mapCertForListHelper(newFormat);
   const exp: ResultRowInterface = {
     type: RowType.OK,
@@ -107,6 +107,6 @@ test('new format returns mapped values and OK status', (t) => {
     positions: [],
   };
 
-  t.is(res.type, RowType.OK);
-  t.deepEqual(exp, res);
+  assertEquals(res.type, RowType.OK);
+  assertObjectMatch(exp, res);
 });

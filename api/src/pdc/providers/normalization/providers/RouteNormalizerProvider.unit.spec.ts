@@ -1,10 +1,10 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
 import { PointInterface, RouteMeta } from '../interfaces/index.ts';
 
 import { RouteNormalizerProvider } from './RouteNormalizerProvider.ts';
 
-test('Route normalizer', async (t) => {
+it('Route normalizer', async (t) => {
   class GeoProvider extends GeoProviderInterfaceResolver {
     async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
       return {
@@ -27,6 +27,6 @@ test('Route normalizer', async (t) => {
   };
   const result = await normalizer.handle(params);
 
-  t.is(result.calc_distance, (params.start.lat + params.end.lat) * 1000, 'have calc_distance matching params');
-  t.is(result.calc_duration, (params.start.lon + params.end.lon) * 1000, 'have calc_distance matching params');
+  assertEquals(result.calc_distance, (params.start.lat + params.end.lat) * 1000, 'have calc_distance matching params');
+  assertEquals(result.calc_duration, (params.start.lon + params.end.lon) * 1000, 'have calc_distance matching params');
 });

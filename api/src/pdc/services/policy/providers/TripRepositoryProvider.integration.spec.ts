@@ -1,6 +1,6 @@
 import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
 import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Policy } from '../engine/entities/Policy.ts';
 import { Idfm } from '../engine/policies/Idfm.ts';
 import { TripRepositoryProvider } from './TripRepositoryProvider.ts';
@@ -13,7 +13,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new TripRepositoryProvider(t.context.db.connection);
@@ -23,7 +23,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should find carpools even with fraudcheck_error', async (t) => {
+it('Should find carpools even with fraudcheck_error', async (t) => {
   const start_date = new Date('2024-03-01');
   const end_date = new Date('2024-03-30');
 
@@ -45,9 +45,9 @@ test.serial('Should find carpools even with fraudcheck_error', async (t) => {
   const { value } = await cursor.next(); // ok carpool
   await cursor.next(); // ok carpool
   await cursor.next(); // fraudcheck_error carpool
-  t.is((value || []).length, 3);
-  t.true(Array.isArray(value));
-  t.like(
+  assertEquals((value || []).length, 3);
+  assert(Array.isArray(value));
+  assertObjectMatch(
     (value || [])
       .map((c) => ({
         start: c.start,

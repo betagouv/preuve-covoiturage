@@ -1,7 +1,7 @@
 import { NotFoundException } from '@/ilos/common/index.ts';
 import { Carpool } from '@/pdc/providers/seed/carpools.ts';
 import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import {
   AcquisitionCreateInterface,
   AcquisitionErrorStageEnum,
@@ -20,7 +20,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.operator_id = 1;
   const db = await before();
   t.context.db = db;
@@ -48,7 +48,7 @@ function createPayload(data: Partial<AcquisitionCreateInterface>): AcquisitionCr
 const statusError = new Error('message');
 const errors = [statusError.message, statusError.message, statusError.message];
 
-test.serial('Should create acquisition', async (t) => {
+it('Should create acquisition', async (t) => {
   const { operator_id } = t.context;
   const data = [
     { operator_journey_id: '1' }, // pending -> pending (updated) -> acquisition_error
@@ -59,7 +59,7 @@ test.serial('Should create acquisition', async (t) => {
   ].map(createPayload);
 
   const acqs = await t.context.repository.createOrUpdateMany(data);
-  t.deepEqual(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4', '5']);
+  assertObjectMatch(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4', '5']);
 
   const result = await t.context.db.connection.getClient().query<any>({
     text: `
@@ -78,14 +78,14 @@ test.serial('Should create acquisition', async (t) => {
     values: [operator_id],
   });
 
-  t.is(result.rowCount, data.length);
-  t.deepEqual(
+  assertEquals(result.rowCount, data.length);
+  assertObjectMatch(
     result.rows,
     data.map((d) => ({ ...d, status: 'pending', try_count: 0 })),
   );
 });
 
-test.serial('Should update acquisition', async (t) => {
+it('Should update acquisition', async (t) => {
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query<any>({
     text: `
@@ -105,7 +105,7 @@ test.serial('Should update acquisition', async (t) => {
 
   // 2 is not update because 'ok' status
   const acqs = await t.context.repository.createOrUpdateMany(data);
-  t.deepEqual(
+  assertObjectMatch(
     acqs.map((v) => v.operator_journey_id),
     ['1'],
   );
@@ -129,8 +129,8 @@ test.serial('Should update acquisition', async (t) => {
     values: [operator_id],
   });
 
-  t.is(result.rowCount, 5);
-  t.deepEqual(
+  assertEquals(result.rowCount, 5);
+  assertObjectMatch(
     result.rows,
     [...data, ...initialData].map((d) => {
       if (d.operator_journey_id !== '2') return { ...d, status: 'pending', try_count: 0 };
@@ -139,7 +139,7 @@ test.serial('Should update acquisition', async (t) => {
   );
 });
 
-test.serial('Should update status', async (t) => {
+it('Should update status', async (t) => {
   const { operator_id } = t.context;
   const { rows: data } = await t.context.db.connection.getClient().query<{ _id: number }>({
     text: `SELECT _id FROM ${t.context.repository.table} WHERE operator_id = $1 AND journey_id = $2`,
@@ -171,8 +171,8 @@ test.serial('Should update status', async (t) => {
     values: [operator_id],
   });
 
-  t.is(result.rowCount, 5);
-  t.deepEqual(result.rows, [
+  assertEquals(result.rowCount, 5);
+  assertObjectMatch(result.rows, [
     {
       operator_id: 1,
       operator_journey_id: '1',
@@ -209,7 +209,7 @@ test.serial('Should update status', async (t) => {
     `,
     values: [data[0]._id],
   });
-  t.deepEqual(result2.rows, [
+  assertObjectMatch(result2.rows, [
     {
       errors,
       operator_id: 1,
@@ -221,11 +221,11 @@ test.serial('Should update status', async (t) => {
   ]);
 });
 
-test.serial('Should get status by operator_id and operator_journey_id', async (t) => {
+it('Should get status by operator_id and operator_journey_id', async (t) => {
   const { operator_id } = t.context;
   const { operator_journey_id, status, fraud_error_labels } = await t.context.repository.getStatus(operator_id, '1');
 
-  t.deepEqual(
+  assertObjectMatch(
     { operator_journey_id, status, fraud_error_labels },
     {
       operator_journey_id: '1',
@@ -235,7 +235,7 @@ test.serial('Should get status by operator_id and operator_journey_id', async (t
   );
 });
 
-test.serial('Should get fraudcheck status and labels for carpool', async (t) => {
+it('Should get fraudcheck status and labels for carpool', async (t) => {
   // Arrange
   const acquisition_row = await updateAcquistionJourneyIdOk(t.context, '5');
   const { _id: carpool_id } = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
@@ -252,29 +252,29 @@ test.serial('Should get fraudcheck status and labels for carpool', async (t) => 
   const { status, fraud_error_labels } = await t.context.repository.getStatus(t.context.operator_id, '5');
 
   // Assert
-  t.deepEqual(status, StatusEnum.FraudError);
-  t.deepEqual(fraud_error_labels, ['interoperator_fraud']);
+  assertObjectMatch(status, StatusEnum.FraudError);
+  assertObjectMatch(fraud_error_labels, ['interoperator_fraud']);
 });
 
-test.serial('Should find with date selectors', async (t) => {
+it('Should find with date selectors', async (t) => {
   const [result, , commit] = await t.context.repository.findThenUpdate({
     limit: 2,
     status: AcquisitionStatusEnum.Pending,
     from: new Date(),
   });
 
-  t.deepEqual(result, []);
+  assertObjectMatch(result, []);
   await commit();
 });
 
-test.serial('Should find then update with selectors', async (t) => {
+it('Should find then update with selectors', async (t) => {
   const [result, , commit] = await t.context.repository.findThenUpdate({
     limit: 2,
     status: AcquisitionStatusEnum.Pending,
     to: new Date(),
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result.map(({ created_at, ...r }) => r),
     [
       { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
@@ -285,13 +285,13 @@ test.serial('Should find then update with selectors', async (t) => {
   await commit();
 });
 
-test.serial('Should find and update with lock', async (t) => {
+it('Should find and update with lock', async (t) => {
   const [result1, , commit1] = await t.context.repository.findThenUpdate({
     limit: 1,
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result1.map(({ created_at, ...r }) => r),
     [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
@@ -301,7 +301,7 @@ test.serial('Should find and update with lock', async (t) => {
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result2.map(({ created_at, ...r }) => r),
     [{ _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
@@ -312,7 +312,7 @@ test.serial('Should find and update with lock', async (t) => {
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result3.map(({ created_at, ...r }) => r),
     [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
@@ -326,12 +326,12 @@ test.serial('Should find and update with lock', async (t) => {
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(result4, []);
+  assertObjectMatch(result4, []);
   await commit3(); // release lock 3
   await commit4(); // release lock 3
 });
 
-test.serial('Should find with lock timeout', async (t) => {
+it('Should find with lock timeout', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query<any>({
@@ -344,7 +344,7 @@ test.serial('Should find with lock timeout', async (t) => {
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result1.map(({ created_at, ...r }) => r),
     [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
   );
@@ -364,7 +364,7 @@ test.serial('Should find with lock timeout', async (t) => {
     status: AcquisitionStatusEnum.Pending,
   });
 
-  t.deepEqual(
+  assertObjectMatch(
     result2.map(({ created_at, ...r }) => r),
     [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
   );
@@ -376,7 +376,7 @@ test.serial('Should find with lock timeout', async (t) => {
 // Les callbacks ne sont pas exec dans le scope du catch
 // Les erreurs ne sont pas captées et le ROLLBACK
 // ne doit pas fonctionner avec le code actuel
-test.serial('Should partial rollback if update error', async (t) => {
+it('Should partial rollback if update error', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const [result1, update1, commit1] = await t.context.repository.findThenUpdate({
     limit: 2,
@@ -400,7 +400,7 @@ test.serial('Should partial rollback if update error', async (t) => {
     values: [result1.map((r) => r._id)],
   });
 
-  t.deepEqual(data, [
+  assertObjectMatch(data, [
     {
       _id: result1[0]._id,
       status: AcquisitionStatusEnum.Ok,
@@ -412,8 +412,8 @@ test.serial('Should partial rollback if update error', async (t) => {
   ]);
 });
 
-test.serial('Should rollback if find error', async (t) => {
-  await t.throwsAsync(async () => {
+it('Should rollback if find error', async (t) => {
+  await assertThrows(async () => {
     await t.context.repository.findThenUpdate({
       limit: 'wrong' as unknown as number,
       status: AcquisitionStatusEnum.Pending,
@@ -421,7 +421,7 @@ test.serial('Should rollback if find error', async (t) => {
   });
 });
 
-test.serial('Should list acquisition status', async (t) => {
+it('Should list acquisition status', async (t) => {
   const search = {
     operator_id: 1,
     status: StatusEnum.Pending,
@@ -432,25 +432,25 @@ test.serial('Should list acquisition status', async (t) => {
   };
 
   const result = await t.context.repository.list(search);
-  t.deepEqual(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
+  assertObjectMatch(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
 
   const result1 = await t.context.repository.list({
     ...search,
     status: StatusEnum.AcquisitionError,
   });
-  t.deepEqual(result1, [{ operator_journey_id: '1' }]);
+  assertObjectMatch(result1, [{ operator_journey_id: '1' }]);
 
   const result2 = await t.context.repository.list({
     ...search,
     status: StatusEnum.Ok,
   });
-  t.deepEqual(result2, [
+  assertObjectMatch(result2, [
     { operator_journey_id: 'operator_journey_id-2' },
     { operator_journey_id: 'operator_journey_id-1' },
   ]);
 });
 
-test.serial('Should cancel acquisition', async (t) => {
+it('Should cancel acquisition', async (t) => {
   await t.context.repository.cancel(1, '3');
   await t.context.repository.cancel(1, '4', 'CODE1', 'TOTO');
   const result = await t.context.db.connection.getClient().query<any>({
@@ -461,7 +461,7 @@ test.serial('Should cancel acquisition', async (t) => {
     ORDER BY operator_journey_id`,
     values: [1],
   });
-  t.deepEqual(result.rows, [
+  assertObjectMatch(result.rows, [
     {
       operator_journey_id: '3',
       cancel_code: null,
@@ -475,24 +475,24 @@ test.serial('Should cancel acquisition', async (t) => {
   ]);
 });
 
-test.serial('Should throw not found if trying to path unexisting acquistion', async (t) => {
-  const error1 = await t.throwsAsync(
+it('Should throw not found if trying to path unexisting acquistion', async (t) => {
+  const error1 = await assertThrows(
     async () =>
       await t.context.repository.patchPayload({ operator_id: null, operator_journey_id: undefined, status: [] }, {}),
   );
-  t.true(error1 instanceof NotFoundException);
+  assert(error1 instanceof NotFoundException);
 
-  const error2 = await t.throwsAsync(
+  const error2 = await assertThrows(
     async () =>
       await t.context.repository.patchPayload(
         { operator_id: 1, operator_journey_id: '4', status: [AcquisitionStatusEnum.Ok] },
         {},
       ),
   );
-  t.true(error2 instanceof NotFoundException);
+  assert(error2 instanceof NotFoundException);
 });
 
-test.serial('Should patch payload', async (t) => {
+it('Should patch payload', async (t) => {
   await t.context.repository.patchPayload(
     { operator_id: 1, operator_journey_id: '1', status: [AcquisitionStatusEnum.Error, AcquisitionStatusEnum.Pending] },
     { test2: true },
@@ -504,7 +504,7 @@ test.serial('Should patch payload', async (t) => {
     `,
     values: [1, '1'],
   });
-  t.deepEqual(result.rows[0], {
+  assertObjectMatch(result.rows[0], {
     payload: {
       test: '12345',
       test2: true,
@@ -512,7 +512,7 @@ test.serial('Should patch payload', async (t) => {
   });
 });
 
-test.serial('Should create new acquisition and get anomaly error with temporal overlap label', async (t) => {
+it('Should create new acquisition and get anomaly error with temporal overlap label', async (t) => {
   // Arrange
   const data = [{ operator_journey_id: '6' }, { operator_journey_id: '7' }].map(createPayload);
 
@@ -544,10 +544,10 @@ test.serial('Should create new acquisition and get anomaly error with temporal o
   const { status, anomaly_error_details } = await t.context.repository.getStatus(t.context.operator_id, '7');
 
   // Assert
-  t.deepEqual(status, StatusEnum.AnomalyError);
-  t.deepEqual(anomaly_error_details[0].label, 'temporal_overlap_anomaly');
-  t.deepEqual(anomaly_error_details[0].metas.conflicting_journey_id, operator_journey_id_6);
-  t.deepEqual(anomaly_error_details[0].metas.temporal_overlap_duration_ratio, 0.845);
+  assertObjectMatch(status, StatusEnum.AnomalyError);
+  assertObjectMatch(anomaly_error_details[0].label, 'temporal_overlap_anomaly');
+  assertObjectMatch(anomaly_error_details[0].metas.conflicting_journey_id, operator_journey_id_6);
+  assertObjectMatch(anomaly_error_details[0].metas.temporal_overlap_duration_ratio, 0.845);
 });
 
 const updateAcquistionJourneyIdOk = async (

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Kernel as AbstractKernel } from '@/ilos/framework/index.ts';
 import { kernel as kernelDecorator } from '@/ilos/common/index.ts';
 
@@ -54,7 +54,7 @@ test.serial.skip('should create an operator', async (t) => {
 
   const result = await t.context.repository.create(data);
   t.context._id = result._id;
-  t.is(result.name, data.name);
+  assertEquals(result.name, data.name);
 });
 
 test.serial.skip('should update an operator', async (t) => {
@@ -63,20 +63,20 @@ test.serial.skip('should update an operator', async (t) => {
   };
 
   const result = await t.context.repository.patch(t.context._id, data);
-  t.is(result.name, data.name);
+  assertEquals(result.name, data.name);
 });
 
 test.serial.skip('should list operators', async (t) => {
   const result = await t.context.repository.all();
-  t.true(Array.isArray(result));
+  assert(Array.isArray(result));
   const results = [...result.filter((r) => r._id === t.context._id)];
-  t.is(results.length, 1);
-  t.is(results[0]._id, t.context._id);
+  assertEquals(results.length, 1);
+  assertEquals(results[0]._id, t.context._id);
 });
 
 test.serial.skip('should find operator by id', async (t) => {
   const result = await t.context.repository.find(t.context._id);
-  t.is(result._id, t.context._id);
+  assertEquals(result._id, t.context._id);
 });
 
 test.serial.skip('should delete operator by id', async (t) => {
@@ -85,9 +85,9 @@ test.serial.skip('should delete operator by id', async (t) => {
     text: 'SELECT * FROM operator.operators WHERE _id = $1 LIMIT 1',
     values: [t.context._id],
   });
-  t.is(result.rows[0]._id, t.context._id);
-  t.true(result.rows[0].deleted_at instanceof Date);
+  assertEquals(result.rows[0]._id, t.context._id);
+  assert(result.rows[0].deleted_at instanceof Date);
 
   const resultFromRepository = await t.context.repository.find(t.context._id);
-  t.is(resultFromRepository, undefined);
+  assertEquals(resultFromRepository, undefined);
 });

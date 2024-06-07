@@ -1,8 +1,8 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { mapResults } from './dataWrapMiddleware.ts';
 
-test('[mapResults] skips on missing results', (t) => {
+it('[mapResults] skips on missing results', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -13,10 +13,10 @@ test('[mapResults] skips on missing results', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), payload);
+  assertObjectMatch(mapResults(payload), payload);
 });
 
-test('[mapResults] returns doc on existing data/meta', (t) => {
+it('[mapResults] returns doc on existing data/meta', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -30,10 +30,10 @@ test('[mapResults] returns doc on existing data/meta', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), payload);
+  assertObjectMatch(mapResults(payload), payload);
 });
 
-test('[mapResults] returns doc with added meta: null if missing', (t) => {
+it('[mapResults] returns doc with added meta: null if missing', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -55,10 +55,10 @@ test('[mapResults] returns doc with added meta: null if missing', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), expectation);
+  assertObjectMatch(mapResults(payload), expectation);
 });
 
-test('[mapResults] wraps result with data/meta if missing', (t) => {
+it('[mapResults] wraps result with data/meta if missing', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -78,10 +78,10 @@ test('[mapResults] wraps result with data/meta if missing', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), expectation);
+  assertObjectMatch(mapResults(payload), expectation);
 });
 
-test('[mapResults] succeeds on non-object results (boolean)', (t) => {
+it('[mapResults] succeeds on non-object results (boolean)', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -97,10 +97,10 @@ test('[mapResults] succeeds on non-object results (boolean)', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), expectation);
+  assertObjectMatch(mapResults(payload), expectation);
 });
 
-test('[mapResults] succeeds on non-object results (string)', (t) => {
+it('[mapResults] succeeds on non-object results (string)', (t) => {
   const payload = {
     id: 1,
     jsonrpc: '2.0',
@@ -116,5 +116,5 @@ test('[mapResults] succeeds on non-object results (string)', (t) => {
     },
   };
 
-  t.deepEqual(mapResults(payload), expectation);
+  assertObjectMatch(mapResults(payload), expectation);
 });

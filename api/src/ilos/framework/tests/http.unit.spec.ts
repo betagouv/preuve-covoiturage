@@ -3,7 +3,7 @@ import { ServiceProvider } from '@/ilos/core/index.ts';
 import { httpHandlerFactory } from '@/ilos/handler-http/index.ts';
 import { HttpTransport } from '@/ilos/transport-http/index.ts';
 import { getPorts } from '@/pdc/helpers/ports.helper.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { axios } from '@/deps.ts';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';
@@ -20,7 +20,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.mathPort = await getPorts();
   t.context.stringPort = await getPorts();
 
@@ -56,7 +56,7 @@ test.before(async (t) => {
   await t.context.stringTransport.up([`${t.context.stringPort}`]);
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.mathTransport.down();
   await t.context.stringTransport.down();
   await t.context.mathKernel.shutdown();
@@ -96,40 +96,40 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   }
 }
 
-test('Http only integration: should work', async (t) => {
+it('Http only integration: should work', async (t) => {
   const responseMath = await makeRPCCall(t.context.mathPort, [{ method: 'math:add', params: [1, 1] }]);
-  t.deepEqual(responseMath.data, {
+  assertObjectMatch(responseMath.data, {
     jsonrpc: '2.0',
     id: 0,
     result: 'math:2',
   });
 
   const responseString = await makeRPCCall(t.context.stringPort, [{ method: 'string:hello', params: { name: 'sam' } }]);
-  t.deepEqual(responseString.data, {
+  assertObjectMatch(responseString.data, {
     jsonrpc: '2.0',
     id: 0,
     result: 'string:Hello world sam',
   });
 });
 
-test('Http only integration: should work with internal service call', async (t) => {
+it('Http only integration: should work with internal service call', async (t) => {
   const response = await makeRPCCall(t.context.stringPort, [
     { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
   ]);
 
-  t.deepEqual(response.data, {
+  assertObjectMatch(response.data, {
     jsonrpc: '2.0',
     id: 0,
     result: 'string:Hello world sam, result is math:2',
   });
 });
 
-test('Http only integration: should work with batch call', async (t) => {
+it('Http only integration: should work with batch call', async (t) => {
   const response = await makeRPCCall(t.context.stringPort, [
     { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
     { method: 'string:result', params: { name: 'john', add: [1, 10] } },
   ]);
-  t.deepEqual(response.data, [
+  assertObjectMatch(response.data, [
     {
       jsonrpc: '2.0',
       id: 0,

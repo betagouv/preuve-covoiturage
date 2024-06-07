@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { CarpoolRepository } from './CarpoolRepository.ts';
 import { CarpoolGeoRepository } from './CarpoolGeoRepository.ts';
@@ -19,7 +19,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new CarpoolGeoRepository(t.context.db.connection);
@@ -32,7 +32,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.beforeEach(async (t) => {
+beforeEach(async (t) => {
   t.context.conn = await t.context.db.connection.getClient().connect();
 });
 
@@ -40,13 +40,13 @@ test.afterEach.always((t) => {
   t.context.conn.release();
 });
 
-test.serial('Should create geo', async (t) => {
+it('Should create geo', async (t) => {
   const conn = t.context.conn;
   const processable = await t.context.repository.findProcessable(
     { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
     conn,
   );
-  t.deepEqual(processable, [
+  assertObjectMatch(processable, [
     { carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position },
   ]);
   const data = { ...upsertableGeoSuccess, carpool_id: processable[0].carpool_id };
@@ -55,29 +55,29 @@ test.serial('Should create geo', async (t) => {
     SELECT carpool_id, start_geo_code, end_geo_code FROM ${raw(t.context.repository.table)}
     WHERE carpool_id = ${t.context.carpool_id}
   `);
-  t.deepEqual(result.rows.pop(), data);
+  assertObjectMatch(result.rows.pop(), data);
 });
 
-test.serial('Should do nothing if geo exists', async (t) => {
+it('Should do nothing if geo exists', async (t) => {
   const conn = t.context.conn;
   const processable = await t.context.repository.findProcessable(
     { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
     conn,
   );
-  t.is(processable.length, 0);
+  assertEquals(processable.length, 0);
   await conn.query(sql`
     DELETE FROM ${raw(t.context.repository.table)}
     WHERE carpool_id = ${t.context.carpool_id}
   `);
 });
 
-test.serial('Should create status', async (t) => {
+it('Should create status', async (t) => {
   const conn = t.context.conn;
   const processable = await t.context.repository.findProcessable(
     { limit: 1, from: insertableCarpool.start_datetime, to: insertableCarpool.end_datetime },
     conn,
   );
-  t.deepEqual(processable, [
+  assertObjectMatch(processable, [
     { carpool_id: t.context.carpool_id, start: insertableCarpool.start_position, end: insertableCarpool.end_position },
   ]);
   const data = { ...upsertableGeoError, carpool_id: processable[0].carpool_id };
@@ -86,5 +86,5 @@ test.serial('Should create status', async (t) => {
     SELECT errors FROM ${raw(t.context.repository.table)}
     WHERE carpool_id = ${t.context.carpool_id}
   `);
-  t.deepEqual(result.rows.pop(), { errors: JSON.parse(JSON.stringify([data.error])) });
+  assertObjectMatch(result.rows.pop(), { errors: JSON.parse(JSON.stringify([data.error])) });
 });

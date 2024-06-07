@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { CarpoolInterface, CarpoolTypeEnum } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
 import { MetaPersonInterface } from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
 import { agg } from './mapFromCarpools.ts';
@@ -10,7 +10,7 @@ interface Context {
 
 const test = anyTest as TestFn<Partial<Context>>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context = {
     carpools: [
       /* eslint-disable prettier/prettier */
@@ -27,32 +27,32 @@ test.beforeEach((t) => {
   };
 });
 
-test('convert carpools to driver summary', (t) => {
+it('convert carpools to driver summary', (t) => {
   const driver = agg(CarpoolTypeEnum.DRIVER, t.context.carpools);
   const expected: MetaPersonInterface = {
     total: { trips: 37, week_trips: 27, weekend_trips: 10, distance: 310, amount: 31 },
     trips: t.context.carpools.filter((i) => i.type === CarpoolTypeEnum.DRIVER),
   };
 
-  t.deepEqual(driver, expected);
+  assertObjectMatch(driver, expected);
 });
 
-test('convert carpools to passenger summary', (t) => {
+it('convert carpools to passenger summary', (t) => {
   const passenger = agg(CarpoolTypeEnum.PASSENGER, t.context.carpools);
   const expected: MetaPersonInterface = {
     total: { trips: 37, week_trips: 27, weekend_trips: 10, distance: 310, amount: 31 },
     trips: t.context.carpools.filter((i) => i.type === CarpoolTypeEnum.PASSENGER),
   };
 
-  t.deepEqual(passenger, expected);
+  assertObjectMatch(passenger, expected);
 });
 
-test('convert carpools to empty set', (t) => {
+it('convert carpools to empty set', (t) => {
   const passenger = agg(CarpoolTypeEnum.PASSENGER, []);
   const expected: MetaPersonInterface = {
     total: { trips: 0, week_trips: 0, weekend_trips: 0, distance: 0, amount: 0 },
     trips: [],
   };
 
-  t.deepEqual(passenger, expected);
+  assertObjectMatch(passenger, expected);
 });

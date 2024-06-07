@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { QueueHandler } from './QueueHandler.ts';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory.ts';
@@ -11,7 +11,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach(async (t) => {
+beforeEach(async (t) => {
   t.context.context = {
     channel: {
       service: '',
@@ -24,7 +24,7 @@ test.beforeEach(async (t) => {
   await t.context.handler.init();
 });
 
-test.serial('Queue handler: works', async (t) => {
+it('Queue handler: works', async (t) => {
   const queueProvider = t.context.handler;
   const defaultContext = t.context.context;
   const result = (await queueProvider.call({
@@ -33,7 +33,7 @@ test.serial('Queue handler: works', async (t) => {
     context: defaultContext,
   })) as any;
 
-  t.deepEqual(result.data, {
+  assertObjectMatch(result.data, {
     jsonrpc: '2.0',
     id: null,
     method: 'basic@latest:method',

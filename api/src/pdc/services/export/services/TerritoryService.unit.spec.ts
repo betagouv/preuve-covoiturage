@@ -1,5 +1,5 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { TerritoryCodeEnum } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
 import { TerritoryService } from './TerritoryService.ts';
 import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
@@ -16,7 +16,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
   t.context.service = new TerritoryService(t.context.kernel);
@@ -26,27 +26,27 @@ test.beforeEach((t) => {
 // TESTS
 // ----------------------------------------------------------------------------------------
 
-test('resolve should return the correct result when no params are provided', async (t) => {
+it('resolve should return the correct result when no params are provided', async (t) => {
   const result = await t.context.service.resolve({});
-  t.deepEqual(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
+  assertObjectMatch(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
 });
 
-test('resolve should return the correct result when geo param is empty', async (t) => {
+it('resolve should return the correct result when geo param is empty', async (t) => {
   const result = await t.context.service.resolve({ geo: [] });
-  t.deepEqual(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
+  assertObjectMatch(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
 });
 
-test('resolve should return the correct result when code is not in the TerritoryCodeEnum list', async (t) => {
+it('resolve should return the correct result when code is not in the TerritoryCodeEnum list', async (t) => {
   const result = await t.context.service.resolve({ geo: ['invalid_code'] });
-  t.deepEqual(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
+  assertObjectMatch(result, { [TerritoryCodeEnum.Country]: ['XXXXX'] });
 });
 
-test('resolve should return the correct result when geo param is an AOM', async (t) => {
+it('resolve should return the correct result when geo param is an AOM', async (t) => {
   const result = await t.context.service.resolve({ geo: ['aom:code'] });
-  t.deepEqual(result, { [TerritoryCodeEnum.Mobility]: ['code'] });
+  assertObjectMatch(result, { [TerritoryCodeEnum.Mobility]: ['code'] });
 });
 
-test('resolve should return the correct result when geo param is an AOM and a COM', async (t) => {
+it('resolve should return the correct result when geo param is an AOM and a COM', async (t) => {
   const result = await t.context.service.resolve({ geo: ['aom:code', 'com:code'] });
-  t.deepEqual(result, { [TerritoryCodeEnum.Mobility]: ['code'], [TerritoryCodeEnum.City]: ['code'] });
+  assertObjectMatch(result, { [TerritoryCodeEnum.Mobility]: ['code'], [TerritoryCodeEnum.City]: ['code'] });
 });

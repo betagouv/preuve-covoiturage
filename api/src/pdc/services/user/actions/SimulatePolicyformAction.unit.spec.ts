@@ -1,6 +1,6 @@
 import { ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon, SinonStub } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider.ts';
 import {
   signature as simulateOnPastGeoSignature,
@@ -27,7 +27,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.userNotificationProvider = new UserNotificationProvider(null, null, null);
 
@@ -49,16 +49,16 @@ test.beforeEach((t) => {
   };
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.kernelInterfaceResolverStub!.restore();
 });
 
-test('SimulatePolicyformAction: should fail and return geo error if error in SimulateOnPastByGeoAction', async (t) => {
+it('SimulatePolicyformAction: should fail and return geo error if error in SimulateOnPastByGeoAction', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub!.throws(new Error('Could not find any coms for territory_insee 45612333333'));
 
   // Act
-  const err = await t.throwsAsync(
+  const err = await assertThrows(
     async () =>
       await t.context.simulatePolicyformAction!.handle({
         name: '',
@@ -75,11 +75,11 @@ test('SimulatePolicyformAction: should fail and return geo error if error in Sim
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  t.is(err?.message, 'Could not find any coms for territory_insee 45612333333');
+  assertEquals(err?.message, 'Could not find any coms for territory_insee 45612333333');
   t.pass();
 });
 
-test('SimulatePolicyformAction: should call simulation for 1, 3 and 6 months period', async (t) => {
+it('SimulatePolicyformAction: should call simulation for 1, 3 and 6 months period', async (t) => {
   // Arrange
   const simulation: SimulateOnPastGeoRequiredParams = { territory_insee: '45612333333', policy_template_id: '1' };
   const params: ParamsInterface = {

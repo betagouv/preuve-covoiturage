@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver } from '@/ilos/common/index.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { faker } from '@/deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { UploadedResource } from '../interfaces/DataGouvInterface.ts';
 import { DataGouvProvider } from '../providers/DataGouvProvider.ts';
 import { ParamsInterface } from '@/shared/trip/publishOpenData.contract.ts';
@@ -34,12 +34,12 @@ interface Context {
 
 const test = anyTest as TestFn<Partial<Context>>;
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904';
   t.context.DATASET_SLUG = 'dataset-slugs';
 });
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
   t.context.buildResourceDescription = new BuildResourceDescription(null);
   t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null);
@@ -62,12 +62,12 @@ test.beforeEach((t) => {
   t.context.buildResourceDescriptionStub = sinon.stub(t.context.buildResourceDescription, 'call');
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   t.context.dataGouvProviderUpdateStub.restore();
   t.context.buildResourceDescriptionStub.restore();
 });
 
-test('PublishOpendataAction: should upload new opendata resource', async (t) => {
+it('PublishOpendataAction: should upload new opendata resource', async (t) => {
   // Arrange
   const params: ParamsInterface = {
     filepath: '/tmp/2021-08.csv',
@@ -115,7 +115,7 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
   t.pass();
 });
 
-test('PublishOpendataAction: should update existing opendata resource', async (t) => {
+it('PublishOpendataAction: should update existing opendata resource', async (t) => {
   // Arrange
   const params: ParamsInterface = {
     filepath: '/tmp/2021-09.csv',

@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 import { CarpoolRepository } from './CarpoolRepository.ts';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
@@ -12,7 +12,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new CarpoolRepository(t.context.db.connection);
@@ -51,25 +51,25 @@ async function getCarpool(context: TestContext, id: Id) {
   };
 }
 
-test.serial('Should create carpool', async (t) => {
+it('Should create carpool', async (t) => {
   const data = { ...insertableCarpool };
 
   const carpool = await t.context.repository.register(data);
   const result = await getCarpool(t.context, carpool._id);
 
-  t.like(result, { ...carpool, ...data });
+  assertObjectMatch(result, { ...carpool, ...data });
 });
 
-test.serial('Should do nothing on duplicate carpool', async (t) => {
+it('Should do nothing on duplicate carpool', async (t) => {
   const data = { ...insertableCarpool };
 
   const carpool = await t.context.repository.register(data);
   const result = await getCarpool(t.context, carpool._id);
 
-  t.like(result, { ...carpool, ...data });
+  assertObjectMatch(result, { ...carpool, ...data });
 });
 
-test.serial('Should update acquisition', async (t) => {
+it('Should update acquisition', async (t) => {
   const insertData = { ...insertableCarpool, operator_journey_id: 'journey_2' };
 
   const carpool = await t.context.repository.register(insertData);
@@ -78,5 +78,5 @@ test.serial('Should update acquisition', async (t) => {
   await t.context.repository.update(insertData.operator_id, insertData.operator_journey_id, updateData);
 
   const result = await getCarpool(t.context, carpool._id);
-  t.like(result, { ...carpool, ...insertData, ...updateData });
+  assertObjectMatch(result, { ...carpool, ...insertData, ...updateData });
 });

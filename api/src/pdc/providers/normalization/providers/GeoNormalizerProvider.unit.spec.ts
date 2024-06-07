@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
 import { PartialGeoInterface, GeoInterface } from '../interfaces/index.ts';
 import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
@@ -15,7 +15,7 @@ class GeoProvider extends GeoProviderInterfaceResolver {
   }
 }
 
-test('Geo normalizer should return expected result', async (t) => {
+it('Geo normalizer should return expected result', async (t) => {
   const provider = new GeoProvider();
   const normalizer = new GeoNormalizerProvider(provider);
 
@@ -33,17 +33,17 @@ test('Geo normalizer should return expected result', async (t) => {
   });
 
   const resultProperties = Reflect.ownKeys(result);
-  t.true(resultProperties.indexOf('start') > -1);
-  t.true(Reflect.ownKeys(result.start).indexOf('geo_code') > -1);
-  t.is(
+  assert(resultProperties.indexOf('start') > -1);
+  assert(Reflect.ownKeys(result.start).indexOf('geo_code') > -1);
+  assertEquals(
     result.start.geo_code,
     `${result.start.lat.toString(10)}_${result.start.lon.toString(10)}`,
     'have start.insee property matching lat, lon values',
   );
 
-  t.true(resultProperties.indexOf('end') > -1);
-  t.true(Reflect.ownKeys(result.end).indexOf('geo_code') > -1);
-  t.is(
+  assert(resultProperties.indexOf('end') > -1);
+  assert(Reflect.ownKeys(result.end).indexOf('geo_code') > -1);
+  assertEquals(
     result.end.geo_code,
     `${result.end.lat.toString(10)}_${result.end.lon.toString(10)}`,
     'have end.insee property matching lat, lon values',

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import { anyTest, TestFn } from '@/dev_deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Dataset } from '../../interfaces/index.ts';
 import { DataGouvProvider } from '../../providers/DataGouvProvider.ts';
 import { GetRessourceIdIfExists } from './GetRessourceIdIfExists.ts';
@@ -20,7 +20,7 @@ interface Context {
 
 const test = anyTest as TestFn<Partial<Context>>;
 
-test.before((t) => {
+beforeAll((t) => {
   t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904';
   t.context.dataset = {
     resources: [
@@ -37,15 +37,15 @@ test.before((t) => {
   t.context.DATASET_SLUG = 'dataset-slugs';
 });
 
-test.beforeEach((t) => {
+beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
   t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(t.context.dataGouvProvider);
   t.context.dataGouvProviderStub = sinon.stub(t.context.dataGouvProvider, 'getDataset');
 });
 
-test.afterEach((t) => {});
+afterEach((t) => {});
 
-test('GetRessourceIdIfExists: should retrieve resource id if matched resource name', async (t) => {
+it('GetRessourceIdIfExists: should retrieve resource id if matched resource name', async (t) => {
   // Arrange
   t.context.dataGouvProviderStub.resolves(t.context.dataset);
 
@@ -54,10 +54,10 @@ test('GetRessourceIdIfExists: should retrieve resource id if matched resource na
 
   // Assert
   sinon.assert.called(t.context.dataGouvProviderStub);
-  t.deepEqual(resourceId, t.context.EXISTING_RESOURCE_ID);
+  assertObjectMatch(resourceId, t.context.EXISTING_RESOURCE_ID);
 });
 
-test('GetRessourceIdIfExists: should return undefined if no matched resource name', async (t) => {
+it('GetRessourceIdIfExists: should return undefined if no matched resource name', async (t) => {
   // Arrange
   t.context.dataGouvProviderStub.resolves(t.context.dataset);
 
@@ -66,5 +66,5 @@ test('GetRessourceIdIfExists: should return undefined if no matched resource nam
 
   // Assert
   sinon.assert.called(t.context.dataGouvProviderStub);
-  t.deepEqual(resourceId, undefined);
+  assertObjectMatch(resourceId, undefined);
 });

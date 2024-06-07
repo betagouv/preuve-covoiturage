@@ -29,7 +29,7 @@ export const coordinatesKeyword: KeywordDefinition = {
         if (isNaN(decimal)) throw new Error(`${latOrLon} must be a decimal`);
         if (decimal < min || decimal > max) throw new Error(`lat must be between ${min} and ${max}`);
 
-        return regex.test(data.toString());
+        return regex.it(data.toString());
       } catch (e) {
         return false;
       }

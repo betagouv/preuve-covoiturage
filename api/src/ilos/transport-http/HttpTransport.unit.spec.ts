@@ -1,6 +1,6 @@
 import { RPCCallType, RPCResponseType } from '@/ilos/common/index.ts';
 import { Kernel } from '@/ilos/core/index.ts';
-import { anyTest, TestFn, supertest, SuperTestAgent } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { HttpTransport } from './HttpTransport.ts';
 
 interface Context {
@@ -10,7 +10,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   class BasicKernel extends Kernel {
     async handle(call: RPCCallType): Promise<RPCResponseType> {
       // generate errors from method name
@@ -65,14 +65,14 @@ test.before(async (t) => {
 
   await t.context.httpTransport.up(['0']);
 
-  t.context.request = supertest(t.context.httpTransport.getInstance());
+  t.context.request = superit(t.context.httpTransport.getInstance());
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.httpTransport.down();
 });
 
-test('Http transport: returns JSON-RPC compliant success response', async (t) => {
+it('Http transport: returns JSON-RPC compliant success response', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -83,15 +83,15 @@ test('Http transport: returns JSON-RPC compliant success response', async (t) =>
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 200);
-  t.deepEqual(response.body, {
+  assertEquals(response.status, 200);
+  assertObjectMatch(response.body, {
     id: 1,
     jsonrpc: '2.0',
     result: 'hello world',
   });
 });
 
-test('Http transport: returns JSON-RPC compliant error response', async (t) => {
+it('Http transport: returns JSON-RPC compliant error response', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -102,8 +102,8 @@ test('Http transport: returns JSON-RPC compliant error response', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  t.is(response.status, 405);
-  t.deepEqual(response.body, {
+  assertEquals(response.status, 405);
+  assertObjectMatch(response.body, {
     id: 1,
     jsonrpc: '2.0',
     error: {
@@ -113,7 +113,7 @@ test('Http transport: returns JSON-RPC compliant error response', async (t) => {
   });
 });
 
-test('Http transport: regular request', async (t) => {
+it('Http transport: regular request', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -123,13 +123,13 @@ test('Http transport: regular request', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 200);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.is(response.body.result, 'hello world');
+  assertEquals(response.status, 200);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertEquals(response.body.result, 'hello world');
 });
 
-test('Http transport: notification request', async (t) => {
+it('Http transport: notification request', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -138,11 +138,11 @@ test('Http transport: notification request', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 204);
-  t.is(response.body, '');
+  assertEquals(response.status, 204);
+  assertEquals(response.body, '');
 });
 
-test('Http transport: should fail if missing Accept header', async (t) => {
+it('Http transport: should fail if missing Accept header', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -151,17 +151,17 @@ test('Http transport: should fail if missing Accept header', async (t) => {
       method: 'test',
     })
     .set('Content-Type', 'application/json');
-  t.is(response.status, 415);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 415);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32000,
     message: 'Wrong Content-type header. Requires application/json',
   });
 });
 
 // Content-type is infered from Accept header
-test('Http transport: should work without Content-type header', async (t) => {
+it('Http transport: should work without Content-type header', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -170,13 +170,13 @@ test('Http transport: should work without Content-type header', async (t) => {
       method: 'test',
     })
     .set('Accept', 'application/json');
-  t.is(response.status, 200);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.is(response.body.result, 'hello world');
+  assertEquals(response.status, 200);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertEquals(response.body.result, 'hello world');
 });
 
-test('Http transport: should fail if http verb is not POST', async (t) => {
+it('Http transport: should fail if http verb is not POST', async (t) => {
   const response = await t.context.request
     .get('/')
     .send({
@@ -186,31 +186,31 @@ test('Http transport: should fail if http verb is not POST', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 405);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 405);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32601,
     message: 'Method not allowed',
   });
 });
 
-test('Http transport: should fail if json is misformed', async (t) => {
+it('Http transport: should fail if json is misformed', async (t) => {
   const response = await t.context.request
     .post('/')
     .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 415);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 415);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32000,
     message: 'Wrong content length',
   });
 });
 
-test('Http transport: should fail if service reject', async (t) => {
+it('Http transport: should fail if service reject', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -220,16 +220,16 @@ test('Http transport: should fail if service reject', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 500);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 500);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32000,
     message: 'Server error',
   });
 });
 
-test('Http transport: should fail if request is invalid', async (t) => {
+it('Http transport: should fail if request is invalid', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -239,16 +239,16 @@ test('Http transport: should fail if request is invalid', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 400);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 400);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32600,
     message: 'Server error',
   });
 });
 
-test('Http transport: should fail if method is not found', async (t) => {
+it('Http transport: should fail if method is not found', async (t) => {
   const response = await t.context.request
     .post('/')
     .send({
@@ -258,10 +258,10 @@ test('Http transport: should fail if method is not found', async (t) => {
     })
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
-  t.is(response.status, 405);
-  t.is(response.body.id, 1);
-  t.is(response.body.jsonrpc, '2.0');
-  t.deepEqual(response.body.error, {
+  assertEquals(response.status, 405);
+  assertEquals(response.body.id, 1);
+  assertEquals(response.body.jsonrpc, '2.0');
+  assertObjectMatch(response.body.error, {
     code: -32601,
     message: 'Method not found',
   });

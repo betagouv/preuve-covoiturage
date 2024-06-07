@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { _ } from '@/deps.ts';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@/ilos/core/index.ts';
 import {
@@ -92,27 +92,27 @@ const { before, after, success, error } = handlerMacro<ParamsInterface, ResultIn
 );
 
 const test = anyTest as TestFn<HandlerMacroContext>;
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context = await before();
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await after(t.context);
 });
 
-test('Success call.user.permissions', success, 'call.user.permissions', ['test.run'], {
+it('Success call.user.permissions', success, 'call.user.permissions', ['test.run'], {
   call: { user: { permissions: ['test.run'] } },
   channel: { service: 'dummy' },
 });
 
-test('Success channel.service', success, 'channel.service', 'dummy', {
+it('Success channel.service', success, 'channel.service', 'dummy', {
   call: { user: { permissions: ['test.run'] } },
   channel: { service: 'dummy' },
 });
 
-test('undefined permissions = Forbidden Error', error, 'call.user.permissions', 'Forbidden Error');
+it('undefined permissions = Forbidden Error', error, 'call.user.permissions', 'Forbidden Error');
 
-test('Error call.user.permissions', error, 'call.user.permissions', 'Forbidden Error', {
+it('Error call.user.permissions', error, 'call.user.permissions', 'Forbidden Error', {
   call: { user: { permissions: [] } },
   channel: { service: 'dummy' },
 });

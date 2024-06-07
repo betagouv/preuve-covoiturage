@@ -1,9 +1,9 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { MiddlewareInterface, ContextType, ResultType, ParamsType } from '@/ilos/common/index.ts';
 
 import { compose } from './compose.ts';
 
-test('Helpers: compose works', async (t) => {
+it('Helpers: compose works', async (t) => {
   class MiddlewareOne implements MiddlewareInterface {
     async process(params: { name: string }, context: ContextType, next?: Function, options?: any): Promise<ResultType> {
       const { name } = params;
@@ -29,5 +29,5 @@ test('Helpers: compose works', async (t) => {
   }
   const call = compose([new MiddlewareOne(), new MiddlewareTwo(), [new MiddlewareThree(), { greeting: 'Hello' }]]);
   const result = await call({ name: 'Arya' }, { channel: { service: 'test' } }, last);
-  t.is(result, 'Hello Arya Stark, welcome !!!');
+  assertEquals(result, 'Hello Arya Stark, welcome !!!');
 });

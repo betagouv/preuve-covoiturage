@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { v4 } from '@/deps.ts';
 import { OperatorsEnum } from '../../interfaces/index.ts';
 import { makeProcessHelper } from '../tests/macro.ts';
@@ -44,7 +44,7 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   'should work with exclusion',
   process,
   {
@@ -65,7 +65,7 @@ test(
   { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
-test(
+it(
   'should work basic',
   process,
   {
@@ -90,7 +90,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with global limits',
   process,
   {
@@ -114,7 +114,7 @@ test(
   },
 );
 
-test(
+it(
   'should work with day limits',
   process,
   {

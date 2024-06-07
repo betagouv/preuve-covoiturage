@@ -1,7 +1,7 @@
 import { KernelInterface, TransportInterface, kernel as kernelDecorator } from '@/ilos/common/index.ts';
 import { HttpTransport } from '@/ilos/transport-http/index.ts';
 import { getPorts } from '@/pdc/helpers/ports.helper.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { axios } from '@/deps.ts';
 import { Kernel } from '../Kernel.ts';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider.ts';
@@ -15,7 +15,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.port = await getPorts();
 
   @kernelDecorator({
@@ -29,7 +29,7 @@ test.before(async (t) => {
   await t.context.transport.up([`${t.context.port}`]);
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.transport.down();
   await t.context.kernel.shutdown();
 });
@@ -67,22 +67,22 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   }
 }
 
-test('Merged integration: works I', async (t) => {
+it('Merged integration: works I', async (t) => {
   const responseMath = await makeRPCCall(t.context.port, [{ method: 'math:add', params: [1, 1] }]);
-  t.deepEqual(responseMath.data, { jsonrpc: '2.0', id: 0, result: 'math:2' });
+  assertObjectMatch(responseMath.data, { jsonrpc: '2.0', id: 0, result: 'math:2' });
 });
 
-test('Merged integration: works II', async (t) => {
+it('Merged integration: works II', async (t) => {
   const responseMath = await makeRPCCall(t.context.port, [{ method: 'string:hello', params: { name: 'sam' } }]);
-  t.deepEqual(responseMath.data, { jsonrpc: '2.0', id: 0, result: 'string:Hello world sam' });
+  assertObjectMatch(responseMath.data, { jsonrpc: '2.0', id: 0, result: 'string:Hello world sam' });
 });
 
-test('Merged integration: works III', async (t) => {
+it('Merged integration: works III', async (t) => {
   const responseMath = await makeRPCCall(t.context.port, [
     { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
     { method: 'string:result', params: { name: 'john', add: [1, 10] } },
   ]);
-  t.deepEqual(responseMath.data, [
+  assertObjectMatch(responseMath.data, [
     {
       jsonrpc: '2.0',
       id: 0,

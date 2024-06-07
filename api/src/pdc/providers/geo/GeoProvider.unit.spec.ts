@@ -1,6 +1,6 @@
 import { NotFoundException } from '@/ilos/common/exceptions/NotFoundException.ts';
-import { anyTest as test } from '@/dev_deps.ts';
-import { sinon,  SinonStub  } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { GeoProvider } from './index.ts';
 import { GeoInterface } from './interfaces/GeoInterface.ts';
 import { EtalabAPIGeoProvider, EtalabBaseAdresseNationaleProvider } from './providers/index.ts';
@@ -14,18 +14,18 @@ let etalabBANProvider: EtalabBaseAdresseNationaleProvider;
 
 let localGeoProviderStub: SinonStub;
 
-test.before((t) => {
+beforeAll((t) => {
   localGeoProvider = new LocalGeoProvider(null);
   etalabApiGeoProvider = new EtalabAPIGeoProvider();
   etalabBANProvider = new EtalabBaseAdresseNationaleProvider();
   geoProvider = new GeoProvider(etalabApiGeoProvider, etalabBANProvider, localGeoProvider, null);
 });
 
-test.afterEach((t) => {
+afterEach((t) => {
   localGeoProviderStub.restore();
 });
 
-test('GeoProvider: should complete insee if null', async (t) => {
+it('GeoProvider: should complete insee if null', async (t) => {
   localGeoProviderStub = sinon.stub(localGeoProvider, 'positionToInsee');
   localGeoProviderStub.resolves('65215');
   const end: GeoInterface = { lat: 43.69617, lon: 7.28949, geo_code: null };
@@ -37,7 +37,7 @@ test('GeoProvider: should complete insee if null', async (t) => {
   t.truthy(endGeoInterfaceResult.geo_code);
 });
 
-test('GeoProvider: should throw Error exception all 3 providers fails to find insee', async (t) => {
+it('GeoProvider: should throw Error exception all 3 providers fails to find insee', async (t) => {
   // Arrange
   localGeoProviderStub.throws(new NotFoundException());
   sinon.stub(etalabApiGeoProvider, 'positionToInsee').throws(new NotFoundException());
@@ -45,5 +45,5 @@ test('GeoProvider: should throw Error exception all 3 providers fails to find in
   const end: GeoInterface = { lat: 43.72953, lon: 7.4166, geo_code: null };
 
   // Act  // Assert
-  await t.throwsAsync(() => geoProvider.checkAndComplete(end), { instanceOf: Error });
+  await assertThrows(() => geoProvider.checkAndComplete(end), { instanceOf: Error });
 });

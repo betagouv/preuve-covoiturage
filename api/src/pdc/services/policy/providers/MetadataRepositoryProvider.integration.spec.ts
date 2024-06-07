@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
 
 import { MetadataRepositoryProvider } from './MetadataRepositoryProvider.ts';
@@ -11,7 +11,7 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
   t.context.repository = new MetadataRepositoryProvider(t.context.db.connection);
@@ -21,7 +21,7 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-test.serial('Should save meta', async (t) => {
+it('Should save meta', async (t) => {
   const data = [
     {
       policy_id: 1,
@@ -57,12 +57,12 @@ test.serial('Should save meta', async (t) => {
     `,
     values: [1],
   });
-  t.deepEqual(result.rows, data);
+  assertObjectMatch(result.rows, data);
 });
 
-test.serial('Should read meta', async (t) => {
+it('Should read meta', async (t) => {
   const result = await t.context.repository.get(1, ['my_key', 'my_key_2']);
-  t.deepEqual(result, [
+  assertObjectMatch(result, [
     {
       policy_id: 1,
       key: 'my_key',
@@ -78,9 +78,9 @@ test.serial('Should read meta', async (t) => {
   ]);
 });
 
-test.serial('Should read meta in past', async (t) => {
+it('Should read meta in past', async (t) => {
   const result = await t.context.repository.get(1, ['my_key', 'my_key_2'], new Date('2021-03-01'));
-  t.deepEqual(result, [
+  assertObjectMatch(result, [
     {
       policy_id: 1,
       key: 'my_key',
@@ -96,9 +96,9 @@ test.serial('Should read meta in past', async (t) => {
   ]);
 });
 
-test.serial('Should not throw if key not found', async (t) => {
+it('Should not throw if key not found', async (t) => {
   const result = await t.context.repository.get(1, ['my_key', 'my_key_2', 'unknown_key'], new Date('2021-01-01'));
-  t.deepEqual(result, [
+  assertObjectMatch(result, [
     {
       policy_id: 1,
       key: 'my_key',
@@ -108,7 +108,7 @@ test.serial('Should not throw if key not found', async (t) => {
   ]);
 });
 
-test.serial('Should delete meta', async (t) => {
+it('Should delete meta', async (t) => {
   const data = [
     {
       policy_id: 1,
@@ -132,5 +132,5 @@ test.serial('Should delete meta', async (t) => {
     `,
     values: [1],
   });
-  t.deepEqual(result.rows, data);
+  assertObjectMatch(result.rows, data);
 });

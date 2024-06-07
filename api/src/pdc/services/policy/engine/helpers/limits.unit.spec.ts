@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatefulContext, StatelessContext } from '../entities/Context.ts';
 import { MetadataStore } from '../entities/MetadataStore.ts';
@@ -38,10 +38,10 @@ async function setupStateful(
   return [await StatefulContext.fromIncentive(store, generateIncentive(data)), store];
 }
 
-test('should watchForGlobalMaxAmount', async (t) => {
+it('should watchForGlobalMaxAmount', async (t) => {
   const [ctx] = setupStateless();
   watchForGlobalMaxAmount(ctx, '1');
-  t.deepEqual(ctx.meta.export(), [
+  assertObjectMatch(ctx.meta.export(), [
     {
       uuid: '1',
       key: 'max_amount_restriction.global.campaign.global',
@@ -51,10 +51,10 @@ test('should watchForGlobalMaxAmount', async (t) => {
   ]);
 });
 
-test('should watchForPersonMaxAmountByMonth', async (t) => {
+it('should watchForPersonMaxAmountByMonth', async (t) => {
   const [ctx] = setupStateless();
   watchForPersonMaxAmountByMonth(ctx, '1', LimitTargetEnum.Passenger);
-  t.deepEqual(ctx.meta.export(), [
+  assertObjectMatch(ctx.meta.export(), [
     {
       uuid: '1',
       key: `max_amount_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_key}.month.0-2019`,
@@ -64,10 +64,10 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
   ]);
 });
 
-test('should watchForPersonMaxAmountByYear', async (t) => {
+it('should watchForPersonMaxAmountByYear', async (t) => {
   const [ctx] = setupStateless();
   watchForPersonMaxAmountByYear(ctx, '1', LimitTargetEnum.Passenger);
-  t.deepEqual(ctx.meta.export(), [
+  assertObjectMatch(ctx.meta.export(), [
     {
       uuid: '1',
       key: `max_amount_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_key}.year.2019`,
@@ -77,10 +77,10 @@ test('should watchForPersonMaxAmountByYear', async (t) => {
   ]);
 });
 
-test('should watchForPersonMaxTripByMonth', async (t) => {
+it('should watchForPersonMaxTripByMonth', async (t) => {
   const [ctx] = setupStateless();
   watchForPersonMaxTripByMonth(ctx, '1', LimitTargetEnum.Passenger);
-  t.deepEqual(ctx.meta.export(), [
+  assertObjectMatch(ctx.meta.export(), [
     {
       uuid: '1',
       key: `max_trip_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_key}.month.0-2019`,
@@ -90,10 +90,10 @@ test('should watchForPersonMaxTripByMonth', async (t) => {
   ]);
 });
 
-test('should watchForPersonMaxTripByDay', async (t) => {
+it('should watchForPersonMaxTripByDay', async (t) => {
   const [ctx] = setupStateless();
   watchForPersonMaxTripByDay(ctx, '1', LimitTargetEnum.Driver);
-  t.deepEqual(ctx.meta.export(), [
+  assertObjectMatch(ctx.meta.export(), [
     {
       uuid: '1',
       key: `max_trip_restriction.${LimitTargetEnum.Driver}-${ctx.carpool.driver_identity_key}.day.15-0-2019`,
@@ -103,7 +103,7 @@ test('should watchForPersonMaxTripByDay', async (t) => {
   ]);
 });
 
-test('should drop incentive if max is reached', async (t) => {
+it('should drop incentive if max is reached', async (t) => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -114,11 +114,11 @@ test('should drop incentive if max is reached', async (t) => {
   });
   ctx.meta.set('uuid', 10);
   applyLimitOnStatefulStage(ctx, 'uuid', 10, watchForGlobalMaxAmount);
-  t.deepEqual(ctx.incentive.get(), 0);
-  t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 10 }]);
+  assertObjectMatch(ctx.incentive.get(), 0);
+  assertObjectMatch(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 10 }]);
 });
 
-test('should partially drop incentive if max will be reached', async (t) => {
+it('should partially drop incentive if max will be reached', async (t) => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -129,11 +129,11 @@ test('should partially drop incentive if max will be reached', async (t) => {
   });
   ctx.meta.set('uuid', 30);
   applyLimitOnStatefulStage(ctx, 'uuid', 100, watchForGlobalMaxAmount);
-  t.deepEqual(ctx.incentive.get(), 70);
-  t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 }]);
+  assertObjectMatch(ctx.incentive.get(), 70);
+  assertObjectMatch(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 }]);
 });
 
-test('should increase meta if incentive is not null', async (t) => {
+it('should increase meta if incentive is not null', async (t) => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -144,15 +144,15 @@ test('should increase meta if incentive is not null', async (t) => {
   });
   ctx.meta.set('uuid', 30);
   applyLimitOnStatefulStage(ctx, 'uuid', 200, watchForGlobalMaxAmount);
-  t.deepEqual(ctx.incentive.get(), 100);
-  t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 130 }]);
+  assertObjectMatch(ctx.incentive.get(), 100);
+  assertObjectMatch(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 130 }]);
 });
 
-test('should watch and apply', async (t) => {
+it('should watch and apply', async (t) => {
   const limit: ConfiguredLimitInterface = ['uuid', 150, watchForGlobalMaxAmount];
   const [ctxStateless, carpool] = setupStateless();
   applyLimitsOnStatelessStage([limit], ctxStateless);
-  t.deepEqual(ctxStateless.meta.export(), [
+  assertObjectMatch(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
       key: 'max_amount_restriction.global.campaign.global',
@@ -161,7 +161,7 @@ test('should watch and apply', async (t) => {
     },
   ]);
   ctxStateless.incentive.set(100);
-  t.deepEqual(ctxStateless.incentive.export(), {
+  assertObjectMatch(ctxStateless.incentive.export(), {
     _id: undefined,
     operator_id: ctxStateless.carpool.operator_id,
     operator_journey_id: ctxStateless.carpool.operator_journey_id,
@@ -175,16 +175,16 @@ test('should watch and apply', async (t) => {
   });
 
   const [ctxStateful, store] = await setupStateful({ ...ctxStateless.incentive.export(), _id: 1 });
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertObjectMatch(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 0 },
   ]);
   applyLimitsOnStatefulStage([limit], ctxStateful);
-  t.is(ctxStateful.incentive.get(), 100);
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.incentive.get(), 100);
+  assertObjectMatch(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 },
   ]);
   await store.save(ctxStateful.meta);
-  t.deepEqual(await store.store(MetadataLifetime.Day), [
+  assertObjectMatch(await store.store(MetadataLifetime.Day), [
     {
       key: 'max_amount_restriction.global.campaign.global',
       datetime: carpool.datetime,
@@ -193,12 +193,12 @@ test('should watch and apply', async (t) => {
     },
   ]);
   applyLimitsOnStatefulStage([limit], ctxStateful);
-  t.is(ctxStateful.incentive.get(), 50);
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.incentive.get(), 50);
+  assertObjectMatch(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 150 },
   ]);
   await store.save(ctxStateful.meta);
-  t.deepEqual(await store.store(MetadataLifetime.Day), [
+  assertObjectMatch(await store.store(MetadataLifetime.Day), [
     {
       key: 'max_amount_restriction.global.campaign.global',
       datetime: carpool.datetime,
@@ -208,11 +208,11 @@ test('should watch and apply', async (t) => {
   ]);
 });
 
-test('should watch and apply for custom data', async (t) => {
+it('should watch and apply for custom data', async (t) => {
   const limit: ConfiguredLimitInterface = ['uuid', 3, watchForPassengerMaxByTripByDay];
   const [ctxStateless, carpool] = setupStateless();
   applyLimitsOnStatelessStage([limit], ctxStateless);
-  t.deepEqual(ctxStateless.meta.export(), [
+  assertObjectMatch(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
       key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
@@ -222,7 +222,7 @@ test('should watch and apply for custom data', async (t) => {
     },
   ]);
   ctxStateless.incentive.set(100);
-  t.deepEqual(ctxStateless.incentive.export(), {
+  assertObjectMatch(ctxStateless.incentive.export(), {
     _id: undefined,
     operator_id: ctxStateless.carpool.operator_id,
     operator_journey_id: ctxStateless.carpool.operator_journey_id,
@@ -236,7 +236,7 @@ test('should watch and apply for custom data', async (t) => {
   });
 
   const [ctxStateful, store] = await setupStateful({ ...ctxStateless.incentive.export(), _id: 1 });
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertObjectMatch(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
@@ -246,8 +246,8 @@ test('should watch and apply for custom data', async (t) => {
   ]);
 
   applyLimitsOnStatefulStage([limit], ctxStateful);
-  t.is(ctxStateful.incentive.get(), 100);
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.incentive.get(), 100);
+  assertObjectMatch(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
@@ -256,11 +256,11 @@ test('should watch and apply for custom data', async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  t.deepEqual(await store.store(MetadataLifetime.Day), []);
+  assertObjectMatch(await store.store(MetadataLifetime.Day), []);
 
   applyLimitsOnStatefulStage([limit], ctxStateful);
-  t.is(ctxStateful.incentive.get(), 100);
-  t.deepEqual(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.incentive.get(), 100);
+  assertObjectMatch(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: `max_passenger_restriction.${carpool.operator_id}.${carpool.operator_trip_id}.day.15-0-2019`,
@@ -269,5 +269,5 @@ test('should watch and apply for custom data', async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  t.deepEqual(await store.store(MetadataLifetime.Day), []);
+  assertObjectMatch(await store.store(MetadataLifetime.Day), []);
 });

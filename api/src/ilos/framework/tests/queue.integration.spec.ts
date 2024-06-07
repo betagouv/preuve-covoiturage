@@ -3,7 +3,7 @@ import { RedisConnection } from '@/ilos/connection-redis/index.ts';
 import { HttpTransport } from '@/ilos/transport-http/index.ts';
 import { QueueTransport } from '@/ilos/transport-redis/index.ts';
 import { getPorts } from '@/pdc/helpers/ports.helper.ts';
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { axios } from '@/deps.ts';
 import { fs, os, path, process } from '@/deps.ts';
 import { Kernel } from '../Kernel.ts';
@@ -24,7 +24,7 @@ interface Context {
 
 const test = anyTest as TestFn<Context>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.stringPort = await getPorts();
 
   @serviceProvider({
@@ -57,7 +57,7 @@ test.before(async (t) => {
   await t.context.queueTransport.up([redisUrl]);
 });
 
-test.after(async (t) => {
+afterAll(async (t) => {
   await t.context.stringTransport.down();
   await t.context.queueTransport.down();
   await t.context.stringCalleeKernel.shutdown();
@@ -83,16 +83,16 @@ function makeRPCNotify(port: number, req: { method: string; params?: any }) {
   }
 }
 
-test('Queue integration: works', async (t) => {
+it('Queue integration: works', async (t) => {
   const data = { name: 'sam' };
   const result = await makeRPCNotify(t.context.stringPort, { method: 'string:log', params: data });
-  t.is(result.data, '');
-  t.is(result.status, 204);
-  t.is(result.statusText, 'No Content');
+  assertEquals(result.data, '');
+  assertEquals(result.status, 204);
+  assertEquals(result.statusText, 'No Content');
 
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
   console.info('reading file content', { content });
-  t.is(content, JSON.stringify(data));
+  assertEquals(content, JSON.stringify(data));
 });

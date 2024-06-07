@@ -1,4 +1,4 @@
-import { anyTest as test } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 
 import { StatelessContext } from '../entities/Context.ts';
 import { MisconfigurationException } from '../exceptions/MisconfigurationException.ts';
@@ -10,20 +10,20 @@ function setup(operator_class: string) {
   return StatelessContext.fromCarpool(1, generateCarpool({ operator_class }));
 }
 
-test('should throw if not in list', async (t) => {
+it('should throw if not in list', async (t) => {
   const ctx = setup('A');
-  await t.throwsAsync<NotEligibleTargetException>(async () => {
+  await assertThrows<NotEligibleTargetException>(async () => {
     isOperatorClassOrThrow(ctx, ['B']);
   });
 });
 
-test('should return true if is driver', async (t) => {
+it('should return true if is driver', async (t) => {
   const ctx = setup('B');
   const res = isOperatorClassOrThrow(ctx, ['B']);
-  t.is(res, true);
+  assertEquals(res, true);
 });
 
-test('should throw if not an array', async (t) => {
+it('should throw if not an array', async (t) => {
   const ctx = setup('B');
   t.throws(
     () => {

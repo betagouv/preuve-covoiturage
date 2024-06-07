@@ -1,4 +1,4 @@
-import { anyTest, TestFn } from '@/dev_deps.ts';
+import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
 import { Pool } from '@/deps.ts';
 import { MemoryStateManager } from '../providers/MemoryStateManager.ts';
 import { AbstractDatatreatment } from '../common/AbstractDatatreatment.ts';
@@ -16,7 +16,7 @@ interface TestContext {
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before(async (t) => {
+beforeAll(async (t) => {
   t.context.connection = createPool();
   t.context.migrator = new Migrator(t.context.connection, createFileManager(), {
     targetSchema: 'public',
@@ -34,12 +34,12 @@ test.before(async (t) => {
   await t.context.migrator.prepare();
 });
 
-test.serial('should validate', async (t) => {
+it('should validate', async (t) => {
   await t.notThrowsAsync(() => t.context.dataset.validate(new MemoryStateManager()));
 });
 
-test.serial('should after', async (t) => {
+it('should after', async (t) => {
   await t.context.migrator.run([CreateGeoTable, CreateGeoCentroidTable, Dataset]);
   const count = await t.context.connection.query(`SELECT count(*) FROM ${t.context.dataset.tableWithSchema}`);
-  t.is(count.rows[0].count, '0');
+  assertEquals(count.rows[0].count, '0');
 });
