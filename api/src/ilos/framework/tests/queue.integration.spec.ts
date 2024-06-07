@@ -1,98 +1,111 @@
-import { KernelInterface, TransportInterface, kernel as kernelDecorator, serviceProvider } from '@/ilos/common/index.ts';
-import { RedisConnection } from '@/ilos/connection-redis/index.ts';
-import { HttpTransport } from '@/ilos/transport-http/index.ts';
-import { QueueTransport } from '@/ilos/transport-redis/index.ts';
-import { getPorts } from '@/pdc/helpers/ports.helper.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { axios } from '@/deps.ts';
-import { fs, os, path, process } from '@/deps.ts';
-import { Kernel } from '../Kernel.ts';
-import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider.ts';
+import {
+  kernel as kernelDecorator,
+  serviceProvider,
+} from "@/ilos/common/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { HttpTransport } from "@/ilos/transport-http/index.ts";
+import { QueueTransport } from "@/ilos/transport-redis/index.ts";
+import {
+  afterAll,
+  assertEquals,
+  beforeAll,
+  delay,
+  describe,
+  getAvailablePort,
+  it,
+} from "@/dev_deps.ts";
+import { axios } from "@/deps.ts";
+import { fs, os, path, process } from "@/deps.ts";
+import { Kernel } from "../Kernel.ts";
+import { ServiceProvider as ParentStringServiceProvider } from "./mock/StringService/ServiceProvider.ts";
 
-const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
-process.env.APP_LOG_PATH = logPath;
+describe("queue", () => {
+  const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
+  process.env.APP_LOG_PATH = logPath;
 
-const redisUrl = process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379';
-
-interface Context {
-  stringTransport: TransportInterface;
-  queueTransport: TransportInterface;
-  stringCallerKernel: KernelInterface;
-  stringCalleeKernel: KernelInterface;
-  stringPort: number;
-}
-
-const test = anyTest as TestFn<Context>;
-
-beforeAll(async (t) => {
-  t.context.stringPort = await getPorts();
-
+  const redisUrl = process.env.APP_REDIS_URL ?? "redis://127.0.0.1:6379";
   @serviceProvider({
     config: {
       log: {
         path: process.env.APP_LOG_PATH,
       },
     },
-    connections: [[RedisConnection, new RedisConnection({ redis: process.env.APP_REDIS_URL })]],
+    connections: [[
+      RedisConnection,
+      new RedisConnection({ redis: process.env.APP_REDIS_URL }),
+    ]],
   })
   class StringServiceProvider extends ParentStringServiceProvider {}
 
   @kernelDecorator({
     children: [StringServiceProvider],
-    connections: [[RedisConnection, new RedisConnection({ redis: process.env.APP_REDIS_URL })]],
+    connections: [[
+      RedisConnection,
+      new RedisConnection({ redis: process.env.APP_REDIS_URL }),
+    ]],
   })
   class StringKernel extends Kernel {
-    name = 'string';
+    name = "string";
   }
 
-  t.context.stringCallerKernel = new StringKernel();
-  await t.context.stringCallerKernel.bootstrap();
-  t.context.stringTransport = new HttpTransport(t.context.stringCallerKernel);
-  await t.context.stringTransport.up([`${t.context.stringPort}`]);
+  let port: number;
+  const stringCallerKernel = new StringKernel();
+  const stringTransport = new HttpTransport(stringCallerKernel);
+  const stringCalleeKernel = new StringKernel();
+  const queueTransport = new QueueTransport(stringCalleeKernel);
 
-  process.env.APP_WORKER = 'true';
-  t.context.stringCalleeKernel = new StringKernel();
-  await t.context.stringCalleeKernel.bootstrap();
-  t.context.queueTransport = new QueueTransport(t.context.stringCalleeKernel);
-  await t.context.queueTransport.up([redisUrl]);
-});
+  beforeAll(async () => {
+    port = await getAvailablePort() || 8080;
 
-afterAll(async (t) => {
-  await t.context.stringTransport.down();
-  await t.context.queueTransport.down();
-  await t.context.stringCalleeKernel.shutdown();
-  await t.context.stringCallerKernel.shutdown();
-});
+    await stringCallerKernel.bootstrap();
+    await stringTransport.up([`${port}`]);
 
-function makeRPCNotify(port: number, req: { method: string; params?: any }) {
-  try {
-    const data = {
-      jsonrpc: '2.0',
-      method: req.method,
-      params: req.params,
-    };
+    process.env.APP_WORKER = "true";
+    await stringCalleeKernel.bootstrap();
+    await queueTransport.up([redisUrl]);
+    await delay(1);
+  });
 
-    return axios.post(`http://127.0.0.1:${port}`, data, {
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json',
-      },
+  afterAll(async () => {
+    await stringTransport.down();
+    await queueTransport.down();
+    await stringCalleeKernel.shutdown();
+    await stringCallerKernel.shutdown();
+  });
+
+  function makeRPCNotify(port: number, req: { method: string; params?: any }) {
+    try {
+      const data = {
+        jsonrpc: "2.0",
+        method: req.method,
+        params: req.params,
+      };
+
+      return axios.post(`http://127.0.0.1:${port}`, data, {
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json",
+        },
+      });
+    } catch (e) {
+      console.error(e.message, e.response.data);
+    }
+  }
+
+  it("Queue integration: works", async (t) => {
+    const data = { name: "sam" };
+    const result = await makeRPCNotify(port, {
+      method: "string:log",
+      params: data,
     });
-  } catch (e) {
-    console.error(e.message, e.response.data);
-  }
-}
+    assertEquals(result?.data, "");
+    assertEquals(result?.status, 204);
+    assertEquals(result?.statusText, "No Content");
 
-it('Queue integration: works', async (t) => {
-  const data = { name: 'sam' };
-  const result = await makeRPCNotify(t.context.stringPort, { method: 'string:log', params: data });
-  assertEquals(result.data, '');
-  assertEquals(result.status, 204);
-  assertEquals(result.statusText, 'No Content');
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
-  await new Promise((resolve) => setTimeout(resolve, 200));
-
-  const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
-  console.info('reading file content', { content });
-  assertEquals(content, JSON.stringify(data));
+    const content = fs.readFileSync(logPath, { encoding: "utf8", flag: "r" });
+    console.info("reading file content", { content });
+    assertEquals(content, JSON.stringify(data));
+  });
 });
