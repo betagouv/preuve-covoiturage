@@ -1,5 +1,6 @@
 import { toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -7,10 +8,6 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "../../interfaces/index.ts";
-import {
-  RunnableSlices,
-  TestingLogFn,
-} from "../../interfaces/engine/PolicyInterface.ts";
 import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import {
   endsAt,
@@ -131,7 +128,6 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
 
   protected processExclusion(
     ctx: StatelessContextInterface,
-    log?: TestingLogFn,
   ) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
@@ -152,8 +148,8 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
     }
   }
 
-  processStateless(ctx: StatelessContextInterface, log?: TestingLogFn): void {
-    this.processExclusion(ctx, log);
+  processStateless(ctx: StatelessContextInterface): void {
+    this.processExclusion(ctx);
     super.processStateless(ctx);
 
     let amount = 0;

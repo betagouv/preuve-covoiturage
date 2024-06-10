@@ -14,7 +14,6 @@ import {
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
 } from "../../interfaces/index.ts";
-import { TestingLogFn } from "../../interfaces/engine/PolicyInterface.ts";
 import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import { UnknownHandlerException } from "../exceptions/UnknownHandlerException.ts";
 import { isSelected } from "../helpers/index.ts";
@@ -78,7 +77,6 @@ export class Policy implements PolicyInterface {
 
   async processStateless(
     carpool: CarpoolInterface,
-    log?: TestingLogFn,
   ): Promise<StatelessIncentiveInterface> {
     const context: StatelessContextInterface = StatelessContext.fromCarpool(
       this._id,
@@ -87,7 +85,7 @@ export class Policy implements PolicyInterface {
     context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
-        this.handler.processStateless(context, log);
+        this.handler.processStateless(context);
       } catch (e) {
         if (e instanceof NotEligibleTargetException) {
           context.incentive.set(0);
@@ -106,14 +104,13 @@ export class Policy implements PolicyInterface {
   async processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
-    log?: TestingLogFn,
   ): Promise<StatefulIncentiveInterface> {
     try {
       const context = await StatefulContext.fromIncentive(store, incentive);
       if (context.meta.isEmpty() || context.incentive.get() === 0) {
         return context.incentive;
       }
-      this.handler.processStateful(context, log);
+      this.handler.processStateful(context);
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {

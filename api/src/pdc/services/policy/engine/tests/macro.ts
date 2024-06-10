@@ -1,5 +1,5 @@
+import { ExecutionContext } from "@/deps.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import { ExecutionContext } from "@/dev_deps.ts";
 import {
   CarpoolInterface,
   MetadataLifetime,
@@ -102,7 +102,7 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
     const store = new MetadataStore(new MemoryMetadataRepository(inputMeta));
     const incentives: SerializedIncentiveInterface[] = [];
     for (const carpool of carpools) {
-      const statelessIncentive = await policy.processStateless(carpool, t.log);
+      const statelessIncentive = await policy.processStateless(carpool);
       const statefulIncentive = await policy.processStateful(
         store,
         statelessIncentive.export(),

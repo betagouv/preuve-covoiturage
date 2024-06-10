@@ -1,8 +1,13 @@
-FROM node:20.11-alpine
+FROM alpine:3.20
 
-RUN apk add p7zip python3 make g++ cmake just
+RUN apk add --no-cache just deno p7zip
 
-RUN npm install --global pm2 pino-pretty db-migrate db-migrate-pg
+RUN addgroup --gid 1000 deno \
+  && adduser --uid 1000 --disabled-password deno --ingroup deno \
+  && mkdir /app/ \
+  && chown deno:deno /app/
+
+USER deno
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/api
 
@@ -10,4 +15,5 @@ COPY ./shared /app/shared
 COPY ./api /app/api
 
 WORKDIR /app/api
-RUN just rebuild
+RUN deno cache --lock deno.lock src/deps.ts
+CMD ["just", "serve"]

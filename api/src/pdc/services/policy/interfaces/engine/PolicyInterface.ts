@@ -1,6 +1,5 @@
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import { LogFn } from "@/dev_deps.ts";
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -75,18 +74,13 @@ export interface PolicyHandlerParamsInterface {
   booster_dates?: Array<string>;
 }
 
-// Let the policy handler define its own log function
-// when test suites have their own logging requirements (e.g. ava)
-export type TestingLogFn = LogFn;
-
 export interface PolicyHandlerInterface {
   max_amount?: number;
   load(): Promise<void>;
   processStateless(
     context: StatelessContextInterface,
-    log?: TestingLogFn,
   ): void;
-  processStateful(context: StatefulContextInterface, log?: TestingLogFn): void;
+  processStateful(context: StatefulContextInterface): void;
   params(): PolicyHandlerParamsInterface;
   describe(): string;
   getOperators?(datetime?: Date): OperatorsEnum[]; // TODO generalise this from GrandPoitiers campaign
