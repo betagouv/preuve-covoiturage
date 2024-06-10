@@ -1,5 +1,5 @@
 import type { CursorQueryConfig, PoolConfig } from "@/deps.ts";
-import { Cursor, Pool } from "@/deps.ts";
+import { Cursor, pg, Pool } from "@/deps.ts";
 import {
   ConnectionInterface,
   DestroyHookInterface,
@@ -8,9 +8,12 @@ import {
 import { env } from "@/ilos/core/index.ts";
 
 export class PostgresConnection
-  implements ConnectionInterface, InitHookInterface, DestroyHookInterface {
+  implements
+    ConnectionInterface<pg.Pool>,
+    InitHookInterface,
+    DestroyHookInterface {
   private readonly pgUrl: string;
-  protected pool;
+  protected pool: pg.Pool;
 
   constructor(protected config: PoolConfig) {
     this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
@@ -42,7 +45,7 @@ export class PostgresConnection
     await this.pool.end();
   }
 
-  getClient() {
+  getClient(): pg.Pool {
     return this.pool;
   }
 

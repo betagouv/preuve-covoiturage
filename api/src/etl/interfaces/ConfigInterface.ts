@@ -1,5 +1,5 @@
-import { PoolConfig } from '@/deps.ts';
-import { StaticAbstractDataset, StaticMigrable } from './index.ts';
+import { PoolConfig } from "@/deps.ts";
+import { StaticAbstractDataset, StaticMigrable } from "./index.ts";
 
 export interface AppConfigInterface {
   targetSchema: string;

@@ -628,14 +628,15 @@ export class Migrator {
   }
 
   async down() {
-    if (this.connection) {
+    if (!this.dbIsCreated) {
       await this.connection.down();
-      await this.rootConnection.down();
     }
+    await this.rootConnection.down();
   }
 
   async drop() {
     if (this.dbIsCreated) {
+      await this.connection.down();
       await this.rootConnection.getClient().query(
         `DROP DATABASE ${this.dbName}`,
       );

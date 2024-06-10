@@ -12,8 +12,8 @@ describe("seed", () => {
   });
 
   afterAll(async () => {
-    await db.down();
     await db.drop();
+    await db.down();
   });
 
   it("should seed territories", async (t) => {

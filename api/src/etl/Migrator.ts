@@ -1,34 +1,42 @@
-import { Pool, Stream  } from '@/deps.ts';
+import { Stream } from "@/deps.ts";
+import { pg } from "@/deps.ts";
 import {
-  FileManagerInterface,
-  DatabaseStateManagerInterface,
-  StaticMigrable,
   AppConfigInterface,
+  DatabaseStateManagerInterface,
+  DatasetInterface,
+  FileManagerInterface,
+  flow,
   State,
   StateManagerInterface,
-  DatasetInterface,
-  flow,
   StaticAbstractDataset,
-} from './interfaces/index.ts';
-import { createStateManager } from './helpers/index.ts';
+  StaticMigrable,
+} from "./interfaces/index.ts";
+import { createStateManager } from "./helpers/index.ts";
 
 export class Migrator extends Stream.EventEmitter {
-  protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();
+  protected migrableInstances: Map<StaticMigrable, DatasetInterface> =
+    new Map();
 
   constructor(
-    readonly pool: Pool,
+    readonly pool: pg.Pool,
     readonly file: FileManagerInterface,
     readonly config: AppConfigInterface,
-    readonly dbStateManager: DatabaseStateManagerInterface = createStateManager(pool, config),
+    readonly dbStateManager: DatabaseStateManagerInterface = createStateManager(
+      pool,
+      config,
+    ),
   ) {
     super();
   }
 
   async prepare(): Promise<void> {
     console.info(`[db] Connecting to database`);
+    console.info(this.pool);
 
     const client = await this.pool.connect();
-    await client.query(`CREATE SCHEMA IF NOT EXISTS ${this.config.targetSchema}`);
+    await client.query(
+      `CREATE SCHEMA IF NOT EXISTS ${this.config.targetSchema}`,
+    );
     client.release();
 
     console.info(`[db] Connected!`);
@@ -52,22 +60,31 @@ export class Migrator extends Stream.EventEmitter {
   }
 
   async getDone(state?: StateManagerInterface): Promise<StaticMigrable[]> {
-    const done = (state ?? (await this.dbStateManager.toMemory())).get(State.Done);
+    const done = (state ?? (await this.dbStateManager.toMemory())).get(
+      State.Done,
+    );
     return [...done];
   }
 
   async getTodo(state?: StateManagerInterface): Promise<StaticMigrable[]> {
-    const done = (state ?? (await this.dbStateManager.toMemory())).get(State.Done);
-    const todos = [...this.config.datastructures, ...this.config.datasets].filter((m) => !done.has(m));
+    const done = (state ?? (await this.dbStateManager.toMemory())).get(
+      State.Done,
+    );
+    const todos = [...this.config.datastructures, ...this.config.datasets]
+      .filter((m) => !done.has(m));
     if (!todos.filter((m) => !!!m.skipStatePersistence).length) {
       return [];
     }
     return todos;
   }
 
-  async do(migrable: DatasetInterface, migrableState: State, stateManager: StateManagerInterface): Promise<void> {
+  async do(
+    migrable: DatasetInterface,
+    migrableState: State,
+    stateManager: StateManagerInterface,
+  ): Promise<void> {
     const migrableCtor = migrable.constructor as StaticMigrable;
-    this.emit('start', { state: migrableState, uuid: migrableCtor.uuid });
+    this.emit("start", { state: migrableState, uuid: migrableCtor.uuid });
     try {
       switch (migrableState) {
         case State.Planned:
@@ -118,14 +135,17 @@ export class Migrator extends Stream.EventEmitter {
         default:
           throw new Error();
       }
-      this.emit('end', { state: migrableState, uuid: migrableCtor.uuid });
+      this.emit("end", { state: migrableState, uuid: migrableCtor.uuid });
     } catch (e) {
-      this.emit('error', { state: migrableState, uuid: migrableCtor.uuid });
+      this.emit("error", { state: migrableState, uuid: migrableCtor.uuid });
       throw e;
     }
   }
 
-  async process(migrableCtor: StaticMigrable, stateManager: StateManagerInterface): Promise<void> {
+  async process(
+    migrableCtor: StaticMigrable,
+    stateManager: StateManagerInterface,
+  ): Promise<void> {
     try {
       const migrable = this.getInstance(migrableCtor);
       for (const state of [...flow]) {
@@ -153,7 +173,11 @@ export class Migrator extends Stream.EventEmitter {
           const migrable = this.getInstance(migrableCtor);
           await this.do(migrable, migrableState, state);
         } catch (e) {
-          console.error(`Error during processing ${migrableCtor.uuid} - ${migrableState} : ${(e as Error).message}`);
+          console.error(
+            `Error during processing ${migrableCtor.uuid} - ${migrableState} : ${
+              (e as Error).message
+            }`,
+          );
           state.set(migrableCtor, State.Failed);
           const migrablesToUnplan = state.get(migrableState);
           [...migrablesToUnplan].map((mc) => state.set(mc, State.Unplanned));

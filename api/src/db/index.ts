@@ -1,12 +1,12 @@
-import { readdirAsync } from "@/deps.ts";
+import { process, readdirAsync } from "@/deps.ts";
 import { extname } from "@/deps.ts";
 import { join } from "@/deps.ts";
 import { readFileSync } from "@/deps.ts";
 import { PgPool } from "@/deps.ts";
 import { PgClient } from "@/deps.ts";
-import type { PoolConfig } from "@/deps.ts";
+import { buildMigrator } from "@/etl/index.ts";
 
-const __dirname = import.meta.dirname;
+const __dirname = import.meta.dirname || "";
 
 async function getPossibleMigrationsFilePath(): Promise<Map<string, string>> {
   const files = await readdirAsync(join(__dirname, "migrations"));
@@ -33,7 +33,7 @@ async function getDoneMigrations(client: PgClient): Promise<Set<string>> {
   return new Set(result.rows.map((r) => r.name));
 }
 
-export async function migrate(config: string) {
+async function runMigrations(config: string) {
   const pool = new PgPool(config, 20);
   const conn = await pool.connect();
   await createMigrationTable(conn);
@@ -45,10 +45,12 @@ export async function migrate(config: string) {
     if (!filepath) {
       continue;
     }
-    const transaction = conn.createTransaction(`migration-${td}`);
+    const sql: string = readFileSync(filepath, "utf8");
+    const transaction = conn.createTransaction(
+      `migration-${td.substring(1)}`,
+    );
     await transaction.begin();
     try {
-      const sql: string = readFileSync(filepath, "utf8");
       await transaction.queryArray(sql);
       await transaction.queryArray(
         `INSERT INTO migrations (name, run_on) VALUES ($NAME, NOW())`,
@@ -56,9 +58,36 @@ export async function migrate(config: string) {
       );
       await transaction.commit();
     } catch (e) {
-      console.log(e);
+      console.log(e, config);
       await transaction.rollback({ chain: true });
     }
   }
   conn.release();
+  await pool.end();
+}
+
+export async function migrate(config: string, skipDatasets = true) {
+  if (!("SKIP_GEO_MIGRATIONS" in process.env)) {
+    const geoInstance = buildMigrator({
+      pool: {
+        connectionString: config,
+      },
+      ...(
+        skipDatasets
+          ? {
+            app: {
+              targetSchema: "geo",
+              datasets: new Set(),
+            },
+          }
+          : {}
+      ),
+    });
+    await geoInstance.prepare();
+    await geoInstance.run();
+    await geoInstance.pool.end();
+  }
+  if (!("SKIP_SQL_MIGRATIONS" in process.env)) {
+    await runMigrations(config);
+  }
 }

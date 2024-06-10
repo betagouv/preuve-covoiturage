@@ -237,6 +237,7 @@ export {
   os,
   path,
   pdf,
+  pg,
   pino,
   Pool,
   process,

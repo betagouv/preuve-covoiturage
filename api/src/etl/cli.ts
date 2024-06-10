@@ -1,7 +1,13 @@
 #!/usr/bin/env node
-import { Command, InvalidArgumentError, Console } from '@/deps.ts';
-import { buildMigrator, defaultConfig, Migrator, PartialConfigInterface, State } from './index.ts';
-import { hash } from './helpers/index.ts';
+import { Command, Console, InvalidArgumentError, process } from "@/deps.ts";
+import {
+  buildMigrator,
+  defaultConfig,
+  Migrator,
+  PartialConfigInterface,
+  State,
+} from "./index.ts";
+import { hash } from "./helpers/index.ts";
 
 interface Options {
   url: string;
@@ -17,9 +23,9 @@ interface Options {
 }
 
 function verbosity(value: string): string {
-  const levels = ['log', 'debug', 'info', 'warn', 'error'];
+  const levels = ["log", "debug", "info", "warn", "error"];
   if (levels.indexOf(value) < 0) {
-    throw new InvalidArgumentError(`Should be one of ${levels.join(', ')}`);
+    throw new InvalidArgumentError(`Should be one of ${levels.join(", ")}`);
   }
   return value;
 }
@@ -27,7 +33,7 @@ function verbosity(value: string): string {
 function parseInteger(value: string): number {
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new InvalidArgumentError('Not a number.');
+    throw new InvalidArgumentError("Not a number.");
   }
   return parsedValue;
 }
@@ -37,21 +43,21 @@ function getMigrator(options: Partial<Options>): Migrator {
     pool: {
       ...(options.url && options.url.length
         ? {
-            connectionString: options.url,
-            user: undefined,
-            password: undefined,
-            host: undefined,
-            port: undefined,
-            database: undefined,
-          }
+          connectionString: options.url,
+          user: undefined,
+          password: undefined,
+          host: undefined,
+          port: undefined,
+          database: undefined,
+        }
         : {
-            connectionString: undefined,
-            user: options.user,
-            password: options.password || defaultConfig.pool.password,
-            host: options.host,
-            port: options.port,
-            database: options.database,
-          }),
+          connectionString: undefined,
+          user: options.user,
+          password: options.password || defaultConfig.pool.password,
+          host: options.host,
+          port: options.port,
+          database: options.database,
+        }),
     },
     logger: {
       level: options.verbose,
@@ -64,17 +70,20 @@ function getMigrator(options: Partial<Options>): Migrator {
       basePath: options.directory,
     },
   };
-  const migrator = buildMigrator(config);
+  const migrator = buildMigrator(config, true);
   return migrator;
 }
 
 async function importAction(opts: Partial<Options>) {
-  const logger = new Console({ stdout: process.stdout, stderr: process.stderr });
+  const logger = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+  });
   const migrator = getMigrator(opts);
-  migrator.on('start', (event: { uuid: string; state: State }) => {
+  migrator.on("start", (event: { uuid: string; state: State }) => {
     logger.info(`${event.uuid} - ${event.state}`);
   });
-  migrator.on('error', (event: { uuid: string; state: State }) => {
+  migrator.on("error", (event: { uuid: string; state: State }) => {
     logger.info(`${event.uuid} - ${event.state} - Error`);
   });
   await migrator.prepare();
@@ -86,7 +95,10 @@ async function statusAction(opts: Partial<Options>) {
   await migrator.prepare();
   const done = await migrator.getDone();
   const todo = await migrator.getTodo();
-  const logger = new Console({ stdout: process.stdout, stderr: process.stderr });
+  const logger = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+  });
   logger.table([
     ...done.map((mig) => ({ name: mig.uuid, done: true })),
     ...todo.map((mig) => ({ name: mig.uuid, done: false })),
@@ -96,53 +108,82 @@ async function statusAction(opts: Partial<Options>) {
 async function getSourceAction(opts: Partial<Options>) {
   const migrator = getMigrator(opts);
   const datasets = migrator.getDatasets();
-  const logger = new Console({ stdout: process.stdout, stderr: process.stderr });
+  const logger = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+  });
   datasets.map((d) => logger.info(`${hash(d.url)} : ${d.url}`));
 }
 
 async function main(): Promise<void> {
   const command = new Command();
   command
-    .name('EvolutionGeo')
-    .description('Importe les datasets géographique par millésime')
-    .option('--url <url>', 'Postgresql url, default to env POSTGRES_URL', defaultConfig.pool.connectionString)
-    .option('-u, --user <user>', 'Postgresql user, default to env POSTGRES_USER', defaultConfig.pool.user)
-    .option('-W, --password <password>', 'Postgresql password, default to env POSTGRES_PASSWORD')
-    .option('-H, --host <host>', 'Postgresql host, default to env POSTGRES_HOST', defaultConfig.pool.host)
+    .name("EvolutionGeo")
+    .description("Importe les datasets géographique par millésime")
     .option(
-      '-p, --port <port>',
-      'Postgresql port, default to env POSTGRES_PORT',
+      "--url <url>",
+      "Postgresql url, default to env POSTGRES_URL",
+      defaultConfig.pool.connectionString,
+    )
+    .option(
+      "-u, --user <user>",
+      "Postgresql user, default to env POSTGRES_USER",
+      defaultConfig.pool.user,
+    )
+    .option(
+      "-W, --password <password>",
+      "Postgresql password, default to env POSTGRES_PASSWORD",
+    )
+    .option(
+      "-H, --host <host>",
+      "Postgresql host, default to env POSTGRES_HOST",
+      defaultConfig.pool.host,
+    )
+    .option(
+      "-p, --port <port>",
+      "Postgresql port, default to env POSTGRES_PORT",
       parseInteger,
       defaultConfig.pool.port ? defaultConfig.pool.port : 5432,
     )
-    .option('-d, --database <database>', 'Postgresql database, default to env POSTGRES_DB', defaultConfig.pool.database)
     .option(
-      '-S, --schema <schema>',
-      'Postgresql schema, default to env POSTGRES_SCHEMA',
+      "-d, --database <database>",
+      "Postgresql database, default to env POSTGRES_DB",
+      defaultConfig.pool.database,
+    )
+    .option(
+      "-S, --schema <schema>",
+      "Postgresql schema, default to env POSTGRES_SCHEMA",
       defaultConfig.app.targetSchema,
     )
     .option(
-      '-d, --directory <directory>',
-      'Path to download directory, default to env CACHE_DIRECTORY or os temporary directory if env missing',
+      "-d, --directory <directory>",
+      "Path to download directory, default to env CACHE_DIRECTORY or os temporary directory if env missing",
       defaultConfig.file.basePath,
     )
-    .option('-v, --verbose <level>', 'Verbosity, default to env LOG_LEVEL', verbosity, 'error');
+    .option(
+      "-v, --verbose <level>",
+      "Verbosity, default to env LOG_LEVEL",
+      verbosity,
+      "error",
+    );
 
   command
-    .command('import')
-    .description('Import datasets')
-    .option('--no-cleanup', 'Disable cleanup')
+    .command("import")
+    .description("Import datasets")
+    .option("--no-cleanup", "Disable cleanup")
     .action((localOpts) => importAction({ ...localOpts, ...command.opts() }));
 
   command
-    .command('status')
-    .description('Get import status')
+    .command("status")
+    .description("Get import status")
     .action((localOpts) => statusAction({ ...localOpts, ...command.opts() }));
 
   command
-    .command('source')
-    .description('Get import sources')
-    .action((localOpts) => getSourceAction({ ...localOpts, ...command.opts() }));
+    .command("source")
+    .description("Get import sources")
+    .action((localOpts) =>
+      getSourceAction({ ...localOpts, ...command.opts() })
+    );
 
   command.parseAsync(process.argv);
 }
