@@ -1,6 +1,8 @@
-import { command, CommandOptionType } from "@/ilos/common/index.ts";
-import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
-
+import {
+  command,
+  CommandOptionType,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
 import { Command } from "../parents/Command.ts";
 
 /**
@@ -30,25 +32,31 @@ export class ListCommand extends Command {
       }
       acc[key].push(h);
       return acc;
-    }, {});
+    }, {} as any);
 
-    Reflect.ownKeys(handlersByTransport).forEach((key: string) => {
-      result += `${key.toUpperCase()} : \n`;
-      const handlersByService = handlersByTransport[key].reduce((acc, h) => {
-        const keyVersion = `${h.service}@${h.version}`;
-        if (!(keyVersion in acc)) {
-          acc[keyVersion] = [];
-        }
-        acc[keyVersion].push(h);
-        return acc;
-      }, {});
+    Reflect.ownKeys(handlersByTransport).forEach((key: string | symbol) => {
+      const k = String(key);
+      result += `${k.toUpperCase()} : \n`;
+      const handlersByService = handlersByTransport[k].reduce(
+        (acc: any, h: any) => {
+          const keyVersion = `${h.service}@${h.version}`;
+          if (!(keyVersion in acc)) {
+            acc[keyVersion] = [];
+          }
+          acc[keyVersion].push(h);
+          return acc;
+        },
+        {},
+      );
 
-      Reflect.ownKeys(handlersByService).forEach((serviceKey: string) => {
-        result += `  - ${serviceKey}\n`;
-        handlersByService[serviceKey].forEach((handler) => {
-          result += `    * ${handler.method}\n`;
-        });
-      });
+      Reflect.ownKeys(handlersByService).forEach(
+        (serviceKey: string | symbol) => {
+          result += `  - ${String(serviceKey)}\n`;
+          handlersByService[serviceKey].forEach((handler: any) => {
+            result += `    * ${handler.method}\n`;
+          });
+        },
+      );
     });
 
     return result;

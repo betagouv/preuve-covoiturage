@@ -4,7 +4,6 @@ import {
   ServiceContainerInterface,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
-
 import { AjvValidator } from "./AjvValidator.ts";
 
 @extension({
@@ -25,8 +24,8 @@ export class ValidatorExtension implements RegisterHookInterface {
     if (Array.isArray(config)) {
       this.validators = config;
     } else {
-      this.validators = config.validators;
-      this.keywords = config.keywords;
+      this.validators = config?.validators || [];
+      this.keywords = config?.keywords || [];
     }
   }
 

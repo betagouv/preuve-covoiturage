@@ -117,9 +117,13 @@ import pdf from "npm:pdf-lib@^1.17";
 
 export { multiPolygon, point, polygon } from "npm:@turf/helpers";
 export type {
+  // @ts-ignore
   Feature,
+  // @ts-ignore
   MultiPolygon,
+  // @ts-ignore
   Polygon,
+  // @ts-ignore
   Properties,
 } from "npm:@turf/helpers";
 import booleanPointInPolygon from "npm:@turf/boolean-point-in-polygon";

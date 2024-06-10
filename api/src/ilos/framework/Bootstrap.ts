@@ -1,5 +1,5 @@
 import { fs, isMainThread, path, pino, process } from "@/deps.ts";
-
+import { CliTransport } from "@/ilos/cli/index.ts";
 import {
   BootstrapType,
   kernel,
@@ -13,10 +13,8 @@ import {
   interceptConsole,
   registerGracefulShutdown,
 } from "@/ilos/tools/index.ts";
-import { CliTransport } from "@/ilos/cli/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
-
 import { Kernel } from "./Kernel.ts";
 
 const defaultBootstrapObject: BootstrapType = {
@@ -41,17 +39,21 @@ export class Bootstrap {
       ...defaultBootstrapObject,
       ...currentBootstrapObject,
     };
+    if (!bootstrapObject.kernel) {
+      throw new Error("Kernel is required");
+    }
+
+    if (!bootstrapObject.transport) {
+      throw new Error("Transport is required");
+    }
+
     this.kernel = bootstrapObject.kernel;
-    this.serviceProviders = bootstrapObject.serviceProviders;
+    this.serviceProviders = bootstrapObject.serviceProviders || [];
     this.transports = bootstrapObject.transport;
   }
 
   static getWorkingPath(): string {
-    const basePath = process.cwd();
-    if (!("npm_package_config_workingDir" in process.env)) {
-      return basePath;
-    }
-    return path.resolve(basePath, process.env.npm_package_config_workingDir);
+    return process.cwd();
   }
 
   static setPaths(): void {
@@ -77,10 +79,11 @@ export class Bootstrap {
   static setEnvFromPackage(): void {
     // Define config from npm package
     Reflect.ownKeys(process.env)
-      .filter((key: string) => /npm_package_config_app/.test(key))
-      .forEach((key: string) => {
-        const oldKey = key;
-        const newKey = key.replace("npm_package_config_", "").toUpperCase();
+      .filter((key) => /npm_package_config_app/.test(String(key)))
+      .forEach((key) => {
+        const oldKey = String(key);
+        const newKey = String(key).replace("npm_package_config_", "")
+          .toUpperCase(); // FIXME
         if (!(newKey in process.env)) {
           process.env[newKey] = process.env[oldKey];
         }
@@ -105,15 +108,13 @@ export class Bootstrap {
 
   static getBootstrapFilePath(): string {
     const basePath = Bootstrap.getWorkingPath();
-    const bootstrapFile = "npm_package_config_bootstrap" in process.env
-      ? process.env.npm_package_config_bootstrap
-      : "./bootstrap.js";
-
+    const bootstrapFile = "./bootstrap.js";
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
+
     if (!fs.existsSync(bootstrapPath)) {
-      console.error(`No bootstrap file provided: ${bootstrapPath}`);
-      return;
+      throw new Error(`No bootstrap file provided: ${bootstrapPath}`);
     }
+
     return bootstrapPath;
   }
 
@@ -175,7 +176,10 @@ export class Bootstrap {
 
     if (typeof command === "function") {
       transport = command(kernelInstance);
-    } else if (command !== "cli" && command in this.transports) {
+    } else if (
+      command !== "cli" && typeof command !== "undefined" &&
+      command in this.transports
+    ) {
       transport = this.transports[command](kernelInstance);
     } else {
       transport = this.transports.cli(kernelInstance);

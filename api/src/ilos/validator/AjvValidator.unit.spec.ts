@@ -1,31 +1,14 @@
-import { ConfigInterfaceResolver, RPCException } from "@/ilos/common/index.ts";
 import {
-  afterAll,
   afterEach,
   assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
+  assertRejects,
   beforeEach,
   describe,
   it,
+  sinon,
 } from "@/dev_deps.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-
+import { InvalidParamsException } from "@/ilos/common/exceptions/index.ts";
+import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
 import { AjvValidator } from "./AjvValidator.ts";
 
 interface Context {
@@ -33,139 +16,142 @@ interface Context {
   provider: AjvValidator;
 }
 
-const test = anyTest as TestFn<Context>;
+describe("AjvValidator", () => {
+  class FakeObject {
+    constructor(data: Record<string, any>) {
+      Reflect.ownKeys(data).forEach((key) => {
+        // @ts-ignore
+        this[key] = data[key];
+      });
+    }
+  }
 
-beforeEach((t) => {
   const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {
     get() {
       return {};
     },
   });
 
-  t.context.provider = new AjvValidator(fakeConfig);
-  t.context.provider.boot();
-});
+  const provider = new AjvValidator(fakeConfig);
 
-afterEach((t) => {
-  sinon.restore();
-});
+  beforeEach(() => {
+    provider.boot();
+  });
 
-class FakeObject {
-  constructor(data) {
-    Reflect.ownKeys(data).forEach((key) => {
-      this[key] = data[key];
-    });
-  }
-}
+  afterEach(() => {
+    sinon.restore();
+  });
 
-it("should work", async (t) => {
-  const schema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema",
-    type: "object",
-    properties: {
-      hello: {
-        type: "string",
+  it("should work", async () => {
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema",
+      type: "object",
+      properties: {
+        hello: {
+          type: "string",
+        },
       },
-    },
-    required: ["hello"],
-  };
+      required: ["hello"],
+    };
 
-  t.context.provider.registerValidator(schema, FakeObject);
-  const result = await t.context.provider.validate(
-    new FakeObject({ hello: "world" }),
-  );
-  assert(result);
-});
+    provider.registerValidator(schema, FakeObject);
+    const result = await provider.validate(
+      new FakeObject({ hello: "world" }),
+    );
+    assert(result);
+  });
 
-it("should raise exception on invalid data", async (t) => {
-  const schema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema",
-    type: "object",
-    properties: {
-      hello: {
-        type: "string",
+  it("should raise exception on invalid data", () => {
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema",
+      type: "object",
+      properties: {
+        hello: {
+          type: "string",
+        },
       },
-    },
-    required: ["hello"],
-  };
+      required: ["hello"],
+    };
 
-  t.context.provider.registerValidator(schema, FakeObject);
-  const err: RPCException = await assertThrows(async () =>
-    t.context.provider.validate(new FakeObject({ hello: 1 }))
-  );
-  assertEquals(err.message, "Invalid params");
-  assertEquals(err.rpcError.data[0], "/hello: must be string");
-});
+    provider.registerValidator(schema, FakeObject);
 
-it("should work with ref", async (t) => {
-  const subSchema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema.world",
-    type: "object",
-    properties: {
-      world: {
-        type: "string",
+    assertRejects(
+      async () => await provider.validate(new FakeObject({ hello: 1 })),
+      InvalidParamsException,
+      "Invalid params",
+    );
+  });
+
+  it("should work with ref", async () => {
+    const subSchema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema.world",
+      type: "object",
+      properties: {
+        world: {
+          type: "string",
+        },
       },
-    },
-    required: ["world"],
-  };
-  const schema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema",
-    type: "object",
-    properties: {
-      hello: {
-        $ref: "myschema.world",
+      required: ["world"],
+    };
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema",
+      type: "object",
+      properties: {
+        hello: {
+          $ref: "myschema.world",
+        },
       },
-    },
-    required: ["hello"],
-  };
-  t.context.provider.registerValidator(subSchema);
-  t.context.provider.registerValidator(schema, FakeObject);
-  const result = await t.context.provider.validate(
-    new FakeObject({ hello: { world: "!!!" } }),
-  );
-  assert(result);
-});
+      required: ["hello"],
+    };
+    provider.registerValidator(subSchema);
+    provider.registerValidator(schema, FakeObject);
+    const result = await provider.validate(
+      new FakeObject({ hello: { world: "!!!" } }),
+    );
+    assert(result);
+  });
 
-it("should work with inheritance", async (t) => {
-  class FakeObjectExtended extends FakeObject {}
+  it("should work with inheritance", async () => {
+    class FakeObjectExtended extends FakeObject {}
 
-  const schema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema",
-    type: "object",
-    properties: {
-      hello: {
-        type: "boolean",
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema",
+      type: "object",
+      properties: {
+        hello: {
+          type: "boolean",
+        },
       },
-    },
-    required: ["hello"],
-  };
+      required: ["hello"],
+    };
 
-  const schemaExtended = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "myschema.extended",
-    type: "object",
-    properties: {
-      hello: {
-        type: "string",
+    const schemaExtended = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "myschema.extended",
+      type: "object",
+      properties: {
+        hello: {
+          type: "string",
+        },
       },
-    },
-    required: ["hello"],
-  };
+      required: ["hello"],
+    };
 
-  t.context.provider.registerValidator(schema, FakeObject);
-  t.context.provider.registerValidator(schemaExtended, FakeObjectExtended);
+    provider.registerValidator(schema, FakeObject);
+    provider.registerValidator(schemaExtended, FakeObjectExtended);
 
-  const resultExtended = await t.context.provider.validate(
-    new FakeObjectExtended({ hello: "world" }),
-  );
-  assert(resultExtended);
-  const result = await t.context.provider.validate(
-    new FakeObject({ hello: true }),
-  );
-  assert(result);
+    const resultExtended = await provider.validate(
+      new FakeObjectExtended({ hello: "world" }),
+    );
+    assert(resultExtended);
+    const result = await provider.validate(
+      new FakeObject({ hello: true }),
+    );
+    assert(result);
+  });
 });

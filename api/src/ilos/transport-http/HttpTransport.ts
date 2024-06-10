@@ -16,10 +16,9 @@ import { mapStatusCode } from "./helpers/mapStatusCode.ts";
  * @implements {TransportInterface}
  */
 export class HttpTransport implements TransportInterface<http.Server> {
-  protected server: http.Server;
-  protected kernel: KernelInterface;
+  protected server: http.Server | null = null;
 
-  constructor(kernel: KernelInterface) {
+  constructor(protected kernel: KernelInterface) {
     this.kernel = kernel;
   }
 
@@ -27,8 +26,8 @@ export class HttpTransport implements TransportInterface<http.Server> {
     return this.kernel;
   }
 
-  getInstance(): http.Server {
-    return this.server;
+  getInstance(): http.Server | void {
+    if (this.server) return this.server;
   }
 
   async up(opts: string[] = []) {
@@ -109,7 +108,7 @@ export class HttpTransport implements TransportInterface<http.Server> {
                 }),
               );
             });
-        } catch (err) {
+        } catch {
           res.statusCode = 415;
           res.end(
             JSON.stringify({
@@ -137,7 +136,7 @@ export class HttpTransport implements TransportInterface<http.Server> {
       const ts = setTimeout(() => {
         reject();
       }, 10000);
-      this.server.close(() => {
+      this.server && this.server.close(() => {
         clearTimeout(ts);
         resolve();
       });

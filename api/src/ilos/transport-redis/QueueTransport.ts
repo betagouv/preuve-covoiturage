@@ -6,13 +6,12 @@ import {
   Worker,
   WorkerOptions,
 } from "@/deps.ts";
-
-import { QueueExtension } from "@/ilos/queue/index.ts";
 import { KernelInterface, TransportInterface } from "@/ilos/common/index.ts";
 import {
   RedisConnection,
   RedisInterface,
 } from "@/ilos/connection-redis/index.ts";
+import { QueueExtension } from "@/ilos/queue/index.ts";
 
 interface WorkerWithScheduler {
   worker: Worker;
@@ -89,7 +88,7 @@ export class QueueTransport
       const key = service;
       const { worker, scheduler } = await this.getWorkerAndScheduler(
         key,
-        async (job) =>
+        async (job: Job) =>
           this.kernel.call(job.data.method, job.data.params.params, {
             ...job.data.params._context,
             channel: {
@@ -124,26 +123,26 @@ export class QueueTransport
   }
 
   protected registerListeners(queue: Worker, name: string): void {
-    queue.on("error", (err) => {
+    queue.on("error", (err: Error) => {
       console.error(`🐮/${name}: error`, err.message);
       this.errorHandler(err);
     });
 
-    queue.on("active", (job) => {
+    queue.on("active", (job: Job) => {
       console.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
-    queue.on("progress", (job, progress) => {
+    queue.on("progress", (job: Job, progress: number | object) => {
       console.info(
         `🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`,
       );
     });
 
-    queue.on("completed", (job) => {
+    queue.on("completed", (job: Job) => {
       console.info(`🐮/${name}: completed ${job.id} ${job.data.method}`);
     });
 
-    queue.on("failed", (job, err) => {
+    queue.on("failed", (job: Job, err: Error) => {
       console.error(`🐮/${name}: failed ${job.id}`, err.message);
       console.error(err.stack);
       this.errorHandler(err, job);

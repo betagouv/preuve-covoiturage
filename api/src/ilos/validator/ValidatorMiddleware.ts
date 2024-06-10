@@ -1,5 +1,6 @@
 import {
   ContextType,
+  FunctionMiddlewareInterface,
   middleware,
   MiddlewareInterface,
   ParamsType,
@@ -14,7 +15,7 @@ export class ValidatorMiddleware implements MiddlewareInterface {
   async process(
     params: ParamsType,
     context: ContextType,
-    next: Function,
+    next: FunctionMiddlewareInterface,
     schema: string,
   ): Promise<ResultType> {
     await this.validator.validate(params, schema);
