@@ -1,22 +1,28 @@
 import {
-  NewableType,
-  MiddlewareInterface,
-  ServiceContainerInterface,
-  RegisterHookInterface,
   extension,
-} from '@/ilos/common/index.ts';
+  MiddlewareInterface,
+  NewableType,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
 
 @extension({
-  name: 'middlewares',
+  name: "middlewares",
 })
 export class Middlewares implements RegisterHookInterface {
   constructor(
-    protected readonly middlewares: (NewableType<MiddlewareInterface> | [string, NewableType<MiddlewareInterface>])[],
+    protected readonly middlewares:
+      (NewableType<MiddlewareInterface> | [
+        string,
+        NewableType<MiddlewareInterface>,
+      ])[],
   ) {
     //
   }
 
-  public async register(serviceContainer: ServiceContainerInterface): Promise<void> {
+  public async register(
+    serviceContainer: ServiceContainerInterface,
+  ): Promise<void> {
     const container = serviceContainer.getContainer();
     const alias = this.middlewares;
 
@@ -25,7 +31,10 @@ export class Middlewares implements RegisterHookInterface {
         const [id, target] = def;
         container.bind(id).to(target);
       } else {
-        const identifier = Reflect.getMetadata('extension:identifier', def) as string;
+        const identifier = Reflect.getMetadata(
+          "extension:identifier",
+          def,
+        ) as string;
         container.bind(def).toSelf();
         if (identifier) {
           container.bind(identifier).toService(def);

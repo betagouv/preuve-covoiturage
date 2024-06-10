@@ -5,6 +5,7 @@ import {
   FunctionalHandlerInterface,
   HandlerConfigType,
   HandlerInterface,
+  MethodNotFoundException,
   NewableType,
   ParamsType,
   ResultType,
@@ -50,7 +51,16 @@ export class Container extends InversifyContainer
   getHandler<P = ParamsType, C = ContextType, R = ResultType>(
     config: HandlerConfigType,
   ): FunctionalHandlerInterface<P, C, R> {
-    return this.handlersRegistry.get<P, C, R>(config);
+    const handler = this.handlersRegistry.get<P, C, R>(config);
+
+    // FIXME ?
+    if (!handler) {
+      throw new MethodNotFoundException(
+        `Handler not found for ${config.signature}`,
+      );
+    }
+
+    return handler;
   }
 
   getHandlers(): (HandlerConfigType & { resolver: Function })[] {

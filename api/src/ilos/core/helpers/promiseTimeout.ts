@@ -1,13 +1,20 @@
-import { TimeoutException } from '@/ilos/common/index.ts';
+import { TimeoutException } from "@/ilos/common/index.ts";
 
-export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: string): Promise<T> {
+export function promiseTimeout<T>(
+  ms: number,
+  promise: Promise<T>,
+  signature?: string,
+): Promise<T> {
   const s = new Date();
-  let id = null;
+
+  // timeout id
+  let id: number = 0;
+
   const timeout = new Promise((_resolve, reject) => {
     if (id) clearTimeout(id);
     id = setTimeout(() => {
       clearTimeout(id);
-      console.debug(`[kernel] ${signature || ''} timeout expired (${ms}ms)`);
+      console.debug(`[kernel] ${signature || ""} timeout expired (${ms}ms)`);
       reject(new TimeoutException(`Timeout Exception (${ms}ms)`));
     }, ms);
   });
@@ -15,13 +22,19 @@ export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: s
   return Promise.race([promise, timeout])
     .then((res) => {
       clearTimeout(id);
-      console.debug(`[kernel] ${signature || ''} succeeded in ${(new Date().getTime() - s.getTime()) / 1000}s`);
+      console.debug(
+        `[kernel] ${signature || ""} succeeded in ${
+          (new Date().getTime() - s.getTime()) / 1000
+        }s`,
+      );
       return res;
     })
     .catch((err) => {
       clearTimeout(id);
-      if (!!!err.nolog) {
-        console.error(`[kernel] ${signature || ''} failed`, { message: err.message });
+      if (!err.nolog) {
+        console.error(`[kernel] ${signature || ""} failed`, {
+          message: err.message,
+        });
       }
 
       throw err;

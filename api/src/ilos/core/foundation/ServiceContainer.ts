@@ -98,7 +98,6 @@ export abstract class ServiceContainer
     this.registerHookRegistry.register(hooker, identifier);
     this.initHookRegistry.register(hooker, identifier);
     this.destroyHookRegistry.register(hooker, identifier);
-    return;
   }
 
   protected registerChildren() {

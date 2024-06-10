@@ -2,6 +2,7 @@ import { assertEquals, assertRejects, describe, it } from "@/dev_deps.ts";
 import {
   ContextType,
   FunctionalHandlerInterface,
+  FunctionMiddlewareInterface,
   handler,
   HandlerInterface,
   middleware,
@@ -11,7 +12,6 @@ import {
   ResultType,
   serviceProvider,
 } from "@/ilos/common/index.ts";
-import { NextFunction } from "@/ilos/common/types/core/MiddlewareInterface.ts";
 import { Action } from "./Action.ts";
 import { Kernel as AbstractKernel } from "./Kernel.ts";
 
@@ -28,7 +28,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: NextFunction,
+        next: FunctionMiddlewareInterface,
       ) {
         const result = await next(params, context);
         return result - 1;
@@ -40,7 +40,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: NextFunction,
+        next: FunctionMiddlewareInterface,
       ) {
         const result = await next(params, context);
         return `hello ${result}?`;
@@ -52,7 +52,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: NextFunction,
+        next: FunctionMiddlewareInterface,
       ) {
         const result = await next(params, context);
         return `world ${result}!`;

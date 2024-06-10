@@ -1,6 +1,9 @@
-import { _ } from '@/deps.ts';
-import { extension, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
-import type { RegisterHookInterface, ServiceContainerInterface } from '@/ilos/common/index.ts';
+import { _ } from "@/deps.ts";
+import type {
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, extension } from "@/ilos/common/index.ts";
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {
@@ -17,13 +20,14 @@ export class ConfigStore extends ConfigInterfaceResolver {
 }
 
 @extension({
-  name: 'config',
+  name: "config",
   autoload: true,
 })
 export class Config implements RegisterHookInterface {
   constructor(protected readonly params: { [k: string]: any } = {}) {}
 
   async register(serviceContainer: ServiceContainerInterface) {
-    serviceContainer.getContainer().bind(ConfigInterfaceResolver).toConstantValue(new ConfigStore(this.params));
+    serviceContainer.getContainer().bind(ConfigInterfaceResolver)
+      .toConstantValue(new ConfigStore(this.params));
   }
 }

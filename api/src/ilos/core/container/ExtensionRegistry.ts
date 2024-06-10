@@ -107,6 +107,7 @@ export class ExtensionRegistry {
     const extensions = this.get();
     for (const extensionConfig of extensions) {
       let extensionCtorConfig: any;
+
       if (
         Reflect.hasMetadata(
           extensionConfig.decoratorKey,
@@ -123,6 +124,10 @@ export class ExtensionRegistry {
         throw new Error(
           `Missing config for extension ${extensionCtorConfig.name}`,
         );
+      }
+
+      if (!extensionConfig.key) {
+        throw new Error(`Missing key for extension ${extensionConfig.name}`);
       }
 
       const extension = this.container.get<FactoryType<ExtensionInterface>>(

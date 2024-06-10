@@ -1,8 +1,8 @@
-import { RPCException } from './RPCException.ts';
+import { RPCException } from "./RPCException.ts";
 
 export class TimeoutException extends RPCException {
   constructor(data?: any) {
-    super('Timeout');
+    super("Timeout");
     this.nolog = true;
     this.rpcError = {
       data,

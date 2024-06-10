@@ -1,8 +1,8 @@
-import { RPCException } from './RPCException.ts';
+import { RPCException } from "./RPCException.ts";
 
 export class ParseErrorException extends RPCException {
   constructor(data?: any) {
-    super('Parse error');
+    super("Parse error");
     this.nolog = true;
     this.rpcError = {
       data,

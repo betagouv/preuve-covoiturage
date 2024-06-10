@@ -193,7 +193,7 @@ describe("Foundation: Kernel", () => {
       id: 1,
       error: {
         code: -32601,
-        data: "Unknown method or service nope:add",
+        data: "Handler not found for nope:add",
         message: "Method not found",
       },
     });

@@ -1,8 +1,8 @@
-import { RPCException } from './RPCException.ts';
+import { RPCException } from "./RPCException.ts";
 
 export class ConflictException extends RPCException {
   constructor(data?: any) {
-    super('Conflict');
+    super("Conflict");
     this.nolog = true;
     this.rpcError = {
       data,

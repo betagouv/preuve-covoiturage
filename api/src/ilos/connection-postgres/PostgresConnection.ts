@@ -1,15 +1,20 @@
-import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@/ilos/common/index.ts';
-import { env } from '@/ilos/core/index.ts';
-import type { CursorQueryConfig, PoolConfig } from '@/deps.ts';
-import { Pool, Cursor } from '@/deps.ts';
+import type { CursorQueryConfig, PoolConfig } from "@/deps.ts";
+import { Cursor, Pool } from "@/deps.ts";
+import {
+  ConnectionInterface,
+  DestroyHookInterface,
+  InitHookInterface,
+} from "@/ilos/common/index.ts";
+import { env } from "@/ilos/core/index.ts";
 
-export class PostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
+export class PostgresConnection
+  implements ConnectionInterface, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
-  protected pool: Pool;
+  protected pool;
 
   constructor(protected config: PoolConfig) {
-    this.pgUrl = config.connectionString || env.or_fail('APP_POSTGRES_URL');
-    const timeout = env.or_int('APP_POSTGRES_TIMEOUT', 60000);
+    this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
+    const timeout = env.or_int("APP_POSTGRES_TIMEOUT", 60000);
 
     this.pool = new Pool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
@@ -25,7 +30,7 @@ export class PostgresConnection implements ConnectionInterface<Pool>, InitHookIn
   }
 
   async up() {
-    await this.pool.query('SELECT NOW()');
+    await this.pool.query("SELECT NOW()");
     return;
   }
 
@@ -37,7 +42,7 @@ export class PostgresConnection implements ConnectionInterface<Pool>, InitHookIn
     await this.pool.end();
   }
 
-  getClient(): Pool {
+  getClient() {
     return this.pool;
   }
 
@@ -45,7 +50,7 @@ export class PostgresConnection implements ConnectionInterface<Pool>, InitHookIn
     text: string,
     values: any[],
     config: CursorQueryConfig | undefined = undefined,
-  ): Promise<{ read: Cursor['read']; release: () => Promise<void> }> {
+  ): Promise<{ read: Cursor["read"]; release: () => Promise<void> }> {
     const client = await this.pool.connect();
     const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
 
@@ -61,7 +66,7 @@ export class PostgresConnection implements ConnectionInterface<Pool>, InitHookIn
   // https://www.postgresql.org/docs/current/libpq-ssl.html
   private hasSSL(strUrl: string): boolean {
     const url = new URL(strUrl);
-    if (!url.searchParams.has('sslmode')) return false;
-    return url.searchParams.get('sslmode') !== 'disable';
+    if (!url.searchParams.has("sslmode")) return false;
+    return url.searchParams.get("sslmode") !== "disable";
   }
 }

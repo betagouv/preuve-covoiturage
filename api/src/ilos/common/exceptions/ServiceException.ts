@@ -1,4 +1,4 @@
-import { RPCErrorType } from '../types/call/RPCErrorType.ts';
+import { RPCErrorType } from "../types/call/RPCErrorType.ts";
 
 export class ServiceException extends Error {
   serviceError = true;

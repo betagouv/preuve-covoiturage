@@ -1,7 +1,12 @@
-import { RegisterHookInterface, NewableType, ServiceContainerInterface, extension } from '@/ilos/common/index.ts';
+import {
+  extension,
+  NewableType,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
 
 @extension({
-  name: 'connections',
+  name: "connections",
 })
 export class ConnectionManagerExtension implements RegisterHookInterface {
   constructor(protected readonly alias: [NewableType<any>, any][]) {}

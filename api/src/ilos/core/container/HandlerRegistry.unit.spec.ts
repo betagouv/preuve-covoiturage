@@ -87,71 +87,71 @@ describe("HandlerRegistry", () => {
     handlerRegistry.set(HelloRemoteQueue);
     handlerRegistry.set(HelloRemoteStar);
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: true,
-      })(defaultCallOptions)) === "HelloLocal",
-    );
+    const hr1 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: true,
+    });
+    assert(hr1);
+    assert(await hr1(defaultCallOptions) === "HelloLocal");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: true,
-        queue: true,
-      })(defaultCallOptions)) === "HelloLocalQueue",
-    );
+    const hr2 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: true,
+      queue: true,
+    });
+    assert(hr2);
+    assert(await hr2(defaultCallOptions) === "HelloLocalQueue");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "*",
-        local: true,
-      })(defaultCallOptions)) === "HelloLocalStar",
-    );
+    const hr3 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "*",
+      local: true,
+    });
+    assert(hr3);
+    assert(await hr3(defaultCallOptions) === "HelloLocalStar");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "notExisting",
-        local: true,
-      })(defaultCallOptions)) === "HelloLocalStar",
-    );
+    const hr4 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "notExisting",
+      local: true,
+    });
+    assert(hr4);
+    assert(await hr4(defaultCallOptions) === "HelloLocalStar");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: false,
-      })(defaultCallOptions)) === "HelloRemote",
-    );
+    const hr5 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: false,
+    });
+    assert(hr5);
+    assert(await hr5(defaultCallOptions) === "HelloRemote");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: false,
-        queue: true,
-      })(defaultCallOptions)) === "HelloRemote",
-    );
+    const hr6 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: false,
+      queue: true,
+    });
+    assert(hr6);
+    assert(await hr6(defaultCallOptions) === "HelloRemote");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "*",
-        local: false,
-      })(defaultCallOptions)) === "HelloRemoteStar",
-    );
+    const hr7 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "*",
+      local: false,
+    });
+    assert(hr7);
+    assert(await hr7(defaultCallOptions) === "HelloRemoteStar");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "notExisting",
-        local: false,
-      })(defaultCallOptions)) === "HelloRemoteStar",
-    );
+    const hr8 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "notExisting",
+      local: false,
+    });
+    assert(hr8);
+    assert(await hr8(defaultCallOptions) === "HelloRemoteStar");
   });
 
   it("fallback to remote", async () => {
@@ -183,23 +183,24 @@ describe("HandlerRegistry", () => {
     handlerRegistry.set(HelloRemote);
     handlerRegistry.set(HelloRemoteStar);
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: true,
-      })(defaultCallOptions)) === "HelloRemote",
-    );
+    const hr1 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: true,
+    });
+    assert(hr1);
+    assert(await hr1(defaultCallOptions) === "HelloRemote");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "truc",
-        local: true,
-        queue: true,
-      })(defaultCallOptions)) === "HelloRemoteStar",
-    );
+    const hr2 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "truc",
+      local: true,
+      queue: true,
+    });
+    assert(hr2);
+    assert(await hr2(defaultCallOptions) === "HelloRemoteStar");
   });
+
   it("fallback to sync", async () => {
     @handler({
       service: "hello",
@@ -228,31 +229,31 @@ describe("HandlerRegistry", () => {
     handlerRegistry.set(HelloLocal);
     handlerRegistry.set(HelloRemoteStar);
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        queue: true,
-        local: true,
-      })(defaultCallOptions)) === "HelloLocal",
-    );
+    const hr1 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      queue: true,
+      local: true,
+    });
+    assert(hr1);
+    assert(await hr1(defaultCallOptions) === "HelloLocal");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "truc",
-        queue: true,
-        local: true,
-      })(defaultCallOptions)) === "HelloRemoteStar",
-    );
+    const hr2 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "truc",
+      queue: true,
+      local: true,
+    });
+    assert(hr2);
+    assert(await hr2(defaultCallOptions) === "HelloRemoteStar");
 
-    assert(
-      (await handlerRegistry.get<null, null>({
-        service: "hello",
-        method: "world",
-        local: false,
-        queue: true,
-      })(defaultCallOptions)) === "HelloRemoteStar",
-    );
+    const hr3 = handlerRegistry.get<null, null>({
+      service: "hello",
+      method: "world",
+      local: false,
+      queue: true,
+    });
+    assert(hr3);
+    assert(await hr3(defaultCallOptions) === "HelloRemoteStar");
   });
 });

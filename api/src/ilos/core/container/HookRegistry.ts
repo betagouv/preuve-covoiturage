@@ -1,6 +1,9 @@
-import { IdentifierType, HookInterface, ServiceContainerInterface } from '@/ilos/common/index.ts';
-
-import { hasInterface } from '../helpers/types/hasInterface.ts';
+import {
+  HookInterface,
+  IdentifierType,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { hasInterface } from "../helpers/types/hasInterface.ts";
 
 export class HookRegistry<T> {
   protected registry: Set<HookInterface> = new Set();
@@ -14,27 +17,43 @@ export class HookRegistry<T> {
   }
 
   public register(hooker: object, identifier?: IdentifierType): void {
-    if (hasInterface<T>(hooker, this.method) && (!identifier || this.authorizeIdentifierLookup)) {
-      let hook = async (container: ServiceContainerInterface) => hooker[this.method](container);
-      if (identifier) {
-        // prettier-ignore
-        hook = async (container: ServiceContainerInterface) =>
-          container
-            .getContainer()
-            .get<T>(identifier)[this.method](container);
-      }
-      this.add(hook);
+    const hasIface = hasInterface<T>(hooker, this.method);
+
+    if (hasIface && this.authorizeIdentifierLookup && identifier) {
+      return this.add(
+        async (container?: ServiceContainerInterface) => {
+          if (!container) {
+            throw new Error("Container is not set");
+          }
+
+          const hooker: any = container.getContainer().get<T>(identifier);
+          return hooker[this.method](container);
+        },
+      );
     }
-    return;
+
+    if (hasIface && (!identifier || this.authorizeIdentifierLookup)) {
+      return this.add(
+        async (container?: ServiceContainerInterface) => {
+          if (!container) {
+            throw new Error("Container is not set");
+          }
+
+          return (hooker as any)[this.method](container);
+        },
+      );
+    }
   }
 
-  protected add(hook: HookInterface) {
+  protected add(hook: HookInterface): void {
     if (!this.dispatched) {
       this.registry.add(hook);
     }
   }
 
-  public async dispatch(serviceContainer: ServiceContainerInterface) {
+  public async dispatch(
+    serviceContainer: ServiceContainerInterface,
+  ): Promise<void> {
     this.dispatched = true;
     const promises: Promise<void>[] = [];
 
