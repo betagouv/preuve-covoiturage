@@ -1,16 +1,22 @@
-import { ServiceContainerInterface, NewableType, KernelInterface, kernel as kernelDecorator } from '@/ilos/common/index.ts';
-import { Kernel as AbstractKernel } from '@/ilos/framework/index.ts';
-import { v4 } from '@/deps.ts';
-import { RedisConnection } from '@/ilos/connection-redis/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import * as connections from '@/config/connections.ts';
+import * as connections from "@/config/connections.ts";
+import { v4 } from "@/deps.ts";
+import {
+  kernel as kernelDecorator,
+  KernelInterface,
+  NewableType,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { Kernel as AbstractKernel } from "@/ilos/framework/index.ts";
 
-export interface KernelTestFn {
+export interface KernelContext {
   kernel: KernelInterface;
+  service: ServiceContainerInterface;
 }
 export interface KernelBeforeAfter {
-  before(): Promise<KernelTestFn>;
-  after(cfg: KernelTestFn): Promise<void>;
+  before(): Promise<KernelContext>;
+  after(cfg: KernelContext): Promise<void>;
 }
 
 export function makeKernelCtor(
@@ -27,7 +33,9 @@ export function makeKernelCtor(
   return Kernel;
 }
 
-export function makeKernel(serviceProviderCtor: NewableType<ServiceContainerInterface>): KernelInterface {
+export function makeKernel(
+  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+): KernelInterface {
   return new (makeKernelCtor(serviceProviderCtor))();
 }
 
@@ -36,14 +44,17 @@ export function uuid(): string {
   return v4();
 }
 
-export function makeKernelBeforeAfter(serviceProviderCtor: NewableType<ServiceContainerInterface>): KernelBeforeAfter {
-  async function before(): Promise<KernelTestFn> {
+export function makeKernelBeforeAfter(
+  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+): KernelBeforeAfter {
+  async function before(): Promise<KernelContext> {
     const kernel = makeKernel(serviceProviderCtor);
     await kernel.bootstrap();
-    return { kernel };
+    const service = kernel.get(serviceProviderCtor);
+    return { kernel, service };
   }
 
-  async function after(cfg: KernelTestFn): Promise<void> {
+  async function after(cfg: KernelContext): Promise<void> {
     await cfg.kernel.shutdown();
   }
   return { before, after };
