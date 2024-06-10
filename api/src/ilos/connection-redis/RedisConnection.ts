@@ -1,4 +1,4 @@
-import { process, Redis } from "@/deps.ts";
+import { process, Redis, RedisOptions } from "@/deps.ts";
 import {
   ConnectionConfigurationType,
   ConnectionInterface,
@@ -27,6 +27,7 @@ export class RedisConnection
 
   constructor(
     protected readonly config: ConnectionConfigurationType | string,
+    protected readonly options: Partial<RedisOptions> = {},
   ) {}
 
   async init(): Promise<void> {
@@ -60,15 +61,18 @@ export class RedisConnection
     const defaultConfig = {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
-      // lazyConnect: true,
+      ...this.options,
     };
+
     if (typeof this.config === "string") {
       return new Redis(this.config, defaultConfig);
     }
+
     const conn = new Redis({
       ...defaultConfig,
       ...this.config,
     });
+
     return conn;
   }
 }

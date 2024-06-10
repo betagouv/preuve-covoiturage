@@ -12,7 +12,7 @@ export {
   writeFile,
 } from "node:fs/promises";
 export { Redis } from "npm:ioredis@^5.3";
-export type { RedisKey } from "npm:ioredis@^5.3";
+export type { RedisKey, RedisOptions } from "npm:ioredis@^5.3";
 import Stream from "node:stream";
 import process from "node:process";
 export { isMainThread } from "node:worker_threads";
