@@ -1,4 +1,4 @@
-import { ContextType, UnauthorizedException } from '@/ilos/common/index.ts';
+import { ContextType, UnauthorizedException } from "@/ilos/common/index.ts";
 
 export function getOperatorIdOrFail(context: ContextType): number {
   const { operator_id }: { operator_id: number } = context.call?.user || {};

@@ -1,14 +1,20 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { Id, Uuid } from '../interfaces/index.ts';
-import { SelectableCarpool, SelectableCarpoolStatus } from '../interfaces/database/lookup.ts';
-import sql, { raw } from '../helpers/sql.ts';
+import { provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
+import { Id, Uuid } from "../interfaces/index.ts";
+import {
+  SelectableCarpool,
+  SelectableCarpoolStatus,
+} from "../interfaces/database/lookup.ts";
+import sql, { raw } from "../helpers/sql.ts";
 
 @provider()
 export class CarpoolLookupRepository {
-  readonly table = 'carpool_v2.carpools';
-  readonly statusTable = 'carpool_v2.status';
-  readonly incentiveTable = 'carpool_v2.operator_incentives';
+  readonly table = "carpool_v2.carpools";
+  readonly statusTable = "carpool_v2.status";
+  readonly incentiveTable = "carpool_v2.operator_incentives";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -80,7 +86,11 @@ export class CarpoolLookupRepository {
 
     return {
       ...carpool,
-      incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
+      incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({
+        index: idx,
+        siret,
+        amount,
+      })),
     };
   }
 }

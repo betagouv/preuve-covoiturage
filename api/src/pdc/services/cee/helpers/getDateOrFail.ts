@@ -1,4 +1,4 @@
-import { InvalidParamsException } from '@/ilos/common/index.ts';
+import { InvalidParamsException } from "@/ilos/common/index.ts";
 import { date } from "@/deps.ts";
 
 export function getDateOrFail(data: any, message: string): Date {

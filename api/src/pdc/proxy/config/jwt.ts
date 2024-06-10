@@ -1,4 +1,4 @@
-import { env } from '@/ilos/core/index.ts';
+import { env } from "@/ilos/core/index.ts";
 
 /**
  * Super complicated token to crypt the JWT tokens
@@ -9,14 +9,14 @@ import { env } from '@/ilos/core/index.ts';
  * Warning! Changing this invalidates all token and the users
  * will have to recreate them !
  */
-export const secret = env.or_fail('APP_JWT_SECRET');
+export const secret = env.or_fail("APP_JWT_SECRET");
 
 /**
  * Time to life: Token lifetime in seconds
  * -1 means infinity
  */
-export const ttl = env.or_int('APP_JWT_TTL', 86400);
+export const ttl = env.or_int("APP_JWT_TTL", 86400);
 
-export const alg = 'HS256';
+export const alg = "HS256";
 export const signOptions = {};
 export const verifyOptions = {};

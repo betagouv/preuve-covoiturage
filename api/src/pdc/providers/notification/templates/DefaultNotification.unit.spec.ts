@@ -1,15 +1,39 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { Extensions } from '@/ilos/core/index.ts';
-import { HandlebarsTemplateProvider } from '@/pdc/providers/template/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { Extensions } from "@/ilos/core/index.ts";
+import { HandlebarsTemplateProvider } from "@/pdc/providers/template/index.ts";
 import { Mail } from "@/deps.ts";
 
 import {
-  DefaultTemplateData,
-  StaticMailTemplateNotificationInterface,
-  NotificationMailTransporter,
   DefaultNotification,
-} from '../index.ts';
+  DefaultTemplateData,
+  NotificationMailTransporter,
+  StaticMailTemplateNotificationInterface,
+} from "../index.ts";
 
 interface TestContext {
   transporter: NotificationMailTransporter;
@@ -30,12 +54,12 @@ beforeEach(async (t) => {
     notification: {
       mail: {
         from: {
-          name: 'admin',
-          email: 'admin@example.com',
+          name: "admin",
+          email: "admin@example.com",
         },
         to: {
-          name: 'test',
-          email: 'test@example.com',
+          name: "test",
+          email: "test@example.com",
         },
         debug: false,
         smtp: {},
@@ -45,54 +69,61 @@ beforeEach(async (t) => {
   const configProvider = new Extensions.ConfigStore(config);
   const templateProvider = new HandlebarsTemplateProvider();
   await templateProvider.init();
-  const transporter = new NotificationOverride(configProvider, templateProvider);
+  const transporter = new NotificationOverride(
+    configProvider,
+    templateProvider,
+  );
   await transporter.init();
   t.context.stub = sinon.stub(transporter.transporter);
   t.context.transporter = transporter;
 });
 
-it('should work', async (t) => {
-  const sendTo = 'toto <toto@example.com>';
-  const sendMessage = 'Tout va bien.';
+it("should work", async (t) => {
+  const sendTo = "toto <toto@example.com>";
+  const sendMessage = "Tout va bien.";
   const notification = new DefaultNotification(sendTo, {
     message_text: sendMessage,
   });
-  const notificationCtor = notification.constructor as StaticMailTemplateNotificationInterface;
+  const notificationCtor = notification
+    .constructor as StaticMailTemplateNotificationInterface;
 
   await t.context.transporter.send(notification);
   assert(t.context.stub.sendMail.calledOnce);
-  const { text, html, subject, to } = t.context.stub.sendMail.getCall(0).args[0];
+  const { text, html, subject, to } =
+    t.context.stub.sendMail.getCall(0).args[0];
   assertEquals(subject, notificationCtor.subject);
   assertEquals(to, sendTo);
   assert((text as string).search(sendMessage) > -1);
   assert((html as string).search(sendMessage) > -1);
 
-  assert((text as string).search('https://covoiturage.beta.gouv.fr') > -1);
-  assert((html as string).search('https://covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search("https://covoiturage.beta.gouv.fr") > -1);
+  assert((html as string).search("https://covoiturage.beta.gouv.fr") > -1);
 
-  assert((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
-  assert((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search("contact@covoiturage.beta.gouv.fr") > -1);
+  assert((html as string).search("contact@covoiturage.beta.gouv.fr") > -1);
 });
 
-it('should work with overriding', async (t) => {
+it("should work with overriding", async (t) => {
   class TestNotification extends DefaultNotification {
     constructor(to: string, data: Partial<DefaultTemplateData>) {
       super(to, {
-        app_url: 'https://dev.covoiturage.beta.gouv.fr',
+        app_url: "https://dev.covoiturage.beta.gouv.fr",
         ...data,
       });
     }
   }
-  const sendTo = 'toto <toto@example.com>';
-  const sendMessage = 'Tout va bien.';
+  const sendTo = "toto <toto@example.com>";
+  const sendMessage = "Tout va bien.";
   const notification = new TestNotification(sendTo, {
     message_text: sendMessage,
   });
-  const notificationCtor = notification.constructor as StaticMailTemplateNotificationInterface;
+  const notificationCtor = notification
+    .constructor as StaticMailTemplateNotificationInterface;
 
   await t.context.transporter.send(notification);
   assert(t.context.stub.sendMail.calledOnce);
-  const { text, html, subject, to } = t.context.stub.sendMail.getCall(0).args[0];
+  const { text, html, subject, to } =
+    t.context.stub.sendMail.getCall(0).args[0];
   assertEquals(subject, notificationCtor.subject);
 
   assertEquals(to, sendTo);
@@ -100,9 +131,9 @@ it('should work with overriding', async (t) => {
   assert((text as string).search(sendMessage) > -1);
   assert((html as string).search(sendMessage) > -1);
 
-  assert((text as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
-  assert((html as string).search('https://dev.covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search("https://dev.covoiturage.beta.gouv.fr") > -1);
+  assert((html as string).search("https://dev.covoiturage.beta.gouv.fr") > -1);
 
-  assert((text as string).search('contact@covoiturage.beta.gouv.fr') > -1);
-  assert((html as string).search('contact@covoiturage.beta.gouv.fr') > -1);
+  assert((text as string).search("contact@covoiturage.beta.gouv.fr") > -1);
+  assert((html as string).search("contact@covoiturage.beta.gouv.fr") > -1);
 });

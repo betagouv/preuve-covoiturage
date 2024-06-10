@@ -1,4 +1,4 @@
-import { QRMath } from './QRMath.ts';
+import { QRMath } from "./QRMath.ts";
 
 function QRPolynomial(num, shift) {
   if (num.length == undefined) {
@@ -25,7 +25,9 @@ QRPolynomial.prototype = {
     const num = new Array(this.getLength() + e.getLength() - 1);
     for (let i = 0; i < this.getLength(); i++) {
       for (let j = 0; j < e.getLength(); j++) {
-        num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)));
+        num[i + j] ^= QRMath.gexp(
+          QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)),
+        );
       }
     }
     return new QRPolynomial(num, 0);

@@ -11,11 +11,10 @@ import {
 })
 export class Middlewares implements RegisterHookInterface {
   constructor(
-    protected readonly middlewares:
-      (NewableType<MiddlewareInterface> | [
-        string,
-        NewableType<MiddlewareInterface>,
-      ])[],
+    protected readonly middlewares: (NewableType<MiddlewareInterface> | [
+      string,
+      NewableType<MiddlewareInterface>,
+    ])[],
   ) {
     //
   }

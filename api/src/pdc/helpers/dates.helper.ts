@@ -1,7 +1,7 @@
-import { Timezone } from '@/pdc/providers/validator/index.ts';
-import { date, datetz } from '@/deps.ts';
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { date, datetz } from "@/deps.ts";
 
-export const defaultTz = 'Europe/Paris';
+export const defaultTz = "Europe/Paris";
 
 // Regular UTC toISOString
 export function toISOString(d: Date): string {
@@ -15,18 +15,25 @@ export function toISOString(d: Date): string {
 // convert a Date to a string in the User timezone
 export function toTzString(d: Date, tz?: Timezone): string {
   try {
-    return datetz.formatInTimeZone(d, tz || defaultTz, "yyyy-MM-dd'T'HH:mm:ssXX");
+    return datetz.formatInTimeZone(
+      d,
+      tz || defaultTz,
+      "yyyy-MM-dd'T'HH:mm:ssXX",
+    );
   } catch (e) {
     return d?.toString();
   }
 }
 
-export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Timezone): Date | undefined {
-  if (d === null || typeof d === 'undefined') return;
+export function castUserStringToUTC(
+  d: Date | string | undefined | null,
+  tz?: Timezone,
+): Date | undefined {
+  if (d === null || typeof d === "undefined") return;
 
   // a JS Date doesn't need to be offset.
   // the User must set the right timezone by himself
-  if (typeof d !== 'string') {
+  if (typeof d !== "string") {
     return d;
   }
 
@@ -39,13 +46,16 @@ export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Ti
   // a full-short date (YYYY-MM-DDTHH:mm:ssZZ) has a timezone
   // it is converted to UTC by the Date object
   const dd = new Date(d);
-  if (dd.toString() === 'Invalid Date') return;
+  if (dd.toString() === "Invalid Date") return;
 
   return dd;
 }
 
 export function dateWithTz(date: Date, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.toISOString().substring(0, 11), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.toISOString().substring(0, 11),
+    tz || defaultTz,
+  );
 }
 
 export function today(tz?: Timezone): Date {
@@ -53,21 +63,36 @@ export function today(tz?: Timezone): Date {
 }
 
 export function addDaysTz(d: Date, days: number, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.addDays(datetz.toZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.addDays(datetz.toZonedTime(d, tz || defaultTz), days),
+    tz || defaultTz,
+  );
 }
 
 export function subDaysTz(d: Date, days: number, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.subDays(datetz.toZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.subDays(datetz.toZonedTime(d, tz || defaultTz), days),
+    tz || defaultTz,
+  );
 }
 
 export function addMonthsTz(d: Date, months: number, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.addMonths(datetz.toZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.addMonths(datetz.toZonedTime(d, tz || defaultTz), months),
+    tz || defaultTz,
+  );
 }
 
 export function subMonthsTz(d: Date, months: number, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.subMonths(datetz.toZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.subMonths(datetz.toZonedTime(d, tz || defaultTz), months),
+    tz || defaultTz,
+  );
 }
 
 export function startOfMonthTz(d: Date, tz?: Timezone): Date {
-  return datetz.fromZonedTime(date.startOfMonth(datetz.toZonedTime(d, tz || defaultTz)), tz || defaultTz);
+  return datetz.fromZonedTime(
+    date.startOfMonth(datetz.toZonedTime(d, tz || defaultTz)),
+    tz || defaultTz,
+  );
 }

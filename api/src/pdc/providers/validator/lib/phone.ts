@@ -1,15 +1,18 @@
-import { parsePhoneNumber, isValidPhoneNumber } from '@/deps.ts';
+import { isValidPhoneNumber, parsePhoneNumber } from "@/deps.ts";
 
 export function formatPhone(input: string): string {
   if (!input) {
     return input;
   }
 
-  const phone = parsePhoneNumber(input, { defaultCountry: 'FR', extract: false });
+  const phone = parsePhoneNumber(input, {
+    defaultCountry: "FR",
+    extract: false,
+  });
   if (!phone) {
     return input;
   }
-  return phone.format('E.164');
+  return phone.format("E.164");
 }
 
 export function formatPhoneTrunc(input: string): string {
@@ -21,7 +24,7 @@ export function formatPhoneTrunc(input: string): string {
 }
 
 export function isValidPhone(input: string): boolean {
-  return isValidPhoneNumber(input, 'FR');
+  return isValidPhoneNumber(input, "FR");
 }
 
 export function isValidPhoneTrunc(input: string): boolean {

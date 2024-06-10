@@ -1,19 +1,19 @@
-import { Action } from '@/ilos/core/index.ts';
+import { Action } from "@/ilos/core/index.ts";
 import {
-  handler,
-  ParamsType,
   ContextType,
+  handler,
+  InvalidParamsException,
+  KernelInterfaceResolver,
+  ParamsType,
   ResultType,
   RPCSingleResponseType,
-  KernelInterfaceResolver,
-  InvalidParamsException,
-} from '@/ilos/common/index.ts';
+} from "@/ilos/common/index.ts";
 
-import { CustomProvider } from '../../Providers/CustomProvider.ts';
+import { CustomProvider } from "../../Providers/CustomProvider.ts";
 
 @handler({
-  service: 'string',
-  method: 'result',
+  service: "string",
+  method: "result",
 })
 export class ResultAction extends Action {
   constructor(
@@ -23,19 +23,25 @@ export class ResultAction extends Action {
     super();
   }
 
-  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
-    if (Array.isArray(params) || !('name' in params) || !('add' in params) || !Array.isArray(params.add)) {
+  protected async handle(
+    params: ParamsType,
+    context: ContextType,
+  ): Promise<ResultType> {
+    if (
+      Array.isArray(params) || !("name" in params) || !("add" in params) ||
+      !Array.isArray(params.add)
+    ) {
       throw new InvalidParamsException();
     }
     const addResult = await (this.kernel.handle({
-      jsonrpc: '2.0',
-      method: 'math:add',
+      jsonrpc: "2.0",
+      method: "math:add",
       id: 1,
       params: params.add,
     }) as Promise<RPCSingleResponseType>);
-    if (addResult && 'result' in addResult) {
+    if (addResult && "result" in addResult) {
       return `${this.custom.get()}Hello world ${params.name}, result is ${addResult.result}`;
     }
-    throw new Error('Something goes wrong');
+    throw new Error("Something goes wrong");
   }
 }

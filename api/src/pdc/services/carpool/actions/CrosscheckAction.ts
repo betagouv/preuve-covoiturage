@@ -1,22 +1,29 @@
-import { Action } from '@/ilos/core/index.ts';
-import { handler, ConfigInterfaceResolver } from '@/ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action } from "@/ilos/core/index.ts";
+import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { FinalizedPersonInterface } from '@/shared/common/interfaces/PersonInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/carpool/crosscheck.contract.ts';
-import { alias } from '@/shared/carpool/crosscheck.schema.ts';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface.ts';
-import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface.ts';
-import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface.ts';
-import { PeopleWithIdInterface } from '../interfaces/Carpool.ts';
-import { getStatus } from '../helpers/getStatus.ts';
+import { FinalizedPersonInterface } from "@/shared/common/interfaces/PersonInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/carpool/crosscheck.contract.ts";
+import { alias } from "@/shared/carpool/crosscheck.schema.ts";
+import { CarpoolRepositoryProviderInterfaceResolver } from "../interfaces/CarpoolRepositoryProviderInterface.ts";
+import { CrosscheckRepositoryProviderInterfaceResolver } from "../interfaces/CrosscheckRepositoryProviderInterface.ts";
+import { IdentityRepositoryProviderInterfaceResolver } from "../interfaces/IdentityRepositoryProviderInterface.ts";
+import { PeopleWithIdInterface } from "../interfaces/Carpool.ts";
+import { getStatus } from "../helpers/getStatus.ts";
 
 /*
  * Import journey in carpool database
  */
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('acquisition', handlerConfig.service), ['validate', alias]],
+  middlewares: [
+    ...internalOnlyMiddlewares("acquisition", handlerConfig.service),
+    ["validate", alias],
+  ],
 })
 export class CrosscheckAction extends Action {
   constructor(
@@ -32,9 +39,10 @@ export class CrosscheckAction extends Action {
     const toProcess: PeopleWithIdInterface[] = [];
     const { people, ...sharedData } = journey;
 
-    const sortedArray = people.sort((p1: FinalizedPersonInterface, p2: FinalizedPersonInterface) =>
-      p1.is_driver > p2.is_driver ? 1 : -1,
-    );
+    const sortedArray = people.sort((
+      p1: FinalizedPersonInterface,
+      p2: FinalizedPersonInterface,
+    ) => p1.is_driver > p2.is_driver ? 1 : -1);
 
     const driverInd = sortedArray.findIndex((user) => user.is_driver);
 
@@ -59,7 +67,10 @@ export class CrosscheckAction extends Action {
 
     // Build identity for every participant
     for (const passenger of passengers) {
-      const { _id: identity_id } = await this.identity.create(passenger.identity, sharedData);
+      const { _id: identity_id } = await this.identity.create(
+        passenger.identity,
+        sharedData,
+      );
       toProcess.push({ ...passenger, identity_id });
     }
 
@@ -71,7 +82,7 @@ export class CrosscheckAction extends Action {
         status: getStatus(
           sharedData.created_at,
           toProcess.map((e) => e.datetime),
-          this.config.get('rules.maxAge'),
+          this.config.get("rules.maxAge"),
         ),
       },
       toProcess,

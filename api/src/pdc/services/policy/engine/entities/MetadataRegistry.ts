@@ -3,51 +3,67 @@ import {
   MetadataRegistryInterface,
   MetadataVariableDefinitionInterface,
   SerializedMetadataVariableDefinitionInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 
-function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinitionInterface): string {
+function getMetaKey(
+  datetime: Date,
+  metaDefinition: MetadataVariableDefinitionInterface,
+): string {
   if (metaDefinition.key) {
     return metaDefinition.key;
   }
-  const date = typeof datetime.getMonth === 'function' ? datetime : new Date(datetime);
-  const [day, month, year] = [date.getDate(), date.getMonth(), date.getFullYear()];
+  const date = typeof datetime.getMonth === "function"
+    ? datetime
+    : new Date(datetime);
+  const [day, month, year] = [
+    date.getDate(),
+    date.getMonth(),
+    date.getFullYear(),
+  ];
 
-  let keyPeriod = 'global';
-  let period = 'campaign';
+  let keyPeriod = "global";
+  let period = "campaign";
   switch (metaDefinition.lifetime) {
     case MetadataLifetime.Day:
       keyPeriod = `${day}-${month}-${year}`;
-      period = 'day';
+      period = "day";
       break;
     case MetadataLifetime.Month:
       keyPeriod = `${month}-${year}`;
-      period = 'month';
+      period = "month";
       break;
     case MetadataLifetime.Year:
       keyPeriod = `${year}`;
-      period = 'year';
+      period = "year";
       break;
     default:
-      keyPeriod = 'global';
-      period = 'campaign';
+      keyPeriod = "global";
+      period = "campaign";
       break;
   }
 
-  return `${metaDefinition.name}.${metaDefinition.scope || 'global'}.${period}.${keyPeriod}`;
+  return `${metaDefinition.name}.${
+    metaDefinition.scope || "global"
+  }.${period}.${keyPeriod}`;
 }
 
 export class MetadataRegistry implements MetadataRegistryInterface {
   constructor(
     public readonly policy_id: number,
     public readonly datetime: Date,
-    public readonly data: Map<string, MetadataVariableDefinitionInterface> = new Map(),
+    public readonly data: Map<string, MetadataVariableDefinitionInterface> =
+      new Map(),
   ) {}
 
   static create(policy_id: number, datetime: Date): MetadataRegistry {
     return new MetadataRegistry(policy_id, datetime);
   }
 
-  static import(policy_id: number, datetime: Date, data: Array<MetadataVariableDefinitionInterface>): MetadataRegistry {
+  static import(
+    policy_id: number,
+    datetime: Date,
+    data: Array<MetadataVariableDefinitionInterface>,
+  ): MetadataRegistry {
     const md = new Map(data.map((d) => [d.uuid, d]));
     return new MetadataRegistry(policy_id, datetime, md);
   }

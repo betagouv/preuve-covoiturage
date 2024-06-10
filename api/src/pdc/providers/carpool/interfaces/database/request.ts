@@ -1,4 +1,11 @@
-import { ApiVersion, CancelCode, CancelMessage, Id, Payload, Uuid } from '../common.ts';
+import {
+  ApiVersion,
+  CancelCode,
+  CancelMessage,
+  Id,
+  Payload,
+  Uuid,
+} from "../common.ts";
 
 export interface InsertableCarpoolCreateRequest {
   carpool_id: Id;
@@ -19,7 +26,9 @@ export interface InsertableCarpoolCancelRequest {
   created_at?: Date;
 }
 
-export type InsertableCarpoolRequest = InsertableCarpoolCreateRequest | InsertableCarpoolCancelRequest;
+export type InsertableCarpoolRequest =
+  | InsertableCarpoolCreateRequest
+  | InsertableCarpoolCancelRequest;
 
 export interface WrittenCarpoolRequest {
   _id: Id;

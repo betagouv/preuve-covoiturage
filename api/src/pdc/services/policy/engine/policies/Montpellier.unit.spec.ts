@@ -1,19 +1,31 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { v4 } from '@/deps.ts';
-import { OperatorsEnum } from '../../interfaces/index.ts';
-import { makeProcessHelper } from '../tests/macro.ts';
-import { Montpellier as Handler } from './Montpellier.ts';
-import { generatePartialCarpools } from '../tests/helpers.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { Montpellier as Handler } from "./Montpellier.ts";
+import { generatePartialCarpools } from "../tests/helpers.ts";
 
 const defaultPosition = {
-  arr: '34088',
-  com: '34088',
-  aom: '243400017',
-  epci: '243400017',
-  dep: '34',
-  reg: '76',
-  country: 'XXXXX',
-  reseau: '76',
+  arr: "34088",
+  com: "34088",
+  aom: "243400017",
+  epci: "243400017",
+  dep: "34",
+  reg: "76",
+  country: "XXXXX",
+  reseau: "76",
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -24,11 +36,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.KLAXIT,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2022-01-01'),
+  datetime: new Date("2022-01-01"),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -46,19 +58,25 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 it(
-  'should work basic',
+  "should work basic",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
-      { distance: 25_000, driver_identity_key: 'one' },
-      { distance: 25_000, seats: 2, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+      { distance: 25_000, driver_identity_key: "one" },
+      { distance: 25_000, seats: 2, driver_identity_key: "one" },
       {
         distance: 25_000,
-        driver_identity_key: 'one',
-        start: { aom: '200096956', com: '47091', arr: '47091', epci: '200096956', reg: '75' },
+        driver_identity_key: "one",
+        start: {
+          aom: "200096956",
+          com: "47091",
+          arr: "47091",
+          epci: "200096956",
+          reg: "75",
+        },
       },
     ],
     meta: [],
@@ -67,11 +85,11 @@ it(
     incentive: [100, 200, 200, 400, 200],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.0-2022',
+        key: "max_amount_restriction.0-one.month.0-2022",
         value: 1100,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 1100,
       },
     ],
@@ -79,18 +97,18 @@ it(
 );
 
 it(
-  'should work with day limits',
+  "should work with day limits",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, driver_identity_key: 'two' },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, driver_identity_key: "two" },
     ],
     meta: [],
   },
@@ -98,11 +116,11 @@ it(
     incentive: [200, 200, 200, 200, 200, 200, 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-two.month.0-2022',
+        key: "max_amount_restriction.0-two.month.0-2022",
         value: 12_00,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 12_00,
       },
     ],
@@ -110,7 +128,7 @@ it(
 );
 
 it(
-  'should work with driver month limits',
+  "should work with driver month limits",
   process,
   {
     policy: { handler: Handler.id },
@@ -121,11 +139,11 @@ it(
     incentive: [...[...Array(75).keys()].map(() => 200), 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-three.month.0-2022',
+        key: "max_amount_restriction.0-three.month.0-2022",
         value: 150_00,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 15000,
       },
     ],

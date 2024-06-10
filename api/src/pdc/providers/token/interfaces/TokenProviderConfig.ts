@@ -1,4 +1,4 @@
-import { jwt } from '@/deps.ts';
+import { jwt } from "@/deps.ts";
 
 export interface TokenProviderConfig {
   secret?: string | Buffer;

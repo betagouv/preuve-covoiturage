@@ -1,12 +1,22 @@
-import { Ajv, ValidateFunction, Format, KeywordDefinition, ErrorObject, ajvErrors, addFormats, ajvKeywords, jsonSchemaSecureJson  } from '@/deps.ts';
+import {
+  addFormats,
+  Ajv,
+  ajvErrors,
+  ajvKeywords,
+  ErrorObject,
+  Format,
+  jsonSchemaSecureJson,
+  KeywordDefinition,
+  ValidateFunction,
+} from "@/deps.ts";
 
 import {
   ConfigInterfaceResolver,
   InvalidParamsException,
   NewableType,
-  ValidatorInterface,
   provider,
-} from '@/ilos/common/index.ts';
+  ValidatorInterface,
+} from "@/ilos/common/index.ts";
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
@@ -24,7 +34,7 @@ export class AjvValidator implements ValidatorInterface {
       removeAdditional: false,
       useDefaults: true,
       coerceTypes: false,
-      ...this.config.get('ajv.config', {}),
+      ...this.config.get("ajv.config", {}),
       allErrors: true, // for all errors for ajv errors plugin
     };
 
@@ -35,10 +45,15 @@ export class AjvValidator implements ValidatorInterface {
     addFormats.default(this.ajv);
     ajvErrors.default(this.ajv);
 
-    this.isSchemaSecure = new Ajv({ strict: false }).compile(jsonSchemaSecureJson);
+    this.isSchemaSecure = new Ajv({ strict: false }).compile(
+      jsonSchemaSecureJson,
+    );
   }
 
-  registerValidator(definition: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
+  registerValidator(
+    definition: { [k: string]: any },
+    target?: NewableType<any> | string,
+  ): ValidatorInterface {
     return this.addSchema(definition, target);
   }
 
@@ -49,9 +64,9 @@ export class AjvValidator implements ValidatorInterface {
   }): ValidatorInterface {
     const { name, type, definition } = def;
     switch (type) {
-      case 'format':
+      case "format":
         return this.addFormat(name, definition as Format);
-      case 'keyword':
+      case "keyword":
         return this.addKeyword(definition as KeywordDefinition);
       default:
         return this;
@@ -68,24 +83,28 @@ export class AjvValidator implements ValidatorInterface {
     }
   }
 
-  protected addSchema(schema: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
+  protected addSchema(
+    schema: { [k: string]: any },
+    target?: NewableType<any> | string,
+  ): ValidatorInterface {
     try {
       this.validateSchema(schema);
       if (target) {
-        const compiledSchema =
-          typeof target === 'string'
-            ? this.ajv.compile({
-                $id: target,
-                ...schema,
-              })
-            : this.ajv.compile(schema);
+        const compiledSchema = typeof target === "string"
+          ? this.ajv.compile({
+            $id: target,
+            ...schema,
+          })
+          : this.ajv.compile(schema);
         this.bindings.set(target, compiledSchema);
       } else {
         this.ajv.addSchema(schema);
       }
       return this;
     } catch (e) {
-      console.error(`Error during adding validator ${schema.$id} | ${target} | ${e.message}`);
+      console.error(
+        `Error during adding validator ${schema.$id} | ${target} | ${e.message}`,
+      );
       console.error(e.message, e);
       throw e;
     }
@@ -101,7 +120,9 @@ export class AjvValidator implements ValidatorInterface {
     const validator = this.bindings.get(resolver);
     const valid = validator(data);
 
-    if (!valid) throw new InvalidParamsException(this.mapErrors(validator.errors));
+    if (!valid) {
+      throw new InvalidParamsException(this.mapErrors(validator.errors));
+    }
 
     return true;
   }

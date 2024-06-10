@@ -1,16 +1,25 @@
-import { date, pdf } from '@/deps.ts';
-import { provider } from '@/ilos/common/index.ts';
-import { MariannePaths } from './assets/marianne.ts';
+import { date, pdf } from "@/deps.ts";
+import { provider } from "@/ilos/common/index.ts";
+import { MariannePaths } from "./assets/marianne.ts";
 
 import {
   PdfCertProviderInterface,
   PdfCertProviderInterfaceResolver,
-} from './interfaces/PdfCertProviderInterfaceResolver.ts';
-import { PdfTemplateData } from './interfaces/PdfTemplateData.ts';
-import { CarpoolInterface, CarpoolTypeEnum } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { MetaPersonInterface } from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+} from "./interfaces/PdfCertProviderInterfaceResolver.ts";
+import { PdfTemplateData } from "./interfaces/PdfTemplateData.ts";
+import {
+  CarpoolInterface,
+  CarpoolTypeEnum,
+} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { MetaPersonInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
 
-type TextOptions = Partial<pdf.PDFPageDrawTextOptions & { align: pdf.TextAlignment; maxChars: number; maxLines: number }>;
+type TextOptions = Partial<
+  pdf.PDFPageDrawTextOptions & {
+    align: pdf.TextAlignment;
+    maxChars: number;
+    maxLines: number;
+  }
+>;
 
 // helpers to start positioning from top left
 const PAGE_SIZE = pdf.PageSizes.A4;
@@ -39,17 +48,35 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.pdfDoc = await pdf.PDFDocument.create();
 
     // embed fonts
-    this.fonts.regular = await this.pdfDoc.embedFont(pdf.StandardFonts.Helvetica);
-    this.fonts.bold = await this.pdfDoc.embedFont(pdf.StandardFonts.HelveticaBold);
-    this.fonts.italic = await this.pdfDoc.embedFont(pdf.StandardFonts.HelveticaOblique);
-    this.fonts.monospace = await this.pdfDoc.embedFont(pdf.StandardFonts.Courier);
+    this.fonts.regular = await this.pdfDoc.embedFont(
+      pdf.StandardFonts.Helvetica,
+    );
+    this.fonts.bold = await this.pdfDoc.embedFont(
+      pdf.StandardFonts.HelveticaBold,
+    );
+    this.fonts.italic = await this.pdfDoc.embedFont(
+      pdf.StandardFonts.HelveticaOblique,
+    );
+    this.fonts.monospace = await this.pdfDoc.embedFont(
+      pdf.StandardFonts.Courier,
+    );
 
     // Add a blank page to the document
     await this.drawSummaryPage(data);
 
     // add pages for driver and passenger trips
-    await this.drawDetailPages(data, CarpoolTypeEnum.DRIVER, 'Gains conducteur', 'gain');
-    await this.drawDetailPages(data, CarpoolTypeEnum.PASSENGER, 'Contributions passager', 'coût');
+    await this.drawDetailPages(
+      data,
+      CarpoolTypeEnum.DRIVER,
+      "Gains conducteur",
+      "gain",
+    );
+    await this.drawDetailPages(
+      data,
+      CarpoolTypeEnum.PASSENGER,
+      "Contributions passager",
+      "coût",
+    );
 
     // number all pages
     await this.drawPageNumbers();
@@ -67,19 +94,29 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const page = await this.drawPageLayout(data);
 
     // general
-    this.text(page, `Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`, {
-      x: PAGE_XMAX / 2,
-      y: 625,
-      font: this.fonts.bold,
-      size: 16,
-      align: pdf.TextAlignment.Center,
-    });
+    this.text(
+      page,
+      `Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`,
+      {
+        x: PAGE_XMAX / 2,
+        y: 625,
+        font: this.fonts.bold,
+        size: 16,
+        align: pdf.TextAlignment.Center,
+      },
+    );
 
     // driver
-    await this.drawSummaryDetails(page, data.data.driver, CarpoolTypeEnum.DRIVER, "Résumé de l'activité conducteur", {
-      x: 46,
-      y: 455,
-    });
+    await this.drawSummaryDetails(
+      page,
+      data.data.driver,
+      CarpoolTypeEnum.DRIVER,
+      "Résumé de l'activité conducteur",
+      {
+        x: 46,
+        y: 455,
+      },
+    );
 
     // passenger
     await this.drawSummaryDetails(
@@ -94,27 +131,34 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(
       page,
       [
-        'La présente attestation est fournie par le Registre de preuve de covoiturage réalisé par le ministère',
-        'des Transports. Cette attestation est réalisée grâce aux informations transmises par les opérateurs de',
-        'covoiturage participant au Registre. Le ministère des Transports ne saurait être tenue responsable des',
-        'informations transmises les opérateurs. Ce document est personnel. Toute personne le modifiant ou',
+        "La présente attestation est fournie par le Registre de preuve de covoiturage réalisé par le ministère",
+        "des Transports. Cette attestation est réalisée grâce aux informations transmises par les opérateurs de",
+        "covoiturage participant au Registre. Le ministère des Transports ne saurait être tenue responsable des",
+        "informations transmises les opérateurs. Ce document est personnel. Toute personne le modifiant ou",
         "procédant à une fausse déclaration s'expose aux sanctions prévues à l'article 441-1 du code pénal,",
         "prévoyant des peines pouvant aller jusqu'à trois ans d'emprisonnement et 45 000 euros d'amende.",
       ]
         .map((s) => s.trim())
-        .join(' '),
-      { x: 46, y: 260, size: 8, font: this.fonts.italic, maxWidth: 480, lineHeight: 11 },
+        .join(" "),
+      {
+        x: 46,
+        y: 260,
+        size: 8,
+        font: this.fonts.italic,
+        maxWidth: 480,
+        lineHeight: 11,
+      },
     );
 
     // Some help?
     this.text(page, `Un problème, une question ?`, { x: 46, y: 190 });
-    this.text(page, 'Contactez nous :', { x: 46, y: 176 });
+    this.text(page, "Contactez nous :", { x: 46, y: 176 });
     this.text(page, data.support, { x: 124, y: 176, color: rgb(0, 0, 0.8) });
 
     // Notes
-    if ('notes' in data.header && data.header.notes !== '') {
+    if ("notes" in data.header && data.header.notes !== "") {
       // title
-      this.text(page, 'Notes', {
+      this.text(page, "Notes", {
         x: 48,
         y: 128,
         size: 9,
@@ -133,7 +177,12 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     }
 
     // QR-code
-    page.drawSvgPath(data.validation.qrcode, { x: 450, y: 128, color: rgb(0, 0, 0), scale: 0.3333 });
+    page.drawSvgPath(data.validation.qrcode, {
+      x: 450,
+      y: 128,
+      color: rgb(0, 0, 0),
+      scale: 0.3333,
+    });
     this.text(page, `Vérifiez la validité de cette attestation sur`, {
       x: 564,
       y: 44,
@@ -161,36 +210,93 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const { x, y } = opts;
 
     // background
-    page.drawRectangle({ x, y, width: 500, height: 120, color: pdf.rgb(0.95, 0.95, 0.95) });
+    page.drawRectangle({
+      x,
+      y,
+      width: 500,
+      height: 120,
+      color: pdf.rgb(0.95, 0.95, 0.95),
+    });
 
     // title
-    this.text(page, title, { x: x + 4, y: y + 132, font: this.fonts.bold, size: 13 });
+    this.text(page, title, {
+      x: x + 4,
+      y: y + 132,
+      font: this.fonts.bold,
+      size: 13,
+    });
 
     // data
-    this.text(page, 'Nombre de trajets effectués au total :', { x: x + 245, y: y + 88, align: pdf.TextAlignment.Right });
-    this.text(page, `${data.total.trips} trajet${data.total.trips > 1 ? 's' : ''}`, { x: x + 255, y: y + 88 });
+    this.text(page, "Nombre de trajets effectués au total :", {
+      x: x + 245,
+      y: y + 88,
+      align: pdf.TextAlignment.Right,
+    });
+    this.text(
+      page,
+      `${data.total.trips} trajet${data.total.trips > 1 ? "s" : ""}`,
+      { x: x + 255, y: y + 88 },
+    );
 
-    this.text(page, 'en semaine :', { x: x + 245, y: y + 74, align: pdf.TextAlignment.Right });
-    this.text(page, `${data.total.week_trips} trajet${data.total.week_trips > 1 ? 's' : ''}`, {
-      x: x + 255,
+    this.text(page, "en semaine :", {
+      x: x + 245,
       y: y + 74,
+      align: pdf.TextAlignment.Right,
     });
+    this.text(
+      page,
+      `${data.total.week_trips} trajet${data.total.week_trips > 1 ? "s" : ""}`,
+      {
+        x: x + 255,
+        y: y + 74,
+      },
+    );
 
-    this.text(page, 'le weekend :', { x: x + 245, y: y + 60, align: pdf.TextAlignment.Right });
-    this.text(page, `${data.total.weekend_trips} trajet${data.total.weekend_trips > 1 ? 's' : ''}`, {
-      x: x + 255,
+    this.text(page, "le weekend :", {
+      x: x + 245,
       y: y + 60,
+      align: pdf.TextAlignment.Right,
     });
+    this.text(
+      page,
+      `${data.total.weekend_trips} trajet${
+        data.total.weekend_trips > 1 ? "s" : ""
+      }`,
+      {
+        x: x + 255,
+        y: y + 60,
+      },
+    );
 
-    this.text(page, 'Kilomètres parcourus :', { x: x + 245, y: y + 36, align: pdf.TextAlignment.Right });
-    this.text(page, `${String(data.total.distance === 0 ? 0 : data.total.distance / 1000).replace('.', ',')} km`, {
-      x: x + 255,
+    this.text(page, "Kilomètres parcourus :", {
+      x: x + 245,
       y: y + 36,
+      align: pdf.TextAlignment.Right,
     });
+    this.text(
+      page,
+      `${
+        String(data.total.distance === 0 ? 0 : data.total.distance / 1000)
+          .replace(".", ",")
+      } km`,
+      {
+        x: x + 255,
+        y: y + 36,
+      },
+    );
 
-    const eurosTitle = type === CarpoolTypeEnum.DRIVER ? 'Gain conducteur :' : 'Contribution passager :';
-    this.text(page, eurosTitle, { x: x + 245, y: y + 22, align: pdf.TextAlignment.Right });
-    this.text(page, `${this.currency(data.total.amount)} €`, { x: x + 255, y: y + 22 });
+    const eurosTitle = type === CarpoolTypeEnum.DRIVER
+      ? "Gain conducteur :"
+      : "Contribution passager :";
+    this.text(page, eurosTitle, {
+      x: x + 245,
+      y: y + 22,
+      align: pdf.TextAlignment.Right,
+    });
+    this.text(page, `${this.currency(data.total.amount)} €`, {
+      x: x + 255,
+      y: y + 22,
+    });
   }
 
   private async drawDetailPages(
@@ -206,16 +312,25 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       if (index % this.tablePageSize === 0) {
         page = await this.drawPageLayout(data);
 
-        this.text(page, title, { x: 46, y: 620, font: this.fonts.bold, size: 16 });
-        this.text(page, `Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`, { x: 46, y: 600 });
+        this.text(page, title, {
+          x: 46,
+          y: 620,
+          font: this.fonts.bold,
+          size: 16,
+        });
+        this.text(
+          page,
+          `Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`,
+          { x: 46, y: 600 },
+        );
 
         // table head
         const opts = { y: 568, font: this.fonts.bold, size: 9 };
 
-        this.text(page, 'jour', { x: this.tableX + 10, ...opts });
-        this.text(page, 'date', { x: this.tableX + 40, ...opts });
-        this.text(page, 'trajets', { x: this.tableX + 300, ...opts });
-        this.text(page, 'distance', { x: this.tableX + 360, ...opts });
+        this.text(page, "jour", { x: this.tableX + 10, ...opts });
+        this.text(page, "date", { x: this.tableX + 40, ...opts });
+        this.text(page, "trajets", { x: this.tableX + 300, ...opts });
+        this.text(page, "distance", { x: this.tableX + 360, ...opts });
         this.text(page, money, { x: this.tableX + 444, ...opts });
       }
 
@@ -240,7 +355,10 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
   }
 
-  private async drawHeader(page: pdf.PDFPage, data: PdfTemplateData): Promise<void> {
+  private async drawHeader(
+    page: pdf.PDFPage,
+    data: PdfTemplateData,
+  ): Promise<void> {
     // fill the header with light gray rectangle
     page.drawRectangle({
       x: 0,
@@ -261,7 +379,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.marianne(page, { x: 6, y: 835, scale: 0.12 });
 
     // title
-    this.multiline(page, 'Attestation\nde covoiturage', {
+    this.multiline(page, "Attestation\nde covoiturage", {
       x: 132,
       y: 793.5,
       font: this.fonts.bold,
@@ -306,9 +424,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       color: pdf.rgb(0.92, 0.92, 0.92),
     });
 
-    if ('header' in data) {
-      if ('operator' in data.header) {
-        if (data.header.operator.name && data.header.operator.name !== '') {
+    if ("header" in data) {
+      if ("operator" in data.header) {
+        if (data.header.operator.name && data.header.operator.name !== "") {
           this.text(page, data.header.operator.name.trim().substring(0, 26), {
             x: 522,
             y: 799,
@@ -318,7 +436,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
           });
         }
 
-        if (data.header.operator.content && data.header.operator.content !== '') {
+        if (
+          data.header.operator.content && data.header.operator.content !== ""
+        ) {
           this.multiline(page, data.header.operator.content, {
             x: 522,
             y: 785,
@@ -329,9 +449,12 @@ export class PdfCertProvider implements PdfCertProviderInterface {
           });
         }
 
-        if (data.header.operator.image && data.header.operator.image !== '') {
+        if (data.header.operator.image && data.header.operator.image !== "") {
           try {
-            const imageBytes = Buffer.from(data.header.operator.image, 'base64');
+            const imageBytes = Buffer.from(
+              data.header.operator.image,
+              "base64",
+            );
             const image = await this.pdfDoc.embedPng(imageBytes);
             const { width, height } = image.scaleToFit(48, 48);
 
@@ -347,8 +470,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
         }
       }
 
-      if ('identity' in data.header) {
-        if (data.header.identity.name && data.header.identity.name !== '') {
+      if ("identity" in data.header) {
+        if (data.header.identity.name && data.header.identity.name !== "") {
           this.text(page, data.header.identity.name.trim().substring(0, 26), {
             x: 578,
             y: 740,
@@ -358,7 +481,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
           });
         }
 
-        if (data.header.identity.content && data.header.identity.content !== '') {
+        if (
+          data.header.identity.content && data.header.identity.content !== ""
+        ) {
           this.multiline(page, data.header.identity.content, {
             x: 578,
             y: 728,
@@ -387,35 +512,57 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // filter out unsupported chars
     const charSet = options.font.getCharacterSet();
-    const chars = str.split('').reduce((set: Set<string>, c: string) => set.add(c), new Set<string>());
+    const chars = str.split("").reduce(
+      (set: Set<string>, c: string) => set.add(c),
+      new Set<string>(),
+    );
     const codes = [...chars].map((c: string) => c.charCodeAt(0)).sort();
     const diff = codes.filter((n: number) => !charSet.includes(n));
-    const clean = diff.reduce((s: string, n: number) => s.replace(String.fromCharCode(n), '?'), str);
+    const clean = diff.reduce(
+      (s: string, n: number) => s.replace(String.fromCharCode(n), "?"),
+      str,
+    );
 
     switch (options.align) {
       case pdf.TextAlignment.Right:
-        if (!('x' in options)) throw new Error('You must set x position when aligning right');
-        options.x = options.x - (options.maxWidth || options.font.widthOfTextAtSize(clean, options.size));
+        if (!("x" in options)) {
+          throw new Error("You must set x position when aligning right");
+        }
+        options.x = options.x -
+          (options.maxWidth ||
+            options.font.widthOfTextAtSize(clean, options.size));
         break;
       case pdf.TextAlignment.Center:
-        if (!('x' in options)) throw new Error('You must set x position when aligning center');
-        options.x = options.x - (options.maxWidth || options.font.widthOfTextAtSize(clean, options.size)) / 2;
+        if (!("x" in options)) {
+          throw new Error("You must set x position when aligning center");
+        }
+        options.x = options.x -
+          (options.maxWidth ||
+              options.font.widthOfTextAtSize(clean, options.size)) / 2;
         break;
     }
 
     page.drawText(clean, options);
   }
 
-  private multiline(page: pdf.PDFPage, str: string, opts: TextOptions = {}): void {
-    const options = this.getDefaultOptions(page, { maxChars: 50, maxLines: 6, ...opts });
+  private multiline(
+    page: pdf.PDFPage,
+    str: string,
+    opts: TextOptions = {},
+  ): void {
+    const options = this.getDefaultOptions(page, {
+      maxChars: 50,
+      maxLines: 6,
+      ...opts,
+    });
 
     // set a default lineHeight if missing as options.y update needs it
-    if (!('lineHeight' in options)) options.lineHeight = options.size * 1.22;
+    if (!("lineHeight" in options)) options.lineHeight = options.size * 1.22;
 
     // draw line by line, clipping at maxWidth
     str
       .trim()
-      .split('\n')
+      .split("\n")
       .splice(0, options.maxLines)
       .map((s: string) => s.trim().substring(0, options.maxChars))
       .forEach((line) => {
@@ -424,7 +571,10 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       });
   }
 
-  private getDefaultOptions(page: pdf.PDFPage, opts: TextOptions = {}): TextOptions {
+  private getDefaultOptions(
+    page: pdf.PDFPage,
+    opts: TextOptions = {},
+  ): TextOptions {
     return {
       ...page.getPosition(),
       font: this.fonts.regular,
@@ -435,7 +585,11 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     };
   }
 
-  private drawRow(page: pdf.PDFPage, index: number, row: CarpoolInterface): void {
+  private drawRow(
+    page: pdf.PDFPage,
+    index: number,
+    row: CarpoolInterface,
+  ): void {
     const rowY = this.tableY - index * this.tableLineHeight;
     const size = 8;
 
@@ -449,42 +603,71 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       });
     }
 
-    this.text(page, `${this.jour(new Date(row.datetime).getDay())}`, { x: this.tableX + 10, y: rowY, size });
+    this.text(page, `${this.jour(new Date(row.datetime).getDay())}`, {
+      x: this.tableX + 10,
+      y: rowY,
+      size,
+    });
     this.text(
       page,
-      `${date.intlFormat(
-        new Date(row.datetime),
-        {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        },
-        { locale: 'fr-FR' },
-      )}`,
+      `${
+        date.intlFormat(
+          new Date(row.datetime),
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          },
+          { locale: "fr-FR" },
+        )
+      }`,
       { x: this.tableX + 40, y: rowY, size },
     );
 
-    const km = `${String(row.distance / 1000 || row.km).replace('.', ',')} km`;
+    const km = `${String(row.distance / 1000 || row.km).replace(".", ",")} km`;
     const eu = `${this.currency(row.amount)} €`;
 
-    this.text(page, `${row.trips}`, { x: this.tableX + 320, y: rowY, size, align: pdf.TextAlignment.Right });
-    this.text(page, km, { x: this.tableX + 398, y: rowY, size, align: pdf.TextAlignment.Right });
-    this.text(page, eu, { x: this.tableX + 466, y: rowY, size, align: pdf.TextAlignment.Right });
+    this.text(page, `${row.trips}`, {
+      x: this.tableX + 320,
+      y: rowY,
+      size,
+      align: pdf.TextAlignment.Right,
+    });
+    this.text(page, km, {
+      x: this.tableX + 398,
+      y: rowY,
+      size,
+      align: pdf.TextAlignment.Right,
+    });
+    this.text(page, eu, {
+      x: this.tableX + 466,
+      y: rowY,
+      size,
+      align: pdf.TextAlignment.Right,
+    });
   }
 
-  private marianne(page: pdf.PDFPage, opts: { x: number; y: number; scale: number }): void {
+  private marianne(
+    page: pdf.PDFPage,
+    opts: { x: number; y: number; scale: number },
+  ): void {
     const { x, y, scale } = opts;
 
     for (const { fill, path } of MariannePaths) {
-      page.drawSvgPath(path, { x, y, scale, color: pdf.rgb.call(null, ...fill) });
+      page.drawSvgPath(path, {
+        x,
+        y,
+        scale,
+        color: pdf.rgb.call(null, ...fill),
+      });
     }
   }
 
   private currency(nb: number): string {
-    return String((nb || 0).toFixed(2)).replace('.', ',');
+    return String((nb || 0).toFixed(2)).replace(".", ",");
   }
 
   private jour(i: number): string {
-    return ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][i];
+    return ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"][i];
   }
 }

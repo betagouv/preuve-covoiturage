@@ -1,7 +1,22 @@
-import { ConfigInterface } from '@/ilos/common/index.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { CronFrequency, MatviewItem } from '../interfaces/StatsRefreshInterfaces.ts';
-import { filterTables } from './filterTables.helper.ts';
+import { ConfigInterface } from "@/ilos/common/index.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  CronFrequency,
+  MatviewItem,
+} from "../interfaces/StatsRefreshInterfaces.ts";
+import { filterTables } from "./filterTables.helper.ts";
 
 // helper to generate the db results from an array
 function makeRows(l: string[]): MatviewItem[] {
@@ -18,74 +33,92 @@ function makeConfig(s: Set<string>): ConfigInterface {
   };
 }
 
-const views = ['daily_view_1', 'daily_view_2', 'weekly_view_1', 'weekly_view_2', 'monthly_view_1', 'monthly_view_2'];
+const views = [
+  "daily_view_1",
+  "daily_view_2",
+  "weekly_view_1",
+  "weekly_view_2",
+  "monthly_view_1",
+  "monthly_view_2",
+];
 
-it('filter monthly, no skips', (t) => {
-  const schema = 'test';
+it("filter monthly, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['monthly'];
+  const frequencies: CronFrequency[] = ["monthly"];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['monthly_view_1', 'monthly_view_2'];
+  const expected = ["monthly_view_1", "monthly_view_2"];
   assertObjectMatch(actual, expected);
 });
 
-it('filter weekly, no skips', (t) => {
-  const schema = 'test';
+it("filter weekly, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['weekly'];
+  const frequencies: CronFrequency[] = ["weekly"];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['weekly_view_1', 'weekly_view_2'];
+  const expected = ["weekly_view_1", "weekly_view_2"];
   assertObjectMatch(actual, expected);
 });
 
-it('filter daily, no skips', (t) => {
-  const schema = 'test';
+it("filter daily, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['daily'];
+  const frequencies: CronFrequency[] = ["daily"];
   const rows = makeRows(views);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['daily_view_1', 'daily_view_2'];
+  const expected = ["daily_view_1", "daily_view_2"];
   assertObjectMatch(actual, expected);
 });
 
-it('filter monthly with non prefixed views, no skips', (t) => {
-  const schema = 'test';
+it("filter monthly with non prefixed views, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['monthly'];
-  const rows = makeRows([...views, 'no_prefix_table']);
+  const frequencies: CronFrequency[] = ["monthly"];
+  const rows = makeRows([...views, "no_prefix_table"]);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['monthly_view_1', 'monthly_view_2'];
+  const expected = ["monthly_view_1", "monthly_view_2"];
   assertObjectMatch(actual, expected);
 });
 
-it('filter daily with non prefixed views, no skips', (t) => {
-  const schema = 'test';
+it("filter daily with non prefixed views, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['daily'];
-  const rows = makeRows([...views, 'no_prefix_table']);
+  const frequencies: CronFrequency[] = ["daily"];
+  const rows = makeRows([...views, "no_prefix_table"]);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['daily_view_1', 'daily_view_2', 'no_prefix_table'];
+  const expected = ["daily_view_1", "daily_view_2", "no_prefix_table"];
   assertObjectMatch(actual, expected);
 });
 
-it('filter monthly, daily with non prefixed views, no skips', (t) => {
-  const schema = 'test';
+it("filter monthly, daily with non prefixed views, no skips", (t) => {
+  const schema = "test";
   const config = makeConfig(new Set());
-  const frequencies: CronFrequency[] = ['daily', 'monthly'];
-  const rows = makeRows([...views, 'no_prefix_table']);
+  const frequencies: CronFrequency[] = ["daily", "monthly"];
+  const rows = makeRows([...views, "no_prefix_table"]);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['daily_view_1', 'daily_view_2', 'monthly_view_1', 'monthly_view_2', 'no_prefix_table'];
+  const expected = [
+    "daily_view_1",
+    "daily_view_2",
+    "monthly_view_1",
+    "monthly_view_2",
+    "no_prefix_table",
+  ];
   assertObjectMatch(actual, expected);
 });
 
-it('filter daily, monthly with skips', (t) => {
-  const schema = 'test';
-  const config = makeConfig(new Set(['test.monthly_view_1']));
-  const frequencies: CronFrequency[] = ['daily', 'monthly'];
-  const rows = makeRows([...views, 'no_prefix_table']);
+it("filter daily, monthly with skips", (t) => {
+  const schema = "test";
+  const config = makeConfig(new Set(["test.monthly_view_1"]));
+  const frequencies: CronFrequency[] = ["daily", "monthly"];
+  const rows = makeRows([...views, "no_prefix_table"]);
   const actual = filterTables(config, frequencies, schema, rows);
-  const expected = ['daily_view_1', 'daily_view_2', 'monthly_view_2', 'no_prefix_table'];
+  const expected = [
+    "daily_view_1",
+    "daily_view_2",
+    "monthly_view_2",
+    "no_prefix_table",
+  ];
   assertObjectMatch(actual, expected);
 });

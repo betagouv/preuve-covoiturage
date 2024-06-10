@@ -1,6 +1,11 @@
 import { MeiliSearch, MeiliSearchConfig } from "@/deps.ts";
 
-export async function indexData<T>(config: MeiliSearchConfig, indexName: string, batchSize: number, documents: T[]) {
+export async function indexData<T>(
+  config: MeiliSearchConfig,
+  indexName: string,
+  batchSize: number,
+  documents: T[],
+) {
   try {
     const msg = `Données indexées avec succès dans MeiliSearch`;
     console.time(msg);

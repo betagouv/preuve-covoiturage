@@ -4,59 +4,85 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
-  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './GrandPoitiers.html.ts';
+} from "../helpers/index.ts";
+import {
+  getOperatorsAt,
+  TimestampedOperators,
+} from "../helpers/getOperatorsAt.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./GrandPoitiers.html.ts";
 
 // Politique Grands poitiers
 // territory_id: 323
 // aom: 200069854
 export const GrandPoitiers: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'grand_poitier_2024';
+  implements PolicyHandlerInterface {
+  static readonly id = "grand_poitier_2024";
 
   // les opérateurs ont été ajoutés petit à petit à la campagne
   // Karos : début
   // Mobicoop : 16 octobre 2023
   // BlaBlaDaily et Klaxit : 22 décembre 2023
-  protected operator_class = ['C'];
+  protected operator_class = ["C"];
   protected readonly operators: TimestampedOperators = [
     {
-      date: new Date('2023-09-27T00:00:00+0200'),
+      date: new Date("2023-09-27T00:00:00+0200"),
       operators: [OperatorsEnum.KAROS],
     },
     {
-      date: new Date('2023-10-16T00:00:00+0200'),
+      date: new Date("2023-10-16T00:00:00+0200"),
       operators: [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP],
     },
     {
-      date: new Date('2023-12-22T00:00:00+0100'),
-      operators: [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP, OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KLAXIT],
+      date: new Date("2023-12-22T00:00:00+0100"),
+      operators: [
+        OperatorsEnum.KAROS,
+        OperatorsEnum.MOBICOOP,
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KLAXIT,
+      ],
     },
   ];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['69057f54-b8d7-410f-b390-f7fecbd1e5a5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['qkx7a91u-wacc-1914-knwc-xwu1x1xx4wz4', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
-      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
+      [
+        "AFE1C47D-BF05-4FA9-9133-853D29797D09",
+        120_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "69057f54-b8d7-410f-b390-f7fecbd1e5a5",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "qkx7a91u-wacc-1914-knwc-xwu1x1xx4wz4",
+        2,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Passenger,
+      ],
+      [
+        "98B26189-C6FC-4DB1-AC1C-41F779C5B3C7",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
@@ -69,7 +95,10 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
+    isOperatorOrThrow(
+      ctx,
+      getOperatorsAt(this.operators, ctx.carpool.datetime),
+    );
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 80_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -91,7 +120,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: getOperatorsAt(this.operators),
       limits: {

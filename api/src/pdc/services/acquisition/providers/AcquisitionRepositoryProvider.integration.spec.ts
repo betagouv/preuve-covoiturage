@@ -1,14 +1,26 @@
-import { NotFoundException } from '@/ilos/common/index.ts';
-import { Carpool } from '@/pdc/providers/seed/carpools.ts';
-import { DbContext, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { NotFoundException } from "@/ilos/common/index.ts";
+import { Carpool } from "@/pdc/providers/seed/carpools.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import {
   AcquisitionCreateInterface,
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
-} from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
-import { StatusEnum } from '@/shared/acquisition/status.contract.ts';
-import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider.ts';
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { StatusEnum } from "@/shared/acquisition/status.contract.ts";
+import { AcquisitionRepositoryProvider } from "./AcquisitionRepositoryProvider.ts";
 import { date } from "@/deps.ts";
 
 interface TestContext {
@@ -24,42 +36,52 @@ beforeAll(async (t) => {
   t.context.operator_id = 1;
   const db = await before();
   t.context.db = db;
-  t.context.repository = new AcquisitionRepositoryProvider(t.context.db.connection);
+  t.context.repository = new AcquisitionRepositoryProvider(
+    t.context.db.connection,
+  );
 });
 
 test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-function createPayload(data: Partial<AcquisitionCreateInterface>): AcquisitionCreateInterface {
+function createPayload(
+  data: Partial<AcquisitionCreateInterface>,
+): AcquisitionCreateInterface {
   return {
     operator_id: 1,
-    operator_journey_id: 'one',
+    operator_journey_id: "one",
     application_id: 1,
     api_version: 1,
-    request_id: 'my request id',
+    request_id: "my request id",
     payload: {
-      test: '12345',
+      test: "12345",
     },
     ...data,
   };
 }
 
-const statusError = new Error('message');
+const statusError = new Error("message");
 const errors = [statusError.message, statusError.message, statusError.message];
 
-it('Should create acquisition', async (t) => {
+it("Should create acquisition", async (t) => {
   const { operator_id } = t.context;
   const data = [
-    { operator_journey_id: '1' }, // pending -> pending (updated) -> acquisition_error
-    { operator_journey_id: '2' }, // pending -> ok
-    { operator_journey_id: '3' }, // pending -> ok
-    { operator_journey_id: '4' }, // pending -> ok
-    { operator_journey_id: '5' }, // pending -> fraudcheck_error
+    { operator_journey_id: "1" }, // pending -> pending (updated) -> acquisition_error
+    { operator_journey_id: "2" }, // pending -> ok
+    { operator_journey_id: "3" }, // pending -> ok
+    { operator_journey_id: "4" }, // pending -> ok
+    { operator_journey_id: "5" }, // pending -> fraudcheck_error
   ].map(createPayload);
 
   const acqs = await t.context.repository.createOrUpdateMany(data);
-  assertObjectMatch(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4', '5']);
+  assertObjectMatch(acqs.map((v) => v.operator_journey_id).sort(), [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+  ]);
 
   const result = await t.context.db.connection.getClient().query<any>({
     text: `
@@ -81,11 +103,11 @@ it('Should create acquisition', async (t) => {
   assertEquals(result.rowCount, data.length);
   assertObjectMatch(
     result.rows,
-    data.map((d) => ({ ...d, status: 'pending', try_count: 0 })),
+    data.map((d) => ({ ...d, status: "pending", try_count: 0 })),
   );
 });
 
-it('Should update acquisition', async (t) => {
+it("Should update acquisition", async (t) => {
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query<any>({
     text: `
@@ -93,21 +115,23 @@ it('Should update acquisition', async (t) => {
       SET status = 'ok', try_count = 50
       WHERE operator_id = $1 AND journey_id = $2
     `,
-    values: [operator_id, '2'],
+    values: [operator_id, "2"],
   });
-  const initialData = [{ operator_journey_id: '3' }, { operator_journey_id: '4' }, { operator_journey_id: '5' }].map(
+  const initialData = [{ operator_journey_id: "3" }, {
+    operator_journey_id: "4",
+  }, { operator_journey_id: "5" }].map(
     createPayload,
   );
   const data = [
-    { operator_journey_id: '1', request_id: 'other request id' },
-    { operator_journey_id: '2', request_id: 'other request id' },
+    { operator_journey_id: "1", request_id: "other request id" },
+    { operator_journey_id: "2", request_id: "other request id" },
   ].map(createPayload);
 
   // 2 is not update because 'ok' status
   const acqs = await t.context.repository.createOrUpdateMany(data);
   assertObjectMatch(
     acqs.map((v) => v.operator_journey_id),
-    ['1'],
+    ["1"],
   );
 
   const result = await t.context.db.connection.getClient().query<any>({
@@ -133,17 +157,22 @@ it('Should update acquisition', async (t) => {
   assertObjectMatch(
     result.rows,
     [...data, ...initialData].map((d) => {
-      if (d.operator_journey_id !== '2') return { ...d, status: 'pending', try_count: 0 };
-      return { ...d, request_id: 'my request id', status: 'ok', try_count: 50 };
+      if (d.operator_journey_id !== "2") {
+        return { ...d, status: "pending", try_count: 0 };
+      }
+      return { ...d, request_id: "my request id", status: "ok", try_count: 50 };
     }),
   );
 });
 
-it('Should update status', async (t) => {
+it("Should update status", async (t) => {
   const { operator_id } = t.context;
-  const { rows: data } = await t.context.db.connection.getClient().query<{ _id: number }>({
-    text: `SELECT _id FROM ${t.context.repository.table} WHERE operator_id = $1 AND journey_id = $2`,
-    values: [operator_id, '1'],
+  const { rows: data } = await t.context.db.connection.getClient().query<
+    { _id: number }
+  >({
+    text:
+      `SELECT _id FROM ${t.context.repository.table} WHERE operator_id = $1 AND journey_id = $2`,
+    values: [operator_id, "1"],
   });
 
   await t.context.repository.updateManyStatus([
@@ -175,16 +204,44 @@ it('Should update status', async (t) => {
   assertObjectMatch(result.rows, [
     {
       operator_id: 1,
-      operator_journey_id: '1',
-      status: 'error',
-      error_stage: 'acquisition',
+      operator_journey_id: "1",
+      status: "error",
+      error_stage: "acquisition",
       errors: [statusError.message],
       try_count: 1,
     },
-    { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: [], try_count: 50 },
-    { operator_id: 1, operator_journey_id: '3', status: 'pending', error_stage: null, errors: [], try_count: 0 },
-    { operator_id: 1, operator_journey_id: '4', status: 'pending', error_stage: null, errors: [], try_count: 0 },
-    { operator_id: 1, operator_journey_id: '5', status: 'pending', error_stage: null, errors: [], try_count: 0 },
+    {
+      operator_id: 1,
+      operator_journey_id: "2",
+      status: "ok",
+      error_stage: null,
+      errors: [],
+      try_count: 50,
+    },
+    {
+      operator_id: 1,
+      operator_journey_id: "3",
+      status: "pending",
+      error_stage: null,
+      errors: [],
+      try_count: 0,
+    },
+    {
+      operator_id: 1,
+      operator_journey_id: "4",
+      status: "pending",
+      error_stage: null,
+      errors: [],
+      try_count: 0,
+    },
+    {
+      operator_id: 1,
+      operator_journey_id: "5",
+      status: "pending",
+      error_stage: null,
+      errors: [],
+      try_count: 0,
+    },
   ]);
 
   await t.context.repository.updateManyStatus([
@@ -213,50 +270,58 @@ it('Should update status', async (t) => {
     {
       errors,
       operator_id: 1,
-      operator_journey_id: '1',
-      status: 'error',
-      error_stage: 'acquisition',
+      operator_journey_id: "1",
+      status: "error",
+      error_stage: "acquisition",
       try_count: 2,
     },
   ]);
 });
 
-it('Should get status by operator_id and operator_journey_id', async (t) => {
+it("Should get status by operator_id and operator_journey_id", async (t) => {
   const { operator_id } = t.context;
-  const { operator_journey_id, status, fraud_error_labels } = await t.context.repository.getStatus(operator_id, '1');
+  const { operator_journey_id, status, fraud_error_labels } = await t.context
+    .repository.getStatus(operator_id, "1");
 
   assertObjectMatch(
     { operator_journey_id, status, fraud_error_labels },
     {
-      operator_journey_id: '1',
+      operator_journey_id: "1",
       status: StatusEnum.AcquisitionError,
       fraud_error_labels: [],
     },
   );
 });
 
-it('Should get fraudcheck status and labels for carpool', async (t) => {
+it("Should get fraudcheck status and labels for carpool", async (t) => {
   // Arrange
-  const acquisition_row = await updateAcquistionJourneyIdOk(t.context, '5');
-  const { _id: carpool_id } = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
+  const acquisition_row = await updateAcquistionJourneyIdOk(t.context, "5");
+  const { _id: carpool_id } = await insertCarpoolWithStatus(
+    t.context,
+    acquisition_row,
+    "fraudcheck_error",
+  );
   await t.context.db.connection.getClient().query<any>({
     text: `
     INSERT INTO fraudcheck.labels(
       carpool_id, label, geo_code)
       VALUES ($1, $2, $3);
     `,
-    values: [carpool_id, 'interoperator_fraud', '76'],
+    values: [carpool_id, "interoperator_fraud", "76"],
   });
 
   // Act
-  const { status, fraud_error_labels } = await t.context.repository.getStatus(t.context.operator_id, '5');
+  const { status, fraud_error_labels } = await t.context.repository.getStatus(
+    t.context.operator_id,
+    "5",
+  );
 
   // Assert
   assertObjectMatch(status, StatusEnum.FraudError);
-  assertObjectMatch(fraud_error_labels, ['interoperator_fraud']);
+  assertObjectMatch(fraud_error_labels, ["interoperator_fraud"]);
 });
 
-it('Should find with date selectors', async (t) => {
+it("Should find with date selectors", async (t) => {
   const [result, , commit] = await t.context.repository.findThenUpdate({
     limit: 2,
     status: AcquisitionStatusEnum.Pending,
@@ -267,7 +332,7 @@ it('Should find with date selectors', async (t) => {
   await commit();
 });
 
-it('Should find then update with selectors', async (t) => {
+it("Should find then update with selectors", async (t) => {
   const [result, , commit] = await t.context.repository.findThenUpdate({
     limit: 2,
     status: AcquisitionStatusEnum.Pending,
@@ -277,15 +342,25 @@ it('Should find then update with selectors', async (t) => {
   assertObjectMatch(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
-      { _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      {
+        _id: 6,
+        payload: { test: "12345" },
+        api_version: 1,
+        operator_id: t.context.operator_id,
+      },
+      {
+        _id: 7,
+        payload: { test: "12345" },
+        api_version: 1,
+        operator_id: t.context.operator_id,
+      },
     ],
   );
 
   await commit();
 });
 
-it('Should find and update with lock', async (t) => {
+it("Should find and update with lock", async (t) => {
   const [result1, , commit1] = await t.context.repository.findThenUpdate({
     limit: 1,
     status: AcquisitionStatusEnum.Pending,
@@ -293,17 +368,29 @@ it('Should find and update with lock', async (t) => {
 
   assertObjectMatch(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{
+      _id: 6,
+      payload: { test: "12345" },
+      api_version: 1,
+      operator_id: t.context.operator_id,
+    }],
   );
 
-  const [result2, update2, commit2] = await t.context.repository.findThenUpdate({
-    limit: 1,
-    status: AcquisitionStatusEnum.Pending,
-  });
+  const [result2, update2, commit2] = await t.context.repository.findThenUpdate(
+    {
+      limit: 1,
+      status: AcquisitionStatusEnum.Pending,
+    },
+  );
 
   assertObjectMatch(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{
+      _id: 7,
+      payload: { test: "12345" },
+      api_version: 1,
+      operator_id: t.context.operator_id,
+    }],
   );
 
   await commit1(); // release lock 1
@@ -314,7 +401,12 @@ it('Should find and update with lock', async (t) => {
 
   assertObjectMatch(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{
+      _id: 6,
+      payload: { test: "12345" },
+      api_version: 1,
+      operator_id: t.context.operator_id,
+    }],
   );
   await update2({ acquisition_id: 7, status: AcquisitionStatusEnum.Ok }); // <-- error
   await update2({ acquisition_id: 8, status: AcquisitionStatusEnum.Ok });
@@ -331,11 +423,13 @@ it('Should find and update with lock', async (t) => {
   await commit4(); // release lock 3
 });
 
-it('Should find with lock timeout', async (t) => {
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+it("Should find with lock timeout", async (t) => {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query<any>({
-    text: `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1 AND status <> 'error'`,
+    text:
+      `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1 AND status <> 'error'`,
     values: [operator_id],
   });
 
@@ -346,7 +440,12 @@ it('Should find with lock timeout', async (t) => {
 
   assertObjectMatch(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
+    [{
+      _id: 1,
+      payload: {},
+      api_version: 2,
+      operator_id: t.context.operator_id,
+    }],
   );
 
   // do the job of the timeout releasing the lock
@@ -366,7 +465,12 @@ it('Should find with lock timeout', async (t) => {
 
   assertObjectMatch(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
+    [{
+      _id: 1,
+      payload: {},
+      api_version: 2,
+      operator_id: t.context.operator_id,
+    }],
   );
 
   await commit2(); // release lock 2
@@ -376,27 +480,33 @@ it('Should find with lock timeout', async (t) => {
 // Les callbacks ne sont pas exec dans le scope du catch
 // Les erreurs ne sont pas captées et le ROLLBACK
 // ne doit pas fonctionner avec le code actuel
-it('Should partial rollback if update error', async (t) => {
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  const [result1, update1, commit1] = await t.context.repository.findThenUpdate({
-    limit: 2,
-    status: AcquisitionStatusEnum.Pending,
-  });
+it("Should partial rollback if update error", async (t) => {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+  const [result1, update1, commit1] = await t.context.repository.findThenUpdate(
+    {
+      limit: 2,
+      status: AcquisitionStatusEnum.Pending,
+    },
+  );
   await update1({
     acquisition_id: result1[0]._id,
     status: AcquisitionStatusEnum.Ok,
   });
   await update1({
     acquisition_id: result1[1]._id,
-    status: 'status_not_existing' as AcquisitionStatusEnum,
+    status: "status_not_existing" as AcquisitionStatusEnum,
   });
 
   // see above why we mock the timeout
   setTimeout(async () => await commit1(), 1000);
   await delay(1500);
 
-  const { rows: data } = await t.context.db.connection.getClient().query<{ _id: number }>({
-    text: `SELECT _id, status FROM ${t.context.repository.table} WHERE _id = ANY($1::int[]) ORDER BY _id`,
+  const { rows: data } = await t.context.db.connection.getClient().query<
+    { _id: number }
+  >({
+    text:
+      `SELECT _id, status FROM ${t.context.repository.table} WHERE _id = ANY($1::int[]) ORDER BY _id`,
     values: [result1.map((r) => r._id)],
   });
 
@@ -412,16 +522,16 @@ it('Should partial rollback if update error', async (t) => {
   ]);
 });
 
-it('Should rollback if find error', async (t) => {
+it("Should rollback if find error", async (t) => {
   await assertThrows(async () => {
     await t.context.repository.findThenUpdate({
-      limit: 'wrong' as unknown as number,
+      limit: "wrong" as unknown as number,
       status: AcquisitionStatusEnum.Pending,
     });
   });
 });
 
-it('Should list acquisition status', async (t) => {
+it("Should list acquisition status", async (t) => {
   const search = {
     operator_id: 1,
     status: StatusEnum.Pending,
@@ -432,27 +542,29 @@ it('Should list acquisition status', async (t) => {
   };
 
   const result = await t.context.repository.list(search);
-  assertObjectMatch(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
+  assertObjectMatch(result, [{ operator_journey_id: "3" }, {
+    operator_journey_id: "2",
+  }, { operator_journey_id: "5" }]);
 
   const result1 = await t.context.repository.list({
     ...search,
     status: StatusEnum.AcquisitionError,
   });
-  assertObjectMatch(result1, [{ operator_journey_id: '1' }]);
+  assertObjectMatch(result1, [{ operator_journey_id: "1" }]);
 
   const result2 = await t.context.repository.list({
     ...search,
     status: StatusEnum.Ok,
   });
   assertObjectMatch(result2, [
-    { operator_journey_id: 'operator_journey_id-2' },
-    { operator_journey_id: 'operator_journey_id-1' },
+    { operator_journey_id: "operator_journey_id-2" },
+    { operator_journey_id: "operator_journey_id-1" },
   ]);
 });
 
-it('Should cancel acquisition', async (t) => {
-  await t.context.repository.cancel(1, '3');
-  await t.context.repository.cancel(1, '4', 'CODE1', 'TOTO');
+it("Should cancel acquisition", async (t) => {
+  await t.context.repository.cancel(1, "3");
+  await t.context.repository.cancel(1, "4", "CODE1", "TOTO");
   const result = await t.context.db.connection.getClient().query<any>({
     text: `SELECT
       journey_id as operator_journey_id, cancel_code, cancel_message
@@ -463,38 +575,50 @@ it('Should cancel acquisition', async (t) => {
   });
   assertObjectMatch(result.rows, [
     {
-      operator_journey_id: '3',
+      operator_journey_id: "3",
       cancel_code: null,
       cancel_message: null,
     },
     {
-      operator_journey_id: '4',
-      cancel_code: 'CODE1',
-      cancel_message: 'TOTO',
+      operator_journey_id: "4",
+      cancel_code: "CODE1",
+      cancel_message: "TOTO",
     },
   ]);
 });
 
-it('Should throw not found if trying to path unexisting acquistion', async (t) => {
+it("Should throw not found if trying to path unexisting acquistion", async (t) => {
   const error1 = await assertThrows(
     async () =>
-      await t.context.repository.patchPayload({ operator_id: null, operator_journey_id: undefined, status: [] }, {}),
+      await t.context.repository.patchPayload({
+        operator_id: null,
+        operator_journey_id: undefined,
+        status: [],
+      }, {}),
   );
   assert(error1 instanceof NotFoundException);
 
   const error2 = await assertThrows(
     async () =>
       await t.context.repository.patchPayload(
-        { operator_id: 1, operator_journey_id: '4', status: [AcquisitionStatusEnum.Ok] },
+        {
+          operator_id: 1,
+          operator_journey_id: "4",
+          status: [AcquisitionStatusEnum.Ok],
+        },
         {},
       ),
   );
   assert(error2 instanceof NotFoundException);
 });
 
-it('Should patch payload', async (t) => {
+it("Should patch payload", async (t) => {
   await t.context.repository.patchPayload(
-    { operator_id: 1, operator_journey_id: '1', status: [AcquisitionStatusEnum.Error, AcquisitionStatusEnum.Pending] },
+    {
+      operator_id: 1,
+      operator_journey_id: "1",
+      status: [AcquisitionStatusEnum.Error, AcquisitionStatusEnum.Pending],
+    },
     { test2: true },
   );
   const result = await t.context.db.connection.getClient().query<any>({
@@ -502,33 +626,40 @@ it('Should patch payload', async (t) => {
     FROM ${t.context.repository.table}
     WHERE operator_id = $1 AND journey_id = $2
     `,
-    values: [1, '1'],
+    values: [1, "1"],
   });
   assertObjectMatch(result.rows[0], {
     payload: {
-      test: '12345',
+      test: "12345",
       test2: true,
     },
   });
 });
 
-it('Should create new acquisition and get anomaly error with temporal overlap label', async (t) => {
+it("Should create new acquisition and get anomaly error with temporal overlap label", async (t) => {
   // Arrange
-  const data = [{ operator_journey_id: '6' }, { operator_journey_id: '7' }].map(createPayload);
+  const data = [{ operator_journey_id: "6" }, { operator_journey_id: "7" }].map(
+    createPayload,
+  );
 
   await t.context.repository.createOrUpdateMany(data);
 
   // acquisition should be processed and ok
-  const acquisition_row_6 = await updateAcquistionJourneyIdOk(t.context, '6');
-  const acquisition_row_7 = await updateAcquistionJourneyIdOk(t.context, '7');
+  const acquisition_row_6 = await updateAcquistionJourneyIdOk(t.context, "6");
+  const acquisition_row_7 = await updateAcquistionJourneyIdOk(t.context, "7");
 
   // first is ok is ok second is conflicting
-  const { _id: carpool_id_6, operator_journey_id: operator_journey_id_6 } = await insertCarpoolWithStatus(
+  const { _id: carpool_id_6, operator_journey_id: operator_journey_id_6 } =
+    await insertCarpoolWithStatus(
+      t.context,
+      acquisition_row_6,
+      "ok",
+    );
+  const { _id: carpool_id_7 } = await insertCarpoolWithStatus(
     t.context,
-    acquisition_row_6,
-    'ok',
+    acquisition_row_7,
+    "anomaly_error",
   );
-  const { _id: carpool_id_7 } = await insertCarpoolWithStatus(t.context, acquisition_row_7, 'anomaly_error');
 
   // add anomaly label for carpool_id 7
   await t.context.db.connection.getClient().query<any>({
@@ -537,17 +668,30 @@ it('Should create new acquisition and get anomaly error with temporal overlap la
       carpool_id, label, conflicting_carpool_id, conflicting_operator_journey_id, overlap_duration_ratio)
       VALUES ($1, $2, $3, $4, $5);
     `,
-    values: [carpool_id_7, 'temporal_overlap_anomaly', carpool_id_6, operator_journey_id_6, 0.845],
+    values: [
+      carpool_id_7,
+      "temporal_overlap_anomaly",
+      carpool_id_6,
+      operator_journey_id_6,
+      0.845,
+    ],
   });
 
   // Act
-  const { status, anomaly_error_details } = await t.context.repository.getStatus(t.context.operator_id, '7');
+  const { status, anomaly_error_details } = await t.context.repository
+    .getStatus(t.context.operator_id, "7");
 
   // Assert
   assertObjectMatch(status, StatusEnum.AnomalyError);
-  assertObjectMatch(anomaly_error_details[0].label, 'temporal_overlap_anomaly');
-  assertObjectMatch(anomaly_error_details[0].metas.conflicting_journey_id, operator_journey_id_6);
-  assertObjectMatch(anomaly_error_details[0].metas.temporal_overlap_duration_ratio, 0.845);
+  assertObjectMatch(anomaly_error_details[0].label, "temporal_overlap_anomaly");
+  assertObjectMatch(
+    anomaly_error_details[0].metas.conflicting_journey_id,
+    operator_journey_id_6,
+  );
+  assertObjectMatch(
+    anomaly_error_details[0].metas.temporal_overlap_duration_ratio,
+    0.845,
+  );
 });
 
 const updateAcquistionJourneyIdOk = async (
@@ -569,7 +713,7 @@ const updateAcquistionJourneyIdOk = async (
 const insertCarpoolWithStatus = async (
   context: TestContext,
   acquisition: { _id: number; journey_id: number },
-  status: 'fraudcheck_error' | 'anomaly_error' | 'ok',
+  status: "fraudcheck_error" | "anomaly_error" | "ok",
 ): Promise<Carpool & { _id: number }> => {
   const result = await context.db.connection.getClient().query<any>({
     text: `
@@ -587,10 +731,10 @@ const insertCarpoolWithStatus = async (
     values: [
       acquisition._id,
       context.operator_id,
-      'trip_id_5',
-      'operator_trip_id_5',
+      "trip_id_5",
+      "operator_trip_id_5",
       true,
-      'C',
+      "C",
       new Date(),
       2500,
       25000,
@@ -599,8 +743,8 @@ const insertCarpoolWithStatus = async (
       acquisition.journey_id,
       0,
       status,
-      '91471',
-      '91471',
+      "91471",
+      "91471",
     ],
   });
 

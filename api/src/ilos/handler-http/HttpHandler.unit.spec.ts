@@ -1,10 +1,22 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 
-import { httpHandlerFactory } from './helpers/httpHandlerFactory.ts';
+import { httpHandlerFactory } from "./helpers/httpHandlerFactory.ts";
 
 const defaultContext = {
   channel: {
-    service: '',
+    service: "",
   },
 };
 
@@ -14,24 +26,24 @@ function setup(
       200,
       {},
       {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     ];
   },
 ) {
-  const url = 'http://myfakeservice:8080';
+  const url = "http://myfakeservice:8080";
 
-  const request = nock(url).post('/').reply(replyFn);
+  const request = nock(url).post("/").reply(replyFn);
 
-  const provider = new (httpHandlerFactory('service', url))();
+  const provider = new (httpHandlerFactory("service", url))();
   provider.init();
 
   return {
     request,
     call: () =>
       provider.call({
-        method: 'service@latest:method',
+        method: "service@latest:method",
         params: { param: true },
         context: defaultContext,
       }),
@@ -42,13 +54,13 @@ afterEach(() => {
   nock.cleanAll();
 });
 
-it('Http handler: works', async (t) => {
+it("Http handler: works", async (t) => {
   t.plan(3);
   const { call } = setup(function (_, req) {
     assertObjectMatch(req, {
       id: 1,
-      jsonrpc: '2.0',
-      method: 'service@latest:method',
+      jsonrpc: "2.0",
+      method: "service@latest:method",
       params: {
         _context: defaultContext,
         params: {
@@ -56,18 +68,18 @@ it('Http handler: works', async (t) => {
         },
       },
     });
-    assertEquals(this.req.headers.accept, 'application/json');
-    assertEquals(this.req.headers['content-type'], 'application/json');
+    assertEquals(this.req.headers.accept, "application/json");
+    assertEquals(this.req.headers["content-type"], "application/json");
     return [
       200,
       {
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id: 1,
-        result: 'hello world',
+        result: "hello world",
       },
       {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     ];
   });
@@ -75,38 +87,38 @@ it('Http handler: works', async (t) => {
   await call();
 });
 
-it('throw error on status code error', async (t) => {
+it("throw error on status code error", async (t) => {
   const { call } = setup(() => [
     500,
     {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: 1,
-      result: 'hello world',
+      result: "hello world",
     },
     {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   ]);
 
   const err = await assertThrows<Error>(async () => call());
-  assertEquals(err.message, 'An error occured');
+  assertEquals(err.message, "An error occured");
 });
 
-it('throw error on object error', async (t) => {
+it("throw error on object error", async (t) => {
   const { call } = setup(() => [
     200,
     {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: 1,
-      error: { message: 'wrong!' },
+      error: { message: "wrong!" },
     },
     {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   ]);
 
   const err = await assertThrows<Error>(async () => call());
-  assertEquals(err.message, 'wrong!');
+  assertEquals(err.message, "wrong!");
 });

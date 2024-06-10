@@ -1,20 +1,28 @@
-import { _ } from '@/deps.ts';
+import { _ } from "@/deps.ts";
 
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@/ilos/common/index.ts';
-import { ConfiguredMiddleware } from '../interfaces.ts';
+import {
+  ContextType,
+  ForbiddenException,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * Filter call from channel service
  */
 @middleware()
-export class ChannelServiceBlacklistMiddleware implements MiddlewareInterface<ChannelServiceBlacklistMiddlewareParams> {
+export class ChannelServiceBlacklistMiddleware
+  implements MiddlewareInterface<ChannelServiceBlacklistMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
     next: Function,
     config: ChannelServiceBlacklistMiddlewareParams,
   ): Promise<ResultType> {
-    const service = _.get(context, 'channel.service', '');
+    const service = _.get(context, "channel.service", "");
     if (config.indexOf(service) >= 0) {
       throw new ForbiddenException(`Service is not reachable from ${service}`);
     }
@@ -24,9 +32,12 @@ export class ChannelServiceBlacklistMiddleware implements MiddlewareInterface<Ch
 
 export type ChannelServiceBlacklistMiddlewareParams = string[];
 
-const alias = 'channel_service.except';
+const alias = "channel_service.except";
 
-export const channelServiceBlacklistMiddlewareBinding = [alias, ChannelServiceBlacklistMiddleware];
+export const channelServiceBlacklistMiddlewareBinding = [
+  alias,
+  ChannelServiceBlacklistMiddleware,
+];
 
 export function channelServiceBlacklistMiddleware(
   ...params: ChannelServiceBlacklistMiddlewareParams

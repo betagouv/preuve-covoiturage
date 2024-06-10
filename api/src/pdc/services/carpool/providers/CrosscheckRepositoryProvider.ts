@@ -1,13 +1,13 @@
-import { provider } from '@/ilos/common/index.ts';
-import { v4 } from '@/deps.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { v4 } from "@/deps.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
   CrosscheckRepositoryProviderInterface,
   CrosscheckRepositoryProviderInterfaceResolver,
-} from '../interfaces/CrosscheckRepositoryProviderInterface.ts';
+} from "../interfaces/CrosscheckRepositoryProviderInterface.ts";
 
-import { PositionInterface } from '../interfaces/Carpool.ts';
+import { PositionInterface } from "../interfaces/Carpool.ts";
 
 /*
  * Trip specific repository
@@ -15,9 +15,10 @@ import { PositionInterface } from '../interfaces/Carpool.ts';
 @provider({
   identifier: CrosscheckRepositoryProviderInterfaceResolver,
 })
-export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProviderInterface {
-  public readonly table = 'carpool.carpools';
-  public readonly identityTable = 'carpool.identities';
+export class CrosscheckRepositoryProvider
+  implements CrosscheckRepositoryProviderInterface {
+  public readonly table = "carpool.carpools";
+  public readonly identityTable = "carpool.identities";
 
   constructor(public connection: PostgresConnection) {}
 
@@ -35,13 +36,18 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
     }
 
     if (!tripId && data.identity_uuid && data.datetime) {
-      tripId = await this.findTripIdByIdentityAndDate(data.identity_uuid, data.datetime);
+      tripId = await this.findTripIdByIdentityAndDate(
+        data.identity_uuid,
+        data.datetime,
+      );
     }
 
     return tripId || v4();
   }
 
-  protected async findTripIdByOperatorTripId(operator_trip_id: string): Promise<string | null> {
+  protected async findTripIdByOperatorTripId(
+    operator_trip_id: string,
+  ): Promise<string | null> {
     const query = {
       text: `
         SELECT trip_id as _id FROM ${this.table}
@@ -58,8 +64,13 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
     return result.rows[0]._id;
   }
 
-  protected async findTripIdByIdentityAndDate(identity_uuid: string, start: Date): Promise<string | null> {
-    const startDateString = start.toISOString ? start.toISOString() : new Date(start).toISOString();
+  protected async findTripIdByIdentityAndDate(
+    identity_uuid: string,
+    start: Date,
+  ): Promise<string | null> {
+    const startDateString = start.toISOString
+      ? start.toISOString()
+      : new Date(start).toISOString();
 
     const query = {
       text: `

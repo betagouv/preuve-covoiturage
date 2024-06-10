@@ -1,8 +1,23 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
-import { CarpoolRepository } from './CarpoolRepository.ts';
-import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool.ts';
-import { Id } from '../interfaces/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { CarpoolRepository } from "./CarpoolRepository.ts";
+import {
+  insertableCarpool,
+  updatableCarpool,
+} from "../mocks/database/carpool.ts";
+import { Id } from "../interfaces/index.ts";
 
 interface TestContext {
   repository: CarpoolRepository;
@@ -41,17 +56,22 @@ async function getCarpool(context: TestContext, id: Id) {
   });
 
   const incentiveResult = await context.db.connection.getClient().query({
-    text: `SELECT idx, siret, amount FROM ${context.repository.incentiveTable} WHERE carpool_id = $1`,
+    text:
+      `SELECT idx, siret, amount FROM ${context.repository.incentiveTable} WHERE carpool_id = $1`,
     values: [id],
   });
 
   return {
     ...result.rows.pop(),
-    incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
+    incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({
+      index: idx,
+      siret,
+      amount,
+    })),
   };
 }
 
-it('Should create carpool', async (t) => {
+it("Should create carpool", async (t) => {
   const data = { ...insertableCarpool };
 
   const carpool = await t.context.repository.register(data);
@@ -60,7 +80,7 @@ it('Should create carpool', async (t) => {
   assertObjectMatch(result, { ...carpool, ...data });
 });
 
-it('Should do nothing on duplicate carpool', async (t) => {
+it("Should do nothing on duplicate carpool", async (t) => {
   const data = { ...insertableCarpool };
 
   const carpool = await t.context.repository.register(data);
@@ -69,13 +89,17 @@ it('Should do nothing on duplicate carpool', async (t) => {
   assertObjectMatch(result, { ...carpool, ...data });
 });
 
-it('Should update acquisition', async (t) => {
-  const insertData = { ...insertableCarpool, operator_journey_id: 'journey_2' };
+it("Should update acquisition", async (t) => {
+  const insertData = { ...insertableCarpool, operator_journey_id: "journey_2" };
 
   const carpool = await t.context.repository.register(insertData);
 
   const updateData = { ...updatableCarpool };
-  await t.context.repository.update(insertData.operator_id, insertData.operator_journey_id, updateData);
+  await t.context.repository.update(
+    insertData.operator_id,
+    insertData.operator_journey_id,
+    updateData,
+  );
 
   const result = await getCarpool(t.context, carpool._id);
   assertObjectMatch(result, { ...carpool, ...insertData, ...updateData });

@@ -1,4 +1,4 @@
-import { ProviderInterface } from '../index.ts';
+import { ProviderInterface } from "../index.ts";
 
 export interface ConfigInterface extends ProviderInterface {
   get<T = any>(key: string, fallback?: T): T;

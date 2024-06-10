@@ -1,19 +1,21 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler } from '@/ilos/common/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { handlerConfig } from '@/shared/observatory/distribution/refreshAllDistribution.contract.ts';
-import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface.ts';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { handlerConfig } from "@/shared/observatory/distribution/refreshAllDistribution.contract.ts";
+import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class RefreshAllDistributionAction extends AbstractAction {
-  constructor(private distributionRepository: DistributionRepositoryInterfaceResolver) {
+  constructor(
+    private distributionRepository: DistributionRepositoryInterfaceResolver,
+  ) {
     super();
   }
 
-  private readonly startDate = new Date('2020-01-01');
+  private readonly startDate = new Date("2020-01-01");
 
   get today() {
     return new Date();

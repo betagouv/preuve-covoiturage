@@ -1,18 +1,18 @@
 import {
-  FileManagerInterface,
   DatasetInterface,
-  StaticMigrable,
-  StaticAbstractDataset,
-  StateManagerInterface,
+  FileManagerInterface,
   State,
-} from '../interfaces/index.ts';
-import { Pool } from '@/deps.ts';
-import { SqlError, ValidationError } from '../errors/index.ts';
+  StateManagerInterface,
+  StaticAbstractDataset,
+  StaticMigrable,
+} from "../interfaces/index.ts";
+import { Pool } from "@/deps.ts";
+import { SqlError, ValidationError } from "../errors/index.ts";
 
 export abstract class AbstractDatatreatment implements DatasetInterface {
   static skipStatePersistence = true;
   abstract readonly sql: string;
-  readonly targetTable: string = 'perimeters';
+  readonly targetTable: string = "perimeters";
 
   get table(): string {
     return (this.constructor as StaticAbstractDataset).table;
@@ -31,7 +31,7 @@ export abstract class AbstractDatatreatment implements DatasetInterface {
   constructor(
     protected connection: Pool,
     protected file: FileManagerInterface,
-    protected targetSchema: string = 'public',
+    protected targetSchema: string = "public",
   ) {}
 
   async validate(state: StateManagerInterface): Promise<void> {
@@ -40,7 +40,9 @@ export abstract class AbstractDatatreatment implements DatasetInterface {
     if (difference.size > 0) {
       throw new ValidationError(
         this,
-        `Cant apply this function, element is missing (${[...difference].map((d) => d.uuid).join(', ')})`,
+        `Cant apply this function, element is missing (${
+          [...difference].map((d) => d.uuid).join(", ")
+        })`,
       );
     }
   }

@@ -1,7 +1,14 @@
-import { InitHookInterface, DestroyHookInterface, RegisterHookInterface } from '../hooks/index.ts';
-import { NewableType } from '../shared/index.ts';
+import {
+  DestroyHookInterface,
+  InitHookInterface,
+  RegisterHookInterface,
+} from "../hooks/index.ts";
+import { NewableType } from "../shared/index.ts";
 
-export type ExtensionInterface = InitHookInterface | DestroyHookInterface | RegisterHookInterface;
+export type ExtensionInterface =
+  | InitHookInterface
+  | DestroyHookInterface
+  | RegisterHookInterface;
 
 export type ExtensionConfigurationType = {
   name: string;
@@ -12,4 +19,6 @@ export type ExtensionConfigurationType = {
   override?: boolean;
 };
 
-export const extensionConfigurationMetadataKey = Symbol.for('extensionConfiguration');
+export const extensionConfigurationMetadataKey = Symbol.for(
+  "extensionConfiguration",
+);

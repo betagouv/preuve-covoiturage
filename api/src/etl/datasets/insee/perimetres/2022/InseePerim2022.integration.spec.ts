@@ -1,10 +1,22 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { access } from '@/deps.ts';
-import { Pool } from '@/deps.ts';
-import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
-import { MemoryStateManager } from '../../../../providers/MemoryStateManager.ts';
-import { createPool, createFileManager } from '../../../../helpers/index.ts';
-import { InseePerim2022 as Dataset } from './InseePerim2022.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { access } from "@/deps.ts";
+import { Pool } from "@/deps.ts";
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
+import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
+import { createFileManager, createPool } from "../../../../helpers/index.ts";
+import { InseePerim2022 as Dataset } from "./InseePerim2022.ts";
 
 interface TestContext {
   connection: Pool;
@@ -27,18 +39,20 @@ test.after.always(async (t) => {
     `);
 });
 
-it('should validate', async (t) => {
-  await t.notThrowsAsync(() => t.context.dataset.validate(new MemoryStateManager()));
+it("should validate", async (t) => {
+  await t.notThrowsAsync(() =>
+    t.context.dataset.validate(new MemoryStateManager())
+  );
 });
 
-it('should prepare', async (t) => {
+it("should prepare", async (t) => {
   await t.context.dataset.before();
   const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
   t.log(query);
   await t.notThrowsAsync(() => t.context.connection.query(query));
 });
 
-it('should download file', async (t) => {
+it("should download file", async (t) => {
   await t.context.dataset.download();
   assert(t.context.dataset.filepaths.length >= 1);
   for (const path of t.context.dataset.filepaths) {
@@ -46,29 +60,29 @@ it('should download file', async (t) => {
   }
 });
 
-it('should transform', async (t) => {
+it("should transform", async (t) => {
   await t.notThrowsAsync(() => t.context.dataset.transform());
 });
 
-it('should load', async (t) => {
+it("should load", async (t) => {
   await t.context.dataset.load();
   const first = await t.context.connection.query(`
     SELECT * FROM ${t.context.dataset.tableWithSchema} order by codgeo asc limit 1
   `);
-  assertEquals(first.rows[0].dep, '01');
-  assertEquals(first.rows[0].epci, '200069193');
+  assertEquals(first.rows[0].dep, "01");
+  assertEquals(first.rows[0].epci, "200069193");
   const last = await t.context.connection.query(`
     SELECT * FROM ${t.context.dataset.tableWithSchema} order by codgeo desc limit 1
   `);
-  assertEquals(last.rows[0].dep, '976');
-  assertEquals(last.rows[0].epci, '200059871');
+  assertEquals(last.rows[0].dep, "976");
+  assertEquals(last.rows[0].epci, "200059871");
   const count = await t.context.connection.query(`
     SELECT count(*) FROM ${t.context.dataset.tableWithSchema}
   `);
-  assertEquals(count.rows[0].count, '34955');
+  assertEquals(count.rows[0].count, "34955");
 });
 
-it('should cleanup', async (t) => {
+it("should cleanup", async (t) => {
   await t.context.dataset.after();
   const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
   await assertThrows(() => t.context.connection.query(query));

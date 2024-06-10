@@ -1,25 +1,28 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   KeyfiguresRepositoryInterface,
   KeyfiguresRepositoryInterfaceResolver,
   MonthlyKeyfiguresParamsInterface,
   MonthlyKeyfiguresResultInterface,
-} from '../interfaces/KeyfiguresRepositoryProviderInterface.ts';
+} from "../interfaces/KeyfiguresRepositoryProviderInterface.ts";
 
 @provider({
   identifier: KeyfiguresRepositoryInterfaceResolver,
 })
-export class KeyfiguresRepositoryProvider implements KeyfiguresRepositoryInterface {
-  private readonly flux_table = 'observatory.monthly_flux';
-  private readonly occupation_table = 'observatory.monthly_occupation';
+export class KeyfiguresRepositoryProvider
+  implements KeyfiguresRepositoryInterface {
+  private readonly flux_table = "observatory.monthly_flux";
+  private readonly occupation_table = "observatory.monthly_occupation";
 
   constructor(private pg: PostgresConnection) {}
 
   // Retourne les données de la table observatory.monthly_flux pour le mois et l'année
   // et le type de territoire en paramètres
   // Paramètres optionnels observe et code pour filtrer les résultats sur un territoire
-  async getMonthlyKeyfigures(params: MonthlyKeyfiguresParamsInterface): Promise<MonthlyKeyfiguresResultInterface> {
+  async getMonthlyKeyfigures(
+    params: MonthlyKeyfiguresParamsInterface,
+  ): Promise<MonthlyKeyfiguresResultInterface> {
     const sql = {
       values: [params.year, params.month, params.type, params.code],
       text: `SELECT b.territory,b.l_territory,
@@ -44,7 +47,10 @@ export class KeyfiguresRepositoryProvider implements KeyfiguresRepositoryInterfa
       WHERE b.territory = $4 AND a.type::varchar = $3::varchar AND a.year = $1 AND a.month = $2
       GROUP BY b.territory,b.l_territory,b.journeys,b.trips,b.has_incentive,b.occupation_rate;`,
     };
-    const response: { rowCount: number; rows: MonthlyKeyfiguresResultInterface } = await this.pg
+    const response: {
+      rowCount: number;
+      rows: MonthlyKeyfiguresResultInterface;
+    } = await this.pg
       .getClient()
       .query<any>(sql);
     return response.rows;

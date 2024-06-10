@@ -1,6 +1,11 @@
-export function tokenMacro(): { type: string; minLength: number; maxLength: number; trim: boolean } {
+export function tokenMacro(): {
+  type: string;
+  minLength: number;
+  maxLength: number;
+  trim: boolean;
+} {
   return {
-    type: 'string',
+    type: "string",
     minLength: 32,
     maxLength: 64,
     trim: true,

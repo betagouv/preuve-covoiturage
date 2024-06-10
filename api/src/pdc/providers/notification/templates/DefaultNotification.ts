@@ -1,6 +1,6 @@
-import { AbstractTemplate } from '@/pdc/providers/template/index.ts';
+import { AbstractTemplate } from "@/pdc/providers/template/index.ts";
 
-import { AbstractMailNotification } from '../AbstractNotification.ts';
+import { AbstractMailNotification } from "../AbstractNotification.ts";
 
 export interface DefaultTemplateData {
   app_url: string;
@@ -185,17 +185,18 @@ puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
   `;
 }
 
-export class DefaultNotification extends AbstractMailNotification<DefaultTemplateData> {
+export class DefaultNotification
+  extends AbstractMailNotification<DefaultTemplateData> {
   static templateText = DefaultTextTemplate;
   static templateMJML = DefaultMJMLTemplate;
-  static readonly subject: string = 'Registre de preuve de covoiturage';
+  static readonly subject: string = "Registre de preuve de covoiturage";
 
   constructor(to: string, data: Partial<DefaultTemplateData>) {
     super(to, {
-      app_url: 'https://covoiturage.beta.gouv.fr',
-      contact_email: 'contact@covoiturage.beta.gouv.fr',
-      header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
-      header_alt: 'Registre de preuve de covoiturage',
+      app_url: "https://covoiturage.beta.gouv.fr",
+      contact_email: "contact@covoiturage.beta.gouv.fr",
+      header_image_src: "https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png",
+      header_alt: "Registre de preuve de covoiturage",
       ...data,
     });
   }

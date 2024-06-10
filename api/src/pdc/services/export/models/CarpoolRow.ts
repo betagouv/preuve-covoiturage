@@ -1,4 +1,4 @@
-import { _ } from '@/deps.ts';
+import { _ } from "@/deps.ts";
 
 export type AllowedComputedFields = {
   campaign_mode: string;

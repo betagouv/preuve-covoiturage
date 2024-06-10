@@ -1,25 +1,30 @@
-import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
-import { ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.ts';
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
+import {
+  ArchiveFileTypeEnum,
+  FileTypeEnum,
+} from "../../../../interfaces/index.ts";
 
 export class InseeMvtcom2021 extends AbstractDataset {
-  static producer = 'insee';
-  static dataset = 'mvtcom';
+  static producer = "insee";
+  static dataset = "mvtcom";
   static year = 2021;
-  static table = 'insee_mvtcom_2021';
-  readonly targetTable = 'com_evolution';
-  static url = 'https://www.insee.fr/fr/statistiques/fichier/5057840/mvtcommune2021-csv.zip';
+  static table = "insee_mvtcom_2021";
+  readonly targetTable = "com_evolution";
+  static url =
+    "https://www.insee.fr/fr/statistiques/fichier/5057840/mvtcommune2021-csv.zip";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.Zip;
   readonly rows: Map<string, [string, string]> = new Map([
-    ['mod', ['0', 'smallint']],
-    ['date_eff', ['1', 'varchar']],
-    ['typecom_av', ['2', 'varchar']],
-    ['com_av', ['3', 'varchar']],
-    ['typecom_ap', ['8', 'varchar']],
-    ['com_ap', ['9', 'varchar']],
+    ["mod", ["0", "smallint"]],
+    ["date_eff", ["1", "varchar"]],
+    ["typecom_av", ["2", "varchar"]],
+    ["com_av", ["3", "varchar"]],
+    ["typecom_ap", ["8", "varchar"]],
+    ["com_ap", ["9", "varchar"]],
   ]);
 
-  readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN mod SET NOT NULL;`;
+  readonly extraBeforeSql =
+    `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN mod SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
   sheetOptions = {};

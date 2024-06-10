@@ -1,11 +1,23 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
-import { CarpoolRepository } from './CarpoolRepository.ts';
-import { CarpoolStatusRepository } from './CarpoolStatusRepository.ts';
-import { insertableCarpool } from '../mocks/database/carpool.ts';
-import { Id } from '../interfaces/index.ts';
-import { insertableAcquisitionStatus } from '../mocks/database/status.ts';
-import sql, { raw } from '../helpers/sql.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { CarpoolRepository } from "./CarpoolRepository.ts";
+import { CarpoolStatusRepository } from "./CarpoolStatusRepository.ts";
+import { insertableCarpool } from "../mocks/database/carpool.ts";
+import { Id } from "../interfaces/index.ts";
+import { insertableAcquisitionStatus } from "../mocks/database/status.ts";
+import sql, { raw } from "../helpers/sql.ts";
 
 interface TestContext {
   repository: CarpoolStatusRepository;
@@ -30,8 +42,11 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-it('Should create acquisition status', async (t) => {
-  const data = { ...insertableAcquisitionStatus, carpool_id: t.context.carpool_id };
+it("Should create acquisition status", async (t) => {
+  const data = {
+    ...insertableAcquisitionStatus,
+    carpool_id: t.context.carpool_id,
+  };
 
   await t.context.repository.saveAcquisitionStatus(data);
   const result = await t.context.db.connection.getClient().query(sql`

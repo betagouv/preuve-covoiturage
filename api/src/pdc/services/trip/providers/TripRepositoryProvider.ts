@@ -1,23 +1,26 @@
 /* eslint-disable max-len */
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { _ } from '@/deps.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { _ } from "@/deps.ts";
 import {
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
-} from '../interfaces/index.ts';
-import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface.ts';
-import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
-import { ResultWithPagination } from '@/shared/common/interfaces/ResultWithPagination.ts';
-import { LightTripInterface } from '@/shared/trip/common/interfaces/LightTripInterface.ts';
-import { TerritoryTripsInterface } from '@/shared/trip/common/interfaces/TerritoryTripsInterface.ts';
+} from "../interfaces/index.ts";
+import {
+  FinancialStatInterface,
+  StatInterface,
+} from "../interfaces/StatInterface.ts";
+import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import { ResultWithPagination } from "@/shared/common/interfaces/ResultWithPagination.ts";
+import { LightTripInterface } from "@/shared/trip/common/interfaces/LightTripInterface.ts";
+import { TerritoryTripsInterface } from "@/shared/trip/common/interfaces/TerritoryTripsInterface.ts";
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '@/shared/trip/common/interfaces/TripSearchInterface.ts';
-import { TripStatInterface } from '@/shared/trip/common/interfaces/TripStatInterface.ts';
+} from "@/shared/trip/common/interfaces/TripSearchInterface.ts";
+import { TripStatInterface } from "@/shared/trip/common/interfaces/TripStatInterface.ts";
 
 /*
  * Trip specific repository
@@ -26,27 +29,34 @@ import { TripStatInterface } from '@/shared/trip/common/interfaces/TripStatInter
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
-  public readonly table = 'trip.list';
-  private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
+  public readonly table = "trip.list";
+  private defaultTz: TzResultInterface = {
+    name: "GMT",
+    utc_offset: "00:00:00",
+  };
 
   constructor(public connection: PostgresConnection) {}
 
-  protected async buildWhereClauses(filters: Partial<TripSearchInterface>): Promise<{
-    text: string;
-    values: any[];
-  } | null> {
+  protected async buildWhereClauses(
+    filters: Partial<TripSearchInterface>,
+  ): Promise<
+    {
+      text: string;
+      values: any[];
+    } | null
+  > {
     const filtersToProcess = [
-      'geo_selector',
-      'status',
-      'date',
-      'ranks',
-      'distance',
-      'campaign_id',
-      'operator_id',
-      'days',
-      'hour',
-      'excluded_start_geo_code',
-      'excluded_end_geo_code',
+      "geo_selector",
+      "status",
+      "date",
+      "ranks",
+      "distance",
+      "campaign_id",
+      "operator_id",
+      "days",
+      "hour",
+      "excluded_start_geo_code",
+      "excluded_end_geo_code",
     ].filter((key) => key in filters);
 
     let orderedFilters = {
@@ -59,7 +69,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((key) => ({ key, value: filters[key] }))
         .map((filter) => {
           switch (filter.key) {
-            case 'excluded_start_geo_code':
+            case "excluded_start_geo_code":
               if (!filter.value || !Array.isArray(filter.value)) {
                 return;
               }
@@ -67,7 +77,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: `journey_start_insee <> ALL($#::varchar[])`,
                 values: [filter.value],
               };
-            case 'excluded_end_geo_code':
+            case "excluded_end_geo_code":
               if (!filter.value || !Array.isArray(filter.value)) {
                 return;
               }
@@ -75,82 +85,93 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: `journey_end_insee <> ALL($#::varchar[])`,
                 values: [filter.value],
               };
-            case 'geo_selector':
-              if (!filter.value || !filter.value.com || !Array.isArray(filter.value?.com)) {
+            case "geo_selector":
+              if (
+                !filter.value || !filter.value.com ||
+                !Array.isArray(filter.value?.com)
+              ) {
                 return;
               }
               const territoryFilterValue = filter.value.com;
               return {
-                text: `(journey_start_insee = ANY($#::varchar[]) OR journey_end_insee = ANY($#::varchar[]))`,
+                text:
+                  `(journey_start_insee = ANY($#::varchar[]) OR journey_end_insee = ANY($#::varchar[]))`,
                 values: [territoryFilterValue, territoryFilterValue],
               };
-            case 'operator_id':
-              const operatorFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
+            case "operator_id":
+              const operatorFilterValue = Array.isArray(filter.value)
+                ? filter.value
+                : [filter.value];
               return {
-                text: 'operator_id = ANY ($#::int[])',
+                text: "operator_id = ANY ($#::int[])",
                 values: [operatorFilterValue],
               };
 
-            case 'status':
+            case "status":
               return {
-                text: 'status = $#',
+                text: "status = $#",
                 values: [filter.value],
               };
 
-            case 'date':
+            case "date":
               if (filter.value.start && filter.value.end) {
                 return {
-                  text: '(journey_start_datetime >= $#::timestamp AND journey_start_datetime < $#::timestamp)',
+                  text:
+                    "(journey_start_datetime >= $#::timestamp AND journey_start_datetime < $#::timestamp)",
                   values: [filter.value.start, filter.value.end],
                 };
               }
               if (filter.value.start) {
                 return {
-                  text: 'journey_start_datetime >= $#::timestamp',
+                  text: "journey_start_datetime >= $#::timestamp",
                   values: [filter.value.start],
                 };
               }
               return {
-                text: 'journey_start_datetime < $#::timestamp',
+                text: "journey_start_datetime < $#::timestamp",
                 values: [filter.value.end],
               };
 
-            case 'ranks':
+            case "ranks":
               return {
-                text: 'operator_class = ANY ($#::text[])',
+                text: "operator_class = ANY ($#::text[])",
                 values: [filter.value],
               };
 
-            case 'distance':
+            case "distance":
               if (filter.value.min && filter.value.max) {
                 return {
-                  text: '(journey_distance >= $#::int AND journey_distance < $#::int)',
+                  text:
+                    "(journey_distance >= $#::int AND journey_distance < $#::int)",
                   values: [filter.value.min, filter.value.max],
                 };
               }
               if (filter.value.min) {
                 return {
-                  text: 'journey_distance >= $#::int',
+                  text: "journey_distance >= $#::int",
                   values: [filter.value.min],
                 };
               }
               return {
-                text: 'journey_distance < $#::int',
+                text: "journey_distance < $#::int",
                 values: [filter.value.max],
               };
-            case 'campaign_id':
+            case "campaign_id":
               // prevent sql injection
-              if (typeof filter.value[0] !== 'number') {
-                throw new Error('campaign_id parameter is not a number');
+              if (typeof filter.value[0] !== "number") {
+                throw new Error("campaign_id parameter is not a number");
               }
               return {
-                text: `applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0) and EXISTS (SELECT * FROM jsonb_array_elements(array_to_json(driver_incentive_rpc_raw)::jsonb ) as obj WHERE obj @> '{ "type": "incentive", "policy_id": ${filter.value[0]}}'::jsonb AND (obj->>'amount')::int > 0)`,
+                text:
+                  `applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0) and EXISTS (SELECT * FROM jsonb_array_elements(array_to_json(driver_incentive_rpc_raw)::jsonb ) as obj WHERE obj @> '{ "type": "incentive", "policy_id": ${
+                    filter.value[0]
+                  }}'::jsonb AND (obj->>'amount')::int > 0)`,
                 values: [filter.value],
               };
 
-            case 'days':
+            case "days":
               return {
-                text: 'journey_start_weekday = ANY ($#::int[])',
+                text: "journey_start_weekday = ANY ($#::int[])",
                 values: [filter.value === 0 ? 7 : filter.value],
                 // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
@@ -172,7 +193,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    const whereClauses = `${orderedFilters.text.join(' AND ')}`;
+    const whereClauses = `${orderedFilters.text.join(" AND ")}`;
     const whereClausesValues = orderedFilters.values;
 
     return {
@@ -181,7 +202,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async getOpendataExcludedTerritories(params: TripSearchInterface): Promise<TerritoryTripsInterface[]> {
+  public async getOpendataExcludedTerritories(
+    params: TripSearchInterface,
+  ): Promise<TerritoryTripsInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const excluded_start_sql_text = this.numberPlaceholders(`
@@ -218,19 +241,21 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return !result.rowCount ? [] : result.rows;
   }
 
-  public async stats(params: Partial<TripStatInterface>): Promise<StatInterface[]> {
+  public async stats(
+    params: Partial<TripStatInterface>,
+  ): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const selectSwitch = {
-      day: 'journey_start_datetime::date::text as day,',
+      day: "journey_start_datetime::date::text as day,",
       month: `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month,`,
-      all: '',
+      all: "",
     };
 
     const groupBySwitch = {
-      day: 'GROUP BY day ORDER BY day ASC',
+      day: "GROUP BY day ORDER BY day ASC",
       month: `GROUP BY TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm')`,
-      all: '',
+      all: "",
     };
 
     const values = [...(where ? where.values : [])];
@@ -249,7 +274,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(COALESCE(passenger_incentive_rpc_financial_sum, 0) + COALESCE(driver_incentive_rpc_financial_sum, 0)), 0)::int as financial_incentive_sum,
         coalesce(sum(COALESCE(passenger_incentive_rpc_sum, 0) + COALESCE(driver_incentive_rpc_sum, 0)), 0)::int as incentive_sum
       FROM ${this.table}
-      ${where.text ? `WHERE ${where.text}` : ''}
+      ${where.text ? `WHERE ${where.text}` : ""}
       ${groupBySwitch[params.group_by]}
     `;
 
@@ -261,20 +286,21 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return !result.rowCount ? [] : result.rows;
   }
 
-  public async financialStats(params: Partial<TripStatInterface>): Promise<FinancialStatInterface[]> {
+  public async financialStats(
+    params: Partial<TripStatInterface>,
+  ): Promise<FinancialStatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const values = [...(where ? where.values : [])];
-    const groupBy =
-      params.group_by === 'day'
-        ? {
-            format: 'yyyy-mm-dd',
-            key: 'day',
-          }
-        : {
-            format: 'yyyy-mm',
-            key: 'month',
-          };
+    const groupBy = params.group_by === "day"
+      ? {
+        format: "yyyy-mm-dd",
+        key: "day",
+      }
+      : {
+        format: "yyyy-mm",
+        key: "month",
+      };
     const text = `
       SELECT
         to_char(journey_start_datetime::date, '${groupBy.format}') as ${groupBy.key},
@@ -282,7 +308,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(passenger_incentive_rpc_financial_sum + driver_incentive_rpc_financial_sum), 0)::int as financial_incentive_sum,
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
-      ${where.text ? `WHERE ${where.text}` : ''}
+      ${where.text ? `WHERE ${where.text}` : ""}
       GROUP BY ${groupBy.key}, operator_id
       ORDER BY ${groupBy.key} ASC
     `;
@@ -297,20 +323,22 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchWithCursor(
     params: TripSearchInterface,
-    type = 'opendata',
+    type = "opendata",
   ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
-      SELECT ${this.getFields(type).join(', ')}
+      SELECT ${this.getFields(type).join(", ")}
       FROM ${this.table}
-      ${where.text ? `WHERE ${where.text}` : ''}
+      ${where.text ? `WHERE ${where.text}` : ""}
       ORDER BY journey_start_datetime ASC
     `);
 
     return this.connection.getCursor(queryText, where.values);
   }
 
-  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
+  public async searchCount(
+    params: Partial<TripSearchInterfaceWithPagination>,
+  ): Promise<{ count: string }> {
     const where = await this.buildWhereClauses(params);
 
     // COUNT(*) is a BIGINT (int8) which is casted as string by node-postgres
@@ -319,7 +347,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
-        ${where.text ? `WHERE ${where.text}` : ''}
+        ${where.text ? `WHERE ${where.text}` : ""}
       `,
       values: [...(where ? where.values : [])],
     };
@@ -351,7 +379,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        ${where.text ? `WHERE ${where.text}` : ''}
+        ${where.text ? `WHERE ${where.text}` : ""}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
@@ -373,7 +401,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     let index = 0;
     while (index < data.length) {
       data[index] = result.rows[index];
-      data[index]['campaigns_id'] = [...new Set(_.map(result.rows[index]['campaigns_id'] || [], 'policy_id'))];
+      data[index]["campaigns_id"] = [
+        ...new Set(
+          _.map(result.rows[index]["campaigns_id"] || [], "policy_id"),
+        ),
+      ];
       index += 1;
     }
 
@@ -386,66 +418,79 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async validateTz(tz?: string): Promise<TzResultInterface> {
     if (!tz) return this.defaultTz;
 
-    const resTimezone = await this.connection.getClient().query<TzResultInterface>({
-      text: 'SELECT name, utc_offset::text FROM pg_timezone_names WHERE LOWER(name) = LOWER($1)',
+    const resTimezone = await this.connection.getClient().query<
+      TzResultInterface
+    >({
+      text:
+        "SELECT name, utc_offset::text FROM pg_timezone_names WHERE LOWER(name) = LOWER($1)",
       values: [tz],
     });
 
     return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
   }
 
-  private getFields(type = 'opendata'): string[] {
+  private getFields(type = "opendata"): string[] {
     // all
     const baseFields = [
-      'journey_id',
-      'trip_id',
-      'journey_start_datetime',
-      'journey_start_lon',
-      'journey_start_lat',
-      'journey_start_insee',
-      'journey_start_department',
-      'journey_start_town',
-      'journey_start_towngroup',
-      'journey_start_country',
-      'journey_end_datetime',
-      'journey_end_lon',
-      'journey_end_lat',
-      'journey_end_insee',
-      'journey_end_department',
-      'journey_end_town',
-      'journey_end_towngroup',
-      'journey_end_country',
-      'driver_card',
-      'passenger_card',
-      'passenger_over_18',
-      'passenger_seats',
-      'operator_class',
-      'operator_journey_id',
-      'operator_passenger_id',
-      'operator_driver_id',
-      'journey_distance',
-      'journey_duration',
-      'journey_distance_anounced',
-      'journey_distance_calculated',
-      'journey_duration_anounced',
-      'journey_duration_calculated',
-      'passenger_incentive_rpc_raw::json[]',
-      'driver_incentive_rpc_raw::json[]',
-      'passenger_incentive_raw::json[]',
-      'driver_incentive_raw::json[]',
+      "journey_id",
+      "trip_id",
+      "journey_start_datetime",
+      "journey_start_lon",
+      "journey_start_lat",
+      "journey_start_insee",
+      "journey_start_department",
+      "journey_start_town",
+      "journey_start_towngroup",
+      "journey_start_country",
+      "journey_end_datetime",
+      "journey_end_lon",
+      "journey_end_lat",
+      "journey_end_insee",
+      "journey_end_department",
+      "journey_end_town",
+      "journey_end_towngroup",
+      "journey_end_country",
+      "driver_card",
+      "passenger_card",
+      "passenger_over_18",
+      "passenger_seats",
+      "operator_class",
+      "operator_journey_id",
+      "operator_passenger_id",
+      "operator_driver_id",
+      "journey_distance",
+      "journey_duration",
+      "journey_distance_anounced",
+      "journey_distance_calculated",
+      "journey_duration_anounced",
+      "journey_duration_calculated",
+      "passenger_incentive_rpc_raw::json[]",
+      "driver_incentive_rpc_raw::json[]",
+      "passenger_incentive_raw::json[]",
+      "driver_incentive_raw::json[]",
     ];
 
     // all except opendata
-    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
+    const financialFields = [
+      "passenger_id",
+      "passenger_contribution",
+      "driver_id",
+      "driver_revenue",
+    ];
 
     let selectedFields = [...baseFields];
     switch (type) {
-      case 'territory':
-      case 'registry':
-        selectedFields = [...selectedFields, 'operator', ...financialFields, 'status'];
+      case "territory":
+      case "registry":
+        selectedFields = [
+          ...selectedFields,
+          "operator",
+          ...financialFields,
+          "status",
+        ];
         break;
-      case 'operator':
-        selectedFields = [...selectedFields, ...financialFields, 'status'];
+      case "operator":
+        selectedFields = [...selectedFields, ...financialFields, "status"];
         break;
     }
 
@@ -455,10 +500,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   // replace $# in query by $1, $2, ...
   private numberPlaceholders(str: string): string {
     return str
-      .split('$#')
+      .split("$#")
       .reduce(
-        (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
-        '',
+        (
+          acc,
+          current,
+          idx,
+          origin,
+        ) => (idx === origin.length - 1
+          ? `${acc}${current}`
+          : `${acc}${current}$${idx + 1}`),
+        "",
       );
   }
 }

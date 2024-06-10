@@ -1,6 +1,10 @@
-export function serialMacro(): { type: string; minimum: number; maximum: number } {
+export function serialMacro(): {
+  type: string;
+  minimum: number;
+  maximum: number;
+} {
   return {
-    type: 'integer',
+    type: "integer",
     minimum: 1,
     maximum: 2147483647,
   };

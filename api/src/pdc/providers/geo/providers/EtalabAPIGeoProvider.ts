@@ -1,10 +1,10 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { axios, HttpsAgent as Agent, _, URLSearchParams } from '@/deps.ts';
-import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { _, axios, HttpsAgent as Agent, URLSearchParams } from "@/deps.ts";
+import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
 @provider()
 export class EtalabAPIGeoProvider implements InseeCoderInterface {
-  protected domain = 'https://geo.api.gouv.fr';
+  protected domain = "https://geo.api.gouv.fr";
   private static agent = new Agent({ keepAlive: false });
 
   async positionToInsee(geo: PointInterface): Promise<string> {
@@ -12,8 +12,8 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
     const params = new URLSearchParams({
       lon: lon.toString(),
       lat: lat.toString(),
-      fields: 'code',
-      format: 'json',
+      fields: "code",
+      format: "json",
     });
 
     let { data } = await axios.get(`${this.domain}/communes`, {
@@ -29,7 +29,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       data = data.shift();
     }
 
-    const inseeCode = _.get(data, 'code', null);
+    const inseeCode = _.get(data, "code", null);
     if (!inseeCode) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
     }
@@ -40,8 +40,8 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
   async inseeToPosition(insee: string): Promise<PointInterface> {
     const params = new URLSearchParams({
       code: insee,
-      fields: 'centre',
-      format: 'json',
+      fields: "centre",
+      format: "json",
     });
     let { data } = await axios.get(`${this.domain}/communes`, {
       params,
@@ -56,7 +56,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       data = data.shift();
     }
 
-    const [lon, lat] = _.get(data, 'centre.coordinates', [null, null]);
+    const [lon, lat] = _.get(data, "centre.coordinates", [null, null]);
 
     if (!lon || !lat) {
       throw new NotFoundException(`Not found on insee code (${insee})`);

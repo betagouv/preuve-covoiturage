@@ -1,7 +1,11 @@
-import { Job, Queue, JobsOptions, QueueOptions } from '@/deps.ts';
-import { _ } from '@/deps.ts';
-import { RedisConnection } from '@/ilos/connection-redis/index.ts';
-import { HandlerInterface, InitHookInterface, CallType } from '@/ilos/common/index.ts';
+import { Job, JobsOptions, Queue, QueueOptions } from "@/deps.ts";
+import { _ } from "@/deps.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import {
+  CallType,
+  HandlerInterface,
+  InitHookInterface,
+} from "@/ilos/common/index.ts";
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
@@ -41,13 +45,13 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       let options = { ...this.defaultJobOptions };
 
       // easy path to repeated/delayed jobs
-      if (context && 'channel' in context && 'metadata' in context.channel) {
+      if (context && "channel" in context && "metadata" in context.channel) {
         options = { ...options, ...context.channel.metadata };
       }
 
       // protect against char : in jobId
       if (options.jobId && _.isString(options.jobId)) {
-        if ((options.jobId as string).indexOf(':') > -1) {
+        if ((options.jobId as string).indexOf(":") > -1) {
           throw new Error('Character ":" is unsupported in jobId');
         }
       }
@@ -62,8 +66,8 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
           }
         }
 
-        for (const job of await this.client.getJobs(['delayed'])) {
-          if (_.get(job, 'opts.repeat.jobId') === options.jobId) {
+        for (const job of await this.client.getJobs(["delayed"])) {
+          if (_.get(job, "opts.repeat.jobId") === options.jobId) {
             await job.remove();
             console.debug(`Removed delayed job ${options.jobId}`);
           }
@@ -74,7 +78,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         method,
         {
           method,
-          jsonrpc: '2.0',
+          jsonrpc: "2.0",
           id: null,
           params: {
             params,
@@ -87,7 +91,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       return job;
     } catch (e) {
       console.error(`Async call ${call.method} failed`, e);
-      throw new Error('An error occured');
+      throw new Error("An error occured");
     }
   }
 }

@@ -1,19 +1,25 @@
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { handler, InvalidParamsException } from '@/ilos/common/index.ts';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler, InvalidParamsException } from "@/ilos/common/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
-import { alias } from '@/shared/acquisition/list.schema.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/acquisition/list.contract.ts';
-import { StatusSearchInterface } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
-import { castUserStringToUTC, subDaysTz, today } from '../helpers/index.ts';
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { alias } from "@/shared/acquisition/list.schema.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/acquisition/list.contract.ts";
+import { StatusSearchInterface } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { castUserStringToUTC, subDaysTz, today } from "../helpers/index.ts";
 import { date } from "@/deps.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.status' }),
+    ["validate", alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: "operator.acquisition.status",
+    }),
   ],
 })
 export class ListJourneyAction extends AbstractAction {
@@ -22,7 +28,9 @@ export class ListJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const acquisitions = await this.acquisitionRepository.list(this.applyDefault(params));
+    const acquisitions = await this.acquisitionRepository.list(
+      this.applyDefault(params),
+    );
     return acquisitions;
   }
 
@@ -45,14 +53,16 @@ export class ListJourneyAction extends AbstractAction {
 
   protected validateStartEnd(startDate: Date, endDate: Date, todayDate: Date) {
     if (date.isAfter(startDate, endDate)) {
-      throw new InvalidParamsException('Start should be before end');
+      throw new InvalidParamsException("Start should be before end");
     }
     if (date.isAfter(endDate, todayDate)) {
-      throw new InvalidParamsException('End should be before now');
+      throw new InvalidParamsException("End should be before now");
     }
     const maxStartDate = subDaysTz(todayDate, 90);
     if (date.isBefore(startDate, maxStartDate)) {
-      throw new InvalidParamsException(`Start should be after ${maxStartDate.toISOString()}`);
+      throw new InvalidParamsException(
+        `Start should be after ${maxStartDate.toISOString()}`,
+      );
     }
   }
 }

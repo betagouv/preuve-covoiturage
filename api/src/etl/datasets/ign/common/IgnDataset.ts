@@ -1,8 +1,11 @@
-import { AbstractDataset } from '../../../common/AbstractDataset.ts';
-import { SqlError } from '../../../errors/SqlError.ts';
-import { TransformError } from '../../../errors/TransformError.ts';
-import { streamData } from '../../../helpers/index.ts';
-import { FileTypeEnum, ArchiveFileTypeEnum } from '../../../interfaces/index.ts';
+import { AbstractDataset } from "../../../common/AbstractDataset.ts";
+import { SqlError } from "../../../errors/SqlError.ts";
+import { TransformError } from "../../../errors/TransformError.ts";
+import { streamData } from "../../../helpers/index.ts";
+import {
+  ArchiveFileTypeEnum,
+  FileTypeEnum,
+} from "../../../interfaces/index.ts";
 
 export interface TransformationParamsInterface {
   key: string;
@@ -13,28 +16,32 @@ export interface TransformationParamsInterface {
 }
 
 const defaultConfig: TransformationParamsInterface = {
-  key: '',
-  format: 'geojson',
+  key: "",
+  format: "geojson",
   precision: 0.000001,
   force: false,
   simplify: [],
 };
 export abstract class IgnDataset extends AbstractDataset {
-  abstract readonly transformations: Array<[string, Partial<TransformationParamsInterface>]>;
+  abstract readonly transformations: Array<
+    [string, Partial<TransformationParamsInterface>]
+  >;
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.SevenZip;
   readonly rows: Map<string, [string, string]> = new Map([
-    ['com', ['INSEE_COM', 'varchar']],
-    ['pop', ['POPULATION', 'integer']],
+    ["com", ["INSEE_COM", "varchar"]],
+    ["pop", ["POPULATION", "integer"]],
   ]);
 
   sheetOptions = {
-    filter: 'features',
+    filter: "features",
   };
 
   fileType: FileTypeEnum = FileTypeEnum.Shp;
 
-  transformedFiles: Array<{ file: string; key: string } & { [k: string]: any }> = [];
+  transformedFiles: Array<
+    { file: string; key: string } & { [k: string]: any }
+  > = [];
 
   async transform(): Promise<void> {
     try {
@@ -56,10 +63,19 @@ export abstract class IgnDataset extends AbstractDataset {
               );
             }
           } else {
-            transformedFilePath = await this.file.transform(path, config.format, config.precision, config.force);
+            transformedFilePath = await this.file.transform(
+              path,
+              config.format,
+              config.precision,
+              config.force,
+            );
           }
           filepaths.push(transformedFilePath);
-          this.transformedFiles.push({ file: transformedFilePath, key: config.key, file_orig: file });
+          this.transformedFiles.push({
+            file: transformedFilePath,
+            key: config.key,
+            file_orig: file,
+          });
         }
       }
       this.filepaths = filepaths;
@@ -71,7 +87,7 @@ export abstract class IgnDataset extends AbstractDataset {
 
   async load(): Promise<void> {
     const connection = await this.connection.connect();
-    await connection.query('BEGIN TRANSACTION');
+    await connection.query("BEGIN TRANSACTION");
     let i = 1;
     try {
       for (const { file, key } of this.transformedFiles) {
@@ -79,28 +95,34 @@ export abstract class IgnDataset extends AbstractDataset {
           console.debug(`Processing file ${file} : ${key}`);
           const cursor = streamData(file, this.fileType, this.sheetOptions);
           let done = false;
-          const comField = this.rows.get('com') || [];
+          const comField = this.rows.get("com") || [];
           do {
             const results = await cursor.next();
             done = !!results.done;
             if (results.value) {
-              const values = [JSON.stringify(results.value.map((r) => r.value))];
+              const values = [
+                JSON.stringify(results.value.map((r) => r.value)),
+              ];
               console.debug(`Batch ${i}`);
               switch (key) {
-                case 'geom':
+                case "geom":
                   await connection.query({
                     text: `
                       INSERT INTO ${this.tableWithSchema} (
-                        ${[...this.rows.keys(), key].join(', \n')}
+                        ${[...this.rows.keys(), key].join(", \n")}
                       )
                       WITH tmp as(
                         SELECT * FROM
                         json_to_recordset($1)
                         as t(type varchar, properties json,geometry json)
                       )
-                      SELECT ${[...this.rows]
-                        .map(([k, r]) => `(properties->>'${r[0]}')::${r[1]} AS ${k}`)
-                        .join(', \n')},
+                      SELECT ${
+                      [...this.rows]
+                        .map(([k, r]) =>
+                          `(properties->>'${r[0]}')::${r[1]} AS ${k}`
+                        )
+                        .join(", \n")
+                    },
                       st_multi(ST_SetSRID(st_geomfromgeojson(geometry),4326)) as ${key} 
                       FROM tmp 
                       ON CONFLICT DO NOTHING
@@ -108,7 +130,7 @@ export abstract class IgnDataset extends AbstractDataset {
                     values,
                   });
                   break;
-                case 'geom_simple':
+                case "geom_simple":
                   await connection.query({
                     text: `
                       UPDATE ${this.tableWithSchema}
@@ -118,12 +140,14 @@ export abstract class IgnDataset extends AbstractDataset {
                         json_to_recordset($1)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
-                      WHERE com = (tt.properties->>'${comField[0]}')::${comField[1]}
+                      WHERE com = (tt.properties->>'${comField[0]}')::${
+                      comField[1]
+                    }
                     `,
                     values,
                   });
                   break;
-                case 'centroid':
+                case "centroid":
                   await connection.query({
                     text: `
                       UPDATE ${this.tableWithSchema}
@@ -133,7 +157,9 @@ export abstract class IgnDataset extends AbstractDataset {
                         json_to_recordset($1)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
-                      WHERE com = (tt.properties->>'${comField[0]}')::${comField[1]}
+                      WHERE com = (tt.properties->>'${comField[0]}')::${
+                      comField[1]
+                    }
                     `,
                     values,
                   });
@@ -151,10 +177,10 @@ export abstract class IgnDataset extends AbstractDataset {
           WHERE st_astext(centroid) IS NULL
         `,
       });
-      await connection.query('COMMIT');
+      await connection.query("COMMIT");
       connection.release();
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query("ROLLBACK");
       connection.release();
       console.error(e);
       throw new SqlError(this, (e as Error).message);

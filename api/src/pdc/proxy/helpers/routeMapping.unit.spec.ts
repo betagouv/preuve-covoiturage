@@ -1,14 +1,30 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { Kernel as AbstractKernel } from '@/ilos/core/index.ts';
-import { RPCResponseType, KernelInterface } from '@/ilos/common/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { Kernel as AbstractKernel } from "@/ilos/core/index.ts";
+import { KernelInterface, RPCResponseType } from "@/ilos/common/index.ts";
 
-import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping.ts';
+import {
+  ArrayRouteMapType,
+  ObjectRouteMapType,
+  routeMapping,
+} from "./routeMapping.ts";
 import { bodyParser, express, expressSession } from "@/deps.ts";
 
 class Kernel extends AbstractKernel {
   async handle(call): Promise<RPCResponseType> {
     return {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: call.id,
       result: {
         method: call.method,
@@ -31,9 +47,9 @@ beforeAll(async (t) => {
   t.context.app = express();
 
   t.context.fakeUser = {
-    id: '1',
-    firstName: 'Nicolas',
-    lastname: 'Test',
+    id: "1",
+    firstName: "Nicolas",
+    lastname: "Test",
   };
 
   t.context.responseFactory = (method: string, params: any): any => {
@@ -45,18 +61,18 @@ beforeAll(async (t) => {
           user: t.context.fakeUser,
         },
         channel: {
-          service: 'proxy',
-          transport: 'node:http',
+          service: "proxy",
+          transport: "node:http",
         },
       },
     };
   };
 
-  t.context.app.use(bodyParser.json({ limit: '2mb' }));
+  t.context.app.use(bodyParser.json({ limit: "2mb" }));
   t.context.app.use(bodyParser.urlencoded({ extended: false }));
   t.context.app.use(
     expressSession({
-      secret: 'SECRET',
+      secret: "SECRET",
       resave: false,
       saveUninitialized: false,
     }),
@@ -70,9 +86,9 @@ beforeAll(async (t) => {
   t.context.kernel = new Kernel();
   t.context.routeMap = [
     {
-      verb: 'post',
-      route: '/user/:id',
-      signature: 'user:update',
+      verb: "post",
+      route: "/user/:id",
+      signature: "user:update",
       mapRequest(body, query, params): any {
         return {
           ...body,
@@ -81,9 +97,9 @@ beforeAll(async (t) => {
       },
     },
     {
-      verb: 'get',
-      route: '/user/:id',
-      signature: 'user:read',
+      verb: "get",
+      route: "/user/:id",
+      signature: "user:read",
       mapResponse(response): any {
         return {
           ...response,
@@ -91,11 +107,11 @@ beforeAll(async (t) => {
         };
       },
     },
-    ['post', '/user', 'user:create'],
+    ["post", "/user", "user:create"],
     {
-      verb: 'get',
-      route: '/user',
-      signature: 'user:list',
+      verb: "get",
+      route: "/user",
+      signature: "user:list",
       mapRequest(body, query): any {
         return {
           ...body,
@@ -109,72 +125,72 @@ beforeAll(async (t) => {
   t.context.request = superit(t.context.app);
 });
 
-it('[Route mapping] works', async (t) => {
+it("[Route mapping] works", async (t) => {
   const response = await t.context.request
-    .post('/user')
+    .post("/user")
     .send({
-      firstName: 'John',
-      lastname: 'Doe',
+      firstName: "John",
+      lastname: "Doe",
     })
-    .set('Accept', 'application/json')
-    .set('Content-Type', 'application/json');
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
 
   assertEquals(response.status, 200);
   assertObjectMatch(
     response.body,
-    t.context.responseFactory('user:create', {
-      firstName: 'John',
-      lastname: 'Doe',
+    t.context.responseFactory("user:create", {
+      firstName: "John",
+      lastname: "Doe",
     }),
   );
 });
 
-it('[Route mapping] works with url params', async (t) => {
+it("[Route mapping] works with url params", async (t) => {
   const response = await t.context.request
-    .post('/user/1')
+    .post("/user/1")
     .send({
-      firstName: 'John',
-      lastname: 'Doe',
+      firstName: "John",
+      lastname: "Doe",
     })
-    .set('Accept', 'application/json')
-    .set('Content-Type', 'application/json');
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
 
   assertEquals(response.status, 200);
   assertObjectMatch(
     response.body,
-    t.context.responseFactory('user:update', {
-      id: '1',
-      firstName: 'John',
-      lastname: 'Doe',
+    t.context.responseFactory("user:update", {
+      id: "1",
+      firstName: "John",
+      lastname: "Doe",
     }),
   );
 });
 
-it('[Route mapping] works with query params', async (t) => {
+it("[Route mapping] works with query params", async (t) => {
   const response = await t.context.request
-    .get('/user/?orderBy=date')
-    .set('Accept', 'application/json')
-    .set('Content-Type', 'application/json');
+    .get("/user/?orderBy=date")
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
 
   assertEquals(response.status, 200);
   assertObjectMatch(
     response.body,
-    t.context.responseFactory('user:list', {
-      orderBy: 'date',
+    t.context.responseFactory("user:list", {
+      orderBy: "date",
     }),
   );
 });
 
-it('[Route mapping] works with response mapping', async (t) => {
+it("[Route mapping] works with response mapping", async (t) => {
   const response = await t.context.request
-    .get('/user/1')
-    .set('Accept', 'application/json')
-    .set('Content-Type', 'application/json');
+    .get("/user/1")
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
 
   assertEquals(response.status, 200);
   assertObjectMatch(
     response.body,
-    t.context.responseFactory('user:read', {
+    t.context.responseFactory("user:read", {
       ...t.context.fakeUser,
     }),
   );

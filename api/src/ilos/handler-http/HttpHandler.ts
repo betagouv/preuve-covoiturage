@@ -1,6 +1,12 @@
-import { axios, AxiosInstance } from '@/deps.ts';
+import { axios, AxiosInstance } from "@/deps.ts";
 
-import { CallType, ResultType, HandlerInterface, InitHookInterface, ServiceException } from '@/ilos/common/index.ts';
+import {
+  CallType,
+  HandlerInterface,
+  InitHookInterface,
+  ResultType,
+  ServiceException,
+} from "@/ilos/common/index.ts";
 
 /**
  * Http handler
@@ -18,7 +24,7 @@ export class HttpHandler implements HandlerInterface, InitHookInterface {
   private client: AxiosInstance;
 
   public init() {
-    throw new Error('no url found');
+    throw new Error("no url found");
   }
 
   protected createClient(url) {
@@ -26,8 +32,8 @@ export class HttpHandler implements HandlerInterface, InitHookInterface {
       baseURL: url,
       timeout: 1000,
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
   }
@@ -36,17 +42,17 @@ export class HttpHandler implements HandlerInterface, InitHookInterface {
     const { method, params, context } = call;
     try {
       // TODO : add channel ?
-      const response = await this.client.post('/', {
+      const response = await this.client.post("/", {
         method,
         params: {
           params,
           _context: context,
         },
         id: 1,
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
       });
 
-      if (!('data' in response) || !('result' in response.data)) {
+      if (!("data" in response) || !("result" in response.data)) {
         throw new ServiceException(response.data.error);
       }
       call.result = response.data.result;
@@ -55,7 +61,7 @@ export class HttpHandler implements HandlerInterface, InitHookInterface {
       if (e.serviceError) {
         throw new Error(e.message);
       }
-      throw new Error('An error occured');
+      throw new Error("An error occured");
     }
   }
 }

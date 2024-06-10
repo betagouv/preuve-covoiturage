@@ -1,20 +1,24 @@
 import {
   GetObjectCommand,
   GetObjectCommandInput,
+  getSignedUrl,
   ListObjectsV2Command,
   ListObjectsV2CommandInput,
   ListObjectsV2CommandOutput,
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
-  getSignedUrl,
-} from '@/deps.ts'
-import { ConfigInterfaceResolver, ProviderInterface, provider } from '@/ilos/common/index.ts';
-import { env } from '@/ilos/core/index.ts';
-import { fs } from '@/deps.ts';
-import { S3ObjectList } from './index.ts';
-import { filenameFromPath, getBucketName } from './helpers/buckets.ts';
-import { BucketName } from './interfaces/BucketName.ts';
+} from "@/deps.ts";
+import {
+  ConfigInterfaceResolver,
+  provider,
+  ProviderInterface,
+} from "@/ilos/common/index.ts";
+import { env } from "@/ilos/core/index.ts";
+import { fs } from "@/deps.ts";
+import { S3ObjectList } from "./index.ts";
+import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
+import { BucketName } from "./interfaces/BucketName.ts";
 
 // @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
 
@@ -30,13 +34,19 @@ export class S3StorageProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
-    this.endpoint = env.or_fail('AWS_ENDPOINT');
-    this.region = env.or_fail('AWS_REGION');
+    this.endpoint = env.or_fail("AWS_ENDPOINT");
+    this.region = env.or_fail("AWS_REGION");
 
     // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
-    this.s3Instances.set(BucketName.Export, this.createInstance(BucketName.Export));
-    this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
+    this.s3Instances.set(
+      BucketName.Export,
+      this.createInstance(BucketName.Export),
+    );
+    this.s3Instances.set(
+      BucketName.Public,
+      this.createInstance(BucketName.Public),
+    );
   }
 
   protected createInstance(bucket: BucketName): S3Client {
@@ -44,7 +54,7 @@ export class S3StorageProvider implements ProviderInterface {
       forcePathStyle: true, // hosting uses path-style
       endpoint: this.endpoint,
       region: this.region,
-      ...this.config.get('storage.bucket.options', {}),
+      ...this.config.get("storage.bucket.options", {}),
     });
   }
 
@@ -58,11 +68,18 @@ export class S3StorageProvider implements ProviderInterface {
     console.info(`[S3StorageProvider:list] bucket ${params.Bucket}/${folder}`);
 
     const command = new ListObjectsV2Command(params);
-    const result: ListObjectsV2CommandOutput = await this.s3Instances.get(bucket).send(command);
+    const result: ListObjectsV2CommandOutput = await this.s3Instances.get(
+      bucket,
+    ).send(command);
     return result.Contents || [];
   }
 
-  async upload(bucket: BucketName, filepath: string, filename?: string, folder?: string): Promise<string> {
+  async upload(
+    bucket: BucketName,
+    filepath: string,
+    filename?: string,
+    folder?: string,
+  ): Promise<string> {
     // Check if file exists
     await fs.promises.access(filepath, fs.constants.R_OK);
 
@@ -112,7 +129,9 @@ export class S3StorageProvider implements ProviderInterface {
       };
 
       const command = new GetObjectCommand(params);
-      const url = await getSignedUrl(this.s3Instances.get(bucket), command, { expiresIn });
+      const url = await getSignedUrl(this.s3Instances.get(bucket), command, {
+        expiresIn,
+      });
 
       return url;
     } catch (e) {

@@ -1,14 +1,15 @@
-import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
-import { Campaign } from '../models/Campaign.ts';
-import { signature as campaignListSignature } from '@/shared/policy/list.contract.ts';
+import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { Campaign } from "../models/Campaign.ts";
+import { signature as campaignListSignature } from "@/shared/policy/list.contract.ts";
 
 export interface CampaignRepositoryInterface {
   list(): Promise<Map<number, Campaign>>;
 }
 
-export abstract class CampaignRepositoryInterfaceResolver implements CampaignRepositoryInterface {
+export abstract class CampaignRepositoryInterfaceResolver
+  implements CampaignRepositoryInterface {
   public async list(): Promise<Map<number, Campaign>> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -23,7 +24,10 @@ export class CampaignRepository implements CampaignRepositoryInterface {
     const campaigns = await this.kernel.call(
       campaignListSignature,
       {},
-      { channel: { service: 'export' }, call: { user: { permissions: ['common.policy.list'] } } },
+      {
+        channel: { service: "export" },
+        call: { user: { permissions: ["common.policy.list"] } },
+      },
     );
 
     return campaigns.reduce((acc, c) => {

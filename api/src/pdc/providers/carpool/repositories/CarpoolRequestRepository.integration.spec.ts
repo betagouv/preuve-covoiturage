@@ -1,11 +1,26 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
-import { CarpoolRepository } from './CarpoolRepository.ts';
-import { insertableCarpool } from '../mocks/database/carpool.ts';
-import { Id } from '../interfaces/index.ts';
-import sql, { raw } from '../helpers/sql.ts';
-import { CarpoolRequestRepository } from './CarpoolRequestRepository.ts';
-import { insertableCarpoolCancelRequest, insertableCarpoolCreateRequest } from '../mocks/database/request.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { CarpoolRepository } from "./CarpoolRepository.ts";
+import { insertableCarpool } from "../mocks/database/carpool.ts";
+import { Id } from "../interfaces/index.ts";
+import sql, { raw } from "../helpers/sql.ts";
+import { CarpoolRequestRepository } from "./CarpoolRequestRepository.ts";
+import {
+  insertableCarpoolCancelRequest,
+  insertableCarpoolCreateRequest,
+} from "../mocks/database/request.ts";
 
 interface TestContext {
   repository: CarpoolRequestRepository;
@@ -30,26 +45,36 @@ test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-it('Should save create request', async (t) => {
-  const data = { ...insertableCarpoolCreateRequest, carpool_id: t.context.carpool_id };
+it("Should save create request", async (t) => {
+  const data = {
+    ...insertableCarpoolCreateRequest,
+    carpool_id: t.context.carpool_id,
+  };
 
   await t.context.repository.save(data);
   const result = await t.context.db.connection.getClient().query(sql`
-    SELECT carpool_id, operator_id, operator_journey_id, api_version, payload FROM ${raw(t.context.repository.table)}
+    SELECT carpool_id, operator_id, operator_journey_id, api_version, payload FROM ${
+    raw(t.context.repository.table)
+  }
     WHERE carpool_id = ${t.context.carpool_id}
   `);
 
   assertObjectMatch(result.rows.pop(), data);
 });
 
-it('Should save cancel request', async (t) => {
-  const data = { ...insertableCarpoolCancelRequest, carpool_id: t.context.carpool_id };
+it("Should save cancel request", async (t) => {
+  const data = {
+    ...insertableCarpoolCancelRequest,
+    carpool_id: t.context.carpool_id,
+  };
 
   await t.context.repository.save(data);
   const result = await t.context.db.connection.getClient().query(sql`
-    SELECT carpool_id, operator_id, operator_journey_id, api_version, cancel_code, cancel_message FROM ${raw(
+    SELECT carpool_id, operator_id, operator_journey_id, api_version, cancel_code, cancel_message FROM ${
+    raw(
       t.context.repository.table,
-    )}
+    )
+  }
     WHERE carpool_id = ${t.context.carpool_id} ORDER BY created_at DESC
   `);
   assertObjectMatch(result.rows.pop(), data);

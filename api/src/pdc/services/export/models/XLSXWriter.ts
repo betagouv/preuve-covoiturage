@@ -1,8 +1,10 @@
-import { 
-  excel, os, path, AdmZip
-} from '@/deps.ts';
-import { ExportTarget } from './Export.ts';
-import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow.ts';
+import { AdmZip, excel, os, path } from "@/deps.ts";
+import { ExportTarget } from "./Export.ts";
+import {
+  AllowedComputedFields,
+  CarpoolRow,
+  CarpoolRowData,
+} from "./CarpoolRow.ts";
 
 export type Datasources = Map<string, any>;
 
@@ -15,7 +17,10 @@ export type ComputedProcessors = Array<ComputedProcessor>;
 // TODO find a way to type the compute() return type depending on the name
 export type ComputedProcessor = {
   name: keyof AllowedComputedFields;
-  compute: (row: CarpoolRow, datasources: Datasources) => AllowedComputedFields[keyof AllowedComputedFields] | null;
+  compute: (
+    row: CarpoolRow,
+    datasources: Datasources,
+  ) => AllowedComputedFields[keyof AllowedComputedFields] | null;
 };
 
 export type Options = {
@@ -33,33 +38,36 @@ export class XLSXWriter {
   protected workbook: excel.stream.xlsx.WorkbookWriter;
   protected dataSheet: excel.Worksheet;
   protected helpSheet: excel.Worksheet;
-  protected workbookExt = 'xlsx';
-  protected archiveExt = 'zip';
+  protected workbookExt = "xlsx";
+  protected archiveExt = "zip";
   protected folder: string;
   protected basename: string;
   protected options: Options = {
     compress: false,
-    dataSheetName: 'Trajets',
+    dataSheetName: "Trajets",
     dataSheetOptions: {},
-    helpSheetName: 'Aide',
+    helpSheetName: "Aide",
     helpSheetOptions: {},
     fields: [],
     computed: [
       {
-        name: 'campaign_mode',
+        name: "campaign_mode",
         compute(row, datasources) {
           // for each campaign, get the mode at the start date or the end date
           // and return the higher one (booster)
-          return row.value('campaigns', []).reduce((acc, id) => {
-            const campaign = datasources.get('campaigns').get(id);
+          return row.value("campaigns", []).reduce((acc, id) => {
+            const campaign = datasources.get("campaigns").get(id);
             if (!campaign) return acc;
-            const mode = campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
-            return acc === 'booster' ? acc : mode;
-          }, 'normal');
+            const mode = campaign.getModeAt([
+              row.value("start_datetime_utc"),
+              row.value("end_datetime_utc"),
+            ]);
+            return acc === "booster" ? acc : mode;
+          }, "normal");
         },
       },
       {
-        name: 'has_incentive',
+        name: "has_incentive",
         compute(row) {
           return row.hasIncentive();
         },
@@ -77,14 +85,26 @@ export class XLSXWriter {
   // TODO create the workbook and the worksheets
   public async create(): Promise<XLSXWriter> {
     // create the Excel file
-    this.workbook = new excel.stream.xlsx.WorkbookWriter({ filename: this.workbookPath, useStyles: true });
+    this.workbook = new excel.stream.xlsx.WorkbookWriter({
+      filename: this.workbookPath,
+      useStyles: true,
+    });
 
     // Add the data sheet and configure the columns
-    this.dataSheet = this.workbook.addWorksheet(this.options.dataSheetName, this.options.dataSheetOptions);
-    this.dataSheet.columns = this.options.fields.map((header) => ({ header, key: header }));
+    this.dataSheet = this.workbook.addWorksheet(
+      this.options.dataSheetName,
+      this.options.dataSheetOptions,
+    );
+    this.dataSheet.columns = this.options.fields.map((header) => ({
+      header,
+      key: header,
+    }));
 
     // Add the help sheet
-    this.helpSheet = this.workbook.addWorksheet(this.options.helpSheetName, this.options.helpSheetOptions);
+    this.helpSheet = this.workbook.addWorksheet(
+      this.options.helpSheetName,
+      this.options.helpSheetOptions,
+    );
 
     return this;
   }
@@ -98,7 +118,10 @@ export class XLSXWriter {
   public async append(carpoolRow: CarpoolRow): Promise<XLSXWriter> {
     // add computed fields to the carpool row
     this.options.computed.forEach((field: ComputedProcessor) => {
-      carpoolRow.addField(field.name, field.compute(carpoolRow, this.options.datasources));
+      carpoolRow.addField(
+        field.name,
+        field.compute(carpoolRow, this.options.datasources),
+      );
     });
 
     // TODO use the XLSX library to write the line to the file
@@ -111,7 +134,7 @@ export class XLSXWriter {
 
   // TODO print help in a separate sheet
   public async printHelp(): Promise<XLSXWriter> {
-    console.info('TODO print help');
+    console.info("TODO print help");
     return this;
   }
 
@@ -159,11 +182,11 @@ export class XLSXWriter {
   // TODO share with APDF where the code comes from
   protected sanitize(str: string): string {
     return str
-      .replace(/\u20AC/g, 'e') // € -> e
-      .normalize('NFD')
-      .replace(/[\ \.\/]/g, '_')
-      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, '')
-      .replace('_-_', '-')
+      .replace(/\u20AC/g, "e") // € -> e
+      .normalize("NFD")
+      .replace(/[\ \.\/]/g, "_")
+      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, "")
+      .replace("_-_", "-")
       .toLowerCase()
       .substring(0, 128);
   }

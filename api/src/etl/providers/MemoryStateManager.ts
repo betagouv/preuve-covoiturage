@@ -1,5 +1,8 @@
-import type { StateManagerInterface, StaticMigrable } from '../interfaces/index.ts';
-import { State, flow } from '../interfaces/index.ts';
+import type {
+  StateManagerInterface,
+  StaticMigrable,
+} from "../interfaces/index.ts";
+import { flow, State } from "../interfaces/index.ts";
 
 export class MemoryStateManager implements StateManagerInterface {
   protected migrableOrder: Array<StaticMigrable> = [];
@@ -22,7 +25,9 @@ export class MemoryStateManager implements StateManagerInterface {
     this.batchSet(unplanned, State.Unplanned);
   }
 
-  *todo(excludeStates: State[] = [State.Done, State.Failed, State.Unplanned]): Iterator<[StaticMigrable, State]> {
+  *todo(
+    excludeStates: State[] = [State.Done, State.Failed, State.Unplanned],
+  ): Iterator<[StaticMigrable, State]> {
     const fl = [...flow].filter((s) => !excludeStates.includes(s));
     for (const state of [...fl]) {
       let data: Set<StaticMigrable>;
@@ -40,13 +45,20 @@ export class MemoryStateManager implements StateManagerInterface {
       [...this.migrableState.entries()]
         .filter(([_, migrableState]) => migrableState === state)
         .sort(([migrableA], [migrableB]) =>
-          this.migrableOrder.indexOf(migrableA) >= this.migrableOrder.indexOf(migrableB) ? 1 : -1,
+          this.migrableOrder.indexOf(migrableA) >=
+              this.migrableOrder.indexOf(migrableB)
+            ? 1
+            : -1
         )
         .map(([migrable]) => migrable),
     );
   }
 
-  protected batchSet(migrables: StaticMigrable[], state: State, before?: StaticMigrable): void {
+  protected batchSet(
+    migrables: StaticMigrable[],
+    state: State,
+    before?: StaticMigrable,
+  ): void {
     const beforeIndex = before ? this.migrableOrder.indexOf(before) : -1;
     for (const mig of migrables) {
       this.migrableState.set(mig, state);
@@ -55,7 +67,11 @@ export class MemoryStateManager implements StateManagerInterface {
         this.migrableOrder.splice(index, 1);
       }
       this.migrableOrder.splice(
-        beforeIndex > -1 ? beforeIndex : index > -1 ? index : this.migrableOrder.length,
+        beforeIndex > -1
+          ? beforeIndex
+          : index > -1
+          ? index
+          : this.migrableOrder.length,
         0,
         mig,
       );

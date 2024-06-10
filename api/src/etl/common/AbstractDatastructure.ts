@@ -1,13 +1,13 @@
 import {
-  FileManagerInterface,
   DatasetInterface,
-  StaticMigrable,
-  StaticAbstractDataset,
-  StateManagerInterface,
+  FileManagerInterface,
   State,
-} from '../interfaces/index.ts';
-import { Pool } from '@/deps.ts';
-import { SqlError, ValidationError } from '../errors/index.ts';
+  StateManagerInterface,
+  StaticAbstractDataset,
+  StaticMigrable,
+} from "../interfaces/index.ts";
+import { Pool } from "@/deps.ts";
+import { SqlError, ValidationError } from "../errors/index.ts";
 
 export abstract class AbstractDatastructure implements DatasetInterface {
   abstract readonly sql: string;
@@ -24,7 +24,7 @@ export abstract class AbstractDatastructure implements DatasetInterface {
   constructor(
     protected connection: Pool,
     protected file: FileManagerInterface,
-    protected targetSchema: string = 'public',
+    protected targetSchema: string = "public",
   ) {}
 
   async validate(state: StateManagerInterface): Promise<void> {
@@ -33,7 +33,9 @@ export abstract class AbstractDatastructure implements DatasetInterface {
     if (difference.size > 0) {
       throw new ValidationError(
         this,
-        `Cant apply this dataset, element is missing (${[...difference].map((d) => d.uuid).join(', ')})`,
+        `Cant apply this dataset, element is missing (${
+          [...difference].map((d) => d.uuid).join(", ")
+        })`,
       );
     }
   }

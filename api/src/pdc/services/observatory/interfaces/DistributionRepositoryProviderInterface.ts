@@ -1,38 +1,51 @@
 import type {
   ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
-} from '@/shared/observatory/distribution/journeysByHours.contract.ts';
+} from "@/shared/observatory/distribution/journeysByHours.contract.ts";
 import type {
   ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
-} from '@/shared/observatory/distribution/journeysByDistances.contract.ts';
+} from "@/shared/observatory/distribution/journeysByDistances.contract.ts";
 import type {
-  ParamsInterface as InsertMonthlyDistributionParamsInterface,
   ParamsInterface as DeleteMonthlyDistributionParamsInterface,
-} from '@/shared/observatory/distribution/insertMonthlyDistribution.contract.ts';
+  ParamsInterface as InsertMonthlyDistributionParamsInterface,
+} from "@/shared/observatory/distribution/insertMonthlyDistribution.contract.ts";
 
 export type {
-  JourneysByHoursParamsInterface,
-  JourneysByHoursResultInterface,
+  DeleteMonthlyDistributionParamsInterface,
+  InsertMonthlyDistributionParamsInterface,
   JourneysByDistancesParamsInterface,
   JourneysByDistancesResultInterface,
-  InsertMonthlyDistributionParamsInterface,
-  DeleteMonthlyDistributionParamsInterface,
+  JourneysByHoursParamsInterface,
+  JourneysByHoursResultInterface,
 };
 
 export interface DistributionRepositoryInterface {
-  insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void>;
-  deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void>;
-  getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface>;
-  getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface>;
+  insertOneMonthDistribution(
+    params: InsertMonthlyDistributionParamsInterface,
+  ): Promise<void>;
+  deleteOneMonthDistribution(
+    params: DeleteMonthlyDistributionParamsInterface,
+  ): Promise<void>;
+  getJourneysByHours(
+    params: JourneysByHoursParamsInterface,
+  ): Promise<JourneysByHoursResultInterface>;
+  getJourneysByDistances(
+    params: JourneysByDistancesParamsInterface,
+  ): Promise<JourneysByDistancesResultInterface>;
 }
 
-export abstract class DistributionRepositoryInterfaceResolver implements DistributionRepositoryInterface {
-  async insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void> {
+export abstract class DistributionRepositoryInterfaceResolver
+  implements DistributionRepositoryInterface {
+  async insertOneMonthDistribution(
+    params: InsertMonthlyDistributionParamsInterface,
+  ): Promise<void> {
     throw new Error();
   }
 
-  async deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void> {
+  async deleteOneMonthDistribution(
+    params: DeleteMonthlyDistributionParamsInterface,
+  ): Promise<void> {
     throw new Error();
   }
 
@@ -40,7 +53,9 @@ export abstract class DistributionRepositoryInterfaceResolver implements Distrib
     throw new Error();
   }
 
-  async getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface> {
+  async getJourneysByHours(
+    params: JourneysByHoursParamsInterface,
+  ): Promise<JourneysByHoursResultInterface> {
     throw new Error();
   }
 

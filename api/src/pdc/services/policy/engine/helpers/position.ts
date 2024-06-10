@@ -3,9 +3,12 @@ import {
   StatelessRuleHelper,
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 
-function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {
+function inList(
+  selectors: TerritorySelectorsInterface,
+  territory: TerritoryCodeInterface,
+): boolean {
   if (!selectors || Object.keys(selectors).length === 0) {
     return false;
   }
@@ -19,11 +22,17 @@ function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCode
   return false;
 }
 
-export const startsAndEndsAt = (ctx: StatelessContextInterface, selector: TerritorySelectorsInterface): boolean => {
+export const startsAndEndsAt = (
+  ctx: StatelessContextInterface,
+  selector: TerritorySelectorsInterface,
+): boolean => {
   return startsAt(ctx, selector) && endsAt(ctx, selector);
 };
 
-export const startsOrEndsAt = (ctx: StatelessContextInterface, selector: TerritorySelectorsInterface): boolean => {
+export const startsOrEndsAt = (
+  ctx: StatelessContextInterface,
+  selector: TerritorySelectorsInterface,
+): boolean => {
   return startsAt(ctx, selector) || endsAt(ctx, selector);
 };
 

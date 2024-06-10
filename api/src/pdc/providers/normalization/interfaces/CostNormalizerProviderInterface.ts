@@ -1,4 +1,4 @@
-import { PaymentInterface, IncentiveInterface } from './index.ts';
+import { IncentiveInterface, PaymentInterface } from "./index.ts";
 
 export type CostResultInterface = {
   cost: number;

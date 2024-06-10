@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 import {
   ensureFreeRide,
   isOperatorClassOrThrow,
@@ -17,37 +17,50 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './SMT2022.html.ts';
+} from "../helpers/index.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./SMT2022.html.ts";
 
 // Politique du Syndicat des Mobilités de Touraine
 export const SMT2022: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = '713';
+  implements PolicyHandlerInterface {
+  static readonly id = "713";
   protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 2_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+    },
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
+      [
+        "A34719E4-DCA0-78E6-38E4-701631B106C2",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -68,7 +81,7 @@ export const SMT2022: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

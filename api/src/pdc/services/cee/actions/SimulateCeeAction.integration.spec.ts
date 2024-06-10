@@ -1,19 +1,43 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
-import { ServiceProvider } from '../ServiceProvider.ts';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@/shared/cee/simulateApplication.contract.ts';
-import { signature } from '@/shared/cee/registerApplication.contract.ts';
-import { config } from '../config/index.ts';
-import { ContextType } from '@/ilos/common/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  DbContext,
+  handlerMacro,
+  HandlerMacroContext,
+  makeDbBeforeAfter,
+} from "@/pdc/providers/test/index.ts";
+import { ServiceProvider } from "../ServiceProvider.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/cee/simulateApplication.contract.ts";
+import { signature } from "@/shared/cee/registerApplication.contract.ts";
+import { config } from "../config/index.ts";
+import { ContextType } from "@/ilos/common/index.ts";
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
   lastNameTruncSchema,
   phoneTruncSchema,
-} from '@/shared/cee/common/ceeSchema.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+} from "@/shared/cee/common/ceeSchema.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
-const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
+const { before, after, success, error } = handlerMacro<
+  ParamsInterface,
+  ResultInterface
+>(
   ServiceProvider,
   handlerConfig,
 );
@@ -24,29 +48,34 @@ interface TestContext extends HandlerMacroContext {
 }
 
 const defaultContext: ContextType = {
-  call: { user: { permissions: ['test.run'], operator_id: 1 } },
-  channel: { service: 'dummy' },
+  call: { user: { permissions: ["test.run"], operator_id: 1 } },
+  channel: { service: "dummy" },
 };
 
 const test = anyTest as TestFn<TestContext>;
 beforeAll(async (t) => {
   const db = await dbBefore();
-  config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
+  config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
   const { kernel } = await before();
   kernel
     .getContainer()
     .rebind(PostgresConnection)
-    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
+    .toConstantValue(
+      new PostgresConnection({
+        connectionString: db.db.currentConnectionString,
+      }),
+    );
   await kernel.call(
     signature,
     {
-      journey_type: 'long',
-      last_name_trunc: 'ABC',
-      driving_license: '051227308989',
-      datetime: '2022-01-02T00:00:00.000Z',
-      application_timestamp: '2022-01-02T00:00:00.000Z',
-      phone_trunc: '+336273488',
-      identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
+      journey_type: "long",
+      last_name_trunc: "ABC",
+      driving_license: "051227308989",
+      datetime: "2022-01-02T00:00:00.000Z",
+      application_timestamp: "2022-01-02T00:00:00.000Z",
+      phone_trunc: "+336273488",
+      identity_key:
+        "0000000000000000000000000000000000000000000000000000000000000000",
     },
     defaultContext,
   );
@@ -59,79 +88,95 @@ afterAll(async (t) => {
 });
 
 const defaultShortPayload: any = {
-  journey_type: 'short',
-  last_name_trunc: 'DEF',
-  phone_trunc: '+336273488',
-  driving_license: '051227308990',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
+  journey_type: "short",
+  last_name_trunc: "DEF",
+  phone_trunc: "+336273488",
+  driving_license: "051227308990",
+  identity_key:
+    "0000000000000000000000000000000000000000000000000000000000000000",
 };
 
 const defaultLongPayload: any = {
-  journey_type: 'long',
-  last_name_trunc: 'ABC',
-  phone_trunc: '+336273488',
-  driving_license: '051227308989',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
+  journey_type: "long",
+  last_name_trunc: "ABC",
+  phone_trunc: "+336273488",
+  driving_license: "051227308989",
+  identity_key:
+    "0000000000000000000000000000000000000000000000000000000000000000",
 };
 
 it(
-  'Invalid last_name_trunc param',
+  "Invalid last_name_trunc param",
   error,
-  { ...defaultShortPayload, last_name_trunc: 'abcd' },
+  { ...defaultShortPayload, last_name_trunc: "abcd" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid journey_type param',
+  "Invalid journey_type param",
   error,
-  { ...defaultShortPayload, journey_type: 'bip' },
+  { ...defaultShortPayload, journey_type: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid driving_license param',
+  "Invalid driving_license param",
   error,
-  { ...defaultShortPayload, driving_license: 'bip' },
+  { ...defaultShortPayload, driving_license: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/driving_license: ${drivingLicenseSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid phone_trunc param',
+  "Invalid phone_trunc param",
   error,
-  { ...defaultLongPayload, phone_trunc: 'bip' },
+  { ...defaultLongPayload, phone_trunc: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/phone_trunc: ${phoneTruncSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/phone_trunc: ${phoneTruncSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
-it('Unauthorized', error, defaultShortPayload, 'Unauthorized Error', {
+it("Unauthorized", error, defaultShortPayload, "Unauthorized Error", {
   ...defaultContext,
   call: { user: {} },
 });
 
-it('Success', success, defaultShortPayload, undefined, defaultContext);
+it("Success", success, defaultShortPayload, undefined, defaultContext);
 
 it(
-  'Conflict',
+  "Conflict",
   error,
   defaultLongPayload,
   (e: any, t) => {
-    assertEquals(e.message, 'Conflict');
-    assertObjectMatch(e.rpcError.data, { datetime: '2022-01-02T00:00:00.000Z' });
+    assertEquals(e.message, "Conflict");
+    assertObjectMatch(e.rpcError.data, {
+      datetime: "2022-01-02T00:00:00.000Z",
+    });
   },
   defaultContext,
 );

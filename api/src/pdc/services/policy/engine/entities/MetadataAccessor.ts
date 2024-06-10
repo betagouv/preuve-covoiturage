@@ -1,13 +1,20 @@
-import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces/index.ts';
-import { UnknownMetaException } from '../exceptions/UnknownMetaException.ts';
+import {
+  MetadataAccessorInterface,
+  SerializedAccessibleMetadataInterface,
+} from "../../interfaces/index.ts";
+import { UnknownMetaException } from "../exceptions/UnknownMetaException.ts";
 
 export class MetadataAccessor implements MetadataAccessorInterface {
   constructor(
     public readonly datetime: Date,
-    public readonly data: Map<string, SerializedAccessibleMetadataInterface> = new Map(),
+    public readonly data: Map<string, SerializedAccessibleMetadataInterface> =
+      new Map(),
   ) {}
 
-  static import(datetime: Date, data: Map<string, SerializedAccessibleMetadataInterface>): MetadataAccessor {
+  static import(
+    datetime: Date,
+    data: Map<string, SerializedAccessibleMetadataInterface>,
+  ): MetadataAccessor {
     return new MetadataAccessor(datetime, data);
   }
 
@@ -17,8 +24,12 @@ export class MetadataAccessor implements MetadataAccessorInterface {
 
   get(uuid: string): number {
     const meta = this.data.get(uuid);
-    if (!meta || !('value' in meta)) {
-      console.error(`key ${uuid} not found in [${[...this.data.keys()].join(', ')}] (${JSON.stringify(meta)})`);
+    if (!meta || !("value" in meta)) {
+      console.error(
+        `key ${uuid} not found in [${[...this.data.keys()].join(", ")}] (${
+          JSON.stringify(meta)
+        })`,
+      );
       throw new UnknownMetaException(`${uuid} not found`);
     }
     return meta.value;

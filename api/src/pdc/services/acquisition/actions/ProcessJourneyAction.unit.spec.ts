@@ -1,14 +1,41 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { ProcessJourneyAction } from './ProcessJourneyAction.ts';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { NormalizationProvider } from '@/pdc/providers/normalization/index.ts';
-import { ConfigStore } from '@/ilos/core/extensions/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { ProcessJourneyAction } from "./ProcessJourneyAction.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
+import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
-import { signature } from '@/shared/carpool/crosscheck.contract.ts';
-import { callContext } from '../config/callContext.ts';
+import {
+  AcquisitionErrorStageEnum,
+  AcquisitionStatusEnum,
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { signature } from "@/shared/carpool/crosscheck.contract.ts";
+import { callContext } from "../config/callContext.ts";
 
 function bootstrap(): {
   action: ProcessJourneyAction;
@@ -33,9 +60,9 @@ function bootstrap(): {
   return { action, repository, kernel, normalizer };
 }
 
-it('should process if normalization ok', async (t) => {
+it("should process if normalization ok", async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
-  const normalizedPayload = { normalized: 'data' } as any;
+  const normalizedPayload = { normalized: "data" } as any;
   normalizer.handle.resolves(normalizedPayload);
   const updateCallbackStub = sinon.stub();
   const commitCallbackStub = sinon.stub();
@@ -48,14 +75,18 @@ it('should process if normalization ok', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
+  repository.findThenUpdate.resolves([
+    acquisitions,
+    updateCallbackStub,
+    commitCallbackStub,
+  ]);
   const inputData = {
-    method: '',
+    method: "",
     params: {},
     context: {
       call: { user: {} },
       channel: {
-        service: '',
+        service: "",
       },
     },
   };
@@ -65,18 +96,22 @@ it('should process if normalization ok', async (t) => {
     kernelContext,
     kernelParams,
     kernelSignature,
-  }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } = kernel.call
-    .getCalls()
-    .map((c) => c.args)
-    .reduce(
-      ({ kernelSignature, kernelParams, kernelContext }, [signature, params, context]) => {
-        kernelParams.push(params as never);
-        kernelContext = context;
-        kernelSignature = signature;
-        return { kernelParams, kernelSignature, kernelContext };
-      },
-      { kernelSignature: '', kernelParams: [], kernelContext: {} },
-    );
+  }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } =
+    kernel.call
+      .getCalls()
+      .map((c) => c.args)
+      .reduce(
+        (
+          { kernelSignature, kernelParams, kernelContext },
+          [signature, params, context],
+        ) => {
+          kernelParams.push(params as never);
+          kernelContext = context;
+          kernelSignature = signature;
+          return { kernelParams, kernelSignature, kernelContext };
+        },
+        { kernelSignature: "", kernelParams: [], kernelContext: {} },
+      );
   assertEquals(kernelSignature, signature);
   assertObjectMatch(kernelContext, callContext);
   assertObjectMatch(kernelParams, [normalizedPayload]);
@@ -89,10 +124,10 @@ it('should process if normalization ok', async (t) => {
   });
 });
 
-it('should fail if normalization fail', async (t) => {
+it("should fail if normalization fail", async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
-  const normalizedPayload = { normalized: 'data' } as any;
-  const normalizationError = new Error('normalization');
+  const normalizedPayload = { normalized: "data" } as any;
+  const normalizationError = new Error("normalization");
   normalizer.handle.callsFake(async (data) => {
     if (data._id === 1) {
       return normalizedPayload;
@@ -117,14 +152,18 @@ it('should fail if normalization fail', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
+  repository.findThenUpdate.resolves([
+    acquisitions,
+    updateCallbackStub,
+    commitCallbackStub,
+  ]);
   const inputData = {
-    method: '',
+    method: "",
     params: {},
     context: {
       call: { user: {} },
       channel: {
-        service: '',
+        service: "",
       },
     },
   };
@@ -134,18 +173,22 @@ it('should fail if normalization fail', async (t) => {
     kernelContext,
     kernelParams,
     kernelSignature,
-  }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } = kernel.call
-    .getCalls()
-    .map((c) => c.args)
-    .reduce(
-      ({ kernelSignature, kernelParams, kernelContext }, [signature, params, context]) => {
-        kernelParams.push(params as never);
-        kernelContext = context;
-        kernelSignature = signature;
-        return { kernelParams, kernelSignature, kernelContext };
-      },
-      { kernelSignature: '', kernelParams: [], kernelContext: {} },
-    );
+  }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } =
+    kernel.call
+      .getCalls()
+      .map((c) => c.args)
+      .reduce(
+        (
+          { kernelSignature, kernelParams, kernelContext },
+          [signature, params, context],
+        ) => {
+          kernelParams.push(params as never);
+          kernelContext = context;
+          kernelSignature = signature;
+          return { kernelParams, kernelSignature, kernelContext };
+        },
+        { kernelSignature: "", kernelParams: [], kernelContext: {} },
+      );
   assertEquals(kernelSignature, signature);
   assertObjectMatch(kernelContext, callContext);
   assertObjectMatch(kernelParams, [normalizedPayload]);
@@ -164,11 +207,14 @@ it('should fail if normalization fail', async (t) => {
   ]);
 });
 
-it('should fail if carpool fail', async (t) => {
+it("should fail if carpool fail", async (t) => {
   const { action, repository, normalizer, kernel } = bootstrap();
-  const normalizedPayload = { normalized: 'data' } as any;
-  normalizer.handle.callsFake((data) => ({ ...normalizedPayload, acquisition_id: data._id }));
-  const kernelError = new Error('Boum');
+  const normalizedPayload = { normalized: "data" } as any;
+  normalizer.handle.callsFake((data) => ({
+    ...normalizedPayload,
+    acquisition_id: data._id,
+  }));
+  const kernelError = new Error("Boum");
   kernel.call.callsFake(async (_method, params: any) => {
     if (params.acquisition_id === 2) {
       throw kernelError;
@@ -192,14 +238,18 @@ it('should fail if carpool fail', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
+  repository.findThenUpdate.resolves([
+    acquisitions,
+    updateCallbackStub,
+    commitCallbackStub,
+  ]);
   const inputData = {
-    method: '',
+    method: "",
     params: {},
     context: {
       call: { user: {} },
       channel: {
-        service: '',
+        service: "",
       },
     },
   };

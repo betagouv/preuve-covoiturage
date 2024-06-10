@@ -1,7 +1,12 @@
-import { ContextType } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { CarpoolV1StatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
-import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@/pdc/providers/test/index.ts';
+import { ContextType } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
+import {
+  DbContext,
+  handlerMacro,
+  HandlerMacroContext,
+  makeDbBeforeAfter,
+} from "@/pdc/providers/test/index.ts";
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
@@ -9,14 +14,33 @@ import {
   operatorJourneyIdSchema,
   phoneTruncSchema,
   timestampSchema,
-} from '@/shared/cee/common/ceeSchema.ts';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@/shared/cee/registerApplication.contract.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { createSign } from '@/deps.ts';
-import { ServiceProvider } from '../ServiceProvider.ts';
-import { config } from '../config/index.ts';
+} from "@/shared/cee/common/ceeSchema.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/cee/registerApplication.contract.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { createSign } from "@/deps.ts";
+import { ServiceProvider } from "../ServiceProvider.ts";
+import { config } from "../config/index.ts";
 
-const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
+const { before, after, success, error } = handlerMacro<
+  ParamsInterface,
+  ResultInterface
+>(
   ServiceProvider,
   handlerConfig,
 );
@@ -29,12 +53,16 @@ interface TestContext extends HandlerMacroContext {
 const test = anyTest as TestFn<TestContext>;
 beforeAll(async (t) => {
   const db = await dbBefore();
-  config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
+  config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
   const { kernel } = await before();
   kernel
     .getContainer()
     .rebind(PostgresConnection)
-    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
+    .toConstantValue(
+      new PostgresConnection({
+        connectionString: db.db.currentConnectionString,
+      }),
+    );
   t.context = { db, kernel };
 });
 
@@ -44,68 +72,79 @@ afterAll(async (t) => {
 });
 
 const defaultContext: ContextType = {
-  call: { user: { permissions: ['test.run'], operator_id: 1 } },
-  channel: { service: 'dummy' },
+  call: { user: { permissions: ["test.run"], operator_id: 1 } },
+  channel: { service: "dummy" },
 };
 
 const defaultShortPayload: any = {
-  journey_type: 'short',
-  last_name_trunc: 'ABC',
-  driving_license: '051227308989',
-  application_timestamp: '2022-01-02T00:00:00.000Z',
-  operator_journey_id: 'operator_journey_id-1',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
+  journey_type: "short",
+  last_name_trunc: "ABC",
+  driving_license: "051227308989",
+  application_timestamp: "2022-01-02T00:00:00.000Z",
+  operator_journey_id: "operator_journey_id-1",
+  identity_key:
+    "0000000000000000000000000000000000000000000000000000000000000000",
 };
 
 const defaultLongPayload: any = {
-  journey_type: 'long',
-  last_name_trunc: 'ABC',
-  driving_license: '051227308989',
-  datetime: '2022-01-02T00:00:00.000Z',
-  application_timestamp: '2022-01-02T00:00:00.000Z',
-  phone_trunc: '+336273488',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
+  journey_type: "long",
+  last_name_trunc: "ABC",
+  driving_license: "051227308989",
+  datetime: "2022-01-02T00:00:00.000Z",
+  application_timestamp: "2022-01-02T00:00:00.000Z",
+  phone_trunc: "+336273488",
+  identity_key:
+    "0000000000000000000000000000000000000000000000000000000000000000",
 };
 
 it(
-  'Invalid last_name_trunc param',
+  "Invalid last_name_trunc param",
   error,
-  { ...defaultShortPayload, last_name_trunc: 'abcd' },
+  { ...defaultShortPayload, last_name_trunc: "abcd" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid journey_type param',
+  "Invalid journey_type param",
   error,
-  { ...defaultShortPayload, journey_type: 'bip' },
+  { ...defaultShortPayload, journey_type: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid driving_license param',
+  "Invalid driving_license param",
   error,
-  { ...defaultShortPayload, driving_license: 'bip' },
+  { ...defaultShortPayload, driving_license: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertEquals(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
+    assertEquals(e.message, "Invalid params");
+    assertEquals(
+      e.rpcError?.data[0],
+      `/driving_license: ${drivingLicenseSchema.errorMessage}`,
+    );
   },
   defaultContext,
 );
 
 it(
-  'Invalid operator_journey_id param',
+  "Invalid operator_journey_id param",
   error,
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.message, "Invalid params");
     assertObjectMatch(e.rpcError?.data, [
       `/operator_journey_id: ${operatorJourneyIdSchema.errorMessage}`,
       ': must match "then" schema',
@@ -115,59 +154,70 @@ it(
 );
 
 it(
-  'Invalid identity_key param',
+  "Invalid identity_key param",
   error,
-  { ...defaultLongPayload, datetime: 'bip' },
+  { ...defaultLongPayload, datetime: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertObjectMatch(e.rpcError?.data, [`/datetime: ${timestampSchema.errorMessage}`, ': must match "then" schema']);
+    assertEquals(e.message, "Invalid params");
+    assertObjectMatch(e.rpcError?.data, [
+      `/datetime: ${timestampSchema.errorMessage}`,
+      ': must match "then" schema',
+    ]);
   },
   defaultContext,
 );
 
 it(
-  'Invalid phone_trunc param',
+  "Invalid phone_trunc param",
   error,
-  { ...defaultLongPayload, phone_trunc: 'bip' },
+  { ...defaultLongPayload, phone_trunc: "bip" },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
-    assertObjectMatch(e.rpcError?.data, [`/phone_trunc: ${phoneTruncSchema.errorMessage}`, ': must match "then" schema']);
+    assertEquals(e.message, "Invalid params");
+    assertObjectMatch(e.rpcError?.data, [
+      `/phone_trunc: ${phoneTruncSchema.errorMessage}`,
+      ': must match "then" schema',
+    ]);
   },
   defaultContext,
 );
 
-it('Unauthorized user', error, defaultShortPayload, 'Unauthorized Error', {
+it("Unauthorized user", error, defaultShortPayload, "Unauthorized Error", {
   ...defaultContext,
   call: { user: {} },
 });
 
 it(
-  'Invalid datetime param',
+  "Invalid datetime param",
   error,
   { ...defaultLongPayload, datetime: new Date().toISOString() },
   (e: any, t) => {
-    assertEquals(e.message, 'Invalid params');
+    assertEquals(e.message, "Invalid params");
     assertEquals(e.rpcError?.data, `Date should be before 7 days from now`);
   },
   defaultContext,
 );
 
 it(
-  'Successful registration 1',
+  "Successful registration 1",
   success,
   defaultShortPayload,
   {
     journey_id: 1,
-    datetime: '2024-03-15T00:15:00.000Z',
+    datetime: "2024-03-15T00:15:00.000Z",
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
+      const signer = createSign("RSA-SHA512");
       signer.write(
-        ['89248032800012', 'short', defaultShortPayload.driving_license, '2024-03-15T00:15:00.000Z'].join('/'),
+        [
+          "89248032800012",
+          "short",
+          defaultShortPayload.driving_license,
+          "2024-03-15T00:15:00.000Z",
+        ].join("/"),
       );
       signer.end();
-      return signer.sign(private_key, 'base64');
+      return signer.sign(private_key, "base64");
     })(),
   },
   defaultContext,
@@ -177,25 +227,28 @@ it(
  * @deprecated [carpool_v2_migration]
  */
 it(
-  'Successful registration 2',
+  "Successful registration 2",
   success,
   {
     ...defaultShortPayload,
-    operator_journey_id: 'operator_journey_id-2',
-    last_name_trunc: 'DEF',
-    driving_license: '051227308990',
-    identity_key: '1'.repeat(64),
+    operator_journey_id: "operator_journey_id-2",
+    last_name_trunc: "DEF",
+    driving_license: "051227308990",
+    identity_key: "1".repeat(64),
   },
   {
     journey_id: 2,
-    datetime: '2024-03-16T00:15:00.000Z',
+    datetime: "2024-03-16T00:15:00.000Z",
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
-      signer.write(['89248032800012', 'short', '051227308990', '2024-03-16T00:15:00.000Z'].join('/'));
+      const signer = createSign("RSA-SHA512");
+      signer.write(
+        ["89248032800012", "short", "051227308990", "2024-03-16T00:15:00.000Z"]
+          .join("/"),
+      );
       signer.end();
-      return signer.sign(private_key, 'base64');
+      return signer.sign(private_key, "base64");
     })(),
   },
   defaultContext,
@@ -205,25 +258,28 @@ it(
  * @deprecated [carpool_v2_migration]
  */
 it(
-  'Successful registration 3',
+  "Successful registration 3",
   success,
   {
     ...defaultShortPayload,
-    operator_journey_id: 'operator_journey_id-3',
-    last_name_trunc: 'GHI',
-    driving_license: '051227308991',
-    identity_key: '2'.repeat(64),
+    operator_journey_id: "operator_journey_id-3",
+    last_name_trunc: "GHI",
+    driving_license: "051227308991",
+    identity_key: "2".repeat(64),
   },
   {
     journey_id: 3,
-    datetime: '2024-03-16T00:15:00.000Z',
+    datetime: "2024-03-16T00:15:00.000Z",
     status: CarpoolV1StatusEnum.Ok,
     token: (function (): string {
       const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
-      signer.write(['89248032800012', 'short', '051227308991', '2024-03-16T00:15:00.000Z'].join('/'));
+      const signer = createSign("RSA-SHA512");
+      signer.write(
+        ["89248032800012", "short", "051227308991", "2024-03-16T00:15:00.000Z"]
+          .join("/"),
+      );
       signer.end();
-      return signer.sign(private_key, 'base64');
+      return signer.sign(private_key, "base64");
     })(),
   },
   defaultContext,
@@ -232,45 +288,59 @@ it(
 /**
  * @deprecated [carpool_v2_migration]
  */
-it('Ensure deprecated carpool_id are properly inserted', async (t) => {
+it("Ensure deprecated carpool_id are properly inserted", async (t) => {
   const result = await t.context.db.connection.getClient().query<any>(`
     SELECT carpool_id, operator_id, operator_journey_id
     FROM cee.cee_applications
     ORDER BY operator_journey_id
   `);
   assertEquals(result.rowCount, 3);
-  assertObjectMatch(result.rows[0], { carpool_id: 1, operator_id: 1, operator_journey_id: 'operator_journey_id-1' });
-  assertObjectMatch(result.rows[1], { carpool_id: 3, operator_id: 1, operator_journey_id: 'operator_journey_id-2' });
-  assertObjectMatch(result.rows[2], { carpool_id: 5, operator_id: 1, operator_journey_id: 'operator_journey_id-3' });
+  assertObjectMatch(result.rows[0], {
+    carpool_id: 1,
+    operator_id: 1,
+    operator_journey_id: "operator_journey_id-1",
+  });
+  assertObjectMatch(result.rows[1], {
+    carpool_id: 3,
+    operator_id: 1,
+    operator_journey_id: "operator_journey_id-2",
+  });
+  assertObjectMatch(result.rows[2], {
+    carpool_id: 5,
+    operator_id: 1,
+    operator_journey_id: "operator_journey_id-3",
+  });
 });
 
 it(
-  'Conflict',
+  "Conflict",
   error,
-  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
+  { ...defaultShortPayload, operator_journey_id: "operator_journey_id-2" },
   (e: any, t) => {
-    assertEquals(e.message, 'Conflict');
-    assertObjectMatch(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
+    assertEquals(e.message, "Conflict");
+    assertObjectMatch(e.rpcError.data, {
+      datetime: "2024-03-15T00:15:00.000Z",
+    });
   },
   defaultContext,
 );
 
 it(
-  'Not found',
+  "Not found",
   error,
-  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
+  { ...defaultShortPayload, operator_journey_id: "operator_journey_id-wrong" },
   (e: any, t) => {
-    assertEquals(e.message, 'Not found');
+    assertEquals(e.message, "Not found");
   },
   defaultContext,
 );
 
-it('Should have register errors', async (t) => {
+it("Should have register errors", async (t) => {
   const result = await t.context.db.connection.getClient().query(`
     SELECT * FROM cee.cee_application_errors ORDER BY created_at
   `);
   assertEquals(result.rowCount, 3);
-  assertObjectMatch(result.rows[0], { error_type: 'date' });
-  assertObjectMatch(result.rows[1], { error_type: 'conflict' });
-  assertObjectMatch(result.rows[2], { error_type: 'non-eligible' });
+  assertObjectMatch(result.rows[0], { error_type: "date" });
+  assertObjectMatch(result.rows[1], { error_type: "conflict" });
+  assertObjectMatch(result.rows[2], { error_type: "non-eligible" });
 });

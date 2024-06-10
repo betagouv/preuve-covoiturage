@@ -6,11 +6,11 @@ import {
   copyFromContextMiddlewareBinding,
   environmentBlacklistMiddlewareBinding,
   environmentWhitelistMiddlewareBinding,
-  hasPermissionMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
-  validateDateMiddlewareBinding,
+  hasPermissionMiddlewareBinding,
   loggerMiddlewareBinding,
-} from './middlewares.ts';
+  validateDateMiddlewareBinding,
+} from "./middlewares.ts";
 
 export const bindings = [
   channelServiceBlacklistMiddlewareBinding,

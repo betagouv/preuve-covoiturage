@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -16,24 +16,36 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers/index.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './Pmgf2023.html.ts';
+} from "../helpers/index.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./Pmgf2023.html.ts";
 
 // Politique Pole Métropolitain du Genevois
 export const Pmgf2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'pmgf_2023';
-  protected operators = [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT];
-  protected operator_class = ['B', 'C'];
+  implements PolicyHandlerInterface {
+  static readonly id = "pmgf_2023";
+  protected operators = [
+    OperatorsEnum.BLABLACAR_DAILY,
+    OperatorsEnum.KAROS,
+    OperatorsEnum.KLAXIT,
+  ];
+  protected operator_class = ["B", "C"];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
+      [
+        "AFE1C47D-BF05-4FA9-9133-853D29797D09",
+        120_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "98B26189-C6FC-4DB1-AC1C-41F779C5B3C7",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
@@ -46,7 +58,8 @@ export const Pmgf2023: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
 
@@ -73,7 +86,7 @@ export const Pmgf2023: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

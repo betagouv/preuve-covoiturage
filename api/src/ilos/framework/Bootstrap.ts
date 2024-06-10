@@ -1,19 +1,23 @@
-import { process, pino, path, fs, isMainThread } from '@/deps.ts';
+import { fs, isMainThread, path, pino, process } from "@/deps.ts";
 
 import {
-  kernel,
   BootstrapType,
-  TransportInterface,
+  kernel,
   KernelInterface,
   NewableType,
   ServiceContainerInterface,
-} from '@/ilos/common/index.ts';
-import { catchErrors, registerGracefulShutdown, interceptConsole } from '@/ilos/tools/index.ts';
-import { CliTransport } from '@/ilos/cli/index.ts';
-import { HttpTransport } from '@/ilos/transport-http/index.ts';
-import { QueueTransport } from '@/ilos/transport-redis/index.ts';
+  TransportInterface,
+} from "@/ilos/common/index.ts";
+import {
+  catchErrors,
+  interceptConsole,
+  registerGracefulShutdown,
+} from "@/ilos/tools/index.ts";
+import { CliTransport } from "@/ilos/cli/index.ts";
+import { HttpTransport } from "@/ilos/transport-http/index.ts";
+import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 
-import { Kernel } from './Kernel.ts';
+import { Kernel } from "./Kernel.ts";
 
 const defaultBootstrapObject: BootstrapType = {
   kernel: () => Kernel,
@@ -33,7 +37,10 @@ export class Bootstrap {
   };
 
   constructor(currentBootstrapObject: BootstrapType) {
-    const bootstrapObject = { ...defaultBootstrapObject, ...currentBootstrapObject };
+    const bootstrapObject = {
+      ...defaultBootstrapObject,
+      ...currentBootstrapObject,
+    };
     this.kernel = bootstrapObject.kernel;
     this.serviceProviders = bootstrapObject.serviceProviders;
     this.transports = bootstrapObject.transport;
@@ -41,7 +48,7 @@ export class Bootstrap {
 
   static getWorkingPath(): string {
     const basePath = process.cwd();
-    if (!('npm_package_config_workingDir' in process.env)) {
+    if (!("npm_package_config_workingDir" in process.env)) {
       return basePath;
     }
     return path.resolve(basePath, process.env.npm_package_config_workingDir);
@@ -51,7 +58,10 @@ export class Bootstrap {
     process.env.APP_ROOT_PATH = process.cwd();
     const workingPath = Bootstrap.getWorkingPath();
     // process.chdir is unavailable on child thread
-    if (fs.existsSync(workingPath) && workingPath !== process.cwd() && isMainThread) {
+    if (
+      fs.existsSync(workingPath) && workingPath !== process.cwd() &&
+      isMainThread
+    ) {
       process.chdir(workingPath);
     }
     process.env.APP_WORKING_PATH = process.cwd();
@@ -59,7 +69,9 @@ export class Bootstrap {
 
   static setEnv(): void {
     process.env.APP_ENV =
-      'NODE_ENV' in process.env && process.env.NODE_ENV !== undefined ? process.env.NODE_ENV : 'local';
+      "NODE_ENV" in process.env && process.env.NODE_ENV !== undefined
+        ? process.env.NODE_ENV
+        : "local";
   }
 
   static setEnvFromPackage(): void {
@@ -68,7 +80,7 @@ export class Bootstrap {
       .filter((key: string) => /npm_package_config_app/.test(key))
       .forEach((key: string) => {
         const oldKey = key;
-        const newKey = key.replace('npm_package_config_', '').toUpperCase();
+        const newKey = key.replace("npm_package_config_", "").toUpperCase();
         if (!(newKey in process.env)) {
           process.env[newKey] = process.env[oldKey];
         }
@@ -81,11 +93,11 @@ export class Bootstrap {
    *
    * Level: 	trace 	debug 	info 	warn 	error 	fatal 	silent
    * Value: 	10 	    20 	    30 	  40 	  50 	    60 	    Infinity
-   *
    */
   static interceptConsole(): void {
     const logger = pino.default({
-      level: process.env.APP_LOG_LEVEL ?? (process.env.NODE_ENV !== 'production' ? 'debug' : 'error'),
+      level: process.env.APP_LOG_LEVEL ??
+        (process.env.NODE_ENV !== "production" ? "debug" : "error"),
     });
 
     interceptConsole(logger);
@@ -93,8 +105,9 @@ export class Bootstrap {
 
   static getBootstrapFilePath(): string {
     const basePath = Bootstrap.getWorkingPath();
-    const bootstrapFile =
-      'npm_package_config_bootstrap' in process.env ? process.env.npm_package_config_bootstrap : './bootstrap.js';
+    const bootstrapFile = "npm_package_config_bootstrap" in process.env
+      ? process.env.npm_package_config_bootstrap
+      : "./bootstrap.js";
 
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
     if (!fs.existsSync(bootstrapPath)) {
@@ -108,7 +121,9 @@ export class Bootstrap {
     return new Bootstrap(bootstrapObject);
   }
 
-  static async createFromPath(bootstrapPath: string = Bootstrap.getBootstrapFilePath()): Promise<Bootstrap> {
+  static async createFromPath(
+    bootstrapPath: string = Bootstrap.getBootstrapFilePath(),
+  ): Promise<Bootstrap> {
     if (bootstrapPath) {
       const currentBootstrap = await import(bootstrapPath);
       const exportName = path.parse(bootstrapPath).name;
@@ -121,7 +136,10 @@ export class Bootstrap {
   }
 
   async start(
-    command: string | ((kernel: KernelInterface) => TransportInterface) | undefined,
+    command:
+      | string
+      | ((kernel: KernelInterface) => TransportInterface)
+      | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
     let options = [...opts];
@@ -129,50 +147,67 @@ export class Bootstrap {
     const kernelConstructor = this.kernel();
     let originalServiceProviders = [];
 
-    if (Reflect.hasMetadata(Symbol.for('extension:children'), kernelConstructor)) {
-      originalServiceProviders = Reflect.getMetadata(Symbol.for('extension:children'), kernelConstructor);
+    if (
+      Reflect.hasMetadata(Symbol.for("extension:children"), kernelConstructor)
+    ) {
+      originalServiceProviders = Reflect.getMetadata(
+        Symbol.for("extension:children"),
+        kernelConstructor,
+      );
     }
 
-    const serviceProviders = [...originalServiceProviders, ...this.serviceProviders];
+    const serviceProviders = [
+      ...originalServiceProviders,
+      ...this.serviceProviders,
+    ];
 
     @kernel({
       children: serviceProviders,
     })
     class CustomKernel extends kernelConstructor {}
 
-    console.debug('Kernel: starting');
+    console.debug("Kernel: starting");
     const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
-    console.debug('Kernel: started');
+    console.debug("Kernel: started");
 
     let transport: TransportInterface;
 
-    if (typeof command === 'function') {
+    if (typeof command === "function") {
       transport = command(kernelInstance);
-    } else if (command !== 'cli' && command in this.transports) {
+    } else if (command !== "cli" && command in this.transports) {
       transport = this.transports[command](kernelInstance);
     } else {
       transport = this.transports.cli(kernelInstance);
-      options = ['', '', !command ? '--help' : command, ...opts];
+      options = ["", "", !command ? "--help" : command, ...opts];
     }
 
     this.registerShutdownHook(kernelInstance, transport);
 
-    console.debug('Transport: starting');
+    console.debug("Transport: starting");
     await transport.up(options);
-    console.debug('Transport: started');
+    console.debug("Transport: started");
 
     return transport;
   }
 
-  protected registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
-    catchErrors([async () => transport.down(), async () => kernelInstance.shutdown()]);
-    registerGracefulShutdown([async () => transport.down(), async () => kernelInstance.shutdown()]);
+  protected registerShutdownHook(
+    kernelInstance: KernelInterface,
+    transport: TransportInterface,
+  ) {
+    catchErrors([
+      async () => transport.down(),
+      async () => kernelInstance.shutdown(),
+    ]);
+    registerGracefulShutdown([
+      async () => transport.down(),
+      async () => kernelInstance.shutdown(),
+    ]);
   }
 
   async boot(command: string | undefined, ...opts: any[]) {
     Bootstrap.interceptConsole();
-    console.info('Bootstraping app...');
+    console.info("Bootstraping app...");
 
     Bootstrap.setPaths();
     Bootstrap.setEnv();

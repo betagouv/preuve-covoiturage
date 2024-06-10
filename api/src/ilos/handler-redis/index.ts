@@ -1,2 +1,2 @@
-export { QueueHandler } from './QueueHandler.ts';
-export { queueHandlerFactory } from './helpers/queueHandlerFactory.ts';
+export { QueueHandler } from "./QueueHandler.ts";
+export { queueHandlerFactory } from "./helpers/queueHandlerFactory.ts";

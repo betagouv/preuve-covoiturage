@@ -1,17 +1,20 @@
-import { MetadataRegistryInterface, SerializedMetadataVariableDefinitionInterface } from '../index.ts';
+import {
+  MetadataRegistryInterface,
+  SerializedMetadataVariableDefinitionInterface,
+} from "../index.ts";
 
 export enum IncentiveStateEnum {
-  Regular = 'regular',
-  Null = 'null',
-  Disabled = 'disabled',
+  Regular = "regular",
+  Null = "null",
+  Disabled = "disabled",
 }
 
 export enum IncentiveStatusEnum {
-  Draft = 'draft',
-  Pending = 'pending',
-  Validated = 'validated',
-  Warning = 'warning',
-  Error = 'error',
+  Draft = "draft",
+  Pending = "pending",
+  Validated = "validated",
+  Warning = "warning",
+  Error = "error",
 }
 
 export interface SerializedIncentiveInterface<T = number> {

@@ -1,8 +1,11 @@
-import { DefaultNotification, DefaultTemplateData } from '@/pdc/providers/notification/index.ts';
+import {
+  DefaultNotification,
+  DefaultTemplateData,
+} from "@/pdc/providers/notification/index.ts";
 
 const defaultData: Partial<DefaultTemplateData> = {
-  hero_alt: 'Export des données',
-  hero_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/x5zwm/vkxn4.png',
+  hero_alt: "Export des données",
+  hero_image_src: "https://x0zwu.mjt.lu/tplimg/x0zwu/b/x5zwm/vkxn4.png",
   title: "Erreur d'export des données",
   preview: "Une erreur s'est produite lors de l'export des données.",
   message_html: `

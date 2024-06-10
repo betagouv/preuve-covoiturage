@@ -1,19 +1,32 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { httpMacro, HttpMacroContext } from '@/pdc/providers/test/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { httpMacro, HttpMacroContext } from "@/pdc/providers/test/index.ts";
 
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { ServiceProvider } from './ServiceProvider.ts';
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { ServiceProvider } from "./ServiceProvider.ts";
 
-const name = 'Toto';
-const territoryGroupTable = 'territory.territory_group';
-const territorySelectorTable = 'territory.territory_group_selector';
+const name = "Toto";
+const territoryGroupTable = "territory.territory_group";
+const territorySelectorTable = "territory.territory_group_selector";
 
 interface TestContext extends HttpMacroContext {
   operator_id: number;
 }
 
 function getDb(context: TestContext): PostgresConnection {
-  return context.transport.getKernel().getContainer().get(ServiceProvider).getContainer().get(PostgresConnection);
+  return context.transport.getKernel().getContainer().get(ServiceProvider)
+    .getContainer().get(PostgresConnection);
 }
 
 const test = anyTest as TestFn<TestContext>;
@@ -28,11 +41,13 @@ beforeAll(async (t) => {
 });
 
 test.after.always(async (t) => {
-  for (const text of [
-    `DELETE FROM ${territorySelectorTable} WHERE territory_group_id IN 
+  for (
+    const text of [
+      `DELETE FROM ${territorySelectorTable} WHERE territory_group_id IN 
       (SELECT _id FROM ${territoryGroupTable} WHERE name = $1)`,
-    `DELETE FROM ${territoryGroupTable} WHERE name = $1`,
-  ]) {
+      `DELETE FROM ${territoryGroupTable} WHERE name = $1`,
+    ]
+  ) {
     await getDb(t.context)
       .getClient()
       .query({
@@ -44,28 +59,28 @@ test.after.always(async (t) => {
   await after({ transport, supertest, request });
 });
 
-it('Create a territory', async (t) => {
+it("Create a territory", async (t) => {
   const response = await t.context.request(
-    'territory:create',
+    "territory:create",
     {
       name,
-      shortname: 'toto',
+      shortname: "toto",
       company_id: 1,
       contacts: {},
       address: {
-        street: '1500 BD LEPIC',
-        postcode: '73100',
-        city: 'Aix Les Bains',
-        country: 'France',
+        street: "1500 BD LEPIC",
+        postcode: "73100",
+        city: "Aix Les Bains",
+        country: "France",
       },
       selector: {
-        com: ['91477', '91471'],
+        com: ["91477", "91471"],
       },
     },
     {
       call: {
         user: {
-          permissions: ['registry.territory.create'],
+          permissions: ["registry.territory.create"],
         },
       },
     },
@@ -85,7 +100,7 @@ it('Create a territory', async (t) => {
   assertEquals(dbResult.rows[0].name, name);
 });
 
-it('Find a territory', async (t) => {
+it("Find a territory", async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -100,20 +115,20 @@ it('Find a territory', async (t) => {
   const _id = dbResult.rows[0]._id;
 
   const response = await t.context.request(
-    'territory:find',
+    "territory:find",
     { _id },
     {
       call: {
         user: {
-          permissions: ['common.territory.find'],
+          permissions: ["common.territory.find"],
         },
       },
     },
   );
-  assertEquals(response.result.name, 'Toto');
+  assertEquals(response.result.name, "Toto");
 });
 
-it('Update a territory', async (t) => {
+it("Update a territory", async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -128,12 +143,12 @@ it('Update a territory', async (t) => {
   const _id = dbResult.rows[0]._id;
 
   const initResponse = await t.context.request(
-    'territory:find',
+    "territory:find",
     { _id },
     {
       call: {
         user: {
-          permissions: ['common.territory.find'],
+          permissions: ["common.territory.find"],
         },
       },
     },
@@ -143,13 +158,13 @@ it('Update a territory', async (t) => {
   const updateData = {
     ...initResponse.result,
     selector: {
-      com: ['91471', '91377'],
+      com: ["91471", "91377"],
     },
   };
-  const response = await t.context.request('territory:update', updateData, {
+  const response = await t.context.request("territory:update", updateData, {
     call: {
       user: {
-        permissions: ['registry.territory.update'],
+        permissions: ["registry.territory.update"],
       },
     },
   });
@@ -157,12 +172,12 @@ it('Update a territory', async (t) => {
   assertEquals(response.result.selector.com.length, 2);
 
   const finalResponse = await t.context.request(
-    'territory:find',
+    "territory:find",
     { _id },
     {
       call: {
         user: {
-          permissions: ['common.territory.find'],
+          permissions: ["common.territory.find"],
         },
       },
     },
@@ -172,7 +187,7 @@ it('Update a territory', async (t) => {
   assertObjectMatch(t1, t2);
 });
 
-it('Patch contact on a territory', async (t) => {
+it("Patch contact on a territory", async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -186,29 +201,29 @@ it('Patch contact on a territory', async (t) => {
   const _id = dbResult.rows[0]._id;
 
   const response = await t.context.request(
-    'territory:patchContacts',
+    "territory:patchContacts",
     {
       _id: _id - 1,
       patch: {
         technical: {
-          firstname: 'Nicolas',
+          firstname: "Nicolas",
         },
       },
     },
     {
       call: {
         user: {
-          permissions: ['territory.territory.patchContacts'],
+          permissions: ["territory.territory.patchContacts"],
           territory_id: _id,
         },
       },
     },
   );
   assertEquals(response.result._id, _id);
-  assertEquals(response.result.contacts.technical.firstname, 'Nicolas');
+  assertEquals(response.result.contacts.technical.firstname, "Nicolas");
 });
 
-it('Get authorized codes', async (t) => {
+it("Get authorized codes", async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -229,62 +244,62 @@ it('Get authorized codes', async (t) => {
       (territory_group_id, selector_type, selector_value) VALUES
       ($1, $2, $3)
       `,
-      values: [_id, 'com', '91477'],
+      values: [_id, "com", "91477"],
     });
 
   const response = await t.context.request(
-    'territory:getAuthorizedCodes',
+    "territory:getAuthorizedCodes",
     {
       _id,
     },
     {
       call: {
         user: {
-          permissions: ['common.territory.read'],
+          permissions: ["common.territory.read"],
         },
       },
     },
   );
   assert(Array.isArray(response.result.com));
   assert(response.result.com.length === 3);
-  assertObjectMatch(response.result.com.sort(), ['91377', '91471', '91477']);
+  assertObjectMatch(response.result.com.sort(), ["91377", "91471", "91477"]);
 });
 
-it('Lists all territories', async (t) => {
+it("Lists all territories", async (t) => {
   const response = await t.context.request(
-    'territory:list',
+    "territory:list",
     {
       search: name,
     },
     {
       call: {
         user: {
-          permissions: ['common.territory.list'],
+          permissions: ["common.territory.list"],
         },
       },
     },
   );
-  assert('data' in response.result);
+  assert("data" in response.result);
   assert(Array.isArray(response.result.data));
   const territory = response.result.data.filter((r) => r.name === name);
   assertEquals(territory.length, 1);
 });
 
-it('Lists all geo zones', async (t) => {
+it("Lists all geo zones", async (t) => {
   const response = await t.context.request(
-    'territory:listGeo',
+    "territory:listGeo",
     {
-      search: 'Massy',
+      search: "Massy",
     },
     {
       call: {
         user: {
-          permissions: ['common.territory.list'],
+          permissions: ["common.territory.list"],
         },
       },
     },
   );
-  assert('data' in response.result);
+  assert("data" in response.result);
   assert(Array.isArray(response.result.data));
   assertEquals(response.result.data.length, 1);
   assertEquals(response.result.meta.pagination.total, 1);

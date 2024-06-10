@@ -1,39 +1,46 @@
-import { coerceDate, coerceInt } from '@/ilos/cli/index.ts';
-import { CommandInterface, CommandOptionType, command } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+} from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   CarpoolGeoRepository,
   CarpoolRepository,
   CarpoolRequestRepository,
   CarpoolStatusRepository,
-} from '@/pdc/providers/carpool/index.ts';
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
+} from "@/pdc/providers/carpool/index.ts";
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/index.ts";
 import { date } from "@/deps.ts";
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
-  static readonly signature: string = 'acquisition:migrate';
-  static readonly description: string = 'Migrate acquisition to v2';
+  static readonly signature: string = "acquisition:migrate";
+  static readonly description: string = "Migrate acquisition to v2";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-l, --loop',
-      description: 'Process acquisition while remaining',
+      signature: "-l, --loop",
+      description: "Process acquisition while remaining",
       default: false,
     },
     {
-      signature: '-s, --size <size>',
-      description: 'Batch size',
+      signature: "-s, --size <size>",
+      description: "Batch size",
       coerce: coerceInt,
       default: 100,
     },
     {
-      signature: '-a, --after <after>',
-      description: 'Start date',
+      signature: "-a, --after <after>",
+      description: "Start date",
       coerce: coerceDate,
     },
     {
-      signature: '-u, --until <until>',
-      description: 'end date',
+      signature: "-u, --until <until>",
+      description: "end date",
       coerce: coerceDate,
     },
   ];
@@ -62,12 +69,16 @@ export class AcquisitionMigrateCommand implements CommandInterface {
     } while (shouldContinue && options.loop);
 
     console.timeEnd(timerMessage);
-    return 'done';
+    return "done";
   }
 
-  protected async migration(batchSize = 100, after?: Date, until?: Date): Promise<number> {
+  protected async migration(
+    batchSize = 100,
+    after?: Date,
+    until?: Date,
+  ): Promise<number> {
     const conn = await this.pg.getClient().connect();
-    await conn.query<any>('BEGIN');
+    await conn.query<any>("BEGIN");
     try {
       const result = await conn.query<any>({
         text: `
@@ -77,7 +88,9 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           LEFT JOIN carpool_v2.carpools cv2
             ON (aa.journey_id = cv2.operator_journey_id AND aa.operator_id = cv2.operator_id)
           WHERE
-            ${after && until ? 'aa.created_at >= $2 AND aa.created_at < $3 AND' : ''}
+            ${
+          after && until ? "aa.created_at >= $2 AND aa.created_at < $3 AND" : ""
+        }
             cv2._id IS NULL AND aa.status = 'ok'
           ORDER BY aa.created_at ASC
           LIMIT $1
@@ -117,8 +130,16 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           values: [acquisition._id],
         });
 
-        const { carpool, passenger_identity, driver_identity, driver_revenue, start_lat, start_lon, end_lat, end_lon } =
-          carpoolResult.rows[0] || {};
+        const {
+          carpool,
+          passenger_identity,
+          driver_identity,
+          driver_revenue,
+          start_lat,
+          start_lon,
+          end_lat,
+          end_lon,
+        } = carpoolResult.rows[0] || {};
         if (!carpool || !passenger_identity || !driver_identity) {
           continue;
         }
@@ -134,7 +155,10 @@ export class AcquisitionMigrateCommand implements CommandInterface {
               lat: start_lat,
               lon: start_lon,
             },
-            end_datetime: date.addSeconds(new Date(carpool.datetime), carpool.duration || carpool.meta.calc_duration || 0),
+            end_datetime: date.addSeconds(
+              new Date(carpool.datetime),
+              carpool.duration || carpool.meta.calc_duration || 0,
+            ),
             end_position: {
               lat: end_lat,
               lon: end_lon,
@@ -153,12 +177,17 @@ export class AcquisitionMigrateCommand implements CommandInterface {
             passenger_phone: passenger_identity.phone,
             passenger_phone_trunc: passenger_identity.phone_trunc,
             passenger_travelpass_name: passenger_identity.travel_pass_name,
-            passenger_travelpass_user_id: passenger_identity.travel_pass_user_id,
+            passenger_travelpass_user_id:
+              passenger_identity.travel_pass_user_id,
             passenger_over_18: passenger_identity.over_18,
             passenger_seats: carpool.seats || 1,
             passenger_contribution: carpool.payment || 0,
             passenger_payments: carpool.meta?.payments || [],
-            incentives: incentives.map((i) => ({ index: i.idx, siret: i.siret, amount: i.amount })),
+            incentives: incentives.map((i) => ({
+              index: i.idx,
+              siret: i.siret,
+              amount: i.amount,
+            })),
           },
           conn,
         );
@@ -188,16 +217,16 @@ export class AcquisitionMigrateCommand implements CommandInterface {
         let fraudStatus: CarpoolFraudStatusEnum = CarpoolFraudStatusEnum.Passed;
 
         switch (carpool.status) {
-          case 'ok':
+          case "ok":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
             break;
-          case 'expired':
+          case "expired":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Expired;
             break;
-          case 'canceled':
+          case "canceled":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Canceled;
             break;
-          case 'fraudcheck_error':
+          case "fraudcheck_error":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
             fraudStatus = CarpoolFraudStatusEnum.Failed;
             break;
@@ -206,14 +235,19 @@ export class AcquisitionMigrateCommand implements CommandInterface {
             break;
         }
 
-        await this.status.setStatus(newCarpool._id, 'acquisition', acquisitionStatus, conn);
-        await this.status.setStatus(newCarpool._id, 'fraud', fraudStatus, conn);
+        await this.status.setStatus(
+          newCarpool._id,
+          "acquisition",
+          acquisitionStatus,
+          conn,
+        );
+        await this.status.setStatus(newCarpool._id, "fraud", fraudStatus, conn);
       }
-      await conn.query<any>('COMMIT');
+      await conn.query<any>("COMMIT");
       return result.rows.length;
     } catch (e) {
       console.error(e);
-      await conn.query<any>('ROLLBACK');
+      await conn.query<any>("ROLLBACK");
     } finally {
       conn.release();
     }

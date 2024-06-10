@@ -1,18 +1,30 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { v4 } from '@/deps.ts';
-import { OperatorsEnum } from '../../interfaces/index.ts';
-import { makeProcessHelper } from '../tests/macro.ts';
-import { SMTC2024Passenger as Handler } from './SMTC2024Passenger.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { SMTC2024Passenger as Handler } from "./SMTC2024Passenger.ts";
 
 const defaultPosition = {
-  arr: '74278',
-  com: '74278',
-  aom: '200033116',
-  epci: '200033116',
-  dep: '74',
-  reg: '84',
-  country: 'XXXXX',
-  reseau: '142',
+  arr: "74278",
+  com: "74278",
+  aom: "200033116",
+  epci: "200033116",
+  dep: "74",
+  reg: "84",
+  country: "XXXXX",
+  reseau: "142",
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -23,11 +35,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.MOV_ICI,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2024-05-15'),
+  datetime: new Date("2024-05-15"),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -45,7 +57,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 it(
-  'should work with exclusion',
+  "should work with exclusion",
   process,
   {
     policy: { handler: Handler.id },
@@ -53,7 +65,7 @@ it(
       { operator_uuid: OperatorsEnum.MOBICOOP },
       { distance: 100 },
       { distance: 30_001 },
-      { operator_class: 'A' },
+      { operator_class: "A" },
     ],
     meta: [],
   },
@@ -61,14 +73,14 @@ it(
 );
 
 it(
-  'should work based on distance and seats',
+  "should work based on distance and seats",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, passenger_identity_key: 'one' },
-      { distance: 5_000, seats: 2, passenger_identity_key: 'one' },
-      { distance: 30_000, passenger_identity_key: 'two' },
+      { distance: 5_000, passenger_identity_key: "one" },
+      { distance: 5_000, seats: 2, passenger_identity_key: "one" },
+      { distance: 30_000, passenger_identity_key: "two" },
     ],
     meta: [],
   },
@@ -76,7 +88,7 @@ it(
     incentive: [50, 100, 300],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 450,
       },
     ],
@@ -84,15 +96,15 @@ it(
 );
 
 it(
-  'should apply daily limits',
+  "should apply daily limits",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, passenger_identity_key: 'one' },
-      { distance: 5_000, passenger_identity_key: 'one' },
-      { distance: 5_000, passenger_identity_key: 'one' },
-      { distance: 5_000, passenger_identity_key: 'one' },
+      { distance: 5_000, passenger_identity_key: "one" },
+      { distance: 5_000, passenger_identity_key: "one" },
+      { distance: 5_000, passenger_identity_key: "one" },
+      { distance: 5_000, passenger_identity_key: "one" },
     ],
   },
   {

@@ -1,9 +1,11 @@
-import { ExtensionInterface } from './ExtensionInterface.ts';
-import { ContainerInterface, IdentifierType } from '../container/index.ts';
-import { NewableType } from '../shared/index.ts';
+import { ExtensionInterface } from "./ExtensionInterface.ts";
+import { ContainerInterface, IdentifierType } from "../container/index.ts";
+import { NewableType } from "../shared/index.ts";
 
 // export type ServiceContainerConstructorInterface<T = any> = new (parent?: ServiceContainerInterface) => T;
-export type ServiceContainerConstructorInterface<T = any> = new (parent?: ContainerInterface) => T;
+export type ServiceContainerConstructorInterface<T = any> = new (
+  parent?: ContainerInterface,
+) => T;
 
 export interface ServiceContainerInterface {
   readonly extensions: NewableType<ExtensionInterface>[];
@@ -22,7 +24,8 @@ export interface ServiceContainerInterface {
   overrideBinding(identifier: IdentifierType, ctor: NewableType<any>): void;
 }
 
-export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
+export abstract class ServiceContainerInterfaceResolver
+  implements ServiceContainerInterface {
   readonly extensions: NewableType<ExtensionInterface>[] = [];
 
   registerHooks(hooker: object, identifier?: IdentifierType): void {

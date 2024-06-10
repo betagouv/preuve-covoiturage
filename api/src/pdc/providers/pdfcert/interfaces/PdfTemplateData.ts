@@ -1,4 +1,4 @@
-import { CertificateMetaInterface } from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
+import { CertificateMetaInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
 
 export interface PdfTemplateData {
   title: string;

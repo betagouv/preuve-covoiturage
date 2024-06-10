@@ -1,10 +1,17 @@
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { SerializedPolicyInterface } from '../index.ts';
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { SerializedPolicyInterface } from "../index.ts";
 
 export abstract class PolicyRepositoryProviderInterfaceResolver {
-  abstract find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined>;
-  abstract create(data: Omit<SerializedPolicyInterface, '_id'>): Promise<SerializedPolicyInterface>;
-  abstract patch(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface>;
+  abstract find(
+    id: number,
+    territoryId?: number,
+  ): Promise<SerializedPolicyInterface | undefined>;
+  abstract create(
+    data: Omit<SerializedPolicyInterface, "_id">,
+  ): Promise<SerializedPolicyInterface>;
+  abstract patch(
+    data: SerializedPolicyInterface,
+  ): Promise<SerializedPolicyInterface>;
   abstract delete(id: number): Promise<void>;
   abstract findWhere(search: {
     _id?: number;

@@ -1,17 +1,17 @@
-import { FileTypeEnum } from '../../interfaces/index.ts';
+import { FileTypeEnum } from "../../interfaces/index.ts";
 
 export function getFileExtensions(filetype: FileTypeEnum): string[] {
   switch (filetype) {
     case FileTypeEnum.Csv:
-      return ['.csv'];
+      return [".csv"];
     case FileTypeEnum.Ods:
-      return ['.ods'];
+      return [".ods"];
     case FileTypeEnum.Xls:
-      return ['.xls', '.xlsx'];
+      return [".xls", ".xlsx"];
     case FileTypeEnum.Geojson:
-      return ['.tson', '.geojson'];
+      return [".tson", ".geojson"];
     case FileTypeEnum.Shp:
-      return ['.shp'];
+      return [".shp"];
     default:
       throw new Error(`Unknown file type ${filetype}`);
   }

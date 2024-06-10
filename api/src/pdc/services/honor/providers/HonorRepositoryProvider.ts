@@ -1,15 +1,15 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
   DataSetInterface,
   ParamsInterface as StatsParamsInterface,
   ResultInterface as StatsResultInterface,
-} from '@/shared/honor/stats.contract.ts';
+} from "@/shared/honor/stats.contract.ts";
 
 type StatsResponseRow = {
   day: string | null;
-  type: 'public' | 'limited' | null;
+  type: "public" | "limited" | null;
   total: number;
 };
 
@@ -18,13 +18,14 @@ export interface HonorRepositoryInterface {
   save(type: string, employer: string): Promise<void>;
 }
 
-export abstract class HonorRepositoryInterfaceResolver implements HonorRepositoryInterface {
+export abstract class HonorRepositoryInterfaceResolver
+  implements HonorRepositoryInterface {
   async stats(params: StatsParamsInterface): Promise<StatsResultInterface> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async save(type: string, employer: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 }
 
@@ -32,7 +33,7 @@ export abstract class HonorRepositoryInterfaceResolver implements HonorRepositor
   identifier: HonorRepositoryInterfaceResolver,
 })
 export class HonorRepositoryProvider implements HonorRepositoryInterface {
-  private readonly table = 'honor.tracking';
+  private readonly table = "honor.tracking";
 
   constructor(private pg: PostgresConnection) {}
 
@@ -40,8 +41,9 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
     // substring from 11 for days
     // substring from 8 for months
     // TODO switch from days to months when we have enough data (starts 10/2020)
-    const response: { rowCount: number; rows: StatsResponseRow[] } = await this.pg.getClient().query({
-      text: `
+    const response: { rowCount: number; rows: StatsResponseRow[] } = await this
+      .pg.getClient().query({
+        text: `
         SELECT
           to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day,
           type,
@@ -50,15 +52,15 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
         GROUP BY day, type
         ORDER BY day, type
       `,
-      values: [params.tz || 'Europe/Paris'],
-    });
+        values: [params.tz || "Europe/Paris"],
+      });
 
     return this.statsConvert(response.rowCount ? response.rows : []);
   }
 
   async save(type: string, employer: string): Promise<void> {
     await this.pg.getClient().query({
-      text: 'INSERT INTO honor.tracking (type, employer) VALUES ($1, $2);',
+      text: "INSERT INTO honor.tracking (type, employer) VALUES ($1, $2);",
       values: [type, employer],
     });
   }
@@ -68,15 +70,19 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
    * ChartJS library
    */
   private statsConvert(rows: StatsResponseRow[]): StatsResultInterface {
-    const count: { total: number; public: number; limited: number } = { total: 0, public: 0, limited: 0 };
+    const count: { total: number; public: number; limited: number } = {
+      total: 0,
+      public: 0,
+      limited: 0,
+    };
     const labels: string[] = [];
     const datasets: DataSetInterface[] = [
       {
-        label: 'Public',
+        label: "Public",
         data: [],
       },
       {
-        label: 'Limited',
+        label: "Limited",
         data: [],
       },
     ];
@@ -91,7 +97,7 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
 
       // set the public/limited values if exists
       const idx = labels.indexOf(row.day);
-      datasets[row.type === 'public' ? 0 : 1].data[idx] = row.total;
+      datasets[row.type === "public" ? 0 : 1].data[idx] = row.total;
       count[row.type] += row.total;
     });
 

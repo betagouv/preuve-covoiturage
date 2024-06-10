@@ -1,16 +1,19 @@
-import { IgnDataset, TransformationParamsInterface } from '../../common/IgnDataset.ts';
-import { StaticAbstractDataset } from '../../../../interfaces/index.ts';
+import {
+  IgnDataset,
+  TransformationParamsInterface,
+} from "../../common/IgnDataset.ts";
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2023 extends IgnDataset {
-  static producer = 'ign';
-  static dataset = 'ae';
+  static producer = "ign";
+  static dataset = "ae";
   static year = 2023;
-  static table = 'ign_ae_2023';
+  static table = "ign_ae_2023";
 
   readonly rows: Map<string, [string, string]> = new Map([
-    ['arr', ['INSEE_ARM', 'varchar']],
-    ['com', ['INSEE_COM', 'varchar']],
-    ['pop', ['POPULATION', 'integer']],
+    ["arr", ["INSEE_ARM", "varchar"]],
+    ["com", ["INSEE_COM", "varchar"]],
+    ["pop", ["POPULATION", "integer"]],
   ]);
 
   readonly beforeSql: string = `
@@ -30,27 +33,37 @@ export class IgnAe2023 extends IgnDataset {
   `;
   static url =
     // eslint-disable-next-line max-len
-    'https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_WGS84G_PACK_2023-05-04$ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/file/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z';
+    "https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_WGS84G_PACK_2023-05-04$ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/file/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z";
 
-  readonly transformations: Array<[string, Partial<TransformationParamsInterface>]> = [
-    ['SHP_WGS84G_FRA/COMMUNE', { key: 'geom' }],
-    ['SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL', { key: 'geom' }],
+  readonly transformations: Array<
+    [string, Partial<TransformationParamsInterface>]
+  > = [
+    ["SHP_WGS84G_FRA/COMMUNE", { key: "geom" }],
+    ["SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL", { key: "geom" }],
     [
-      'SHP_WGS84G_FRA/COMMUNE',
+      "SHP_WGS84G_FRA/COMMUNE",
       {
-        key: 'geom_simple',
-        simplify: ['-simplify 60% keep-shapes', '-simplify 50% keep-shapes', '-simplify 40% keep-shapes'],
+        key: "geom_simple",
+        simplify: [
+          "-simplify 60% keep-shapes",
+          "-simplify 50% keep-shapes",
+          "-simplify 40% keep-shapes",
+        ],
       },
     ],
     [
-      'SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL',
+      "SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL",
       {
-        key: 'geom_simple',
-        simplify: ['-simplify 60% keep-shapes', '-simplify 50% keep-shapes', '-simplify 40% keep-shapes'],
+        key: "geom_simple",
+        simplify: [
+          "-simplify 60% keep-shapes",
+          "-simplify 50% keep-shapes",
+          "-simplify 40% keep-shapes",
+        ],
       },
     ],
-    ['SHP_WGS84G_FRA/CHEF_LIEU_CARTO', { key: 'centroid' }],
-    ['SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL', { key: 'centroid' }],
+    ["SHP_WGS84G_FRA/CHEF_LIEU_CARTO", { key: "centroid" }],
+    ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
   ];
 
   readonly importSql = `

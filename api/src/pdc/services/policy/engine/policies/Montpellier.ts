@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -16,35 +16,56 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { LimitTargetEnum } from '../helpers/limits.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './Montpellier.html.ts';
+} from "../helpers/index.ts";
+import { LimitTargetEnum } from "../helpers/limits.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./Montpellier.html.ts";
 
 /* eslint-disable-next-line */
-export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = 'montpellier_2022';
+export const Montpellier: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface {
+  static readonly id = "montpellier_2022";
   protected operators = [OperatorsEnum.KLAXIT];
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    {
+      start: 2_000,
+      end: 10_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100),
+    },
     {
       start: 10_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
     },
   ];
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount],
+      [
+        "56042464-852C-95B8-2009-8DD4808C9370",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
+        150_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "99911EAF-89AB-C346-DDD5-BD2C7704F935",
+        max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -64,7 +85,7 @@ export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractP
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

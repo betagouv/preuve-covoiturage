@@ -1,12 +1,12 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
-  protected fn = 'geo.get_latest_by_point';
-  protected fb = 'geo.get_closest_country';
-  protected fbclose = 'geo.get_closest_com';
+  protected fn = "geo.get_latest_by_point";
+  protected fb = "geo.get_closest_country";
+  protected fbclose = "geo.get_closest_com";
 
   constructor(protected connection: PostgresConnection) {}
 

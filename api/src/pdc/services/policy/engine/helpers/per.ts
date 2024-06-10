@@ -1,4 +1,4 @@
-import { StatelessContextInterface } from '../../interfaces/index.ts';
+import { StatelessContextInterface } from "../../interfaces/index.ts";
 
 export interface PerKmParams {
   /**
@@ -34,7 +34,10 @@ export interface PerKmParams {
  * @param {PerKmParams} params
  * @returns {number}
  */
-export const perKm = (ctx: StatelessContextInterface, params: PerKmParams): number => {
+export const perKm = (
+  ctx: StatelessContextInterface,
+  params: PerKmParams,
+): number => {
   let { distance } = ctx.carpool;
 
   if (Number.isNaN(distance) || distance === 0) {
@@ -63,6 +66,9 @@ export const perKm = (ctx: StatelessContextInterface, params: PerKmParams): numb
  * @param {number} amount
  * @returns {number}
  */
-export const perSeat = (ctx: StatelessContextInterface, amount: number): number => {
+export const perSeat = (
+  ctx: StatelessContextInterface,
+  amount: number,
+): number => {
   return (ctx.carpool.seats || 1) * amount;
 };

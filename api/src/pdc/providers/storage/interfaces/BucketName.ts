@@ -1,5 +1,5 @@
 export enum BucketName {
-  Export = 'export',
-  Public = 'public',
-  APDF = 'appels-de-fonds',
+  Export = "export",
+  Public = "public",
+  APDF = "appels-de-fonds",
 }

@@ -1,5 +1,5 @@
-const { integration } = require('./ava.common.cjs');
+const { integration } = require("./ava.common.cjs");
 
 module.exports = {
-    ...integration,
-}
+  ...integration,
+};

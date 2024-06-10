@@ -1,1 +1,1 @@
-export * from './acquisition.ts';
+export * from "./acquisition.ts";

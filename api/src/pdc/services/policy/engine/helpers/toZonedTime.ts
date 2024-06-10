@@ -1,6 +1,6 @@
 import { datetz } from "@/deps.ts";
 
-const defaultTz = 'Europe/Paris';
+const defaultTz = "Europe/Paris";
 
 export function toZonedTime(
   date: Date | string | number,

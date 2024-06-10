@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -14,33 +14,47 @@ import {
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
-} from '../helpers/index.ts';
-import { startsAndEndsAtOrThrow } from '../helpers/startsAndEndsAtOrThrow.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './MetropoleSavoie.html.ts';
+} from "../helpers/index.ts";
+import { startsAndEndsAtOrThrow } from "../helpers/startsAndEndsAtOrThrow.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./MetropoleSavoie.html.ts";
 
 /* eslint-disable-next-line */
-export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = 'metropole_savoie_2022';
+export const MetropoleSavoie: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface {
+  static readonly id = "metropole_savoie_2022";
   protected operators = [OperatorsEnum.BLABLACAR_DAILY];
   protected slices: RunnableSlices = [
-    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 5_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+    },
     {
       start: 20_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000 })),
     },
   ];
 
   constructor(public max_amount: number) {
     super();
-    this.limits = [['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount]];
+    this.limits = [[
+      "99911EAF-89AB-C346-DDD5-BD2C7704F935",
+      max_amount,
+      watchForGlobalMaxAmount,
+    ]];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
-    startsAndEndsAtOrThrow(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] });
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
+    startsAndEndsAtOrThrow(ctx, {
+      aom: ["200068674", "200069110"],
+      epci: ["200041010"],
+    });
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -60,7 +74,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

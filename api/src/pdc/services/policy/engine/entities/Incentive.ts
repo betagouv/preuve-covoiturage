@@ -5,8 +5,8 @@ import {
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-} from '../../interfaces/index.ts';
-import { MetadataRegistry } from './MetadataRegistry.ts';
+} from "../../interfaces/index.ts";
+import { MetadataRegistry } from "./MetadataRegistry.ts";
 
 export class Incentive<T> {
   constructor(
@@ -96,13 +96,15 @@ export class Incentive<T> {
   }
 }
 
-export class StatelessIncentive extends Incentive<undefined> implements StatelessIncentiveInterface {
+export class StatelessIncentive extends Incentive<undefined>
+  implements StatelessIncentiveInterface {
   export(): SerializedIncentiveInterface<undefined> {
     return super.export();
   }
 }
 
-export class StatefulIncentive extends Incentive<number> implements StatefulIncentiveInterface {
+export class StatefulIncentive extends Incentive<number>
+  implements StatefulIncentiveInterface {
   export(): SerializedIncentiveInterface<number> {
     return super.export();
   }

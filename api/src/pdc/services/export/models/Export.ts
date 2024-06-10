@@ -1,15 +1,15 @@
-import { ExportParams } from './ExportParams.ts';
+import { ExportParams } from "./ExportParams.ts";
 
 export enum ExportStatus {
-  PENDING = 'pending',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  FAILURE = 'failure',
+  PENDING = "pending",
+  RUNNING = "running",
+  SUCCESS = "success",
+  FAILURE = "failure",
 }
 export enum ExportTarget {
-  OPENDATA = 'opendata',
-  OPERATOR = 'operator',
-  TERRITORY = 'territory',
+  OPENDATA = "opendata",
+  OPERATOR = "operator",
+  TERRITORY = "territory",
 }
 
 export class Export {

@@ -1,13 +1,13 @@
-import { KernelInterfaceResolver, provider } from '@/ilos/common/index.ts';
-import { APDFNameProvider } from '@/pdc/providers/storage/index.ts';
-import { excel } from '@/deps.ts';
-import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
-import { SliceStatInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
-import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
-import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
-import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
-import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
-import { wrapSlices } from './wrapSlicesHelper.ts';
+import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
+import { excel } from "@/deps.ts";
+import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
+import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
+import { ResultInterface as Campaign } from "@/shared/policy/find.contract.ts";
+import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
+import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
+import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
+import { wrapSlices } from "./wrapSlicesHelper.ts";
 
 @provider()
 export class BuildExcel {
@@ -19,8 +19,13 @@ export class BuildExcel {
     private apdfNameProvider: APDFNameProvider,
   ) {}
 
-  public static initWorkbookWriter(filepath: string): excel.stream.xlsx.WorkbookWriter {
-    return new excel.stream.xlsx.WorkbookWriter({ filename: filepath, useStyles: true });
+  public static initWorkbookWriter(
+    filepath: string,
+  ): excel.stream.xlsx.WorkbookWriter {
+    return new excel.stream.xlsx.WorkbookWriter({
+      filename: filepath,
+      useStyles: true,
+    });
   }
 
   async call(
@@ -29,7 +34,12 @@ export class BuildExcel {
     end_date: Date,
     operator_id: number,
   ): Promise<{ filename: string; filepath: string }> {
-    const params = { start_date, end_date, operator_id, campaign_id: campaign._id };
+    const params = {
+      start_date,
+      end_date,
+      operator_id,
+      campaign_id: campaign._id,
+    };
 
     // fetch aggregated and slice data
     const {
@@ -37,7 +47,10 @@ export class BuildExcel {
       total_sum: amount,
       subsidized_count: subsidized,
       slices,
-    } = await this.apdfRepoProvider.getPolicyStats(params, wrapSlices(campaign.params.slices));
+    } = await this.apdfRepoProvider.getPolicyStats(
+      params,
+      wrapSlices(campaign.params.slices),
+    );
 
     // generate the filename and filepath
     const fileParams = {
@@ -53,7 +66,8 @@ export class BuildExcel {
     const filepath: string = this.apdfNameProvider.filepath(filename);
 
     // create the Workbook and add Worksheets
-    const wbWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+    const wbWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel
+      .initWorkbookWriter(filepath);
     if (this.hasSliceTrips(slices)) await this.writeSlices(wbWriter, slices);
     await this.writeTrips(wbWriter, params);
     await wbWriter.commit();
@@ -61,24 +75,32 @@ export class BuildExcel {
     return { filename, filepath };
   }
 
-  private async writeTrips(wkw: excel.stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
+  private async writeTrips(
+    wkw: excel.stream.xlsx.WorkbookWriter,
+    params: CampaignSearchParamsInterface,
+  ): Promise<void> {
     try {
       const booster_dates = await this.listBoosterDates(params.campaign_id);
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.TripsWsWriter.call(tripCursor, booster_dates, wkw);
     } catch (e) {
-      console.error(`[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`);
+      console.error(
+        `[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`,
+      );
       console.error(e.message);
       console.error(e.stack);
     }
   }
 
-  private async writeSlices(wkw: excel.stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
+  private async writeSlices(
+    wkw: excel.stream.xlsx.WorkbookWriter,
+    slices: SliceStatInterface[],
+  ): Promise<void> {
     try {
       if (!slices.length) return;
       await this.slicesWsWriter.call(wkw, slices);
     } catch (e) {
-      console.error('[apdf:buildExcel] Error while computing slices');
+      console.error("[apdf:buildExcel] Error while computing slices");
       console.error(e.message);
     }
   }
@@ -89,9 +111,12 @@ export class BuildExcel {
 
   private async listBoosterDates(campaign_id: number): Promise<Set<string>> {
     const campaign = await this.kernel.call(
-      'campaign:find',
+      "campaign:find",
       { _id: campaign_id },
-      { channel: { service: 'apdf' }, call: { user: { permissions: ['registry.policy.find'] } } },
+      {
+        channel: { service: "apdf" },
+        call: { user: { permissions: ["registry.policy.find"] } },
+      },
     );
 
     return new Set<string>(campaign?.params?.booster_dates);

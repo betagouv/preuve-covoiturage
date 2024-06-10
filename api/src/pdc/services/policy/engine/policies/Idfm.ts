@@ -4,9 +4,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
+import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import {
   atDate,
   endsAt,
@@ -21,22 +21,38 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { LimitTargetEnum } from '../helpers/limits.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './Idfm.html.ts';
+} from "../helpers/index.ts";
+import { LimitTargetEnum } from "../helpers/limits.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./Idfm.html.ts";
 
 // Politique d'Île-de-France Mobilité
 /* eslint-disable-next-line */
-export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = '459';
+export const Idfm: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface {
+  static readonly id = "459";
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount],
+      [
+        "56042464-852C-95B8-2009-8DD4808C9370",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
+        150_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "99911EAF-89AB-C346-DDD5-BD2C7704F935",
+        max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
@@ -47,51 +63,60 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     OperatorsEnum.YNSTANT,
   ];
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
+    {
+      start: 2_000,
+      end: 15_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
+    },
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
   protected boosterDates = [
-    '2022-02-18',
-    '2022-03-25',
-    '2022-03-26',
-    '2022-03-27',
-    '2022-03-28',
-    '2022-06-18',
-    '2022-07-06',
-    '2022-11-10',
-    '2023-01-19',
-    '2023-01-31',
-    '2023-02-07',
-    '2023-03-07',
-    '2023-03-08',
-    '2023-03-16',
-    '2023-03-17',
-    '2023-03-23',
-    '2023-03-24',
-    '2023-03-28',
-    '2023-04-06',
-    '2023-04-13',
-    '2023-08-12',
-    '2023-08-13',
-    '2023-08-14',
+    "2022-02-18",
+    "2022-03-25",
+    "2022-03-26",
+    "2022-03-27",
+    "2022-03-28",
+    "2022-06-18",
+    "2022-07-06",
+    "2022-11-10",
+    "2023-01-19",
+    "2023-01-31",
+    "2023-02-07",
+    "2023-03-07",
+    "2023-03-08",
+    "2023-03-16",
+    "2023-03-17",
+    "2023-03-23",
+    "2023-03-24",
+    "2023-03-28",
+    "2023-04-06",
+    "2023-04-13",
+    "2023-08-12",
+    "2023-08-13",
+    "2023-08-14",
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     // Ajout de mobicoop à partir du 2 janvier
-    if (isAfter(ctx, { date: new Date('2023-03-22') })) {
+    if (isAfter(ctx, { date: new Date("2023-03-22") })) {
       isOperatorOrThrow(ctx, this.operators);
     } else {
-      isOperatorOrThrow(ctx, [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.KLAXIT]);
+      isOperatorOrThrow(ctx, [
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KAROS,
+        OperatorsEnum.KLAXIT,
+      ]);
     }
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
 
     // Exclure les trajet Paris-Paris
-    if (startsAt(ctx, { com: ['75056'] }) && endsAt(ctx, { com: ['75056'] })) {
+    if (startsAt(ctx, { com: ["75056"] }) && endsAt(ctx, { com: ["75056"] })) {
       throw new NotEligibleTargetException();
     }
 
@@ -99,17 +124,19 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     // Code insee de l'aom IDFM 2022: 217500016
     // Code insee de l'aom IDFM 2023: 287500078
     if (
-      (!startsAt(ctx, { aom: ['217500016'] }) || !endsAt(ctx, { aom: ['217500016'] })) &&
-      (!startsAt(ctx, { aom: ['287500078'] }) || !endsAt(ctx, { aom: ['287500078'] }))
+      (!startsAt(ctx, { aom: ["217500016"] }) ||
+        !endsAt(ctx, { aom: ["217500016"] })) &&
+      (!startsAt(ctx, { aom: ["287500078"] }) ||
+        !endsAt(ctx, { aom: ["287500078"] }))
     ) {
       throw new NotEligibleTargetException();
     }
 
     // Classe de trajet
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
     // Modification de la campagne au 1er septembre
-    if (isAfter(ctx, { date: new Date('2022-09-01') })) {
-      isOperatorClassOrThrow(ctx, ['C']);
+    if (isAfter(ctx, { date: new Date("2022-09-01") })) {
+      isOperatorClassOrThrow(ctx, ["C"]);
     }
   }
 
@@ -135,7 +162,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

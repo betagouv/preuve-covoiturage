@@ -1,4 +1,4 @@
-import type { CsvOptions, StreamJsonOptions as JsonOptions } from '@/deps.ts';
+import type { CsvOptions, StreamJsonOptions as JsonOptions } from "@/deps.ts";
 export type { CsvOptions };
 export type { JsonOptions };
 
@@ -7,4 +7,8 @@ export interface XlsxOptions {
   startRow?: number;
 }
 
-export type StreamDataOptions = CsvOptions | XlsxOptions | JsonOptions | undefined;
+export type StreamDataOptions =
+  | CsvOptions
+  | XlsxOptions
+  | JsonOptions
+  | undefined;

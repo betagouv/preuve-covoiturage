@@ -4,38 +4,51 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
-  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
-} from '../helpers/index.ts';
-import { watchForPersonMaxTripByDay } from '../helpers/limits.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './Cannes2024.html.ts';
+} from "../helpers/index.ts";
+import { watchForPersonMaxTripByDay } from "../helpers/limits.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./Cannes2024.html.ts";
 
 // Politique Cannes
 export const Cannes2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'cannes_2024';
+  implements PolicyHandlerInterface {
+  static readonly id = "cannes_2024";
   protected operators = [OperatorsEnum.KLAXIT];
-  protected operator_class = ['B', 'C'];
+  protected operator_class = ["B", "C"];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['AFE1C47D-BF05-4FA9-9133-853D297AZEPD', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
+      [
+        "AFE1C47D-BF05-4FA9-9133-853D29797D09",
+        150_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "AFE1C47D-BF05-4FA9-9133-853D297AZEPD",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "98B26189-C6FC-4DB1-AC1C-41F779C5B3C7",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
@@ -48,7 +61,8 @@ export const Cannes2024: PolicyHandlerStaticInterface = class
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
@@ -75,7 +89,7 @@ export const Cannes2024: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

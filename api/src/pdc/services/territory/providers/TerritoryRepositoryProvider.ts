@@ -1,5 +1,12 @@
-import { KernelInterfaceResolver, NotFoundException, provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import {
+  KernelInterfaceResolver,
+  NotFoundException,
+  provider,
+} from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -13,16 +20,17 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
   UpdateParamsInterface,
   UpdateResultInterface,
-} from '../interfaces/TerritoryRepositoryProviderInterface.ts';
-import { TerritorySelectorsInterface } from '@/shared/territory/common/interfaces/TerritoryCodeInterface.ts';
+} from "../interfaces/TerritoryRepositoryProviderInterface.ts";
+import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
-export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
-  public readonly table = 'territory.territory_group';
-  public readonly relationTable = 'territory.territory_group_selector';
-  public readonly GROUP_DEFAULT_SHORT_NAME = '';
+export class TerritoryRepositoryProvider
+  implements TerritoryRepositoryProviderInterface {
+  public readonly table = "territory.territory_group";
+  public readonly relationTable = "territory.territory_group_selector";
+  public readonly GROUP_DEFAULT_SHORT_NAME = "";
 
   constructor(
     protected connection: PostgresConnection,
@@ -90,7 +98,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const client = this.connection.getClient();
     const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
-      whereClauses.length ? ` WHERE ${whereClauses.join(' AND ')}` : ''
+      whereClauses.length ? ` WHERE ${whereClauses.join(" AND ")}` : ""
     }`;
 
     const total = parseFloat(
@@ -107,7 +115,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     const query = {
       text: `
         SELECT _id, name FROM ${this.table}
-        WHERE deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(' AND ')}` : ''}
+        WHERE deleted_at IS NULL ${
+        whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""
+      }
         ORDER BY name ASC
         LIMIT $${whereClauses.length + 1}
         OFFSET $${whereClauses.length + 2}
@@ -116,21 +126,30 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     };
     const result = await client.query<any>(query);
 
-    return { data: result.rows, meta: { pagination: { offset, limit, total } } };
+    return {
+      data: result.rows,
+      meta: { pagination: { offset, limit, total } },
+    };
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
     const connection = await this.connection.getClient().connect();
-    await connection.query<any>('BEGIN');
+    await connection.query<any>("BEGIN");
     try {
-      const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+      const fields = ["name", "shortname", "contacts", "address", "company_id"];
 
-      const values: any[] = [data.name, this.GROUP_DEFAULT_SHORT_NAME, data.contacts, data.address, data.company_id];
+      const values: any[] = [
+        data.name,
+        this.GROUP_DEFAULT_SHORT_NAME,
+        data.contacts,
+        data.address,
+        data.company_id,
+      ];
 
       const query = {
         text: `
-          INSERT INTO ${this.table} (${fields.join(',')})
-          VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
+          INSERT INTO ${this.table} (${fields.join(",")})
+          VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(",")})
           RETURNING *
         `,
         values,
@@ -147,10 +166,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         await this.syncSelector(connection, resultData._id, data.selector);
       }
 
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
       return { ...resultData, selector: data.selector };
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();
@@ -163,7 +182,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     selector: TerritorySelectorsInterface,
   ): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
-      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
+      .map((type) =>
+        selector[type].map((
+          value: string | number,
+        ) => [groupId, type, value.toString()])
+      )
       .reduce((arr, v) => [...arr, ...v], [])
       .reduce(
         (arr, v) => {
@@ -218,16 +241,22 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
     const connection = await this.connection.getClient().connect();
-    await connection.query<any>('BEGIN');
+    await connection.query<any>("BEGIN");
     try {
-      const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+      const fields = ["name", "shortname", "contacts", "address", "company_id"];
 
-      const values: any[] = [data.name, '', data.contacts, data.address, data.company_id];
+      const values: any[] = [
+        data.name,
+        "",
+        data.contacts,
+        data.address,
+        data.company_id,
+      ];
 
       const query = {
         text: `
           UPDATE ${this.table}
-          SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(',')}
+          SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(",")}
           WHERE _id = ${data._id}
           RETURNING *
         `,
@@ -246,17 +275,19 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         await this.syncSelector(connection, resultData._id, data.selector);
       }
 
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
       return { ...resultData, selector: data.selector };
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();
     }
   }
 
-  async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
+  async patchContacts(
+    params: PatchContactsParamsInterface,
+  ): Promise<PatchContactsResultInterface> {
     const query = {
       text: `UPDATE ${this.table} set contacts = $2 WHERE _id = $1`,
       values: [params._id, JSON.stringify(params.patch)],
@@ -273,7 +304,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return modifiedTerritoryRes.rows[0];
   }
 
-  async getRelationCodes(params: { _id: number }): Promise<TerritorySelectorsInterface> {
+  async getRelationCodes(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface> {
     const query = {
       text: `
         WITH selector_raw AS (
@@ -301,7 +334,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return result.rows[0].selector;
   }
 
-  async getRelationCodesCom(params: { _id: number }): Promise<TerritorySelectorsInterface> {
+  async getRelationCodesCom(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface> {
     const query = {
       text: `
       SELECT

@@ -1,10 +1,13 @@
-import { CarpoolInterface, CarpoolTypeEnum } from '@/shared/certificate/common/interfaces/CarpoolInterface.ts';
-import { CertificateBaseInterface } from '@/shared/certificate/common/interfaces/CertificateBaseInterface.ts';
+import {
+  CarpoolInterface,
+  CarpoolTypeEnum,
+} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { CertificateBaseInterface } from "@/shared/certificate/common/interfaces/CertificateBaseInterface.ts";
 import {
   CertificateMetaInterface,
   MetaPersonInterface,
-} from '@/shared/certificate/common/interfaces/CertificateMetaInterface.ts';
-import { PointInterface } from '@/shared/common/interfaces/PointInterface.ts';
+} from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
+import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
 
 export interface ParamsInterface {
   person: { uuid: string };
@@ -18,7 +21,9 @@ export interface ParamsInterface {
   }>;
 }
 
-export const mapFromCarpools = (params: ParamsInterface): CertificateBaseInterface => {
+export const mapFromCarpools = (
+  params: ParamsInterface,
+): CertificateBaseInterface => {
   const {
     person,
     operator,
@@ -30,20 +35,33 @@ export const mapFromCarpools = (params: ParamsInterface): CertificateBaseInterfa
     tz,
     positions,
     identity: { uuid: person.uuid },
-    operator: { uuid: operator.uuid, name: operator.name, support: operator.support },
+    operator: {
+      uuid: operator.uuid,
+      name: operator.name,
+      support: operator.support,
+    },
     driver: agg(CarpoolTypeEnum.DRIVER, carpools),
     passenger: agg(CarpoolTypeEnum.PASSENGER, carpools),
   };
 
-  return { meta, end_at, start_at, operator_id: operator._id, identity_uuid: person.uuid };
+  return {
+    meta,
+    end_at,
+    start_at,
+    operator_id: operator._id,
+    identity_uuid: person.uuid,
+  };
 };
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
-export const agg = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPersonInterface => {
+export const agg = (
+  type: CarpoolTypeEnum,
+  carpools: CarpoolInterface[],
+): MetaPersonInterface => {
   const subset = carpools.filter((c) => c.type === type);
 
-  const total = subset.reduce<PropType<MetaPersonInterface, 'total'>>(
+  const total = subset.reduce<PropType<MetaPersonInterface, "total">>(
     (p, c) => {
       const isWeek = [0, 6].indexOf(c.datetime.getDay()) === -1;
       return {

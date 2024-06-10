@@ -1,20 +1,33 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import sql, { bulk, join, raw } from '../helpers/sql.ts';
-import { CarpoolIncentive, Id, InsertableCarpool, UpdatableCarpool, Uuid, WrittenCarpool } from '../interfaces/index.ts';
-import { DatabaseException } from '../exceptions/DatabaseException.ts';
+import { provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
+import sql, { bulk, join, raw } from "../helpers/sql.ts";
+import {
+  CarpoolIncentive,
+  Id,
+  InsertableCarpool,
+  UpdatableCarpool,
+  Uuid,
+  WrittenCarpool,
+} from "../interfaces/index.ts";
+import { DatabaseException } from "../exceptions/DatabaseException.ts";
 
 @provider()
 export class CarpoolRepository {
-  readonly table = 'carpool_v2.carpools';
-  readonly incentiveTable = 'carpool_v2.operator_incentives';
+  readonly table = "carpool_v2.carpools";
+  readonly incentiveTable = "carpool_v2.operator_incentives";
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async register(data: InsertableCarpool, client?: PoolClient): Promise<WrittenCarpool> {
+  public async register(
+    data: InsertableCarpool,
+    client?: PoolClient,
+  ): Promise<WrittenCarpool> {
     const cl = client ?? (await this.connection.getClient().connect());
     if (!client) {
-      await cl.query('BEGIN');
+      await cl.query("BEGIN");
     }
 
     const sqlQuery = sql`
@@ -101,7 +114,7 @@ export class CarpoolRepository {
       return carpool;
     } catch (e) {
       if (!client) {
-        await cl.query('ROLLBACK');
+        await cl.query("ROLLBACK");
       }
       throw e;
     } finally {
@@ -119,24 +132,26 @@ export class CarpoolRepository {
   ): Promise<WrittenCarpool> {
     const cl = client ?? (await this.connection.getClient().connect());
     const keys = Object.keys(data)
-      .filter((key) => key in data && ['incentives'].indexOf(key) < 0)
+      .filter((key) => key in data && ["incentives"].indexOf(key) < 0)
       .map((key) => {
-        if (['start_position', 'end_position'].indexOf(key) >= 0) {
-          return sql`${raw(key)} = ST_SetSRID(ST_Point(${data[key].lon}, ${data[key].lat}), 4326)`;
+        if (["start_position", "end_position"].indexOf(key) >= 0) {
+          return sql`${raw(key)} = ST_SetSRID(ST_Point(${data[key].lon}, ${
+            data[key].lat
+          }), 4326)`;
         }
-        if (key === 'passenger_payments') {
+        if (key === "passenger_payments") {
           return sql`${raw(key)} = ${JSON.stringify(data[key])}`;
         }
         return sql`${raw(key)} = ${data[key]}`;
       });
 
     if (!!!keys.length) {
-      throw new Error('No data provided to be updated');
+      throw new Error("No data provided to be updated");
     }
 
     const sqlQuery = sql`
        UPDATE ${raw(this.table)}
-       SET ${join(keys, ',')}
+       SET ${join(keys, ",")}
        WHERE
          operator_id = ${operator_id} AND
          operator_journey_id = ${operator_journey_id}
@@ -144,7 +159,7 @@ export class CarpoolRepository {
     `;
 
     if (!client) {
-      await cl.query('BEGIN');
+      await cl.query("BEGIN");
     }
 
     try {
@@ -161,7 +176,7 @@ export class CarpoolRepository {
       return carpool;
     } catch (e) {
       if (!client) {
-        await cl.query('ROLLBACK');
+        await cl.query("ROLLBACK");
       }
       throw e;
     } finally {
@@ -176,13 +191,21 @@ export class CarpoolRepository {
     incentives: Array<CarpoolIncentive>,
     client: PoolClient,
   ): Promise<void> {
-    await client.query(sql`DELETE FROM ${raw(this.incentiveTable)} WHERE carpool_id = ${carpool_id}`);
+    await client.query(
+      sql`DELETE FROM ${
+        raw(this.incentiveTable)
+      } WHERE carpool_id = ${carpool_id}`,
+    );
     if (!incentives.length) {
       return;
     }
-    const sqlQuery = sql`INSERT INTO ${raw(this.incentiveTable)} (carpool_id, idx, siret, amount) VALUES ${bulk(
-      incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]),
-    )}`;
+    const sqlQuery = sql`INSERT INTO ${
+      raw(this.incentiveTable)
+    } (carpool_id, idx, siret, amount) VALUES ${
+      bulk(
+        incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]),
+      )
+    }`;
     await client.query(sqlQuery);
   }
 }

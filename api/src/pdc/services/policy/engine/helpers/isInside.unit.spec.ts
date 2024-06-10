@@ -1,12 +1,24 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 
-import { StatelessContext } from '../entities/Context.ts';
-import { generateCarpool } from '../tests/helpers.ts';
-import type { GeoJSON } from '@/shared/geo/GeoJson.ts';
-import { isInside } from './isInside.ts';
+import { StatelessContext } from "../entities/Context.ts";
+import { generateCarpool } from "../tests/helpers.ts";
+import type { GeoJSON } from "@/shared/geo/GeoJson.ts";
+import { isInside } from "./isInside.ts";
 
 const shape: GeoJSON = {
-  type: 'Polygon',
+  type: "Polygon",
   coordinates: [
     [
       [2.267006795730566, 48.857559923352795],
@@ -30,16 +42,19 @@ const point2 = {
 };
 
 function setup(lat: number, lon: number) {
-  return StatelessContext.fromCarpool(1, generateCarpool({ start_lat: lat, start_lon: lon }));
+  return StatelessContext.fromCarpool(
+    1,
+    generateCarpool({ start_lat: lat, start_lon: lon }),
+  );
 }
 
-it('Should return true if point is in shape', (t) => {
+it("Should return true if point is in shape", (t) => {
   const ctx = setup(point1.lat, point1.lon);
   const res = isInside(ctx, { shape });
   assertEquals(res, true);
 });
 
-it('Should return false if point is not in shape', (t) => {
+it("Should return false if point is not in shape", (t) => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isInside(ctx, { shape });
   assertEquals(res, false);

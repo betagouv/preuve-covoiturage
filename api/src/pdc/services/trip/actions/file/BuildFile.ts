@@ -1,11 +1,17 @@
-import { provider } from '@/ilos/common/index.ts';
-import { fs, os, path, v4, Stringifier, stringify } from '@/deps.ts';
-import { getOpenDataExportName } from '../../helpers/getOpenDataExportName.ts';
-import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper.ts';
-import { ExportTripInterface } from '../../interfaces/index.ts';
-import { PgCursorHandler } from '@/shared/common/PromisifiedPgCursor.ts';
-import { FormatInterface, ParamsInterface } from '@/shared/trip/buildExport.contract.ts';
-import { BuildExportAction } from '../BuildExportAction.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { fs, os, path, Stringifier, stringify, v4 } from "@/deps.ts";
+import { getOpenDataExportName } from "../../helpers/getOpenDataExportName.ts";
+import {
+  normalizeExport,
+  normalizeOpendata,
+} from "../../helpers/normalizeExportDataHelper.ts";
+import { ExportTripInterface } from "../../interfaces/index.ts";
+import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import {
+  FormatInterface,
+  ParamsInterface,
+} from "@/shared/trip/buildExport.contract.ts";
+import { BuildExportAction } from "../BuildExportAction.ts";
 
 @provider()
 export class BuildFile {
@@ -20,7 +26,7 @@ export class BuildFile {
     // CSV file
     const { filename, tz } = this.cast(params.type, params, date);
     const filepath = path.join(os.tmpdir(), filename);
-    const fd = await fs.promises.open(filepath, 'a');
+    const fd = await fs.promises.open(filepath, "a");
 
     // Transform data
     const stringifier = this.configure(fd, params.type);
@@ -52,41 +58,49 @@ export class BuildFile {
     }
   }
 
-  private cast(type: string, params: ParamsInterface, date: Date): Required<FormatInterface> {
+  private cast(
+    type: string,
+    params: ParamsInterface,
+    date: Date,
+  ): Required<FormatInterface> {
     return {
-      tz: params.format?.tz ?? 'Europe/Paris',
-      filename:
-        params.format?.filename ?? type === 'opendata' ? getOpenDataExportName('csv', date) : `covoiturage-${v4()}.csv`,
+      tz: params.format?.tz ?? "Europe/Paris",
+      filename: params.format?.filename ?? type === "opendata"
+        ? getOpenDataExportName("csv", date)
+        : `covoiturage-${v4()}.csv`,
     };
   }
 
-  private configure(fd: fs.promises.FileHandle, type = 'opendata'): Stringifier {
+  private configure(
+    fd: fs.promises.FileHandle,
+    type = "opendata",
+  ): Stringifier {
     const stringifier = stringify({
-      delimiter: ';',
+      delimiter: ";",
       header: true,
       columns: BuildExportAction.getColumns(type),
       cast: {
-        boolean: (b: Boolean): string => (b ? 'OUI' : 'NON'),
+        boolean: (b: Boolean): string => (b ? "OUI" : "NON"),
         date: (d: Date): string => d.toISOString(),
-        number: (n: Number): string => n.toString().replace('.', ','),
+        number: (n: Number): string => n.toString().replace(".", ","),
       },
       quoted: true,
       quoted_empty: true,
       quoted_string: true,
     });
 
-    stringifier.on('readable', async () => {
+    stringifier.on("readable", async () => {
       let row: string;
       while ((row = stringifier.read()) !== null) {
-        await fd.appendFile(row, { encoding: 'utf8' });
+        await fd.appendFile(row, { encoding: "utf8" });
       }
     });
 
-    stringifier.on('end', () => {
+    stringifier.on("end", () => {
       console.debug(`Finished exporting CSV`);
     });
 
-    stringifier.on('error', (err) => {
+    stringifier.on("error", (err) => {
       console.error(err.message);
     });
 

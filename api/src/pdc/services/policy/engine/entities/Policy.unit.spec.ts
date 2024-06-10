@@ -1,29 +1,46 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { applyLimitOnStatefulStage, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers/index.ts';
-import { process } from '../tests/macro.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  applyLimitOnStatefulStage,
+  isOperatorClassOrThrow,
+  perKm,
+  watchForGlobalMaxAmount,
+} from "../helpers/index.ts";
+import { process } from "../tests/macro.ts";
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   StatefulContextInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 
 class TestHandler implements PolicyHandlerInterface {
   load(): Promise<void> {
     return;
   }
   processStateless(ctx: StatelessContextInterface): void {
-    isOperatorClassOrThrow(ctx, ['C']);
+    isOperatorClassOrThrow(ctx, ["C"]);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
-    watchForGlobalMaxAmount(ctx, 'max');
+    watchForGlobalMaxAmount(ctx, "max");
   }
 
   processStateful(ctx: StatefulContextInterface): void {
-    applyLimitOnStatefulStage(ctx, 'max', 2000, watchForGlobalMaxAmount);
+    applyLimitOnStatefulStage(ctx, "max", 2000, watchForGlobalMaxAmount);
   }
 
   describe() {
-    return '';
+    return "";
   }
 
   params(): PolicyHandlerParamsInterface {
@@ -32,42 +49,68 @@ class TestHandler implements PolicyHandlerInterface {
 }
 
 it(
-  'should work if class C',
+  "should work if class C",
   process,
-  { handler: new TestHandler(), carpool: [{ distance: 1000 }, { distance: 2000 }], meta: [] },
-  { incentive: [10, 20], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 30 }] },
+  {
+    handler: new TestHandler(),
+    carpool: [{ distance: 1000 }, { distance: 2000 }],
+    meta: [],
+  },
+  {
+    incentive: [10, 20],
+    meta: [{ key: "max_amount_restriction.global.campaign.global", value: 30 }],
+  },
 );
 
 it(
-  'should work if not class C',
+  "should work if not class C",
   process,
-  { handler: new TestHandler(), carpool: [{ distance: 1000, operator_class: 'B' }], meta: [] },
+  {
+    handler: new TestHandler(),
+    carpool: [{ distance: 1000, operator_class: "B" }],
+    meta: [],
+  },
   { incentive: [0], meta: [] },
 );
 
 it(
-  'should work with initial meta',
+  "should work with initial meta",
   process,
   {
     handler: new TestHandler(),
     carpool: [{ distance: 10000 }],
-    meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 1950 }],
+    meta: [{
+      key: "max_amount_restriction.global.campaign.global",
+      value: 1950,
+    }],
   },
-  { incentive: [50], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 2000 }] },
+  {
+    incentive: [50],
+    meta: [{
+      key: "max_amount_restriction.global.campaign.global",
+      value: 2000,
+    }],
+  },
 );
 
 it(
-  'should work with dates',
+  "should work with dates",
   process,
   {
     handler: new TestHandler(),
     carpool: [
-      { distance: 10000, datetime: new Date('2022-01-01') },
-      { distance: 10000, datetime: new Date('2022-12-01') },
+      { distance: 10000, datetime: new Date("2022-01-01") },
+      { distance: 10000, datetime: new Date("2022-12-01") },
     ],
     meta: [],
   },
-  { incentive: [100, 100], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 200 }] },
+  {
+    incentive: [100, 100],
+    meta: [{
+      key: "max_amount_restriction.global.campaign.global",
+      value: 200,
+    }],
+  },
 );
 
 class MaxAmountPolicyHandler implements PolicyHandlerInterface {
@@ -81,17 +124,22 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
     return;
   }
   processStateless(ctx: StatelessContextInterface): void {
-    isOperatorClassOrThrow(ctx, ['C']);
+    isOperatorClassOrThrow(ctx, ["C"]);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
-    watchForGlobalMaxAmount(ctx, 'max');
+    watchForGlobalMaxAmount(ctx, "max");
   }
 
   processStateful(ctx: StatefulContextInterface): void {
-    applyLimitOnStatefulStage(ctx, 'max', this.max_amount, watchForGlobalMaxAmount);
+    applyLimitOnStatefulStage(
+      ctx,
+      "max",
+      this.max_amount,
+      watchForGlobalMaxAmount,
+    );
   }
 
   describe() {
-    return '';
+    return "";
   }
 
   params(): PolicyHandlerParamsInterface {
@@ -100,15 +148,21 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
 }
 
 it(
-  'should use constructor max amount',
+  "should use constructor max amount",
   process,
   {
     handler: new MaxAmountPolicyHandler(60_000),
     carpool: [
-      { distance: 10000, datetime: new Date('2022-01-01') },
-      { distance: 10000, datetime: new Date('2022-12-01') },
+      { distance: 10000, datetime: new Date("2022-01-01") },
+      { distance: 10000, datetime: new Date("2022-12-01") },
     ],
     meta: [],
   },
-  { incentive: [100, 100], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 200 }] },
+  {
+    incentive: [100, 100],
+    meta: [{
+      key: "max_amount_restriction.global.campaign.global",
+      value: 200,
+    }],
+  },
 );

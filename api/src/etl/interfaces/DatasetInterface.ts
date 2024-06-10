@@ -1,12 +1,16 @@
-import { Pool } from '@/deps.ts';
-import { FileManagerInterface, StateManagerInterface } from './index.ts';
+import { Pool } from "@/deps.ts";
+import { FileManagerInterface, StateManagerInterface } from "./index.ts";
 
 export interface StaticMigrable {
   readonly uuid: string;
   readonly table: string;
   readonly year: number;
   readonly skipStatePersistence?: boolean;
-  new (connection: Pool, file: FileManagerInterface, targetSchema: string): DatasetInterface;
+  new (
+    connection: Pool,
+    file: FileManagerInterface,
+    targetSchema: string,
+  ): DatasetInterface;
 }
 
 export interface StaticAbstractDataset extends StaticMigrable {

@@ -1,6 +1,6 @@
-import { Timezone } from '@/pdc/providers/validator/index.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { LogFn } from '@/dev_deps.ts';
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { LogFn } from "@/dev_deps.ts";
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -14,7 +14,7 @@ import {
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
   UnboundedSlices,
-} from '../index.ts';
+} from "../index.ts";
 
 export interface PolicyInterface {
   _id: number;
@@ -28,7 +28,9 @@ export interface PolicyInterface {
   status: PolicyStatusEnum;
 
   export(): SerializedPolicyInterface;
-  processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface>;
+  processStateless(
+    carpool: CarpoolInterface,
+  ): Promise<StatelessIncentiveInterface>;
   processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
@@ -80,14 +82,20 @@ export type TestingLogFn = LogFn;
 export interface PolicyHandlerInterface {
   max_amount?: number;
   load(): Promise<void>;
-  processStateless(context: StatelessContextInterface, log?: TestingLogFn): void;
+  processStateless(
+    context: StatelessContextInterface,
+    log?: TestingLogFn,
+  ): void;
   processStateful(context: StatefulContextInterface, log?: TestingLogFn): void;
   params(): PolicyHandlerParamsInterface;
   describe(): string;
   getOperators?(datetime?: Date): OperatorsEnum[]; // TODO generalise this from GrandPoitiers campaign
 }
 
-export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P) => boolean;
+export type StatelessRuleHelper<P> = (
+  ctx: StatelessContextInterface,
+  params: P,
+) => boolean;
 
 export interface StatefulContextInterface {
   incentive: StatefulIncentiveInterface;

@@ -1,18 +1,30 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { v4 } from '@/deps.ts';
-import { OperatorsEnum } from '../../interfaces/index.ts';
-import { makeProcessHelper } from '../tests/macro.ts';
-import { MetropoleSavoie as Handler } from './MetropoleSavoie.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { MetropoleSavoie as Handler } from "./MetropoleSavoie.ts";
 
 const defaultPosition = {
-  arr: '73031',
-  com: '73031',
-  aom: '200069110',
-  epci: '200069110',
-  dep: '73',
-  reg: '84',
-  country: 'XXXXX',
-  reseau: '76',
+  arr: "73031",
+  com: "73031",
+  aom: "200069110",
+  epci: "200069110",
+  dep: "73",
+  reg: "84",
+  country: "XXXXX",
+  reseau: "76",
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -23,11 +35,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2023-01-02'),
+  datetime: new Date("2023-01-02"),
   seats: 1,
   distance: 6_000,
   operator_journey_id: v4(),
@@ -45,7 +57,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 it(
-  'should work basic',
+  "should work basic",
   process,
   {
     policy: { handler: Handler.id },
@@ -56,7 +68,13 @@ it(
       { distance: 80_000, seats: 2 },
       {
         distance: 5_000,
-        start: { aom: null, com: '73084', arr: '73084', epci: '200041010', reg: '84' },
+        start: {
+          aom: null,
+          com: "73084",
+          arr: "73084",
+          epci: "200041010",
+          reg: "84",
+        },
       },
     ],
     meta: [],
@@ -65,7 +83,7 @@ it(
     incentive: [200, 400, 800, 1600, 200],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 3200,
       },
     ],
@@ -73,14 +91,14 @@ it(
 );
 
 it(
-  'should work with global limits',
+  "should work with global limits",
   process,
   {
     policy: { handler: Handler.id, max_amount: 150_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_key: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_key: "one" }],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 149_999_50,
       },
     ],
@@ -89,7 +107,7 @@ it(
     incentive: [50],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 150_000_00,
       },
     ],
@@ -97,7 +115,7 @@ it(
 );
 
 it(
-  'should work with exclusion',
+  "should work with exclusion",
   process,
   {
     policy: { handler: Handler.id },
@@ -108,7 +126,13 @@ it(
       },
       {
         distance: 25_000,
-        start: { aom: '200096956', com: '47091', arr: '47091', epci: '200096956', reg: '75' },
+        start: {
+          aom: "200096956",
+          com: "47091",
+          arr: "47091",
+          epci: "200096956",
+          reg: "75",
+        },
       },
     ],
     meta: [],

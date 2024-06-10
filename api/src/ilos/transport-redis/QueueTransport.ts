@@ -1,8 +1,18 @@
-import { Worker, QueueScheduler, Processor, Job, WorkerOptions, QueueSchedulerOptions } from '@/deps.ts';
+import {
+  Job,
+  Processor,
+  QueueScheduler,
+  QueueSchedulerOptions,
+  Worker,
+  WorkerOptions,
+} from "@/deps.ts";
 
-import { QueueExtension } from '@/ilos/queue/index.ts';
-import { TransportInterface, KernelInterface } from '@/ilos/common/index.ts';
-import { RedisConnection, RedisInterface } from '@/ilos/connection-redis/index.ts';
+import { QueueExtension } from "@/ilos/queue/index.ts";
+import { KernelInterface, TransportInterface } from "@/ilos/common/index.ts";
+import {
+  RedisConnection,
+  RedisInterface,
+} from "@/ilos/connection-redis/index.ts";
 
 interface WorkerWithScheduler {
   worker: Worker;
@@ -15,7 +25,8 @@ interface WorkerWithScheduler {
  * @class QueueTransport
  * @implements {TransportInterface}
  */
-export class QueueTransport implements TransportInterface<WorkerWithScheduler[]> {
+export class QueueTransport
+  implements TransportInterface<WorkerWithScheduler[]> {
   queues: WorkerWithScheduler[] = [];
   kernel: KernelInterface;
   connections: RedisConnection[] = [];
@@ -39,17 +50,27 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
     return connection.getClient();
   }
 
-  protected getWorker(connection: RedisInterface, name: string, processor: Processor): Worker {
+  protected getWorker(
+    connection: RedisInterface,
+    name: string,
+    processor: Processor,
+  ): Worker {
     const options = { connection } as WorkerOptions;
     return new Worker(name, processor, options);
   }
 
-  protected getScheduler(connection: RedisInterface, name: string): QueueScheduler {
+  protected getScheduler(
+    connection: RedisInterface,
+    name: string,
+  ): QueueScheduler {
     const options = { connection } as QueueSchedulerOptions;
     return new QueueScheduler(name, options);
   }
 
-  protected async getWorkerAndScheduler(name: string, processor: Processor): Promise<WorkerWithScheduler> {
+  protected async getWorkerAndScheduler(
+    name: string,
+    processor: Processor,
+  ): Promise<WorkerWithScheduler> {
     const connection = await this.getRedisConnection();
     return {
       scheduler: this.getScheduler(connection, name),
@@ -60,20 +81,24 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
   async up(_opts: string[] = []) {
     const container = this.kernel.getContainer();
     if (!container.isBound(QueueExtension.containerKey)) {
-      throw new Error('No queue declared');
+      throw new Error("No queue declared");
     }
 
     const services = container.getAll<string>(QueueExtension.containerKey);
     for (const service of services) {
       const key = service;
-      const { worker, scheduler } = await this.getWorkerAndScheduler(key, async (job) =>
-        this.kernel.call(job.data.method, job.data.params.params, {
-          ...job.data.params._context,
-          channel: {
-            ...(job.data.params._context && job.data.params._context.channel ? job.data.params._context.channel : {}),
-            transport: 'queue',
-          },
-        }),
+      const { worker, scheduler } = await this.getWorkerAndScheduler(
+        key,
+        async (job) =>
+          this.kernel.call(job.data.method, job.data.params.params, {
+            ...job.data.params._context,
+            channel: {
+              ...(job.data.params._context && job.data.params._context.channel
+                ? job.data.params._context.channel
+                : {}),
+              transport: "queue",
+            },
+          }),
       );
       this.registerListeners(worker, key);
       this.queues.push({
@@ -99,24 +124,26 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
   }
 
   protected registerListeners(queue: Worker, name: string): void {
-    queue.on('error', (err) => {
+    queue.on("error", (err) => {
       console.error(`🐮/${name}: error`, err.message);
       this.errorHandler(err);
     });
 
-    queue.on('active', (job) => {
+    queue.on("active", (job) => {
       console.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
-    queue.on('progress', (job, progress) => {
-      console.info(`🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`);
+    queue.on("progress", (job, progress) => {
+      console.info(
+        `🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`,
+      );
     });
 
-    queue.on('completed', (job) => {
+    queue.on("completed", (job) => {
       console.info(`🐮/${name}: completed ${job.id} ${job.data.method}`);
     });
 
-    queue.on('failed', (job, err) => {
+    queue.on("failed", (job, err) => {
       console.error(`🐮/${name}: failed ${job.id}`, err.message);
       console.error(err.stack);
       this.errorHandler(err, job);

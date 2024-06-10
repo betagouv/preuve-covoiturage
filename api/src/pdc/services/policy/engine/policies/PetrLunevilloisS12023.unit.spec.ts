@@ -1,18 +1,30 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { v4 } from '@/deps.ts';
-import { OperatorsEnum } from '../../interfaces/index.ts';
-import { makeProcessHelper } from '../tests/macro.ts';
-import { PetrLunevilloisS12023 as Handler } from './PetrLunevilloisS12023.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { PetrLunevilloisS12023 as Handler } from "./PetrLunevilloisS12023.ts";
 
 const defaultPosition = {
-  arr: '54233',
-  com: '54233',
-  aom: '200051134',
-  epci: '200069433',
-  dep: '54',
-  reg: '44',
-  country: 'XXXXX',
-  reseau: '269',
+  arr: "54233",
+  com: "54233",
+  aom: "200051134",
+  epci: "200069433",
+  dep: "54",
+  reg: "44",
+  country: "XXXXX",
+  reseau: "269",
 };
 const defaultLat = 48.5905360901711;
 const defaultLon = 6.499392987670189;
@@ -23,11 +35,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.MOBICOOP,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2023-02-01'),
+  datetime: new Date("2023-02-01"),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -45,16 +57,16 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 it(
-  'should work with exclusions',
+  "should work with exclusions",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_uuid: 'not in list' },
+      { operator_uuid: "not in list" },
       { operator_uuid: OperatorsEnum.KLAXIT },
       { distance: 100 },
       { distance: 60_000 },
-      { operator_class: 'A' },
+      { operator_class: "A" },
     ],
     meta: [],
   },
@@ -62,15 +74,15 @@ it(
 );
 
 it(
-  'should work basic with start/end inside aom',
+  "should work basic with start/end inside aom",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
-      { distance: 25_000, driver_identity_key: 'two' },
-      { distance: 25_000, seats: 2, driver_identity_key: 'two' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+      { distance: 25_000, driver_identity_key: "two" },
+      { distance: 25_000, seats: 2, driver_identity_key: "two" },
     ],
     meta: [],
   },
@@ -78,7 +90,7 @@ it(
     incentive: [21, 42, 161, 322],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 546,
       },
     ],
@@ -86,24 +98,68 @@ it(
 );
 
 it(
-  'should work basic with start or end outside aom',
+  "should work basic with start or end outside aom",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
       // start
-      { distance: 5_000, driver_identity_key: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, seats: 2, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 55_000, driver_identity_key: 'two', start: { ...defaultPosition, aom: 'not_in_aom' } },
+      {
+        distance: 5_000,
+        driver_identity_key: "one",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 5_000,
+        seats: 2,
+        driver_identity_key: "one",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 25_000,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 25_000,
+        seats: 2,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 55_000,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
 
       // end
-      { distance: 5_000, driver_identity_key: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 25_000, seats: 2, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
-      { distance: 55_000, driver_identity_key: 'two', end: { ...defaultPosition, aom: 'not_in_aom' } },
+      {
+        distance: 5_000,
+        driver_identity_key: "one",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 5_000,
+        seats: 2,
+        driver_identity_key: "one",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 25_000,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 25_000,
+        seats: 2,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      {
+        distance: 55_000,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
     ],
     meta: [],
   },
@@ -114,14 +170,14 @@ it(
 );
 
 it(
-  'should work with global limits',
+  "should work with global limits",
   process,
   {
     policy: { handler: Handler.id, max_amount: 10_000_00 },
-    carpool: [{ distance: 59_000, driver_identity_key: 'one' }],
+    carpool: [{ distance: 59_000, driver_identity_key: "one" }],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 9_999_99,
       },
     ],
@@ -130,7 +186,7 @@ it(
     incentive: [1], // <-- should be 413. capped to 1
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 10_000_00,
       },
     ],
@@ -138,15 +194,15 @@ it(
 );
 
 it(
-  'should work with 2 trips per day limit',
+  "should work with 2 trips per day limit",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, driver_identity_key: "one" },
     ],
     meta: [],
   },
@@ -154,7 +210,7 @@ it(
     incentive: [21, 21, 0, 0],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 42,
       },
     ],

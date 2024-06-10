@@ -1,43 +1,55 @@
-import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import {
+  ConfigInterfaceResolver,
+  ConflictException,
+  NotFoundException,
+  provider,
+} from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { _ } from "@/deps.ts";
 
-import { UserFindInterface } from '@/shared/user/common/interfaces/UserFindInterface.ts';
-import { UserLastLoginInterface } from '@/shared/user/common/interfaces/UserLastLoginInterface.ts';
-import { UserListFiltersInterface } from '@/shared/user/common/interfaces/UserListFiltersInterface.ts';
-import { UserListInterface } from '@/shared/user/common/interfaces/UserListInterface.ts';
-import { UserPatchInterface } from '@/shared/user/common/interfaces/UserPatchInterface.ts';
+import { UserFindInterface } from "@/shared/user/common/interfaces/UserFindInterface.ts";
+import { UserLastLoginInterface } from "@/shared/user/common/interfaces/UserLastLoginInterface.ts";
+import { UserListFiltersInterface } from "@/shared/user/common/interfaces/UserListFiltersInterface.ts";
+import { UserListInterface } from "@/shared/user/common/interfaces/UserListInterface.ts";
+import { UserPatchInterface } from "@/shared/user/common/interfaces/UserPatchInterface.ts";
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
-} from '../interfaces/UserRepositoryProviderInterface.ts';
-import { PaginationParamsInterface } from '@/shared/common/interfaces/PaginationParamsInterface.ts';
-import { UserCreateInterface } from '@/shared/user/common/interfaces/UserCreateInterface.ts';
-import { ResultInterface as HasUsersResultInterface } from '@/shared/user/hasUsers.contract.ts';
+} from "../interfaces/UserRepositoryProviderInterface.ts";
+import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
+import { UserCreateInterface } from "@/shared/user/common/interfaces/UserCreateInterface.ts";
+import { ResultInterface as HasUsersResultInterface } from "@/shared/user/hasUsers.contract.ts";
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
 })
-export class UserPgRepositoryProvider implements UserRepositoryProviderInterface {
-  public readonly table = 'auth.users';
+export class UserPgRepositoryProvider
+  implements UserRepositoryProviderInterface {
+  public readonly table = "auth.users";
   public readonly defaultLimit: number;
   public readonly maxLimit: number;
 
-  protected readonly availableFilters = ['_id', 'operator_id', 'territory_id', 'email', 'hidden'];
+  protected readonly availableFilters = [
+    "_id",
+    "operator_id",
+    "territory_id",
+    "email",
+    "hidden",
+  ];
   protected readonly availableSets = [
     // 'operator_id',
     // 'territory_id',
-    'email',
-    'firstname',
-    'lastname',
+    "email",
+    "firstname",
+    "lastname",
     // 'role',
     // 'password',
-    'phone',
-    'hidden',
+    "phone",
+    "hidden",
     // 'status',
     // 'forgotten_token',
     // 'forgotten_at',
-    'ui_status',
+    "ui_status",
   ];
   protected readonly groupCastStatement = `CASE
       WHEN operator_id is not null THEN 'operators'
@@ -49,8 +61,8 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     protected connection: PostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {
-    this.defaultLimit = config.get('pagination.defaultLimit', 10);
-    this.maxLimit = config.get('pagination.maxLimit', 1000);
+    this.defaultLimit = config.get("pagination.defaultLimit", 10);
+    this.maxLimit = config.get("pagination.maxLimit", 1000);
   }
 
   private getPermissionsFromRole(role: string): string[] {
@@ -70,15 +82,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   private coerceRole(data: UserCreateInterface): string {
-    const [, level] = data.role.split('.');
+    const [, level] = data.role.split(".");
     if (data.operator_id) return `operator.${level}`;
     if (data.territory_id) return `territory.${level}`;
     return `registry.${level}`;
   }
 
   private coerceHidden(data: UserCreateInterface): boolean {
-    const [group] = data.role.split('.');
-    return group === 'registry' ? false : !!data.hidden;
+    const [group] = data.role.split(".");
+    return group === "registry" ? false : !!data.hidden;
   }
 
   async create(data: UserCreateInterface): Promise<UserFindInterface> {
@@ -124,18 +136,29 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
+  protected async deleteWhere(
+    id: number,
+    where?: { operator_id?: number; territory_id?: number },
+  ): Promise<boolean> {
     const query = {
       text: `
       DELETE FROM ${this.table}
         WHERE _id = $1
-        ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
+        ${
+        where
+          ? (where.operator_id
+            ? "AND operator_id = $2"
+            : "AND territory_id = $2")
+          : ""
+      }
       `,
       values: [id],
     };
 
     if (where) {
-      query.values.push((where.operator_id ? where.operator_id : where.territory_id) || 0);
+      query.values.push(
+        (where.operator_id ? where.operator_id : where.territory_id) || 0,
+      );
     }
 
     const result = await this.connection.getClient().query<any>(query);
@@ -160,8 +183,8 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async deleteAssociated(key: string, value: number): Promise<void> {
-    if (['territory_id', 'operator_id'].indexOf(key) === -1) {
-      throw new Error('Only territory_id and operator_id are supported keys');
+    if (["territory_id", "operator_id"].indexOf(key) === -1) {
+      throw new Error("Only territory_id and operator_id are supported keys");
     }
 
     await this.connection.getClient().query<any>({
@@ -187,16 +210,23 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: whereClauses.values,
     };
 
-    totalQuery.text = totalQuery.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
+    totalQuery.text = totalQuery.text.split("$#").reduce(
+      (acc, current, idx, origin) => {
+        if (idx === origin.length - 1) {
+          return `${acc}${current}`;
+        }
 
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
+        return `${acc}${current}$${idx + 1}`;
+      },
+      "",
+    );
 
-    const totalResult = await this.connection.getClient().query<any>(totalQuery);
-    const total = Number(totalResult.rows.length === 1 ? totalResult.rows[0].total : -1);
+    const totalResult = await this.connection.getClient().query<any>(
+      totalQuery,
+    );
+    const total = Number(
+      totalResult.rows.length === 1 ? totalResult.rows[0].total : -1,
+    );
 
     let limit: number = (pagination && pagination.limit) || this.defaultLimit;
     const offset: number = (pagination && pagination.offset) || 0;
@@ -229,13 +259,13 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: whereClauses.values,
     };
 
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+    query.text = query.text.split("$#").reduce((acc, current, idx, origin) => {
       if (idx === origin.length - 1) {
         return `${acc}${current}`;
       }
 
       return `${acc}${current}$${idx + 1}`;
-    }, '');
+    }, "");
 
     const result = await this.connection.getClient().query<any>(query);
 
@@ -252,16 +282,21 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  protected buildWhereClauses(filters: Record<string, unknown>, join = 'AND'): { text: string; values: unknown[] } {
+  protected buildWhereClauses(
+    filters: Record<string, unknown>,
+    join = "AND",
+  ): { text: string; values: unknown[] } {
     // no filters -> no clauses
     if (!filters || Object.keys(filters).length === 0) {
-      return { text: '', values: [] };
+      return { text: "", values: [] };
     }
 
     // white list filters
-    const filtersToProcess = this.availableFilters.filter((key) => key in filters);
+    const filtersToProcess = this.availableFilters.filter((key) =>
+      key in filters
+    );
     if (filtersToProcess.length === 0) {
-      return { text: '', values: [] };
+      return { text: "", values: [] };
     }
 
     // convert text to placeholders for prepared queries
@@ -269,7 +304,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       .map((key) => ({ key, value: filters[key] }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
-        (acc: { text: Array<string>, values: Array<unknown> }, current) => {
+        (acc: { text: Array<string>; values: Array<unknown> }, current) => {
           acc.text.push(current.text);
           acc.values.push(...current.values);
           return acc;
@@ -290,7 +325,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     email?: string;
   }): Promise<UserFindInterface> {
     if (!where || Object.keys(where).length === 0) {
-      throw new Error('Need to have a where clause');
+      throw new Error("Need to have a where clause");
     }
 
     const whereClauses = this.buildWhereClauses(where);
@@ -318,17 +353,17 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: whereClauses.values,
     };
 
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+    query.text = query.text.split("$#").reduce((acc, current, idx, origin) => {
       if (idx === origin.length - 1) {
         return `${acc}${current}`;
       }
 
       return `${acc}${current}$${idx + 1}`;
-    }, '');
+    }, "");
     const result = await this.connection.getClient().query<any>(query);
 
     if (result.rowCount === 0) {
-      throw new Error('No change');
+      throw new Error("No change");
     }
 
     return {
@@ -341,11 +376,17 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return this.findWhere({ _id });
   }
 
-  async findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined> {
+  async findByOperator(
+    _id: number,
+    operator_id: number,
+  ): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, operator_id });
   }
 
-  async findByTerritory(_id: number, territory_id: number): Promise<UserFindInterface | undefined> {
+  async findByTerritory(
+    _id: number,
+    territory_id: number,
+  ): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, territory_id });
   }
 
@@ -388,14 +429,14 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     const setToProcess = this.availableSets.filter((key) => key in sets);
 
     if (setToProcess.length === 0) {
-      throw new Error('Please add something to modify :)');
+      throw new Error("Please add something to modify :)");
     }
 
     const finalSets = setToProcess
       .map((key) => ({ key, value: _.get(sets, key) }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
-        (acc: { text: Array<string>, values: Array<unknown> }, current) => {
+        (acc: { text: Array<string>; values: Array<unknown> }, current) => {
           acc.text.push(current.text);
           acc.values.push(...current.values);
           return acc;
@@ -407,7 +448,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       );
 
     return {
-      text: finalSets.text.join(', '),
+      text: finalSets.text.join(", "),
       values: finalSets.values,
     };
   }
@@ -415,8 +456,11 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     data: UserPatchInterface,
     where: { _id: number; operator_id?: number; territory_id?: number },
   ): Promise<UserFindInterface | undefined> {
-    if (!data || !where || Object.keys(data).length === 0 || Object.keys(where).length === 0) {
-      throw new Error('Patch need to have a where clause');
+    if (
+      !data || !where || Object.keys(data).length === 0 ||
+      Object.keys(where).length === 0
+    ) {
+      throw new Error("Patch need to have a where clause");
     }
 
     const setClauses = this.buildSetClauses(data);
@@ -451,12 +495,12 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: [...setClauses.values, ...whereClauses.values],
     };
 
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+    query.text = query.text.split("$#").reduce((acc, current, idx, origin) => {
       if (idx === origin.length - 1) {
         return `${acc}${current}`;
       }
       return `${acc}${current}$${idx + 1}`;
-    }, '');
+    }, "");
 
     const result = await this.connection.getClient().query<any>(query);
 
@@ -470,22 +514,29 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface | undefined> {
+  async patch(
+    _id: number,
+    data: UserPatchInterface,
+  ): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id });
   }
 
-  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void | undefined> {
+  async patchRole(
+    _id: number,
+    role: string,
+    roleSuffixOnly?: boolean,
+  ): Promise<void | undefined> {
     let finalRole = role;
     if (roleSuffixOnly) {
       const user = await this.find(_id);
       if (!user) throw new NotFoundException();
       switch (user.group) {
-        case 'territories':
+        case "territories":
           finalRole = `territory.${role}`;
 
           break;
 
-        case 'operators':
+        case "operators":
           finalRole = `operator.${role}`;
 
           break;
@@ -506,11 +557,19 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     await this.connection.getClient().query<any>(query);
   }
 
-  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface | undefined> {
+  async patchByOperator(
+    _id: number,
+    data: UserPatchInterface,
+    operator_id: number,
+  ): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id, operator_id });
   }
 
-  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface | undefined> {
+  async patchByTerritory(
+    _id: number,
+    data: UserPatchInterface,
+    territory_id: number,
+  ): Promise<UserFindInterface | undefined> {
     return this.patchWhere(data, { _id, territory_id });
   }
 

@@ -1,1 +1,1 @@
-export { Migrator } from './Migrator.ts';
+export { Migrator } from "./Migrator.ts";

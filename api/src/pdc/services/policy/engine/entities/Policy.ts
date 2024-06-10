@@ -1,5 +1,5 @@
-import { Timezone } from '@/pdc/providers/validator/index.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   CarpoolInterface,
   MetadataStoreInterface,
@@ -13,13 +13,13 @@ import {
   StatelessContextInterface,
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces/index.ts';
-import { TestingLogFn } from '../../interfaces/engine/PolicyInterface.ts';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
-import { UnknownHandlerException } from '../exceptions/UnknownHandlerException.ts';
-import { isSelected } from '../helpers/index.ts';
-import { policies } from '../policies/index.ts';
-import { StatefulContext, StatelessContext } from './Context.ts';
+} from "../../interfaces/index.ts";
+import { TestingLogFn } from "../../interfaces/engine/PolicyInterface.ts";
+import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
+import { UnknownHandlerException } from "../exceptions/UnknownHandlerException.ts";
+import { isSelected } from "../helpers/index.ts";
+import { policies } from "../policies/index.ts";
+import { StatefulContext, StatelessContext } from "./Context.ts";
 
 export class Policy implements PolicyInterface {
   constructor(
@@ -76,8 +76,14 @@ export class Policy implements PolicyInterface {
     };
   }
 
-  async processStateless(carpool: CarpoolInterface, log?: TestingLogFn): Promise<StatelessIncentiveInterface> {
-    const context: StatelessContextInterface = StatelessContext.fromCarpool(this._id, carpool);
+  async processStateless(
+    carpool: CarpoolInterface,
+    log?: TestingLogFn,
+  ): Promise<StatelessIncentiveInterface> {
+    const context: StatelessContextInterface = StatelessContext.fromCarpool(
+      this._id,
+      carpool,
+    );
     context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
@@ -111,7 +117,9 @@ export class Policy implements PolicyInterface {
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {
-      console.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
+      console.error(
+        `Stateful incentive calculation failed for ${incentive._id}: ${e.message}`,
+      );
       console.debug(e);
       throw e;
     }
@@ -126,11 +134,17 @@ export class Policy implements PolicyInterface {
       return false;
     }
 
-    if (!this.territory_selector || Object.keys(this.territory_selector).length <= 0) {
+    if (
+      !this.territory_selector ||
+      Object.keys(this.territory_selector).length <= 0
+    ) {
       return true;
     }
 
-    if (!isSelected(carpool.start, this.territory_selector) && !isSelected(carpool.end, this.territory_selector)) {
+    if (
+      !isSelected(carpool.start, this.territory_selector) &&
+      !isSelected(carpool.end, this.territory_selector)
+    ) {
       return false;
     }
 

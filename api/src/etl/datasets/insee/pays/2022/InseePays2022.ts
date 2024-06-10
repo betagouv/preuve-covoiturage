@@ -1,30 +1,36 @@
-import { EurostatCountries2020 } from '../../../eurostat/countries/2020/EurostatCountries2020.ts';
-import { EurostatSimplifiedCountries2020 } from '../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts';
-import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
-import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.ts';
+import { EurostatCountries2020 } from "../../../eurostat/countries/2020/EurostatCountries2020.ts";
+import { EurostatSimplifiedCountries2020 } from "../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts";
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
+import {
+  ArchiveFileTypeEnum,
+  FileTypeEnum,
+  StateManagerInterface,
+} from "../../../../interfaces/index.ts";
 
 export class InseePays2022 extends AbstractDataset {
-  static producer = 'insee';
-  static dataset = 'pays';
+  static producer = "insee";
+  static dataset = "pays";
   static year = 2022;
-  static table = 'insee_pays_2022';
-  static url = 'https://www.insee.fr/fr/statistiques/fichier/6051727/pays_2022.csv';
+  static table = "insee_pays_2022";
+  static url =
+    "https://www.insee.fr/fr/statistiques/fichier/6051727/pays_2022.csv";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
-    ['cog', ['0', 'varchar(5)']],
-    ['actual', ['1', 'varchar(1)']],
-    ['capay', ['2', 'varchar']],
-    ['crpay', ['3', 'varchar']],
-    ['ani', ['4', 'varchar']],
-    ['libcog', ['5', 'varchar']],
-    ['libenr', ['6', 'varchar']],
-    ['ancnom', ['7', 'varchar']],
-    ['codeiso2', ['8', 'varchar']],
-    ['codeiso3', ['9', 'varchar']],
-    ['codenum3', ['10', 'varchar']],
+    ["cog", ["0", "varchar(5)"]],
+    ["actual", ["1", "varchar(1)"]],
+    ["capay", ["2", "varchar"]],
+    ["crpay", ["3", "varchar"]],
+    ["ani", ["4", "varchar"]],
+    ["libcog", ["5", "varchar"]],
+    ["libenr", ["6", "varchar"]],
+    ["ancnom", ["7", "varchar"]],
+    ["codeiso2", ["8", "varchar"]],
+    ["codeiso3", ["9", "varchar"]],
+    ["codenum3", ["10", "varchar"]],
   ]);
-  readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
+  readonly extraBeforeSql =
+    `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
   sheetOptions = {};

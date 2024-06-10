@@ -1,15 +1,15 @@
-import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces/index.ts';
-import { UnknownMetaException } from '../exceptions/UnknownMetaException.ts';
+import { MetadataRepositoryProviderInterfaceResolver } from "../../interfaces/index.ts";
+import { UnknownMetaException } from "../exceptions/UnknownMetaException.ts";
 import {
   MetadataAccessorInterface,
   MetadataLifetime,
   MetadataRegistryInterface,
   MetadataStoreInterface,
-  StoredMetadataVariableInterface,
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
-} from '../../interfaces/index.ts';
-import { MetadataAccessor } from './MetadataAccessor.ts';
+  StoredMetadataVariableInterface,
+} from "../../interfaces/index.ts";
+import { MetadataAccessor } from "./MetadataAccessor.ts";
 
 function getCacheKey(policy_id: number, key: string): string {
   return `${policy_id.toString()}-${key}`;
@@ -23,9 +23,13 @@ function getDefaultVariableDefinition(
 export class MetadataStore implements MetadataStoreInterface {
   public cache: Map<string, StoredMetadataVariableInterface> = new Map();
 
-  constructor(protected readonly repository?: MetadataRepositoryProviderInterfaceResolver) {}
+  constructor(
+    protected readonly repository?: MetadataRepositoryProviderInterfaceResolver,
+  ) {}
 
-  async load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface> {
+  async load(
+    registry: MetadataRegistryInterface,
+  ): Promise<MetadataAccessorInterface> {
     const variables = registry.export();
     const keys = variables.map((v) => v.key);
 
@@ -33,11 +37,20 @@ export class MetadataStore implements MetadataStoreInterface {
       return MetadataAccessor.import(registry.datetime, new Map());
     }
 
-    const keysToQuery = keys.filter((k) => !this.cache.has(getCacheKey(registry.policy_id, k)));
-    const missingData = (await this.repository?.get(registry.policy_id, keysToQuery, registry.datetime)) || [];
+    const keysToQuery = keys.filter((k) =>
+      !this.cache.has(getCacheKey(registry.policy_id, k))
+    );
+    const missingData = (await this.repository?.get(
+      registry.policy_id,
+      keysToQuery,
+      registry.datetime,
+    )) || [];
     for (const key of keysToQuery) {
-      const variableDefinition = getDefaultVariableDefinition(variables.find((v) => v.key === key));
-      const value = missingData.find((k) => k.key === key)?.value || variableDefinition.initialValue || 0;
+      const variableDefinition = getDefaultVariableDefinition(
+        variables.find((v) => v.key === key),
+      );
+      const value = missingData.find((k) => k.key === key)?.value ||
+        variableDefinition.initialValue || 0;
       this.cache.set(getCacheKey(registry.policy_id, key), {
         ...variableDefinition,
         policy_id: registry.policy_id,
@@ -47,15 +60,24 @@ export class MetadataStore implements MetadataStoreInterface {
     }
     const data = variables
       .map((v) => [v, this.cache.get(getCacheKey(registry.policy_id, v.key))])
-      .reduce((m, [v, i]: [SerializedMetadataVariableDefinitionInterface, StoredMetadataVariableInterface]) => {
-        m.set(v.uuid, {
-          policy_id: i.policy_id,
-          key: i.key,
-          value: i.value,
-          ...(v.carpoolValue ? { carpoolValue: v.carpoolValue } : {}),
-        });
-        return m;
-      }, new Map());
+      .reduce(
+        (
+          m,
+          [v, i]: [
+            SerializedMetadataVariableDefinitionInterface,
+            StoredMetadataVariableInterface,
+          ],
+        ) => {
+          m.set(v.uuid, {
+            policy_id: i.policy_id,
+            key: i.key,
+            value: i.value,
+            ...(v.carpoolValue ? { carpoolValue: v.carpoolValue } : {}),
+          });
+          return m;
+        },
+        new Map(),
+      );
 
     return MetadataAccessor.import(registry.datetime, data);
   }
@@ -72,7 +94,9 @@ export class MetadataStore implements MetadataStoreInterface {
     }
   }
 
-  async store(lifetime: MetadataLifetime): Promise<Array<SerializedStoredMetadataInterface>> {
+  async store(
+    lifetime: MetadataLifetime,
+  ): Promise<Array<SerializedStoredMetadataInterface>> {
     const dataToSave: Array<SerializedStoredMetadataInterface> = [];
     for (const uuid of this.cache.keys()) {
       const data = this.cache.get(uuid);

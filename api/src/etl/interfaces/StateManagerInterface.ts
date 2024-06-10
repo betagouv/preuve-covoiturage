@@ -1,4 +1,4 @@
-import { StaticMigrable } from './index.ts';
+import { StaticMigrable } from "./index.ts";
 
 export interface StateManagerInterface {
   plan(migrables: StaticMigrable[]): void;
@@ -15,17 +15,17 @@ export interface DatabaseStateManagerInterface {
 }
 
 export enum State {
-  Planned = 'planned',
-  Validated = 'validated',
-  Created = 'created',
-  Downloaded = 'downloaded',
-  Transformed = 'transformed',
-  Loaded = 'loaded',
-  Imported = 'imported',
-  Done = 'done',
-  DoneSkipPersistence = 'done with skip persistence',
-  Failed = 'failed',
-  Unplanned = 'unplanned',
+  Planned = "planned",
+  Validated = "validated",
+  Created = "created",
+  Downloaded = "downloaded",
+  Transformed = "transformed",
+  Loaded = "loaded",
+  Imported = "imported",
+  Done = "done",
+  DoneSkipPersistence = "done with skip persistence",
+  Failed = "failed",
+  Unplanned = "unplanned",
 }
 
 export const flow = [

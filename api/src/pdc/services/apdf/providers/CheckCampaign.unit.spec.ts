@@ -1,18 +1,48 @@
-import { faker } from '@/deps.ts';
-import { ContextType, KernelInterfaceResolver, NotFoundException } from '@/ilos/common/index.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { ResultInterface as GetCampaignResultInterface } from '@/shared/policy/find.contract.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper.ts';
-import { CheckCampaign } from './CheckCampaign.ts';
+import { faker } from "@/deps.ts";
+import {
+  ContextType,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from "@/ilos/common/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { ResultInterface as GetCampaignResultInterface } from "@/shared/policy/find.contract.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { createGetCampaignResult } from "../helpers/createGetCampaignResult.helper.ts";
+import { CheckCampaign } from "./CheckCampaign.ts";
 
 interface Context {
   // Injected tokens
   kernelInterfaceResolver: KernelInterfaceResolver;
 
   // Injected tokens method's stubs
-  kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
+  kernelInterfaceResolverStub: SinonStub<
+    [method: string, params: any, context: ContextType]
+  >;
 
   // Constants
   RETURNED_EXCEL_PATH: string;
@@ -25,10 +55,16 @@ interface Context {
 const test = anyTest as TestFn<Context>;
 
 beforeEach((t) => {
-  t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
-  t.context.checkCampaign = new CheckCampaign(t.context.kernelInterfaceResolver);
+  t.context.kernelInterfaceResolver =
+    new (class extends KernelInterfaceResolver {})();
+  t.context.checkCampaign = new CheckCampaign(
+    t.context.kernelInterfaceResolver,
+  );
 
-  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.kernelInterfaceResolver, 'call');
+  t.context.kernelInterfaceResolverStub = sinon.stub(
+    t.context.kernelInterfaceResolver,
+    "call",
+  );
   t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
   t.context.CAMPAIGN_NAME = faker.word.noun();
 });
@@ -37,7 +73,10 @@ afterEach((t) => {
   t.context.kernelInterfaceResolverStub.restore();
 });
 
-const successStubArrange = (ctx: Context, operator_ids: number[]): GetCampaignResultInterface => {
+const successStubArrange = (
+  ctx: Context,
+  operator_ids: number[],
+): GetCampaignResultInterface => {
   const campaign: GetCampaignResultInterface = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     ctx.CAMPAIGN_NAME,
@@ -51,15 +90,21 @@ const successStubArrange = (ctx: Context, operator_ids: number[]): GetCampaignRe
 };
 
 // eslint-disable-next-line max-len
-it('GetCampaignAndCallBuildExcel: should campaign be valid if provided dates are in date range and one operator', async (t) => {
+it("GetCampaignAndCallBuildExcel: should campaign be valid if provided dates are in date range and one operator", async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [5]);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [
+    5,
+  ]);
 
   const startOfMonth: Date = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setMonth(startOfMonth.getMonth() - 1);
 
-  const endOfMonth: Date = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
+  const endOfMonth: Date = new Date(
+    startOfMonth.getFullYear(),
+    startOfMonth.getMonth() + 1,
+    0,
+  );
 
   // Act
   await t.context.checkCampaign.call(campaign._id, startOfMonth, endOfMonth);
@@ -70,10 +115,13 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid if provided dates are
 });
 
 // eslint-disable-next-line max-len
-it('GetCampaignAndCallBuildExcel: should campaign be valid provided dates intersect range and 2 operators', async (t) => {
+it("GetCampaignAndCallBuildExcel: should campaign be valid provided dates intersect range and 2 operators", async (t) => {
   // Arrange
   const operator_ids = [5, 6];
-  const campaign: GetCampaignResultInterface = successStubArrange(t.context, operator_ids);
+  const campaign: GetCampaignResultInterface = successStubArrange(
+    t.context,
+    operator_ids,
+  );
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -82,7 +130,11 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid provided dates inters
   todayPlus1Year.setFullYear(todayPlus1Year.getFullYear() + 1);
 
   // Act
-  await t.context.checkCampaign.call(campaign._id, todayMinus3Years, todayPlus1Year);
+  await t.context.checkCampaign.call(
+    campaign._id,
+    todayMinus3Years,
+    todayPlus1Year,
+  );
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
@@ -90,9 +142,11 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid provided dates inters
 });
 
 // eslint-disable-next-line max-len
-it('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and 1 operator', async (t) => {
+it("GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and 1 operator", async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [5]);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [
+    5,
+  ]);
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -101,7 +155,11 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in large
   todayPlus3Years.setFullYear(todayPlus3Years.getFullYear() + 3);
 
   // Act
-  await t.context.checkCampaign.call(campaign._id, todayMinus3Years, todayPlus3Years);
+  await t.context.checkCampaign.call(
+    campaign._id,
+    todayMinus3Years,
+    todayPlus3Years,
+  );
 
   // Assert
   t.pass();
@@ -109,9 +167,12 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in large
 });
 
 // eslint-disable-next-line max-len
-it('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and no operator whitelist', async (t) => {
+it("GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and no operator whitelist", async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t.context, []);
+  const campaign: GetCampaignResultInterface = successStubArrange(
+    t.context,
+    [],
+  );
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -120,27 +181,35 @@ it('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in large
   todayPlus3Years.setFullYear(todayPlus3Years.getFullYear() + 3);
 
   // Act
-  await t.context.checkCampaign.call(campaign._id, todayMinus3Years, todayPlus3Years);
+  await t.context.checkCampaign.call(
+    campaign._id,
+    todayMinus3Years,
+    todayPlus3Years,
+  );
 
   // Assert
   t.pass();
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
+it("GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id", async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.rejects(new NotFoundException());
 
   // Act
   await assertThrows(async () => {
-    await t.context.checkCampaign.call(faker.number.int(), new Date(), new Date());
+    await t.context.checkCampaign.call(
+      faker.number.int(),
+      new Date(),
+      new Date(),
+    );
   });
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async (t) => {
+it("GetCampaignAndCallBuildExcel: should throw Error if draft campaign", async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.resolves(
     createGetCampaignResult(PolicyStatusEnum.DRAFT, t.context.CAMPAIGN_NAME),
@@ -148,14 +217,18 @@ it('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async (
 
   // Act
   await assertThrows(async () => {
-    await t.context.checkCampaign.call(faker.number.int(), new Date(), new Date());
+    await t.context.checkCampaign.call(
+      faker.number.int(),
+      new Date(),
+      new Date(),
+    );
   });
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not in date range', async (t) => {
+it("GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not in date range", async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.resolves(
     createGetCampaignResult(
@@ -174,28 +247,32 @@ it('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not i
 
   // Act
   await assertThrows(async () => {
-    await t.context.checkCampaign.call(faker.number.int(), todayMinus3Years, todayMinus2Years);
+    await t.context.checkCampaign.call(
+      faker.number.int(),
+      todayMinus3Years,
+      todayMinus2Years,
+    );
   });
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower = start. end = upper', async (t) => {
+it("isValidDateRange: lower = start. end = upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
 
   // Assert
@@ -203,21 +280,21 @@ it('isValidDateRange: lower = start. end = upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower = start. end < upper', async (t) => {
+it("isValidDateRange: lower = start. end < upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2022-02-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2022-02-01T00:00:00+0100"),
   );
 
   // Assert
@@ -225,21 +302,21 @@ it('isValidDateRange: lower = start. end < upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower < start. end = upper', async (t) => {
+it("isValidDateRange: lower < start. end = upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2022-02-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-02-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
 
   // Assert
@@ -247,21 +324,21 @@ it('isValidDateRange: lower < start. end = upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower > start. end < upper', async (t) => {
+it("isValidDateRange: lower > start. end < upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2021-12-01T00:00:00+0100'),
-    new Date('2022-02-01T00:00:00+0100'),
+    new Date("2021-12-01T00:00:00+0100"),
+    new Date("2022-02-01T00:00:00+0100"),
   );
 
   // Assert
@@ -269,21 +346,21 @@ it('isValidDateRange: lower > start. end < upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower < start. end > upper', async (t) => {
+it("isValidDateRange: lower < start. end > upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2022-12-01T00:00:00+0100'),
-    new Date('2023-02-01T00:00:00+0100'),
+    new Date("2022-12-01T00:00:00+0100"),
+    new Date("2023-02-01T00:00:00+0100"),
   );
 
   // Assert
@@ -291,21 +368,21 @@ it('isValidDateRange: lower < start. end > upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower < start. end < upper', async (t) => {
+it("isValidDateRange: lower < start. end < upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2022-12-01T00:00:00+0100'),
-    new Date('2023-02-01T00:00:00+0100'),
+    new Date("2022-12-01T00:00:00+0100"),
+    new Date("2023-02-01T00:00:00+0100"),
   );
 
   // Assert
@@ -313,21 +390,21 @@ it('isValidDateRange: lower < start. end < upper', async (t) => {
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-it('isValidDateRange: lower > start. end > upper', async (t) => {
+it("isValidDateRange: lower > start. end > upper", async (t) => {
   // Arrange
   const campaign = createGetCampaignResult(
     PolicyStatusEnum.ACTIVE,
     t.context.CAMPAIGN_NAME,
-    new Date('2022-01-01T00:00:00+0100'),
-    new Date('2023-01-01T00:00:00+0100'),
+    new Date("2022-01-01T00:00:00+0100"),
+    new Date("2023-01-01T00:00:00+0100"),
   );
   t.context.kernelInterfaceResolverStub.resolves(campaign);
 
   // Act
   await t.context.checkCampaign.call(
     campaign._id,
-    new Date('2021-12-01T00:00:00+0100'),
-    new Date('2023-02-01T00:00:00+0100'),
+    new Date("2021-12-01T00:00:00+0100"),
+    new Date("2023-02-01T00:00:00+0100"),
   );
 
   // Assert

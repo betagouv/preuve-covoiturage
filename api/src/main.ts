@@ -1,5 +1,5 @@
-import { process } from '@/deps.ts';
-import { bootstrap as app } from './pdc/proxy/bootstrap.ts';
+import { process } from "@/deps.ts";
+import { bootstrap as app } from "./pdc/proxy/bootstrap.ts";
 
 const [, , command, ...opts] = process.argv;
 

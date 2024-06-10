@@ -1,8 +1,12 @@
 import { createReadStream, parse } from "@/deps.ts";
-import { CsvOptions } from '../../interfaces/index.ts';
+import { CsvOptions } from "../../interfaces/index.ts";
 
-export async function* streamCsv<T>(filepath: string, sheetOptions: CsvOptions, chunkSize = 100): AsyncIterable<T[]> {
-  const fsStream = createReadStream(filepath, { encoding: 'utf-8' });
+export async function* streamCsv<T>(
+  filepath: string,
+  sheetOptions: CsvOptions,
+  chunkSize = 100,
+): AsyncIterable<T[]> {
+  const fsStream = createReadStream(filepath, { encoding: "utf-8" });
   const parser = parse({
     columns: (header: any) => Object.keys(header).map((k) => k.toLowerCase()),
     ...sheetOptions,

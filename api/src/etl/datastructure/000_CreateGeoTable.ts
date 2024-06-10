@@ -1,11 +1,11 @@
-import { AbstractDatastructure } from '../common/AbstractDatastructure.ts';
+import { AbstractDatastructure } from "../common/AbstractDatastructure.ts";
 
 export class CreateGeoTable extends AbstractDatastructure {
-  static uuid = 'create_geo_table';
-  static table = 'perimeters';
+  static uuid = "create_geo_table";
+  static table = "perimeters";
   static year = 2019;
 
-  readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
+  readonly indexWithSchema = this.tableWithSchema.replace(".", "_");
   readonly sql = `
       CREATE EXTENSION IF NOT EXISTS postgis;
       CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (

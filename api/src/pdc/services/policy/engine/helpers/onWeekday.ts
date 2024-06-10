@@ -1,5 +1,8 @@
-import { toZonedTime } from './toZonedTime.ts';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
+import { toZonedTime } from "./toZonedTime.ts";
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
 
 interface OnWeekdayParams {
   days: number[];
@@ -11,7 +14,9 @@ export const onWeekday: StatelessRuleHelper<OnWeekdayParams> = (
   params: OnWeekdayParams,
 ): boolean => {
   const date = toZonedTime(ctx.carpool.datetime, params.tz);
-  const day = typeof date.getDay === 'function' ? date.getDay() : new Date(date).getDay();
+  const day = typeof date.getDay === "function"
+    ? date.getDay()
+    : new Date(date).getDay();
   if (params.days.indexOf(day) < 0) {
     return false;
   }

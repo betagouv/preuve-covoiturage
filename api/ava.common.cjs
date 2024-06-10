@@ -1,19 +1,19 @@
 const common = {
-  timeout: '1m',
+  timeout: "1m",
   typescript: {
     rewritePaths: {
-      'src/': "dist/",
+      "src/": "dist/",
     },
-    compile: false
+    compile: false,
   },
   require: [
-    "module-alias/register"
-  ]
+    "module-alias/register",
+  ],
 };
 
 const integration = {
   ...common,
-  files: ['src/**/*.integration.spec.ts'],
+  files: ["src/**/*.integration.spec.ts"],
 };
 
 const unit = {
@@ -21,18 +21,18 @@ const unit = {
   files: [
     "src/**/*.spec.ts",
     "!src/**/*.integration.spec.ts",
-    "!src/**/*.helper.spec.ts"
+    "!src/**/*.helper.spec.ts",
   ],
 };
 
 const coverage = {
   ...common,
-  files: ['src/**/*.spec.ts'],
-}
+  files: ["src/**/*.spec.ts"],
+};
 
 module.exports = {
   common,
   integration,
   unit,
   coverage,
-}
+};

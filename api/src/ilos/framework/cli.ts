@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Bootstrap } from './Bootstrap.ts';
+import { Bootstrap } from "./Bootstrap.ts";
 
 Bootstrap.createFromPath().then((app) => {
   const [, , command, ...opts] = process.argv;

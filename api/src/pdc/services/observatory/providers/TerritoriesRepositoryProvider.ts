@@ -1,24 +1,27 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
-  TerritoriesRepositoryInterface,
-  TerritoriesRepositoryInterfaceResolver,
   TerritoriesListParamsInterface,
   TerritoriesListResultInterface,
+  TerritoriesRepositoryInterface,
+  TerritoriesRepositoryInterfaceResolver,
   TerritoryNameParamsInterface,
   TerritoryNameResultInterface,
-} from '../interfaces/TerritoriesRepositoryProviderInterface.ts';
+} from "../interfaces/TerritoriesRepositoryProviderInterface.ts";
 
 @provider({
   identifier: TerritoriesRepositoryInterfaceResolver,
 })
-export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInterface {
-  private readonly table = 'geo.perimeters_centroid';
+export class TerritoriesRepositoryProvider
+  implements TerritoriesRepositoryInterface {
+  private readonly table = "geo.perimeters_centroid";
 
   constructor(private pg: PostgresConnection) {}
 
-  async getTerritoriesList(params: TerritoriesListParamsInterface): Promise<TerritoriesListResultInterface> {
+  async getTerritoriesList(
+    params: TerritoriesListParamsInterface,
+  ): Promise<TerritoriesListResultInterface> {
     const sql = {
       values: [params.year],
       text: `
@@ -28,13 +31,16 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
         ORDER BY type,territory;
       `,
     };
-    const response: { rowCount: number; rows: TerritoriesListResultInterface } = await this.pg
-      .getClient()
-      .query<any>(sql);
+    const response: { rowCount: number; rows: TerritoriesListResultInterface } =
+      await this.pg
+        .getClient()
+        .query<any>(sql);
     return response.rows;
   }
 
-  async getTerritoryName(params: TerritoryNameParamsInterface): Promise<TerritoryNameResultInterface> {
+  async getTerritoryName(
+    params: TerritoryNameParamsInterface,
+  ): Promise<TerritoryNameResultInterface> {
     const sql = {
       values: [params.year, params.code, params.type],
       text: `

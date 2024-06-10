@@ -1,11 +1,16 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates.ts';
-import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider.ts';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { endOfMonth, startOfMonth } from "../helpers/getDefaultDates.ts";
+import { GetOldestTripDateRepositoryProvider } from "../providers/GetOldestTripRepositoryProvider.ts";
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
   signature as buildExportSignature,
-} from '@/shared/trip/buildExport.contract.ts';
+} from "@/shared/trip/buildExport.contract.ts";
 import { date } from "@/deps.ts";
 
 export interface StartEndDate {
@@ -15,20 +20,26 @@ export interface StartEndDate {
 
 @command()
 export class ReplayOpendataExportCommand implements CommandInterface {
-  static readonly signature: string = 'trip:replayOpendata';
-  static readonly description: string = 'Replay open data exports for each month from first trip to now';
+  static readonly signature: string = "trip:replayOpendata";
+  static readonly description: string =
+    "Replay open data exports for each month from first trip to now";
   static readonly options: CommandOptionType[] = [];
 
   constructor(
     private kernel: KernelInterfaceResolver,
-    private getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider,
+    private getOldestTripDateRepositoryProvider:
+      GetOldestTripDateRepositoryProvider,
   ) {}
 
   public async call(): Promise<StartEndDate[]> {
     // 0. Get first trip journey_start_datetime
-    const oldestTripDate: Date = await this.getOldestTripDateRepositoryProvider.call();
+    const oldestTripDate: Date = await this.getOldestTripDateRepositoryProvider
+      .call();
     // 1. Get all month from begining trip.list
-    const intervals: StartEndDate[] = this.getMonthsIntervalsFrom(oldestTripDate, new Date());
+    const intervals: StartEndDate[] = this.getMonthsIntervalsFrom(
+      oldestTripDate,
+      new Date(),
+    );
     // 2. For each, call build opendata export synchronously
     for (const i of intervals) {
       const params: BuildExportParamInterface = {
@@ -38,11 +49,14 @@ export class ReplayOpendataExportCommand implements CommandInterface {
             end: i.end.toISOString() as unknown as Date,
           },
         },
-        type: 'opendata',
-        format: { tz: 'Europe/Paris' },
+        type: "opendata",
+        format: { tz: "Europe/Paris" },
       };
-      await this.kernel.call<BuildExportParamInterface, BuildExportResultInterface>(buildExportSignature, params, {
-        channel: { service: 'trip' },
+      await this.kernel.call<
+        BuildExportParamInterface,
+        BuildExportResultInterface
+      >(buildExportSignature, params, {
+        channel: { service: "trip" },
       });
     }
 
@@ -57,8 +71,8 @@ export class ReplayOpendataExportCommand implements CommandInterface {
 
     while (date.isBefore(dateCursor, dateEnd)) {
       intervals.push({
-        start: startOfMonth(dateCursor, 'Europe/Paris'),
-        end: endOfMonth(dateCursor, 'Europe/Paris'),
+        start: startOfMonth(dateCursor, "Europe/Paris"),
+        end: endOfMonth(dateCursor, "Europe/Paris"),
       });
       dateCursor = date.add(dateCursor, { months: 1 });
     }

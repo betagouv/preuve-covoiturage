@@ -1,5 +1,5 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 export type Recipient = {
   _id: number;
@@ -10,19 +10,23 @@ export type Recipient = {
   message: string;
 };
 
-export type CreateRecipientData = Pick<Recipient, 'export_id' | 'email' | 'fullname' | 'message'>;
+export type CreateRecipientData = Pick<
+  Recipient,
+  "export_id" | "email" | "fullname" | "message"
+>;
 
 export interface RecipientRepositoryInterface {
   create(data: CreateRecipientData): Promise<number>;
   anonymize(export_id: number): Promise<void>;
 }
 
-export abstract class RecipientRepositoryInterfaceResolver implements RecipientRepositoryInterface {
+export abstract class RecipientRepositoryInterfaceResolver
+  implements RecipientRepositoryInterface {
   public async create(data: CreateRecipientData): Promise<number> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async anonymize(export_id: number): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -30,7 +34,7 @@ export abstract class RecipientRepositoryInterfaceResolver implements RecipientR
   identifier: RecipientRepositoryInterfaceResolver,
 })
 export class RecipientRepository implements RecipientRepositoryInterface {
-  protected readonly table = 'export.recipients';
+  protected readonly table = "export.recipients";
 
   constructor(protected connection: PostgresConnection) {}
 

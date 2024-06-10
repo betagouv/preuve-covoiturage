@@ -1,8 +1,8 @@
-import { AbstractDatafunction } from '../common/AbstractDatafunction.ts';
+import { AbstractDatafunction } from "../common/AbstractDatafunction.ts";
 
 export class CreateGetLatestByCodeFunction extends AbstractDatafunction {
-  static uuid = 'create_get_latest_by_code_function';
-  static table = 'get_latest_by_code';
+  static uuid = "create_get_latest_by_code_function";
+  static table = "get_latest_by_code";
   static year = 2022;
   readonly sql = `
     CREATE OR REPLACE FUNCTION ${this.functionWithSchema}(code varchar) returns table (

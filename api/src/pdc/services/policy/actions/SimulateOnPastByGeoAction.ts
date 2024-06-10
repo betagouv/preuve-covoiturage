@@ -1,22 +1,29 @@
-import { handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/simulateOnPastGeo.contract.ts';
-import { alias } from '@/shared/policy/simulateOnPastGeo.schema.ts';
+import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/simulateOnPastGeo.contract.ts";
+import { alias } from "@/shared/policy/simulateOnPastGeo.schema.ts";
 import {
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
   signature as geoSignature,
-} from '@/shared/territory/findGeoBySiren.contract.ts';
-import { MetadataStore } from '../engine/entities/MetadataStore.ts';
-import { Policy } from '../engine/entities/Policy.ts';
-import { SerializedPolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
-import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider.ts';
+} from "@/shared/territory/findGeoBySiren.contract.ts";
+import { MetadataStore } from "../engine/entities/MetadataStore.ts";
+import { Policy } from "../engine/entities/Policy.ts";
+import {
+  SerializedPolicyInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from "../interfaces/index.ts";
+import { MemoryMetadataRepository } from "../providers/MemoryMetadataRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], ...internalOnlyMiddlewares('user')],
+  middlewares: [["validate", alias], ...internalOnlyMiddlewares("user")],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
   private readonly DEFAULT_TIME_FRAME_6_MONTHS = 6;
@@ -34,25 +41,31 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
 
     const today = new Date();
     const start_date = new Date();
-    start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHS));
+    start_date.setMonth(
+      today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHS),
+    );
 
     // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
       start_date: start_date,
       end_date: today,
       _id: 1000,
-      name: '',
-      tz: 'Europe/Paris',
+      name: "",
+      tz: "Europe/Paris",
       status: PolicyStatusEnum.ACTIVE,
       handler: params.policy_template_id,
       incentive_sum: 0,
       territory_id: 0,
       max_amount: 10_000_000_00,
       territory_selector: {
-        ...(params.territory_insee === geoResult.aom_siren && { aom: [geoResult.aom_siren] }),
-        ...(params.territory_insee === geoResult.dep_siren && { dep: [geoResult.dep_siren] }),
-        ...(params.territory_insee === geoResult.epci_siren && { epci: [geoResult.epci_siren] }),
-        ...(params.territory_insee === geoResult.reg_siren && { reg: [geoResult.reg_siren] }),
+        ...(params.territory_insee === geoResult.aom_siren &&
+          { aom: [geoResult.aom_siren] }),
+        ...(params.territory_insee === geoResult.dep_siren &&
+          { dep: [geoResult.dep_siren] }),
+        ...(params.territory_insee === geoResult.epci_siren &&
+          { epci: [geoResult.epci_siren] }),
+        ...(params.territory_insee === geoResult.reg_siren &&
+          { reg: [geoResult.reg_siren] }),
       },
     };
 
@@ -79,7 +92,10 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
           // 3. For each trip, process stateless and stateful safely
           try {
             const incentive = await policy.processStateless(carpool);
-            const finalIncentive = await policy.processStateful(store, incentive.export());
+            const finalIncentive = await policy.processStateful(
+              store,
+              incentive.export(),
+            );
             const finalAmount = finalIncentive.get();
             if (finalAmount > 0) {
               carpool_subsidized += 1;
@@ -102,9 +118,11 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     const geoParamsInterface: GeoParamsInterface = {
       siren: params.territory_insee,
     };
-    const geoResult: GeoResultInterface = await this.kernel.call<GeoParamsInterface>(geoSignature, geoParamsInterface, {
+    const geoResult: GeoResultInterface = await this.kernel.call<
+      GeoParamsInterface
+    >(geoSignature, geoParamsInterface, {
       call: {
-        user: { permissions: ['common.territory.list'] },
+        user: { permissions: ["common.territory.list"] },
       },
       channel: {
         service: handlerConfig.service,
@@ -112,7 +130,9 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     });
 
     if (geoResult.coms.length === 0) {
-      throw Error(`Could not find any coms for territory_insee ${params.territory_insee}`);
+      throw Error(
+        `Could not find any coms for territory_insee ${params.territory_insee}`,
+      );
     }
     return geoResult;
   }

@@ -1,11 +1,15 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { Export, ExportStatus } from '../models/Export.ts';
-import { ExportRecipient } from '../models/ExportRecipient.ts';
-import { LogServiceInterfaceResolver } from '../services/LogService.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { Export, ExportStatus } from "../models/Export.ts";
+import { ExportRecipient } from "../models/ExportRecipient.ts";
+import { LogServiceInterfaceResolver } from "../services/LogService.ts";
 
-export type ExportCreateData = Pick<Export, 'created_by' | 'target' | 'params'> & { recipients: ExportRecipient[] };
-export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;
+export type ExportCreateData =
+  & Pick<Export, "created_by" | "target" | "params">
+  & { recipients: ExportRecipient[] };
+export type ExportUpdateData = Partial<
+  Pick<Export, "status" | "progress" | "download_url" | "error" | "stats">
+>;
 export type ExportProgress = (progress: number) => Promise<void>;
 
 export interface ExportRepositoryInterface {
@@ -21,36 +25,40 @@ export interface ExportRepositoryInterface {
   addRecipient(export_id: number, recipient: ExportRecipient): Promise<void>;
 }
 
-export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
+export abstract class ExportRepositoryInterfaceResolver
+  implements ExportRepositoryInterface {
   public async create(data: ExportCreateData): Promise<Export> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async get(id: number): Promise<Export> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async update(id: number, data: ExportUpdateData): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async delete(id: number): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async list(): Promise<Export[]> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async status(id: number, status: ExportStatus): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async error(id: number, error: string): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async progress(id: number): Promise<ExportProgress> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   public async pickPending(): Promise<Export | null> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
-  public async addRecipient(export_id: number, recipient: ExportRecipient): Promise<void> {
-    throw new Error('Not implemented');
+  public async addRecipient(
+    export_id: number,
+    recipient: ExportRecipient,
+  ): Promise<void> {
+    throw new Error("Not implemented");
   }
 }
 
@@ -58,8 +66,8 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
   identifier: ExportRepositoryInterfaceResolver,
 })
 export class ExportRepository implements ExportRepositoryInterface {
-  protected readonly exportsTable = 'export.exports';
-  protected readonly recipientsTable = 'export.recipients';
+  protected readonly exportsTable = "export.exports";
+  protected readonly recipientsTable = "export.recipients";
 
   constructor(
     protected connection: PostgresConnection,
@@ -100,9 +108,11 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async update(id: number, data: ExportUpdateData): Promise<void> {
     await this.connection.getClient().query<any>({
-      text: `UPDATE ${this.exportsTable} SET ${Object.keys(data)
-        .map((key, index) => `${key} = $${index + 2}`)
-        .join(', ')} WHERE _id = $1`,
+      text: `UPDATE ${this.exportsTable} SET ${
+        Object.keys(data)
+          .map((key, index) => `${key} = $${index + 2}`)
+          .join(", ")
+      } WHERE _id = $1`,
       values: [id, ...Object.values(data)],
     });
   }
@@ -148,7 +158,8 @@ export class ExportRepository implements ExportRepositoryInterface {
 
     // update the export status
     await this.connection.getClient().query<any>({
-      text: `UPDATE ${this.exportsTable} SET status = $1, error = $2::text WHERE _id = $3`,
+      text:
+        `UPDATE ${this.exportsTable} SET status = $1, error = $2::text WHERE _id = $3`,
       values: [ExportStatus.FAILURE, error, id],
     });
   }
@@ -158,7 +169,8 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
       await this.connection.getClient().query<any>({
-        text: `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
+        text:
+          `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],
       });
     };
@@ -176,16 +188,24 @@ export class ExportRepository implements ExportRepositoryInterface {
     return rowCount ? Export.fromJSON(rows[0]) : null;
   }
 
-  public async addRecipient(export_id: number, recipient: ExportRecipient): Promise<void> {
-    if (!export_id) throw new Error('Export _id is required');
-    if (!recipient.email) throw new Error('Recipient email is required');
+  public async addRecipient(
+    export_id: number,
+    recipient: ExportRecipient,
+  ): Promise<void> {
+    if (!export_id) throw new Error("Export _id is required");
+    if (!recipient.email) throw new Error("Recipient email is required");
 
     await this.connection.getClient().query<any>({
       text: `
         INSERT INTO ${this.recipientsTable} (export_id, email, fullname, message)
         VALUES ($1, $2, $3, $4)
       `,
-      values: [export_id, recipient.email, recipient.fullname, recipient.message],
+      values: [
+        export_id,
+        recipient.email,
+        recipient.fullname,
+        recipient.message,
+      ],
     });
   }
 }

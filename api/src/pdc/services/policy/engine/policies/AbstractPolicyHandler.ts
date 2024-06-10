@@ -3,8 +3,12 @@ import {
   PolicyHandlerParamsInterface,
   StatefulContextInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { applyLimitsOnStatefulStage, applyLimitsOnStatelessStage, ConfiguredLimitInterface } from '../helpers/index.ts';
+} from "../../interfaces/index.ts";
+import {
+  applyLimitsOnStatefulStage,
+  applyLimitsOnStatelessStage,
+  ConfiguredLimitInterface,
+} from "../helpers/index.ts";
 
 export abstract class AbstractPolicyHandler implements PolicyHandlerInterface {
   public limits: Array<ConfiguredLimitInterface>;

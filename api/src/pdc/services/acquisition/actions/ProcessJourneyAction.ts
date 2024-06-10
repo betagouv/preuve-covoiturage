@@ -1,18 +1,29 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { NormalizationProvider } from '@/pdc/providers/normalization/index.ts';
-import { randomUUID } from '@/deps.ts';
+import {
+  ConfigInterfaceResolver,
+  handler,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
+import { randomUUID } from "@/deps.ts";
 
-import { callContext } from '../config/callContext.ts';
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface.ts';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/acquisition/process.contract.ts';
+import { callContext } from "../config/callContext.ts";
+import {
+  AcquisitionErrorStageEnum,
+  AcquisitionStatusEnum,
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/acquisition/process.contract.ts";
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
-} from '@/shared/carpool/crosscheck.contract.ts';
+} from "@/shared/carpool/crosscheck.contract.ts";
 
 @handler({
   ...handlerConfig,
@@ -30,17 +41,26 @@ export class ProcessJourneyAction extends AbstractAction {
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
     const runUUID = randomUUID();
-    const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 1000 });
+    const { timeout, batchSize } = this.config.get("acquisition.processing", {
+      timeout: 0,
+      batchSize: 1000,
+    });
 
     // Get a batch of acquisitions to process, lock them and get a pg client instance
     // to be keep the transaction alive
-    const [acquisitions, update, commit] = await this.repository.findThenUpdate({
-      limit: batchSize,
-      status: AcquisitionStatusEnum.Pending,
-    });
+    const [acquisitions, update, commit] = await this.repository.findThenUpdate(
+      {
+        limit: batchSize,
+        status: AcquisitionStatusEnum.Pending,
+      },
+    );
 
     const msg = `[acquisition:${runUUID}] processed (${acquisitions.length})`;
-    console.debug(`[acquisition:${runUUID}] processing batch ${acquisitions.map((a) => a._id).join(', ')}`);
+    console.debug(
+      `[acquisition:${runUUID}] processing batch ${
+        acquisitions.map((a) => a._id).join(", ")
+      }`,
+    );
     console.time(msg);
 
     // We set a timeout to avoid the action to be stuck in case of error
@@ -57,7 +77,7 @@ export class ProcessJourneyAction extends AbstractAction {
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,
           error_stage: AcquisitionErrorStageEnum.Normalisation,
-          errors: ['Timeout'],
+          errors: ["Timeout"],
         });
         failed.push(acquisition._id);
         console.debug(` >>> Update TIMED OUT: ${acquisition._id}`);
@@ -65,7 +85,8 @@ export class ProcessJourneyAction extends AbstractAction {
 
       try {
         // track how much time the action takes
-        const timerMsg = `[acquisition:${runUUID}] processed (${acquisition._id}`;
+        const timerMsg =
+          `[acquisition:${runUUID}] processed (${acquisition._id}`;
         console.time(timerMsg);
 
         // Normalize geo, route and cost data
@@ -80,7 +101,10 @@ export class ProcessJourneyAction extends AbstractAction {
         // through the kernel.
         // The crosscheck action will run its own transaction to update the records.
         console.debug(` >>> Crosscheck: ${acquisition._id}`);
-        await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
+        await this.kernel.call<
+          CrosscheckParamsInterface,
+          CrosscheckResultInterface
+        >(
           crosscheckSignature,
           normalizedAcquisition,
           callContext,
@@ -96,7 +120,9 @@ export class ProcessJourneyAction extends AbstractAction {
         }
         console.timeEnd(timerMsg);
       } catch (e) {
-        console.error(`[acquisition:${runUUID}] error ${e.message} processing ${acquisition._id}`);
+        console.error(
+          `[acquisition:${runUUID}] error ${e.message} processing ${acquisition._id}`,
+        );
         await update({
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,

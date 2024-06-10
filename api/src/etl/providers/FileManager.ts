@@ -1,17 +1,22 @@
-import { axios, mapshaper } from '@/deps.ts';
-import { access, mkdir, Readable, basename, join } from '@/deps.ts'
+import { axios, mapshaper } from "@/deps.ts";
+import { access, basename, join, mkdir, Readable } from "@/deps.ts";
 import {
-  writeFile,
-  hash,
-  randomString,
-  unzipFile,
-  ungzFile,
-  un7zFile,
   getAllFiles,
   getFileExtensions,
-} from '../helpers/index.ts';
+  hash,
+  randomString,
+  un7zFile,
+  ungzFile,
+  unzipFile,
+  writeFile,
+} from "../helpers/index.ts";
 
-import { FileManagerInterface, FileManagerConfigInterface, ArchiveFileTypeEnum, FileTypeEnum } from '../interfaces/index.ts';
+import {
+  ArchiveFileTypeEnum,
+  FileManagerConfigInterface,
+  FileManagerInterface,
+  FileTypeEnum,
+} from "../interfaces/index.ts";
 
 export class FileManager implements FileManagerInterface {
   readonly basePath: string;
@@ -21,7 +26,8 @@ export class FileManager implements FileManagerInterface {
 
   constructor(config: FileManagerConfigInterface) {
     this.basePath = config.basePath;
-    this.downloadPath = config.downloadPath || join(config.basePath, 'download');
+    this.downloadPath = config.downloadPath ||
+      join(config.basePath, "download");
     this.mirrorUrl = config.mirrorUrl;
   }
 
@@ -30,7 +36,10 @@ export class FileManager implements FileManagerInterface {
   }
 
   protected getTemporaryFilePath(data?: string, isDownload = false): string {
-    return join(isDownload ? this.downloadPath : this.basePath, data ? hash(data) : randomString());
+    return join(
+      isDownload ? this.downloadPath : this.basePath,
+      data ? hash(data) : randomString(),
+    );
   }
 
   protected getMirrorUrl(url: string): string | undefined {
@@ -55,11 +64,17 @@ export class FileManager implements FileManagerInterface {
     this.isReady = true;
   }
 
-  async decompress(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]> {
+  async decompress(
+    filepath: string,
+    archiveType: ArchiveFileTypeEnum,
+    fileType: FileTypeEnum,
+  ): Promise<string[]> {
     try {
       await this.install();
       await access(filepath);
-      const extractPath = this.getTemporaryDirectoryPath(`${basename(filepath)}-extract`);
+      const extractPath = this.getTemporaryDirectoryPath(
+        `${basename(filepath)}-extract`,
+      );
       try {
         await access(extractPath);
       } catch {
@@ -98,13 +113,17 @@ export class FileManager implements FileManagerInterface {
     } catch (e) {
       // If file not found download it !
       try {
-        const response = await axios.get<Readable>(url, { responseType: 'stream' });
+        const response = await axios.get<Readable>(url, {
+          responseType: "stream",
+        });
         await writeFile(response.data, filepath);
       } catch (e) {
         // If not found and have mirror, try download
         const mirrorUrl = this.getMirrorUrl(url);
         if (mirrorUrl) {
-          const response = await axios.get<Readable>(mirrorUrl, { responseType: 'stream' });
+          const response = await axios.get<Readable>(mirrorUrl, {
+            responseType: "stream",
+          });
           await writeFile(response.data, filepath);
         } else {
           throw e;
@@ -124,17 +143,17 @@ export class FileManager implements FileManagerInterface {
     try {
       const outFilepath = `${this.getTemporaryFilePath()}.${format}`;
       const options = [
-        '-i',
+        "-i",
         filepath,
-        simplify || '',
-        '-o',
-        force ? 'force' : '',
+        simplify || "",
+        "-o",
+        force ? "force" : "",
         outFilepath,
         `format=${format}`,
         `precision=${precision}`,
       ];
-      console.debug(`Running mapshaper with options ${options.join(' ')}`);
-      await mapshaper.runCommands(options.join(' '));
+      console.debug(`Running mapshaper with options ${options.join(" ")}`);
+      await mapshaper.runCommands(options.join(" "));
       return outFilepath;
     } catch (err) {
       console.error(err);

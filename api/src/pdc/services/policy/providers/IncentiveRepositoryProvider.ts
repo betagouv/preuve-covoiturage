@@ -1,5 +1,5 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -7,20 +7,21 @@ import {
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
   SerializedMetadataVariableDefinitionInterface,
-} from '../interfaces/index.ts';
+} from "../interfaces/index.ts";
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,
 })
-export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
-  public readonly incentivesTable = 'policy.incentives';
-  public readonly carpoolTable = 'carpool_v2.carpools';
-  public readonly carpoolStatusTable = 'carpool_v2.status';
+export class IncentiveRepositoryProvider
+  implements IncentiveRepositoryProviderInterfaceResolver {
+  public readonly incentivesTable = "policy.incentives";
+  public readonly carpoolTable = "carpool_v2.carpools";
+  public readonly carpoolStatusTable = "carpool_v2.status";
 
   /**
    * @deprecated [carpool_v2_migration]
    */
-  public readonly oldCarpoolTable = 'carpool.carpools';
+  public readonly oldCarpoolTable = "carpool.carpools";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -102,15 +103,16 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     });
 
     // pick values for the given keys. Override status if defined
-    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] = filteredData.reduce(
-      ([ids, amounts, statuses], i) => {
-        ids.push(i._id);
-        amounts.push(i.statefulAmount);
-        statuses.push(status ?? i.status);
-        return [ids, amounts, statuses];
-      },
-      [[], [], []],
-    );
+    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] =
+      filteredData.reduce(
+        ([ids, amounts, statuses], i) => {
+          ids.push(i._id);
+          amounts.push(i.statefulAmount);
+          statuses.push(status ?? i.status);
+          return [ids, amounts, statuses];
+        },
+        [[], [], []],
+      );
 
     const query = {
       text: `
@@ -157,7 +159,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
-        ${from ? 'AND datetime >= $3::timestamp' : ''}
+        ${from ? "AND datetime >= $3::timestamp" : ""}
         AND datetime < $2::timestamp
       `,
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
@@ -181,7 +183,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
-        ${from ? 'AND datetime >= $3::timestamp' : ''}
+        ${from ? "AND datetime >= $3::timestamp" : ""}
         AND datetime <= $2::timestamp
       ORDER BY datetime ASC;
       `,
@@ -214,7 +216,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await cursor.release();
   }
 
-  async createOrUpdateMany(data: SerializedIncentiveInterface<undefined>[]): Promise<void> {
+  async createOrUpdateMany(
+    data: SerializedIncentiveInterface<undefined>[],
+  ): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data
       .reverse()
@@ -229,7 +233,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       .map((i) => ({
         ...i,
         status: i.status || IncentiveStatusEnum.Draft,
-        state: i.statefulAmount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
+        state: i.statefulAmount === 0
+          ? IncentiveStateEnum.Null
+          : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
 

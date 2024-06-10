@@ -1,12 +1,27 @@
-import { Container } from '@/ilos/core/index.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import { Container } from "@/ilos/core/index.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 
-import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
-import { NormalizationProvider } from './NormalizationProvider.ts';
-import { CostNormalizerProvider } from './CostNormalizerProvider.ts';
-import { PartialGeoInterface, PointInterface } from '@/pdc/providers/geo/interfaces/index.ts';
-import { provider } from '@/ilos/common/index.ts';
-import { randomUUID } from '@/deps.ts';
+import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
+import { NormalizationProvider } from "./NormalizationProvider.ts";
+import { CostNormalizerProvider } from "./CostNormalizerProvider.ts";
+import {
+  PartialGeoInterface,
+  PointInterface,
+} from "@/pdc/providers/geo/interfaces/index.ts";
+import { provider } from "@/ilos/common/index.ts";
+import { randomUUID } from "@/deps.ts";
 
 class CostMock extends CostNormalizerProvider {
   protected async getSiret(operatorId: number): Promise<string> {
@@ -20,7 +35,7 @@ class GeoMock extends GeoProviderInterfaceResolver {
     return {
       lat: data.lat || 0,
       lon: data.lon || 0,
-      geo_code: 'geo_code',
+      geo_code: "geo_code",
     };
   }
 
@@ -41,16 +56,16 @@ function setup() {
   return container.get(NormalizationProvider);
 }
 
-it('Should throw if data has no version', async (t) => {
+it("Should throw if data has no version", async (t) => {
   const provider = setup();
   const data = {} as any;
   const err = await assertThrows(async () => {
     await provider.handle(data);
   });
-  assertEquals(err.message, '[normalization] Unknown API version undefined');
+  assertEquals(err.message, "[normalization] Unknown API version undefined");
 });
 
-it('Should normalize v3', async (t) => {
+it("Should normalize v3", async (t) => {
   const provider = setup();
   const data = {
     _id: 1,
@@ -60,21 +75,21 @@ it('Should normalize v3', async (t) => {
     payload: {
       operator_journey_id: randomUUID(),
       operator_trip_id: randomUUID(),
-      operator_class: 'C',
+      operator_class: "C",
       incentives: [
         {
           index: 0,
-          siret: '13002526500013',
+          siret: "13002526500013",
           amount: 150,
         },
       ],
       start: {
-        datetime: new Date('2023-04-01T01:01:01.000Z'),
+        datetime: new Date("2023-04-01T01:01:01.000Z"),
         lat: 47.74942,
         lon: 2.42909,
       },
       end: {
-        datetime: new Date('2023-04-01T01:31:01.000Z'),
+        datetime: new Date("2023-04-01T01:31:01.000Z"),
         lat: 47.84905,
         lon: 2.06105,
       },
@@ -92,22 +107,22 @@ it('Should normalize v3', async (t) => {
           identity_key: randomUUID(),
           operator_user_id: randomUUID(),
           travel_pass: {
-            name: 'navigo',
-            user_id: '111',
+            name: "navigo",
+            user_id: "111",
           },
         },
         contribution: 50,
         payments: [
           {
             index: 0,
-            siret: '38529030900454',
+            siret: "38529030900454",
             amount: 50,
-            type: 'payment',
+            type: "payment",
           },
         ],
         seats: 1,
       },
-      licence_plate: 'licence_plate',
+      licence_plate: "licence_plate",
     },
   };
   const normalizedData = await provider.handle(data);
@@ -128,12 +143,12 @@ it('Should normalize v3', async (t) => {
         start: {
           lat: data.payload.start.lat,
           lon: data.payload.start.lon,
-          geo_code: 'geo_code',
+          geo_code: "geo_code",
         },
         end: {
           lat: data.payload.end.lat,
           lon: data.payload.end.lon,
-          geo_code: 'geo_code',
+          geo_code: "geo_code",
         },
         is_driver: true,
         seats: 0,
@@ -157,12 +172,12 @@ it('Should normalize v3', async (t) => {
         start: {
           lat: data.payload.start.lat,
           lon: data.payload.start.lon,
-          geo_code: 'geo_code',
+          geo_code: "geo_code",
         },
         end: {
           lat: data.payload.end.lat,
           lon: data.payload.end.lon,
-          geo_code: 'geo_code',
+          geo_code: "geo_code",
         },
         is_driver: false,
         seats: 1,
@@ -171,7 +186,8 @@ it('Should normalize v3', async (t) => {
           operator_user_id: data.payload.passenger.identity.operator_user_id,
           identity_key: data.payload.passenger.identity.identity_key,
           travel_pass_name: data.payload.passenger.identity.travel_pass.name,
-          travel_pass_user_id: data.payload.passenger.identity.travel_pass.user_id,
+          travel_pass_user_id:
+            data.payload.passenger.identity.travel_pass.user_id,
         },
         meta: {
           calc_duration: 500,

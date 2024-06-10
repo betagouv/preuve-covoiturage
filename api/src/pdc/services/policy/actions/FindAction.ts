@@ -1,26 +1,35 @@
-import { ForbiddenException, handler, KernelInterfaceResolver, NotFoundException } from '@/ilos/common/index.ts';
-import { Action as AbstractAction } from '@/ilos/core/index.ts';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { Policy } from '../engine/entities/Policy.ts';
+import {
+  ForbiddenException,
+  handler,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { Policy } from "../engine/entities/Policy.ts";
 
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from '@/shared/operator/find.contract.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/find.contract.ts';
-import { alias } from '@/shared/policy/find.schema.ts';
+} from "@/shared/operator/find.contract.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/find.contract.ts";
+import { alias } from "@/shared/policy/find.schema.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.policy.find',
-      registry: 'registry.policy.find',
-      operator: 'operator.policy.find',
+      territory: "territory.policy.find",
+      registry: "registry.policy.find",
+      operator: "operator.policy.find",
     }),
-    ['validate', alias],
+    ["validate", alias],
   ],
 })
 export class FindAction extends AbstractAction {
@@ -32,7 +41,10 @@ export class FindAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const policyData = await this.policyRepository.find(params._id, params.territory_id);
+    const policyData = await this.policyRepository.find(
+      params._id,
+      params.territory_id,
+    );
 
     if (!policyData) {
       throw new NotFoundException(`policy #${params._id} not found`);
@@ -49,17 +61,22 @@ export class FindAction extends AbstractAction {
       return result;
     }
 
-    const operator: OperatorResultInterface = await this.kernel.call<OperatorParamsInterface, OperatorResultInterface>(
+    const operator: OperatorResultInterface = await this.kernel.call<
+      OperatorParamsInterface,
+      OperatorResultInterface
+    >(
       operatorFindSignature,
       { _id: params.operator_id },
       {
         channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['registry.operator.find'] } },
+        call: { user: { permissions: ["registry.operator.find"] } },
       },
     );
 
     if (!result.params.operators.includes(operator.uuid)) {
-      throw new ForbiddenException(`Operator ${operator.uuid} is not allowed to access policy #${params._id}`);
+      throw new ForbiddenException(
+        `Operator ${operator.uuid} is not allowed to access policy #${params._id}`,
+      );
     }
     return result;
   }

@@ -1,8 +1,23 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { makeDbBeforeAfter, DbContext } from '@/pdc/providers/test/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 
-import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider.ts';
-import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces/index.ts';
+import { IncentiveRepositoryProvider } from "./IncentiveRepositoryProvider.ts";
+import {
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
+} from "../interfaces/index.ts";
 
 interface TestContext {
   db: DbContext;
@@ -15,21 +30,23 @@ const { before, after } = makeDbBeforeAfter();
 beforeAll(async (t) => {
   const db = await before();
   t.context.db = db;
-  t.context.repository = new IncentiveRepositoryProvider(t.context.db.connection);
+  t.context.repository = new IncentiveRepositoryProvider(
+    t.context.db.connection,
+  );
 });
 
 test.after.always(async (t) => {
   await after(t.context.db);
 });
 
-it('Should create many incentives', async (t) => {
+it("Should create many incentives", async (t) => {
   const incentives = [
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date('2024-03-15'),
+      operator_journey_id: "operator_journey_id-1",
+      datetime: new Date("2024-03-15"),
       statelessAmount: 0,
       statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
@@ -43,8 +60,8 @@ it('Should create many incentives', async (t) => {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date('2024-03-15'),
+      operator_journey_id: "operator_journey_id-1",
+      datetime: new Date("2024-03-15"),
       statelessAmount: 100,
       statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
@@ -55,16 +72,16 @@ it('Should create many incentives', async (t) => {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-2',
-      datetime: new Date('2024-03-16'),
+      operator_journey_id: "operator_journey_id-2",
+      datetime: new Date("2024-03-16"),
       statelessAmount: 200,
       statefulAmount: 200,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
       meta: [
         {
-          uuid: 'uuid',
-          key: 'key',
+          uuid: "uuid",
+          key: "key",
         },
       ],
     },
@@ -73,31 +90,42 @@ it('Should create many incentives', async (t) => {
   await t.context.repository.createOrUpdateMany(incentives);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
+    text:
+      `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
   assertEquals(incentiveResults.rowCount, 2);
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 100);
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 200);
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-1"
+    ).result,
+    100,
+  );
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-2"
+    ).result,
+    200,
+  );
 });
 
-it('Should update many incentives', async (t) => {
+it("Should update many incentives", async (t) => {
   const incentives = [
     // update
     {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-1',
-      datetime: new Date('2024-03-15'),
+      operator_journey_id: "operator_journey_id-1",
+      datetime: new Date("2024-03-15"),
       statelessAmount: 0,
       statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
       meta: [
         {
-          uuid: 'uuid',
-          key: 'key',
+          uuid: "uuid",
+          key: "key",
         },
       ],
     },
@@ -107,8 +135,8 @@ it('Should update many incentives', async (t) => {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-2',
-      datetime: new Date('2024-03-16'),
+      operator_journey_id: "operator_journey_id-2",
+      datetime: new Date("2024-03-16"),
       statelessAmount: 500,
       statefulAmount: 500,
       status: IncentiveStatusEnum.Draft,
@@ -121,8 +149,8 @@ it('Should update many incentives', async (t) => {
       _id: undefined,
       policy_id: 0,
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-3',
-      datetime: new Date('2024-03-16'),
+      operator_journey_id: "operator_journey_id-3",
+      datetime: new Date("2024-03-16"),
       statelessAmount: 100,
       statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
@@ -134,20 +162,42 @@ it('Should update many incentives', async (t) => {
   await t.context.repository.createOrUpdateMany(incentives);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
+    text:
+      `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 
   assertEquals(incentiveResults.rowCount, 3);
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').result, 0);
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-1').state, 'null');
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-2').result, 500);
-  assertEquals(incentiveResults.rows.find((i) => i.operator_journey_id === 'operator_journey_id-3').result, 100);
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-1"
+    ).result,
+    0,
+  );
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-1"
+    ).state,
+    "null",
+  );
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-2"
+    ).result,
+    500,
+  );
+  assertEquals(
+    incentiveResults.rows.find((i) =>
+      i.operator_journey_id === "operator_journey_id-3"
+    ).result,
+    100,
+  );
 });
 
-it('Should update many incentives amount', async (t) => {
+it("Should update many incentives amount", async (t) => {
   const incentives = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
+    text:
+      `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 
@@ -155,15 +205,19 @@ it('Should update many incentives amount', async (t) => {
   await t.context.repository.updateStatefulAmount(data as any);
 
   const incentiveResults = await t.context.db.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
+    text:
+      `SELECT * FROM ${t.context.repository.incentivesTable} WHERE policy_id = $1`,
     values: [0],
   });
 
   assertEquals(incentiveResults.rowCount, 3);
-  assertEquals(incentiveResults.rows.filter((i) => i.state === 'null').length, 3);
+  assertEquals(
+    incentiveResults.rows.filter((i) => i.state === "null").length,
+    3,
+  );
 });
 
-it('Should list draft incentive', async (t) => {
+it("Should list draft incentive", async (t) => {
   const cursor = t.context.repository.findDraftIncentive(new Date());
   const { value } = await cursor.next();
   await cursor.next();
@@ -177,19 +231,19 @@ it('Should list draft incentive', async (t) => {
   assertObjectMatch(incentives, [
     {
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-1',
+      operator_journey_id: "operator_journey_id-1",
       statefulAmount: 0,
       statelessAmount: 0,
     },
     {
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-2',
+      operator_journey_id: "operator_journey_id-2",
       statefulAmount: 0,
       statelessAmount: 500,
     },
     {
       operator_id: 1,
-      operator_journey_id: 'operator_journey_id-3',
+      operator_journey_id: "operator_journey_id-3",
       statefulAmount: 0,
       statelessAmount: 100,
     },

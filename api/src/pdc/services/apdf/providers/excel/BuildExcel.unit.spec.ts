@@ -1,18 +1,42 @@
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { APDFNameProvider } from '@/pdc/providers/storage/index.ts';
-import { PolicyStatsInterface } from '@/shared/apdf/interfaces/PolicySliceStatInterface.ts';
-import { PolicyStatusEnum } from '@/shared/policy/common/interfaces/PolicyInterface.ts';
-import { SliceInterface } from '@/shared/policy/common/interfaces/Slices.ts';
-import { ResultInterface as Campaign } from '@/shared/policy/find.contract.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { excel } from '@/deps.ts';
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface.ts';
-import { DataRepositoryProvider } from '../APDFRepositoryProvider.ts';
-import { BuildExcel } from './BuildExcel.ts';
-import { SlicesWorksheetWriter } from './SlicesWorksheetWriter.ts';
-import { TripsWorksheetWriter } from './TripsWorksheetWriter.ts';
-import { wrapSlices } from './wrapSlicesHelper.ts';
+import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
+import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { SliceInterface } from "@/shared/policy/common/interfaces/Slices.ts";
+import { ResultInterface as Campaign } from "@/shared/policy/find.contract.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { excel } from "@/deps.ts";
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
+import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
+import { BuildExcel } from "./BuildExcel.ts";
+import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
+import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
+import { wrapSlices } from "./wrapSlicesHelper.ts";
 
 interface Context {
   // Injected tokens
@@ -65,24 +89,36 @@ beforeEach((t) => {
     t.context.createSlicesSheetToWorkbook,
     t.context.nameProvider,
   );
-  t.context.filenameStub = sinon.stub(t.context.nameProvider, 'filename');
-  t.context.filepathStub = sinon.stub(t.context.nameProvider, 'filepath');
-  t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
-  t.context.tripsWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
-  t.context.getPolicyCursorStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyCursor');
-  t.context.policyStatsStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyStats');
-  t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
+  t.context.filenameStub = sinon.stub(t.context.nameProvider, "filename");
+  t.context.filepathStub = sinon.stub(t.context.nameProvider, "filepath");
+  t.context.kernelStub = sinon.stub(t.context.kernel, "call");
+  t.context.tripsWorkbookWriterStub = sinon.stub(
+    t.context.streamDataToWorkbook,
+    "call",
+  );
+  t.context.getPolicyCursorStub = sinon.stub(
+    t.context.apdfRepositoryProvider,
+    "getPolicyCursor",
+  );
+  t.context.policyStatsStub = sinon.stub(
+    t.context.apdfRepositoryProvider,
+    "getPolicyStats",
+  );
+  t.context.slicesWorkbookWriterStub = sinon.stub(
+    t.context.createSlicesSheetToWorkbook,
+    "call",
+  );
 });
 
 beforeAll((t) => {
   t.context.campaign = {
     _id: 458,
-    name: 'IDFM normal',
+    name: "IDFM normal",
     territory_id: 0,
-    description: 'description',
-    start_date: new Date('2022-01-01T00:00:00Z'),
-    end_date: new Date('2022-02-01T00:00:00Z'),
-    handler: 'handler.js',
+    description: "description",
+    start_date: new Date("2022-01-01T00:00:00Z"),
+    end_date: new Date("2022-02-01T00:00:00Z"),
+    handler: "handler.js",
     status: PolicyStatusEnum.ACTIVE,
     incentive_sum: 4000,
     params: {
@@ -92,16 +128,16 @@ beforeAll((t) => {
       ],
     },
   };
-  t.context.start_date = new Date('2022-01-01T00:00:00Z');
-  t.context.end_date = new Date('2022-02-01T00:00:00Z');
+  t.context.start_date = new Date("2022-01-01T00:00:00Z");
+  t.context.end_date = new Date("2022-02-01T00:00:00Z");
   t.context.operator_id = 4;
-  t.context.filename = 'APDF-idfm.xlsx';
-  t.context.filepath = '/tmp/APDF-idfm.xlsx';
+  t.context.filename = "APDF-idfm.xlsx";
+  t.context.filepath = "/tmp/APDF-idfm.xlsx";
   t.context.workbookWriterMock = { commit: () => {} };
   t.context.booster_dates = new Set<string>();
 
   t.context.workbookWriterStub = sinon
-    .stub(BuildExcel, 'initWorkbookWriter')
+    .stub(BuildExcel, "initWorkbookWriter")
     .returns(t.context.workbookWriterMock as excel.stream.xlsx.WorkbookWriter);
 });
 
@@ -115,7 +151,7 @@ afterEach((t) => {
   t.context.workbookWriterStub!.restore();
 });
 
-it('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
+it("BuildExcel: should call stream data and create slice then return excel filepath", async (t) => {
   // Arrange
   const cursorCallback = () => {};
   t.context.getPolicyCursorStub!.returns(cursorCallback);
@@ -186,13 +222,13 @@ it('BuildExcel: should call stream data and create slice then return excel filep
   assertEquals(filepath, t.context.filepath!);
 });
 
-it('BuildExcel: should call stream data and return filepath even if create slice error occurs', async (t) => {
+it("BuildExcel: should call stream data and return filepath even if create slice error occurs", async (t) => {
   // Arrange
   const cursorCallback = () => {};
   t.context.getPolicyCursorStub!.returns(cursorCallback);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
-  t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.slicesWorkbookWriterStub!.rejects("Error while computing slices");
   t.context.kernelStub!.resolves(t.context.booster_dates);
   t.context.policyStatsStub?.resolves({
     total_count: 111,
@@ -257,7 +293,7 @@ it('BuildExcel: should call stream data and return filepath even if create slice
   assertEquals(filepath, t.context.filepath!);
 });
 
-it('BuildExcel: should call stream data and return excel filepath without slices', async (t) => {
+it("BuildExcel: should call stream data and return excel filepath without slices", async (t) => {
   // Arrange
   t.context.campaign = { ...t.context.campaign!, params: { slices: [] } };
 
@@ -265,7 +301,7 @@ it('BuildExcel: should call stream data and return excel filepath without slices
   t.context.getPolicyCursorStub!.returns(cursorCallback);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
-  t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.slicesWorkbookWriterStub!.rejects("Error while computing slices");
   t.context.kernelStub!.resolves(t.context.booster_dates);
   t.context.policyStatsStub?.resolves({
     total_count: 111,

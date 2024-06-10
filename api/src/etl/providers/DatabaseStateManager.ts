@@ -1,21 +1,23 @@
-import { Pool } from '@/deps.ts';
+import { Pool } from "@/deps.ts";
 import {
-  DatabaseStateManagerInterface,
-  StateManagerInterface,
   AppConfigInterface,
-  StaticMigrable,
+  DatabaseStateManagerInterface,
   State,
-} from '../interfaces/index.ts';
-import { MemoryStateManager } from './MemoryStateManager.ts';
+  StateManagerInterface,
+  StaticMigrable,
+} from "../interfaces/index.ts";
+import { MemoryStateManager } from "./MemoryStateManager.ts";
 
 export class DatabaseStateManager implements DatabaseStateManagerInterface {
-  readonly table: string = 'dataset_migration';
+  readonly table: string = "dataset_migration";
   readonly migrations: Map<string, StaticMigrable>;
   readonly targetSchema: string;
 
   constructor(protected connection: Pool, config: AppConfigInterface) {
     this.targetSchema = config.targetSchema;
-    this.migrations = new Map([...config.datastructures, ...config.datasets].map((m) => [m.uuid, m]));
+    this.migrations = new Map(
+      [...config.datastructures, ...config.datasets].map((m) => [m.uuid, m]),
+    );
   }
 
   get tableWithSchema(): string {

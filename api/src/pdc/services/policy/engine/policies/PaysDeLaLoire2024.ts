@@ -4,9 +4,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException.ts';
+} from "../../interfaces/index.ts";
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
+import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import {
   endsAt,
   isOperatorClassOrThrow,
@@ -21,15 +21,17 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { isAdultOrThrow } from '../helpers/isAdultOrThrow.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './PaysDeLaLoire2024.html.ts';
+} from "../helpers/index.ts";
+import { isAdultOrThrow } from "../helpers/isAdultOrThrow.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./PaysDeLaLoire2024.html.ts";
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
-export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = 'pdll_2024';
+export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface {
+  static readonly id = "pdll_2024";
   protected operators = [
     OperatorsEnum.BLABLACAR_DAILY,
     OperatorsEnum.KAROS,
@@ -37,11 +39,16 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
     OperatorsEnum.MOBICOOP,
   ];
   protected slices: RunnableSlices = [
-    { start: 5_000, end: 17_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75) },
+    {
+      start: 5_000,
+      end: 17_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 75),
+    },
     {
       start: 17_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 })),
     },
     {
       start: 30_000,
@@ -52,16 +59,30 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.max_amount, watchForGlobalMaxAmount],
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 84_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      [
+        "8C5251E8-AB82-EB29-C87A-2BF59D4F6328",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "5499304F-2C64-AB1A-7392-52FF88F5E78D",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
+      [
+        "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
+        84_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
-    isOperatorClassOrThrow(ctx, ['C']);
+    isOperatorClassOrThrow(ctx, ["C"]);
     isAdultOrThrow(ctx);
 
     /*
@@ -72,16 +93,16 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
        - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
      */
     if (
-      startsAndEndsAt(ctx, { aom: ['244400404'] }) ||
-      startsAndEndsAt(ctx, { aom: ['244900015'] }) ||
-      startsAndEndsAt(ctx, { aom: ['247200132'] }) ||
-      startsAndEndsAt(ctx, { aom: ['200071678'] })
+      startsAndEndsAt(ctx, { aom: ["244400404"] }) ||
+      startsAndEndsAt(ctx, { aom: ["244900015"] }) ||
+      startsAndEndsAt(ctx, { aom: ["247200132"] }) ||
+      startsAndEndsAt(ctx, { aom: ["200071678"] })
     ) {
       throw new NotEligibleTargetException();
     }
 
     // Exclure les trajets qui ne sont pas dans l'AOM
-    if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
+    if (!startsAt(ctx, { reg: ["52"] }) || !endsAt(ctx, { reg: ["52"] })) {
       throw new NotEligibleTargetException();
     }
   }
@@ -103,7 +124,7 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

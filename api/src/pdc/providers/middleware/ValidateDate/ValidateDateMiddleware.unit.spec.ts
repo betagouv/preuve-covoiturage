@@ -1,14 +1,29 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { ContextType, InvalidParamsException } from '@/ilos/common/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { ContextType, InvalidParamsException } from "@/ilos/common/index.ts";
 
-import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDateMiddleware.ts';
+import {
+  ValidateDateMiddleware,
+  ValidateDateMiddlewareParams,
+} from "./ValidateDateMiddleware.ts";
 
 async function process(
   middlewareParams: ValidateDateMiddlewareParams,
   callParams: any = {
     date: {
-      start: new Date('2020-06-01'),
-      end: new Date('2020-12-01'),
+      start: new Date("2020-06-01"),
+      end: new Date("2020-12-01"),
     },
   },
 ) {
@@ -17,7 +32,7 @@ async function process(
       user: {},
     },
     channel: {
-      service: '',
+      service: "",
     },
   };
 
@@ -26,10 +41,10 @@ async function process(
   return middleware.process(callParams, context, next, middlewareParams);
 }
 
-it('Middleware ValidateDate: should throw if start > end', async (t) => {
+it("Middleware ValidateDate: should throw if start > end", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.end',
+    startPath: "date.start",
+    endPath: "date.end",
     minStart: () => new Date(),
     maxEnd: () => new Date(),
     applyDefault: true,
@@ -37,24 +52,24 @@ it('Middleware ValidateDate: should throw if start > end', async (t) => {
 
   const callParams = {
     date: {
-      start: new Date('2021-01-01'),
-      end: new Date('2020-01-01'),
+      start: new Date("2021-01-01"),
+      end: new Date("2020-01-01"),
     },
   };
 
   await assertThrows(
     process(middlewareParams, callParams),
     { instanceOf: InvalidParamsException },
-    'Start should be before end',
+    "Start should be before end",
   );
 });
 
-it('Middleware ValidateDate: should throw if start < minstart', async (t) => {
+it("Middleware ValidateDate: should throw if start < minstart", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.end',
-    minStart: () => new Date('2021-01-01'),
-    maxEnd: () => new Date('2021-02-01'),
+    startPath: "date.start",
+    endPath: "date.end",
+    minStart: () => new Date("2021-01-01"),
+    maxEnd: () => new Date("2021-02-01"),
     applyDefault: true,
   };
   await assertThrows(
@@ -64,12 +79,12 @@ it('Middleware ValidateDate: should throw if start < minstart', async (t) => {
   );
 });
 
-it('Middleware ValidateDate: should throw if start not exist with minStart', async (t) => {
+it("Middleware ValidateDate: should throw if start not exist with minStart", async (t) => {
   const middlewareParams = {
-    startPath: 'date.wrongstart',
-    endPath: 'date.end',
-    minStart: () => new Date('2019-01-01'),
-    maxEnd: () => new Date('2021-02-01'),
+    startPath: "date.wrongstart",
+    endPath: "date.end",
+    minStart: () => new Date("2019-01-01"),
+    maxEnd: () => new Date("2021-02-01"),
     applyDefault: false,
   };
   await assertThrows(
@@ -79,12 +94,12 @@ it('Middleware ValidateDate: should throw if start not exist with minStart', asy
   );
 });
 
-it('Middleware ValidateDate: should throw if end > maxEnd', async (t) => {
+it("Middleware ValidateDate: should throw if end > maxEnd", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.end',
-    minStart: () => new Date('2019-01-01'),
-    maxEnd: () => new Date('2020-02-01'),
+    startPath: "date.start",
+    endPath: "date.end",
+    minStart: () => new Date("2019-01-01"),
+    maxEnd: () => new Date("2020-02-01"),
     applyDefault: true,
   };
   await assertThrows(
@@ -94,12 +109,12 @@ it('Middleware ValidateDate: should throw if end > maxEnd', async (t) => {
   );
 });
 
-it('Middleware ValidateDate: should throw if end not exist with maxEnd', async (t) => {
+it("Middleware ValidateDate: should throw if end not exist with maxEnd", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.wrongend',
-    minStart: () => new Date('2019-01-01'),
-    maxEnd: () => new Date('2021-02-01'),
+    startPath: "date.start",
+    endPath: "date.wrongend",
+    minStart: () => new Date("2019-01-01"),
+    maxEnd: () => new Date("2021-02-01"),
     applyDefault: false,
   };
 
@@ -110,42 +125,54 @@ it('Middleware ValidateDate: should throw if end not exist with maxEnd', async (
   );
 });
 
-it('Middleware ValidateDate: should apply default if start missing', async (t) => {
+it("Middleware ValidateDate: should apply default if start missing", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.end',
-    minStart: () => new Date('2019-01-01'),
-    maxEnd: () => new Date('2021-02-01'),
+    startPath: "date.start",
+    endPath: "date.end",
+    minStart: () => new Date("2019-01-01"),
+    maxEnd: () => new Date("2021-02-01"),
     applyDefault: true,
   };
 
   const callParams = {
     date: {
-      end: new Date('2020-01-01'),
+      end: new Date("2020-01-01"),
     },
   };
 
   const result = await process(middlewareParams, callParams);
-  assertEquals(result.params.date.start.toDateString(), middlewareParams.minStart().toDateString());
-  assertEquals((callParams.date as any).start.toDateString(), middlewareParams.minStart().toDateString());
+  assertEquals(
+    result.params.date.start.toDateString(),
+    middlewareParams.minStart().toDateString(),
+  );
+  assertEquals(
+    (callParams.date as any).start.toDateString(),
+    middlewareParams.minStart().toDateString(),
+  );
 });
 
-it('Middleware ValidateDate: should apply default if end missing', async (t) => {
+it("Middleware ValidateDate: should apply default if end missing", async (t) => {
   const middlewareParams = {
-    startPath: 'date.start',
-    endPath: 'date.end',
-    minStart: () => new Date('2019-01-01'),
-    maxEnd: () => new Date('2021-02-01'),
+    startPath: "date.start",
+    endPath: "date.end",
+    minStart: () => new Date("2019-01-01"),
+    maxEnd: () => new Date("2021-02-01"),
     applyDefault: true,
   };
 
   const callParams = {
     date: {
-      start: new Date('2020-01-01'),
+      start: new Date("2020-01-01"),
     },
   };
 
   const result = await process(middlewareParams, callParams);
-  assertEquals(result.params.date.end.toDateString(), middlewareParams.maxEnd().toDateString());
-  assertEquals((callParams.date as any).end.toDateString(), middlewareParams.maxEnd().toDateString());
+  assertEquals(
+    result.params.date.end.toDateString(),
+    middlewareParams.maxEnd().toDateString(),
+  );
+  assertEquals(
+    (callParams.date as any).end.toDateString(),
+    middlewareParams.maxEnd().toDateString(),
+  );
 });

@@ -1,6 +1,18 @@
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
-import type { GeoJSON } from '@/shared/geo/GeoJson.ts';
-import { booleanPointInPolygon, Feature, MultiPolygon, Polygon, Properties, multiPolygon, point, polygon } from '@/deps.ts';
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
+import type { GeoJSON } from "@/shared/geo/GeoJson.ts";
+import {
+  booleanPointInPolygon,
+  Feature,
+  MultiPolygon,
+  multiPolygon,
+  point,
+  Polygon,
+  polygon,
+  Properties,
+} from "@/deps.ts";
 
 interface IsCloseToParams {
   shape: GeoJSON;
@@ -14,16 +26,19 @@ export const isInside: StatelessRuleHelper<IsCloseToParams> = (
   const end = point([ctx.carpool.end_lon, ctx.carpool.end_lat]);
   const shape = getShapeFromGeoJSON(params.shape);
 
-  return booleanPointInPolygon(start, shape) || booleanPointInPolygon(end, shape);
+  return booleanPointInPolygon(start, shape) ||
+    booleanPointInPolygon(end, shape);
 };
 
-function getShapeFromGeoJSON(data: GeoJSON): Feature<Polygon | MultiPolygon, Properties> {
-  if (data.type === 'Polygon') {
+function getShapeFromGeoJSON(
+  data: GeoJSON,
+): Feature<Polygon | MultiPolygon, Properties> {
+  if (data.type === "Polygon") {
     return polygon(data.coordinates);
   }
 
-  if (data.type === 'MultiPolygon') {
+  if (data.type === "MultiPolygon") {
     return multiPolygon(data.coordinates);
   }
-  throw new Error('Invalid GeoJSON');
+  throw new Error("Invalid GeoJSON");
 }

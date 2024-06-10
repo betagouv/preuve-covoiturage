@@ -1,5 +1,5 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   DeleteMonthlyDistributionParamsInterface,
   DistributionRepositoryInterface,
@@ -9,18 +9,21 @@ import {
   JourneysByDistancesResultInterface,
   JourneysByHoursParamsInterface,
   JourneysByHoursResultInterface,
-} from '../interfaces/DistributionRepositoryProviderInterface.ts';
+} from "../interfaces/DistributionRepositoryProviderInterface.ts";
 
 @provider({
   identifier: DistributionRepositoryInterfaceResolver,
 })
-export class DistributionRepositoryProvider implements DistributionRepositoryInterface {
-  private readonly table = 'observatory.monthly_distribution';
-  private readonly insert_procedure = 'observatory.insert_monthly_distribution';
+export class DistributionRepositoryProvider
+  implements DistributionRepositoryInterface {
+  private readonly table = "observatory.monthly_distribution";
+  private readonly insert_procedure = "observatory.insert_monthly_distribution";
 
   constructor(private pg: PostgresConnection) {}
 
-  async insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void> {
+  async insertOneMonthDistribution(
+    params: InsertMonthlyDistributionParamsInterface,
+  ): Promise<void> {
     await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
@@ -29,7 +32,9 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
     });
   }
 
-  async deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void> {
+  async deleteOneMonthDistribution(
+    params: DeleteMonthlyDistributionParamsInterface,
+  ): Promise<void> {
     await this.pg.getClient().query<any>({
       values: [params.year, params.month],
       text: `
@@ -38,10 +43,12 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
     });
   }
 
-  async getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface> {
+  async getJourneysByHours(
+    params: JourneysByHoursParamsInterface,
+  ): Promise<JourneysByHoursResultInterface> {
     const filterDirection = params.direction
       ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum`
-      : '';
+      : "";
     const sql = {
       values: [params.year, params.month, params.type, params.code],
       text: `SELECT
@@ -56,9 +63,10 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
       AND territory = $4
       ${filterDirection};`,
     };
-    const response: { rowCount: number; rows: JourneysByHoursResultInterface } = await this.pg
-      .getClient()
-      .query<any>(sql);
+    const response: { rowCount: number; rows: JourneysByHoursResultInterface } =
+      await this.pg
+        .getClient()
+        .query<any>(sql);
     return response.rows;
   }
 
@@ -67,7 +75,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
   ): Promise<JourneysByDistancesResultInterface> {
     const filterDirection = params.direction
       ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum`
-      : '';
+      : "";
     const sql = {
       values: [params.year, params.month, params.type, params.code],
       text: `SELECT
@@ -82,7 +90,10 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
       AND territory = $4
       ${filterDirection};`,
     };
-    const response: { rowCount: number; rows: JourneysByDistancesResultInterface } = await this.pg
+    const response: {
+      rowCount: number;
+      rows: JourneysByDistancesResultInterface;
+    } = await this.pg
       .getClient()
       .query<any>(sql);
     return response.rows;

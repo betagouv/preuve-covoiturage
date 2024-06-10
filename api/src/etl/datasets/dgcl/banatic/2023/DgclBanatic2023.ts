@@ -1,19 +1,22 @@
-import { DgclBanaticDataset } from '../common/DgclBanaticDataset.ts';
-import { FileTypeEnum, StateManagerInterface } from '../../../../interfaces/index.ts';
-import { CeremaAom2023 } from '../../../../datasets.ts';
+import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
+import {
+  FileTypeEnum,
+  StateManagerInterface,
+} from "../../../../interfaces/index.ts";
+import { CeremaAom2023 } from "../../../../datasets.ts";
 
 export class DgclBanatic2023 extends DgclBanaticDataset {
-  static producer = 'dgcl';
-  static dataset = 'banatic';
+  static producer = "dgcl";
+  static dataset = "banatic";
   static year = 2023;
-  static table = 'dgcl_banatic_2023';
+  static table = "dgcl_banatic_2023";
   static url =
     // eslint-disable-next-line max-len
-    'https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2023&format=C';
+    "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2023&format=C";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   sheetOptions = {
-    name: 'Sheet1',
+    name: "Sheet1",
     startRow: 0,
   };
 
@@ -35,8 +38,8 @@ export class DgclBanatic2023 extends DgclBanaticDataset {
   `;
   /* Attribution des code aom région (identique au code siren de la région) pour les communes
   n'ayant pas pris la compétence  !!! Attention, il y a plusieurs erreurs dans le fichier source
-  CeremaAom2023: les codes régions ont été attribués en tant que code aom mais parfois les codes ne 
-  coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles 
+  CeremaAom2023: les codes régions ont été attribués en tant que code aom mais parfois les codes ne
+  coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles
   ou <= à 2 caractères via la requête ci-dessous */
   readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 

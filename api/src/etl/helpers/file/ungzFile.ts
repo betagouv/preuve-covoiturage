@@ -1,4 +1,4 @@
-import { createReadStream, createWriteStream, createGunzip } from '@/deps.ts';
+import { createGunzip, createReadStream, createWriteStream } from "@/deps.ts";
 
 export function ungzFile(filepath: string, extractPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -7,7 +7,7 @@ export function ungzFile(filepath: string, extractPath: string): Promise<void> {
     const unzip = createGunzip();
     const file = fileContents.pipe(unzip);
     file.pipe(writeStream);
-    file.on('finish', resolve);
-    file.on('error', reject);
+    file.on("finish", resolve);
+    file.on("error", reject);
   });
 }

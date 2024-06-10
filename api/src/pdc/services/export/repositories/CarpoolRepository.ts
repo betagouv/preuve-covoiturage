@@ -1,23 +1,27 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { CarpoolRow } from '../models/CarpoolRow.ts';
-import { ExportParams } from '../models/ExportParams.ts';
-import { XLSXWriter } from '../models/XLSXWriter.ts';
-import { ExportProgress } from './ExportRepository.ts';
-import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery.ts';
-import { QueryTemplates } from './queries/Query.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CarpoolRow } from "../models/CarpoolRow.ts";
+import { ExportParams } from "../models/ExportParams.ts";
+import { XLSXWriter } from "../models/XLSXWriter.ts";
+import { ExportProgress } from "./ExportRepository.ts";
+import { CarpoolListQuery, TemplateKeys } from "./queries/CarpoolListQuery.ts";
+import { QueryTemplates } from "./queries/Query.ts";
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
   count(params: ExportParams): Promise<number>;
 }
 
-export abstract class CarpoolRepositoryInterfaceResolver implements CarpoolRepositoryInterface {
-  public async list(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
-    throw new Error('Not implemented');
+export abstract class CarpoolRepositoryInterfaceResolver
+  implements CarpoolRepositoryInterface {
+  public async list(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+  ): Promise<void> {
+    throw new Error("Not implemented");
   }
   public async count(params: ExportParams): Promise<number> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -25,12 +29,16 @@ export abstract class CarpoolRepositoryInterfaceResolver implements CarpoolRepos
   identifier: CarpoolRepositoryInterfaceResolver,
 })
 export class CarpoolRepository implements CarpoolRepositoryInterface {
-  public readonly table = 'carpool.carpools';
+  public readonly table = "carpool.carpools";
   private readonly batchSize = 1000;
 
   constructor(public connection: PostgresConnection) {}
 
-  public async list(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  public async list(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void> {
     const [values, templates] = this.getListValuesAndTemplates(params);
 
     // use a cursor to loop over the entire set of results
@@ -74,12 +82,14 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
     return parseInt(rows[0].count, 10);
   }
 
-  private getListValuesAndTemplates(params: ExportParams): [[Date, Date, number], QueryTemplates<TemplateKeys>] {
+  private getListValuesAndTemplates(
+    params: ExportParams,
+  ): [[Date, Date, number], QueryTemplates<TemplateKeys>] {
     const { start_at, end_at } = params.get();
     const values: [Date, Date, number] = [start_at, end_at, 2023];
     const templates: QueryTemplates<TemplateKeys> = new Map();
-    templates.set('geo_selectors', params.geoToSQL());
-    templates.set('operator_id', params.operatorToSQL());
+    templates.set("geo_selectors", params.geoToSQL());
+    templates.set("operator_id", params.operatorToSQL());
 
     return [values, templates];
   }

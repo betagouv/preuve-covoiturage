@@ -1,18 +1,22 @@
-import { CommandInterface, CommandOptionType, command } from '@/ilos/common/index.ts';
-import { Export, ExportStatus } from '../models/Export.ts';
-import { XLSXWriter } from '../models/XLSXWriter.ts';
-import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository.ts';
-import { BuildServiceInterfaceResolver } from '../services/BuildService.ts';
-import { FieldServiceInterfaceResolver } from '../services/FieldService.ts';
-import { LogServiceInterfaceResolver } from '../services/LogService.ts';
-import { NameServiceInterfaceResolver } from '../services/NameService.ts';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+} from "@/ilos/common/index.ts";
+import { Export, ExportStatus } from "../models/Export.ts";
+import { XLSXWriter } from "../models/XLSXWriter.ts";
+import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
+import { BuildServiceInterfaceResolver } from "../services/BuildService.ts";
+import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
+import { LogServiceInterfaceResolver } from "../services/LogService.ts";
+import { NameServiceInterfaceResolver } from "../services/NameService.ts";
 
 export type Options = {};
 
 @command()
 export class ProcessCommand implements CommandInterface {
-  static readonly signature: string = 'export:process';
-  static readonly description: string = 'Process all pending exports';
+  static readonly signature: string = "export:process";
+  static readonly description: string = "Process all pending exports";
   static readonly options: CommandOptionType[] = [];
 
   constructor(
@@ -36,7 +40,7 @@ export class ProcessCommand implements CommandInterface {
       killswitch--;
     }
 
-    console.info('No more pending exports. Bye!');
+    console.info("No more pending exports. Bye!");
   }
 
   protected async process(exp: Export): Promise<void> {

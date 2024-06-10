@@ -1,13 +1,20 @@
-import { _ } from '@/deps.ts';
+import { _ } from "@/deps.ts";
 
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@/ilos/common/index.ts';
-import { ConfiguredMiddleware } from '../interfaces.ts';
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * Delete properties from model or array of models on output of handler
  */
 @middleware()
-export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWhitelistMiddlewareParams> {
+export class ContentWhitelistMiddleware
+  implements MiddlewareInterface<ContentWhitelistMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -23,7 +30,7 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWh
     }
 
     const configKeys = config
-      .map((k: string) => k.split('.'))
+      .map((k: string) => k.split("."))
       .reduce((acc: object, keys: string[]) => {
         _.set(acc, keys, true);
         return acc;
@@ -43,12 +50,12 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWh
     Reflect.ownKeys(keys).map((key: string) => {
       const keyValue = keys[key];
       if (keyValue === true) {
-        if (key === '*') {
+        if (key === "*") {
           result = model;
         } else {
           result[key] = model[key];
         }
-      } else if (key === '*') {
+      } else if (key === "*") {
         result = this.whitelist(model, keyValue);
       } else if (key in model) {
         result[key] = this.whitelist(model[key], keyValue);
@@ -60,9 +67,12 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWh
 
 export type ContentWhitelistMiddlewareParams = string[];
 
-const alias = 'content.only';
+const alias = "content.only";
 
-export const contentWhitelistMiddlewareBinding = [alias, ContentWhitelistMiddleware];
+export const contentWhitelistMiddlewareBinding = [
+  alias,
+  ContentWhitelistMiddleware,
+];
 
 export function contentWhitelistMiddleware(
   ...params: ContentWhitelistMiddlewareParams

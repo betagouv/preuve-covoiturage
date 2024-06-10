@@ -3,8 +3,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../../interfaces/index.ts';
-import { PolicyTemplateDescriptions } from '@/shared/policy/common/classes/PolicyTemplateDescription.ts';
+} from "../../../interfaces/index.ts";
+import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
 import {
   ConfiguredLimitInterface,
   isOperatorClassOrThrow,
@@ -12,28 +12,32 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-} from '../../helpers/index.ts';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler.ts';
+} from "../../helpers/index.ts";
+import { AbstractPolicyHandler } from "../AbstractPolicyHandler.ts";
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
+  implements PolicyHandlerInterface {
   params(): PolicyHandlerParamsInterface {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
   describe(): string {
     return PolicyTemplateDescriptions.template_one_description_html;
   }
 
-  static readonly id = '1';
+  static readonly id = "1";
 
   protected slices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 2_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+    },
     {
       start: 20_000,
       end: 50_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
     },
   ];
 
@@ -51,7 +55,7 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   }
 
   processExclusion(ctx: StatelessContextInterface) {
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
   }
 

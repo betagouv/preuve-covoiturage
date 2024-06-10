@@ -1,5 +1,8 @@
-import { ListOfConfiguredMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { scopeToGroupMiddleware, ScopeToGroupMiddlewareParams } from './ScopeToGroupMiddleware.ts';
+import { ListOfConfiguredMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import {
+  scopeToGroupMiddleware,
+  ScopeToGroupMiddlewareParams,
+} from "./ScopeToGroupMiddleware.ts";
 
 export function groupPermissionMiddlewaresHelper(groups: {
   territory: string;

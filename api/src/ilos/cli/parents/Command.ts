@@ -1,4 +1,8 @@
-import { CommandInterface, CommandOptionType, ResultType } from '@/ilos/common/index.ts';
+import {
+  CommandInterface,
+  CommandOptionType,
+  ResultType,
+} from "@/ilos/common/index.ts";
 
 /**
  * Command parent class, must be decorated
@@ -13,6 +17,6 @@ export abstract class Command implements CommandInterface {
   static readonly options: CommandOptionType[] = [];
 
   public async call(...args: any[]): Promise<ResultType> {
-    throw new Error('No implementation found');
+    throw new Error("No implementation found");
   }
 }

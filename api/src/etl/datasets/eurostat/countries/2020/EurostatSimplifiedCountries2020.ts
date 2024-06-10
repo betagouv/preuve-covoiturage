@@ -1,27 +1,31 @@
-import { AbstractDataset } from '../../../../common/AbstractDataset.ts';
-import { streamData } from '../../../../helpers/index.ts';
-import { ArchiveFileTypeEnum, FileTypeEnum } from '../../../../interfaces/index.ts';
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
+import { streamData } from "../../../../helpers/index.ts";
+import {
+  ArchiveFileTypeEnum,
+  FileTypeEnum,
+} from "../../../../interfaces/index.ts";
 
 export class EurostatSimplifiedCountries2020 extends AbstractDataset {
-  static producer = 'eurostat';
-  static dataset = 'simplified_countries';
+  static producer = "eurostat";
+  static dataset = "simplified_countries";
   static year = 2020;
-  static table = 'eurostat_simplified_countries_2020';
-  static url = 'https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_60M_2020_4326.geojson';
+  static table = "eurostat_simplified_countries_2020";
+  static url =
+    "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_60M_2020_4326.geojson";
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
-    ['codeiso3', ['properties->>ISO3_CODE', 'varchar']],
-    ['geom', ['geometry', 'geometry(MULTIPOLYGON,4326)']],
+    ["codeiso3", ["properties->>ISO3_CODE", "varchar"]],
+    ["geom", ["geometry", "geometry(MULTIPOLYGON,4326)"]],
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Geojson;
   sheetOptions = {
-    filter: 'features',
+    filter: "features",
   };
 
   async load(): Promise<void> {
     const connection = await this.connection.connect();
-    await connection.query('BEGIN TRANSACTION');
+    await connection.query("BEGIN TRANSACTION");
     try {
       for (const filepath of this.filepaths) {
         const cursor = streamData(filepath, this.fileType, this.sheetOptions);
@@ -33,7 +37,7 @@ export class EurostatSimplifiedCountries2020 extends AbstractDataset {
             const query = {
               text: `
                 INSERT INTO ${this.tableWithSchema} (
-                    ${[...this.rows.keys()].join(', \n')}
+                    ${[...this.rows.keys()].join(", \n")}
                 )
                 WITH tmp as(
                   SELECT * FROM
@@ -52,10 +56,10 @@ export class EurostatSimplifiedCountries2020 extends AbstractDataset {
           }
         } while (!done);
       }
-      await connection.query('COMMIT');
+      await connection.query("COMMIT");
       connection.release();
     } catch (e) {
-      await connection.query('ROLLBACK');
+      await connection.query("ROLLBACK");
       connection.release();
       throw e;
     }

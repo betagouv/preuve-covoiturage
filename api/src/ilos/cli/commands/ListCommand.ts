@@ -1,8 +1,7 @@
+import { command, CommandOptionType } from "@/ilos/common/index.ts";
+import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 
-import { command, CommandOptionType } from '@/ilos/common/index.ts';
-import { KernelInterfaceResolver } from '@/ilos/common/index.ts';
-
-import { Command } from '../parents/Command.ts';
+import { Command } from "../parents/Command.ts";
 
 /**
  * Command that list RPC methods
@@ -12,8 +11,8 @@ import { Command } from '../parents/Command.ts';
  */
 @command()
 export class ListCommand extends Command {
-  static readonly signature: string = 'list';
-  static readonly description: string = 'List RPC methods';
+  static readonly signature: string = "list";
+  static readonly description: string = "List RPC methods";
   static readonly options: CommandOptionType[] = [];
 
   constructor(private kernel: KernelInterfaceResolver) {
@@ -21,11 +20,11 @@ export class ListCommand extends Command {
   }
 
   public async call(): Promise<string> {
-    let result = '';
+    let result = "";
     const handlers = this.kernel.getContainer().getHandlers();
 
     const handlersByTransport = handlers.reduce((acc, h) => {
-      const key = h.local ? 'local' : h.queue ? 'queue' : 'remote';
+      const key = h.local ? "local" : h.queue ? "queue" : "remote";
       if (!(key in acc)) {
         acc[key] = [];
       }

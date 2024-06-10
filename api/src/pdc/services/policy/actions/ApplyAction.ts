@@ -1,21 +1,33 @@
-import { ContextType, handler, InvalidParamsException, NotFoundException } from '@/ilos/common/index.ts';
-import { Action as AbstractAction, env } from '@/ilos/core/index.ts';
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { Policy } from '../engine/entities/Policy.ts';
-import { defaultTz, subDaysTz, today, toTzString } from '../helpers/index.ts';
+import {
+  ContextType,
+  handler,
+  InvalidParamsException,
+  NotFoundException,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { Policy } from "../engine/entities/Policy.ts";
+import { defaultTz, subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
-} from '../interfaces/index.ts';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/policy/apply.contract.ts';
-import { alias } from '@/shared/policy/apply.schema.ts';
+} from "../interfaces/index.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/apply.contract.ts";
+import { alias } from "@/shared/policy/apply.schema.ts";
 import { date } from "@/deps.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), [
+    "validate",
+    alias,
+  ]],
 })
 export class ApplyAction extends AbstractAction {
   private readonly context: ContextType = {
@@ -36,8 +48,10 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false('APP_DISABLE_POLICY_PROCESSING')) {
-      return console.warn('[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
+    if (env.or_false("APP_DISABLE_POLICY_PROCESSING")) {
+      return console.warn(
+        "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
+      );
     }
 
     const { from, to, override } = this.defaultParams(params);
@@ -61,7 +75,12 @@ export class ApplyAction extends AbstractAction {
     };
   }
 
-  protected async processPolicy(policy_id: number, from: Date, to: Date, override = false): Promise<void> {
+  protected async processPolicy(
+    policy_id: number,
+    from: Date,
+    to: Date,
+    override = false,
+  ): Promise<void> {
     // 1. Find policy
     const pol = await this.policyRepository.find(policy_id);
     if (!pol) {
@@ -85,27 +104,41 @@ export class ApplyAction extends AbstractAction {
 
     // throw if campaign start date is after policy end date
     if (date.isAfter(start, policy.end_date)) {
-      throw new InvalidParamsException(`[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`);
+      throw new InvalidParamsException(
+        `[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`,
+      );
     }
 
     // throw if no time span
     if (end.getTime() - start.getTime() < 1) {
-      throw new InvalidParamsException(`[policy ${policy._id}] Invalid time span (from ${s} to ${e})`);
+      throw new InvalidParamsException(
+        `[policy ${policy._id}] Invalid time span (from ${s} to ${e})`,
+      );
     }
 
     console.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
 
     const batchSize = 1000;
-    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, override);
+    const cursor = this.tripRepository.findTripByPolicy(
+      policy,
+      start,
+      end,
+      batchSize,
+      override,
+    );
     let done = false;
 
     do {
-      if (total === 0) console.info(`[policy ${policy._id}] Fetching carpools...`);
+      if (total === 0) {
+        console.info(`[policy ${policy._id}] Fetching carpools...`);
+      }
       if (total === 0) console.time(`[policy ${policy._id}] Fetched carpools`);
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
       done = results.done;
-      if (total === 0) console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
+      if (total === 0) {
+        console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
+      }
 
       const bs = new Date(); // benchmark start
       if (results.value) {
@@ -120,20 +153,29 @@ export class ApplyAction extends AbstractAction {
       const ms = new Date().getTime() - bs.getTime();
       if (counter) {
         const rate = ((counter / ms) * 1000).toFixed(0);
-        console.info(`[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`);
+        console.info(
+          `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`,
+        );
       }
       total += counter;
       counter = 0;
 
       // 4. Save incentives
       if (incentives.length) {
-        const saveMsg = `[policy ${policy_id}] stored ${incentives.length} incentives`;
+        const saveMsg =
+          `[policy ${policy_id}] stored ${incentives.length} incentives`;
         console.time(saveMsg);
-        await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
+        await this.incentiveRepository.createOrUpdateMany(
+          incentives.map((i) => i.export()),
+        );
         console.timeEnd(saveMsg);
       }
     } while (!done);
 
-    console.info(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
+    console.info(
+      `[policy ${policy_id}] finished - ${total} in ${
+        new Date().getTime() - bench.getTime()
+      }ms`,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { excel } from '@/deps.ts';
+import { excel } from "@/deps.ts";
 
 export abstract class AbstractWorksheetWriter {
   protected initWorkSheet(
@@ -7,7 +7,10 @@ export abstract class AbstractWorksheetWriter {
     columns?: Partial<excel.Column>[],
     worksheetOptions?: Partial<excel.AddWorksheetOptions>,
   ) {
-    const worksheet: excel.Worksheet = workbook.addWorksheet(worksheetName, worksheetOptions);
+    const worksheet: excel.Worksheet = workbook.addWorksheet(
+      worksheetName,
+      worksheetOptions,
+    );
     if (columns) worksheet.columns = columns;
     return worksheet;
   }

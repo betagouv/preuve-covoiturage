@@ -1,1 +1,1 @@
-export { NormalizationProvider } from './providers/NormalizationProvider.ts';
+export { NormalizationProvider } from "./providers/NormalizationProvider.ts";

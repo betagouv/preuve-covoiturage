@@ -1,11 +1,21 @@
 # Utilisation avancée
 
-Au lieu d'utiliser la ligne de commande pour éxécuter l'intégralité des migrations, vous avez la possibilité en utilisant "Évolutions-geo" comme dépendance de votre projet de jouer uniquement certains datasets, d'en créer de nouveaux ou de commander les migrations de manière fonctionnelle.
+Au lieu d'utiliser la ligne de commande pour éxécuter l'intégralité des
+migrations, vous avez la possibilité en utilisant "Évolutions-geo" comme
+dépendance de votre projet de jouer uniquement certains datasets, d'en créer de
+nouveaux ou de commander les migrations de manière fonctionnelle.
 
 ## Types de datasets
-La logique du programme est de construire des tables finales agrégeant les données de tables intermédiaires (une par source et millésime de données) qui seront supprimées (ou non) en fin de parcours.
-Chaque table est donc décrite dans une classe `dataset` qui contient les différentes propriétés et méthodes permettant les différentes étapes du traitement des données (téléchargement, creation des tables, transformation des données, etc...).
-Nous avons donc conçu les interfaces `StaticMigrable` et `DatasetInterface` qui doivent être implémentés dans chaque `dataset`:
+
+La logique du programme est de construire des tables finales agrégeant les
+données de tables intermédiaires (une par source et millésime de données) qui
+seront supprimées (ou non) en fin de parcours. Chaque table est donc décrite
+dans une classe `dataset` qui contient les différentes propriétés et méthodes
+permettant les différentes étapes du traitement des données (téléchargement,
+creation des tables, transformation des données, etc...). Nous avons donc conçu
+les interfaces `StaticMigrable` et `DatasetInterface` qui doivent être
+implémentés dans chaque `dataset`:
+
 ```typescript=
 interface StaticMigrable {
   // la clé utilisée pour savoir si le dataset a été joué
@@ -36,14 +46,23 @@ interface StaticMigrable {
   after(): Promise<void>;
 }
 ```
-Néanmoins, afin de faciliter l'implémentation, nous avons créé 4 classes abstraites `AbstractDatastructure`, `AbstractDataset`, `AbstractDatafunction` et `AbstractDatatreatment` afin de gérer les types de datasets dont nous avions besoin. Libre à vous de surcharger les différentes méthodes pour répondre à votre besoin.
-Vous pouvez étendre `AbstractDatastructure` en créant de nouvelles classes pour créer les datasets correspondants aux tables finales.
-Vous pouvez étendre `AbstractDataset` en créant de nouvelles classes pour créer les datasets correspondants aux tables intermédiaires.
-Vous pouvez étendre `AbstractDatafunction` en créant de nouvelles classes pour créer les datasets correspondants aux fonctions que vous souhaitez ajouter à la base de données.
-Vous pouvez étendre `AbstractDatatreatment` en créant de nouvelles classes pour créer les datasets correspondants à des post-traitements utilisant les données de tables finales.
 
+Néanmoins, afin de faciliter l'implémentation, nous avons créé 4 classes
+abstraites `AbstractDatastructure`, `AbstractDataset`, `AbstractDatafunction` et
+`AbstractDatatreatment` afin de gérer les types de datasets dont nous avions
+besoin. Libre à vous de surcharger les différentes méthodes pour répondre à
+votre besoin. Vous pouvez étendre `AbstractDatastructure` en créant de nouvelles
+classes pour créer les datasets correspondants aux tables finales. Vous pouvez
+étendre `AbstractDataset` en créant de nouvelles classes pour créer les datasets
+correspondants aux tables intermédiaires. Vous pouvez étendre
+`AbstractDatafunction` en créant de nouvelles classes pour créer les datasets
+correspondants aux fonctions que vous souhaitez ajouter à la base de données.
+Vous pouvez étendre `AbstractDatatreatment` en créant de nouvelles classes pour
+créer les datasets correspondants à des post-traitements utilisant les données
+de tables finales.
 
 ## Jouer tous les datasets
+
 ```typescript=
 import { datasets, StaticMigrable } from '@betagouvpdc/perimeters.ts';
 
@@ -54,8 +73,12 @@ async function main(): Promise<void> {
     await migrator.run();
 }
 ```
+
 ## Personnaliser la liste des datasets
-Attention, les datasets créant les tables finales doivent se positionner avant les datasets de tables intermédiaires les alimentants.
+
+Attention, les datasets créant les tables finales doivent se positionner avant
+les datasets de tables intermédiaires les alimentants.
+
 ```typescript=
 import { StaticMigrable } from '@betagouvpdc/perimeters.ts';
 import { CreateGeoTable } from '@betagouvpdc/perimeters/dist/datastructure/000_CreateGeoTable.ts';
@@ -69,9 +92,14 @@ async function main(): Promise<void> {
     await migrator.run();
 }
 ```
+
 ## Créer un nouveau dataset
-Pour faciliter l'implémentation, il existe deux classes abstraites qui gèrent la plupart des cas, vous pouvez les étendre de la façon suivante :
+
+Pour faciliter l'implémentation, il existe deux classes abstraites qui gèrent la
+plupart des cas, vous pouvez les étendre de la façon suivante :
+
 ### Pour la classe abstraite `AbstractDataset` :
+
 ```typescript=
 import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum } from '@betagouvpdc/evolution-geo.ts';
 
@@ -134,6 +162,7 @@ export class MyDataset extends AbstractDataset {
 ```
 
 ### Pour la classe abstraite `AbstractDatastructure` :
+
 ```typescript=
 import { AbstractDatastructure } from '@betagouvpdc/evolution-geo.ts';
 export class MyDataset extends AbstractDatastructure {
@@ -185,8 +214,12 @@ export class MyDataset extends AbstractDatastructure {
   `;
 }
 ```
+
 ### Cas d'un dataset avec des données geographiques
-Vous pouvez vous inspirer ou étendre la classe abstraite [IgnDataset](/src/datasets/ign/common/IgnDataset.ts) de la façon suivante :
+
+Vous pouvez vous inspirer ou étendre la classe abstraite
+[IgnDataset](/src/datasets/ign/common/IgnDataset.ts) de la façon suivante :
+
 ```typescript=
 import { IgnDataset } from '@betagouvpdc/perimeters/dist/datasets/ign/common/IgnDataset.ts';
 export class MyGeoDataset extends IgnDataset {
@@ -257,6 +290,7 @@ export class MyGeoDataset extends IgnDataset {
 ```
 
 ## Utiliser le nouveau dataset
+
 ```typescript=
 import { buildMigrator, datasets } from '@betagouvpdc/perimeters.ts';
 import { MyDataset } from './MyDataset.ts';

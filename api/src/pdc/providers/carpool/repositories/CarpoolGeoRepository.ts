@@ -1,12 +1,15 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PoolClient, PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { Id, Position, UpsertableCarpoolGeo } from '../interfaces/index.ts';
-import sql, { raw } from '../helpers/sql.ts';
+import { provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
+import { Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+import sql, { raw } from "../helpers/sql.ts";
 
 @provider()
 export class CarpoolGeoRepository {
-  readonly table = 'carpool_v2.geo';
-  readonly carpoolTable = 'carpool_v2.carpools';
+  readonly table = "carpool_v2.geo";
+  readonly carpoolTable = "carpool_v2.carpools";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -28,15 +31,15 @@ export class CarpoolGeoRepository {
           cc.start_datetime >= ${search.from} AND
           cc.start_datetime < ${search.to}
           ${
-            !!!search.failedOnly
-              ? raw(`
+      !!!search.failedOnly
+        ? raw(`
             AND cg._id IS NULL`)
-              : raw(`
+        : raw(`
             AND (
               cg.start_geo_code IS NULL OR
               cg.end_geo_code IS NULL
             )`)
-          }
+    }
         ORDER BY cc.start_datetime
         LIMIT ${search.limit}
     `;
@@ -54,15 +57,18 @@ export class CarpoolGeoRepository {
     }));
   }
 
-  public async upsert(data: UpsertableCarpoolGeo, client: PoolClient): Promise<void> {
+  public async upsert(
+    data: UpsertableCarpoolGeo,
+    client: PoolClient,
+  ): Promise<void> {
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
         carpool_id, start_geo_code, end_geo_code, errors
       ) VALUES (
         ${data.carpool_id},
-        ${'start_geo_code' in data ? data.start_geo_code : null},
-        ${'end_geo_code' in data ? data.end_geo_code : null},
-        ${JSON.stringify('error' in data ? [data.error] : [])}
+        ${"start_geo_code" in data ? data.start_geo_code : null},
+        ${"end_geo_code" in data ? data.end_geo_code : null},
+        ${JSON.stringify("error" in data ? [data.error] : [])}
       )
       ON CONFLICT (carpool_id)
       DO UPDATE

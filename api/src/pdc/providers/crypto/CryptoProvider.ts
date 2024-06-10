@@ -1,7 +1,7 @@
-import { CryptoJS, bcrypt } from '@/deps.ts';
-import { provider, ProviderInterface } from '@/ilos/common/index.ts';
+import { bcrypt, CryptoJS } from "@/deps.ts";
+import { provider, ProviderInterface } from "@/ilos/common/index.ts";
 
-import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface.ts';
+import { CryptoProviderInterfaceResolver } from "./interfaces/CryptoProviderInterface.ts";
 
 @provider({
   identifier: CryptoProviderInterfaceResolver,
@@ -19,7 +19,10 @@ export class CryptoProvider implements ProviderInterface {
     return bcrypt.compare(plainPwd, hashedPwd);
   }
 
-  async compareToken(plainToken: string, hashedToken: string): Promise<boolean> {
+  async compareToken(
+    plainToken: string,
+    hashedToken: string,
+  ): Promise<boolean> {
     return bcrypt.compare(plainToken, hashedToken);
   }
 
@@ -28,8 +31,9 @@ export class CryptoProvider implements ProviderInterface {
   }
 
   public generateToken(length = 32): string {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = "";
+    const possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (let i = 0; i < Math.abs(length || 32); i = i + 1) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));

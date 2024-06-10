@@ -1,7 +1,19 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { GeoProviderInterfaceResolver } from '@/pdc/providers/geo/index.ts';
-import { PartialGeoInterface, GeoInterface } from '../interfaces/index.ts';
-import { GeoNormalizerProvider } from './GeoNormalizerProvider.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
+import { GeoInterface, PartialGeoInterface } from "../interfaces/index.ts";
+import { GeoNormalizerProvider } from "./GeoNormalizerProvider.ts";
 
 class GeoProvider extends GeoProviderInterfaceResolver {
   async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
@@ -15,7 +27,7 @@ class GeoProvider extends GeoProviderInterfaceResolver {
   }
 }
 
-it('Geo normalizer should return expected result', async (t) => {
+it("Geo normalizer should return expected result", async (t) => {
   const provider = new GeoProvider();
   const normalizer = new GeoNormalizerProvider(provider);
 
@@ -33,19 +45,19 @@ it('Geo normalizer should return expected result', async (t) => {
   });
 
   const resultProperties = Reflect.ownKeys(result);
-  assert(resultProperties.indexOf('start') > -1);
-  assert(Reflect.ownKeys(result.start).indexOf('geo_code') > -1);
+  assert(resultProperties.indexOf("start") > -1);
+  assert(Reflect.ownKeys(result.start).indexOf("geo_code") > -1);
   assertEquals(
     result.start.geo_code,
     `${result.start.lat.toString(10)}_${result.start.lon.toString(10)}`,
-    'have start.insee property matching lat, lon values',
+    "have start.insee property matching lat, lon values",
   );
 
-  assert(resultProperties.indexOf('end') > -1);
-  assert(Reflect.ownKeys(result.end).indexOf('geo_code') > -1);
+  assert(resultProperties.indexOf("end") > -1);
+  assert(Reflect.ownKeys(result.end).indexOf("geo_code") > -1);
   assertEquals(
     result.end.geo_code,
     `${result.end.lat.toString(10)}_${result.end.lon.toString(10)}`,
-    'have end.insee property matching lat, lon values',
+    "have end.insee property matching lat, lon values",
   );
 });

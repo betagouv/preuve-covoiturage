@@ -1,11 +1,14 @@
-import { OperatorsEnum } from '../../interfaces/index.ts';
+import { OperatorsEnum } from "../../interfaces/index.ts";
 
 export type TimestampedOperators = Array<{
   date: Date;
   operators: OperatorsEnum[];
 }>;
 
-export function getOperatorsAt(list: TimestampedOperators, datetime?: Date): OperatorsEnum[] {
+export function getOperatorsAt(
+  list: TimestampedOperators,
+  datetime?: Date,
+): OperatorsEnum[] {
   if (!Array.isArray(list) || !list.length) return [];
 
   const sorted = [...list].sort(({ date: dateA }, { date: dateB }) => {
@@ -23,7 +26,7 @@ export function getOperatorsAt(list: TimestampedOperators, datetime?: Date): Ope
   // return the last one or fallback
   if (Array.isArray(sorted) && sorted.length) {
     const last = sorted[sorted.length - 1];
-    if ('operators' in last) return last.operators;
+    if ("operators" in last) return last.operators;
   }
 
   return [];

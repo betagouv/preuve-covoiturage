@@ -1,8 +1,8 @@
-import { AbstractDatafunction } from '../common/AbstractDatafunction.ts';
+import { AbstractDatafunction } from "../common/AbstractDatafunction.ts";
 
 export class CreateGetClosestComFunction extends AbstractDatafunction {
-  static uuid = 'create_get_closest_com_function';
-  static table = 'get_closest_com';
+  static uuid = "create_get_closest_com_function";
+  static table = "get_closest_com";
   static year = 2022;
   readonly sql = `
     CREATE OR REPLACE FUNCTION ${this.functionWithSchema}(lon float, lat float, buffer integer default 1000) 

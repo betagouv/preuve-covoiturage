@@ -1,4 +1,5 @@
-export const description = `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 01 janvier 2024 au 31 Décembre 2025</b></p>
   

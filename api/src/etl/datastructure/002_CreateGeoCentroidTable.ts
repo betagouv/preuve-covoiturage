@@ -1,10 +1,10 @@
-import { AbstractDatastructure } from '../common/AbstractDatastructure.ts';
+import { AbstractDatastructure } from "../common/AbstractDatastructure.ts";
 
 export class CreateGeoCentroidTable extends AbstractDatastructure {
-  static uuid = 'create_geo_centroid_table';
-  static table = 'perimeters_centroid';
+  static uuid = "create_geo_centroid_table";
+  static table = "perimeters_centroid";
   static year = 2019;
-  readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
+  readonly indexWithSchema = this.tableWithSchema.replace(".", "_");
   readonly sql = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,

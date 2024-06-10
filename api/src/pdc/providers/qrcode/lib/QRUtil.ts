@@ -1,10 +1,10 @@
-import { QRMaskPattern } from './QRMaskPattern.ts';
+import { QRMaskPattern } from "./QRMaskPattern.ts";
 
-import { QRPolynomial } from './QRPolynomial.ts';
+import { QRPolynomial } from "./QRPolynomial.ts";
 
-import { QRMath } from './QRMath.ts';
+import { QRMath } from "./QRMath.ts";
 
-import { QRMode } from './QRMode.ts';
+import { QRMode } from "./QRMode.ts";
 
 export const QRUtil = {
   PATTERN_POSITION_TABLE: [
@@ -49,20 +49,24 @@ export const QRUtil = {
     [6, 26, 54, 82, 110, 138, 166],
     [6, 30, 58, 86, 114, 142, 170],
   ],
-  G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-  G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+  G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) |
+    (1 << 0),
+  G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) |
+    (1 << 2) | (1 << 0),
   G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
   getBCHTypeInfo: function (data) {
     let d = data << 10;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
-      d ^= QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
+      d ^= QRUtil.G15 <<
+        (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
     }
     return ((data << 10) | d) ^ QRUtil.G15_MASK;
   },
   getBCHTypeNumber: function (data) {
     let d = data << 12;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
-      d ^= QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
+      d ^= QRUtil.G18 <<
+        (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
     }
     return (data << 12) | d;
   },
@@ -228,7 +232,8 @@ export const QRUtil = {
         }
       }
     }
-    const ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
+    const ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) /
+      5;
     lostPoint += ratio * 10;
     return lostPoint;
   },

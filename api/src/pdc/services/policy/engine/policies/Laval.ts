@@ -1,11 +1,11 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface.ts';
+import { RunnableSlices } from "../../interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces/index.ts';
+} from "../../interfaces/index.ts";
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -15,32 +15,43 @@ import {
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-} from '../helpers/index.ts';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler.ts';
-import { description } from './Laval.html.ts';
+} from "../helpers/index.ts";
+import { AbstractPolicyHandler } from "./AbstractPolicyHandler.ts";
+import { description } from "./Laval.html.ts";
 
 // Politique de la Communauté D'Agglomeration De Laval
 export const Laval: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = '695';
+  implements PolicyHandlerInterface {
+  static readonly id = "695";
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['A2CEF9FE-D179-319F-1996-9D69E0157522', max_amount, watchForGlobalMaxAmount],
+      [
+        "70CE7566-6FD5-F850-C039-D76AF6F8CEB5",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "A2CEF9FE-D179-319F-1996-9D69E0157522",
+        max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
   protected operators = [OperatorsEnum.KLAXIT];
-  protected slices: RunnableSlices = [{ start: 2_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
+  protected slices: RunnableSlices = [{
+    start: 2_000,
+    fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50),
+  }];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -60,7 +71,7 @@ export const Laval: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.slices,
       operators: this.operators,
       limits: {

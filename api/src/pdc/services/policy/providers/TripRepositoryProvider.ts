@@ -1,19 +1,24 @@
-import { provider } from '@/ilos/common/index.ts';
-import { PostgresConnection } from '@/ilos/connection-postgres/index.ts';
-import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces/index.ts';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import {
+  CarpoolInterface,
+  PolicyInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from "../interfaces/index.ts";
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,
 })
-export class TripRepositoryProvider implements TripRepositoryProviderInterfaceResolver {
-  public readonly table = 'carpool_v2.carpools';
-  public readonly geoTable = 'carpool_v2.geo';
-  public readonly statusTable = 'carpool_v2.status';
-  public readonly operatorTable = 'operator.operators';
-  public readonly oldCarpoolTable = 'carpool.carpools';
-  public readonly incentiveTable = 'policy.incentives';
-  public readonly getComFunction = 'territory.get_com_by_territory_id';
-  public readonly getMillesimeFunction = 'geo.get_latest_millesime';
+export class TripRepositoryProvider
+  implements TripRepositoryProviderInterfaceResolver {
+  public readonly table = "carpool_v2.carpools";
+  public readonly geoTable = "carpool_v2.geo";
+  public readonly statusTable = "carpool_v2.status";
+  public readonly operatorTable = "operator.operators";
+  public readonly oldCarpoolTable = "carpool.carpools";
+  public readonly incentiveTable = "policy.incentives";
+  public readonly getComFunction = "territory.get_com_by_territory_id";
+  public readonly getMillesimeFunction = "geo.get_latest_millesime";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -67,16 +72,14 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
         JOIN ${this.statusTable} cs
           ON cs.carpool_id = cc._id
         ${
-          override
-            ? ''
-            : `
+        override ? "" : `
               LEFT JOIN ${this.incentiveTable} pi
                 ON
                   cc.operator_journey_id = pi.operator_journey_id
                   AND cc.operator_id = pi.operator_id
                   AND pi.policy_id = $4::int
             `
-        }
+      }
         WHERE
           cc.start_datetime >= $2::timestamp
           AND cc.start_datetime < $3::timestamp
@@ -84,7 +87,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
             co.start_geo_code = ANY($1::varchar[])
             OR co.end_geo_code = ANY($1::varchar[])
           )
-          ${override ? '' : 'AND pi._id IS NULL'}
+          ${override ? "" : "AND pi._id IS NULL"}
         ORDER BY cc.start_datetime ASC
       `,
       values: [coms, from, to, ...(!override && policy_id ? [policy_id] : [])],
@@ -101,7 +104,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
     batchSize = 100,
     override = false,
   ): AsyncGenerator<CarpoolInterface[], void, void> {
-    const yearResult = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const yearResult = await this.connection.getClient().query(
+      `SELECT * from ${this.getMillesimeFunction}() as year`,
+    );
     const year = yearResult.rows[0]?.year;
 
     const comRes = await this.connection.getClient().query({

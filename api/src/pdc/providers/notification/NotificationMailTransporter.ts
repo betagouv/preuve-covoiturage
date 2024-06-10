@@ -1,13 +1,16 @@
-import { ConfigInterfaceResolver, provider } from '@/ilos/common/index.ts';
-import { TemplateInterface, TemplateProviderInterfaceResolver } from '@/pdc/providers/template/index.ts';
-import { mailer, mjml2html, MailOptions, process } from '@/deps.ts';
+import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import {
+  TemplateInterface,
+  TemplateProviderInterfaceResolver,
+} from "@/pdc/providers/template/index.ts";
+import { mailer, MailOptions, mjml2html, process } from "@/deps.ts";
 
 import {
+  MailTemplateNotificationInterface,
   NotificationTransporterInterface,
   NotificationTransporterInterfaceResolver,
-  MailTemplateNotificationInterface,
   StaticMailTemplateNotificationInterface,
-} from './interfaces/index.ts';
+} from "./interfaces/index.ts";
 
 interface NotificationOptions {
   debug: boolean;
@@ -19,8 +22,11 @@ interface NotificationOptions {
   identifier: NotificationTransporterInterfaceResolver,
 })
 export class NotificationMailTransporter
-  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<MailOptions>>
-{
+  implements
+    NotificationTransporterInterface<
+      MailTemplateNotificationInterface,
+      Partial<MailOptions>
+    > {
   transporter: mailer.Transporter;
   protected options: NotificationOptions;
 
@@ -31,7 +37,9 @@ export class NotificationMailTransporter
 
   async init(): Promise<void> {
     this.setOptionsFromConfig();
-    await this.createTransport(this.config.get('notification.mail.verifySmtp', false));
+    await this.createTransport(
+      this.config.get("notification.mail.verifySmtp", false),
+    );
   }
 
   async destroy(): Promise<void> {
@@ -42,22 +50,28 @@ export class NotificationMailTransporter
 
   protected setOptionsFromConfig(): void {
     this.options = {
-      from: `${this.config.get('notification.mail.from.name')} <${this.config.get('notification.mail.from.email')}>`,
-      debug: this.config.get('notification.mail.debug', false),
-      debugToOverride: `${this.config.get('notification.mail.to.name')} <${this.config.get(
-        'notification.mail.to.email',
-      )}>`,
+      from: `${this.config.get("notification.mail.from.name")} <${
+        this.config.get("notification.mail.from.email")
+      }>`,
+      debug: this.config.get("notification.mail.debug", false),
+      debugToOverride: `${this.config.get("notification.mail.to.name")} <${
+        this.config.get(
+          "notification.mail.to.email",
+        )
+      }>`,
     };
   }
 
   protected async createTransport(verify = false): Promise<void> {
     if (!this.transporter) {
-      this.transporter = mailer.createTransport(this.config.get('notification.mail.smtp'));
+      this.transporter = mailer.createTransport(
+        this.config.get("notification.mail.smtp"),
+      );
       if (verify) {
         try {
           await this.transporter.verify();
         } catch (e) {
-          console.error('Failed to connect to SMTP server');
+          console.error("Failed to connect to SMTP server");
           process.exit(1);
         }
       }
@@ -69,15 +83,21 @@ export class NotificationMailTransporter
     return !mjml ? result : mjml2html(result).html;
   }
 
-  async send(mail: MailTemplateNotificationInterface, options = {}): Promise<void> {
-    const mailCtor = mail.constructor as StaticMailTemplateNotificationInterface;
+  async send(
+    mail: MailTemplateNotificationInterface,
+    options = {},
+  ): Promise<void> {
+    const mailCtor = mail
+      .constructor as StaticMailTemplateNotificationInterface;
 
     await this.transporter.sendMail({
       ...options,
       from: this.options.from,
       to: this.options.debug ? this.options.debugToOverride : mail.to,
       subject: mailCtor.subject,
-      html: mailCtor.templateMJML ? this.render(new mailCtor.templateMJML(mail.data), true) : undefined,
+      html: mailCtor.templateMJML
+        ? this.render(new mailCtor.templateMJML(mail.data), true)
+        : undefined,
       text: this.render(new mailCtor.templateText(mail.data)),
     });
 

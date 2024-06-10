@@ -30,4 +30,6 @@ interface FinancialStatByDayInterface extends CommonFinancialStatInterface {
   day: Date;
 }
 
-export type FinancialStatInterface = FinancialStatByMonthInterface | FinancialStatByDayInterface;
+export type FinancialStatInterface =
+  | FinancialStatByMonthInterface
+  | FinancialStatByDayInterface;

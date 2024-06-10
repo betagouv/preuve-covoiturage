@@ -1,6 +1,6 @@
-import { ParamsWithContextType } from './ParamsWithContextType.ts';
-import { ParamsType } from './ParamsType.ts';
-import { IdType } from './IdType.ts';
+import { ParamsWithContextType } from "./ParamsWithContextType.ts";
+import { ParamsType } from "./ParamsType.ts";
+import { IdType } from "./IdType.ts";
 
 export type RPCSingleCallType = {
   id?: IdType;

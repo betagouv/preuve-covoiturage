@@ -1,16 +1,23 @@
-import { CompanyInterface } from '@/shared/common/interfaces/CompanyInterface2.ts';
+import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
 
 export interface CompanyDataSourceProviderInterface {
   find(siret: string): Promise<CompanyInterface>;
-  find_many(sirets: string[], parallelCall?: number): Promise<CompanyInterface[]>;
+  find_many(
+    sirets: string[],
+    parallelCall?: number,
+  ): Promise<CompanyInterface[]>;
 }
 
-export abstract class CompanyDataSourceProviderInterfaceResolver implements CompanyDataSourceProviderInterface {
+export abstract class CompanyDataSourceProviderInterfaceResolver
+  implements CompanyDataSourceProviderInterface {
   async find(siret: string): Promise<CompanyInterface> {
     throw new Error();
   }
 
-  async find_many(sirets: string[], parallelCall = 4): Promise<CompanyInterface[]> {
+  async find_many(
+    sirets: string[],
+    parallelCall = 4,
+  ): Promise<CompanyInterface[]> {
     throw new Error();
   }
 }

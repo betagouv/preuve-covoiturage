@@ -1,24 +1,41 @@
-import { internalOnlyMiddlewares } from '@/pdc/providers/middleware/index.ts';
-import { Action } from '@/ilos/core/index.ts';
-import { handler, ContextType, KernelInterfaceResolver } from '@/ilos/common/index.ts';
-import { BucketName, S3StorageProvider } from '@/pdc/providers/storage/index.ts';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '@/shared/trip/sendExport.contract.ts';
-import { alias } from '@/shared/trip/sendExport.schema.ts';
-import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '@/shared/user/notify.contract.ts';
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { Action } from "@/ilos/core/index.ts";
 import {
-  signature as buildExportSignature,
+  ContextType,
+  handler,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import {
+  BucketName,
+  S3StorageProvider,
+} from "@/pdc/providers/storage/index.ts";
+
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/trip/sendExport.contract.ts";
+import { alias } from "@/shared/trip/sendExport.schema.ts";
+import {
+  ParamsInterface as NotifyParamsInterface,
+  signature as notifySignature,
+} from "@/shared/user/notify.contract.ts";
+import {
   ParamsInterface as BuildExportParamsInterface,
-} from '@/shared/trip/buildExport.contract.ts';
+  signature as buildExportSignature,
+} from "@/shared/trip/buildExport.contract.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), [
+    "validate",
+    alias,
+  ]],
 })
 export class SendExportAction extends Action {
   protected defaultContext: ContextType = {
     channel: {
-      service: 'trip',
+      service: "trip",
     },
     call: {
       user: {},
@@ -32,7 +49,10 @@ export class SendExportAction extends Action {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
     try {
       const { from, ...exportParams } = params;
       const fileKey = await this.kernel.call<BuildExportParamsInterface>(
@@ -46,7 +66,7 @@ export class SendExportAction extends Action {
       const fullname = from.fullname;
 
       const emailParams = {
-        template: 'ExportCSVNotification',
+        template: "ExportCSVNotification",
         to: `${fullname} <${email}>`,
         data: {
           fullname,
@@ -54,21 +74,25 @@ export class SendExportAction extends Action {
         },
       };
 
-      await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
-        channel: {
-          service: 'trip',
+      await this.kernel.notify<NotifyParamsInterface>(
+        notifySignature,
+        emailParams,
+        {
+          channel: {
+            service: "trip",
+          },
+          call: {
+            user: {},
+          },
         },
-        call: {
-          user: {},
-        },
-      });
+      );
 
       return;
     } catch (e) {
       await this.kernel.notify<NotifyParamsInterface>(
         notifySignature,
         {
-          template: 'ExportCSVErrorNotification',
+          template: "ExportCSVErrorNotification",
           to: `${params.from.fullname} <${params.from.email}>`,
           data: {
             fullname: params.from.fullname,

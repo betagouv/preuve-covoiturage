@@ -1,11 +1,14 @@
-import { IgnDataset, TransformationParamsInterface } from '../../common/IgnDataset.ts';
-import { StaticAbstractDataset } from '../../../../interfaces/index.ts';
+import {
+  IgnDataset,
+  TransformationParamsInterface,
+} from "../../common/IgnDataset.ts";
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2019 extends IgnDataset {
-  static producer = 'ign';
-  static dataset = 'ae';
+  static producer = "ign";
+  static dataset = "ae";
   static year = 2019;
-  static table = 'ign_ae_2019';
+  static table = "ign_ae_2019";
 
   readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
@@ -23,12 +26,17 @@ export class IgnAe2019 extends IgnDataset {
   `;
   static url =
     // eslint-disable-next-line max-len
-    'http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-0__SHP__FRA_WGS84G_2019-09-24.7z';
+    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-0__SHP__FRA_WGS84G_2019-09-24.7z";
 
-  readonly transformations: Array<[string, Partial<TransformationParamsInterface>]> = [
-    ['SHP_WGS84_FR/COMMUNE.shp', { key: 'geom' }],
-    ['SHP_WGS84_FR/COMMUNE_CARTO.shp', { key: 'geom_simple', simplify: ['-simplify dp interval=100 keep-shapes'] }],
-    ['SHP_WGS84_FR/CHEF_LIEU_CARTO.shp', { key: 'centroid' }],
+  readonly transformations: Array<
+    [string, Partial<TransformationParamsInterface>]
+  > = [
+    ["SHP_WGS84_FR/COMMUNE.shp", { key: "geom" }],
+    ["SHP_WGS84_FR/COMMUNE_CARTO.shp", {
+      key: "geom_simple",
+      simplify: ["-simplify dp interval=100 keep-shapes"],
+    }],
+    ["SHP_WGS84_FR/CHEF_LIEU_CARTO.shp", { key: "centroid" }],
   ];
 
   readonly importSql = `

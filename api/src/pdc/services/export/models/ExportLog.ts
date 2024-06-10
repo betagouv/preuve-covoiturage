@@ -1,11 +1,11 @@
 export enum ExportLogEvent {
-  CREATED = 'created',
-  CANCELLED = 'cancelled',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  FAILURE = 'failure',
-  SEND = 'send',
-  UPLOAD = 'upload',
+  CREATED = "created",
+  CANCELLED = "cancelled",
+  RUNNING = "running",
+  SUCCESS = "success",
+  FAILURE = "failure",
+  SEND = "send",
+  UPLOAD = "upload",
 }
 
 export class ExportLog {

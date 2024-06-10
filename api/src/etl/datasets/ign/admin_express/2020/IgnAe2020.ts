@@ -1,11 +1,14 @@
-import { IgnDataset, TransformationParamsInterface } from '../../common/IgnDataset.ts';
-import { StaticAbstractDataset } from '../../../../interfaces/index.ts';
+import {
+  IgnDataset,
+  TransformationParamsInterface,
+} from "../../common/IgnDataset.ts";
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2020 extends IgnDataset {
-  static producer = 'ign';
-  static dataset = 'ae';
+  static producer = "ign";
+  static dataset = "ae";
   static year = 2020;
-  static table = 'ign_ae_2020';
+  static table = "ign_ae_2020";
 
   readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
@@ -23,27 +26,37 @@ export class IgnAe2020 extends IgnDataset {
   `;
   static url =
     // eslint-disable-next-line max-len
-    'http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z';
+    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z";
 
-  readonly transformations: Array<[string, Partial<TransformationParamsInterface>]> = [
-    ['SHP_WGS84G_FRA/COMMUNE', { key: 'geom' }],
-    ['SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL', { key: 'geom' }],
+  readonly transformations: Array<
+    [string, Partial<TransformationParamsInterface>]
+  > = [
+    ["SHP_WGS84G_FRA/COMMUNE", { key: "geom" }],
+    ["SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL", { key: "geom" }],
     [
-      'SHP_WGS84G_FRA/COMMUNE',
+      "SHP_WGS84G_FRA/COMMUNE",
       {
-        key: 'geom_simple',
-        simplify: ['-simplify 60% keep-shapes', '-simplify 50% keep-shapes', '-simplify 40% keep-shapes'],
+        key: "geom_simple",
+        simplify: [
+          "-simplify 60% keep-shapes",
+          "-simplify 50% keep-shapes",
+          "-simplify 40% keep-shapes",
+        ],
       },
     ],
     [
-      'SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL',
+      "SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL",
       {
-        key: 'geom_simple',
-        simplify: ['-simplify 60% keep-shapes', '-simplify 50% keep-shapes', '-simplify 40% keep-shapes'],
+        key: "geom_simple",
+        simplify: [
+          "-simplify 60% keep-shapes",
+          "-simplify 50% keep-shapes",
+          "-simplify 40% keep-shapes",
+        ],
       },
     ],
-    ['SHP_WGS84G_FRA/CHEF_LIEU_CARTO', { key: 'centroid' }],
-    ['SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL', { key: 'centroid' }],
+    ["SHP_WGS84G_FRA/CHEF_LIEU_CARTO", { key: "centroid" }],
+    ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
   ];
 
   readonly importSql = `

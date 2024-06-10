@@ -1,8 +1,4 @@
-import {
-  Request,
-  Response,
-  NextFunction
-} from '@/deps.ts';
+import { NextFunction, Request, Response } from "@/deps.ts";
 
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
@@ -16,39 +12,39 @@ export function errorHandlerMiddleware(
   let code: number;
 
   switch (err.message) {
-    case 'Bad Request Error':
-    case 'Bad Request':
-    case 'Validation Error':
-    case 'Validation':
+    case "Bad Request Error":
+    case "Bad Request":
+    case "Validation Error":
+    case "Validation":
       code = 400;
       break;
 
-    case 'Unauthorized Error':
-    case 'Unauthorized':
+    case "Unauthorized Error":
+    case "Unauthorized":
       code = 401;
       break;
 
-    case 'Forbidden Error':
-    case 'Forbidden':
+    case "Forbidden Error":
+    case "Forbidden":
       code = 403;
       break;
 
-    case 'Not Found Error':
-    case 'Not Found':
+    case "Not Found Error":
+    case "Not Found":
       code = 404;
       break;
 
-    case 'Conflict Error':
-    case 'Conflict':
+    case "Conflict Error":
+    case "Conflict":
       code = 409;
       break;
 
-    case 'Too Many Requests Error':
-    case 'Too Many Requests':
+    case "Too Many Requests Error":
+    case "Too Many Requests":
       code = 429;
       break;
 
-    case 'Internal Server Error':
+    case "Internal Server Error":
       code = 500;
       break;
 
@@ -57,15 +53,20 @@ export function errorHandlerMiddleware(
   }
 
   try {
-    const { id, method } = Array.isArray(_req.body) ? _req.body.pop() : _req.body;
+    const { id, method } = Array.isArray(_req.body)
+      ? _req.body.pop()
+      : _req.body;
 
-    console.error(`[errorHandler] ${err.name} ${code} ${err.message}\n${err.stack}`, { id, method });
+    console.error(
+      `[errorHandler] ${err.name} ${code} ${err.message}\n${err.stack}`,
+      { id, method },
+    );
   } catch (e) {}
 
   if (res.headersSent) return;
   res.status(code).json({
     id: 1,
-    jsonrpc: '2.0',
+    jsonrpc: "2.0",
     error: { code, data: err.name, message: err.message },
   });
 }

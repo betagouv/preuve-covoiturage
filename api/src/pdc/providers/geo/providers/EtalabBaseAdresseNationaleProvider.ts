@@ -1,11 +1,16 @@
-import { NotFoundException, provider } from '@/ilos/common/index.ts';
-import { axios } from '@/deps.ts';
-import { _, HttpsAgent as Agent, axiosRetry, URLSearchParams } from '@/deps.ts';
-import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces/index.ts';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { axios } from "@/deps.ts";
+import { _, axiosRetry, HttpsAgent as Agent, URLSearchParams } from "@/deps.ts";
+import {
+  GeoCoderInterface,
+  InseeCoderInterface,
+  PointInterface,
+} from "../interfaces/index.ts";
 
 @provider()
-export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, InseeCoderInterface {
-  protected domain = 'https://api-adresse.data.gouv.fr';
+export class EtalabBaseAdresseNationaleProvider
+  implements GeoCoderInterface, InseeCoderInterface {
+  protected domain = "https://api-adresse.data.gouv.fr";
   private static agent = new Agent({ keepAlive: false });
 
   constructor() {
@@ -19,8 +24,8 @@ export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, In
   async literalToPosition(literal: string): Promise<PointInterface> {
     const params = new URLSearchParams({
       q: literal,
-      limit: '1',
-      autocomplete: '0',
+      limit: "1",
+      autocomplete: "0",
     });
 
     const res = await axios.get(`${this.domain}/search`, {
@@ -28,11 +33,14 @@ export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, In
       httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
     });
 
-    if (!_.get(res, 'data.features', []).length) {
+    if (!_.get(res, "data.features", []).length) {
       throw new NotFoundException();
     }
 
-    const [lon, lat] = _.get(res, 'data.features.0.geometry.coordinates', [null, null]);
+    const [lon, lat] = _.get(res, "data.features.0.geometry.coordinates", [
+      null,
+      null,
+    ]);
 
     if (!lon || !lat) {
       throw new NotFoundException(`Literal not found on BAN (${literal})`);
@@ -56,11 +64,11 @@ export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, In
       httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
     });
 
-    if (!_.get(res, 'data.features', []).length) {
+    if (!_.get(res, "data.features", []).length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
-    const data = _.get(res, 'data.features.0.properties.citycode', null);
+    const data = _.get(res, "data.features.0.properties.citycode", null);
     if (!data) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }

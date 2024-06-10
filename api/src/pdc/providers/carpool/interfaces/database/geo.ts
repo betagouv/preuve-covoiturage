@@ -1,4 +1,4 @@
-import { GeoCode, Id, SerializableError } from '../common.ts';
+import { GeoCode, Id, SerializableError } from "../common.ts";
 
 export interface UpsertableSuccessCarpoolGeo {
   carpool_id: Id;
@@ -11,4 +11,6 @@ export interface UpsertableErrorCarpoolGeo {
   error: SerializableError;
 }
 
-export type UpsertableCarpoolGeo = UpsertableSuccessCarpoolGeo | UpsertableErrorCarpoolGeo;
+export type UpsertableCarpoolGeo =
+  | UpsertableSuccessCarpoolGeo
+  | UpsertableErrorCarpoolGeo;

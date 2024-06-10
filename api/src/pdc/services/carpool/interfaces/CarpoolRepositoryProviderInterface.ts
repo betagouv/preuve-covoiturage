@@ -1,4 +1,4 @@
-import { PeopleWithIdInterface } from './Carpool.ts';
+import { PeopleWithIdInterface } from "./Carpool.ts";
 
 export interface CarpoolRepositoryProviderInterface {
   importFromAcquisition(
@@ -16,7 +16,8 @@ export interface CarpoolRepositoryProviderInterface {
   ): Promise<void>;
   updateStatus(acquisition_id: number, status: string): Promise<void>;
 }
-export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
+export abstract class CarpoolRepositoryProviderInterfaceResolver
+  implements CarpoolRepositoryProviderInterface {
   abstract importFromAcquisition(
     shared: {
       acquisition_id: number;

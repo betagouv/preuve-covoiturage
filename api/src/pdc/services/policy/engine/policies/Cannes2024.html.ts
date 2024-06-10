@@ -1,4 +1,5 @@
-export const description = `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d’incitation au covoiturage du <b> 01 janvier 2024 au 30 avril 2024</b></p>
   

@@ -1,28 +1,43 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
-import { Action, ServiceProvider, Extensions } from '@/ilos/core/index.ts';
-import { ConnectionManagerExtension } from '@/ilos/connection-manager/index.ts';
-import { RedisConnection } from '@/ilos/connection-redis/index.ts';
-import { handler, serviceProvider } from '@/ilos/common/index.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { Action, Extensions, ServiceProvider } from "@/ilos/core/index.ts";
+import { ConnectionManagerExtension } from "@/ilos/connection-manager/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { handler, serviceProvider } from "@/ilos/common/index.ts";
 
-import { QueueExtension } from './QueueExtension.ts';
+import { QueueExtension } from "./QueueExtension.ts";
 
 @handler({
-  service: 'serviceA',
-  method: 'hello',
+  service: "serviceA",
+  method: "hello",
 })
 class ServiceOneHandler extends Action {}
 
 @handler({
-  service: 'serviceB',
-  method: 'world',
+  service: "serviceB",
+  method: "world",
 })
 class ServiceTwoHandler extends Action {}
 
-it('Queue extension: should register queue name in container as worker', async (t) => {
+it("Queue extension: should register queue name in container as worker", async (t) => {
   @serviceProvider({
-    queues: ['serviceA', 'serviceB'],
+    queues: ["serviceA", "serviceB"],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[RedisConnection, new RedisConnection('redis://localhost:6379')]],
+    connections: [[
+      RedisConnection,
+      new RedisConnection("redis://localhost:6379"),
+    ]],
   })
   class MyService extends ServiceProvider {
     extensions = [
@@ -43,20 +58,28 @@ it('Queue extension: should register queue name in container as worker', async (
 
   const queueRegistry = container.getAll(queueRegistrySymbol);
 
-  assert(queueRegistry.indexOf('serviceA') > -1);
-  assert(queueRegistry.indexOf('serviceB') > -1);
+  assert(queueRegistry.indexOf("serviceA") > -1);
+  assert(queueRegistry.indexOf("serviceB") > -1);
   assertEquals(container.getHandlers().length, 4);
 });
 
-it('should register queue name in container and handlers', async (t) => {
+it("should register queue name in container and handlers", async (t) => {
   @serviceProvider({
     env: null,
-    queues: ['serviceA', 'serviceB'],
+    queues: ["serviceA", "serviceB"],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[RedisConnection, new RedisConnection('redis://localhost:6379')]],
+    connections: [[
+      RedisConnection,
+      new RedisConnection("redis://localhost:6379"),
+    ]],
   })
   class MyService extends ServiceProvider {
-    extensions = [Extensions.Config, Extensions.Handlers, QueueExtension, ConnectionManagerExtension];
+    extensions = [
+      Extensions.Config,
+      Extensions.Handlers,
+      QueueExtension,
+      ConnectionManagerExtension,
+    ];
   }
 
   const service = new MyService();
@@ -67,7 +90,7 @@ it('should register queue name in container and handlers', async (t) => {
   assert(container.isBound(queueRegistrySymbol));
 
   const queueRegistry = container.getAll(queueRegistrySymbol);
-  assert(queueRegistry.indexOf('serviceA') > -1);
-  assert(queueRegistry.indexOf('serviceB') > -1);
+  assert(queueRegistry.indexOf("serviceA") > -1);
+  assert(queueRegistry.indexOf("serviceB") > -1);
   assertEquals(container.getHandlers().length, 4);
 });

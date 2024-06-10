@@ -1,5 +1,8 @@
 import { distance, point } from "@/deps.ts";
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces/index.ts';
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
 
 interface IsCloseToParams {
   position: { lat: number; lon: number };
@@ -14,7 +17,7 @@ export const isCloseTo: StatelessRuleHelper<IsCloseToParams> = (
   const end = point([ctx.carpool.end_lon, ctx.carpool.end_lat]);
   const base = point([params.position.lon, params.position.lat]);
   return (
-    distance(start, base, { units: 'meters' }) <= params.radius ||
-    distance(end, base, { units: 'meters' }) <= params.radius
+    distance(start, base, { units: "meters" }) <= params.radius ||
+    distance(end, base, { units: "meters" }) <= params.radius
   );
 };

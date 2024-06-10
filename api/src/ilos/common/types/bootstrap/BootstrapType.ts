@@ -1,6 +1,6 @@
-import { KernelInterface, ServiceContainerInterface } from '../core/index.ts';
-import { TransportInterface } from '../transport/index.ts';
-import { NewableType } from '../shared/index.ts';
+import { KernelInterface, ServiceContainerInterface } from "../core/index.ts";
+import { TransportInterface } from "../transport/index.ts";
+import { NewableType } from "../shared/index.ts";
 
 export type BootstrapType = {
   serviceProviders?: NewableType<ServiceContainerInterface>[];

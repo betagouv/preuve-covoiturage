@@ -1,18 +1,30 @@
-import { assertEquals, assert, assertFalse, assertThrows, assertObjectMatch, afterEach, beforeEach, afterAll, beforeAll, describe, it } from '@/dev_deps.ts';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertFalse,
+  assertObjectMatch,
+  assertThrows,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 
-import { rnaCustomFormat } from './rnaCustomFormat.ts';
+import { rnaCustomFormat } from "./rnaCustomFormat.ts";
 
-it('valid RNA', (t) => {
-  const rna = 'W802005251';
+it("valid RNA", (t) => {
+  const rna = "W802005251";
   assert((rnaCustomFormat as any)(rna));
 });
 
-it('too short', (t) => {
-  const rna = 'W12345';
+it("too short", (t) => {
+  const rna = "W12345";
   assertFalse((rnaCustomFormat as any)(rna));
 });
 
-it('too long', (t) => {
-  const rna = 'W00331234567890';
+it("too long", (t) => {
+  const rna = "W00331234567890";
   assertFalse((rnaCustomFormat as any)(rna));
 });

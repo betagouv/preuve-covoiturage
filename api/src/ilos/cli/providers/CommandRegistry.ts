@@ -1,5 +1,5 @@
 import { Command } from "@/deps.ts";
-import { provider, ProviderInterface } from '@/ilos/common/index.ts';
+import { provider, ProviderInterface } from "@/ilos/common/index.ts";
 
 /**
  * Commander provider

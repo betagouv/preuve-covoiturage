@@ -1,9 +1,9 @@
-import { AbstractDatatreatment } from '../common/AbstractDatatreatment.ts';
+import { AbstractDatatreatment } from "../common/AbstractDatatreatment.ts";
 
 export class PopulateGeoCentroid extends AbstractDatatreatment {
-  static uuid = 'populate_geo_centroid';
+  static uuid = "populate_geo_centroid";
   static year = 2019;
-  static table = 'perimeters_centroid';
+  static table = "perimeters_centroid";
   readonly sql = `
     INSERT INTO ${this.tableWithSchema} (
       year,

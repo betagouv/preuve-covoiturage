@@ -1,6 +1,6 @@
-import { process, os, readFileSync } from '@/deps.ts';
-import { datasets, datastructures } from './datasets.ts';
-import { ConfigInterface } from './interfaces/ConfigInterface.ts';
+import { os, process, readFileSync } from "@/deps.ts";
+import { datasets, datastructures } from "./datasets.ts";
+import { ConfigInterface } from "./interfaces/ConfigInterface.ts";
 
 function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   const asVarEnvName = baseEnvKey;
@@ -9,11 +9,11 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   let cert: string;
   let envContent: string;
   if (asVarEnvName in process.env) {
-    envContent = process.env[asVarEnvName] || '';
-    cert = envContent.toString().replace(/\\n/g, '\n');
+    envContent = process.env[asVarEnvName] || "";
+    cert = envContent.toString().replace(/\\n/g, "\n");
   } else if (asPathEnvName in process.env) {
-    envContent = process.env[asPathEnvName] || '';
-    cert = readFileSync(envContent.toString(), 'utf-8');
+    envContent = process.env[asPathEnvName] || "";
+    cert = readFileSync(envContent.toString(), "utf-8");
   } else {
     return {};
   }
@@ -21,23 +21,25 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
 }
 
 const postgresTls = {
-  ...tlsSetup('ca', 'POSTGRES_CA'),
-  ...tlsSetup('cert', 'POSTGRES_CERT'),
-  ...tlsSetup('key', 'POSTGRES_KEY'),
+  ...tlsSetup("ca", "POSTGRES_CA"),
+  ...tlsSetup("cert", "POSTGRES_CERT"),
+  ...tlsSetup("key", "POSTGRES_KEY"),
 };
 
 export const config: ConfigInterface = {
   pool: {
     connectionString: process.env.POSTGRES_URL,
-    user: process.env.POSTGRES_USER || 'postgres',
-    password: process.env.POSTGRES_PASSWORD || 'postgres',
-    database: process.env.POSTGRES_DB || 'local',
-    host: process.env.POSTGRES_HOST || '127.0.0.1',
-    port: process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT, 10) : 5432,
+    user: process.env.POSTGRES_USER || "postgres",
+    password: process.env.POSTGRES_PASSWORD || "postgres",
+    database: process.env.POSTGRES_DB || "local",
+    host: process.env.POSTGRES_HOST || "127.0.0.1",
+    port: process.env.POSTGRES_PORT
+      ? parseInt(process.env.POSTGRES_PORT, 10)
+      : 5432,
     ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
   },
   logger: {
-    level: process.env.LOG_LEVEL || 'debug',
+    level: process.env.LOG_LEVEL || "debug",
   },
   file: {
     basePath: process.env.CACHE_DIRECTORY || os.tmpdir(),
@@ -46,7 +48,7 @@ export const config: ConfigInterface = {
   },
   app: {
     noCleanup: false,
-    targetSchema: process.env.POSTGRES_SCHEMA || 'public',
+    targetSchema: process.env.POSTGRES_SCHEMA || "public",
     datasets,
     datastructures,
     sevenZipBinPath: process.env.SEVEN_ZIP_BIN_PATH,
