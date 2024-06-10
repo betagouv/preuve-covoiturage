@@ -12,7 +12,7 @@ import { makeKernelCtor } from "./helpers.ts";
 export interface HttpContext {
   transport: TransportInterface;
   supertest: SuperTestAgent;
-  request: <P = ParamsType, R = unknown>(
+  request: <P = ParamsType, R = any>(
     method: string,
     params: P,
     context: Partial<ContextType>,

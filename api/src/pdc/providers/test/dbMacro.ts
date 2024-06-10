@@ -34,8 +34,6 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       };
     },
     after: async (ctx: DbContext): Promise<void> => {
-      await ctx.db.down();
-
       // Test databases can be kept for inspection by setting the env var
       // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
       // use `just drop_test_databases` in your shell to clear them.
@@ -49,6 +47,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       } else {
         await ctx.db.drop();
       }
+      await ctx.db.down();
     },
   };
 }
