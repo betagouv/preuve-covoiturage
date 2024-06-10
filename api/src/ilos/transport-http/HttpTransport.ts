@@ -1,12 +1,10 @@
 import { http } from "@/deps.ts";
-
 import {
   KernelInterface,
   RPCCallType,
   RPCResponseType,
   TransportInterface,
 } from "@/ilos/common/index.ts";
-
 import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 
 /**
