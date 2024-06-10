@@ -1,28 +1,41 @@
+import { process, Redis } from "@/deps.ts";
 import {
   ConnectionConfigurationType,
   ConnectionInterface,
   DestroyHookInterface,
   InitHookInterface,
-} from '@/ilos/common/index.ts';
-// FIXME
-import { process, Redis } from '@/deps.ts';
-window.process = process
+} from "@/ilos/common/index.ts";
 
-export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookInterface, InitHookInterface {
-  protected client: Redis;
-  protected connected = false;
+/**
+ * This is a workaround to make `process` available to redisio library.
+ * @fixme
+ */
+type WindowProcess = Window & typeof globalThis & { process: NodeJS.Process };
+(window as WindowProcess).process = process;
 
-  constructor(protected readonly config: ConnectionConfigurationType | string) {}
+export class RedisConnection
+  implements
+    ConnectionInterface<Redis>,
+    DestroyHookInterface,
+    InitHookInterface {
+  protected client: Redis | null = null;
+
+  get connected(): boolean {
+    // "wait" | "reconnecting" | "connecting" | "connect" | "ready" | "close" | "end";
+    return this.getClient().status === "ready";
+  }
+
+  constructor(
+    protected readonly config: ConnectionConfigurationType | string,
+  ) {}
 
   async init(): Promise<void> {
     await this.up();
   }
 
   async up() {
-    if (!this.connected && this.getClient().status === 'wait') {
+    if (!this.connected && this.getClient().status === "wait") {
       await this.getClient().connect();
-      this.connected = true;
-      return;
     }
   }
 
@@ -33,7 +46,6 @@ export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookI
   async down() {
     if (this.connected) {
       this.getClient().disconnect();
-      this.connected = false;
     }
   }
 
@@ -50,7 +62,7 @@ export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookI
       enableReadyCheck: false,
       // lazyConnect: true,
     };
-    if (typeof this.config === 'string') {
+    if (typeof this.config === "string") {
       return new Redis(this.config, defaultConfig);
     }
     const conn = new Redis({
