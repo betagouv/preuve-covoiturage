@@ -14,17 +14,24 @@
         {
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
-              nodejs_20
+              # system packages
               p7zip
               just
               openssl
-              dbt
-              python311Packages.dbt-postgres
+
+              # rpc infra
+              nodejs_20
               postgresql_14
               deno
+
+              # data stack
+              dbt
+              pre-commit
+              python311Packages.dbt-postgres
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"
+              export PRE_COMMIT_ALLOW_NO_CONFIG=1
             '';
           };
         });
