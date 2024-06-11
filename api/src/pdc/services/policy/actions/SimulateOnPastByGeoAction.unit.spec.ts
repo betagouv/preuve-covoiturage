@@ -2,7 +2,7 @@ import { faker } from "@/deps.ts";
 import {
   afterEach,
   assertEquals,
-  assertThrows,
+  assertRejects,
   beforeEach,
   describe,
   it,
@@ -18,7 +18,7 @@ import {
 } from "../interfaces/index.ts";
 import { SimulateOnPastByGeoAction } from "./SimulateOnPastByGeoAction.ts";
 
-describe(() => {
+describe("SimulateOnPastByGeoAction", () => {
   let fakeKernelInterfaceResolver: KernelInterfaceResolver;
   let tripRepository: TripRepositoryProviderInterfaceResolver;
   let kernelInterfaceResolverStub: SinonStub<
@@ -83,7 +83,7 @@ describe(() => {
     kernelInterfaceResolverStub!.resolves({ coms: [] });
 
     // Act
-    await assertThrows(
+    await assertRejects(
       async () =>
         await simulateOnPasGeoAction!.handle({
           territory_insee: "45612333333",
