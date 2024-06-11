@@ -211,9 +211,11 @@ export class IncentiveRepositoryProvider
         await cursor.release();
         throw e;
       }
+      console.log({ count });
     } while (count > 0);
-
+    console.log("Start release");
     await cursor.release();
+    console.log("release done");
   }
 
   async createOrUpdateMany(
