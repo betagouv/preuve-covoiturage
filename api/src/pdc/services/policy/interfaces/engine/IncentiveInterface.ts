@@ -36,7 +36,7 @@ export interface CommonIncentiveInterface {
 }
 
 export interface StatelessIncentiveInterface extends CommonIncentiveInterface {
-  export(): SerializedIncentiveInterface<undefined>;
+  export<T = unknown>(): SerializedIncentiveInterface<T>;
   setMeta(registry: MetadataRegistryInterface): void;
 }
 

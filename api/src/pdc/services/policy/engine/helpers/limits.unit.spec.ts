@@ -41,10 +41,10 @@ async function setupStateful(
   ];
 }
 
-it("should watchForGlobalMaxAmount", async (t) => {
+it("should watchForGlobalMaxAmount", async () => {
   const [ctx] = setupStateless();
   watchForGlobalMaxAmount(ctx, "1");
-  assertObjectMatch(ctx.meta.export(), [
+  assertEquals(ctx.meta.export(), [
     {
       uuid: "1",
       key: "max_amount_restriction.global.campaign.global",
@@ -54,10 +54,10 @@ it("should watchForGlobalMaxAmount", async (t) => {
   ]);
 });
 
-it("should watchForPersonMaxAmountByMonth", async (t) => {
+it("should watchForPersonMaxAmountByMonth", async () => {
   const [ctx] = setupStateless();
   watchForPersonMaxAmountByMonth(ctx, "1", LimitTargetEnum.Passenger);
-  assertObjectMatch(ctx.meta.export(), [
+  assertEquals(ctx.meta.export(), [
     {
       uuid: "1",
       key:
@@ -68,10 +68,10 @@ it("should watchForPersonMaxAmountByMonth", async (t) => {
   ]);
 });
 
-it("should watchForPersonMaxAmountByYear", async (t) => {
+it("should watchForPersonMaxAmountByYear", async () => {
   const [ctx] = setupStateless();
   watchForPersonMaxAmountByYear(ctx, "1", LimitTargetEnum.Passenger);
-  assertObjectMatch(ctx.meta.export(), [
+  assertEquals(ctx.meta.export(), [
     {
       uuid: "1",
       key:
@@ -82,10 +82,10 @@ it("should watchForPersonMaxAmountByYear", async (t) => {
   ]);
 });
 
-it("should watchForPersonMaxTripByMonth", async (t) => {
+it("should watchForPersonMaxTripByMonth", async () => {
   const [ctx] = setupStateless();
   watchForPersonMaxTripByMonth(ctx, "1", LimitTargetEnum.Passenger);
-  assertObjectMatch(ctx.meta.export(), [
+  assertEquals(ctx.meta.export(), [
     {
       uuid: "1",
       key:
@@ -96,10 +96,10 @@ it("should watchForPersonMaxTripByMonth", async (t) => {
   ]);
 });
 
-it("should watchForPersonMaxTripByDay", async (t) => {
+it("should watchForPersonMaxTripByDay", async () => {
   const [ctx] = setupStateless();
   watchForPersonMaxTripByDay(ctx, "1", LimitTargetEnum.Driver);
-  assertObjectMatch(ctx.meta.export(), [
+  assertEquals(ctx.meta.export(), [
     {
       uuid: "1",
       key:
@@ -110,7 +110,7 @@ it("should watchForPersonMaxTripByDay", async (t) => {
   ]);
 });
 
-it("should drop incentive if max is reached", async (t) => {
+it("should drop incentive if max is reached", async () => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -121,15 +121,15 @@ it("should drop incentive if max is reached", async (t) => {
   });
   ctx.meta.set("uuid", 10);
   applyLimitOnStatefulStage(ctx, "uuid", 10, watchForGlobalMaxAmount);
-  assertObjectMatch(ctx.incentive.get(), 0);
-  assertObjectMatch(ctx.meta.export(), [{
+  assertEquals(ctx.incentive.get(), 0);
+  assertEquals(ctx.meta.export(), [{
     policy_id: 1,
     key: "max_amount_restriction.global.campaign.global",
     value: 10,
   }]);
 });
 
-it("should partially drop incentive if max will be reached", async (t) => {
+it("should partially drop incentive if max will be reached", async () => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -140,15 +140,15 @@ it("should partially drop incentive if max will be reached", async (t) => {
   });
   ctx.meta.set("uuid", 30);
   applyLimitOnStatefulStage(ctx, "uuid", 100, watchForGlobalMaxAmount);
-  assertObjectMatch(ctx.incentive.get(), 70);
-  assertObjectMatch(ctx.meta.export(), [{
+  assertEquals(ctx.incentive.get(), 70);
+  assertEquals(ctx.meta.export(), [{
     policy_id: 1,
     key: "max_amount_restriction.global.campaign.global",
     value: 100,
   }]);
 });
 
-it("should increase meta if incentive is not null", async (t) => {
+it("should increase meta if incentive is not null", async () => {
   const [ctx] = await setupStateful({
     meta: [
       {
@@ -159,15 +159,15 @@ it("should increase meta if incentive is not null", async (t) => {
   });
   ctx.meta.set("uuid", 30);
   applyLimitOnStatefulStage(ctx, "uuid", 200, watchForGlobalMaxAmount);
-  assertObjectMatch(ctx.incentive.get(), 100);
-  assertObjectMatch(ctx.meta.export(), [{
+  assertEquals(ctx.incentive.get(), 100);
+  assertEquals(ctx.meta.export(), [{
     policy_id: 1,
     key: "max_amount_restriction.global.campaign.global",
     value: 130,
   }]);
 });
 
-it("should watch and apply", async (t) => {
+it("should watch and apply", async () => {
   const limit: ConfiguredLimitInterface = [
     "uuid",
     150,
@@ -175,7 +175,7 @@ it("should watch and apply", async (t) => {
   ];
   const [ctxStateless, carpool] = setupStateless();
   applyLimitsOnStatelessStage([limit], ctxStateless);
-  assertObjectMatch(ctxStateless.meta.export(), [
+  assertEquals(ctxStateless.meta.export(), [
     {
       uuid: "uuid",
       key: "max_amount_restriction.global.campaign.global",
@@ -201,7 +201,7 @@ it("should watch and apply", async (t) => {
     ...ctxStateless.incentive.export(),
     _id: 1,
   });
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: "max_amount_restriction.global.campaign.global",
@@ -210,7 +210,7 @@ it("should watch and apply", async (t) => {
   ]);
   applyLimitsOnStatefulStage([limit], ctxStateful);
   assertEquals(ctxStateful.incentive.get(), 100);
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: "max_amount_restriction.global.campaign.global",
@@ -218,7 +218,7 @@ it("should watch and apply", async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  assertObjectMatch(await store.store(MetadataLifetime.Day), [
+  assertEquals(await store.store(MetadataLifetime.Day), [
     {
       key: "max_amount_restriction.global.campaign.global",
       datetime: carpool.datetime,
@@ -228,7 +228,7 @@ it("should watch and apply", async (t) => {
   ]);
   applyLimitsOnStatefulStage([limit], ctxStateful);
   assertEquals(ctxStateful.incentive.get(), 50);
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key: "max_amount_restriction.global.campaign.global",
@@ -236,7 +236,7 @@ it("should watch and apply", async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  assertObjectMatch(await store.store(MetadataLifetime.Day), [
+  assertEquals(await store.store(MetadataLifetime.Day), [
     {
       key: "max_amount_restriction.global.campaign.global",
       datetime: carpool.datetime,
@@ -246,7 +246,7 @@ it("should watch and apply", async (t) => {
   ]);
 });
 
-it("should watch and apply for custom data", async (t) => {
+it("should watch and apply for custom data", async () => {
   const limit: ConfiguredLimitInterface = [
     "uuid",
     3,
@@ -254,7 +254,7 @@ it("should watch and apply for custom data", async (t) => {
   ];
   const [ctxStateless, carpool] = setupStateless();
   applyLimitsOnStatelessStage([limit], ctxStateless);
-  assertObjectMatch(ctxStateless.meta.export(), [
+  assertEquals(ctxStateless.meta.export(), [
     {
       uuid: "uuid",
       key:
@@ -282,7 +282,7 @@ it("should watch and apply for custom data", async (t) => {
     ...ctxStateless.incentive.export(),
     _id: 1,
   });
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key:
@@ -294,7 +294,7 @@ it("should watch and apply for custom data", async (t) => {
 
   applyLimitsOnStatefulStage([limit], ctxStateful);
   assertEquals(ctxStateful.incentive.get(), 100);
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key:
@@ -304,11 +304,11 @@ it("should watch and apply for custom data", async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  assertObjectMatch(await store.store(MetadataLifetime.Day), []);
+  assertEquals(await store.store(MetadataLifetime.Day), []);
 
   applyLimitsOnStatefulStage([limit], ctxStateful);
   assertEquals(ctxStateful.incentive.get(), 100);
-  assertObjectMatch(ctxStateful.meta.export(), [
+  assertEquals(ctxStateful.meta.export(), [
     {
       policy_id: 1,
       key:
@@ -318,5 +318,5 @@ it("should watch and apply for custom data", async (t) => {
     },
   ]);
   await store.save(ctxStateful.meta);
-  assertObjectMatch(await store.store(MetadataLifetime.Day), []);
+  assertEquals(await store.store(MetadataLifetime.Day), []);
 });

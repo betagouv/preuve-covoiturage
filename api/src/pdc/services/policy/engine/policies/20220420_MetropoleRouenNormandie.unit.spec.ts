@@ -1,7 +1,8 @@
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { MetropoleRouenNormandie2022 as Handler } from "./20220420_MetropoleRouenNormandie";
+import { MetropoleRouenNormandie2022 as Handler } from "./20220420_MetropoleRouenNormandie.ts";
 
 const defaultPosition = {
   arr: "76540",
@@ -43,95 +44,103 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
-      distance: 200_000,
-    }, { operator_class: "A" }],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0], meta: [] },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
+          distance: 200_000,
+        }, { operator_class: "A" }],
+        meta: [],
+      },
+      { incentive: [0, 0, 0, 0], meta: [] },
+    ),
 );
 
-test(
+it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
-      { distance: 25_000, driver_identity_key: "two" },
+  async () =>
+    await process(
       {
-        distance: 25_000,
-        driver_identity_key: "two",
-        datetime: new Date("2022-03-28"),
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          { distance: 25_000, driver_identity_key: "two" },
+          {
+            distance: 25_000,
+            driver_identity_key: "two",
+            datetime: new Date("2022-03-28"),
+          },
+          { distance: 55_000, driver_identity_key: "two" },
+        ],
+        meta: [],
       },
-      { distance: 55_000, driver_identity_key: "two" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 400, 250, 250, 400],
-    meta: [
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1500,
+        incentive: [200, 400, 250, 250, 400],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1500,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with global limits",
-  process,
-  {
-    policy: { handler: Handler.id, max_amount: 2_500_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_key: "one" }],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 2_499_999_50,
+        policy: { handler: Handler.id, max_amount: 2_500_000_00 },
+        carpool: [{ distance: 5_000, driver_identity_key: "one" }],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 2_499_999_50,
+          },
+        ],
       },
-    ],
-  },
-  {
-    incentive: [50],
-    meta: [
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 2_500_000_00,
+        incentive: [50],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 2_500_000_00,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with day limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 200, 200, 200, 200, 200, 0],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 12_00,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [],
       },
-    ],
-  },
+      {
+        incentive: [200, 200, 200, 200, 200, 200, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 12_00,
+          },
+        ],
+      },
+    ),
 );

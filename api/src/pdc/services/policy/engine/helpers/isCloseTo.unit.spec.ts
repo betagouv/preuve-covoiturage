@@ -26,13 +26,13 @@ function setup(lat: number, lon: number) {
   );
 }
 
-it("should return true if in range", async (t) => {
+it("should return true if in range", async () => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isCloseTo(ctx, { position: point1, radius: 500 });
   assertEquals(res, true);
 });
 
-it("should return false if not in range", async (t) => {
+it("should return false if not in range", async () => {
   const ctx = setup(point3.lat, point3.lon);
   const res = isCloseTo(ctx, { position: point1, radius: 500 });
   assertEquals(res, false);

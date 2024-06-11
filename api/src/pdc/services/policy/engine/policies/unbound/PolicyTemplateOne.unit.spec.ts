@@ -46,52 +46,56 @@ const process = makeProcessHelper(defaultCarpool);
 
 it(
   "should work with exclusion",
-  process,
-  {
-    policy: {
-      handler: Handler.id,
-      territory_selector: {
-        [TerritoryCodeEnum.City]: ["80160"],
-        [TerritoryCodeEnum.Mobility]: ["248000531"],
-        [TerritoryCodeEnum.CityGroup]: ["248000531"],
+  async () =>
+    await process(
+      {
+        policy: {
+          handler: Handler.id,
+          territory_selector: {
+            [TerritoryCodeEnum.City]: ["80160"],
+            [TerritoryCodeEnum.Mobility]: ["248000531"],
+            [TerritoryCodeEnum.CityGroup]: ["248000531"],
+          },
+        },
+        carpool: [{ distance: 100 }, { distance: 200_000 }, {
+          operator_class: "A",
+        }],
+        meta: [],
       },
-    },
-    carpool: [{ distance: 100 }, { distance: 200_000 }, {
-      operator_class: "A",
-    }],
-    meta: [],
-  },
-  { incentive: [0, 0, 0], meta: [] },
+      { incentive: [0, 0, 0], meta: [] },
+    ),
 );
 
 it(
   "should work basic",
-  process,
-  {
-    policy: {
-      handler: Handler.id,
-      territory_selector: {
-        [TerritoryCodeEnum.Mobility]: ["217500016"],
-        [TerritoryCodeEnum.CityGroup]: ["200056232"],
-      },
-    },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
-      { distance: 25_000, driver_identity_key: "two" },
-      { distance: 55_000, driver_identity_key: "three" },
+  async () =>
+    await process(
       {
-        distance: 50_000,
-        driver_identity_key: "four",
-        start: { ...defaultPosition, [TerritoryCodeEnum.City]: "91666" },
-        end: { ...defaultPosition, [TerritoryCodeEnum.City]: "77250" },
+        policy: {
+          handler: Handler.id,
+          territory_selector: {
+            [TerritoryCodeEnum.Mobility]: ["217500016"],
+            [TerritoryCodeEnum.CityGroup]: ["200056232"],
+          },
+        },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          { distance: 25_000, driver_identity_key: "two" },
+          { distance: 55_000, driver_identity_key: "three" },
+          {
+            distance: 50_000,
+            driver_identity_key: "four",
+            start: { ...defaultPosition, [TerritoryCodeEnum.City]: "91666" },
+            end: { ...defaultPosition, [TerritoryCodeEnum.City]: "77250" },
+          },
+          { start: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
+        ],
+        meta: [],
       },
-      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 400, 250, 500, 500, 200],
-    meta: [],
-  },
+      {
+        incentive: [200, 400, 250, 500, 500, 200],
+        meta: [],
+      },
+    ),
 );

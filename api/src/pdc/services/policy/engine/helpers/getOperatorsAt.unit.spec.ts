@@ -24,22 +24,22 @@ describe("getOperatorsAt", () => {
     },
   ];
 
-  it("missing operators returns empty array", (t) => {
+  it("missing operators returns empty array", () => {
     // @ts-expect-error
     assertEquals(getOperatorsAt(undefined), []);
   });
 
-  it("missing operators property returns empty array", (t) => {
+  it("missing operators property returns empty array", () => {
     // @ts-expect-error
     assertEquals(getOperatorsAt([{ date: new Date() }]), []);
   });
 
-  it("missing date property returns empty array", (t) => {
+  it("missing date property returns empty array", () => {
     // @ts-expect-error
     assertEquals(getOperatorsAt([{ operators: [] }]), []);
   });
 
-  it("should return the last operators if no datetime is provided", (t) => {
+  it("should return the last operators if no datetime is provided", () => {
     assertEquals(getOperatorsAt(list), [
       OperatorsEnum.KAROS,
       OperatorsEnum.MOBICOOP,
@@ -48,20 +48,20 @@ describe("getOperatorsAt", () => {
     ]);
   });
 
-  it("should return Karos only if datetime is before 16/10/2023", (t) => {
+  it("should return Karos only if datetime is before 16/10/2023", () => {
     assertEquals(getOperatorsAt(list, new Date("2023-10-15")), [
       OperatorsEnum.KAROS,
     ]);
   });
 
-  it("should return Karos and Mobicoop if datetime is after 16/10/2023", (t) => {
+  it("should return Karos and Mobicoop if datetime is after 16/10/2023", () => {
     assertEquals(getOperatorsAt(list, new Date("2023-10-17")), [
       OperatorsEnum.KAROS,
       OperatorsEnum.MOBICOOP,
     ]);
   });
 
-  it("should return all operators if datetime is after 22/12/2023", (t) => {
+  it("should return all operators if datetime is after 22/12/2023", () => {
     assertEquals(getOperatorsAt(list, new Date("2023-12-23")), [
       OperatorsEnum.KAROS,
       OperatorsEnum.MOBICOOP,
@@ -70,7 +70,7 @@ describe("getOperatorsAt", () => {
     ]);
   });
 
-  it("should sort operators in chronological order: sorted", (t) => {
+  it("should sort operators in chronological order: sorted", () => {
     const list: TimestampedOperators = [
       {
         date: new Date("2023-01-01T00:00:00+0100"),
@@ -90,7 +90,7 @@ describe("getOperatorsAt", () => {
     assertEquals([OperatorsEnum.BLABLACAR_DAILY], sorted);
   });
 
-  it("should sort operators in chronological order: reverse", (t) => {
+  it("should sort operators in chronological order: reverse", () => {
     const list: TimestampedOperators = [
       {
         date: new Date("2023-03-01T00:00:00+0100"),
@@ -110,7 +110,7 @@ describe("getOperatorsAt", () => {
     assertEquals([OperatorsEnum.BLABLACAR_DAILY], sorted);
   });
 
-  it("should sort operators in chronological order: random", (t) => {
+  it("should sort operators in chronological order: random", () => {
     const list: TimestampedOperators = [
       {
         date: new Date("2023-03-01T00:00:00+0100"),

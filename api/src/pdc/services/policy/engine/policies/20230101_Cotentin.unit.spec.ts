@@ -1,7 +1,8 @@
 import { v4 } from "@/deps.ts";
+import { assertEquals, assertNotEquals, it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { Cotentin2023 as Handler } from "./20230101_Cotentin";
+import { Cotentin2023 as Handler } from "./20230101_Cotentin.ts";
 
 const defaultPosition = {
   arr: "22113",
@@ -43,129 +44,139 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
-      operator_class: "A",
-    }],
-    meta: [],
-  },
-  { incentive: [0, 0, 0], meta: [] },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
+          operator_class: "A",
+        }],
+        meta: [],
+      },
+      { incentive: [0, 0, 0], meta: [] },
+    ),
 );
 
-test(
+it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one", operator_trip_id: "1" },
+  async () =>
+    await process(
       {
-        distance: 5_000,
-        seats: 2,
-        driver_identity_key: "one",
-        operator_trip_id: "2",
+        policy: { handler: Handler.id },
+        carpool: [
+          {
+            distance: 5_000,
+            driver_identity_key: "one",
+            operator_trip_id: "1",
+          },
+          {
+            distance: 5_000,
+            seats: 2,
+            driver_identity_key: "one",
+            operator_trip_id: "2",
+          },
+          {
+            distance: 25_000,
+            driver_identity_key: "two",
+            seats: 2,
+            operator_trip_id: "3",
+          },
+          {
+            distance: 25_000,
+            driver_identity_key: "two",
+            datetime: new Date("2023-03-28"),
+          },
+        ],
+        meta: [],
       },
       {
-        distance: 25_000,
-        driver_identity_key: "two",
-        seats: 2,
-        operator_trip_id: "3",
+        incentive: [200, 400, 500, 250],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1350,
+          },
+        ],
       },
-      {
-        distance: 25_000,
-        driver_identity_key: "two",
-        datetime: new Date("2023-03-28"),
-      },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 400, 500, 250],
-    meta: [
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1350,
-      },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with driver day limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
+  async () =>
+    await process(
       {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "21",
-        operator_trip_id: "1",
+        policy: { handler: Handler.id },
+        carpool: [
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "21",
+            operator_trip_id: "1",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "22",
+            operator_trip_id: "2",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "23",
+            operator_trip_id: "3",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "24",
+            operator_trip_id: "4",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "25",
+            operator_trip_id: "5",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "26",
+            operator_trip_id: "6",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "26",
+            operator_trip_id: "6",
+          },
+          {
+            distance: 5_000,
+            driver_identity_key: "11",
+            passenger_identity_key: "26",
+            operator_trip_id: "6",
+          },
+        ],
+        meta: [],
       },
       {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "22",
-        operator_trip_id: "2",
+        incentive: [200, 200, 200, 200, 200, 200, 0, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1200,
+          },
+        ],
       },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "23",
-        operator_trip_id: "3",
-      },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "24",
-        operator_trip_id: "4",
-      },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "25",
-        operator_trip_id: "5",
-      },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "26",
-        operator_trip_id: "6",
-      },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "26",
-        operator_trip_id: "6",
-      },
-      {
-        distance: 5_000,
-        driver_identity_key: "11",
-        passenger_identity_key: "26",
-        operator_trip_id: "6",
-      },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 200, 200, 200, 200, 200, 0, 0],
-    meta: [
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1200,
-      },
-    ],
-  },
+    ),
 );
 
-test("latest operator", (t) => {
+it("latest operator", () => {
   const handler = new Handler(100);
   const { operators } = handler.params();
-  t.not(operators, undefined);
-  t.not(operators, []);
-  t.deepEqual(operators, [OperatorsEnum.BLABLACAR_DAILY]);
+  assertNotEquals(operators, undefined);
+  assertNotEquals(operators, []);
+  assertEquals(operators, [OperatorsEnum.BLABLACAR_DAILY]);
 });

@@ -14,7 +14,7 @@ import {
 import { process } from "../tests/macro.ts";
 
 class TestHandler implements PolicyHandlerInterface {
-  load(): Promise<void> {
+  async load(): Promise<void> {
     return;
   }
   processStateless(ctx: StatelessContextInterface): void {
@@ -38,67 +38,78 @@ class TestHandler implements PolicyHandlerInterface {
 
 it(
   "should work if class C",
-  process,
-  {
-    handler: new TestHandler(),
-    carpool: [{ distance: 1000 }, { distance: 2000 }],
-    meta: [],
-  },
-  {
-    incentive: [10, 20],
-    meta: [{ key: "max_amount_restriction.global.campaign.global", value: 30 }],
-  },
+  async () =>
+    await process(
+      {
+        handler: new TestHandler(),
+        carpool: [{ distance: 1000 }, { distance: 2000 }],
+        meta: [],
+      },
+      {
+        incentive: [10, 20],
+        meta: [{
+          key: "max_amount_restriction.global.campaign.global",
+          value: 30,
+        }],
+      },
+    ),
 );
 
 it(
   "should work if not class C",
-  process,
-  {
-    handler: new TestHandler(),
-    carpool: [{ distance: 1000, operator_class: "B" }],
-    meta: [],
-  },
-  { incentive: [0], meta: [] },
+  async () =>
+    await process(
+      {
+        handler: new TestHandler(),
+        carpool: [{ distance: 1000, operator_class: "B" }],
+        meta: [],
+      },
+      { incentive: [0], meta: [] },
+    ),
 );
 
 it(
   "should work with initial meta",
-  process,
-  {
-    handler: new TestHandler(),
-    carpool: [{ distance: 10000 }],
-    meta: [{
-      key: "max_amount_restriction.global.campaign.global",
-      value: 1950,
-    }],
-  },
-  {
-    incentive: [50],
-    meta: [{
-      key: "max_amount_restriction.global.campaign.global",
-      value: 2000,
-    }],
-  },
+  async () =>
+    await process(
+      {
+        handler: new TestHandler(),
+        carpool: [{ distance: 10000 }],
+        meta: [{
+          key: "max_amount_restriction.global.campaign.global",
+          value: 1950,
+        }],
+      },
+      {
+        incentive: [50],
+        meta: [{
+          key: "max_amount_restriction.global.campaign.global",
+          value: 2000,
+        }],
+      },
+    ),
 );
 
 it(
   "should work with dates",
-  process,
-  {
-    handler: new TestHandler(),
-    carpool: [
-      { distance: 10000, datetime: new Date("2022-01-01") },
-      { distance: 10000, datetime: new Date("2022-12-01") },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [100, 100],
-    meta: [{
-      key: "max_amount_restriction.global.campaign.global",
-      value: 200,
-    }],
-  },
+  async () =>
+    await process(
+      {
+        handler: new TestHandler(),
+        carpool: [
+          { distance: 10000, datetime: new Date("2022-01-01") },
+          { distance: 10000, datetime: new Date("2022-12-01") },
+        ],
+        meta: [],
+      },
+      {
+        incentive: [100, 100],
+        meta: [{
+          key: "max_amount_restriction.global.campaign.global",
+          value: 200,
+        }],
+      },
+    ),
 );
 
 class MaxAmountPolicyHandler implements PolicyHandlerInterface {
@@ -108,7 +119,7 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
     this.max_amount = max_amount;
   }
 
-  load(): Promise<void> {
+  async load(): Promise<void> {
     return;
   }
   processStateless(ctx: StatelessContextInterface): void {
@@ -137,20 +148,22 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
 
 it(
   "should use constructor max amount",
-  process,
-  {
-    handler: new MaxAmountPolicyHandler(60_000),
-    carpool: [
-      { distance: 10000, datetime: new Date("2022-01-01") },
-      { distance: 10000, datetime: new Date("2022-12-01") },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [100, 100],
-    meta: [{
-      key: "max_amount_restriction.global.campaign.global",
-      value: 200,
-    }],
-  },
+  async () =>
+    await process(
+      {
+        handler: new MaxAmountPolicyHandler(60_000),
+        carpool: [
+          { distance: 10000, datetime: new Date("2022-01-01") },
+          { distance: 10000, datetime: new Date("2022-12-01") },
+        ],
+        meta: [],
+      },
+      {
+        incentive: [100, 100],
+        meta: [{
+          key: "max_amount_restriction.global.campaign.global",
+          value: 200,
+        }],
+      },
+    ),
 );

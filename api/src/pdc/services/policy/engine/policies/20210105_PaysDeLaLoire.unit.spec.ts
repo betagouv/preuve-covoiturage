@@ -1,7 +1,8 @@
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { PaysDeLaLoire2021 as Handler } from "./20210105_PaysDeLaLoire";
+import { PaysDeLaLoire2021 as Handler } from "./20210105_PaysDeLaLoire.ts";
 
 const defaultPosition = {
   arr: "85047",
@@ -43,115 +44,123 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { operator_uuid: OperatorsEnum.ATCHOUM },
-      { distance: 100 },
-      { operator_class: "A" },
+  async () =>
+    await process(
       {
-        start: { ...defaultPosition, aom: "244900015" },
-        end: { ...defaultPosition, aom: "244900015" },
+        policy: { handler: Handler.id },
+        carpool: [
+          { operator_uuid: OperatorsEnum.ATCHOUM },
+          { distance: 100 },
+          { operator_class: "A" },
+          {
+            start: { ...defaultPosition, aom: "244900015" },
+            end: { ...defaultPosition, aom: "244900015" },
+          },
+          {
+            start: { ...defaultPosition, aom: "244400404" },
+            end: { ...defaultPosition, aom: "244400404" },
+          },
+          {
+            start: { ...defaultPosition, aom: "247200132" },
+            end: { ...defaultPosition, aom: "247200132" },
+          },
+          {
+            start: { ...defaultPosition, aom: "200071678" },
+            end: { ...defaultPosition, aom: "200071678" },
+          },
+          { start: { ...defaultPosition, reg: "11" } },
+          { end: { ...defaultPosition, reg: "11" } },
+        ],
+        meta: [],
       },
-      {
-        start: { ...defaultPosition, aom: "244400404" },
-        end: { ...defaultPosition, aom: "244400404" },
-      },
-      {
-        start: { ...defaultPosition, aom: "247200132" },
-        end: { ...defaultPosition, aom: "247200132" },
-      },
-      {
-        start: { ...defaultPosition, aom: "200071678" },
-        end: { ...defaultPosition, aom: "200071678" },
-      },
-      { start: { ...defaultPosition, reg: "11" } },
-      { end: { ...defaultPosition, reg: "11" } },
-    ],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+      { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+    ),
 );
 
-test(
+it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
-      { distance: 25_000, driver_identity_key: "two" },
+  async () =>
+    await process(
       {
-        distance: 25_000,
-        driver_identity_key: "two",
-        datetime: new Date("2022-03-28"),
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          { distance: 25_000, driver_identity_key: "two" },
+          {
+            distance: 25_000,
+            driver_identity_key: "two",
+            datetime: new Date("2022-03-28"),
+          },
+          { distance: 55_000, driver_identity_key: "two" },
+        ],
+        meta: [],
       },
-      { distance: 55_000, driver_identity_key: "two" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 400, 250, 250, 500],
-    meta: [
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1600,
+        incentive: [200, 400, 250, 250, 500],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1600,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with global limits",
-  process,
-  {
-    policy: { handler: Handler.id, max_amount: 2_000_000_00 },
-    carpool: [{ distance: 5_000, driver_identity_key: "one" }],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1_999_999_50,
+        policy: { handler: Handler.id, max_amount: 2_000_000_00 },
+        carpool: [{ distance: 5_000, driver_identity_key: "one" }],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1_999_999_50,
+          },
+        ],
       },
-    ],
-  },
-  {
-    incentive: [50],
-    meta: [
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 2_000_000_00,
+        incentive: [50],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 2_000_000_00,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with day limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 200, 200, 200, 200, 200, 0],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1200,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [],
       },
-    ],
-  },
+      {
+        incentive: [200, 200, 200, 200, 200, 200, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1200,
+          },
+        ],
+      },
+    ),
 );

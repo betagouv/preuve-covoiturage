@@ -1,7 +1,6 @@
 import { assertEquals, assertThrows, it } from "@/dev_deps.ts";
 
 import { StatelessContext } from "../entities/Context.ts";
-import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import { generateCarpool } from "../tests/helpers.ts";
 import { isAdultOrThrow } from "./isAdultOrThrow.ts";
 
@@ -12,14 +11,14 @@ function setup(passenger_is_over_18: boolean) {
   );
 }
 
-it("should throw if not an adult", async (t) => {
+it("should throw if not an adult", async () => {
   const ctx = setup(false);
-  await assertThrows<NotEligibleTargetException>(async () => {
+  assertThrows(() => {
     isAdultOrThrow(ctx);
   });
 });
 
-it("should return true if adult", async (t) => {
+it("should return true if adult", async () => {
   const ctx = setup(true);
   const res = isAdultOrThrow(ctx);
   assertEquals(res, true);

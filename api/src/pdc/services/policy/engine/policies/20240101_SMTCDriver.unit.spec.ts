@@ -1,11 +1,8 @@
-<<<<<<<< HEAD:api/src/pdc/services/policy/engine/policies/SMTC2024.unit.spec.ts
-========
-import test from 'ava';
-import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { SMTC2024Driver as Handler } from './20240101_SMTCDriver';
->>>>>>>> 2b738c433 (refacto campagnes (#2504)):api/src/pdc/services/policy/engine/policies/20240101_SMTCDriver.spec.ts
+import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { SMTC2024Driver as Handler } from "./20240101_SMTCDriver.ts";
 
 const defaultPosition = {
   arr: "74278",
@@ -49,123 +46,131 @@ const process = makeProcessHelper(defaultCarpool);
 
 it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { operator_uuid: OperatorsEnum.MOBICOOP },
-      { distance: 100 },
-      { distance: 80_001 },
-      { operator_class: "A" },
-    ],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0], meta: [] },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [
+          { operator_uuid: OperatorsEnum.MOBICOOP },
+          { distance: 100 },
+          { distance: 80_001 },
+          { operator_class: "A" },
+        ],
+        meta: [],
+      },
+      { incentive: [0, 0, 0, 0], meta: [] },
+    ),
 );
 
 it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
-      { distance: 60_000, driver_identity_key: "one" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [150, 300, 150],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.0-one.month.4-2024",
-        value: 600,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          { distance: 60_000, driver_identity_key: "one" },
+        ],
+        meta: [],
       },
       {
-        key: "max_amount_restriction.0-one.year.2024",
-        value: 600,
+        incentive: [150, 300, 150],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2024",
+            value: 600,
+          },
+          {
+            key: "max_amount_restriction.0-one.year.2024",
+            value: 600,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 600,
+          },
+        ],
       },
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 600,
-      },
-    ],
-  },
+    ),
 );
 
 it(
   "should work with driver month limits 90",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.0-one.month.4-2024",
-        value: 88_50,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2024",
+            value: 88_50,
+          },
+          {
+            key: "max_amount_restriction.0-one.year.2024",
+            value: 88_50,
+          },
+        ],
       },
       {
-        key: "max_amount_restriction.0-one.year.2024",
-        value: 88_50,
+        incentive: [150, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2024",
+            value: 90_00,
+          },
+          // La limite à l'année est incrémentée de 1,50 €
+          // mais la limite au mois prévaut, la 2ème incitation de 1,5€ ne sera pas attribuée
+          {
+            key: "max_amount_restriction.0-one.year.2024",
+            value: 91_50,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 150,
+          },
+        ],
       },
-    ],
-  },
-  {
-    incentive: [150, 0],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.4-2024",
-        value: 90_00,
-      },
-      // La limite à l'année est incrémentée de 1,50 €
-      // mais la limite au mois prévaut, la 2ème incitation de 1,5€ ne sera pas attribuée
-      {
-        key: "max_amount_restriction.0-one.year.2024",
-        value: 91_50,
-      },
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 150,
-      },
-    ],
-  },
+    ),
 );
 
 it(
   "should work with driver year limit 540",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.0-one.year.2024",
-        value: 538_50,
-      },
-    ],
-  },
-  {
-    incentive: [150, 0],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.4-2024",
-        value: 150,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.year.2024",
+            value: 538_50,
+          },
+        ],
       },
       {
-        key: "max_amount_restriction.0-one.year.2024",
-        value: 540_00,
+        incentive: [150, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2024",
+            value: 150,
+          },
+          {
+            key: "max_amount_restriction.0-one.year.2024",
+            value: 540_00,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 150,
+          },
+        ],
       },
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 150,
-      },
-    ],
-  },
+    ),
 );

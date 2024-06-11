@@ -1,4 +1,5 @@
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { SMTC2024Passenger as Handler } from "./20240101_SMTC2024Passenger.ts";
@@ -45,56 +46,62 @@ const process = makeProcessHelper(defaultCarpool);
 
 it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { operator_uuid: OperatorsEnum.MOBICOOP },
-      { distance: 100 },
-      { distance: 30_001 },
-      { operator_class: "A" },
-    ],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0], meta: [] },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [
+          { operator_uuid: OperatorsEnum.MOBICOOP },
+          { distance: 100 },
+          { distance: 30_001 },
+          { operator_class: "A" },
+        ],
+        meta: [],
+      },
+      { incentive: [0, 0, 0, 0], meta: [] },
+    ),
 );
 
 it(
   "should work based on distance and seats",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, passenger_identity_key: "one" },
-      { distance: 5_000, seats: 2, passenger_identity_key: "one" },
-      { distance: 30_000, passenger_identity_key: "two" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [50, 100, 300],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 450,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, passenger_identity_key: "one" },
+          { distance: 5_000, seats: 2, passenger_identity_key: "one" },
+          { distance: 30_000, passenger_identity_key: "two" },
+        ],
+        meta: [],
       },
-    ],
-  },
+      {
+        incentive: [50, 100, 300],
+        meta: [
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 450,
+          },
+        ],
+      },
+    ),
 );
 
 it(
   "should apply daily limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, passenger_identity_key: "one" },
-      { distance: 5_000, passenger_identity_key: "one" },
-      { distance: 5_000, passenger_identity_key: "one" },
-      { distance: 5_000, passenger_identity_key: "one" },
-    ],
-  },
-  {
-    incentive: [50, 50, 0, 0],
-  },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, passenger_identity_key: "one" },
+          { distance: 5_000, passenger_identity_key: "one" },
+          { distance: 5_000, passenger_identity_key: "one" },
+          { distance: 5_000, passenger_identity_key: "one" },
+        ],
+      },
+      {
+        incentive: [50, 50, 0, 0],
+      },
+    ),
 );

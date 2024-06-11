@@ -36,13 +36,13 @@ function setup(lat: number, lon: number) {
   );
 }
 
-it("Should return true if point is in shape", (t) => {
+it("Should return true if point is in shape", () => {
   const ctx = setup(point1.lat, point1.lon);
   const res = isInside(ctx, { shape });
   assertEquals(res, true);
 });
 
-it("Should return false if point is not in shape", (t) => {
+it("Should return false if point is not in shape", () => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isInside(ctx, { shape });
   assertEquals(res, false);

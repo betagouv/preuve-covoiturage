@@ -46,53 +46,57 @@ const process = makeProcessHelper(defaultCarpool);
 
 it(
   "should work with exclusion",
-  process,
-  {
-    policy: {
-      handler: Handler.id,
-      territory_selector: {
-        [TerritoryCodeEnum.City]: ["80160"],
-        [TerritoryCodeEnum.Mobility]: ["248000531"],
-        [TerritoryCodeEnum.CityGroup]: ["248000531"],
+  async () =>
+    await process(
+      {
+        policy: {
+          handler: Handler.id,
+          territory_selector: {
+            [TerritoryCodeEnum.City]: ["80160"],
+            [TerritoryCodeEnum.Mobility]: ["248000531"],
+            [TerritoryCodeEnum.CityGroup]: ["248000531"],
+          },
+        },
+        carpool: [
+          { distance: 1900 },
+          { operator_class: "A" },
+          { end: { ...defaultPosition, aom: "no_ok" } },
+          { end: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
+          { start: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
+        ],
+        meta: [],
       },
-    },
-    carpool: [
-      { distance: 1900 },
-      { operator_class: "A" },
-      { end: { ...defaultPosition, aom: "no_ok" } },
-      { end: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
-      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: "80160" } },
-    ],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0, 0], meta: [] },
+      { incentive: [0, 0, 0, 0, 0], meta: [] },
+    ),
 );
 
 it(
   "should work basic",
-  process,
-  {
-    policy: {
-      handler: Handler.id,
-      territory_selector: {
-        [TerritoryCodeEnum.Mobility]: ["217500016"],
-        [TerritoryCodeEnum.CityGroup]: ["200056232"],
-      },
-    },
-    carpool: [
-      { distance: 2_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+  async () =>
+    await process(
       {
-        distance: 50_000,
-        driver_identity_key: "four",
-        start: { ...defaultPosition, [TerritoryCodeEnum.City]: "91666" },
-        end: { ...defaultPosition, [TerritoryCodeEnum.City]: "77250" },
+        policy: {
+          handler: Handler.id,
+          territory_selector: {
+            [TerritoryCodeEnum.Mobility]: ["217500016"],
+            [TerritoryCodeEnum.CityGroup]: ["200056232"],
+          },
+        },
+        carpool: [
+          { distance: 2_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          {
+            distance: 50_000,
+            driver_identity_key: "four",
+            start: { ...defaultPosition, [TerritoryCodeEnum.City]: "91666" },
+            end: { ...defaultPosition, [TerritoryCodeEnum.City]: "77250" },
+          },
+        ],
+        meta: [],
       },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [50, 100, 50],
-    meta: [],
-  },
+      {
+        incentive: [50, 100, 50],
+        meta: [],
+      },
+    ),
 );

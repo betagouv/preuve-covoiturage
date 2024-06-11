@@ -1,7 +1,8 @@
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { PMGFOctobre2023 as Handler } from "./20231001_PMGF";
+import { PMGFOctobre2023 as Handler } from "./20231001_PMGF.ts";
 
 const defaultPosition = {
   arr: "74278",
@@ -43,89 +44,95 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
-      operator_class: "A",
-    }],
-    meta: [],
-  },
-  { incentive: [0, 0, 0], meta: [] },
+  async () =>
+    await process(
+      {
+        policy: { handler: Handler.id },
+        carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
+          operator_class: "A",
+        }],
+        meta: [],
+      },
+      { incentive: [0, 0, 0], meta: [] },
+    ),
 );
 
-test(
+it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+  async () =>
+    await process(
       {
-        distance: 25_000,
-        driver_identity_key: "one",
-        passenger_identity_key: "two",
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          {
+            distance: 25_000,
+            driver_identity_key: "one",
+            passenger_identity_key: "two",
+          },
+          {
+            distance: 40_000,
+            driver_identity_key: "one",
+            passenger_identity_key: "three",
+          },
+          {
+            distance: 40_000,
+            seats: 2,
+            driver_identity_key: "one",
+            passenger_identity_key: "three",
+          },
+          { distance: 60_000, driver_identity_key: "one" },
+        ],
+        meta: [],
       },
       {
-        distance: 40_000,
-        driver_identity_key: "one",
-        passenger_identity_key: "three",
+        incentive: [100, 200, 150, 300, 600, 300],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.9-2023",
+            value: 1650,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 1650,
+          },
+        ],
       },
-      {
-        distance: 40_000,
-        seats: 2,
-        driver_identity_key: "one",
-        passenger_identity_key: "three",
-      },
-      { distance: 60_000, driver_identity_key: "one" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [100, 200, 150, 300, 600, 300],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.9-2023",
-        value: 1650,
-      },
-      {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 1650,
-      },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with driver month limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.0-one.month.9-2023",
-        value: 49_00,
-      },
-    ],
-  },
-  {
-    incentive: [100, 0],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.9-2023",
-        value: 50_00,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.9-2023",
+            value: 49_00,
+          },
+        ],
       },
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 100,
+        incentive: [100, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.9-2023",
+            value: 50_00,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 100,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );

@@ -1,4 +1,4 @@
-import { ExecutionContext } from "@/deps.ts";
+import { assertEquals } from "@/dev_deps.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   CarpoolInterface,
@@ -47,7 +47,6 @@ class MemoryMetadataRepository
 
 export const makeProcessHelper = (cp?: CarpoolInterface) => {
   return async (
-    t: ExecutionContext,
     input: ProcessParams,
     expected: ProcessResult,
   ) => {
@@ -106,16 +105,15 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
       const statefulIncentive = await policy.processStateful(
         store,
         statelessIncentive.export(),
-        t.log,
       );
       incentives.push(statefulIncentive.export());
     }
-    assertObjectMatch(
+    assertEquals(
       incentives.map((i) => i.statefulAmount),
       expected.incentive,
     );
     if (expected.meta) {
-      assertObjectMatch(
+      assertEquals(
         (await store.store(input.lifetime || MetadataLifetime.Day)).map((
           m,
         ) => ({ key: m.key, value: m.value })),

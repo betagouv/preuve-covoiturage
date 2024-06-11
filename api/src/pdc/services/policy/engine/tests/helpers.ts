@@ -82,9 +82,9 @@ export function generateIncentive(
  * same month when testing for limits.
  *
  * @example
- * test(
+ * it(
  *   'should work with driver amount month limits',
- *   process,
+ *   async () => await process(
  *   {
  *     policy: { handler: Handler.id },
  *     carpool: generatePartialCarpools(80, new Date('2023-10-01')),

@@ -1,7 +1,8 @@
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { ATMB202305 as Handler } from "./20230502_ATMB";
+import { ATMB202305 as Handler } from "./20230502_ATMB.ts";
 
 const defaultPosition = {
   arr: "74278",
@@ -43,137 +44,143 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
-test(
+it(
   "should work with exclusion",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { operator_uuid: "not in list" },
-      { distance: 100 },
-      { operator_class: "A" },
-      { start: { ...defaultPosition, aom: "11" } },
-      { end: { ...defaultPosition, aom: "11" } },
+  async () =>
+    await process(
       {
-        start: {
-          ...defaultPosition,
-          epci: "200070852", // Usses et Rhône
-          aom: "200070852",
-        },
-        end: {
-          ...defaultPosition,
-          epci: "200070852",
-          aom: "200070852",
-        },
-        datetime: new Date("2023-12-18"),
+        policy: { handler: Handler.id },
+        carpool: [
+          { operator_uuid: "not in list" },
+          { distance: 100 },
+          { operator_class: "A" },
+          { start: { ...defaultPosition, aom: "11" } },
+          { end: { ...defaultPosition, aom: "11" } },
+          {
+            start: {
+              ...defaultPosition,
+              epci: "200070852", // Usses et Rhône
+              aom: "200070852",
+            },
+            end: {
+              ...defaultPosition,
+              epci: "200070852",
+              aom: "200070852",
+            },
+            datetime: new Date("2023-12-18"),
+          },
+          {
+            start: {
+              ...defaultPosition,
+              epci: "247400047", // CC Vallée Verte
+              aom: "247400047",
+            },
+            end: {
+              ...defaultPosition,
+              epci: "247400047",
+              aom: "247400047",
+            },
+            datetime: new Date("2023-12-18"),
+          },
+          {
+            end: {
+              ...defaultPosition,
+              aom: "247000623", // CC Quatre Rivière
+            },
+            start: {
+              ...defaultPosition,
+              aom: "247000623",
+            },
+            datetime: new Date("2023-12-18"),
+          },
+        ],
+        meta: [],
       },
-      {
-        start: {
-          ...defaultPosition,
-          epci: "247400047", // CC Vallée Verte
-          aom: "247400047",
-        },
-        end: {
-          ...defaultPosition,
-          epci: "247400047",
-          aom: "247400047",
-        },
-        datetime: new Date("2023-12-18"),
-      },
-      {
-        end: {
-          ...defaultPosition,
-          aom: "247000623", // CC Quatre Rivière
-        },
-        start: {
-          ...defaultPosition,
-          aom: "247000623",
-        },
-        datetime: new Date("2023-12-18"),
-      },
-    ],
-    meta: [],
-  },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+      { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+    ),
 );
 
-test(
+it(
   "should work basic",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
+  async () =>
+    await process(
       {
-        distance: 5_000,
-        driver_identity_key: "one",
-        start: {
-          ...defaultPosition,
-          epci: "200070852", // Usses et Rhône
-        },
-      },
-      { distance: 5_000, seats: 2, driver_identity_key: "one" },
-      {
-        distance: 25_000,
-        driver_identity_key: "one",
-        passenger_identity_key: "two",
-      },
-      {
-        distance: 40_000,
-        driver_identity_key: "one",
-        passenger_identity_key: "three",
-      },
-      {
-        distance: 40_000,
-        seats: 2,
-        driver_identity_key: "one",
-        passenger_identity_key: "three",
-      },
-      { distance: 60_000, driver_identity_key: "one" },
-    ],
-    meta: [],
-  },
-  {
-    incentive: [200, 400, 250, 400, 800, 400],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.4-2023",
-        value: 2450,
+        policy: { handler: Handler.id },
+        carpool: [
+          {
+            distance: 5_000,
+            driver_identity_key: "one",
+            start: {
+              ...defaultPosition,
+              epci: "200070852", // Usses et Rhône
+            },
+          },
+          { distance: 5_000, seats: 2, driver_identity_key: "one" },
+          {
+            distance: 25_000,
+            driver_identity_key: "one",
+            passenger_identity_key: "two",
+          },
+          {
+            distance: 40_000,
+            driver_identity_key: "one",
+            passenger_identity_key: "three",
+          },
+          {
+            distance: 40_000,
+            seats: 2,
+            driver_identity_key: "one",
+            passenger_identity_key: "three",
+          },
+          { distance: 60_000, driver_identity_key: "one" },
+        ],
+        meta: [],
       },
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 2450,
+        incentive: [200, 400, 250, 400, 800, 400],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2023",
+            value: 2450,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 2450,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
 
-test(
+it(
   "should work with driver month limits",
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [
-      { distance: 5_000, driver_identity_key: "one" },
-      { distance: 5_000, driver_identity_key: "one" },
-    ],
-    meta: [
+  async () =>
+    await process(
       {
-        key: "max_amount_restriction.0-one.month.4-2023",
-        value: 48_00,
-      },
-    ],
-  },
-  {
-    incentive: [200, 0],
-    meta: [
-      {
-        key: "max_amount_restriction.0-one.month.4-2023",
-        value: 50_00,
+        policy: { handler: Handler.id },
+        carpool: [
+          { distance: 5_000, driver_identity_key: "one" },
+          { distance: 5_000, driver_identity_key: "one" },
+        ],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2023",
+            value: 48_00,
+          },
+        ],
       },
       {
-        key: "max_amount_restriction.global.campaign.global",
-        value: 200,
+        incentive: [200, 0],
+        meta: [
+          {
+            key: "max_amount_restriction.0-one.month.4-2023",
+            value: 50_00,
+          },
+          {
+            key: "max_amount_restriction.global.campaign.global",
+            value: 200,
+          },
+        ],
       },
-    ],
-  },
+    ),
 );
