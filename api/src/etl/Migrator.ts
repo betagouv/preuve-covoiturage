@@ -1,5 +1,5 @@
-import { Stream } from "@/deps.ts";
-import { pg } from "@/deps.ts";
+import { pg, Stream } from "@/deps.ts";
+import { createStateManager } from "./helpers/index.ts";
 import {
   AppConfigInterface,
   DatabaseStateManagerInterface,
@@ -11,7 +11,6 @@ import {
   StaticAbstractDataset,
   StaticMigrable,
 } from "./interfaces/index.ts";
-import { createStateManager } from "./helpers/index.ts";
 
 export class Migrator extends Stream.EventEmitter {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> =
@@ -31,7 +30,6 @@ export class Migrator extends Stream.EventEmitter {
 
   async prepare(): Promise<void> {
     console.info(`[db] Connecting to database`);
-    console.info(this.pool);
 
     const client = await this.pool.connect();
     await client.query(

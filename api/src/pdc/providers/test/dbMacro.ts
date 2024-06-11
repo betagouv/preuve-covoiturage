@@ -19,12 +19,13 @@ export interface DbBeforeAfter {
 export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
   return {
     before: async (): Promise<DbContext> => {
-      const connectionString =
-        cfg?.connectionString || "APP_POSTGRES_URL" in process.env
-          ? process.env.APP_POSTGRES_URL
-          : "postgresql://postgres:postgres@localhost:5432/local";
+      const connectionString = cfg?.connectionString ||
+        process.env.APP_POSTGRES_URL;
 
-      const db = new Migrator(connectionString);
+      const db = new Migrator(
+        connectionString ||
+          "postgresql://postgres:postgres@localhost:5432/local",
+      );
       await db.create();
       await db.migrate();
       await db.seed();

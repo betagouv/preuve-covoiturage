@@ -1,9 +1,12 @@
-import { process, readdirAsync } from "@/deps.ts";
-import { extname } from "@/deps.ts";
-import { join } from "@/deps.ts";
-import { readFileSync } from "@/deps.ts";
-import { PgPool } from "@/deps.ts";
-import { PgClient } from "@/deps.ts";
+import {
+  extname,
+  join,
+  PgClient,
+  PgPool,
+  process,
+  readdirAsync,
+  readFileSync,
+} from "@/deps.ts";
 import { buildMigrator } from "@/etl/index.ts";
 
 const __dirname = import.meta.dirname || "";
@@ -58,7 +61,7 @@ async function runMigrations(config: string) {
       );
       await transaction.commit();
     } catch (e) {
-      console.log(e, config);
+      console.log(e);
       await transaction.rollback({ chain: true });
     }
   }

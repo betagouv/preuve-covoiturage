@@ -1,4 +1,3 @@
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { migrate } from "@/db/index.ts";
 import {
   CsvOptions as ParseOptions,
@@ -8,6 +7,7 @@ import {
   path,
   URL,
 } from "@/deps.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
@@ -57,14 +57,11 @@ export class Migrator {
   }
 
   async create() {
-    console.log(`DATABASE = ${this.dbName}, ${this.dbIsCreated}`);
-    console.log(await this.rootConnection.getClient().query("SELECT NOW()"));
     if (this.dbIsCreated) {
       await this.rootConnection.getClient().query(
         `CREATE DATABASE ${this.dbName}`,
       );
     }
-    console.log(`DATABASE = ${this.dbName}, ${this.dbIsCreated} === DONE`);
   }
 
   async migrate() {

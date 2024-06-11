@@ -1,6 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE SCHEMA IF NOT EXISTS acquisition;
+CREATE SCHEMA IF NOT EXISTS anomaly;
 CREATE SCHEMA IF NOT EXISTS application;
 CREATE SCHEMA IF NOT EXISTS auth;
 CREATE SCHEMA IF NOT EXISTS carpool;
@@ -331,6 +332,17 @@ CREATE TABLE carpool.carpools (
     end_geo_code character varying(5) NOT NULL,
     payment integer
 );
+
+CREATE TABLE anomaly.labels (
+  _id serial PRIMARY KEY,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  carpool_id integer REFERENCES carpool.carpools(_id) NOT NULL,
+  label varchar NOT NULL,
+  conflicting_carpool_id integer REFERENCES carpool.carpools(_id) NOT NULL,
+  conflicting_operator_journey_id varchar NOT NULL,
+  overlap_duration_ratio real
+);
+
 CREATE VIEW acquisition.carpools AS
  SELECT carpools.acquisition_id,
     carpools.operator_id,
