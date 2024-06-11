@@ -42,6 +42,10 @@ test('should return the last operators if no datetime is provided', (t) => {
   ]);
 });
 
+test('should return an empty array if date is before the oldest', (t) => {
+  t.deepEqual(getOperatorsAt(list, new Date('1975-09-26')), []);
+});
+
 test('should return Karos only if datetime is before 16/10/2023', (t) => {
   t.deepEqual(getOperatorsAt(list, new Date('2023-10-15')), [OperatorsEnum.KAROS]);
 });
