@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
@@ -16,6 +17,14 @@ import {
 import { Policy } from "../engine/entities/Policy.ts";
 import { Idfm } from "../engine/policies/Idfm.ts";
 import { TripRepositoryProvider } from "./TripRepositoryProvider.ts";
+=======
+import { DbContext, makeDbBeforeAfter } from '@pdc/providers/test';
+import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import anyTest, { TestFn } from 'ava';
+import { Policy } from '../engine/entities/Policy';
+import { IDFMPeriodeNormale2021 } from '../engine/policies/20210520_IDFM';
+import { TripRepositoryProvider } from './TripRepositoryProvider';
+>>>>>>> 2b738c433 (refacto campagnes (#2504))
 
 interface TestContext {
   db: DbContext;
@@ -45,9 +54,15 @@ it("Should find carpools even with fraudcheck_error", async (t) => {
     territory_selector: { aom: ["217500016"] },
     start_date,
     end_date,
+<<<<<<< HEAD
     tz: "Europe/Paris",
     name: "Policy",
     handler: Idfm.id,
+=======
+    tz: 'Europe/Paris',
+    name: 'Policy',
+    handler: IDFMPeriodeNormale2021.id,
+>>>>>>> 2b738c433 (refacto campagnes (#2504))
     status: PolicyStatusEnum.ACTIVE,
     incentive_sum: 5000,
     max_amount: 10_000_000_00,

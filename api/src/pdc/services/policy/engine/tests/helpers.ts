@@ -70,18 +70,66 @@ export function generateIncentive(
   return { ...defaultIncentive, ...incentive };
 }
 
+<<<<<<< HEAD
 export function generatePartialCarpools(
   count = 75,
 ): Partial<CarpoolInterface>[] {
   const date: Date = new Date("2022-01-01");
+=======
+/**
+ * Generate a list of partial carpools
+ *
+ * distance is set to 25_000
+ * driver_identity_key is set to 'three'
+ * passenger_identity_key is set to a random uuid on every carpool to avoid limits
+ *
+ * From the date provided, every 3rd carpool will be the next day.
+ * You should start at the beginning of the month to spread carpools over the
+ * same month when testing for limits.
+ *
+ * @example
+ * test(
+ *   'should work with driver amount month limits',
+ *   process,
+ *   {
+ *     policy: { handler: Handler.id },
+ *     carpool: generatePartialCarpools(80, new Date('2023-10-01')),
+ *     meta: [],
+ *   },
+ *   {
+ *     incentive: [...[...Array(80).keys()].map(() => 150), 0],
+ *     meta: [
+ *       {
+ *         key: 'max_amount_restriction.0-three.month.9-2023',
+ *         value: 120_00,
+ *       },
+ *       {
+ *         key: 'max_amount_restriction.global.campaign.global',
+ *         value: 120_00,
+ *       },
+ *     ],
+ *   },
+ * );
+ *
+ * @param {Number} count number of carpools to generate
+ * @param {Date} date datetime of the first carpool
+ * @returns {Partial<CarpoolInterface>[]}
+ */
+export function generatePartialCarpools(count = 75, date = new Date('2022-01-01')): Partial<CarpoolInterface>[] {
+>>>>>>> 2b738c433 (refacto campagnes (#2504))
   return [
     ...Array(count + 1 + 1)
       .slice(1)
       .keys(),
   ].map((x) => ({
+<<<<<<< HEAD
     datetime: x % 3 == 0
       ? date.setDate(date.getDate() + 1) && new Date(date)
       : new Date(date),
+=======
+    // every 3rd carpool is the next day
+    datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
+>>>>>>> 2b738c433 (refacto campagnes (#2504))
     distance: 25_000,
     driver_identity_key: "three",
     passenger_identity_key: v4(),
