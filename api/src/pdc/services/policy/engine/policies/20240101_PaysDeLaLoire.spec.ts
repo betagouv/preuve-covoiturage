@@ -3,8 +3,6 @@ import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { PaysDeLaLoire2024 as Handler } from './20240101_PaysDeLaLoire';
-import { operator } from '../../../user/config/permissions';
-import { date } from '../../../trip/config/middlewares';
 
 const defaultPosition = {
   arr: '85047',
