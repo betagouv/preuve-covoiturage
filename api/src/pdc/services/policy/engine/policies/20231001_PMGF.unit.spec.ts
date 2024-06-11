@@ -1,18 +1,17 @@
-import test from 'ava';
-import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { PMGFOctobre2023 as Handler } from './20231001_PMGF';
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { PMGFOctobre2023 as Handler } from "./20231001_PMGF";
 
 const defaultPosition = {
-  arr: '74278',
-  com: '74278',
-  aom: '200033116',
-  epci: '200033116',
-  dep: '74',
-  reg: '84',
-  country: 'XXXXX',
-  reseau: '142',
+  arr: "74278",
+  com: "74278",
+  aom: "200033116",
+  epci: "200033116",
+  dep: "74",
+  reg: "84",
+  country: "XXXXX",
+  reseau: "142",
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -23,11 +22,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.KLAXIT,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2023-10-01'),
+  datetime: new Date("2023-10-01"),
   seats: 1,
   distance: 5_000,
   operator_journey_id: v4(),
@@ -45,28 +44,43 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusion',
+  "should work with exclusion",
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_uuid: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
+    carpool: [{ operator_uuid: "not in list" }, { distance: 100 }, {
+      operator_class: "A",
+    }],
     meta: [],
   },
   { incentive: [0, 0, 0], meta: [] },
 );
 
 test(
-  'should work basic',
+  "should work basic",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
-      { distance: 25_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
-      { distance: 40_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
-      { distance: 40_000, seats: 2, driver_identity_key: 'one', passenger_identity_key: 'three' },
-      { distance: 60_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+      {
+        distance: 25_000,
+        driver_identity_key: "one",
+        passenger_identity_key: "two",
+      },
+      {
+        distance: 40_000,
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+      },
+      {
+        distance: 40_000,
+        seats: 2,
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+      },
+      { distance: 60_000, driver_identity_key: "one" },
     ],
     meta: [],
   },
@@ -74,11 +88,11 @@ test(
     incentive: [100, 200, 150, 300, 600, 300],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.9-2023',
+        key: "max_amount_restriction.0-one.month.9-2023",
         value: 1650,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 1650,
       },
     ],
@@ -86,17 +100,17 @@ test(
 );
 
 test(
-  'should work with driver month limits',
+  "should work with driver month limits",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, driver_identity_key: "one" },
     ],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.9-2023',
+        key: "max_amount_restriction.0-one.month.9-2023",
         value: 49_00,
       },
     ],
@@ -105,11 +119,11 @@ test(
     incentive: [100, 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.9-2023',
+        key: "max_amount_restriction.0-one.month.9-2023",
         value: 50_00,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 100,
       },
     ],

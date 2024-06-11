@@ -7,11 +7,11 @@ import {
   ResultType,
 } from "@/ilos/common/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 import {
   ParamsInterface,
   signature as finalize,
 } from "@/shared/policy/finalize.contract.ts";
+import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 
 interface CommandOptions {
   from: string;

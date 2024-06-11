@@ -1,17 +1,16 @@
-import test from 'ava';
-import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { PMGFxATMB2024 as Handler } from './20240401_PMGFxATMB';
+import { v4 } from "@/deps.ts";
+import { OperatorsEnum } from "../../interfaces/index.ts";
+import { makeProcessHelper } from "../tests/macro.ts";
+import { PMGFxATMB2024 as Handler } from "./20240401_PMGFxATMB";
 
 const defaultPosition = {
-  arr: '74206',
-  com: '74206',
-  aom: '200067551',
-  epci: '200067551',
-  dep: '74',
-  reg: '84',
-  country: 'XXXXX',
+  arr: "74206",
+  com: "74206",
+  aom: "200067551",
+  epci: "200067551",
+  dep: "74",
+  reg: "84",
+  country: "XXXXX",
   reseau: null,
 };
 
@@ -24,11 +23,11 @@ const defaultCarpool = {
   passenger_identity_key: v4(),
   driver_identity_key: v4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
-  operator_class: 'C',
+  operator_class: "C",
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2024-04-15'),
+  datetime: new Date("2024-04-15"),
   seats: 1,
   duration: 600,
   distance: 5_000,
@@ -47,50 +46,50 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should work with exclusions',
+  "should work with exclusions",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { operator_uuid: 'not in list' },
+      { operator_uuid: "not in list" },
       { distance: 100 },
-      { operator_class: 'A' },
+      { operator_class: "A" },
       {
         start: {
           ...defaultPosition,
-          epci: '200070852', // Usses et Rhône
-          aom: '200070852',
+          epci: "200070852", // Usses et Rhône
+          aom: "200070852",
         },
         end: {
           ...defaultPosition,
-          epci: '200070852',
-          aom: '200070852',
+          epci: "200070852",
+          aom: "200070852",
         },
-        datetime: new Date('2024-04-15'),
+        datetime: new Date("2024-04-15"),
       },
       {
         start: {
           ...defaultPosition,
-          epci: '247400047', // CC Vallée Verte
-          aom: '247400047',
+          epci: "247400047", // CC Vallée Verte
+          aom: "247400047",
         },
         end: {
           ...defaultPosition,
-          epci: '247400047',
-          aom: '247400047',
+          epci: "247400047",
+          aom: "247400047",
         },
-        datetime: new Date('2024-04-15'),
+        datetime: new Date("2024-04-15"),
       },
       {
         end: {
           ...defaultPosition,
-          aom: '247000623', // CC Quatre Rivière
+          aom: "247000623", // CC Quatre Rivière
         },
         start: {
           ...defaultPosition,
-          aom: '247000623',
+          aom: "247000623",
         },
-        datetime: new Date('2024-04-15'),
+        datetime: new Date("2024-04-15"),
       },
     ],
     meta: [],
@@ -99,18 +98,35 @@ test(
 );
 
 test(
-  'trips inside AOM',
+  "trips inside AOM",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, seats: 2, driver_identity_key: 'one' },
-      { distance: 20_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
-      { distance: 30_000, driver_identity_key: 'one', passenger_identity_key: 'two' },
-      { distance: 40_000, driver_identity_key: 'one', passenger_identity_key: 'three' },
-      { distance: 40_000, seats: 2, driver_identity_key: 'one', passenger_identity_key: 'three' },
-      { distance: 70_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, seats: 2, driver_identity_key: "one" },
+      {
+        distance: 20_000,
+        driver_identity_key: "one",
+        passenger_identity_key: "two",
+      },
+      {
+        distance: 30_000,
+        driver_identity_key: "one",
+        passenger_identity_key: "two",
+      },
+      {
+        distance: 40_000,
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+      },
+      {
+        distance: 40_000,
+        seats: 2,
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+      },
+      { distance: 70_000, driver_identity_key: "one" },
     ],
   },
   {
@@ -119,51 +135,51 @@ test(
 );
 
 test(
-  'trips outside AOM',
+  "trips outside AOM",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
       {
         distance: 5_000,
-        driver_identity_key: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 5_000,
         seats: 2,
-        driver_identity_key: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 20_000,
-        driver_identity_key: 'one',
-        passenger_identity_key: 'two',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        passenger_identity_key: "two",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 30_000,
-        driver_identity_key: 'one',
-        passenger_identity_key: 'two',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        passenger_identity_key: "two",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 40_000,
-        driver_identity_key: 'one',
-        passenger_identity_key: 'three',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 40_000,
         seats: 2,
-        driver_identity_key: 'one',
-        passenger_identity_key: 'three',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        passenger_identity_key: "three",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
       {
         distance: 70_000,
-        driver_identity_key: 'one',
-        start: { ...defaultPosition, epci: '200070852', aom: '200070852' },
+        driver_identity_key: "one",
+        start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
       },
     ],
   },
@@ -173,17 +189,17 @@ test(
 );
 
 test(
-  'should work with driver month limits',
+  "should work with driver month limits",
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_key: 'one' },
-      { distance: 5_000, driver_identity_key: 'one' },
+      { distance: 5_000, driver_identity_key: "one" },
+      { distance: 5_000, driver_identity_key: "one" },
     ],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
+        key: "max_amount_restriction.0-one.month.3-2024",
         value: 48_50,
       },
     ],
@@ -192,11 +208,11 @@ test(
     incentive: [150, 0],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.3-2024',
+        key: "max_amount_restriction.0-one.month.3-2024",
         value: 50_00,
       },
       {
-        key: 'max_amount_restriction.global.campaign.global',
+        key: "max_amount_restriction.global.campaign.global",
         value: 150,
       },
     ],

@@ -1,13 +1,13 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/policy/syncIncentiveSum.contract.ts";
 import { alias } from "@/shared/policy/syncIncentiveSum.schema.ts";
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,

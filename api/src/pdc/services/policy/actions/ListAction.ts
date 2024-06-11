@@ -6,8 +6,6 @@ import {
 } from "@/pdc/providers/middleware/index.ts";
 import { SerializedPolicyInterface } from "../interfaces/engine/PolicyInterface.ts";
 
-import { Policy } from "../engine/entities/Policy.ts";
-import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
@@ -20,6 +18,8 @@ import {
   SingleResultInterface,
 } from "@/shared/policy/list.contract.ts";
 import { alias } from "@/shared/policy/list.schema.ts";
+import { Policy } from "../engine/entities/Policy.ts";
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,

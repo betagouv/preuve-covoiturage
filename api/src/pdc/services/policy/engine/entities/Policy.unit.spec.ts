@@ -1,16 +1,10 @@
+import { it } from "@/dev_deps.ts";
 import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+  PolicyHandlerInterface,
+  PolicyHandlerParamsInterface,
+  StatefulContextInterface,
+  StatelessContextInterface,
+} from "../../interfaces/index.ts";
 import {
   applyLimitOnStatefulStage,
   isOperatorClassOrThrow,
@@ -18,12 +12,6 @@ import {
   watchForGlobalMaxAmount,
 } from "../helpers/index.ts";
 import { process } from "../tests/macro.ts";
-import {
-  PolicyHandlerInterface,
-  PolicyHandlerParamsInterface,
-  StatefulContextInterface,
-  StatelessContextInterface,
-} from "../../interfaces/index.ts";
 
 class TestHandler implements PolicyHandlerInterface {
   load(): Promise<void> {

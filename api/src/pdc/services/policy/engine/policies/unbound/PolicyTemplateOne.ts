@@ -1,10 +1,10 @@
+import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "../../../interfaces/index.ts";
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
 import {
   ConfiguredLimitInterface,
   isOperatorClassOrThrow,

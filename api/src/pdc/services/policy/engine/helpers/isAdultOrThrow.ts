@@ -1,8 +1,8 @@
-import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 import {
   StatelessContextInterface,
   StatelessRuleHelper,
 } from "../../interfaces/index.ts";
+import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
 
 export const isAdultOrThrow: StatelessRuleHelper<void> = (
   ctx: StatelessContextInterface,

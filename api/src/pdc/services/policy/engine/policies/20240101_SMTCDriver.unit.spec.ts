@@ -1,21 +1,4 @@
 <<<<<<<< HEAD:api/src/pdc/services/policy/engine/policies/SMTC2024.unit.spec.ts
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { v4 } from "@/deps.ts";
-import { OperatorsEnum } from "../../interfaces/index.ts";
-import { makeProcessHelper } from "../tests/macro.ts";
-import { SMTC2024 as Handler } from "./SMTC2024.ts";
 ========
 import test from 'ava';
 import { v4 } from 'uuid';

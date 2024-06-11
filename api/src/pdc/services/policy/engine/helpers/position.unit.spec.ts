@@ -1,20 +1,8 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assertEquals, it } from "@/dev_deps.ts";
 
+import { TerritoryCodeInterface } from "../../interfaces/index.ts";
 import { StatelessContext } from "../entities/Context.ts";
 import { generateCarpool } from "../tests/helpers.ts";
-import { TerritoryCodeInterface } from "../../interfaces/index.ts";
 import { endsAt, startsAt } from "./position.ts";
 
 function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {

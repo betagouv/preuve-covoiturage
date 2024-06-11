@@ -8,7 +8,6 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 
-import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
@@ -20,6 +19,7 @@ import {
   ResultInterface,
 } from "@/shared/policy/find.contract.ts";
 import { alias } from "@/shared/policy/find.schema.ts";
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,

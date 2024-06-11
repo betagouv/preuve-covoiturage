@@ -29,11 +29,11 @@ describe("TripRepositoryProvider", () => {
   it("Should find carpools even with fraudcheck_error", async () => {
     const start_date = new Date("2024-03-01");
     const end_date = new Date("2024-03-30");
-    
+
     const policy = await Policy.import({
       _id: 1,
       territory_id: 1,
-      territory_selector: { aom: ["217500016"] }  ,
+      territory_selector: { aom: ["217500016"] },
       start_date,
       end_date,
       tz: "Europe/Paris",

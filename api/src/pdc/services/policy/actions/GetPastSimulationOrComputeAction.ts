@@ -1,3 +1,4 @@
+import { RedisKey } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -18,7 +19,6 @@ import {
   signature as simulatePastSignature,
 } from "@/shared/policy/simulateOnPast.contract.ts";
 import { alias } from "@/shared/policy/simulateOnPast.schema.ts";
-import { RedisKey } from "@/deps.ts";
 
 @handler({
   ...handlerConfig,

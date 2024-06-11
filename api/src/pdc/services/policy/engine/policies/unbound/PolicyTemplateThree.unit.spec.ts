@@ -1,17 +1,5 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { v4 } from "@/deps.ts";
+import { it } from "@/dev_deps.ts";
 import { TerritoryCodeEnum } from "../../../interfaces/index.ts";
 import { makeProcessHelper } from "../../tests/macro.ts";
 import { PolicyTemplateThree as Handler } from "./PolicyTemplateThree.ts";

@@ -1,5 +1,4 @@
-import test from "ava";
-import { v4 } from "uuid";
+import { v4 } from "@/deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { PaysDeLaLoire2024 as Handler } from "./20240101_PaysDeLaLoire.ts";

@@ -1,3 +1,4 @@
+import { RedisKey } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
@@ -9,7 +10,6 @@ import {
   ResultInterface,
 } from "@/shared/policy/simulateOnPast.contract.ts";
 import { alias } from "@/shared/policy/simulateOnPast.schema.ts";
-import { RedisKey } from "@/deps.ts";
 import { MetadataStore } from "../engine/entities/MetadataStore.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import {

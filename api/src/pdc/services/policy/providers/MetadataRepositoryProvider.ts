@@ -1,8 +1,8 @@
+import { provider } from "@/ilos/common/index.ts";
 import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
-import { provider } from "@/ilos/common/index.ts";
 
 import {
   MetadataRepositoryProviderInterfaceResolver,

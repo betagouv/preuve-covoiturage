@@ -1,28 +1,7 @@
-<<<<<<<< HEAD:api/src/pdc/services/policy/engine/policies/SMTC2024Passenger.unit.spec.ts
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { v4 } from "@/deps.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { SMTC2024Passenger as Handler } from "./SMTC2024Passenger.ts";
-========
-import test from 'ava';
-import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
-import { makeProcessHelper } from '../tests/macro';
-import { SMTC2024Passenger as Handler } from './20240101_SMTC2024Passenger';
->>>>>>>> 2b738c433 (refacto campagnes (#2504)):api/src/pdc/services/policy/engine/policies/20240101_SMTC2024Passenger.spec.ts
+import { SMTC2024Passenger as Handler } from "./20240101_SMTC2024Passenger.ts";
 
 const defaultPosition = {
   arr: "74278",
