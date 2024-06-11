@@ -9,13 +9,12 @@ import {
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import { Policy } from "../engine/entities/Policy.ts";
-import { Idfm } from "../engine/policies/Idfm.ts";
+import { IDFMPeriodeNormale2021 } from "../engine/policies/20210520_IDFM.ts";
 import { TripRepositoryProvider } from "./TripRepositoryProvider.ts";
 
 describe("TripRepositoryProvider", () => {
   let db: DbContext;
   let repository: TripRepositoryProvider;
-
   const { before, after } = makeDbBeforeAfter();
 
   beforeAll(async () => {
@@ -30,16 +29,16 @@ describe("TripRepositoryProvider", () => {
   it("Should find carpools even with fraudcheck_error", async () => {
     const start_date = new Date("2024-03-01");
     const end_date = new Date("2024-03-30");
-
+    
     const policy = await Policy.import({
       _id: 1,
       territory_id: 1,
-      territory_selector: { aom: ["217500016"] },
+      territory_selector: { aom: ["217500016"] }  ,
       start_date,
       end_date,
       tz: "Europe/Paris",
       name: "Policy",
-      handler: Idfm.id,
+      handler: IDFMPeriodeNormale2021.id,
       status: PolicyStatusEnum.ACTIVE,
       incentive_sum: 5000,
       max_amount: 10_000_000_00,

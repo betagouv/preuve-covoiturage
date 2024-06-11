@@ -1,38 +1,38 @@
-import { PolicyHandlerStaticInterface } from "../../interfaces/index.ts";
-import { ATMB202305 } from "./ATMB202305.ts";
-import { Cannes2024 } from "./Cannes2024.ts";
-import { Cotentin2023 } from "./Cotentin2023.ts";
-import { GrandChatellerault2024 } from "./GrandChatellerault2024.ts";
-import { GrandPoitiers } from "./GrandPoitiers.ts";
-import { Idfm } from "./Idfm.ts";
-import { LaRochelle20232024 } from "./LaRochelle20232024.ts";
-import { Lannion } from "./Lannion.ts";
-import { LannionTregor2024 } from "./LannionTregor2024.ts";
-import { Laval } from "./Laval.ts";
-import { MetropoleSavoie } from "./MetropoleSavoie.ts";
-import { Montpellier } from "./Montpellier.ts";
-import { Mrn } from "./Mrn.ts";
-import { NantesMetropole2024 } from "./NantesMetropole2024.ts";
-import { Nm } from "./Nm.ts";
-import { Occitanie20232024 } from "./Occitanie20232024.ts";
-import { PMGFxATMB2024 } from "./PMGFxATMB2024.ts";
-import { PaysBasque20232024 } from "./PaysBasque20232024.ts";
-import { PaysDeLaLoire2021 } from "./PaysDeLaLoire2021.ts";
-import { PaysDeLaLoire2023 } from "./PaysDeLaLoire2023.ts";
-import { PaysDeLaLoire2024 } from "./PaysDeLaLoire2024.ts";
-import { PetrLunevilloisS12023 } from "./PetrLunevilloisS12023.ts";
-import { Pmgf } from "./Pmgf.ts";
-import { Pmgf2023 } from "./Pmgf2023.ts";
-import { PmgfLate2023 } from "./PmgfLate2023.ts";
-import { SMT2022 } from "./SMT2022.ts";
-import { SMT2023 } from "./SMT2023.ts";
-import { SMTC2024 } from "./SMTC2024.ts";
-import { SMTC2024Passenger } from "./SMTC2024Passenger.ts";
-import { TerresTouloises2024 } from "./TerresTouloises2024.ts";
-import { Vitre2023 } from "./Vitre2023.ts";
-import { PolicyTemplateOne } from "./unbound/PolicyTemplateOne.ts";
-import { PolicyTemplateThree } from "./unbound/PolicyTemplateThree.ts";
-import { PolicyTemplateTwo } from "./unbound/PolicyTemplateTwo.ts";
+import { PaysDeLaLoire2021 } from "@/pdc/services/policy/engine/policies/20210105_PaysDeLaLoire.ts";
+import { IDFMPeriodeNormale2021 } from "@/pdc/services/policy/engine/policies/20210520_IDFM.ts";
+import { NantesMetropoleXPCovoitan2021 } from "@/pdc/services/policy/engine/policies/20211202_NantesMetropoleXP.ts";
+import { LavalAgglo2022 } from "@/pdc/services/policy/engine/policies/20220412_LavalAgglo.ts";
+import { SMT2022 } from "@/pdc/services/policy/engine/policies/20220414_SMT.ts";
+import { MetropoleRouenNormandie2022 } from "@/pdc/services/policy/engine/policies/20220420_MetropoleRouenNormandie.ts";
+import { Occitanie20232024 } from "@/pdc/services/policy/engine/policies/20221024_Occitanie.ts";
+import { PMGF2022 } from "@/pdc/services/policy/engine/policies/20221102_PMGF.ts";
+import { Montpellier } from "@/pdc/services/policy/engine/policies/20221206_Montpellier.ts";
+import { Cotentin2023 } from "@/pdc/services/policy/engine/policies/20230101_Cotentin.ts";
+import { LaRochelle20232024 } from "@/pdc/services/policy/engine/policies/20230101_LaRochelle.ts";
+import { Vitre2023 } from "@/pdc/services/policy/engine/policies/20230101_Vitre.ts";
+import { MetropoleSavoie } from "@/pdc/services/policy/engine/policies/20230124_MetropoleSavoie.ts";
+import { SMT2023 } from "@/pdc/services/policy/engine/policies/20230126_SMT.ts";
+import { PaysDeLaLoire2023 } from "@/pdc/services/policy/engine/policies/20230201_PaysDeLaLoire.ts";
+import { PaysBasque20232024 } from "@/pdc/services/policy/engine/policies/20230401_PaysBasqueAdour.ts";
+import { Lannion202305 } from "@/pdc/services/policy/engine/policies/20230501_Lannion.ts";
+import { ATMB202305 } from "@/pdc/services/policy/engine/policies/20230502_ATMB.ts";
+import { PMGF2023 } from "@/pdc/services/policy/engine/policies/20230502_PMGF.ts";
+import { GrandPoitiers } from "@/pdc/services/policy/engine/policies/20230927_GrandPoitiers.ts";
+import { PMGFOctobre2023 } from "@/pdc/services/policy/engine/policies/20231001_PMGF.ts";
+import { Cannes2024 } from "@/pdc/services/policy/engine/policies/20240101_Cannes.ts";
+import { NantesMetropole2024 } from "@/pdc/services/policy/engine/policies/20240101_NantesMetropole.ts";
+import { PaysDeLaLoire2024 } from "@/pdc/services/policy/engine/policies/20240101_PaysDeLaLoire.ts";
+import { SMTC2024Passenger } from "@/pdc/services/policy/engine/policies/20240101_SMTC2024Passenger.ts";
+import { SMTC2024Driver } from "@/pdc/services/policy/engine/policies/20240101_SMTCDriver.ts";
+import { PetrLunevilloisS12023 } from "@/pdc/services/policy/engine/policies/20240108_PetrLunevillois.ts";
+import { GrandChatellerault2024 } from "@/pdc/services/policy/engine/policies/20240201_GrandChatellerault.ts";
+import { TerresTouloises2024 } from "@/pdc/services/policy/engine/policies/20240201_TerresTouloises.ts";
+import { LannionTregor2024 } from "@/pdc/services/policy/engine/policies/20240401_LannionTregor.ts";
+import { PMGFxATMB2024 } from "@/pdc/services/policy/engine/policies/20240401_PMGFxATMB.ts";
+import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
+import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
+import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
+import { PolicyHandlerStaticInterface } from "@/pdc/services/policy/interfaces/index.ts";
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line
@@ -44,32 +44,32 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Cotentin2023,
     GrandChatellerault2024,
     GrandPoitiers,
-    Idfm,
-    Lannion,
+    IDFMPeriodeNormale2021,
+    Lannion202305,
     LannionTregor2024,
     LaRochelle20232024,
-    Laval,
+    LavalAgglo2022,
+    MetropoleRouenNormandie2022,
     MetropoleSavoie,
     Montpellier,
-    Mrn,
     NantesMetropole2024,
-    Nm,
+    NantesMetropoleXPCovoitan2021,
     Occitanie20232024,
     PaysBasque20232024,
     PaysDeLaLoire2021,
     PaysDeLaLoire2023,
     PaysDeLaLoire2024,
     PetrLunevilloisS12023,
-    Pmgf,
-    Pmgf2023,
-    PmgfLate2023,
+    PMGF2022,
+    PMGF2023,
+    PMGFOctobre2023,
     PMGFxATMB2024,
     PolicyTemplateOne,
     PolicyTemplateThree,
     PolicyTemplateTwo,
     SMT2022,
     SMT2023,
-    SMTC2024,
+    SMTC2024Driver,
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
