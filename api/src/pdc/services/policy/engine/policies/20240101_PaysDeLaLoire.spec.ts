@@ -3,6 +3,8 @@ import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { PaysDeLaLoire2024 as Handler } from './20240101_PaysDeLaLoire';
+import { operator } from '../../../user/config/permissions';
+import { date } from '../../../trip/config/middlewares';
 
 const defaultPosition = {
   arr: '85047',
@@ -59,6 +61,19 @@ test(
     ],
   },
   { incentive: [0, 0, 0, 0, 0, 0] },
+);
+
+test(
+  'Klaxit removed on 2024-03-18',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      { operator_uuid: OperatorsEnum.KLAXIT, datetime: new Date('2024-03-17T23:00:00+0100') },
+      { operator_uuid: OperatorsEnum.KLAXIT, datetime: new Date('2024-03-18T10:00:00+0100') },
+    ],
+  },
+  { incentive: [75, 0] },
 );
 
 test(
