@@ -50,6 +50,10 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
         OperatorsEnum.MOBICOOP,
       ],
     },
+    {
+      date: new Date('2024-03-18T00:00:00+0100'),
+      operators: [OperatorsEnum.BLABLACAR_DAILY, OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP],
+    },
   ];
 
   protected slices: RunnableSlices = [

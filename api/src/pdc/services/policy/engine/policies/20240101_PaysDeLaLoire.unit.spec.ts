@@ -62,6 +62,19 @@ test(
 );
 
 test(
+  'Klaxit removed on 2024-03-18',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      { operator_uuid: OperatorsEnum.KLAXIT, datetime: new Date('2024-03-17T23:00:00+0100') },
+      { operator_uuid: OperatorsEnum.KLAXIT, datetime: new Date('2024-03-18T10:00:00+0100') },
+    ],
+  },
+  { incentive: [75, 0] },
+);
+
+test(
   'should work with AOM exclusions',
   process,
   {
