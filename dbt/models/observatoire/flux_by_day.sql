@@ -5,8 +5,8 @@ SELECT
   end_geo_code as destination,
   start_datetime::date AS start_date,
   COUNT(*) AS journeys,
-  count(distinct driver_identity_key) as drivers,
-  count(distinct passenger_identity_key) as passengers,
+  count(distinct driver_id) as drivers,
+  count(distinct passenger_id) as passengers,
   sum(passenger_seats) as passenger_seats,
   sum(distance) as distance,
   sum(duration) as duration
