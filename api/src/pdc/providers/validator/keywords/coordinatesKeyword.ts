@@ -31,7 +31,7 @@ export const coordinatesKeyword: KeywordDefinition = {
           throw new Error(`lat must be between ${min} and ${max}`);
         }
 
-        return regex.it(data.toString());
+        return regex.test(data.toString());
       } catch (e) {
         return false;
       }
