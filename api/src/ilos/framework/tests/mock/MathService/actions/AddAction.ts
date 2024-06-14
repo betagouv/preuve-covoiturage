@@ -1,12 +1,10 @@
-import { Action } from "@/ilos/core/index.ts";
 import {
-  ContextType,
   handler,
   InvalidParamsException,
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
-
+import { Action } from "@/ilos/core/index.ts";
 import { CustomProvider } from "../../Providers/CustomProvider.ts";
 
 @handler({
@@ -18,17 +16,16 @@ export class AddAction extends Action {
     super();
   }
 
-  protected async handle(
-    params: ParamsType,
-    context: ContextType,
-  ): Promise<ResultType> {
+  protected async handle(params: ParamsType): Promise<ResultType> {
     if (!Array.isArray(params)) {
       throw new InvalidParamsException();
     }
+
     let result = 0;
     params.forEach((add: number) => {
       result += add;
     });
+
     return `${this.custom.get()}${result}`;
   }
 }

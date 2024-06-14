@@ -1,8 +1,7 @@
-import { ServiceProvider as BaseServiceProvider } from "@/ilos/core/index.ts";
 import { serviceProvider } from "@/ilos/common/index.ts";
-
-import { AddAction } from "./actions/AddAction.ts";
+import { ServiceProvider as BaseServiceProvider } from "@/ilos/core/index.ts";
 import { CustomProvider } from "../Providers/CustomProvider.ts";
+import { AddAction } from "./actions/AddAction.ts";
 
 @serviceProvider({
   providers: [CustomProvider],

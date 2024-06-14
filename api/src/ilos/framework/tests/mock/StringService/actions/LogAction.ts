@@ -1,5 +1,3 @@
-import { fs } from "@/deps.ts";
-import { Action } from "@/ilos/core/index.ts";
 import {
   ConfigInterfaceResolver,
   ContextType,
@@ -7,6 +5,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { Action } from "@/ilos/core/index.ts";
 
 @handler({
   service: "string",
@@ -25,11 +24,12 @@ export class LogAction extends Action {
       context && !!context.channel && !!context.channel.transport &&
       context.channel.transport === "queue"
     ) {
-      fs.writeFileSync(this.config.get("log.path"), JSON.stringify(params), {
-        encoding: "utf8",
-        flag: "w",
-      });
+      Deno.writeFileSync(
+        this.config.get("log.path"),
+        new TextEncoder().encode(JSON.stringify(params)),
+      );
     }
+
     return params;
   }
 }

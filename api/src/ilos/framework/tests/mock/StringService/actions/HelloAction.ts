@@ -1,13 +1,11 @@
-import { Action } from "@/ilos/core/index.ts";
 import {
   ConfigInterfaceResolver,
-  ContextType,
   handler,
   InvalidParamsException,
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
-
+import { Action } from "@/ilos/core/index.ts";
 import { CustomProvider } from "../../Providers/CustomProvider.ts";
 
 @handler({
@@ -24,12 +22,13 @@ export class HelloAction extends Action {
 
   protected async handle(
     params: ParamsType,
-    context: ContextType,
   ): Promise<ResultType> {
     if (Array.isArray(params) || !("name" in params)) {
       throw new InvalidParamsException();
     }
+
     const sentence = this.config.get("string.hello");
+
     return `${this.custom.get()}${sentence} ${params.name}`;
   }
 }
