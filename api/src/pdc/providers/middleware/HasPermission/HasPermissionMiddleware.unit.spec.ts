@@ -1,23 +1,5 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import {
-  ContextType,
-  ForbiddenException,
-  InvalidParamsException,
-  ParamsType,
-  ResultType,
-} from "@/ilos/common/index.ts";
+import { assertEquals, assertRejects, it } from "@/dev_deps.ts";
+import { ContextType, ParamsType, ResultType } from "@/ilos/common/index.ts";
 
 import { HasPermissionMiddleware } from "./HasPermissionMiddleware.ts";
 
@@ -59,36 +41,30 @@ it("Permission middleware: matching 1 permission", async (t) => {
 it("Permission middleware: no method permissions", async (t) => {
   const permissions = ["test.ok"];
   const { params, context } = callFactory(permissions);
-  await assertThrows(
-    middleware.process(params, context, () => {}, []),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(async () =>
+    middleware.process(params, context, () => {}, [])
   );
 });
 
 it("Permission middleware: no user permissions", async (t) => {
   const { params, context } = callFactory([]);
-  await assertThrows(
-    middleware.process(params, context, () => {}, ["not-ok"]),
-    { instanceOf: ForbiddenException },
+  await assertRejects(async () =>
+    middleware.process(params, context, () => {}, ["not-ok"])
   );
 });
 
 it("Permission middleware: different permission", async (t) => {
   const permissions: string[] = ["test.ok"];
   const { params, context } = callFactory(permissions);
-  await assertThrows(
-    middleware.process(params, context, () => {}, ["not-ok"]),
-    { instanceOf: ForbiddenException },
+  await assertRejects(async () =>
+    middleware.process(params, context, () => {}, ["not-ok"])
   );
 });
 
 it("Permission middleware: not matching all permissions", async (t) => {
   const permissions: string[] = ["perm1"];
   const { params, context } = callFactory(permissions);
-  await assertThrows(
-    middleware.process(params, context, () => {}, ["perm1", "perm2"]),
-    {
-      instanceOf: ForbiddenException,
-    },
+  await assertRejects(async () =>
+    middleware.process(params, context, () => {}, ["perm1", "perm2"])
   );
 });

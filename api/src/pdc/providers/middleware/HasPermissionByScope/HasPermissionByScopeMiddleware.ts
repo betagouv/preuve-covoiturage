@@ -1,13 +1,14 @@
+import { _ } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
+  FunctionMiddlewareInterface,
   InvalidParamsException,
   middleware,
   MiddlewareInterface,
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
-import { _ } from "@/deps.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /**
@@ -23,7 +24,7 @@ export class HasPermissionByScopeMiddleware
   async process(
     params: ParamsType,
     context: ContextType,
-    next: Function,
+    next: FunctionMiddlewareInterface,
     options: HasPermissionByScopeMiddlewareParams,
   ): Promise<ResultType> {
     const [basePermission, permissionScopes] = options;
@@ -68,7 +69,7 @@ export class HasPermissionByScopeMiddleware
 
 export type ScopeAndPermission = [string, string, string];
 export type HasPermissionByScopeMiddlewareParams = [
-  string | undefined,
+  string | undefined | null,
   ScopeAndPermission[],
 ];
 

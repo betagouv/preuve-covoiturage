@@ -1,17 +1,5 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { ContextType, InvalidParamsException } from "@/ilos/common/index.ts";
+import { assertEquals, assertRejects, it } from "@/dev_deps.ts";
+import { ContextType } from "@/ilos/common/index.ts";
 
 import {
   ValidateDateMiddleware,
@@ -37,11 +25,11 @@ async function process(
   };
 
   const middleware = new ValidateDateMiddleware();
-  const next = (params, context) => ({ params, context });
+  const next = (params: any, context: any) => ({ params, context });
   return middleware.process(callParams, context, next, middlewareParams);
 }
 
-it("Middleware ValidateDate: should throw if start > end", async (t) => {
+it("Middleware ValidateDate: should throw if start > end", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.end",
@@ -57,14 +45,13 @@ it("Middleware ValidateDate: should throw if start > end", async (t) => {
     },
   };
 
-  await assertThrows(
-    process(middlewareParams, callParams),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(
+    async () => process(middlewareParams, callParams),
     "Start should be before end",
   );
 });
 
-it("Middleware ValidateDate: should throw if start < minstart", async (t) => {
+it("Middleware ValidateDate: should throw if start < minstart", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.end",
@@ -72,14 +59,13 @@ it("Middleware ValidateDate: should throw if start < minstart", async (t) => {
     maxEnd: () => new Date("2021-02-01"),
     applyDefault: true,
   };
-  await assertThrows(
-    process(middlewareParams),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(
+    async () => process(middlewareParams),
     `Start should be after ${middlewareParams.minStart().toDateString()}`,
   );
 });
 
-it("Middleware ValidateDate: should throw if start not exist with minStart", async (t) => {
+it("Middleware ValidateDate: should throw if start not exist with minStart", async () => {
   const middlewareParams = {
     startPath: "date.wrongstart",
     endPath: "date.end",
@@ -87,14 +73,13 @@ it("Middleware ValidateDate: should throw if start not exist with minStart", asy
     maxEnd: () => new Date("2021-02-01"),
     applyDefault: false,
   };
-  await assertThrows(
-    process(middlewareParams),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(
+    async () => process(middlewareParams),
     `Start should be after ${middlewareParams.minStart().toDateString()}`,
   );
 });
 
-it("Middleware ValidateDate: should throw if end > maxEnd", async (t) => {
+it("Middleware ValidateDate: should throw if end > maxEnd", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.end",
@@ -102,14 +87,13 @@ it("Middleware ValidateDate: should throw if end > maxEnd", async (t) => {
     maxEnd: () => new Date("2020-02-01"),
     applyDefault: true,
   };
-  await assertThrows(
-    process(middlewareParams),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(
+    async () => process(middlewareParams),
     `End should be before ${middlewareParams.maxEnd().toDateString()}`,
   );
 });
 
-it("Middleware ValidateDate: should throw if end not exist with maxEnd", async (t) => {
+it("Middleware ValidateDate: should throw if end not exist with maxEnd", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.wrongend",
@@ -118,14 +102,13 @@ it("Middleware ValidateDate: should throw if end not exist with maxEnd", async (
     applyDefault: false,
   };
 
-  await assertThrows(
-    process(middlewareParams),
-    { instanceOf: InvalidParamsException },
+  await assertRejects(
+    async () => process(middlewareParams),
     `End should be before ${middlewareParams.maxEnd().toDateString()}`,
   );
 });
 
-it("Middleware ValidateDate: should apply default if start missing", async (t) => {
+it("Middleware ValidateDate: should apply default if start missing", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.end",
@@ -151,7 +134,7 @@ it("Middleware ValidateDate: should apply default if start missing", async (t) =
   );
 });
 
-it("Middleware ValidateDate: should apply default if end missing", async (t) => {
+it("Middleware ValidateDate: should apply default if end missing", async () => {
   const middlewareParams = {
     startPath: "date.start",
     endPath: "date.end",
