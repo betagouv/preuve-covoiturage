@@ -1,4 +1,5 @@
 import {
+  fs,
   GetObjectCommand,
   GetObjectCommandInput,
   getSignedUrl,
@@ -15,9 +16,8 @@ import {
   ProviderInterface,
 } from "@/ilos/common/index.ts";
 import { env } from "@/ilos/core/index.ts";
-import { fs } from "@/deps.ts";
-import { S3ObjectList } from "./index.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
+import { S3ObjectList } from "./index.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
 
 // @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
@@ -25,8 +25,8 @@ import { BucketName } from "./interfaces/BucketName.ts";
 @provider()
 export class S3StorageProvider implements ProviderInterface {
   private s3Instances: Map<BucketName, S3Client> = new Map();
-  private endpoint: string;
-  private region: string;
+  private endpoint: string | undefined;
+  private region: string | undefined;
 
   public static readonly SEVEN_DAY: number = 7 * 86400;
   public static readonly TEN_MINUTES: number = 7 * 600;
@@ -68,10 +68,11 @@ export class S3StorageProvider implements ProviderInterface {
     console.info(`[S3StorageProvider:list] bucket ${params.Bucket}/${folder}`);
 
     const command = new ListObjectsV2Command(params);
-    const result: ListObjectsV2CommandOutput = await this.s3Instances.get(
-      bucket,
-    ).send(command);
-    return result.Contents || [];
+    const result: ListObjectsV2CommandOutput | undefined = await this
+      .s3Instances.get(
+        bucket,
+      )?.send(command);
+    return result?.Contents || [];
   }
 
   async upload(
@@ -82,7 +83,6 @@ export class S3StorageProvider implements ProviderInterface {
   ): Promise<string> {
     // Check if file exists
     await fs.promises.access(filepath, fs.constants.R_OK);
-
     try {
       const rs = fs.createReadStream(filepath);
       let key = filename ?? filenameFromPath(filepath);
@@ -99,7 +99,7 @@ export class S3StorageProvider implements ProviderInterface {
       };
 
       const command = new PutObjectCommand(params);
-      await this.s3Instances.get(bucket).send(command);
+      await this.s3Instances.get(bucket)?.send(command);
 
       return key;
     } catch (e) {
@@ -129,7 +129,11 @@ export class S3StorageProvider implements ProviderInterface {
       };
 
       const command = new GetObjectCommand(params);
-      const url = await getSignedUrl(this.s3Instances.get(bucket), command, {
+      const instance = this.s3Instances.get(bucket);
+      if (!instance) {
+        throw new Error();
+      }
+      const url = await getSignedUrl(instance, command, {
         expiresIn,
       });
 

@@ -1,23 +1,11 @@
-import { ConfigStore } from "@/ilos/core/extensions/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { axios, https, join, process, tmpdir, writeFile } from "@/deps.ts";
-import { BucketName } from "./interfaces/BucketName.ts";
+import { assertObjectMatch, it } from "@/dev_deps.ts";
+import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import { S3StorageProvider } from "./S3StorageProvider.ts";
+import { BucketName } from "./interfaces/BucketName.ts";
 
-it("should be uploading file with bucket as sub-domain", async (t) => {
-  t.log("Start test");
+it("should be uploading file with bucket as sub-domain", async () => {
+  console.debug("Start test");
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   // disable https checking
@@ -30,25 +18,25 @@ it("should be uploading file with bucket as sub-domain", async (t) => {
   process.env.AWS_ENDPOINT = "https://s3.covoiturage.test";
   const s3 = new S3StorageProvider(config);
 
-  t.log(`Init s3 client`);
+  console.debug(`Init s3 client`);
   await s3.init();
 
   const filename = "test2.csv";
   const filecontent = { hello: "world" };
   const filepath = join(tmpdir(), filename);
 
-  t.log(`Write file to ${filepath}`);
+  console.debug(`Write file to ${filepath}`);
   await writeFile(filepath, JSON.stringify(filecontent));
 
-  t.log(`Start uploading ${filename} to bucket: ${BucketName.Export}`);
+  console.debug(`Start uploading ${filename} to bucket: ${BucketName.Export}`);
   const key = await s3.upload(BucketName.Export, filepath, filename);
-  t.log(`Uploaded ${filename} to ${key}`);
+  console.debug(`Uploaded ${filename} to ${key}`);
 
   const url = await s3.getPublicUrl(BucketName.Export, filename);
-  t.log(`Public URL: ${url}`);
+  console.debug(`Public URL: ${url}`);
 
   const response = await axios.get(url, { httpsAgent });
-  t.log(`Response: ${JSON.stringify(response.data)}`);
+  console.debug(`Response: ${JSON.stringify(response.data)}`);
 
   assertObjectMatch(filecontent, response.data);
 });

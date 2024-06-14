@@ -1,20 +1,8 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { os, path } from "@/deps.ts";
+import { assertEquals, assertObjectMatch, it } from "@/dev_deps.ts";
 import { APDFNameProvider } from "./APDFNameProvider.ts";
 
-it("Stringify APDF: filename", (t) => {
+it("Stringify APDF: filename", () => {
   const provider = new APDFNameProvider();
   assertEquals(
     provider.filename({
@@ -30,7 +18,7 @@ it("Stringify APDF: filename", (t) => {
   );
 });
 
-it("Stringify APDF: filename null trips and amount", (t) => {
+it("Stringify APDF: filename null trips and amount", () => {
   const provider = new APDFNameProvider();
   assertEquals(
     provider.filepath({
@@ -46,7 +34,7 @@ it("Stringify APDF: filename null trips and amount", (t) => {
   );
 });
 
-it("Stringify APDF: filename rounded amount", (t) => {
+it("Stringify APDF: filename rounded amount", () => {
   const provider = new APDFNameProvider();
   assertEquals(
     provider.filepath({
@@ -62,7 +50,7 @@ it("Stringify APDF: filename rounded amount", (t) => {
   );
 });
 
-it("Stringify APDF: filepath with string", (t) => {
+it("Stringify APDF: filepath with string", () => {
   const provider = new APDFNameProvider();
   assertEquals(
     provider.filepath("APDF-2022-01-1-2-3-4-yolo.xlsx"),
@@ -70,7 +58,7 @@ it("Stringify APDF: filepath with string", (t) => {
   );
 });
 
-it("Stringify APDF: filepath with object", (t) => {
+it("Stringify APDF: filepath with object", () => {
   const provider = new APDFNameProvider();
   assertEquals(
     provider.filepath({
@@ -86,7 +74,7 @@ it("Stringify APDF: filepath with object", (t) => {
   );
 });
 
-it("Parse APDF: filename", (t) => {
+it("Parse APDF: filename", () => {
   const provider = new APDFNameProvider();
   assertObjectMatch(
     provider.parse("APDF-2022-01-1-2-111-100-22200-abc123.xlsx"),
@@ -102,7 +90,7 @@ it("Parse APDF: filename", (t) => {
   );
 });
 
-it("Parse APDF: filename with prefix", (t) => {
+it("Parse APDF: filename with prefix", () => {
   const provider = new APDFNameProvider();
   assertObjectMatch(
     provider.parse("1/APDF-2022-01-1-2-111-100-22200-abc123.xlsx"),
@@ -158,7 +146,7 @@ const list = [
 ];
 
 for (const [src, trg] of list) {
-  it(`Sanitize ${src}`, (t) => {
+  it(`Sanitize ${src}`, () => {
     const provider = new APDFNameProvider();
     assertEquals(provider.sanitize(src), trg);
   });
