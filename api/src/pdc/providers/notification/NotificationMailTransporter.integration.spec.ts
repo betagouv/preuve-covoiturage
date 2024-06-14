@@ -1,31 +1,16 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, beforeAll, describe, it } from "@/dev_deps.ts";
 import { env, Extensions } from "@/ilos/core/index.ts";
-import { NotificationMailTransporter } from "./NotificationMailTransporter.ts";
 import {
   AbstractTemplate,
   HandlebarsTemplateProvider,
 } from "@/pdc/providers/template/index.ts";
 import { AbstractMailNotification } from "./AbstractNotification.ts";
+import { NotificationMailTransporter } from "./NotificationMailTransporter.ts";
 
 interface TestContext {
-  transporter: NotificationMailTransporter;
 }
 
-const test = anyTest as TestFn<TestContext>;
-
-beforeAll(async (t) => {
+describe("Notification", () => {
   const config = {
     notification: {
       mail: {
@@ -55,25 +40,27 @@ beforeAll(async (t) => {
   };
   const configProvider = new Extensions.ConfigStore(config);
   const templateProvider = new HandlebarsTemplateProvider();
-  templateProvider.init();
-  const transporter = new NotificationMailTransporter(
-    configProvider,
-    templateProvider,
-  );
-  await transporter.init();
-  t.context.transporter = transporter;
-});
+  let transporter: NotificationMailTransporter;
 
-afterAll(async (t) => {
-  await t.context.transporter.destroy();
-});
+  beforeAll(async () => {
+    templateProvider.init();
+    transporter = new NotificationMailTransporter(
+      configProvider,
+      templateProvider,
+    );
+    await transporter.init();
+  });
 
-it("should work", async (t) => {
-  class TemplateText extends AbstractTemplate<{ word: string }> {
-    static template = "Hello {{word}}";
-  }
-  class TemplateMJML extends AbstractTemplate<{ word: string }> {
-    static template = `       
+  afterAll(async () => {
+    await transporter.destroy();
+  });
+
+  it("should work", async () => {
+    class TemplateText extends AbstractTemplate<{ word: string }> {
+      static template = "Hello {{word}}";
+    }
+    class TemplateMJML extends AbstractTemplate<{ word: string }> {
+      static template = `       
             <mjml>
                 <mj-body>
                     <mj-section>
@@ -82,15 +69,16 @@ it("should work", async (t) => {
                 </mj-body>
             </mjml>
         `;
-  }
-  class Notification extends AbstractMailNotification<{ word: string }> {
-    static subject = "Test";
-    static templateMJML = TemplateMJML;
-    static templateText = TemplateText;
-  }
+    }
+    class Notification extends AbstractMailNotification<{ word: string }> {
+      static subject = "Test";
+      static templateMJML = TemplateMJML;
+      static templateText = TemplateText;
+    }
 
-  await t.context.transporter.send(
-    new Notification("fake <fake@example.com>", { word: "world!" }),
-  );
-  t.pass();
+    await transporter.send(
+      new Notification("fake <fake@example.com>", { word: "world!" }),
+    );
+    assert(true);
+  });
 });
