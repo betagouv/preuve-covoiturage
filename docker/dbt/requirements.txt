@@ -1,0 +1,2 @@
+sqlfluff==3.0.7
+dbt-osmosis==0.12.10

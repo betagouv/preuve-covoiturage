@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+  - name: operator
+    tables:
+      - name: operators
+        columns:
+          - name: _id
+            data_type: integer
+          - name: created_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: updated_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: deleted_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: name
+            data_type: character varying
+          - name: legal_name
+            description: ''
+            data_type: character varying
+          - name: siret
+            description: ''
+            data_type: character varying
+          - name: cgu_accepted_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: cgu_accepted_by
+            description: ''
+            data_type: character varying
+          - name: company
+            description: ''
+            data_type: json
+          - name: address
+            description: ''
+            data_type: json
+          - name: bank
+            description: ''
+            data_type: json
+          - name: contacts
+            description: ''
+            data_type: json
+          - name: uuid
+            description: ''
+            data_type: uuid
+          - name: support
+            description: ''
+            data_type: character varying

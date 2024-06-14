@@ -42,5 +42,8 @@
     "**/*.d.ts": true,
     // "api/**/dist": true,
     "db": true
+  },
+  "[yaml]": {
+    "editor.formatOnSave": false
   }
 }
