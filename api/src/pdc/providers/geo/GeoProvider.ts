@@ -125,19 +125,19 @@ export class GeoProvider implements GeoProviderInterface {
     if (!lat || !lon) {
       if (literal) {
         ({ lat, lon } = await this.literalToPosition(literal));
-      } else {
+      } else if (geo_code) {
         ({ lat, lon } = await this.inseeToPosition(geo_code));
       }
     }
 
-    if (!geo_code) {
+    if (!geo_code && (lat && lon)) {
       geo_code = await this.positionToInsee({ lat, lon });
     }
 
     return {
-      lat,
-      lon,
-      geo_code,
+      lat: lat || 0,
+      lon: lon || 0,
+      geo_code: geo_code || "",
     };
   }
 }
