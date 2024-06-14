@@ -1,15 +1,4 @@
-import {
-  fs,
-  GetObjectCommand,
-  GetObjectCommandInput,
-  getSignedUrl,
-  ListObjectsV2Command,
-  ListObjectsV2CommandInput,
-  ListObjectsV2CommandOutput,
-  PutObjectCommand,
-  PutObjectCommandInput,
-  S3Client,
-} from "@/deps.ts";
+import { fs, S3Client, URL } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   provider,
@@ -19,8 +8,6 @@ import { env } from "@/ilos/core/index.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
 import { S3ObjectList } from "./index.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
-
-// @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
@@ -50,29 +37,42 @@ export class S3StorageProvider implements ProviderInterface {
   }
 
   protected createInstance(bucket: BucketName): S3Client {
-    return new S3Client({
-      forcePathStyle: true, // hosting uses path-style
-      endpoint: this.endpoint,
+    if (!this.endpoint || !this.region) {
+      throw new Error();
+    }
+    const endPointUrl = new URL(this.endpoint);
+    const params = {
+      pathStyle: true,
+      endPoint: endPointUrl.hostname,
+      port: parseInt(endPointUrl.port || "443", 10),
+      useSSL: endPointUrl.protocol === "https:",
       region: this.region,
+      bucket,
+      accessKey: env.or_fail("AWS_ACCESS_KEY_ID"),
+      secretKey: env.or_fail("AWS_SECRET_ACCESS_KEY"),
       ...this.config.get("storage.bucket.options", {}),
-    });
+    };
+    return new S3Client(params);
   }
 
   async list(bucket: BucketName, folder?: string): Promise<S3ObjectList> {
-    const params: ListObjectsV2CommandInput = { Bucket: getBucketName(bucket) };
-
-    if (folder) {
-      params.Prefix = folder;
+    const client = this.s3Instances.get(bucket);
+    if (!client) {
+      throw new Error();
     }
-
-    console.info(`[S3StorageProvider:list] bucket ${params.Bucket}/${folder}`);
-
-    const command = new ListObjectsV2Command(params);
-    const result: ListObjectsV2CommandOutput | undefined = await this
-      .s3Instances.get(
-        bucket,
-      )?.send(command);
-    return result?.Contents || [];
+    const params = {
+      prefix: folder,
+      bucketName: getBucketName(bucket),
+    };
+    console.info(
+      `[S3StorageProvider:list] bucket ${params.bucketName}/${params.prefix}`,
+    );
+    const generator = client.listObjects(params);
+    const result = [];
+    for await (const r of generator) {
+      result.push(r);
+    }
+    return result;
   }
 
   async upload(
@@ -83,23 +83,23 @@ export class S3StorageProvider implements ProviderInterface {
   ): Promise<string> {
     // Check if file exists
     await fs.promises.access(filepath, fs.constants.R_OK);
+    const client = this.s3Instances.get(bucket);
+    if (!client) {
+      throw new Error();
+    }
     try {
-      const rs = fs.createReadStream(filepath);
+      const rs = await Deno.open(filepath, { read: true });
       let key = filename ?? filenameFromPath(filepath);
 
       if (folder) {
         key = `${folder}/${key}`;
       }
 
-      const params: PutObjectCommandInput = {
-        Bucket: getBucketName(bucket),
-        Key: key,
-        Body: rs,
-        ContentDisposition: `attachment; filepath=${key}`,
+      const params = {
+        bucketName: getBucketName(bucket),
       };
 
-      const command = new PutObjectCommand(params);
-      await this.s3Instances.get(bucket)?.send(command);
+      await client.putObject(key, rs.readable, params);
 
       return key;
     } catch (e) {
@@ -121,22 +121,15 @@ export class S3StorageProvider implements ProviderInterface {
     filekey: string,
     expiresIn: number = S3StorageProvider.SEVEN_DAY,
   ): Promise<string> {
+    const client = this.s3Instances.get(bucket);
+    if (!client) {
+      throw new Error();
+    }
     try {
-      const params: GetObjectCommandInput = {
-        Bucket: getBucketName(bucket),
-        Key: filekey,
-        ResponseContentDisposition: `attachment; filepath=${filekey}`,
-      };
-
-      const command = new GetObjectCommand(params);
-      const instance = this.s3Instances.get(bucket);
-      if (!instance) {
-        throw new Error();
-      }
-      const url = await getSignedUrl(instance, command, {
-        expiresIn,
+      const url = await client.getPresignedUrl("GET", filekey, {
+        bucketName: getBucketName(bucket),
+        expirySeconds: expiresIn,
       });
-
       return url;
     } catch (e) {
       console.error(`S3StorageProvider Error: ${e.message} (${filekey})`);

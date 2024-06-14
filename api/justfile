@@ -10,15 +10,15 @@ default:
 
 # Run test:integration
 test-integration:
-  deno test '**/*.integration.spec.ts'
+  just test '**/*.integration.spec.ts'
 
 # Run test:unit
 test-unit:
-  deno test --no-check '**/*.unit.spec.ts'
+  just test --no-check '**/*.unit.spec.ts'
 
 # Run test
 test *pattern:
-  deno test {{ pattern }}
+  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
 # Start docker services (detached)
 start *services="s3 postgres redis mailer":
