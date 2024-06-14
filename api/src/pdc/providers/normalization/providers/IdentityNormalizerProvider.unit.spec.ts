@@ -1,19 +1,7 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assert, assertEquals, assertFalse, it } from "@/dev_deps.ts";
 
-import { IdentityNormalizerProvider } from "./IdentityNormalizerProvider.ts";
 import { LegacyIdentityInterface } from "../interfaces/index.ts";
+import { IdentityNormalizerProvider } from "./IdentityNormalizerProvider.ts";
 
 it("Identity normalizer should work", async (t) => {
   const normalizer = new IdentityNormalizerProvider();

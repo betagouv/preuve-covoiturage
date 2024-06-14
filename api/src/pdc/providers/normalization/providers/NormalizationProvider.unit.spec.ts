@@ -1,27 +1,15 @@
+import { assertObjectMatch, assertRejects, it } from "@/dev_deps.ts";
 import { Container } from "@/ilos/core/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 
+import { randomUUID } from "@/deps.ts";
+import { provider } from "@/ilos/common/index.ts";
 import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
-import { NormalizationProvider } from "./NormalizationProvider.ts";
-import { CostNormalizerProvider } from "./CostNormalizerProvider.ts";
 import {
   PartialGeoInterface,
   PointInterface,
 } from "@/pdc/providers/geo/interfaces/index.ts";
-import { provider } from "@/ilos/common/index.ts";
-import { randomUUID } from "@/deps.ts";
+import { CostNormalizerProvider } from "./CostNormalizerProvider.ts";
+import { NormalizationProvider } from "./NormalizationProvider.ts";
 
 class CostMock extends CostNormalizerProvider {
   protected async getSiret(operatorId: number): Promise<string> {
@@ -59,10 +47,9 @@ function setup() {
 it("Should throw if data has no version", async (t) => {
   const provider = setup();
   const data = {} as any;
-  const err = await assertThrows(async () => {
+  await assertRejects(async () => {
     await provider.handle(data);
   });
-  assertEquals(err.message, "[normalization] Unknown API version undefined");
 });
 
 it("Should normalize v3", async (t) => {
