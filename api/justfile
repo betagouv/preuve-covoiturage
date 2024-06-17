@@ -79,7 +79,7 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
 
 # Seed data
 seed:
-  just api ilos seed
+  just api seed
 
 # Create a new bucket
 [private]
