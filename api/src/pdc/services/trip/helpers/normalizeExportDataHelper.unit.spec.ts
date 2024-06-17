@@ -1,16 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assertEquals, describe, it } from "@/dev_deps.ts";
 import { FlattenTripInterface } from "../actions/BuildExportAction.ts";
 import { ExportTripInterface } from "../interfaces/index.ts";
 import {
@@ -18,9 +6,7 @@ import {
   normalizeOpendata,
 } from "./normalizeExportDataHelper.ts";
 
-const test = anyTest as TestFn<Context>;
-
-beforeAll((t) => {
+describe("normalize data export", () => {
   const tripWithoutIncentive: ExportTripInterface = {
     journey_id: "",
     trip_id: "",
@@ -56,137 +42,135 @@ beforeAll((t) => {
     journey_duration_anounced: 0,
     journey_duration_calculated: 0,
   };
-  t.context = {
-    TRIP_WITHOUT_INCENTIVE: tripWithoutIncentive,
-    TRIP_WITH_DRIVER_INCENTIVE: {
-      ...tripWithoutIncentive,
-      driver_incentive_raw: [
-        {
-          siret: "89015202800019",
-          amount: 200,
-          type: "incentive",
-        },
-      ],
-      driver_incentive_rpc_raw: [
-        {
-          siret: "89015202800019",
-          amount: 200,
-          type: "incentive",
-        },
-      ],
-    },
-    TRIP_WITH_PASSENGER_INCENTIVE: {
-      ...tripWithoutIncentive,
-      passenger_incentive_raw: [
-        {
-          siret: "89015202800019",
-          amount: 200,
-          type: "incentive",
-        },
-      ],
-      passenger_incentive_rpc_raw: [
-        {
-          siret: "89015202800019",
-          amount: 200,
-          type: "incentive",
-        },
-      ],
-    },
+  const TRIP_WITHOUT_INCENTIVE = tripWithoutIncentive;
+  const TRIP_WITH_DRIVER_INCENTIVE = {
+    ...tripWithoutIncentive,
+    driver_incentive_raw: [
+      {
+        siret: "89015202800019",
+        amount: 200,
+        type: "incentive",
+      },
+    ],
+    driver_incentive_rpc_raw: [
+      {
+        siret: "89015202800019",
+        amount: 200,
+        type: "incentive",
+      },
+    ],
   };
-});
+  const TRIP_WITH_PASSENGER_INCENTIVE = {
+    ...tripWithoutIncentive,
+    passenger_incentive_raw: [
+      {
+        siret: "89015202800019",
+        amount: 200,
+        type: "incentive",
+      },
+    ],
+    passenger_incentive_rpc_raw: [
+      {
+        siret: "89015202800019",
+        amount: 200,
+        type: "incentive",
+      },
+    ],
+  };
 
-it("normalizeExportHelper: should flattern trip with driver_incentive for export", (t) => {
-  // Act
-  const result: FlattenTripInterface = normalizeExport(
-    t.context.TRIP_WITH_DRIVER_INCENTIVE,
-    "Europe/Paris",
-  );
+  it("normalizeExportHelper: should flattern trip with driver_incentive for export", () => {
+    // Act
+    const result: FlattenTripInterface = normalizeExport(
+      TRIP_WITH_DRIVER_INCENTIVE,
+      "Europe/Paris",
+    );
 
-  // Assert
-  assertEquals(result.driver_incentive_1_amount, 2);
-  assertEquals(result.driver_incentive_1_siret, "89015202800019");
+    // Assert
+    assertEquals(result.driver_incentive_1_amount, 2);
+    assertEquals(result.driver_incentive_1_siret, "89015202800019");
 
-  assertEquals(result.passenger_incentive_1_amount, 0);
-  assertEquals(result.passenger_incentive_1_siret, undefined);
+    assertEquals(result.passenger_incentive_1_amount, 0);
+    assertEquals(result.passenger_incentive_1_siret, undefined);
 
-  assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
-  assertEquals(result.driver_revenue, 5);
-  assertEquals(result.has_incentive, undefined);
-});
+    assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
+    assertEquals(result.driver_revenue, 5);
+    assertEquals(result.has_incentive, undefined);
+  });
 
-it("normalizeExportHelper: should flattern trip with passenger incentive for export", (t) => {
-  // Act
-  const result: FlattenTripInterface = normalizeExport(
-    t.context.TRIP_WITH_PASSENGER_INCENTIVE,
-    "Europe/Paris",
-  );
+  it("normalizeExportHelper: should flattern trip with passenger incentive for export", () => {
+    // Act
+    const result: FlattenTripInterface = normalizeExport(
+      TRIP_WITH_PASSENGER_INCENTIVE,
+      "Europe/Paris",
+    );
 
-  // Assert
-  assertEquals(result.passenger_incentive_1_amount, 2);
-  assertEquals(result.passenger_incentive_1_siret, "89015202800019");
+    // Assert
+    assertEquals(result.passenger_incentive_1_amount, 2);
+    assertEquals(result.passenger_incentive_1_siret, "89015202800019");
 
-  assertEquals(result.driver_incentive_1_amount, 0);
-  assertEquals(result.driver_incentive_1_siret, undefined);
+    assertEquals(result.driver_incentive_1_amount, 0);
+    assertEquals(result.driver_incentive_1_siret, undefined);
 
-  assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
-  assertEquals(result.driver_revenue, 5);
-  assertEquals(result.has_incentive, undefined);
-});
+    assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
+    assertEquals(result.driver_revenue, 5);
+    assertEquals(result.has_incentive, undefined);
+  });
 
-it("normalizeExportHelper: should flattern trip without driver_incentive for opendata export", (t) => {
-  // Act
-  const result: FlattenTripInterface = normalizeOpendata(
-    t.context.TRIP_WITH_DRIVER_INCENTIVE,
-    "Europe/Paris",
-  );
+  it("normalizeExportHelper: should flattern trip without driver_incentive for opendata export", () => {
+    // Act
+    const result: FlattenTripInterface = normalizeOpendata(
+      TRIP_WITH_DRIVER_INCENTIVE,
+      "Europe/Paris",
+    );
 
-  // Assert
-  assertEquals(result.driver_incentive_1_amount, undefined);
-  assertEquals(result.driver_incentive_1_siret, undefined);
+    // Assert
+    assertEquals(result.driver_incentive_1_amount, undefined);
+    assertEquals(result.driver_incentive_1_siret, undefined);
 
-  assertEquals(result.passenger_incentive_1_amount, undefined);
-  assertEquals(result.passenger_incentive_1_siret, undefined);
+    assertEquals(result.passenger_incentive_1_amount, undefined);
+    assertEquals(result.passenger_incentive_1_siret, undefined);
 
-  assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
-  assertEquals(result.driver_revenue, 500);
-  assertEquals(result.has_incentive, true);
-});
+    assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
+    assertEquals(result.driver_revenue, 500);
+    assertEquals(result.has_incentive, true);
+  });
 
-it("normalizeExportHelper: should flattern trip with incentive false for opendata export", (t) => {
-  // Act
-  const result: FlattenTripInterface = normalizeOpendata(
-    t.context.TRIP_WITHOUT_INCENTIVE,
-    "Europe/Paris",
-  );
+  it("normalizeExportHelper: should flattern trip with incentive false for opendata export", () => {
+    // Act
+    const result: FlattenTripInterface = normalizeOpendata(
+      TRIP_WITHOUT_INCENTIVE,
+      "Europe/Paris",
+    );
 
-  // Assert
-  assertEquals(result.driver_incentive_1_amount, undefined);
-  assertEquals(result.driver_incentive_1_siret, undefined);
+    // Assert
+    assertEquals(result.driver_incentive_1_amount, undefined);
+    assertEquals(result.driver_incentive_1_siret, undefined);
 
-  assertEquals(result.passenger_incentive_1_amount, undefined);
-  assertEquals(result.passenger_incentive_1_siret, undefined);
+    assertEquals(result.passenger_incentive_1_amount, undefined);
+    assertEquals(result.passenger_incentive_1_siret, undefined);
 
-  assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
-  assertEquals(result.driver_revenue, 500);
-  assertEquals(result.has_incentive, false);
-});
+    assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
+    assertEquals(result.driver_revenue, 500);
+    assertEquals(result.has_incentive, false);
+  });
 
-// eslint-disable-next-line max-len
-it("normalizeExportHelper: should flattern trip with incentive true for passenger incentives for opendata export", (t) => {
-  // Act
-  const result: FlattenTripInterface = normalizeOpendata(
-    t.context.TRIP_WITH_PASSENGER_INCENTIVE,
-    "Europe/Paris",
-  );
+  // eslint-disable-next-line max-len
+  it("normalizeExportHelper: should flattern trip with incentive true for passenger incentives for opendata export", () => {
+    // Act
+    const result: FlattenTripInterface = normalizeOpendata(
+      TRIP_WITH_PASSENGER_INCENTIVE,
+      "Europe/Paris",
+    );
 
-  // Assert
-  assertEquals(result.driver_incentive_1_amount, undefined);
-  assertEquals(result.driver_incentive_1_siret, undefined);
+    // Assert
+    assertEquals(result.driver_incentive_1_amount, undefined);
+    assertEquals(result.driver_incentive_1_siret, undefined);
 
-  assertEquals(result.passenger_incentive_1_amount, undefined);
-  assertEquals(result.passenger_incentive_1_siret, undefined);
+    assertEquals(result.passenger_incentive_1_amount, undefined);
+    assertEquals(result.passenger_incentive_1_siret, undefined);
 
-  assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
-  assertEquals(result.driver_revenue, 500);
-  assertEquals(result.has_incentive, true);
+    assertEquals(result.journey_start_datetime, "2021-09-26T14:00:00+02:00");
+    assertEquals(result.driver_revenue, 500);
+    assertEquals(result.has_incentive, true);
+  });
 });

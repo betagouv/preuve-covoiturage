@@ -1,131 +1,105 @@
+import { datetz } from "@/deps.ts";
+import {
+  afterEach,
+  assertEquals,
+  assertObjectMatch,
+  beforeEach,
+  describe,
+  it,
+  sinon,
+} from "@/dev_deps.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { endOfMonth, startOfMonth } from "../helpers/getDefaultDates.ts";
 import { GetOldestTripDateRepositoryProvider } from "../providers/GetOldestTripRepositoryProvider.ts";
 import {
   ReplayOpendataExportCommand,
   StartEndDate,
 } from "./ReplayOpendataExportCommand.ts";
-import { datetz } from "@/deps.ts";
 
-interface Context {
-  // Injected tokens
-  fakeKernelInterfaceResolver: KernelInterfaceResolver;
-  getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider;
+describe("Replay Opendata Export", () => {
+  let fakeKernelInterfaceResolver: KernelInterfaceResolver;
+  let getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider;
+  let fakeKernelInterfaceResolverStub: sinon.SinonStub;
+  let getOldestTripDateRepositoryProviderStub: sinon.SinonStub;
+  let replayOpendataExportCommand: ReplayOpendataExportCommand;
 
-  // Injected tokens method's stubs
-  fakeKernelInterfaceResolverStub: SinonStub;
-  getOldestTripDateRepositoryProviderStub: SinonStub;
+  beforeEach(() => {
+    fakeKernelInterfaceResolver =
+      new (class extends KernelInterfaceResolver {})();
+    getOldestTripDateRepositoryProvider =
+      new GetOldestTripDateRepositoryProvider(null as any);
+    replayOpendataExportCommand = new ReplayOpendataExportCommand(
+      fakeKernelInterfaceResolver,
+      getOldestTripDateRepositoryProvider,
+    );
 
-  // Constants
-
-  // Tested token
-  replayOpendataExportCommand: ReplayOpendataExportCommand;
-}
-
-const test = anyTest as TestFn<Partial<Context>>;
-
-beforeEach((t) => {
-  t.context.fakeKernelInterfaceResolver =
-    new (class extends KernelInterfaceResolver {})();
-  t.context.getOldestTripDateRepositoryProvider =
-    new GetOldestTripDateRepositoryProvider(null);
-  t.context.replayOpendataExportCommand = new ReplayOpendataExportCommand(
-    t.context.fakeKernelInterfaceResolver,
-    t.context.getOldestTripDateRepositoryProvider,
-  );
-
-  t.context.getOldestTripDateRepositoryProviderStub = sinon.stub(
-    t.context.getOldestTripDateRepositoryProvider,
-    "call",
-  );
-  t.context.fakeKernelInterfaceResolverStub = sinon.stub(
-    t.context.fakeKernelInterfaceResolver,
-    "call",
-  );
-});
-
-afterEach((t) => {
-  t.context.fakeKernelInterfaceResolverStub.restore();
-});
-
-it("ReplayOpendataExportCommand: should call n times BuildExport from 08 October 2020 to Today", async (t) => {
-  // Arrange
-  t.context.getOldestTripDateRepositoryProviderStub.resolves(
-    new Date("2020-10-08T15:34:52"),
-  );
-
-  // Act
-  const result: StartEndDate[] = await t.context.replayOpendataExportCommand
-    .call();
-
-  // Assert
-  const today: Date = new Date();
-  assertObjectMatch(result[0], {
-    start: datetz.fromZonedTime(
-      new Date("2020-10-01T00:00:00"),
-      "Europe/Paris",
-    ),
-    end: datetz.fromZonedTime(
-      new Date("2020-10-31T23:59:59.999"),
-      "Europe/Paris",
-    ),
+    getOldestTripDateRepositoryProviderStub = sinon.stub(
+      getOldestTripDateRepositoryProvider,
+      "call",
+    );
+    fakeKernelInterfaceResolverStub = sinon.stub(
+      fakeKernelInterfaceResolver,
+      "call",
+    );
   });
-  assertObjectMatch(result[7], {
-    start: datetz.fromZonedTime(
-      new Date("2021-05-01T00:00:00"),
-      "Europe/Paris",
-    ),
-    end: datetz.fromZonedTime(
-      new Date("2021-05-31T23:59:59.999"),
-      "Europe/Paris",
-    ),
+
+  afterEach(() => {
+    fakeKernelInterfaceResolverStub.restore();
   });
-  assertObjectMatch(result[12], {
-    start: datetz.fromZonedTime(
-      new Date("2021-10-01T00:00:00"),
-      "Europe/Paris",
-    ),
-    end: datetz.fromZonedTime(
-      new Date("2021-10-31T23:59:59.999"),
-      "Europe/Paris",
-    ),
+
+  it("ReplayOpendataExportCommand: should call n times BuildExport from 08 October 2020 to Today", async () => {
+    // Arrange
+    getOldestTripDateRepositoryProviderStub.resolves(
+      new Date("2020-10-08T15:34:52"),
+    );
+
+    // Act
+    const result: StartEndDate[] = await replayOpendataExportCommand
+      .call();
+
+    // Assert
+    const today: Date = new Date();
+    assertObjectMatch(result[0], {
+      start: datetz.fromZonedTime(
+        new Date("2020-10-01T00:00:00"),
+        "Europe/Paris",
+      ),
+      end: datetz.fromZonedTime(
+        new Date("2020-10-31T23:59:59.999"),
+        "Europe/Paris",
+      ),
+    });
+    assertObjectMatch(result[7], {
+      start: datetz.fromZonedTime(
+        new Date("2021-05-01T00:00:00"),
+        "Europe/Paris",
+      ),
+      end: datetz.fromZonedTime(
+        new Date("2021-05-31T23:59:59.999"),
+        "Europe/Paris",
+      ),
+    });
+    assertObjectMatch(result[12], {
+      start: datetz.fromZonedTime(
+        new Date("2021-10-01T00:00:00"),
+        "Europe/Paris",
+      ),
+      end: datetz.fromZonedTime(
+        new Date("2021-10-31T23:59:59.999"),
+        "Europe/Paris",
+      ),
+    });
+    assertEquals(
+      result[result.length - 1].start.toISOString().split("T")[0],
+      startOfMonth(today, "Europe/Paris").toISOString().split("T")[0],
+    );
+    assertEquals(
+      result[result.length - 1].end.toISOString(),
+      endOfMonth(today, "Europe/Paris").toISOString(),
+    );
+    sinon.assert.callCount(
+      fakeKernelInterfaceResolverStub,
+      result.length,
+    );
   });
-  assertEquals(
-    result[result.length - 1].start.toISOString().split("T")[0],
-    startOfMonth(today, "Europe/Paris").toISOString().split("T")[0],
-  );
-  assertEquals(
-    result[result.length - 1].end.toISOString(),
-    endOfMonth(today, "Europe/Paris").toISOString(),
-  );
-  sinon.assert.callCount(
-    t.context.fakeKernelInterfaceResolverStub,
-    result.length,
-  );
 });

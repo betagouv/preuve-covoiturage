@@ -15,6 +15,7 @@
       "npm:@types/express@^4": "npm:@types/express@4.17.21",
       "npm:@types/jsonwebtoken@^9": "npm:@types/jsonwebtoken@9.0.6",
       "npm:@types/lodash@^4": "npm:@types/lodash@4.17.5",
+      "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@types/node-7z@^2": "npm:@types/node-7z@2.1.8",
       "npm:@types/node@^20": "npm:@types/node@20.14.2",
       "npm:@types/nodemailer@^6.4": "npm:@types/nodemailer@6.4.15",
