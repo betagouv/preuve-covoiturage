@@ -49,12 +49,14 @@ export class PostgresConnection
     InitHookInterface,
     DestroyHookInterface {
   private readonly pgUrl: string;
+  private database: string = "";
   protected pool: PgPool;
   protected _status: PgPoolStatus = PgPoolStatus.DOWN;
 
   constructor(protected config: PoolConfig) {
-    this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
     const timeout = env.or_int("APP_POSTGRES_TIMEOUT", 60000);
+    this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
+    this.database = new URL(this.pgUrl)?.pathname || "";
 
     this.pool = new PgPool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
@@ -63,6 +65,8 @@ export class PostgresConnection
       idle_in_transaction_session_timeout: timeout,
       ...config,
     });
+
+    console.debug("[pg] connect to", this.database);
   }
 
   /**
@@ -85,6 +89,7 @@ export class PostgresConnection
   }
 
   async down(): Promise<void> {
+    console.debug("[pg] disconnect from", this.database);
     this.pool.connected && await this.pool.end();
   }
 
