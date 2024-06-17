@@ -1,6 +1,6 @@
+import { process } from "@/deps.ts";
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { Migrator } from "./Migrator.ts";
-import { process } from "@/deps.ts";
 
 describe("seed", () => {
   const db = new Migrator(process.env.APP_POSTGRES_URL);
@@ -17,7 +17,7 @@ describe("seed", () => {
   });
 
   it("should seed territories", async (t) => {
-    const result = await db.connection.getClient().query({
+    const result = await db.testConn.getClient().query({
       text: "SELECT count(*) FROM geo.perimeters",
     });
     assertEquals(result.rows[0].count, "17");

@@ -40,15 +40,16 @@ export async function assertErrorHandler<P = unknown, R = unknown>(
   context: KernelContext,
   handlerConfig: HandlerConfigInterface,
   params: P,
-  response: R,
+  _response: R,
   currentContext = {},
 ) {
   const callContext = {
     ...emptyContext,
     ...currentContext,
   };
+
   await assertRejects(async () =>
-    await context.kernel.call<P, R>(
+    context.kernel.call<P, R>(
       `${handlerConfig.service}:${handlerConfig.method}`,
       params,
       callContext,

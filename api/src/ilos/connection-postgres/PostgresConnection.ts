@@ -1,5 +1,5 @@
 import type { CursorQueryConfig, PoolConfig } from "@/deps.ts";
-import { Cursor, pg, Pool } from "@/deps.ts";
+import { Cursor, Pool } from "@/deps.ts";
 import {
   ConnectionInterface,
   DestroyHookInterface,
@@ -7,19 +7,56 @@ import {
 } from "@/ilos/common/index.ts";
 import { env } from "@/ilos/core/index.ts";
 
+export enum PgPoolStatus {
+  UP = "UP",
+  DOWN = "DOWN",
+  ERROR = "ERROR",
+}
+
+export class PgPool extends Pool {
+  protected _status: PgPoolStatus = PgPoolStatus.DOWN;
+
+  constructor(config?: PoolConfig) {
+    super(config);
+
+    this.on("acquire", () => {
+      this._status = PgPoolStatus.UP;
+    });
+
+    this.on("error", (err: Error) => {
+      console.error("PgPool error", err.message);
+      this._status = PgPoolStatus.ERROR;
+    });
+  }
+
+  get status(): PgPoolStatus {
+    return this._status;
+  }
+
+  get connected(): boolean {
+    return this._status === PgPoolStatus.UP;
+  }
+
+  async end(): Promise<void> {
+    this._status = PgPoolStatus.DOWN;
+    await super.end();
+  }
+}
+
 export class PostgresConnection
   implements
-    ConnectionInterface<pg.Pool>,
+    ConnectionInterface<PgPool>,
     InitHookInterface,
     DestroyHookInterface {
   private readonly pgUrl: string;
-  protected pool: pg.Pool;
+  protected pool: PgPool;
+  protected _status: PgPoolStatus = PgPoolStatus.DOWN;
 
   constructor(protected config: PoolConfig) {
     this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
     const timeout = env.or_int("APP_POSTGRES_TIMEOUT", 60000);
 
-    this.pool = new Pool({
+    this.pool = new PgPool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
       statement_timeout: timeout,
       query_timeout: timeout,
@@ -28,24 +65,30 @@ export class PostgresConnection
     });
   }
 
+  /**
+   * Helper to the pool status
+   */
+  get connected(): boolean {
+    return this.pool.connected;
+  }
+
   async init(): Promise<void> {
     await this.up();
   }
 
-  async up() {
+  async up(): Promise<void> {
     await this.pool.query("SELECT NOW()");
-    return;
   }
 
   async destroy(): Promise<void> {
     await this.down();
   }
 
-  async down() {
-    await this.pool.end();
+  async down(): Promise<void> {
+    this.pool.connected && await this.pool.end();
   }
 
-  getClient(): pg.Pool {
+  getClient(): PgPool {
     return this.pool;
   }
 

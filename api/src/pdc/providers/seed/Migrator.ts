@@ -20,44 +20,68 @@ import { User, users } from "./users.ts";
 
 const __dirname = import.meta.dirname;
 export class Migrator {
-  public rootConnection: PostgresConnection;
-  public connection: PostgresConnection;
+  // base connection to handle the creation of a specific database
+  public baseConn: PostgresConnection;
   public rootConnectionString: string;
+
+  // specific connection to a test database
+  public testConn: PostgresConnection;
   public currentConnectionString: string;
+
   public readonly dbName: string;
-  public readonly dbIsCreated: boolean;
+  public readonly hasTmpDb: boolean;
   public readonly verbose = false;
 
-  constructor(dbUrlString: string, newDatabase = true) {
+  constructor(dbUrlString: string, createTmpDb = true) {
     const dbUrl = new URL(dbUrlString);
-    this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase
+    this.hasTmpDb = createTmpDb;
+    this.dbName = createTmpDb
       ? `test_${Date.now().valueOf()}_${
         (Math.random() + 1).toString(36).substring(7)
       }`
       : dbUrl.pathname.replace("/", "");
+
     const currentConnection = new URL(dbUrlString);
     this.rootConnectionString = currentConnection.toString();
-    if (newDatabase) {
+    if (createTmpDb) {
       currentConnection.pathname = `/${this.dbName}`;
     }
+
     this.currentConnectionString = currentConnection.toString();
-    this.connection = new PostgresConnection({
+    this.testConn = new PostgresConnection({
       connectionString: this.currentConnectionString,
     });
-    this.rootConnection = newDatabase
+
+    this.baseConn = createTmpDb
       ? new PostgresConnection({ connectionString: this.rootConnectionString })
-      : this.connection;
+      : this.testConn;
   }
 
   async up() {
-    await this.connection.up();
-    await this.rootConnection.up();
+    this.testConn && await this.testConn.up();
+    this.baseConn && await this.baseConn.up();
+  }
+
+  async down() {
+    this.testConn && await this.testConn.down();
+    this.baseConn && await this.baseConn.down();
+  }
+
+  async drop() {
+    if (this.hasTmpDb) {
+      // connection to the test database must be closed before dropping it
+      await this.testConn.down();
+
+      // drop the test database using the base connection
+      await this.baseConn.getClient().query(
+        `DROP DATABASE ${this.dbName}`,
+      );
+    }
   }
 
   async create() {
-    if (this.dbIsCreated) {
-      await this.rootConnection.getClient().query(
+    if (this.hasTmpDb) {
+      await this.baseConn.getClient().query(
         `CREATE DATABASE ${this.dbName}`,
       );
     }
@@ -68,13 +92,11 @@ export class Migrator {
   }
 
   async seed() {
-    if (!this.connection) {
-      await this.up();
-    }
+    await this.up();
 
     console.debug("[migrator] seeding...");
 
-    await this.connection.getClient().query<any>(
+    await this.testConn.getClient().query(
       `SET session_replication_role = 'replica'`,
     );
 
@@ -141,7 +163,7 @@ export class Migrator {
             - policy.incentives
             +++ VIEWS +++
     */
-    await this.connection.getClient().query<any>(
+    await this.testConn.getClient().query<any>(
       `SET session_replication_role = 'origin'`,
     );
   }
@@ -150,7 +172,7 @@ export class Migrator {
     filename: string,
     options: ParseOptions = {},
   ): AsyncIterator<P> {
-    const filepath = path.join(__dirname, filename);
+    const filepath = path.join(import.meta.dirname!, filename);
     const parser = fs.createReadStream(filepath).pipe(
       parse({
         cast: (v: any) => (v === "" ? null : v),
@@ -165,14 +187,14 @@ export class Migrator {
   protected async seedFromCsv(
     filename: string,
     tablename: string,
-    csvOptions: ParseOptions = {},
+    _csvOptions: ParseOptions = {},
   ) {
     const cursor = this.dataFromCsv(filename);
     let done = false;
     do {
       const data = await cursor.next();
       if (data.value && Array.isArray(data.value)) {
-        await this.connection.getClient().query<any>({
+        await this.testConn.getClient().query<any>({
           text: `INSERT INTO ${tablename} VALUES (${
             data.value.map((_, i) => `$${i + 1}`).join(", ")
           })`,
@@ -184,7 +206,7 @@ export class Migrator {
   }
 
   async seedCarpoolV2([driverCarpool, passengerCarpool]: [Carpool, Carpool]) {
-    const carpoolResult = await this.connection.getClient().query({
+    const carpoolResult = await this.testConn.getClient().query({
       text: `INSERT INTO carpool_v2.carpools (
         operator_id,
         operator_journey_id,
@@ -281,7 +303,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
         INSERT INTO carpool_v2.requests (
           carpool_id, operator_id, operator_journey_id, payload, api_version, cancel_code, cancel_message
@@ -307,7 +329,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
       INSERT INTO carpool_v2.geo (
         carpool_id, start_geo_code, end_geo_code, errors
@@ -332,7 +354,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
       INSERT INTO carpool_v2.status (
         carpool_id, acquisition_status
@@ -346,7 +368,7 @@ export class Migrator {
   }
 
   async seedCarpool(carpool: Carpool) {
-    const result = await this.connection.getClient().query<any>({
+    const result = await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO carpool.identities 
           (uuid, travel_pass_user_id, over_18, phone_trunc)
@@ -367,7 +389,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO carpool.carpools 
           (
@@ -420,7 +442,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO acquisition.acquisitions
           (
@@ -444,7 +466,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query<any>(`
+    await this.testConn.getClient().query<any>(`
         SELECT
           setval(
             'acquisition.acquisitions__id_seq',
@@ -455,7 +477,7 @@ export class Migrator {
   }
 
   async seedCompany(company: Company) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO company.companies
           (_id, siret, siren, nic, legal_name, company_naf_code, establishment_naf_code, headquarter)
@@ -485,7 +507,7 @@ export class Migrator {
   }
 
   async seedOperator(operator: Operator) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO operator.operators
           (_id, name, legal_name, siret, company, address, bank, contacts, uuid)
@@ -517,7 +539,7 @@ export class Migrator {
   }
 
   async seedUser(user: User) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO auth.users
           (email, firstname, lastname, password, status, role, territory_id, operator_id)
@@ -572,7 +594,7 @@ export class Migrator {
       `,
       values,
     };
-    const resultData = await this.connection.getClient().query<any>(query);
+    const resultData = await this.testConn.getClient().query<any>(query);
     this.syncSelector(resultData.rows[0]._id, territory_group.selector);
   }
 
@@ -596,7 +618,7 @@ export class Migrator {
         },
         [[], [], []],
       );
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query({
       text: `
         DELETE FROM territory.territory_group_selector
         WHERE territory_group_id = $1
@@ -604,7 +626,7 @@ export class Migrator {
       values: [groupId],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO territory.territory_group_selector (
           territory_group_id,
@@ -618,18 +640,5 @@ export class Migrator {
 
   async seedTerritory() {
     await this.seedFromCsv("./geo.csv", "geo.perimeters");
-  }
-
-  async down() {
-    this.rootConnection && await this.rootConnection.down();
-  }
-
-  async drop() {
-    if (this.dbIsCreated) {
-      this.connection && await this.connection.down();
-      await this.rootConnection.getClient().query(
-        `DROP DATABASE ${this.dbName}`,
-      );
-    }
   }
 }

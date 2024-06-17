@@ -27,7 +27,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       await db.migrate();
       await db.seed();
 
-      return { db, connection: db.connection };
+      return { db, connection: db.testConn };
     },
     after: async (ctx: DbContext): Promise<void> => {
       // Test databases can be kept for inspection by setting the env var
