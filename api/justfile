@@ -14,7 +14,7 @@ test-integration:
 
 # Run test:unit
 test-unit:
-  just test --no-check '**/*.unit.spec.ts'
+  just test '**/*.unit.spec.ts'
 
 # Run test
 test *pattern:
