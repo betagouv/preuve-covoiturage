@@ -1,37 +1,19 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { Pool } from "@/deps.ts";
-import { Migrator } from "./Migrator.ts";
+import { assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { buildMigrator } from "./buildMigrator.ts";
-import { createPool } from "./helpers/index.ts";
 import { config } from "./config.ts";
+import { createPool } from "./helpers/index.ts";
 
-interface TestContext {
-  connection: Pool;
-  migrator: Migrator;
-}
-const test = anyTest as TestFn<TestContext>;
+describe("datastructure", () => {
+  let connection = createPool();
+  const migrator = buildMigrator(config);
 
-beforeAll(async (t) => {
-  t.context.connection = createPool();
-  t.context.migrator = buildMigrator(config);
-  await t.context.migrator.prepare();
-  t.context.connection = t.context.migrator.pool;
-});
+  beforeAll(async () => {
+    await migrator.prepare();
+    connection = migrator.pool;
+  });
 
-it("should verify no null data in perimeters table after migrations", async (t) => {
-  const counts = await t.context.connection.query(`select
+  it("should verify no null data in perimeters table after migrations", async (t) => {
+    const counts = await connection.query(`select
     (select count(arr) from perimeters where arr is null) as missing_arr,
     (select count(l_arr) from perimeters where l_arr is null) as missing_l_arr,
     (select count(com) from perimeters where com is null and country = 'XXXXX') as missing_com,
@@ -48,20 +30,21 @@ it("should verify no null data in perimeters table after migrations", async (t) 
     (select count(l_country) from perimeters where l_country is null) as missing_l_country,
     (select count(pop) from perimeters where pop is null) as missing_pop,
     (select count(surface) from perimeters where surface is null) as missing_surface`);
-  assertEquals(counts.rows[0].missing_arr, "0");
-  assertEquals(counts.rows[0].missing_l_arr, "0");
-  assertEquals(counts.rows[0].missing_com, "0");
-  assertEquals(counts.rows[0].missing_l_com, "0");
-  assertEquals(counts.rows[0].missing_epci, "0");
-  assertEquals(counts.rows[0].missing_l_epci, "0");
-  assertEquals(counts.rows[0].missing_aom, "0");
-  assertEquals(counts.rows[0].missing_l_aom, "0");
-  assertEquals(counts.rows[0].missing_dep, "0");
-  assertEquals(counts.rows[0].missing_l_dep, "0");
-  assertEquals(counts.rows[0].missing_reg, "0");
-  assertEquals(counts.rows[0].missing_l_reg, "0");
-  assertEquals(counts.rows[0].missing_country, "0");
-  assertEquals(counts.rows[0].missing_l_country, "0");
-  assertEquals(counts.rows[0].missing_pop, "0");
-  assertEquals(counts.rows[0].missing_surface, "0");
+    assertEquals(counts.rows[0].missing_arr, "0");
+    assertEquals(counts.rows[0].missing_l_arr, "0");
+    assertEquals(counts.rows[0].missing_com, "0");
+    assertEquals(counts.rows[0].missing_l_com, "0");
+    assertEquals(counts.rows[0].missing_epci, "0");
+    assertEquals(counts.rows[0].missing_l_epci, "0");
+    assertEquals(counts.rows[0].missing_aom, "0");
+    assertEquals(counts.rows[0].missing_l_aom, "0");
+    assertEquals(counts.rows[0].missing_dep, "0");
+    assertEquals(counts.rows[0].missing_l_dep, "0");
+    assertEquals(counts.rows[0].missing_reg, "0");
+    assertEquals(counts.rows[0].missing_l_reg, "0");
+    assertEquals(counts.rows[0].missing_country, "0");
+    assertEquals(counts.rows[0].missing_l_country, "0");
+    assertEquals(counts.rows[0].missing_pop, "0");
+    assertEquals(counts.rows[0].missing_surface, "0");
+  });
 });
