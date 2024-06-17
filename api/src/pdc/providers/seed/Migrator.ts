@@ -621,7 +621,6 @@ export class Migrator {
   }
 
   async down() {
-    this.connection && await this.connection.down();
     this.rootConnection && await this.rootConnection.down();
   }
 
