@@ -20,19 +20,14 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
   return {
     before: async (): Promise<DbContext> => {
       const connectionString = cfg?.connectionString ||
-        process.env.APP_POSTGRES_URL;
-
-      const db = new Migrator(
-        connectionString ||
-          "postgresql://postgres:postgres@localhost:5432/local",
-      );
+        process.env.APP_POSTGRES_URL ||
+        "postgresql://postgres:postgres@localhost:5432/local";
+      const db = new Migrator(connectionString);
       await db.create();
       await db.migrate();
       await db.seed();
-      return {
-        db,
-        connection: db.connection,
-      };
+
+      return { db, connection: db.connection };
     },
     after: async (ctx: DbContext): Promise<void> => {
       // Test databases can be kept for inspection by setting the env var
@@ -43,12 +38,15 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
         process.env.APP_POSTGRES_KEEP_TEST_DATABASES === "true"
       ) {
         console.info(
-          `[db-macro] Keeping the test database: ${ctx.db.dbName} run 'just drop_test_databases to clear'`,
+          `[db-macro] Keeping the test database: ${
+            ctx?.db?.dbName || "undefined"
+          } run 'just drop_test_databases to clear'`,
         );
       } else {
         await ctx.db.drop();
       }
-      await ctx.db.down();
+
+      ctx && ctx.db && await ctx.db.down();
     },
   };
 }

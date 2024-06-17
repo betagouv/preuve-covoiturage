@@ -8,7 +8,6 @@ import {
   URL,
 } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-
 import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
 import { Operator, operators } from "./operators.ts";
@@ -185,9 +184,6 @@ export class Migrator {
   }
 
   async seedCarpoolV2([driverCarpool, passengerCarpool]: [Carpool, Carpool]) {
-    console.debug("seedCarpoolV2", {
-      acquisition_Id: driverCarpool.acquisition_id,
-    });
     const carpoolResult = await this.connection.getClient().query({
       text: `INSERT INTO carpool_v2.carpools (
         operator_id,
@@ -625,12 +621,13 @@ export class Migrator {
   }
 
   async down() {
-    await this.rootConnection.down();
+    this.connection && await this.connection.down();
+    this.rootConnection && await this.rootConnection.down();
   }
 
   async drop() {
     if (this.dbIsCreated) {
-      await this.connection.down();
+      this.connection && await this.connection.down();
       await this.rootConnection.getClient().query(
         `DROP DATABASE ${this.dbName}`,
       );
