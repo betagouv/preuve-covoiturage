@@ -2,7 +2,7 @@ import { assertEquals, describe, it } from "@/dev_deps.ts";
 import { mapStatusCode } from "./mapStatusCode.ts";
 
 describe("mapStatusCode", () => {
-  it("RPC/HTTP status codes mapping: regular -> 200", (t) => {
+  it("RPC/HTTP status codes mapping: regular -> 200", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -13,11 +13,11 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: notification -> 204", (t) => {
+  it("RPC/HTTP status codes mapping: notification -> 204", () => {
     assertEquals(mapStatusCode(), 204);
   });
 
-  it("RPC/HTTP status codes mapping: Parse error -> 422", (t) => {
+  it("RPC/HTTP status codes mapping: Parse error -> 422", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -28,7 +28,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Invalid Request -> 400", (t) => {
+  it("RPC/HTTP status codes mapping: Invalid Request -> 400", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -39,7 +39,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Invalid Params -> 400", (t) => {
+  it("RPC/HTTP status codes mapping: Invalid Params -> 400", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -50,7 +50,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Method not found -> 405", (t) => {
+  it("RPC/HTTP status codes mapping: Method not found -> 405", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -61,7 +61,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Internal error -> 500", (t) => {
+  it("RPC/HTTP status codes mapping: Internal error -> 500", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -72,7 +72,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Server error 32000 -> 500", (t) => {
+  it("RPC/HTTP status codes mapping: Server error 32000 -> 500", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -83,7 +83,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Server error 32099 -> 500", (t) => {
+  it("RPC/HTTP status codes mapping: Server error 32099 -> 500", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -94,7 +94,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Unauthorized -> 401", (t) => {
+  it("RPC/HTTP status codes mapping: Unauthorized -> 401", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -105,7 +105,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Forbidden -> 403", (t) => {
+  it("RPC/HTTP status codes mapping: Forbidden -> 403", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -116,7 +116,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: Conflict -> 409", (t) => {
+  it("RPC/HTTP status codes mapping: Conflict -> 409", () => {
     assertEquals(
       mapStatusCode({
         id: 1,
@@ -127,7 +127,7 @@ describe("mapStatusCode", () => {
     );
   });
 
-  it("RPC/HTTP status codes mapping: handles array response", (t) => {
+  it("RPC/HTTP status codes mapping: handles array response", () => {
     assertEquals(
       mapStatusCode([{
         id: 1,

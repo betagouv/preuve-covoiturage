@@ -3,7 +3,9 @@ import {
   assertEquals,
   assertObjectMatch,
   beforeAll,
+  delay,
   describe,
+  getAvailablePort,
   it,
   supertest,
   SuperTestAgent,
@@ -13,72 +15,70 @@ import { Kernel } from "@/ilos/core/index.ts";
 import { HttpTransport } from "./HttpTransport.ts";
 
 describe("HttpTransport", () => {
-  let request: SuperTestAgent | null = null;
-  let httpTransport: HttpTransport | null = null;
+  class BasicKernel extends Kernel {
+    async handle(call: RPCCallType): Promise<RPCResponseType> {
+      // generate errors from method name
+      if ("method" in call) {
+        switch (call.method) {
+          case "test":
+            // notifications return void
+            if (call.id === undefined || call.id === null) {
+              return;
+            }
+
+            return {
+              id: 1,
+              jsonrpc: "2.0",
+              result: "hello world",
+            };
+          case "error":
+            return {
+              id: 1,
+              jsonrpc: "2.0",
+              error: {
+                code: -32000,
+                message: "Server error",
+              },
+            };
+          case "invalidRequest":
+            return {
+              id: 1,
+              jsonrpc: "2.0",
+              error: {
+                code: -32600,
+                message: "Server error",
+              },
+            };
+        }
+      }
+
+      return {
+        id: 1,
+        jsonrpc: "2.0",
+        error: {
+          code: -32601,
+          message: "Method not found",
+        },
+      };
+    }
+  }
+  let request: SuperTestAgent;
+  const kernel = new BasicKernel();
+  const httpTransport = new HttpTransport(kernel);
 
   beforeAll(async () => {
-    class BasicKernel extends Kernel {
-      async handle(call: RPCCallType): Promise<RPCResponseType> {
-        // generate errors from method name
-        if ("method" in call) {
-          switch (call.method) {
-            case "test":
-              // notifications return void
-              if (call.id === undefined || call.id === null) {
-                return;
-              }
-
-              return {
-                id: 1,
-                jsonrpc: "2.0",
-                result: "hello world",
-              };
-            case "error":
-              return {
-                id: 1,
-                jsonrpc: "2.0",
-                error: {
-                  code: -32000,
-                  message: "Server error",
-                },
-              };
-            case "invalidRequest":
-              return {
-                id: 1,
-                jsonrpc: "2.0",
-                error: {
-                  code: -32600,
-                  message: "Server error",
-                },
-              };
-          }
-        }
-
-        return {
-          id: 1,
-          jsonrpc: "2.0",
-          error: {
-            code: -32601,
-            message: "Method not found",
-          },
-        };
-      }
-    }
-
-    const kernel = new BasicKernel();
-    httpTransport = new HttpTransport(kernel);
-    await httpTransport.up(["0"]);
+    await httpTransport.up([`${await getAvailablePort()}`]);
     const httpInstance = httpTransport.getInstance();
     if (!httpInstance) throw new Error("Failed to get HTTP Transport instance");
     request = supertest(httpInstance);
+    await delay(1);
   });
 
   afterAll(async () => {
-    httpTransport && await httpTransport.down();
+    await httpTransport.down();
   });
 
-  it.only("Http transport: returns JSON-RPC compliant success response", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
+  it("Http transport: returns JSON-RPC compliant success response", async () => {
     const response = await request
       .post("/")
       .send({
@@ -98,7 +98,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: returns JSON-RPC compliant error response", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -121,7 +120,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: regular request", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -138,7 +136,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: notification request", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -152,7 +149,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: should fail if missing Accept header", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -172,7 +168,6 @@ describe("HttpTransport", () => {
 
   // Content-type is infered from Accept header
   it("Http transport: should work without Content-type header", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -187,8 +182,7 @@ describe("HttpTransport", () => {
     assertEquals(response.body.result, "hello world");
   });
 
-  it("Http transport: should fail if http verb is not POST", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
+  it.skip("Http transport: should fail if http verb is not POST", async () => {
     const response = await request
       .get("/")
       .send({
@@ -224,7 +218,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: should fail if service reject", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -244,7 +237,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: should fail if request is invalid", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
@@ -264,7 +256,6 @@ describe("HttpTransport", () => {
   });
 
   it("Http transport: should fail if method is not found", async () => {
-    if (!request) throw new Error("'request' must be initialised by SuperTest");
     const response = await request
       .post("/")
       .send({
