@@ -86,37 +86,37 @@ export class Migrator extends Stream.EventEmitter {
     try {
       switch (migrableState) {
         case State.Planned:
-          console.debug(`${migrableCtor.uuid} : start processing`);
+          // console.debug(`${migrableCtor.uuid} : start processing`);
           await migrable.validate(stateManager);
           stateManager.set(migrableCtor, State.Validated);
           break;
         case State.Validated:
-          console.debug(`${migrableCtor.uuid} : before`);
+          // console.debug(`${migrableCtor.uuid} : before`);
           await migrable.before();
           stateManager.set(migrableCtor, State.Created);
           break;
         case State.Created:
-          console.debug(`${migrableCtor.uuid} : download`);
+          // console.debug(`${migrableCtor.uuid} : download`);
           await migrable.download();
           stateManager.set(migrableCtor, State.Downloaded);
           break;
         case State.Downloaded:
-          console.debug(`${migrableCtor.uuid} : transform`);
+          // console.debug(`${migrableCtor.uuid} : transform`);
           await migrable.transform();
           stateManager.set(migrableCtor, State.Transformed);
           break;
         case State.Transformed:
-          console.debug(`${migrableCtor.uuid} : load`);
+          // console.debug(`${migrableCtor.uuid} : load`);
           await migrable.load();
           stateManager.set(migrableCtor, State.Loaded);
           break;
         case State.Loaded:
-          console.debug(`${migrableCtor.uuid} : import`);
+          // console.debug(`${migrableCtor.uuid} : import`);
           await migrable.import();
           stateManager.set(migrableCtor, State.Imported);
           break;
         case State.Imported:
-          console.debug(`${migrableCtor.uuid} : after`);
+          // console.debug(`${migrableCtor.uuid} : after`);
           if (!this.config.noCleanup) {
             await migrable.after();
           }
@@ -125,10 +125,10 @@ export class Migrator extends Stream.EventEmitter {
             : stateManager.set(migrableCtor, State.Done);
           break;
         case State.DoneSkipPersistence:
-          console.debug(`${migrableCtor.uuid} : done with skip persistence`);
+          // console.debug(`${migrableCtor.uuid} : done with skip persistence`);
           break;
         case State.Done:
-          console.debug(`${migrableCtor.uuid} : done`);
+          // console.debug(`${migrableCtor.uuid} : done`);
           break;
         default:
           throw new Error();
