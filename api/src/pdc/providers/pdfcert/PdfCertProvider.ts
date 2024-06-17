@@ -1,17 +1,17 @@
-import { date, pdf } from "@/deps.ts";
+import { intlFormat, pdf } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { MariannePaths } from "./assets/marianne.ts";
 
-import {
-  PdfCertProviderInterface,
-  PdfCertProviderInterfaceResolver,
-} from "./interfaces/PdfCertProviderInterfaceResolver.ts";
-import { PdfTemplateData } from "./interfaces/PdfTemplateData.ts";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
 } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { MetaPersonInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
+import {
+  PdfCertProviderInterface,
+  PdfCertProviderInterfaceResolver,
+} from "./interfaces/PdfCertProviderInterfaceResolver.ts";
+import { PdfTemplateData } from "./interfaces/PdfTemplateData.ts";
 
 type TextOptions = Partial<
   pdf.PDFPageDrawTextOptions & {
@@ -611,7 +611,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(
       page,
       `${
-        date.intlFormat(
+        intlFormat(
           new Date(row.datetime),
           {
             year: "numeric",

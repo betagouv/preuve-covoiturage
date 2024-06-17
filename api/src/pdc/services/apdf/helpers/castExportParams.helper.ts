@@ -1,5 +1,5 @@
+import { _, date, fromZonedTime } from "@/deps.ts";
 import { ParamsInterface } from "@/shared/apdf/export.contract.ts";
-import { _, date, datetz } from "@/deps.ts";
 
 export function castExportParams(
   params: ParamsInterface,
@@ -38,7 +38,7 @@ export function castExportParams(
 
   // timezoned
   return {
-    start_date: datetz.fromZonedTime(start, params.format?.tz),
-    end_date: datetz.fromZonedTime(end, params.format?.tz),
+    start_date: fromZonedTime(start, params.format?.tz),
+    end_date: fromZonedTime(end, params.format?.tz),
   };
 }

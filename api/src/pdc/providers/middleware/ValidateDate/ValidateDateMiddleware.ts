@@ -1,4 +1,4 @@
-import { _, date } from "@/deps.ts";
+import { _, endOfDay, startOfDay } from "@/deps.ts";
 import {
   ContextType,
   InvalidParamsException,
@@ -36,10 +36,10 @@ export class ValidateDateMiddleware
       applyDefault: applyDefaultOpt,
     } = options;
     const minStart: Date | undefined = minStartFn
-      ? date.startOfDay(minStartFn(params, context))
+      ? startOfDay(minStartFn(params, context))
       : undefined;
     const maxEnd: Date | undefined = maxEndFn
-      ? date.endOfDay(maxEndFn(params, context))
+      ? endOfDay(maxEndFn(params, context))
       : undefined;
     const applyDefault = applyDefaultOpt ?? false;
     const startDate: Date | undefined = _.get(params, startPath, undefined);

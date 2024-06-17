@@ -1,3 +1,4 @@
+import { subMonths } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import {
   APDFNameProvider,
@@ -6,12 +7,11 @@ import {
   S3ObjectList,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
+import { EnrichedApdfType } from "@/shared/apdf/list.contract.ts";
 import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
 } from "../interfaces/StorageRepositoryProviderInterface.ts";
-import { EnrichedApdfType } from "@/shared/apdf/list.contract.ts";
-import { date } from "@/deps.ts";
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,
@@ -83,7 +83,7 @@ export class StorageRepositoryProvider
 
       // show all but last month
       const fileMonth = obj.datetime.toISOString().substring(0, 7);
-      const lastMonth = date.subMonths(new Date(), 1).toISOString().substring(
+      const lastMonth = subMonths(new Date(), 1).toISOString().substring(
         0,
         7,
       );

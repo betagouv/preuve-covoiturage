@@ -1,3 +1,4 @@
+import { addSeconds } from "@/deps.ts";
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import {
   command,
@@ -15,7 +16,6 @@ import {
   CarpoolAcquisitionStatusEnum,
   CarpoolFraudStatusEnum,
 } from "@/pdc/providers/carpool/interfaces/index.ts";
-import { date } from "@/deps.ts";
 
 @command()
 export class AcquisitionMigrateCommand implements CommandInterface {
@@ -155,7 +155,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
               lat: start_lat,
               lon: start_lon,
             },
-            end_datetime: date.addSeconds(
+            end_datetime: addSeconds(
               new Date(carpool.datetime),
               carpool.duration || carpool.meta.calc_duration || 0,
             ),

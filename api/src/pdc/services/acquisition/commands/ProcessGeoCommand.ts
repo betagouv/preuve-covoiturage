@@ -1,11 +1,11 @@
+import { subDays } from "@/deps.ts";
+import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import {
   command,
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
-import { date } from "@/deps.ts";
 
 @command()
 export class ProcessGeoCommand implements CommandInterface {
@@ -59,7 +59,7 @@ export class ProcessGeoCommand implements CommandInterface {
       const did = await this.encode(
         batchSize,
         options.failed,
-        options.after ?? date.subDays(new Date(), options.lastDays),
+        options.after ?? subDays(new Date(), options.lastDays),
         options.until ?? new Date(),
       );
       console.timeLog(timerMessage);

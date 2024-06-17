@@ -1,3 +1,4 @@
+import { format, toZonedTime } from "@/deps.ts";
 import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
 export function normalize(
@@ -5,12 +6,12 @@ export function normalize(
   booster_dates: Set<string>,
   timeZone: string,
 ): APDFTripInterface {
-  const sd = datetz.toZonedTime(src.start_datetime, timeZone);
-  const ed = datetz.toZonedTime(src.end_datetime, timeZone);
+  const sd = toZonedTime(src.start_datetime, timeZone);
+  const ed = toZonedTime(src.end_datetime, timeZone);
 
   // format and convert to user timezone
-  const sdf = datetz.format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
-  const edf = datetz.format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+  const sdf = format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+  const edf = format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
 
   const s = sdf.substring(0, 10);
   const e = edf.substring(0, 10);

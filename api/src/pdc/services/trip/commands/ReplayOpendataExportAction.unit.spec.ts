@@ -1,4 +1,4 @@
-import { datetz } from "@/deps.ts";
+import { fromZonedTime } from "@/deps.ts";
 import {
   afterEach,
   assertEquals,
@@ -60,31 +60,31 @@ describe("Replay Opendata Export", () => {
     // Assert
     const today: Date = new Date();
     assertObjectMatch(result[0], {
-      start: datetz.fromZonedTime(
+      start: fromZonedTime(
         new Date("2020-10-01T00:00:00"),
         "Europe/Paris",
       ),
-      end: datetz.fromZonedTime(
+      end: fromZonedTime(
         new Date("2020-10-31T23:59:59.999"),
         "Europe/Paris",
       ),
     });
     assertObjectMatch(result[7], {
-      start: datetz.fromZonedTime(
+      start: fromZonedTime(
         new Date("2021-05-01T00:00:00"),
         "Europe/Paris",
       ),
-      end: datetz.fromZonedTime(
+      end: fromZonedTime(
         new Date("2021-05-31T23:59:59.999"),
         "Europe/Paris",
       ),
     });
     assertObjectMatch(result[12], {
-      start: datetz.fromZonedTime(
+      start: fromZonedTime(
         new Date("2021-10-01T00:00:00"),
         "Europe/Paris",
       ),
-      end: datetz.fromZonedTime(
+      end: fromZonedTime(
         new Date("2021-10-31T23:59:59.999"),
         "Europe/Paris",
       ),

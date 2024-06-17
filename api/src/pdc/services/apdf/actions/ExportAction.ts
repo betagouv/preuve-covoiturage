@@ -1,3 +1,4 @@
+import { _, date, fromZonedTime, fs } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   ContextType,
@@ -17,8 +18,6 @@ import {
 } from "@/shared/apdf/export.contract.ts";
 import { alias } from "@/shared/apdf/export.schema.ts";
 import { ResultInterface as PolicyResultInterface } from "@/shared/policy/find.contract.ts";
-import { date, datetz, fs } from "@/deps.ts";
-import { _ } from "@/deps.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 import { getCampaignOperators } from "../helpers/getCampaignOperators.helper.ts";
 import { DataRepositoryProviderInterfaceResolver } from "../interfaces/APDFRepositoryProviderInterface.ts";
@@ -200,8 +199,8 @@ export class ExportAction extends Action {
 
     // timezoned
     return {
-      start_date: datetz.fromZonedTime(start, params.format?.tz),
-      end_date: datetz.fromZonedTime(end, params.format?.tz),
+      start_date: fromZonedTime(start, params.format?.tz),
+      end_date: fromZonedTime(end, params.format?.tz),
     };
   }
 }

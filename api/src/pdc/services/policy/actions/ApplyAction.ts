@@ -1,4 +1,4 @@
-import { date } from "@/deps.ts";
+import { isAfter, maxDate, minDate } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -96,14 +96,14 @@ export class ApplyAction extends AbstractAction {
 
     // 2. Start a cursor to find trips
     // handle date boundaries
-    const start = date.max([from, policy.start_date]);
-    const end = date.min([to, policy.end_date]);
+    const start = maxDate([from, policy.start_date]);
+    const end = minDate([to, policy.end_date]);
     const s = toTzString(start);
     const e = toTzString(end);
     const pe = toTzString(policy.end_date);
 
     // throw if campaign start date is after policy end date
-    if (date.isAfter(start, policy.end_date)) {
+    if (isAfter(start, policy.end_date)) {
       throw new InvalidParamsException(
         `[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`,
       );

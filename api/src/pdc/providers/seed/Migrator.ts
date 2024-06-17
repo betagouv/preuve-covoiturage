@@ -167,6 +167,7 @@ export class Migrator {
     await this.testConn.getClient().query<any>(
       `SET session_replication_role = 'origin'`,
     );
+    console.debug("[migrator] seeding...done");
   }
 
   protected async *dataFromCsv<P>(

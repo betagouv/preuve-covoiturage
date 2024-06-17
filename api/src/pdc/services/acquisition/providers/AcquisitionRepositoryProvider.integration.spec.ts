@@ -1,4 +1,4 @@
-import { date } from "@/deps.ts";
+import { subDays } from "@/deps.ts";
 import {
   afterAll,
   assert,
@@ -578,7 +578,7 @@ describe("AcquisitionRepositoryProvider", () => {
     const search = {
       operator_id: 1,
       status: StatusEnum.Pending,
-      start: date.subDays(new Date(), 7),
+      start: subDays(new Date(), 7),
       end: new Date(),
       offset: 0,
       limit: 3,

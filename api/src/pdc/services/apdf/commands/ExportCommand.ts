@@ -1,3 +1,4 @@
+import { _, fromZonedTime } from "@/deps.ts";
 import { coerceIntList } from "@/ilos/cli/index.ts";
 import {
   command,
@@ -14,7 +15,6 @@ import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
 } from "@/shared/policy/list.contract.ts";
-import { _ } from "@/deps.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 
 interface Options {
@@ -82,14 +82,14 @@ export class ExportCommand implements CommandInterface {
       _.set(
         params,
         "query.date.start",
-        datetz.fromZonedTime(options.start, options.tz).toISOString(),
+        fromZonedTime(options.start, options.tz).toISOString(),
       );
     }
     if (options.end) {
       _.set(
         params,
         "query.date.end",
-        datetz.fromZonedTime(options.end, options.tz).toISOString(),
+        fromZonedTime(options.end, options.tz).toISOString(),
       );
     }
     if (options.operators?.length) {

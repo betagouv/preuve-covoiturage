@@ -110,13 +110,36 @@ export type Factory<T> = interfaces.Factory<T>;
 export type ContainerOptions = interfaces.ContainerOptions;
 
 export { Stringifier, stringify } from "npm:csv-stringify@^6.5";
+export {
+  format,
+  formatInTimeZone,
+  fromZonedTime,
+  toZonedTime,
+} from "npm:date-fns-tz@^3.1";
+export type { FormatOptionsWithTZ } from "npm:date-fns-tz@^3.1";
+export {
+  add as addDate,
+  addDays,
+  addMonths,
+  addSeconds,
+  endOfDay,
+  intlFormat,
+  isAfter,
+  isBefore,
+  isValid as isValidDate,
+  max as maxDate,
+  min as minDate,
+  startOfDay,
+  startOfMonth,
+  sub,
+  subDays,
+  subMonths,
+} from "npm:date-fns@^3.6";
 export { MeiliSearch } from "npm:meilisearch@^0.40";
 export type { Config as MeiliSearchConfig } from "npm:meilisearch@^0.40";
 
 import booleanPointInPolygon from "npm:@turf/boolean-point-in-polygon";
 import distance from "npm:@turf/distance";
-import * as datetz from "npm:date-fns-tz@^3.1";
-import * as date from "npm:date-fns@^3.6";
 import { fr as datefr } from "npm:date-fns@^3.6/locale";
 import pdf from "npm:pdf-lib@^1.17";
 

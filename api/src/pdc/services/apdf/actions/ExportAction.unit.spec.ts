@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { date, datetz, faker } from "@/deps.ts";
+import { date, faker, fromZonedTime } from "@/deps.ts";
 import {
   afterEach,
   assertEquals,
@@ -109,11 +109,11 @@ describe("Application Service", () => {
     );
 
     // Assert
-    const startDate = datetz.fromZonedTime(
+    const startDate = fromZonedTime(
       date.startOfMonth(date.subMonths(new Date(), 1)),
       "Europe/Paris",
     );
-    const endDate = datetz.fromZonedTime(
+    const endDate = fromZonedTime(
       date.startOfMonth(new Date()),
       "Europe/Paris",
     );
