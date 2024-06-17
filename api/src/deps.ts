@@ -1,12 +1,22 @@
 // @deno-types="npm:@types/node@^20"
+import fs from "node:fs";
 import os from "node:os";
+import path from "node:path";
 import process from "node:process";
 import Stream from "node:stream";
-import DBMigratePG from "npm:db-migrate-pg@1.5";
-import DBMigrate from "npm:db-migrate@^0.11";
+import axiosRetry from "npm:axios-retry@^4";
+import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Console } from "node:console";
-export { readFileSync } from "node:fs";
+export { createHash, randomBytes } from "node:crypto";
+export {
+  createReadStream,
+  createWriteStream,
+  readdir,
+  readFileSync,
+  rmSync,
+  stat,
+} from "node:fs";
 export {
   access,
   mkdir,
@@ -15,30 +25,18 @@ export {
   writeFile,
 } from "node:fs/promises";
 export { hostname, tmpdir } from "node:os";
+export { basename, extname, join } from "node:path";
 export { URL, URLSearchParams } from "node:url";
 export { isMainThread } from "node:worker_threads";
+export { faker } from "npm:@faker-js/faker@^8.4";
 export { Command, InvalidArgumentError } from "npm:commander@^12.1";
+export { parse } from "npm:csv-parse@^5.5";
+export type { Options as CsvOptions } from "npm:csv-parse@^5.5";
 export { Redis } from "npm:ioredis@^5.3";
 export type { RedisKey, RedisOptions } from "npm:ioredis@^5.3";
 // @deno-types="npm:@types/pg@^8.11"
-import fs from "node:fs";
-import path from "node:path";
-import axiosRetry from "npm:axios-retry@^4";
-import axios from "npm:axios@^1.7";
 import pg from "npm:pg@^8.12";
 // @deno-types="npm:@types/pg@^8.11"
-export { createHash, randomBytes } from "node:crypto";
-export {
-  createReadStream,
-  createWriteStream,
-  readdir,
-  rmSync,
-  stat,
-} from "node:fs";
-export { basename, extname, join } from "node:path";
-export { faker } from "npm:@faker-js/faker@^8.4";
-export { parse } from "npm:csv-parse@^5.5";
-export type { Options as CsvOptions } from "npm:csv-parse@^5.5";
 export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
 // @deno-types="npm:@types/pg-cursor@^2.7"
 import Cursor from "npm:pg-cursor@^2.11";
@@ -61,12 +59,12 @@ import _ from "npm:lodash@^4";
 import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
 import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
 // @deno-types="npm:@types/steam-json@^1.7"
-export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/filters/FilterBase.js";
-// @deno-types="npm:@types/node-7z@^2"
 export { Readable } from "node:stream";
 export { createGunzip } from "node:zlib";
 export { AxiosError } from "npm:axios@^1.7";
 export type { AxiosInstance } from "npm:axios@^1.7";
+export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/filters/FilterBase.js";
+// @deno-types="npm:@types/node-7z@^2"
 export { extractFull } from "npm:node-7z@^3.0";
 // @deno-types="npm:@types/node-7z@^2"
 export type { SevenZipOptions } from "npm:node-7z@^3";
@@ -206,8 +204,6 @@ export {
   date,
   datefr,
   datetz,
-  DBMigrate,
-  DBMigratePG,
   distance,
   excel,
   express,

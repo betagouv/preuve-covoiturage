@@ -625,9 +625,6 @@ export class Migrator {
   }
 
   async down() {
-    if (!this.dbIsCreated) {
-      await this.connection.down();
-    }
     await this.rootConnection.down();
   }
 
