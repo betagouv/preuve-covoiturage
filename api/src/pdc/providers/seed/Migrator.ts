@@ -81,6 +81,7 @@ export class Migrator {
 
   async create() {
     if (this.hasTmpDb) {
+      console.debug(`[migrator] creating database ${this.dbName}`);
       await this.baseConn.getClient().query(
         `CREATE DATABASE ${this.dbName}`,
       );
