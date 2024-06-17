@@ -16,6 +16,22 @@ const emptyContext: ContextType = {
   },
 };
 
+export async function assertHandler<P = unknown, R = unknown>(
+  context: KernelContext,
+  currentContext: ContextType = {} as ContextType,
+  handlerConfig: HandlerConfigInterface,
+  params: P,
+  callback: (result: R) => Promise<void>,
+) {
+  const callContext = { ...emptyContext, ...currentContext };
+  const result = await context.kernel.call<P, R>(
+    `${handlerConfig.service}:${handlerConfig.method}`,
+    params,
+    callContext,
+  );
+  await callback(result);
+}
+
 export async function assertSuccessHandler<P = unknown, R = unknown>(
   context: KernelContext,
   handlerConfig: HandlerConfigInterface,
