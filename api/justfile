@@ -100,7 +100,7 @@ ci_test_unit: (test-unit)
 
 # Run api command
 api *command:
-  deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys --allow-run src/main.ts {{ command }}
+  deno run --allow-net --allow-env --allow-read --allow-write --allow-ffi --allow-sys --allow-run src/main.ts {{ command }}
 
 migrate:
   deno run --allow-net --allow-env --allow-read --allow-ffi --allow-sys --allow-run  src/db/main.ts
