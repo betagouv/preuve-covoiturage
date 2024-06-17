@@ -1,19 +1,4 @@
 import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { FileManager } from "./FileManager.ts";
-import { hash, writeFile } from "../helpers/index.ts";
-import {
   axios,
   AxiosError,
   join,
@@ -24,129 +9,115 @@ import {
 } from "@/deps.ts";
 import {
   afterAll,
-  afterEach,
   assert,
   assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
   beforeEach,
   describe,
   it,
+  sinon,
 } from "@/dev_deps.ts";
+import { hash, writeFile } from "../helpers/index.ts";
+import { FileManager } from "./FileManager.ts";
 
-interface Context {
-  // Constants
-  RESSOURCE_URL: string;
-  GEO_PERIMETER_TMP_DIR: string;
-  READABLE_STREAM: Readable;
-
-  // Injected tokens method's stubs
-  axiosStub: SinonStub;
-
-  // Tested token
-  fileManager: FileManager;
-}
-
-const test = anyTest as TestFn<Context>;
-
-const FILE_CONTENT_STRING = "{}";
-
-beforeAll((t) => {
-  t.context.GEO_PERIMETER_TMP_DIR = "/tmp/perimeter-geo-test";
-  t.context.RESSOURCE_URL =
+describe("File Manager", () => {
+  const GEO_PERIMETER_TMP_DIR = "/tmp/perimeter-geo-test";
+  const RESSOURCE_URL =
     "http://www.get.domaine.fr/system/files/documents/2022/09/file";
+  const axiosStub = sinon.stub(axios, "get");
+  const FILE_CONTENT_STRING = "{}";
+  let READABLE_STREAM: Readable;
+  let fileManager: FileManager;
 
-  t.context.axiosStub = sinon.stub(axios, "get");
-});
-
-afterAll((t) => {
-  rmSync(t.context.GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
-  t.context.axiosStub.restore();
-});
-
-beforeEach((t) => {
-  rmSync(t.context.GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
-
-  t.context.fileManager = new FileManager({
-    basePath: t.context.GEO_PERIMETER_TMP_DIR,
-    downloadPath: `${t.context.GEO_PERIMETER_TMP_DIR}/download`,
-    mirrorUrl: "https://s3.domain.fr/bucket",
+  afterAll(() => {
+    rmSync(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
+    axiosStub.restore();
   });
 
-  t.context.axiosStub.reset();
+  beforeEach(() => {
+    rmSync(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
 
-  t.context.READABLE_STREAM = new Readable();
-  t.context.READABLE_STREAM.push(FILE_CONTENT_STRING);
-  t.context.READABLE_STREAM.push(null);
-});
+    fileManager = new FileManager({
+      basePath: GEO_PERIMETER_TMP_DIR,
+      downloadPath: `${GEO_PERIMETER_TMP_DIR}/download`,
+      mirrorUrl: "https://s3.domain.fr/bucket",
+    });
 
-it("should return ressource file if available", async (t) => {
-  // Arrange
-  const existingFilepath = join(
-    t.context.fileManager.downloadPath,
-    hash(t.context.RESSOURCE_URL),
-  );
-  await mkdir(t.context.fileManager.downloadPath, { recursive: true });
-  await writeFile(t.context.READABLE_STREAM, existingFilepath);
+    axiosStub.reset();
 
-  // Act
-  const filepath = await t.context.fileManager.download(
-    t.context.RESSOURCE_URL,
-  );
-
-  // Assert
-  sinon.assert.notCalled(t.context.axiosStub);
-  assertObjectMatch(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
-});
-
-it("should download ressource url if not on fs", async (t) => {
-  // Arrange
-  t.context.axiosStub.resolves({ data: t.context.READABLE_STREAM });
-
-  // Act
-  const filepath = await t.context.fileManager.download(
-    t.context.RESSOURCE_URL,
-  );
-
-  // Assert
-  sinon.assert.calledOnceWithExactly(
-    t.context.axiosStub,
-    t.context.RESSOURCE_URL,
-    { responseType: "stream" },
-  );
-  assertObjectMatch(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
-});
-
-it("should fallback to miror if any error code with download ressource", async (t) => {
-  // Arrange
-  t.context.axiosStub.onCall(0).callsFake(() => {
-    throw new AxiosError("Invalid URL", "403");
+    READABLE_STREAM = new Readable();
+    READABLE_STREAM.push(FILE_CONTENT_STRING);
+    READABLE_STREAM.push(null);
   });
-  t.context.axiosStub.onCall(1).resolves({ data: t.context.READABLE_STREAM });
 
-  // Act
-  const filepath = await t.context.fileManager.download(
-    t.context.RESSOURCE_URL,
-  );
+  it("should return ressource file if available", async () => {
+    // Arrange
+    const existingFilepath = join(
+      fileManager.downloadPath,
+      hash(RESSOURCE_URL),
+    );
+    await mkdir(fileManager.downloadPath, { recursive: true });
+    await writeFile(READABLE_STREAM, existingFilepath);
 
-  // Assert
-  sinon.assert.calledTwice(t.context.axiosStub);
-  assert(
-    t.context.axiosStub.getCall(0).calledWithExactly(t.context.RESSOURCE_URL, {
-      responseType: "stream",
-    }),
-  );
-  assert(
-    t.context.axiosStub
-      .getCall(1)
-      .calledWithExactly(
-        `${t.context.fileManager.mirrorUrl}/${hash(t.context.RESSOURCE_URL)}`,
+    // Act
+    const filepath = await fileManager.download(
+      RESSOURCE_URL,
+    );
+
+    // Assert
+    sinon.assert.notCalled(axiosStub);
+    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+  });
+
+  it("should download ressource url if not on fs", async () => {
+    // Arrange
+    axiosStub.resolves({ data: READABLE_STREAM });
+
+    // Act
+    const filepath = await fileManager.download(
+      RESSOURCE_URL,
+    );
+
+    // Assert
+    sinon.assert.calledOnceWithExactly(
+      axiosStub,
+      RESSOURCE_URL,
+      { responseType: "stream" },
+    );
+    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+  });
+
+  it("should fallback to miror if any error code with download ressource", async () => {
+    // Arrange
+    axiosStub.onCall(0).callsFake(() => {
+      throw new AxiosError("Invalid URL", "403");
+    });
+    axiosStub.onCall(1).resolves({ data: READABLE_STREAM });
+
+    // Act
+    const filepath = await fileManager.download(
+      RESSOURCE_URL,
+    );
+
+    // Assert
+    sinon.assert.calledTwice(axiosStub);
+    assert(
+      axiosStub.getCall(0).calledWithExactly(
+        RESSOURCE_URL,
         {
           responseType: "stream",
         },
       ),
-  );
-  assertObjectMatch(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+    );
+    assert(
+      axiosStub
+        .getCall(1)
+        .calledWithExactly(
+          `${fileManager.mirrorUrl}/${hash(RESSOURCE_URL)}`,
+          {
+            responseType: "stream",
+          },
+        ),
+    );
+    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+  });
 });

@@ -1,234 +1,213 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import { faker } from "@/deps.ts";
 import {
-  afterAll,
   afterEach,
   assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
   beforeAll,
   beforeEach,
   describe,
   it,
+  sinon,
 } from "@/dev_deps.ts";
+import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
+import { ParamsInterface } from "@/shared/trip/publishOpenData.contract.ts";
 import { UploadedResource } from "../interfaces/DataGouvInterface.ts";
 import { DataGouvProvider } from "../providers/DataGouvProvider.ts";
-import { ParamsInterface } from "@/shared/trip/publishOpenData.contract.ts";
-import { BuildResourceDescription } from "./opendata/BuildResourceDescription.ts";
 import { PublishOpenDataAction } from "./PublishOpenDataAction.ts";
+import { BuildResourceDescription } from "./opendata/BuildResourceDescription.ts";
 import { GetRessourceIdIfExists } from "./opendata/GetRessourceIdIfExists.ts";
 
-interface Context {
-  // Injected tokens
-  dataGouvProvider: DataGouvProvider;
-  buildResourceDescription: BuildResourceDescription;
-  config: ConfigInterfaceResolver;
-  getRessourceIdIfExists: GetRessourceIdIfExists;
+describe("publish open data", () => {
+  let dataGouvProvider: DataGouvProvider;
+  let buildResourceDescription: BuildResourceDescription;
+  let config: ConfigInterfaceResolver;
+  let getRessourceIdIfExists: GetRessourceIdIfExists;
+  let dataGouvProviderUpdateStub: sinon.SinonStub;
+  let buildResourceDescriptionStub: sinon.SinonStub;
+  let dataGouvProviderUploadDatasetResourceStub: sinon.SinonStub;
+  let dataGouvProviderUpdateDatasetResourceStub: sinon.SinonStub;
+  let getRessourceIdIfExistsStub: sinon.SinonStub;
+  let DATASET_SLUG: string;
+  let EXISTING_RESOURCE_ID: string;
+  let publishOpenDataAction: PublishOpenDataAction;
+  beforeAll(() => {
+    EXISTING_RESOURCE_ID = "83d3b230-37da-46e0-8ec7-2faee41b5904";
+    DATASET_SLUG = "dataset-slugs";
+  });
 
-  // Injected tokens method's stubs
-  dataGouvProviderUpdateStub: SinonStub;
-  buildResourceDescriptionStub: SinonStub;
-  dataGouvProviderUploadDatasetResourceStub: SinonStub;
-  dataGouvProviderUpdateDatasetResourceStub: SinonStub;
-  getRessourceIdIfExistsStub: SinonStub;
+  beforeEach(() => {
+    dataGouvProvider = new DataGouvProvider(null as any);
+    buildResourceDescription = new BuildResourceDescription(null as any);
+    getRessourceIdIfExists = new GetRessourceIdIfExists(null as any);
 
-  // Constants
-  DATASET_SLUG: string;
-  EXISTING_RESOURCE_ID: string;
+    publishOpenDataAction = new PublishOpenDataAction(
+      new (class extends ConfigInterfaceResolver {
+        get(k: string, c: any): any {
+          return DATASET_SLUG;
+        }
+      })() as any,
+      dataGouvProvider,
+      buildResourceDescription,
+      getRessourceIdIfExists,
+    );
 
-  // Tested token
-  publishOpenDataAction: PublishOpenDataAction;
-}
+    getRessourceIdIfExistsStub = sinon.stub(
+      getRessourceIdIfExists,
+      "call",
+    );
+    dataGouvProviderUploadDatasetResourceStub = sinon.stub(
+      dataGouvProvider,
+      "uploadDatasetResource",
+    );
+    dataGouvProviderUpdateDatasetResourceStub = sinon.stub(
+      dataGouvProvider,
+      "updateDatasetResource",
+    );
+    dataGouvProviderUpdateStub = sinon.stub(
+      dataGouvProvider,
+      "updateResource",
+    );
+    buildResourceDescriptionStub = sinon.stub(
+      buildResourceDescription,
+      "call",
+    );
+  });
 
-const test = anyTest as TestFn<Partial<Context>>;
+  afterEach(() => {
+    dataGouvProviderUpdateStub.restore();
+    buildResourceDescriptionStub.restore();
+  });
 
-beforeAll((t) => {
-  t.context.EXISTING_RESOURCE_ID = "83d3b230-37da-46e0-8ec7-2faee41b5904";
-  t.context.DATASET_SLUG = "dataset-slugs";
-});
+  it("PublishOpendataAction: should upload new opendata resource", async () => {
+    // Arrange
+    const params: ParamsInterface = {
+      filepath: "/tmp/2021-08.csv",
+      tripSearchQueryParam: {
+        status: "ok",
+        date: { start: new Date(), end: new Date() },
+      },
+      excludedTerritories: [{
+        start_geo_code: "1",
+        end_geo_code: "3",
+        aggregated_trips_journeys: ["trip1"],
+      }],
+    };
+    const datasetResource: UploadedResource = {
+      success: true,
+      type: "main",
+      filetype: "file",
+      format: "utf8",
+      url: faker.internet.url(),
+      title: "My resource",
+    };
+    const description: string = faker.lorem.words(600);
+    dataGouvProviderUploadDatasetResourceStub.resolves(
+      datasetResource,
+    );
+    buildResourceDescriptionStub.resolves(description);
+    getRessourceIdIfExistsStub.resolves(undefined);
 
-beforeEach((t) => {
-  t.context.dataGouvProvider = new DataGouvProvider(null);
-  t.context.buildResourceDescription = new BuildResourceDescription(null);
-  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null);
+    // Act
+    await publishOpenDataAction.handle(params, null as any);
 
-  t.context.publishOpenDataAction = new PublishOpenDataAction(
-    new (class extends ConfigInterfaceResolver {
-      get<T>(k: string, c: T): T {
-        return t.context.DATASET_SLUG as T;
-      }
-    })(),
-    t.context.dataGouvProvider,
-    t.context.buildResourceDescription,
-    t.context.getRessourceIdIfExists,
-  );
+    // Assert
+    sinon.assert.calledOnceWithExactly(
+      buildResourceDescriptionStub,
+      params.tripSearchQueryParam,
+      params.excludedTerritories,
+    );
+    sinon.assert.calledOnceWithExactly(
+      dataGouvProviderUploadDatasetResourceStub,
+      DATASET_SLUG,
+      params.filepath,
+    );
+    sinon.assert.notCalled(dataGouvProviderUpdateDatasetResourceStub);
+    sinon.assert.calledOnceWithExactly(
+      dataGouvProviderUpdateStub,
+      DATASET_SLUG,
+      {
+        ...datasetResource,
+        description,
+      },
+    );
+    sinon.assert.callOrder(
+      buildResourceDescriptionStub,
+      dataGouvProviderUploadDatasetResourceStub,
+      dataGouvProviderUpdateStub,
+    );
+    sinon.assert.calledOnceWithExactly(
+      getRessourceIdIfExistsStub,
+      DATASET_SLUG,
+      params.filepath,
+    );
+    assert(true);
+  });
 
-  t.context.getRessourceIdIfExistsStub = sinon.stub(
-    t.context.getRessourceIdIfExists,
-    "call",
-  );
-  t.context.dataGouvProviderUploadDatasetResourceStub = sinon.stub(
-    t.context.dataGouvProvider,
-    "uploadDatasetResource",
-  );
-  t.context.dataGouvProviderUpdateDatasetResourceStub = sinon.stub(
-    t.context.dataGouvProvider,
-    "updateDatasetResource",
-  );
-  t.context.dataGouvProviderUpdateStub = sinon.stub(
-    t.context.dataGouvProvider,
-    "updateResource",
-  );
-  t.context.buildResourceDescriptionStub = sinon.stub(
-    t.context.buildResourceDescription,
-    "call",
-  );
-});
+  it("PublishOpendataAction: should update existing opendata resource", async () => {
+    // Arrange
+    const params: ParamsInterface = {
+      filepath: "/tmp/2021-09.csv",
+      tripSearchQueryParam: {
+        status: "ok",
+        date: { start: new Date(), end: new Date() },
+      },
+      excludedTerritories: [{
+        start_geo_code: "1",
+        end_geo_code: "3",
+        aggregated_trips_journeys: ["trip1"],
+      }],
+    };
+    const datasetResource: UploadedResource = {
+      success: true,
+      type: "main",
+      filetype: "file",
+      format: "utf8",
+      url: faker.internet.url(),
+      title: "My resource",
+    };
+    const description: string = faker.lorem.words(600);
+    dataGouvProviderUpdateDatasetResourceStub.resolves(
+      datasetResource,
+    );
+    buildResourceDescriptionStub.resolves(description);
+    getRessourceIdIfExistsStub.resolves(
+      EXISTING_RESOURCE_ID,
+    );
 
-afterEach((t) => {
-  t.context.dataGouvProviderUpdateStub.restore();
-  t.context.buildResourceDescriptionStub.restore();
-});
+    // Act
+    await publishOpenDataAction.handle(params, null as any);
 
-it("PublishOpendataAction: should upload new opendata resource", async (t) => {
-  // Arrange
-  const params: ParamsInterface = {
-    filepath: "/tmp/2021-08.csv",
-    tripSearchQueryParam: {
-      status: "ok",
-      date: { start: new Date(), end: new Date() },
-    },
-    excludedTerritories: [{
-      start_geo_code: "1",
-      end_geo_code: "3",
-      aggregated_trips_journeys: ["trip1"],
-    }],
-  };
-  const datasetResource: UploadedResource = {
-    success: true,
-    type: "main",
-    filetype: "file",
-    format: "utf8",
-    url: faker.internet.url(),
-    title: "My resource",
-  };
-  const description: string = faker.lorem.words(600);
-  t.context.dataGouvProviderUploadDatasetResourceStub.resolves(datasetResource);
-  t.context.buildResourceDescriptionStub.resolves(description);
-  t.context.getRessourceIdIfExistsStub.resolves(undefined);
-
-  // Act
-  await t.context.publishOpenDataAction.handle(params, null);
-
-  // Assert
-  sinon.assert.calledOnceWithExactly(
-    t.context.buildResourceDescriptionStub,
-    params.tripSearchQueryParam,
-    params.excludedTerritories,
-  );
-  sinon.assert.calledOnceWithExactly(
-    t.context.dataGouvProviderUploadDatasetResourceStub,
-    t.context.DATASET_SLUG,
-    params.filepath,
-  );
-  sinon.assert.notCalled(t.context.dataGouvProviderUpdateDatasetResourceStub);
-  sinon.assert.calledOnceWithExactly(
-    t.context.dataGouvProviderUpdateStub,
-    t.context.DATASET_SLUG,
-    {
-      ...datasetResource,
-      description,
-    },
-  );
-  sinon.assert.callOrder(
-    t.context.buildResourceDescriptionStub,
-    t.context.dataGouvProviderUploadDatasetResourceStub,
-    t.context.dataGouvProviderUpdateStub,
-  );
-  sinon.assert.calledOnceWithExactly(
-    t.context.getRessourceIdIfExistsStub,
-    t.context.DATASET_SLUG,
-    params.filepath,
-  );
-  t.pass();
-});
-
-it("PublishOpendataAction: should update existing opendata resource", async (t) => {
-  // Arrange
-  const params: ParamsInterface = {
-    filepath: "/tmp/2021-09.csv",
-    tripSearchQueryParam: {
-      status: "ok",
-      date: { start: new Date(), end: new Date() },
-    },
-    excludedTerritories: [{
-      start_geo_code: "1",
-      end_geo_code: "3",
-      aggregated_trips_journeys: ["trip1"],
-    }],
-  };
-  const datasetResource: UploadedResource = {
-    success: true,
-    type: "main",
-    filetype: "file",
-    format: "utf8",
-    url: faker.internet.url(),
-    title: "My resource",
-  };
-  const description: string = faker.lorem.words(600);
-  t.context.dataGouvProviderUpdateDatasetResourceStub.resolves(datasetResource);
-  t.context.buildResourceDescriptionStub.resolves(description);
-  t.context.getRessourceIdIfExistsStub.resolves(t.context.EXISTING_RESOURCE_ID);
-
-  // Act
-  await t.context.publishOpenDataAction.handle(params, null);
-
-  // Assert
-  sinon.assert.calledOnceWithExactly(
-    t.context.buildResourceDescriptionStub,
-    params.tripSearchQueryParam,
-    params.excludedTerritories,
-  );
-  sinon.assert.notCalled(t.context.dataGouvProviderUploadDatasetResourceStub);
-  sinon.assert.calledOnceWithExactly(
-    t.context.dataGouvProviderUpdateDatasetResourceStub,
-    t.context.DATASET_SLUG,
-    params.filepath,
-    t.context.EXISTING_RESOURCE_ID,
-  );
-  sinon.assert.calledOnceWithExactly(
-    t.context.dataGouvProviderUpdateStub,
-    t.context.DATASET_SLUG,
-    {
-      ...datasetResource,
-      description,
-    },
-  );
-  sinon.assert.callOrder(
-    t.context.buildResourceDescriptionStub,
-    t.context.dataGouvProviderUpdateDatasetResourceStub,
-    t.context.dataGouvProviderUpdateStub,
-  );
-  sinon.assert.calledOnceWithExactly(
-    t.context.getRessourceIdIfExistsStub,
-    t.context.DATASET_SLUG,
-    params.filepath,
-  );
-  t.pass();
+    // Assert
+    sinon.assert.calledOnceWithExactly(
+      buildResourceDescriptionStub,
+      params.tripSearchQueryParam,
+      params.excludedTerritories,
+    );
+    sinon.assert.notCalled(dataGouvProviderUploadDatasetResourceStub);
+    sinon.assert.calledOnceWithExactly(
+      dataGouvProviderUpdateDatasetResourceStub,
+      DATASET_SLUG,
+      params.filepath,
+      EXISTING_RESOURCE_ID,
+    );
+    sinon.assert.calledOnceWithExactly(
+      dataGouvProviderUpdateStub,
+      DATASET_SLUG,
+      {
+        ...datasetResource,
+        description,
+      },
+    );
+    sinon.assert.callOrder(
+      buildResourceDescriptionStub,
+      dataGouvProviderUpdateDatasetResourceStub,
+      dataGouvProviderUpdateStub,
+    );
+    sinon.assert.calledOnceWithExactly(
+      getRessourceIdIfExistsStub,
+      DATASET_SLUG,
+      params.filepath,
+    );
+    assert(true);
+  });
 });
