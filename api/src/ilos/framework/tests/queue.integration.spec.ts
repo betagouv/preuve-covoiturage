@@ -1,10 +1,4 @@
-import {
-  kernel as kernelDecorator,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
-import { RedisConnection } from "@/ilos/connection-redis/index.ts";
-import { HttpTransport } from "@/ilos/transport-http/index.ts";
-import { QueueTransport } from "@/ilos/transport-redis/index.ts";
+import { axios, fs, os, path, process } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -14,12 +8,20 @@ import {
   getAvailablePort,
   it,
 } from "@/dev_deps.ts";
-import { axios } from "@/deps.ts";
-import { fs, os, path, process } from "@/deps.ts";
+import {
+  kernel as kernelDecorator,
+  serviceProvider,
+} from "@/ilos/common/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { HttpTransport } from "@/ilos/transport-http/index.ts";
+import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { Kernel } from "../Kernel.ts";
 import { ServiceProvider as ParentStringServiceProvider } from "./mock/StringService/ServiceProvider.ts";
 
-describe("queue", () => {
+/**
+ * @fixme SKIP due to timeout leak in bullMQ
+ */
+describe.skip("queue", () => {
   const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
   process.env.APP_LOG_PATH = logPath;
 
