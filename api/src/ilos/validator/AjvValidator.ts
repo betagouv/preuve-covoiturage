@@ -126,7 +126,7 @@ export class AjvValidator implements ValidatorInterface {
     return errors.map((error) => `${error.instancePath}: ${error.message}`);
   }
 
-  async validate(data: any, schema?: string): Promise<boolean> {
+  async validate(data: object, schema?: string): Promise<boolean> {
     const resolver = schema ? schema : data.constructor;
 
     if (!this.bindings.has(resolver)) {
