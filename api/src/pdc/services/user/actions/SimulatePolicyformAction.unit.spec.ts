@@ -1,12 +1,13 @@
 import {
   afterEach,
   assert,
-  assertThrows,
+  assertRejects,
+  beforeEach,
   describe,
   it,
   sinon,
 } from "@/dev_deps.ts";
-import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
   signature as simulateOnPastGeoSignature,
   SimulateOnPastGeoRequiredParams,
@@ -16,24 +17,6 @@ import { UserNotificationProvider } from "../providers/UserNotificationProvider.
 import { SimulatePolicyformAction } from "./SimulatePolicyformAction.ts";
 
 describe("simulate policy form", () => {
-  interface Context {
-    // Injected tokens
-    fakeKernelInterfaceResolver: KernelInterfaceResolver;
-    userNotificationProvider: UserNotificationProvider;
-
-    // Injected tokens method's stubs
-    kernelInterfaceResolverStub: sinon.SinonStub<
-      [method: string, params: any, context: ContextType]
-    >;
-    userNotificationProviderStub: sinon.SinonStub;
-
-    // Tested token
-    simulatePolicyformAction: SimulatePolicyformAction;
-
-    // Constants
-    SIMULATE_ON_PAST_BY_GEO_ACTION_CONTEXT: any;
-  }
-
   const fakeKernelInterfaceResolver =
     new (class extends KernelInterfaceResolver {})();
   const userNotificationProvider = new UserNotificationProvider(
@@ -47,15 +30,6 @@ describe("simulate policy form", () => {
     userNotificationProvider,
   );
 
-  const kernelInterfaceResolverStub = sinon.stub(
-    fakeKernelInterfaceResolver,
-    "call",
-  );
-  const userNotificationProviderStub = sinon.stub(
-    userNotificationProvider,
-    "simulationEmail",
-  );
-
   const SIMULATE_ON_PAST_BY_GEO_ACTION_CONTEXT = {
     call: {
       user: {},
@@ -64,9 +38,23 @@ describe("simulate policy form", () => {
       service: "user",
     },
   };
+  let kernelInterfaceResolverStub: any;
+  let userNotificationProviderStub: any;
+
+  beforeEach(() => {
+    kernelInterfaceResolverStub = sinon.stub(
+      fakeKernelInterfaceResolver,
+      "call",
+    );
+    userNotificationProviderStub = sinon.stub(
+      userNotificationProvider,
+      "simulationEmail",
+    );
+  });
 
   afterEach(() => {
     kernelInterfaceResolverStub!.restore();
+    userNotificationProviderStub.restore();
   });
 
   it("SimulatePolicyformAction: should fail and return geo error if error in SimulateOnPastByGeoAction", async () => {
@@ -76,7 +64,7 @@ describe("simulate policy form", () => {
     );
 
     // Act
-    await assertThrows(
+    await assertRejects(
       async () =>
         await simulatePolicyformAction!.handle({
           name: "",

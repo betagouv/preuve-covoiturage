@@ -1,47 +1,28 @@
 import {
-  afterAll,
-  afterEach,
   assert,
   assertEquals,
-  assertFalse,
   assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
   it,
+  sinon,
 } from "@/dev_deps.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { ProcessJourneyAction } from "./ProcessJourneyAction.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
+import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { ProcessJourneyAction } from "./ProcessJourneyAction.ts";
 
+import { signature } from "@/shared/carpool/crosscheck.contract.ts";
+import { callContext } from "../config/callContext.ts";
 import {
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
 } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
-import { signature } from "@/shared/carpool/crosscheck.contract.ts";
-import { callContext } from "../config/callContext.ts";
 
 function bootstrap(): {
   action: ProcessJourneyAction;
-  repository: SinonStubbedInstance<AcquisitionRepositoryProvider>;
-  kernel: SinonStubbedInstance<KernelInterfaceResolver>;
-  normalizer: SinonStubbedInstance<NormalizationProvider>;
+  repository: sinon.SinonStubbedInstance<AcquisitionRepositoryProvider>;
+  kernel: sinon.SinonStubbedInstance<KernelInterfaceResolver>;
+  normalizer: sinon.SinonStubbedInstance<NormalizationProvider>;
 } {
   const repository = sinon.createStubInstance(AcquisitionRepositoryProvider);
   const kernel = sinon.createStubInstance(KernelInterfaceResolver);
@@ -60,7 +41,7 @@ function bootstrap(): {
   return { action, repository, kernel, normalizer };
 }
 
-it("should process if normalization ok", async (t) => {
+it("should process if normalization ok", async () => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: "data" } as any;
   normalizer.handle.resolves(normalizedPayload);
@@ -99,11 +80,11 @@ it("should process if normalization ok", async (t) => {
   }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } =
     kernel.call
       .getCalls()
-      .map((c) => c.args)
+      .map((c: any) => c.args)
       .reduce(
         (
-          { kernelSignature, kernelParams, kernelContext },
-          [signature, params, context],
+          { kernelSignature, kernelParams, kernelContext }: any,
+          [signature, params, context]: [string, unknown, unknown],
         ) => {
           kernelParams.push(params as never);
           kernelContext = context;
@@ -114,7 +95,7 @@ it("should process if normalization ok", async (t) => {
       );
   assertEquals(kernelSignature, signature);
   assertObjectMatch(kernelContext, callContext);
-  assertObjectMatch(kernelParams, [normalizedPayload]);
+  assertEquals(kernelParams, [normalizedPayload]);
   assert(updateCallbackStub.calledOnce);
   assert(commitCallbackStub.calledOnce);
   const cbParams = updateCallbackStub.getCall(0).args[0];
@@ -124,11 +105,11 @@ it("should process if normalization ok", async (t) => {
   });
 });
 
-it("should fail if normalization fail", async (t) => {
+it("should fail if normalization fail", async () => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: "data" } as any;
   const normalizationError = new Error("normalization");
-  normalizer.handle.callsFake(async (data) => {
+  normalizer.handle.callsFake(async (data: any) => {
     if (data._id === 1) {
       return normalizedPayload;
     }
@@ -176,11 +157,11 @@ it("should fail if normalization fail", async (t) => {
   }: { kernelContext: any; kernelParams: any[]; kernelSignature: string } =
     kernel.call
       .getCalls()
-      .map((c) => c.args)
+      .map((c: any) => c.args)
       .reduce(
         (
-          { kernelSignature, kernelParams, kernelContext },
-          [signature, params, context],
+          { kernelSignature, kernelParams, kernelContext }: any,
+          [signature, params, context]: any,
         ) => {
           kernelParams.push(params as never);
           kernelContext = context;
@@ -191,9 +172,9 @@ it("should fail if normalization fail", async (t) => {
       );
   assertEquals(kernelSignature, signature);
   assertObjectMatch(kernelContext, callContext);
-  assertObjectMatch(kernelParams, [normalizedPayload]);
-  const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
-  assertObjectMatch(calls, [
+  assertEquals(kernelParams, [normalizedPayload]);
+  const calls = updateCallbackStub.getCalls().map((c: any) => c.args[0]);
+  assertEquals(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,
@@ -207,15 +188,15 @@ it("should fail if normalization fail", async (t) => {
   ]);
 });
 
-it("should fail if carpool fail", async (t) => {
+it("should fail if carpool fail", async () => {
   const { action, repository, normalizer, kernel } = bootstrap();
   const normalizedPayload = { normalized: "data" } as any;
-  normalizer.handle.callsFake((data) => ({
+  normalizer.handle.callsFake((data: any) => ({
     ...normalizedPayload,
     acquisition_id: data._id,
   }));
   const kernelError = new Error("Boum");
-  kernel.call.callsFake(async (_method, params: any) => {
+  kernel.call.callsFake(async (_method: string, params: any) => {
     if (params.acquisition_id === 2) {
       throw kernelError;
     }
@@ -255,8 +236,8 @@ it("should fail if carpool fail", async (t) => {
   };
   await action.call(inputData);
 
-  const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
-  assertObjectMatch(calls, [
+  const calls = updateCallbackStub.getCalls().map((c: any) => c.args[0]);
+  assertEquals(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,

@@ -1,35 +1,17 @@
 import {
+  assert,
+  assertEquals,
+  assertObjectMatch,
+  assertRejects,
+  it,
+  sinon,
+} from "@/dev_deps.ts";
+import {
   InvalidParamsException,
   ParseErrorException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import {
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
@@ -39,8 +21,8 @@ import { CreateJourneyAction } from "./CreateJourneyAction.ts";
 
 function bootstrap(): {
   action: CreateJourneyAction;
-  repository: SinonStubbedInstance<AcquisitionRepositoryProvider>;
-  validator: SinonStubbedInstance<ValidatorInterfaceResolver>;
+  repository: sinon.SinonStubbedInstance<AcquisitionRepositoryProvider>;
+  validator: sinon.SinonStubbedInstance<ValidatorInterfaceResolver>;
 } {
   const repository = sinon.createStubInstance(AcquisitionRepositoryProvider);
   const validator = sinon.createStubInstance(ValidatorInterfaceResolver);
@@ -50,7 +32,7 @@ function bootstrap(): {
   return { action, repository, validator };
 }
 
-it("should return repository data if validator not fail", async (t) => {
+it("should return repository data if validator not fail", async () => {
   const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = "1";
@@ -79,7 +61,7 @@ it("should return repository data if validator not fail", async (t) => {
   assertObjectMatch(result, { operator_journey_id, created_at });
   const { api_version, ...payload } = inputData.params;
   assert(validator.validate.calledOnceWith(payload));
-  assertObjectMatch(repository.createOrUpdateMany.getCalls().pop().args.pop(), [
+  assertEquals(repository.createOrUpdateMany.getCalls().pop().args.pop(), [
     {
       payload,
       operator_id: 2,
@@ -91,7 +73,7 @@ it("should return repository data if validator not fail", async (t) => {
   ]);
 });
 
-it("should fail if validator fail", async (t) => {
+it("should fail if validator fail", async () => {
   const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = "1";
@@ -118,7 +100,7 @@ it("should fail if validator fail", async (t) => {
       },
     },
   };
-  await assertThrows(async () => await action.call(inputData));
+  await assertRejects(async () => await action.call(inputData));
   const { api_version, ...payload } = inputData.params;
   assert(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
@@ -132,12 +114,12 @@ it("should fail if validator fail", async (t) => {
     request_id: "request_id",
     status: AcquisitionStatusEnum.Error,
   };
-  assertObjectMatch(repository.createOrUpdateMany.getCalls().pop().args.pop(), [
+  assertEquals(repository.createOrUpdateMany.getCalls().pop().args.pop(), [
     repositoryAssertArgs,
   ]);
 });
 
-it("should fail if date validation fail", async (t) => {
+it("should fail if date validation fail", async () => {
   const { action, repository, validator } = bootstrap();
   const created_at = new Date();
   const operator_journey_id = "1";
@@ -165,7 +147,7 @@ it("should fail if date validation fail", async (t) => {
       },
     },
   };
-  await assertThrows(async () => await action.call(inputData));
+  await assertRejects(async () => await action.call(inputData));
   const { api_version, ...payload } = inputData.params;
   assert(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
@@ -181,10 +163,10 @@ it("should fail if date validation fail", async (t) => {
   };
   const repositoryArgs = repository.createOrUpdateMany.getCall(0).args[0];
   assert(repository.createOrUpdateMany.calledOnce);
-  assertObjectMatch(repositoryArgs, [repositoryAssertArgs]);
+  assertEquals(repositoryArgs, [repositoryAssertArgs]);
 });
 
-it("should fail if journey already registred", async (t) => {
+it("should fail if journey already registred", async () => {
   const { action, repository, validator } = bootstrap();
   const operator_journey_id = "1";
   repository.createOrUpdateMany.resolves([]);
@@ -207,7 +189,7 @@ it("should fail if journey already registred", async (t) => {
       },
     },
   };
-  await assertThrows(async () => await action.call(inputData));
+  await assertRejects(async () => await action.call(inputData));
   const { api_version, ...payload } = inputData.params;
   assert(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
@@ -220,5 +202,5 @@ it("should fail if journey already registred", async (t) => {
   };
   const repositoryArgs = repository.createOrUpdateMany.getCall(0).args[0];
   assert(repository.createOrUpdateMany.calledOnce);
-  assertObjectMatch(repositoryArgs, [repositoryAssertArgs]);
+  assertEquals(repositoryArgs, [repositoryAssertArgs]);
 });
