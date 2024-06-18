@@ -1,4 +1,4 @@
-import { fs, isMainThread, path, pino, process } from "@/deps.ts";
+import { pino, process } from "@/deps.ts";
 import { CliTransport } from "@/ilos/cli/index.ts";
 import {
   BootstrapType,
@@ -52,42 +52,11 @@ export class Bootstrap {
     this.transports = bootstrapObject.transport;
   }
 
-  static getWorkingPath(): string {
-    return process.cwd();
-  }
-
-  static setPaths(): void {
-    process.env.APP_ROOT_PATH = process.cwd();
-    const workingPath = Bootstrap.getWorkingPath();
-    // process.chdir is unavailable on child thread
-    if (
-      fs.existsSync(workingPath) && workingPath !== process.cwd() &&
-      isMainThread
-    ) {
-      process.chdir(workingPath);
-    }
-    process.env.APP_WORKING_PATH = process.cwd();
-  }
-
   static setEnv(): void {
     process.env.APP_ENV =
       "NODE_ENV" in process.env && process.env.NODE_ENV !== undefined
         ? process.env.NODE_ENV
         : "local";
-  }
-
-  static setEnvFromPackage(): void {
-    // Define config from npm package
-    Reflect.ownKeys(process.env)
-      .filter((key) => /npm_package_config_app/.test(String(key)))
-      .forEach((key) => {
-        const oldKey = String(key);
-        const newKey = String(key).replace("npm_package_config_", "")
-          .toUpperCase(); // FIXME
-        if (!(newKey in process.env)) {
-          process.env[newKey] = process.env[oldKey];
-        }
-      });
   }
 
   /**
@@ -106,34 +75,8 @@ export class Bootstrap {
     interceptConsole(logger);
   }
 
-  static getBootstrapFilePath(): string {
-    const basePath = Bootstrap.getWorkingPath();
-    const bootstrapFile = "./bootstrap.js";
-    const bootstrapPath = path.resolve(basePath, bootstrapFile);
-
-    if (!fs.existsSync(bootstrapPath)) {
-      throw new Error(`No bootstrap file provided: ${bootstrapPath}`);
-    }
-
-    return bootstrapPath;
-  }
-
   static create(bootstrapObject: BootstrapType): Bootstrap {
     return new Bootstrap(bootstrapObject);
-  }
-
-  static async createFromPath(
-    bootstrapPath: string = Bootstrap.getBootstrapFilePath(),
-  ): Promise<Bootstrap> {
-    if (bootstrapPath) {
-      const currentBootstrap = await import(bootstrapPath);
-      const exportName = path.parse(bootstrapPath).name;
-      if (exportName in currentBootstrap) {
-        return currentBootstrap[exportName];
-      }
-    }
-
-    throw new Error(`Unable to load bootstrap file ${bootstrapPath}`);
   }
 
   async start(
@@ -143,6 +86,7 @@ export class Bootstrap {
       | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
+    let shouldBeKilled = false;
     let options = [...opts];
 
     const kernelConstructor = this.kernel();
@@ -184,6 +128,7 @@ export class Bootstrap {
     } else {
       transport = this.transports.cli(kernelInstance);
       options = ["", "", !command ? "--help" : command, ...opts];
+      shouldBeKilled = true;
     }
 
     this.registerShutdownHook(kernelInstance, transport);
@@ -191,6 +136,11 @@ export class Bootstrap {
     console.debug("Transport: starting");
     await transport.up(options);
     console.debug("Transport: started");
+
+    if (shouldBeKilled) {
+      await transport.down();
+      await kernelInstance.shutdown();
+    }
 
     return transport;
   }
@@ -209,14 +159,15 @@ export class Bootstrap {
     ]);
   }
 
-  async boot(command: string | undefined, ...opts: any[]) {
+  async boot(
+    command: string | undefined,
+    ...opts: any[]
+  ): Promise<TransportInterface> {
     Bootstrap.interceptConsole();
     console.info("Bootstraping app...");
 
-    Bootstrap.setPaths();
     Bootstrap.setEnv();
-    Bootstrap.setEnvFromPackage();
 
-    return this.start(command, ...opts);
+    return await this.start(command, ...opts);
   }
 }

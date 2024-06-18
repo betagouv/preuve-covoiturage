@@ -104,4 +104,8 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       throw new Error("An error occured");
     }
   }
+
+  public async destroy() {
+    await this.client?.close();
+  }
 }

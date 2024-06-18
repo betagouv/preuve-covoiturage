@@ -65,8 +65,6 @@ export class PostgresConnection
       idle_in_transaction_session_timeout: timeout,
       ...config,
     });
-
-    console.debug("[pg] connect to", this.database);
   }
 
   /**
@@ -82,6 +80,7 @@ export class PostgresConnection
 
   async up(): Promise<void> {
     await this.pool.query("SELECT NOW()");
+    console.debug("[pg] connect to", this.database);
   }
 
   async destroy(): Promise<void> {

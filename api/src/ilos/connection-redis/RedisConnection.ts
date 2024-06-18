@@ -46,7 +46,7 @@ export class RedisConnection
 
   async down() {
     if (this.connected) {
-      this.getClient().disconnect();
+      await this.getClient().quit();
     }
   }
 
