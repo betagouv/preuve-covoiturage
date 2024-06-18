@@ -9,7 +9,7 @@ export async function getAllFiles(
   for await (const file of files) {
     const filepath = join(baseDirectory, file);
     const filestat = await stat(filepath);
-    if (filestaassertEqualsDirectory()) {
+    if (filestat.isDirectory()) {
       await getAllFiles(filepath, extensions, setOfFiles);
     } else if (extensions.indexOf(extname(filepath)) >= 0) {
       setOfFiles.add(filepath);

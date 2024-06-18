@@ -4,15 +4,15 @@ import {
   PgClient,
   PgPool,
   process,
-  readdirAsync,
-  readFileSync,
+  readdir,
+  readFile,
 } from "@/deps.ts";
 import { buildMigrator } from "@/etl/index.ts";
 
 const __dirname = import.meta.dirname || "";
 
 async function getPossibleMigrationsFilePath(): Promise<Map<string, string>> {
-  const files = await readdirAsync(join(__dirname, "migrations"));
+  const files = await readdir(join(__dirname, "migrations"));
   return new Map(
     files.filter((f: string) => extname(f) === ".sql").map((
       f: string,
@@ -48,7 +48,7 @@ async function runMigrations(config: string) {
     if (!filepath) {
       continue;
     }
-    const sql: string = readFileSync(filepath, "utf8");
+    const sql: string = await readFile(filepath, "utf8");
     const transaction = conn.createTransaction(
       `migration-${td.substring(1)}`,
     );

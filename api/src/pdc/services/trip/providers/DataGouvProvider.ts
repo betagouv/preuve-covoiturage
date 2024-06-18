@@ -3,7 +3,7 @@ import {
   AxiosInstance,
   createReadStream,
   FormData,
-  statSync,
+  stat,
 } from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import {
@@ -52,7 +52,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
   ): Promise<UploadedResource> {
     const form = new FormData();
     form.append("file", createReadStream(filepath), {
-      knownLength: statSync(filepath).size,
+      knownLength: (await stat(filepath)).size,
     });
     const response = await this.client.post<UploadedResource>(
       `/datasets/${slug}/upload/`,
@@ -76,7 +76,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
   ): Promise<UploadedResource> {
     const form = new FormData();
     form.append("file", createReadStream(filepath), {
-      knownLength: statSync(filepath).size,
+      knownLength: (await stat(filepath)).size,
     });
     const response = await this.client.post<UploadedResource>(
       `/datasets/${slug}/resources/${resourceId}/upload/`,

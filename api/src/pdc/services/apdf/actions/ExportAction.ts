@@ -4,7 +4,7 @@ import {
   fromZonedTime,
   startOfMonth,
   subMonths,
-  unlinkSync,
+  unlink,
 } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
@@ -144,7 +144,7 @@ export class ExportAction extends Action {
 
               // maybe delete the file
               try {
-                unlinkSync(filepath);
+                unlink(filepath);
               } catch (e) {
                 console.warn(`Failed to unlink ${filepath}`);
               }

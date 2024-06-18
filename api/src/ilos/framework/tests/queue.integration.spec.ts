@@ -1,4 +1,4 @@
-import { axios, os, path, process, readFileSync } from "@/deps.ts";
+import { axios, os, path, process, readFile } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -106,7 +106,7 @@ describe.skip("queue", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    const content = readFileSync(logPath, { encoding: "utf8", flag: "r" });
+    const content = await readFile(logPath, { encoding: "utf8", flag: "r" });
     console.info("reading file content", { content });
     assertEquals(content, JSON.stringify(data));
   });

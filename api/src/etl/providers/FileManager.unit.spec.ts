@@ -4,8 +4,8 @@ import {
   join,
   mkdir,
   Readable,
-  readFileSync,
-  rmSync,
+  readFile,
+  rm,
 } from "@/deps.ts";
 import {
   afterAll,
@@ -28,13 +28,13 @@ describe("File Manager", () => {
   let READABLE_STREAM: Readable;
   let fileManager: FileManager;
 
-  afterAll(() => {
-    rmSync(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
+  afterAll(async () => {
+    await rm(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
     axiosStub.restore();
   });
 
-  beforeEach(() => {
-    rmSync(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
+  beforeEach(async () => {
+    await rm(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
 
     fileManager = new FileManager({
       basePath: GEO_PERIMETER_TMP_DIR,
@@ -65,7 +65,7 @@ describe("File Manager", () => {
 
     // Assert
     sinon.assert.notCalled(axiosStub);
-    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
   });
 
   it("should download ressource url if not on fs", async () => {
@@ -83,7 +83,7 @@ describe("File Manager", () => {
       RESSOURCE_URL,
       { responseType: "stream" },
     );
-    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
   });
 
   it("should fallback to miror if any error code with download ressource", async () => {
@@ -118,6 +118,6 @@ describe("File Manager", () => {
           },
         ),
     );
-    assertEquals(readFileSync(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
   });
 });

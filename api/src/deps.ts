@@ -13,19 +13,17 @@ export {
   constants as fsConstants,
   createReadStream,
   createWriteStream,
-  readdir,
   readFileSync,
-  rmSync,
-  stat,
-  statSync,
-  unlinkSync,
 } from "node:fs";
 export {
   access,
   mkdir,
   open,
-  readdir as readdirAsync,
+  readdir,
   readFile,
+  rm,
+  stat,
+  unlink,
   writeFile,
 } from "node:fs/promises";
 export type { FileHandle } from "node:fs/promises";

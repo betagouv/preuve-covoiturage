@@ -1,4 +1,4 @@
-import { _, AdmZip, os, path, unlinkSync } from "@/deps.ts";
+import { _, AdmZip, os, path, unlink } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -295,8 +295,8 @@ export class BuildExportAction extends Action {
       zippath,
       zipname,
     );
-    this.removeFromFs(filepath);
-    this.removeFromFs(zippath);
+    await this.removeFromFs(filepath);
+    await this.removeFromFs(zippath);
     return fileKey;
   }
 
@@ -310,7 +310,7 @@ export class BuildExportAction extends Action {
       excluded_territories,
       filepath,
     );
-    this.removeFromFs(filepath);
+    await this.removeFromFs(filepath);
     return filepath;
   }
 
@@ -323,8 +323,8 @@ export class BuildExportAction extends Action {
     return { zippath, zipname };
   }
 
-  private removeFromFs(filepath: string) {
-    unlinkSync(filepath);
+  private async removeFromFs(filepath: string) {
+    await unlink(filepath);
   }
 
   private addExcludedTerritoriesToQueryParams(
