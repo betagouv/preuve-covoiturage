@@ -1,8 +1,8 @@
 import { migrate } from "@/db/index.ts";
 import {
   addDate,
+  createReadStream,
   CsvOptions as ParseOptions,
-  fs,
   parse,
   path,
   URL,
@@ -175,7 +175,7 @@ export class Migrator {
     options: ParseOptions = {},
   ): AsyncIterator<P> {
     const filepath = path.join(import.meta.dirname!, filename);
-    const parser = fs.createReadStream(filepath).pipe(
+    const parser = createReadStream(filepath).pipe(
       parse({
         cast: (v: any) => (v === "" ? null : v),
         ...options,

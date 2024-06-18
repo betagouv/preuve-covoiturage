@@ -1,16 +1,25 @@
+import {
+  FileHandle,
+  fsConstants,
+  open,
+  os,
+  path,
+  Stringifier,
+  stringify,
+  v4,
+} from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { fs, os, path, Stringifier, stringify, v4 } from "@/deps.ts";
+import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import {
+  FormatInterface,
+  ParamsInterface,
+} from "@/shared/trip/buildExport.contract.ts";
 import { getOpenDataExportName } from "../../helpers/getOpenDataExportName.ts";
 import {
   normalizeExport,
   normalizeOpendata,
 } from "../../helpers/normalizeExportDataHelper.ts";
 import { ExportTripInterface } from "../../interfaces/index.ts";
-import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
-import {
-  FormatInterface,
-  ParamsInterface,
-} from "@/shared/trip/buildExport.contract.ts";
 import { BuildExportAction } from "../BuildExportAction.ts";
 
 @provider()
@@ -26,7 +35,7 @@ export class BuildFile {
     // CSV file
     const { filename, tz } = this.cast(params.type, params, date);
     const filepath = path.join(os.tmpdir(), filename);
-    const fd = await fs.promises.open(filepath, "a");
+    const fd = await open(filepath, fsConstants.O_APPEND);
 
     // Transform data
     const stringifier = this.configure(fd, params.type);
@@ -72,7 +81,7 @@ export class BuildFile {
   }
 
   private configure(
-    fd: fs.promises.FileHandle,
+    fd: FileHandle,
     type = "opendata",
   ): Stringifier {
     const stringifier = stringify({

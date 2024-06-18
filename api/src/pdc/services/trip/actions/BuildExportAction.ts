@@ -1,3 +1,4 @@
+import { _, AdmZip, os, path, unlinkSync } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -9,15 +10,6 @@ import {
   BucketName,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
-import { AdmZip, fs } from "@/deps.ts";
-import { _ } from "@/deps.ts";
-import { os, path } from "@/deps.ts";
-import {
-  endOfPreviousMonthDate,
-  startOfPreviousMonthDate,
-} from "../helpers/getDefaultDates.ts";
-import { ExportTripInterface } from "../interfaces/index.ts";
-import { TripRepositoryProvider } from "../providers/TripRepositoryProvider.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import {
   handlerConfig,
@@ -32,6 +24,12 @@ import {
   signature as publishOpenDataSignature,
 } from "@/shared/trip/publishOpenData.contract.ts";
 import { ExportType } from "@/shared/trip/sendExport.contract.ts";
+import {
+  endOfPreviousMonthDate,
+  startOfPreviousMonthDate,
+} from "../helpers/getDefaultDates.ts";
+import { ExportTripInterface } from "../interfaces/index.ts";
+import { TripRepositoryProvider } from "../providers/TripRepositoryProvider.ts";
 import { BuildFile } from "./file/BuildFile.ts";
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
@@ -326,7 +324,7 @@ export class BuildExportAction extends Action {
   }
 
   private removeFromFs(filepath: string) {
-    fs.unlinkSync(filepath);
+    unlinkSync(filepath);
   }
 
   private addExcludedTerritoriesToQueryParams(

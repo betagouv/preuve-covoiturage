@@ -1,5 +1,4 @@
 // @deno-types="npm:@types/node@^20"
-import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
@@ -11,20 +10,25 @@ import "npm:reflect-metadata@^0.2";
 export { Console } from "node:console";
 export { createHash, randomBytes } from "node:crypto";
 export {
+  constants as fsConstants,
   createReadStream,
   createWriteStream,
   readdir,
   readFileSync,
   rmSync,
   stat,
+  statSync,
+  unlinkSync,
 } from "node:fs";
 export {
   access,
   mkdir,
+  open,
   readdir as readdirAsync,
   readFile,
   writeFile,
 } from "node:fs/promises";
+export type { FileHandle } from "node:fs/promises";
 export { hostname, tmpdir } from "node:os";
 export { basename, extname, join } from "node:path";
 export { URL, URLSearchParams } from "node:url";
@@ -37,6 +41,10 @@ export { Redis } from "npm:ioredis@^5.3";
 export type { RedisKey, RedisOptions } from "npm:ioredis@^5.3";
 // @deno-types="npm:@types/pg@^8.11"
 import pg from "npm:pg@^8.12";
+export { Readable } from "node:stream";
+export { createGunzip } from "node:zlib";
+export { AxiosError } from "npm:axios@^1.7";
+export type { AxiosInstance } from "npm:axios@^1.7";
 // @deno-types="npm:@types/pg@^8.11"
 export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
 // @deno-types="npm:@types/pg-cursor@^2.7"
@@ -45,10 +53,6 @@ import pino from "npm:pino@^9.1";
 // @deno-types="npm:@types/pg-cursor@^2.7"
 export type { CursorQueryConfig } from "npm:pg-cursor@^2.11";
 // @deno-types="npm:@types/express@^4"
-export { Readable } from "node:stream";
-export { createGunzip } from "node:zlib";
-export { AxiosError } from "npm:axios@^1.7";
-export type { AxiosInstance } from "npm:axios@^1.7";
 export type {
   NextFunction,
   Request,
@@ -171,7 +175,6 @@ import bodyParser from "npm:body-parser@^1.20";
 import RedisStore from "npm:connect-redis@^7.1";
 import expressMung from "npm:express-mung@^0.5";
 import rateLimit from "npm:express-rate-limit@^7.3";
-
 export {
   Client as PgClient,
   Pool as PgPool,
@@ -233,7 +236,6 @@ export {
   expressSession,
   extractZip,
   FormData,
-  fs,
   Handlebars,
   helmet,
   http,

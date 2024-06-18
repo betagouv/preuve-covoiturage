@@ -1,5 +1,11 @@
+import {
+  axios,
+  AxiosInstance,
+  createReadStream,
+  FormData,
+  statSync,
+} from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { axios, AxiosInstance, FormData, fs } from "@/deps.ts";
 import {
   DataGouvProviderInterface,
   Dataset,
@@ -45,8 +51,8 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     filepath: string,
   ): Promise<UploadedResource> {
     const form = new FormData();
-    form.append("file", fs.createReadStream(filepath), {
-      knownLength: fs.statSync(filepath).size,
+    form.append("file", createReadStream(filepath), {
+      knownLength: statSync(filepath).size,
     });
     const response = await this.client.post<UploadedResource>(
       `/datasets/${slug}/upload/`,
@@ -69,8 +75,8 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     resourceId: string,
   ): Promise<UploadedResource> {
     const form = new FormData();
-    form.append("file", fs.createReadStream(filepath), {
-      knownLength: fs.statSync(filepath).size,
+    form.append("file", createReadStream(filepath), {
+      knownLength: statSync(filepath).size,
     });
     const response = await this.client.post<UploadedResource>(
       `/datasets/${slug}/resources/${resourceId}/upload/`,

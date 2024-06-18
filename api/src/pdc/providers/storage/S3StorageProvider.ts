@@ -1,4 +1,4 @@
-import { fs, S3Client, URL } from "@/deps.ts";
+import { access, fsConstants, S3Client, URL } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   provider,
@@ -82,7 +82,7 @@ export class S3StorageProvider implements ProviderInterface {
     folder?: string,
   ): Promise<string> {
     // Check if file exists
-    await fs.promises.access(filepath, fs.constants.R_OK);
+    await access(filepath, fsConstants.R_OK);
     const client = this.s3Instances.get(bucket);
     if (!client) {
       throw new Error();
