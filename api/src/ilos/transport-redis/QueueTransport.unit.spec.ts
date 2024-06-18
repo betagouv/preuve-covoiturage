@@ -149,7 +149,6 @@ describe("QueueTransport", () => {
   });
 
   afterAll(async () => {
-    await redis.down();
     await transport?.down();
   });
 

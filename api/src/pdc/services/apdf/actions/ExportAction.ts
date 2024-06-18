@@ -144,7 +144,7 @@ export class ExportAction extends Action {
 
               // maybe delete the file
               try {
-                unlink(filepath);
+                await unlink(filepath);
               } catch (e) {
                 console.warn(`Failed to unlink ${filepath}`);
               }

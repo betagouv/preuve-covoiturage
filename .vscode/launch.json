@@ -17,6 +17,24 @@
         "--allow-all"
       ],
       "attachSimplePort": 9229
+    },
+    {
+      "request": "launch",
+      "name": "Test",
+      "type": "node",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}/api",
+      "envFile": "${workspaceFolder}/api/.env",
+      "runtimeExecutable": "deno",
+      "runtimeArgs": [
+        "test",
+        "--config",
+        "./deno.json",
+        "--inspect-wait",
+        "--allow-all",
+        "--no-check"
+      ],
+      "attachSimplePort": 9229
     }
   ]
 }
