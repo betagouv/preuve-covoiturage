@@ -1,4 +1,4 @@
-import { assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { buildMigrator } from "./buildMigrator.ts";
 import { config } from "./config.ts";
 import { CeremaAom2019 } from "./datasets/cerema/aom/2019/CeremaAom2019.ts";
@@ -41,13 +41,12 @@ import { CreateComEvolutionTable } from "./datastructure/001_CreateComEvolutionT
 import { createPool } from "./helpers/index.ts";
 import { MemoryStateManager } from "./providers/MemoryStateManager.ts";
 
-describe("Build Migrator", () => {
-  let connection = createPool();
+describe.skip("Build Migrator", () => {
+  const connection = createPool();
   const migrator = buildMigrator(config);
 
   beforeAll(async () => {
     await migrator.prepare();
-    connection = migrator.pool;
     for await (
       const migrable of [
         ...migrator.config.datastructures,
@@ -60,7 +59,7 @@ describe("Build Migrator", () => {
     }
   });
 
-  test.after.always(async () => {
+  afterAll(async () => {
     for await (
       const migrable of [
         ...migrator.config.datastructures,

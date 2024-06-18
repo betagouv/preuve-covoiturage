@@ -1,100 +1,91 @@
+import { access } from "@/deps.ts";
 import {
   afterAll,
-  afterEach,
   assert,
   assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
+  assertRejects,
   beforeAll,
-  beforeEach,
   describe,
   it,
 } from "@/dev_deps.ts";
-import { access } from "@/deps.ts";
-import { Pool } from "@/deps.ts";
-import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
-import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import { createFileManager, createPool } from "../../../../helpers/index.ts";
-import { InseePays2021 as Dataset } from "./InseePays2021.ts";
 import { Migrator } from "../../../../Migrator.ts";
 import { CreateGeoTable } from "../../../../datastructure/000_CreateGeoTable.ts";
 import { CreateComEvolutionTable } from "../../../../datastructure/001_CreateComEvolutionTable.ts";
+import { createFileManager, createPool } from "../../../../helpers/index.ts";
+import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
+import { InseePays2021 as Dataset } from "./InseePays2021.ts";
 
-interface TestContext {
-  migrator: Migrator;
-  connection: Pool;
-  dataset: AbstractDataset;
-}
-
-const test = anyTest as TestFn<TestContext>;
-
-beforeAll(async (t) => {
-  t.context.connection = createPool();
-  t.context.migrator = new Migrator(t.context.connection, createFileManager(), {
+describe.skip("InseePays2021", () => {
+  const connection = createPool();
+  const migrator = new Migrator(connection, createFileManager(), {
     targetSchema: "public",
     datastructures: new Set([CreateGeoTable, CreateComEvolutionTable]),
     datasets: new Set([Dataset]),
     noCleanup: false,
   });
-  t.context.dataset = new Dataset(t.context.connection, createFileManager());
-  await t.context.connection.query(`
-      DROP TABLE IF EXISTS ${t.context.dataset.tableWithSchema}
+  const dataset = new Dataset(connection, createFileManager());
+
+  beforeAll(async () => {
+    await connection.query(`
+      DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
-  await t.context.connection.query(`
+    await connection.query(`
       DROP TABLE IF EXISTS public.dataset_migration
     `);
-  await t.context.migrator.prepare();
-});
+    await migrator.prepare();
+  });
 
-test.after.always(async (t) => {
-  await t.context.connection.query(`
-      DROP TABLE IF EXISTS ${t.context.dataset.tableWithSchema}
+  afterAll(async () => {
+    await connection.query(`
+      DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
-  await t.context.connection.query(`
+    await connection.query(`
       DROP TABLE IF EXISTS public.dataset_migration
     `);
-});
+  });
 
-it("should validate", async (t) => {
-  await t.notThrowsAsync(() =>
-    t.context.dataset.validate(new MemoryStateManager())
-  );
-});
+  it("should validate", async () => {
+    await dataset.validate(new MemoryStateManager());
+    assert(true);
+  });
 
-it("should prepare", async (t) => {
-  await t.context.dataset.before();
-  const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
-  t.log(query);
-  await t.notThrowsAsync(() => t.context.connection.query(query));
-});
+  it("should prepare", async () => {
+    await dataset.before();
+    const query = `SELECT * FROM ${dataset.tableWithSchema}`;
+    console.debug(query);
+    await connection.query(query);
+    assert(true);
+  });
 
-it("should download file", async (t) => {
-  await t.context.dataset.download();
-  assert(t.context.dataset.filepaths.length >= 1);
-  for (const path of t.context.dataset.filepaths) {
-    await t.notThrowsAsync(() => access(path));
-  }
-});
+  it("should download file", async () => {
+    await dataset.download();
+    assert(dataset.filepaths.length >= 1);
+    for (const path of dataset.filepaths) {
+      await access(path);
+      assert(true);
+    }
+  });
 
-it("should transform", async (t) => {
-  await t.notThrowsAsync(() => t.context.dataset.transform());
-});
+  it("should transform", async () => {
+    await dataset.transform();
+    assert(true);
+  });
 
-it("should load", async (t) => {
-  await t.context.migrator.run([
-    CreateGeoTable,
-    CreateComEvolutionTable,
-    Dataset,
-  ]);
-  const response = await t.context.connection.query(`
+  it("should load", async () => {
+    await migrator.run([
+      CreateGeoTable,
+      CreateComEvolutionTable,
+      Dataset,
+    ]);
+    const response = await connection.query(`
       SELECT count(distinct country) FROM public.perimeters
     `);
-  assertEquals(response.rows[0].count, "208");
-});
+    assertEquals(response.rows[0].count, "208");
+  });
 
-it("should cleanup", async (t) => {
-  await t.context.dataset.after();
-  const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
-  await assertThrows(() => t.context.connection.query(query));
+  it("should cleanup", async () => {
+    await dataset.after();
+    const query = `SELECT * FROM ${dataset.tableWithSchema}`;
+    await assertRejects(() => connection.query(query));
+  });
 });

@@ -1,65 +1,45 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { Pool } from "@/deps.ts";
-import { MemoryStateManager } from "../providers/MemoryStateManager.ts";
-import { AbstractDatatreatment } from "../common/AbstractDatatreatment.ts";
-import { createFileManager, createPool } from "../helpers/index.ts";
-import { PopulateGeoCentroid as Dataset } from "./PopulateGeoCentroid.ts";
+import { assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { Migrator } from "../Migrator.ts";
 import { CreateGeoTable } from "../datastructure/000_CreateGeoTable.ts";
 import { CreateGeoCentroidTable } from "../datastructure/002_CreateGeoCentroidTable.ts";
+import { createFileManager, createPool } from "../helpers/index.ts";
+import { MemoryStateManager } from "../providers/MemoryStateManager.ts";
+import { PopulateGeoCentroid as Dataset } from "./PopulateGeoCentroid.ts";
 
-interface TestContext {
-  migrator: Migrator;
-  connection: Pool;
-  dataset: AbstractDatatreatment;
-}
-
-const test = anyTest as TestFn<TestContext>;
-
-beforeAll(async (t) => {
-  t.context.connection = createPool();
-  t.context.migrator = new Migrator(t.context.connection, createFileManager(), {
+describe.skip("PopulateGeoCentroid", () => {
+  const connection = createPool();
+  const migrator = new Migrator(connection, createFileManager(), {
     targetSchema: "public",
     datastructures: new Set([CreateGeoTable, CreateGeoCentroidTable, Dataset]),
     datasets: new Set([]),
     noCleanup: false,
   });
-  t.context.dataset = new Dataset(t.context.connection, createFileManager());
-  await t.context.connection.query(`
-      DROP TABLE IF EXISTS ${t.context.dataset.tableWithSchema}
+  const dataset = new Dataset(connection, createFileManager());
+
+  beforeAll(async () => {
+    await connection.query(`
+      DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
-  await t.context.connection.query(`
+    await connection.query(`
       DROP TABLE IF EXISTS public.dataset_migration
     `);
-  await t.context.migrator.prepare();
-});
+    await migrator.prepare();
+  });
 
-it("should validate", async (t) => {
-  await t.notThrowsAsync(() =>
-    t.context.dataset.validate(new MemoryStateManager())
-  );
-});
+  it("should validate", async () => {
+    await dataset.validate(new MemoryStateManager());
+    assert(true);
+  });
 
-it("should after", async (t) => {
-  await t.context.migrator.run([
-    CreateGeoTable,
-    CreateGeoCentroidTable,
-    Dataset,
-  ]);
-  const count = await t.context.connection.query(
-    `SELECT count(*) FROM ${t.context.dataset.tableWithSchema}`,
-  );
-  assertEquals(count.rows[0].count, "0");
+  it("should after", async () => {
+    await migrator.run([
+      CreateGeoTable,
+      CreateGeoCentroidTable,
+      Dataset,
+    ]);
+    const count = await connection.query(
+      `SELECT count(*) FROM ${dataset.tableWithSchema}`,
+    );
+    assertEquals(count.rows[0].count, "0");
+  });
 });

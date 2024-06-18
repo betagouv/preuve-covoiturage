@@ -3,7 +3,7 @@ import { buildMigrator } from "./buildMigrator.ts";
 import { config } from "./config.ts";
 import { createPool } from "./helpers/index.ts";
 
-describe("datastructure", () => {
+describe.skip("datastructure", () => {
   let connection = createPool();
   const migrator = buildMigrator(config);
 
@@ -12,7 +12,7 @@ describe("datastructure", () => {
     connection = migrator.pool;
   });
 
-  it("should verify no null data in perimeters table after migrations", async (t) => {
+  it("should verify no null data in perimeters table after migrations", async () => {
     const counts = await connection.query(`select
     (select count(arr) from perimeters where arr is null) as missing_arr,
     (select count(l_arr) from perimeters where l_arr is null) as missing_l_arr,

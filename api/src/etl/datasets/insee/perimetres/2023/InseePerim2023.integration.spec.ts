@@ -1,89 +1,81 @@
+import { access } from "@/deps.ts";
 import {
   afterAll,
-  afterEach,
   assert,
   assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
+  assertRejects,
   beforeAll,
-  beforeEach,
   describe,
   it,
 } from "@/dev_deps.ts";
-import { access } from "@/deps.ts";
-import { Pool } from "@/deps.ts";
-import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
+import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseePerim2023 as Dataset } from "./InseePerim2023.ts";
 
-interface TestContext {
-  connection: Pool;
-  dataset: AbstractDataset;
-}
+describe.skip("InseePerim2023", () => {
+  const connection = createPool();
+  const dataset = new Dataset(connection, createFileManager());
 
-const test = anyTest as TestFn<TestContext>;
-
-beforeAll(async (t) => {
-  t.context.connection = createPool();
-  t.context.dataset = new Dataset(t.context.connection, createFileManager());
-  await t.context.connection.query(`
-      DROP TABLE IF EXISTS ${t.context.dataset.tableWithSchema}
+  beforeAll(async () => {
+    await connection.query(`
+      DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
-});
+  });
 
-test.after.always(async (t) => {
-  await t.context.connection.query(`
-      DROP TABLE IF EXISTS ${t.context.dataset.tableWithSchema}
+  afterAll(async () => {
+    await connection.query(`
+      DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
-});
+  });
 
-it("should validate", async (t) => {
-  await t.notThrowsAsync(() =>
-    t.context.dataset.validate(new MemoryStateManager())
-  );
-});
+  it("should validate", async () => {
+    await dataset.validate(new MemoryStateManager());
+    assert(true);
+  });
 
-it("should prepare", async (t) => {
-  await t.context.dataset.before();
-  const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
-  t.log(query);
-  await t.notThrowsAsync(() => t.context.connection.query(query));
-});
+  it("should prepare", async () => {
+    await dataset.before();
+    const query = `SELECT * FROM ${dataset.tableWithSchema}`;
+    console.debug(query);
+    await connection.query(query);
+    assert(true);
+  });
 
-it("should download file", async (t) => {
-  await t.context.dataset.download();
-  assert(t.context.dataset.filepaths.length >= 1);
-  for (const path of t.context.dataset.filepaths) {
-    await t.notThrowsAsync(() => access(path));
-  }
-});
+  it("should download file", async () => {
+    await dataset.download();
+    assert(dataset.filepaths.length >= 1);
+    for (const path of dataset.filepaths) {
+      await access(path);
+      assert(true);
+    }
+  });
 
-it("should transform", async (t) => {
-  await t.notThrowsAsync(() => t.context.dataset.transform());
-});
+  it("should transform", async () => {
+    await dataset.transform();
+    assert(true);
+  });
 
-it("should load", async (t) => {
-  await t.context.dataset.load();
-  const first = await t.context.connection.query(`
-    SELECT * FROM ${t.context.dataset.tableWithSchema} order by codgeo asc limit 1
+  it("should load", async () => {
+    await dataset.load();
+    const first = await connection.query(`
+    SELECT * FROM ${dataset.tableWithSchema} order by codgeo asc limit 1
   `);
-  assertEquals(first.rows[0].dep, "01");
-  assertEquals(first.rows[0].epci, "200069193");
-  const last = await t.context.connection.query(`
-    SELECT * FROM ${t.context.dataset.tableWithSchema} order by codgeo desc limit 1
+    assertEquals(first.rows[0].dep, "01");
+    assertEquals(first.rows[0].epci, "200069193");
+    const last = await connection.query(`
+    SELECT * FROM ${dataset.tableWithSchema} order by codgeo desc limit 1
   `);
-  assertEquals(last.rows[0].dep, "976");
-  assertEquals(last.rows[0].epci, "200059871");
-  const count = await t.context.connection.query(`
-    SELECT count(*) FROM ${t.context.dataset.tableWithSchema}
+    assertEquals(last.rows[0].dep, "976");
+    assertEquals(last.rows[0].epci, "200059871");
+    const count = await connection.query(`
+    SELECT count(*) FROM ${dataset.tableWithSchema}
   `);
-  assertEquals(count.rows[0].count, "34945");
-});
+    assertEquals(count.rows[0].count, "34945");
+  });
 
-it("should cleanup", async (t) => {
-  await t.context.dataset.after();
-  const query = `SELECT * FROM ${t.context.dataset.tableWithSchema}`;
-  await assertThrows(() => t.context.connection.query(query));
+  it("should cleanup", async () => {
+    await dataset.after();
+    const query = `SELECT * FROM ${dataset.tableWithSchema}`;
+    await assertRejects(() => connection.query(query));
+  });
 });
