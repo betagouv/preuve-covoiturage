@@ -4,6 +4,7 @@ import {
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 @command()
 export class SeedCommand implements CommandInterface {
@@ -22,15 +23,13 @@ export class SeedCommand implements CommandInterface {
     },
   ];
 
-  public async call(options): Promise<string> {
-    // const db = new Migrator(options.databaseUri, false);
-    // await db.up();
-    // if (!options.skipMigration) {
-    //   await db.migrate();
-    // }
-    // await db.seed();
-    // await db.down();
-    // console.log("all is done");
-    return "toto";
+  public async call(options): Promise<void> {
+    const db = new Migrator(options.databaseUri, false);
+    await db.up();
+    if (!options.skipMigration) {
+      await db.migrate();
+    }
+    await db.seed();
+    await db.down();
   }
 }
