@@ -1,7 +1,7 @@
 import { migrate } from "@/db/index.ts";
 import {
+  addDate,
   CsvOptions as ParseOptions,
-  date,
   fs,
   parse,
   path,
@@ -279,7 +279,7 @@ export class Migrator {
         driverCarpool.datetime,
         driverCarpool.start_position.lon,
         driverCarpool.start_position.lat,
-        date.add(driverCarpool.datetime, { seconds: driverCarpool.duration }),
+        addDate(driverCarpool.datetime, { seconds: driverCarpool.duration }),
         driverCarpool.end_position.lon,
         driverCarpool.end_position.lat,
         driverCarpool.distance,

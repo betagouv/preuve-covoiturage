@@ -1,4 +1,11 @@
-import { _, date, fromZonedTime, fs } from "@/deps.ts";
+import {
+  _,
+  addMonths,
+  fromZonedTime,
+  fs,
+  startOfMonth,
+  subMonths,
+} from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   ContextType,
@@ -181,21 +188,21 @@ export class ExportAction extends Action {
     if (start_date_lc && !end_date_lc) {
       return {
         start_date: new Date(start_date_lc),
-        end_date: date.addMonths(start_date_lc, 1),
+        end_date: addMonths(start_date_lc, 1),
       };
     }
 
     // make a 1 month date range from end_date
     if (!start_date_lc && end_date_lc) {
       return {
-        start_date: date.subMonths(end_date_lc, 1),
+        start_date: subMonths(end_date_lc, 1),
         end_date: new Date(end_date_lc),
       };
     }
 
     // defaults
-    const start = date.startOfMonth(date.subMonths(new Date(), 1));
-    const end = date.startOfMonth(new Date());
+    const start = startOfMonth(subMonths(new Date(), 1));
+    const end = startOfMonth(new Date());
 
     // timezoned
     return {
