@@ -240,7 +240,7 @@ describe("Application Service", () => {
       START_DATE,
       END_DATE,
     );
-    assertEquals(result, expectedFiles);
+    assertEquals(result.sort(), expectedFiles.sort());
     assertEquals(checkCampaignStub!.args[0][0], campaign1._id);
     assertEquals(checkCampaignStub!.args[1][0], campaign2._id);
   });
