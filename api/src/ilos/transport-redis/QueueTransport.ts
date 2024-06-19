@@ -108,12 +108,18 @@ export class QueueTransport
   }
 
   async down() {
-    const promises = [];
     for (const { worker, scheduler } of this.queues) {
-      promises.push(worker.close());
-      promises.push(scheduler.close());
+      try {
+        await worker.close();
+      } catch (e: any) {
+        if (e?.message !== "Connection is closed.") throw e;
+      }
+      try {
+        await scheduler.close();
+      } catch (e: any) {
+        if (e?.message !== "Connection is closed.") throw e;
+      }
     }
-    await Promise.all(promises);
     await Promise.all(this.connections.map((c: RedisConnection) => c.down()));
     this.connections = [];
   }
