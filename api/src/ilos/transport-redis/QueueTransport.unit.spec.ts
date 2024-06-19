@@ -12,6 +12,7 @@ import {
   ContextType,
   handler,
   kernel as kernelDecorator,
+  KernelInterface,
   ParamsType,
   ResultType,
   serviceProvider,
@@ -28,8 +29,9 @@ import { QueueExtension as ParentQueueExtension } from "@/ilos/queue/index.ts";
 import { QueueTransport } from "./QueueTransport.ts";
 
 describe("QueueTransport", () => {
-  let sandbox: sinon.SinonSandbox | null = null;
-  let transport: QueueTransport | null = null;
+  let sandbox: sinon.SinonSandbox;
+  let transport: QueueTransport;
+  let kernel: KernelInterface;
 
   // Connection is configured but not connected
   const redis = new RedisConnection("redis://localhost:6379", {
@@ -116,7 +118,7 @@ describe("QueueTransport", () => {
       readonly extensions = [Extensions.Config, ConnectionManagerExtension];
     }
 
-    const kernel = new BasicKernel();
+    kernel = new BasicKernel();
     await kernel.bootstrap();
     transport = new QueueTransport(kernel);
 
@@ -150,6 +152,7 @@ describe("QueueTransport", () => {
 
   afterAll(async () => {
     await transport?.down();
+    await kernel?.shutdown();
   });
 
   it("should call a handle as a job", async () => {

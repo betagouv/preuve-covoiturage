@@ -46,7 +46,13 @@ export class RedisConnection
 
   async down() {
     if (this.connected) {
-      await this.getClient().quit();
+      try {
+        await this.getClient().quit();
+      } catch (e: any) {
+        if (e?.message !== "Connection is closed.") {
+          throw e;
+        }
+      }
     }
   }
 
