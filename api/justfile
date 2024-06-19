@@ -14,11 +14,11 @@ test-integration:
 
 # Run test:unit
 test-unit:
-  just test '**/*.unit.spec.ts'
+  just test --parallel '**/*.unit.spec.ts'
 
 # Run test
 test *pattern:
-  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors --parallel {{ pattern }}
+  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
 # Start docker services (detached)
 start *services="s3 postgres redis mailer":

@@ -1,20 +1,8 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { Action, Extensions, ServiceProvider } from "@/ilos/core/index.ts";
+import { assert, assertEquals, it } from "@/dev_deps.ts";
+import { handler, serviceProvider } from "@/ilos/common/index.ts";
 import { ConnectionManagerExtension } from "@/ilos/connection-manager/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
-import { handler, serviceProvider } from "@/ilos/common/index.ts";
+import { Action, Extensions, ServiceProvider } from "@/ilos/core/index.ts";
 
 import { QueueExtension } from "./QueueExtension.ts";
 
@@ -30,7 +18,7 @@ class ServiceOneHandler extends Action {}
 })
 class ServiceTwoHandler extends Action {}
 
-it("Queue extension: should register queue name in container as worker", async (t) => {
+it("Queue extension: should register queue name in container as worker", async () => {
   @serviceProvider({
     queues: ["serviceA", "serviceB"],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
@@ -63,7 +51,7 @@ it("Queue extension: should register queue name in container as worker", async (
   assertEquals(container.getHandlers().length, 4);
 });
 
-it("should register queue name in container and handlers", async (t) => {
+it("should register queue name in container and handlers", async () => {
   @serviceProvider({
     env: null,
     queues: ["serviceA", "serviceB"],

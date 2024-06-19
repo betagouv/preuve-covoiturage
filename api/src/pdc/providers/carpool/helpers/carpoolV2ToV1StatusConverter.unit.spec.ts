@@ -1,16 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assertEquals, it } from "@/dev_deps.ts";
 import {
   CarpoolAcquisitionStatusEnum,
   CarpoolFraudStatusEnum,
@@ -163,7 +151,7 @@ for (
     ...failedFraud,
   ]
 ) {
-  it(title, (t) => {
+  it(title, () => {
     assertEquals(carpoolV2ToV1StatusConverter(args[0], args[1]), expected);
   });
 }

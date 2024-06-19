@@ -12,7 +12,7 @@ class MockedNormalizerCostAction extends CostNormalizerProvider {
   }
 }
 
-it("Cost normalization should work", async (t) => {
+it("Cost normalization should work", async () => {
   const action = new MockedNormalizerCostAction();
   const data = {
     operator_id: 1,

@@ -4,11 +4,11 @@ import { AjvValidator } from "@/ilos/validator/index.ts";
 
 import { macroKeyword } from "./macroKeyword.ts";
 
-it("should return schema if macro exist", (t) => {
+it("should return schema if macro exist", () => {
   assert(Reflect.ownKeys((macroKeyword as any).macro("uuid")).length > 0);
 });
 
-it("should return empty schema if macro doest not exist", (t) => {
+it("should return empty schema if macro doest not exist", () => {
   assert(Reflect.ownKeys((macroKeyword as any).macro("aa")).length === 0);
 });
 

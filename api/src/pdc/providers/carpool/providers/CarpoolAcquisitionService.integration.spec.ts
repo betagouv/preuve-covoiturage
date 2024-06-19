@@ -84,11 +84,11 @@ describe("CarpoolAcquistionService", () => {
     const data = { ...insertableCarpool };
     await service.registerRequest({ ...data, api_version: 3 });
 
-    // t.log(carpoolRepository.register.getCalls());
+    // console.log(carpoolRepository.register.getCalls());
     assert(carpoolRepositoryL.register.calledOnce);
-    // t.log(requestRepository.save.getCalls());
+    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
@@ -122,11 +122,11 @@ describe("CarpoolAcquistionService", () => {
       operator_journey_id: insertableCarpool.operator_journey_id,
     });
 
-    // t.log(carpoolRepository.update.getCalls());
+    // console.log(carpoolRepository.update.getCalls());
     assert(carpoolRepositoryL.update.calledOnce);
-    // t.log(requestRepository.save.getCalls());
+    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
@@ -142,7 +142,7 @@ describe("CarpoolAcquistionService", () => {
     });
   });
 
-  it("Should cancel carpool", async (t) => {
+  it("Should cancel carpool", async () => {
     const lookupRepositoryL = sinon.spy(lookupRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
     const statusRepositoryL = sinon.spy(statusRepository);
@@ -162,11 +162,11 @@ describe("CarpoolAcquistionService", () => {
     };
     await service.cancelRequest(data);
 
-    // t.log(lookupRepository.findOneStatus.getCalls());
+    // console.log(lookupRepository.findOneStatus.getCalls());
     assert(lookupRepositoryL.findOneStatus.calledOnce);
-    // t.log(requestRepository.save.getCalls());
+    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // t.log(statusRepository.saveAcquisitionStatus.getCalls());
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = lookupRepository.findOne(

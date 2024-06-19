@@ -45,7 +45,7 @@ describe("CarpoolGeoRepository", () => {
   afterEach(() => {
     conn.release();
   });
-  it("Should create geo", async (t) => {
+  it("Should create geo", async () => {
     const processable = await repository.findProcessable(
       {
         limit: 1,
@@ -75,7 +75,7 @@ describe("CarpoolGeoRepository", () => {
     assertObjectMatch(result.rows.pop(), data);
   });
 
-  it("Should do nothing if geo exists", async (t) => {
+  it("Should do nothing if geo exists", async () => {
     const processable = await repository.findProcessable(
       {
         limit: 1,
@@ -91,7 +91,7 @@ describe("CarpoolGeoRepository", () => {
   `);
   });
 
-  it("Should create status", async (t) => {
+  it("Should create status", async () => {
     const processable = await repository.findProcessable(
       {
         limit: 1,

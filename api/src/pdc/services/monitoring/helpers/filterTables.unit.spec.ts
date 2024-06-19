@@ -1,17 +1,5 @@
+import { assertObjectMatch, it } from "@/dev_deps.ts";
 import { ConfigInterface } from "@/ilos/common/index.ts";
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
 import {
   CronFrequency,
   MatviewItem,
@@ -42,7 +30,7 @@ const views = [
   "monthly_view_2",
 ];
 
-it("filter monthly, no skips", (t) => {
+it("filter monthly, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["monthly"];
@@ -52,7 +40,7 @@ it("filter monthly, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter weekly, no skips", (t) => {
+it("filter weekly, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["weekly"];
@@ -62,7 +50,7 @@ it("filter weekly, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter daily, no skips", (t) => {
+it("filter daily, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["daily"];
@@ -72,7 +60,7 @@ it("filter daily, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter monthly with non prefixed views, no skips", (t) => {
+it("filter monthly with non prefixed views, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["monthly"];
@@ -82,7 +70,7 @@ it("filter monthly with non prefixed views, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter daily with non prefixed views, no skips", (t) => {
+it("filter daily with non prefixed views, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["daily"];
@@ -92,7 +80,7 @@ it("filter daily with non prefixed views, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter monthly, daily with non prefixed views, no skips", (t) => {
+it("filter monthly, daily with non prefixed views, no skips", () => {
   const schema = "test";
   const config = makeConfig(new Set());
   const frequencies: CronFrequency[] = ["daily", "monthly"];
@@ -108,7 +96,7 @@ it("filter monthly, daily with non prefixed views, no skips", (t) => {
   assertObjectMatch(actual, expected);
 });
 
-it("filter daily, monthly with skips", (t) => {
+it("filter daily, monthly with skips", () => {
   const schema = "test";
   const config = makeConfig(new Set(["test.monthly_view_1"]));
   const frequencies: CronFrequency[] = ["daily", "monthly"];

@@ -38,7 +38,7 @@ describe("CarpoolGeoRepository", () => {
     await after(db);
   });
 
-  it("Should get one carpool status", async (t) => {
+  it("Should get one carpool status", async () => {
     const data = { ...insertableCarpool };
     const r = await repository.findOneStatus(
       data.operator_id,
@@ -55,7 +55,7 @@ describe("CarpoolGeoRepository", () => {
     );
   });
 
-  it("Should get one carpool", async (t) => {
+  it("Should get one carpool", async () => {
     const data = { ...insertableCarpool };
     const r = await repository.findOne(
       data.operator_id,

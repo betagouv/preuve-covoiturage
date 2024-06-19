@@ -44,7 +44,7 @@ function setup() {
   return container.get(NormalizationProvider);
 }
 
-it("Should throw if data has no version", async (t) => {
+it("Should throw if data has no version", async () => {
   const provider = setup();
   const data = {} as any;
   await assertRejects(async () => {
@@ -52,7 +52,7 @@ it("Should throw if data has no version", async (t) => {
   });
 });
 
-it("Should normalize v3", async (t) => {
+it("Should normalize v3", async () => {
   const provider = setup();
   const data = {
     _id: 1,

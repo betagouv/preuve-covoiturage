@@ -4,7 +4,7 @@ import { PointInterface, RouteMeta } from "../interfaces/index.ts";
 
 import { RouteNormalizerProvider } from "./RouteNormalizerProvider.ts";
 
-it("Route normalizer", async (t) => {
+it("Route normalizer", async () => {
   class GeoProvider extends GeoProviderInterfaceResolver {
     async getRouteMeta(
       start: PointInterface,

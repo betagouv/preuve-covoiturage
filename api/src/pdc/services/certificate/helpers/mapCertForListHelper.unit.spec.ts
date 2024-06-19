@@ -1,24 +1,12 @@
 /* eslint-disable max-len */
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { mapCertForListHelper } from "./mapCertForListHelper.ts";
+import { assertEquals, assertObjectMatch, it } from "@/dev_deps.ts";
+import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
 import {
   ResultRowInterface,
   RowType,
 } from "@/shared/certificate/common/interfaces/ResultRowInterface.ts";
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
-import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { mapCertForListHelper } from "./mapCertForListHelper.ts";
 
 const newEmptyFormat: CertificateInterface = {
   _id: 2,
@@ -160,7 +148,7 @@ const newFormat: CertificateInterface = {
 };
 /* eslint-enable prettier/prettier */
 
-it("new empty format returns empty values with OK status", (t) => {
+it("new empty format returns empty values with OK status", () => {
   const res: ResultRowInterface = mapCertForListHelper(newEmptyFormat);
   const exp: ResultRowInterface = {
     type: RowType.OK,
@@ -201,7 +189,7 @@ it("new empty format returns empty values with OK status", (t) => {
   assertObjectMatch(exp, res);
 });
 
-it("new format returns mapped values and OK status", (t) => {
+it("new format returns mapped values and OK status", () => {
   const res: ResultRowInterface = mapCertForListHelper(newFormat);
   const exp: ResultRowInterface = {
     type: RowType.OK,

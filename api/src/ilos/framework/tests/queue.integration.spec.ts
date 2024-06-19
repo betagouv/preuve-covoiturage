@@ -94,7 +94,7 @@ describe.skip("queue", () => {
     }
   }
 
-  it("Queue integration: works", async (t) => {
+  it("Queue integration: works", async () => {
     const data = { name: "sam" };
     const result = await makeRPCNotify(port, {
       method: "string:log",

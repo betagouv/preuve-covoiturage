@@ -7,9 +7,6 @@ import {
 import { AbstractMailNotification } from "./AbstractNotification.ts";
 import { NotificationMailTransporter } from "./NotificationMailTransporter.ts";
 
-interface TestContext {
-}
-
 describe("Notification", () => {
   const config = {
     notification: {

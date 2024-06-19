@@ -3,7 +3,7 @@ import { assert, assertEquals, assertFalse, it } from "@/dev_deps.ts";
 import { LegacyIdentityInterface } from "../interfaces/index.ts";
 import { IdentityNormalizerProvider } from "./IdentityNormalizerProvider.ts";
 
-it("Identity normalizer should work", async (t) => {
+it("Identity normalizer should work", async () => {
   const normalizer = new IdentityNormalizerProvider();
   const params: LegacyIdentityInterface = {
     firstname: "Roger",

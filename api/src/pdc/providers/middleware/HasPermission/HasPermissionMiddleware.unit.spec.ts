@@ -29,7 +29,7 @@ const callFactory = (
   result: null,
 });
 
-it("Permission middleware: matching 1 permission", async (t) => {
+it("Permission middleware: matching 1 permission", async () => {
   const permissions = ["test.ok"];
   const { params, context } = callFactory(permissions);
   assertEquals(
@@ -38,7 +38,7 @@ it("Permission middleware: matching 1 permission", async (t) => {
   );
 });
 
-it("Permission middleware: no method permissions", async (t) => {
+it("Permission middleware: no method permissions", async () => {
   const permissions = ["test.ok"];
   const { params, context } = callFactory(permissions);
   await assertRejects(async () =>
@@ -46,14 +46,14 @@ it("Permission middleware: no method permissions", async (t) => {
   );
 });
 
-it("Permission middleware: no user permissions", async (t) => {
+it("Permission middleware: no user permissions", async () => {
   const { params, context } = callFactory([]);
   await assertRejects(async () =>
     middleware.process(params, context, () => {}, ["not-ok"])
   );
 });
 
-it("Permission middleware: different permission", async (t) => {
+it("Permission middleware: different permission", async () => {
   const permissions: string[] = ["test.ok"];
   const { params, context } = callFactory(permissions);
   await assertRejects(async () =>
@@ -61,7 +61,7 @@ it("Permission middleware: different permission", async (t) => {
   );
 });
 
-it("Permission middleware: not matching all permissions", async (t) => {
+it("Permission middleware: not matching all permissions", async () => {
   const permissions: string[] = ["perm1"];
   const { params, context } = callFactory(permissions);
   await assertRejects(async () =>

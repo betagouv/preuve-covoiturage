@@ -15,7 +15,7 @@ class GeoProvider extends GeoProviderInterfaceResolver {
   }
 }
 
-it("Geo normalizer should return expected result", async (t) => {
+it("Geo normalizer should return expected result", async () => {
   const provider = new GeoProvider();
   const normalizer = new GeoNormalizerProvider(provider);
 

@@ -2,27 +2,27 @@ import { assert, assertFalse, it } from "@/dev_deps.ts";
 
 import { objectidCustomFormat } from "./objectidCustomFormat.ts";
 
-it("valid ObjectId", (t) => {
+it("valid ObjectId", () => {
   const id = "5d07eabd57ce4d70ae6a8508";
   assert((objectidCustomFormat as any)(id));
 });
 
-it("valid ObjectId uppercase", (t) => {
+it("valid ObjectId uppercase", () => {
   const id = "5d07eb19990207328440c338".toUpperCase();
   assert((objectidCustomFormat as any)(id));
 });
 
-it("too short", (t) => {
+it("too short", () => {
   const id = "5d07eb199902";
   assertFalse((objectidCustomFormat as any)(id));
 });
 
-it("too long", (t) => {
+it("too long", () => {
   const id = "5d07eabd57ce4d70ae6a8508d57ce4d7";
   assertFalse((objectidCustomFormat as any)(id));
 });
 
-it("wrong chars", (t) => {
+it("wrong chars", () => {
   const id = "5d07eb1-.^0207328440c338";
   assertFalse((objectidCustomFormat as any)(id));
 });

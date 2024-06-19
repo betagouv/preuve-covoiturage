@@ -16,7 +16,7 @@ describe("seed", () => {
     await db.down();
   });
 
-  it("should seed territories", async (t) => {
+  it("should seed territories", async () => {
     const result = await db.testConn.getClient().query({
       text: "SELECT count(*) FROM geo.perimeters",
     });

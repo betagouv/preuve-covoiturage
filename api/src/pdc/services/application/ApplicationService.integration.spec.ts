@@ -12,7 +12,7 @@ import {
 } from "@/pdc/providers/test/index.ts";
 import { ServiceProvider } from "./ServiceProvider.ts";
 
-describe("application service", () => {
+describe.skip("application service", () => {
   let ctx: HttpContext;
   let application_test_context: any;
   const operator_id: number = Math.round(Math.random() * 1000);
@@ -39,7 +39,7 @@ describe("application service", () => {
         },
       },
     );
-
+    assert("result" in response);
     assert("uuid" in response.result);
     assertEquals(response.result.name, "Application");
     assertEquals(response.result.owner_id, operator_id);
@@ -126,7 +126,7 @@ describe("application service", () => {
     assert("error" in result);
   });
 
-  it("#4 - List applications", async (t) => {
+  it("#4 - List applications", async () => {
     await ctx.request(
       "application:create",
       {

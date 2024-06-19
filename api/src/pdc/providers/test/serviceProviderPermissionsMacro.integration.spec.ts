@@ -141,7 +141,7 @@ describe("Permission", () => {
     );
   });
 
-  it("Error call.user.permissions", async (t) => {
+  it("Error call.user.permissions", async () => {
     await assertErrorHandler(
       context,
       handlerConfig,

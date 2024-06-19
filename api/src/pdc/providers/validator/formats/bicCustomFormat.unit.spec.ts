@@ -1,22 +1,22 @@
 import { assert, assertFalse, it } from "@/dev_deps.ts";
 import { bicCustomFormat } from "./bicCustomFormat.ts";
 
-it("valid BIC short string", (t) => {
+it("valid BIC short string", () => {
   const bic = "ABNANL2A";
   assert((bicCustomFormat as any)(bic));
 });
 
-it("valid BIC padding X", (t) => {
+it("valid BIC padding X", () => {
   const bic = "ABNANL2AXXX";
   assert((bicCustomFormat as any)(bic));
 });
 
-it("invalid BIC too short", (t) => {
+it("invalid BIC too short", () => {
   const bic = "012345";
   assertFalse((bicCustomFormat as any)(bic));
 });
 
-it("invalid BIC too long", (t) => {
+it("invalid BIC too long", () => {
   const bic = "00331234567890";
   assertFalse((bicCustomFormat as any)(bic));
 });

@@ -1,16 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assertEquals, it } from "@/dev_deps.ts";
 import { Config, ExportParams } from "./ExportParams.ts";
 
 // ----------------------------------------------------------------------------------------
@@ -29,7 +17,7 @@ const defaultConfig: Config = {
 // TESTS
 // ----------------------------------------------------------------------------------------
 
-it("geoToSQL should return start AND end AOM", (t) => {
+it("geoToSQL should return start AND end AOM", () => {
   const ep = new ExportParams({
     ...defaultConfig,
     geo_selector: { aom: ["code"] },
@@ -40,7 +28,7 @@ it("geoToSQL should return start AND end AOM", (t) => {
   );
 });
 
-it("geoToSQL should return start OR end AOM", (t) => {
+it("geoToSQL should return start OR end AOM", () => {
   const ep = new ExportParams({
     ...defaultConfig,
     geo_selector: { aom: ["code"] },
@@ -51,7 +39,7 @@ it("geoToSQL should return start OR end AOM", (t) => {
   );
 });
 
-it("geoToSQL should return start OR end AOM (default param)", (t) => {
+it("geoToSQL should return start OR end AOM (default param)", () => {
   const ep = new ExportParams({
     ...defaultConfig,
     geo_selector: { aom: ["code"] },
@@ -59,7 +47,7 @@ it("geoToSQL should return start OR end AOM (default param)", (t) => {
   assertEquals(ep.geoToSQL(), "AND ((gps.aom = 'code') OR (gpe.aom = 'code'))");
 });
 
-it("geoToSQL should return start OR end with many AOM", (t) => {
+it("geoToSQL should return start OR end with many AOM", () => {
   const ep = new ExportParams({
     ...defaultConfig,
     geo_selector: { aom: ["blue", "red"] },
@@ -70,7 +58,7 @@ it("geoToSQL should return start OR end with many AOM", (t) => {
   );
 });
 
-it("geoToSQL should return start OR end with many AOM and cities", (t) => {
+it("geoToSQL should return start OR end with many AOM and cities", () => {
   const ep = new ExportParams({
     ...defaultConfig,
     geo_selector: { aom: ["blue", "red"], com: ["01010", "2A323"] },

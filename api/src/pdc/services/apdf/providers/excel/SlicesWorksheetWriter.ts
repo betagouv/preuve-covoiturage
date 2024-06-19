@@ -1,5 +1,5 @@
-import { provider } from "@/ilos/common/index.ts";
 import { excel } from "@/deps.ts";
+import { provider } from "@/ilos/common/index.ts";
 import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
 import { SliceInterface } from "@/shared/policy/common/interfaces/Slices.ts";
 import { AbstractWorksheetWriter } from "./AbstractWorksheetWriter.ts";
@@ -24,8 +24,6 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     wbWriter: excel.stream.xlsx.WorkbookWriter,
     slices: SliceStatInterface[],
   ): Promise<void> {
-    /* eslint-disable prettier/prettier,max-len */
-
     const options: Partial<excel.AddWorksheetOptions> = {
       views: [{ showGridLines: false }],
     };
@@ -325,6 +323,6 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     } else if (slice.start && !slice.end) {
       return `Supérieure à ${slice.start / 1000} km`;
     }
-    return `De ${slice.start / 1000} km à ${slice.end / 1000} km`;
+    return `De ${slice.start / 1000} km à ${(slice.end || 0) / 1000} km`;
   }
 }

@@ -1,20 +1,8 @@
-import {
-  afterAll,
-  afterEach,
-  assert,
-  assertEquals,
-  assertFalse,
-  assertObjectMatch,
-  assertThrows,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { assertObjectMatch, it } from "@/dev_deps.ts";
 
 import { mapResults } from "./dataWrapMiddleware.ts";
 
-it("[mapResults] skips on missing results", (t) => {
+it("[mapResults] skips on missing results", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
@@ -28,7 +16,7 @@ it("[mapResults] skips on missing results", (t) => {
   assertObjectMatch(mapResults(payload), payload);
 });
 
-it("[mapResults] returns doc on existing data/meta", (t) => {
+it("[mapResults] returns doc on existing data/meta", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
@@ -45,7 +33,7 @@ it("[mapResults] returns doc on existing data/meta", (t) => {
   assertObjectMatch(mapResults(payload), payload);
 });
 
-it("[mapResults] returns doc with added meta: null if missing", (t) => {
+it("[mapResults] returns doc with added meta: null if missing", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
@@ -70,7 +58,7 @@ it("[mapResults] returns doc with added meta: null if missing", (t) => {
   assertObjectMatch(mapResults(payload), expectation);
 });
 
-it("[mapResults] wraps result with data/meta if missing", (t) => {
+it("[mapResults] wraps result with data/meta if missing", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
@@ -93,7 +81,7 @@ it("[mapResults] wraps result with data/meta if missing", (t) => {
   assertObjectMatch(mapResults(payload), expectation);
 });
 
-it("[mapResults] succeeds on non-object results (boolean)", (t) => {
+it("[mapResults] succeeds on non-object results (boolean)", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
@@ -112,7 +100,7 @@ it("[mapResults] succeeds on non-object results (boolean)", (t) => {
   assertObjectMatch(mapResults(payload), expectation);
 });
 
-it("[mapResults] succeeds on non-object results (string)", (t) => {
+it("[mapResults] succeeds on non-object results (string)", () => {
   const payload = {
     id: 1,
     jsonrpc: "2.0",
