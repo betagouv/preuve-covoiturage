@@ -249,28 +249,6 @@ services:
     depends_on:
       - s3
 
-  cypress:
-    build:
-      dockerfile: ../docker/cypress/Dockerfile
-      context: ./tests
-    volumes:
-      - /tmp/cypress/videos:/app/cypress/videos
-      - /tmp/cypress/screenshots:/app/cypress/screenshots
-    environment:
-      CYPRESS_baseUrl: https://app.covoiturage.test
-      CYPRESS_MAILHOG_URL: https://mailer.covoiturage.test/api
-    depends_on:
-      - api
-    networks:
-      - front
-
-  lint:
-    build: './docker/lint'
-    tty: true
-    volumes:
-      - ./api:/code/api:ro
-      - ./dashboard:/code/dashboard:ro
-
 networks:
   front:
   back:
