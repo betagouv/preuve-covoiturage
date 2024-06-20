@@ -1,7 +1,6 @@
+import { _, axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env } from "@/ilos/core/index.ts";
-import { axios, HttpsAgent as Agent } from "@/deps.ts";
-import { _ } from "@/deps.ts";
 import {
   PointInterface,
   RouteMeta,
@@ -14,7 +13,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     "OSRM_URL",
     "http://osrm.covoiturage.beta.gouv.fr:5000",
   );
-  private static agent = new Agent({ keepAlive: false });
+  private static agent = new HttpAgent({ keepAlive: false });
 
   async getRouteMeta(
     start: PointInterface,

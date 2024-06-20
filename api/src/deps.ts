@@ -29,9 +29,13 @@ export {
 export type { FileHandle } from "node:fs/promises";
 export { hostname, tmpdir } from "node:os";
 export { basename, extname, join } from "node:path";
+export { Readable } from "node:stream";
 export { URL, URLSearchParams } from "node:url";
 export { isMainThread } from "node:worker_threads";
+export { createGunzip } from "node:zlib";
 export { faker } from "npm:@faker-js/faker@^8.4";
+export { AxiosError } from "npm:axios@^1.7";
+export type { AxiosInstance } from "npm:axios@^1.7";
 export { Command, InvalidArgumentError } from "npm:commander@^12.1";
 export { parse } from "npm:csv-parse@^5.5";
 export type { Options as CsvOptions } from "npm:csv-parse@^5.5";
@@ -39,10 +43,6 @@ export { Redis } from "npm:ioredis@^5.3";
 export type { RedisKey, RedisOptions } from "npm:ioredis@^5.3";
 // @deno-types="npm:@types/pg@^8.11"
 import pg from "npm:pg@^8.12";
-export { Readable } from "node:stream";
-export { createGunzip } from "node:zlib";
-export { AxiosError } from "npm:axios@^1.7";
-export type { AxiosInstance } from "npm:axios@^1.7";
 // @deno-types="npm:@types/pg@^8.11"
 export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
 // @deno-types="npm:@types/pg-cursor@^2.7"
@@ -164,22 +164,15 @@ export {
   S3Errors,
 } from "https://deno.land/x/s3_lite_client@0.7.0/mod.ts";
 
-export * as Sentry from "npm:@sentry/node@^8.2";
-
-import https from "node:https";
-// @deno-types="npm:@types/adm-zip@^0.5"
-import AdmZip from "npm:adm-zip@^0.5";
-import bodyParser from "npm:body-parser@^1.20";
-import RedisStore from "npm:connect-redis@^7.1";
-import expressMung from "npm:express-mung@^0.5";
-import rateLimit from "npm:express-rate-limit@^7.3";
 export {
   Client as PgClient,
   Pool as PgPool,
 } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 export { createSign, randomUUID } from "node:crypto";
+export { Agent as HttpAgent } from "node:http";
 export { Agent as HttpsAgent } from "node:https";
 export { gunzipSync, gzipSync } from "node:zlib";
+export * as Sentry from "npm:@sentry/node@^8.2";
 export type {
   Options as RateLimiterOptions,
   RateLimitRequestHandler,
@@ -195,6 +188,14 @@ export {
   parsePhoneNumber,
 } from "npm:libphonenumber-js@^1.11";
 export type { IFilterXSSOptions } from "npm:xss@^1";
+
+import https from "node:https";
+// @deno-types="npm:@types/adm-zip@^0.5"
+import AdmZip from "npm:adm-zip@^0.5";
+import bodyParser from "npm:body-parser@^1.20";
+import RedisStore from "npm:connect-redis@^7.1";
+import expressMung from "npm:express-mung@^0.5";
+import rateLimit from "npm:express-rate-limit@^7.3";
 // @deno-types="npm:@types/express-session@^1.18"
 import expressSession from "npm:express-session@^1.18";
 import promClient from "npm:prom-client@^15.1";
