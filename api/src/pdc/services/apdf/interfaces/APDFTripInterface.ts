@@ -6,7 +6,7 @@ export interface APDFTripInterface {
   end_epci: string;
   end_insee: string;
   end_location: string;
-  incentive_type: 'normale' | 'booster';
+  incentive_type: "normale" | "booster";
   operator_class: string;
   operator_journey_id: string;
   operator_trip_id: string;

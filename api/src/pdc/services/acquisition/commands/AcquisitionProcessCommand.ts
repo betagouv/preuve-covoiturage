@@ -1,13 +1,18 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
 
 @command()
 export class AcquisitionProcessCommand implements CommandInterface {
-  static readonly signature: string = 'acquisition:process';
-  static readonly description: string = 'Import acquisition on carpool';
+  static readonly signature: string = "acquisition:process";
+  static readonly description: string = "Import acquisition on carpool";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-l, --loop',
-      description: 'Process acquisition while remaining',
+      signature: "-l, --loop",
+      description: "Process acquisition while remaining",
       default: false,
     },
   ];
@@ -19,12 +24,12 @@ export class AcquisitionProcessCommand implements CommandInterface {
 
     do {
       shouldContinue = await this.kernel.call(
-        'acquisition:process',
+        "acquisition:process",
         {},
-        { channel: { service: 'acquisition' }, call: { user: {} } },
+        { channel: { service: "acquisition" }, call: { user: {} } },
       );
     } while (shouldContinue && options.loop);
 
-    return 'done';
+    return "done";
   }
 }

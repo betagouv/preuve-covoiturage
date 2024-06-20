@@ -1,4 +1,24 @@
 import {
+  getOperatorsAt,
+  TimestampedOperators,
+} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
+import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
+import {
+  LimitTargetEnum,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
+} from "@/pdc/services/policy/engine/helpers/limits.ts";
+import {
+  onDistanceRange,
+  onDistanceRangeOrThrow,
+} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
+import { startsAndEndsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
+import { startsOrEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsOrEndsAtOrThrow.ts";
+import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
+import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
+import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -6,24 +26,8 @@ import {
   StatelessContextInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
-import {
-  LimitTargetEnum,
-  isOperatorClassOrThrow,
-  isOperatorOrThrow,
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-  perKm,
-  perSeat,
-  startsAndEndsAt,
-  watchForGlobalMaxAmount,
-  watchForPersonMaxAmountByMonth,
-} from '../helpers';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
-import { startsOrEndsAtOrThrow } from '../helpers/startsOrEndsAtOrThrow';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './20240401_PMGFxATMB.html';
+} from "@/pdc/services/policy/interfaces/index.ts";
+import { description } from "./20240401_PMGFxATMB.html.ts";
 
 // INSERT INTO policy.policies (territory_id, start_date, end_date, name, unit, status, handler, max_amount)
 // VALUES (
@@ -39,15 +43,14 @@ import { description } from './20240401_PMGFxATMB.html';
 
 export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'pmgf_x_atmb_2024';
+  implements PolicyHandlerInterface {
+  static readonly id = "pmgf_x_atmb_2024";
 
-  protected operator_class = ['B', 'C'];
+  protected operator_class = ["B", "C"];
 
   protected readonly operators: TimestampedOperators = [
     {
-      date: new Date('2024-04-01T00:00:00+0200'),
+      date: new Date("2024-04-01T00:00:00+0200"),
       operators: [OperatorsEnum.BLABLACAR_DAILY],
     },
   ];
@@ -55,8 +58,17 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['B87E2FFA-6837-43D6-B81E-D3436AB06CF1', 50_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['F50EF28B-78F5-4366-807E-80CBDBDD2DFF', this.max_amount, watchForGlobalMaxAmount], // required
+      [
+        "B87E2FFA-6837-43D6-B81E-D3436AB06CF1",
+        50_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "F50EF28B-78F5-4366-807E-80CBDBDD2DFF",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ], // required
     ];
   }
 
@@ -67,11 +79,19 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
    * - limite d'incitation à 40 km
    */
   protected internalTripsSlices: RunnableSlices = [
-    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
+    {
+      start: 5_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
+    },
     {
       start: 20_000,
       end: 150_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 12.5, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(
+          ctx,
+          perKm(ctx, { amount: 12.5, offset: 20_000, limit: 40_000 }),
+        ),
     },
   ];
 
@@ -82,36 +102,49 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
    * - limite d'incitation à 40 km
    */
   protected externalTripsSlices: RunnableSlices = [
-    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) },
+    {
+      start: 5_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50),
+    },
     {
       start: 20_000,
       end: 150_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 12.5, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(
+          ctx,
+          perKm(ctx, { amount: 12.5, offset: 20_000, limit: 40_000 }),
+        ),
     },
   ];
 
   protected territorySelector: TerritorySelectorsInterface = {
     [TerritoryCodeEnum.Mobility]: [
-      '240100750', // CA du Pays de GEX
-      '247400690', // CC du Genevois
-      '200011773', // CC Annemasse-Les Voirons-Agglomération
-      '200067551', // CA Thonon Agglomération
+      "240100750", // CA du Pays de GEX
+      "247400690", // CC du Genevois
+      "200011773", // CC Annemasse-Les Voirons-Agglomération
+      "200067551", // CA Thonon Agglomération
     ],
     [TerritoryCodeEnum.CityGroup]: [
-      '240100891', // CA du Pays Bellegardien
-      '247400724', // CC du Pays Rochois
-      '200000172', // CC Faucigny-Glières
-      '247400583', // CC Arve et Salève
+      "240100891", // CA du Pays Bellegardien
+      "247400724", // CC du Pays Rochois
+      "200000172", // CC Faucigny-Glières
+      "247400583", // CC Arve et Salève
     ],
   };
 
   protected getSlices(ctx?: StatelessContextInterface): RunnableSlices {
     if (!ctx) return this.internalTripsSlices;
-    return startsAndEndsAt(ctx, this.territorySelector) ? this.internalTripsSlices : this.externalTripsSlices;
+    return startsAndEndsAt(ctx, this.territorySelector)
+      ? this.internalTripsSlices
+      : this.externalTripsSlices;
   }
 
   protected processExclusions(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
+    isOperatorOrThrow(
+      ctx,
+      getOperatorsAt(this.operators, ctx.carpool.datetime),
+    );
     isOperatorClassOrThrow(ctx, this.operator_class);
     startsOrEndsAtOrThrow(ctx, this.territorySelector);
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 150_000 });
@@ -134,7 +167,7 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.getSlices(),
       operators: getOperatorsAt(this.operators),
       limits: {

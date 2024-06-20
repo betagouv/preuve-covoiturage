@@ -1,6 +1,6 @@
-import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface';
-import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
-import { TerritoryCodeEnum } from './common/interfaces/TerritoryCodeInterface';
+import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface.ts';
+import { ResultWithPagination } from '../common/interfaces/ResultWithPagination.ts';
+import { TerritoryCodeEnum } from './common/interfaces/TerritoryCodeInterface.ts';
 
 export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   search: string;

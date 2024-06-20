@@ -1,6 +1,6 @@
-import { company } from '../common/schemas/company';
-import { address } from '../common/schemas/address';
-import { bank } from '../common/schemas/bank';
+import { company } from '../common/schemas/company.ts';
+import { address } from '../common/schemas/address.ts';
+import { bank } from '../common/schemas/bank.ts';
 
 export const alias = 'operator.patch';
 

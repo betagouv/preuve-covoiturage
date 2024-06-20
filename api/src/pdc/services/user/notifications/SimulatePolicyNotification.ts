@@ -1,6 +1,6 @@
-import { AbstractMailNotification } from '@pdc/providers/notification';
-import { AbstractTemplate } from '@pdc/providers/template';
-import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract';
+import { AbstractMailNotification } from "@/pdc/providers/notification/index.ts";
+import { AbstractTemplate } from "@/pdc/providers/template/index.ts";
+import { SimulateOnPastGeoRequiredParams } from "@/shared/policy/simulateOnPastGeo.contract.ts";
 
 export interface SimulatePolicyFormTemplateData {
   title: string;
@@ -25,7 +25,8 @@ export interface SimulatePolicyFormTemplateData {
   simulation_result_six_months_amount: number;
 }
 
-export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyFormMJMLTemplate
+  extends AbstractTemplate<SimulatePolicyFormTemplateData> {
   static readonly template = `
 <mjml version="4.6.3" lang="fr">
   <mj-head>
@@ -191,7 +192,8 @@ export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePol
   `;
 }
 
-export class SimulatePolicyFormTextTemplate extends AbstractTemplate<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyFormTextTemplate
+  extends AbstractTemplate<SimulatePolicyFormTemplateData> {
   static readonly template = `
   <p>
   Vous trouverez ci-dessous le résultat ainsi que le récapitulatif de la demande de simulation qui nous a été adressée.
@@ -257,17 +259,18 @@ export class SimulatePolicyFormTextTemplate extends AbstractTemplate<SimulatePol
       `;
 }
 
-export class SimulatePolicyNotification extends AbstractMailNotification<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyNotification
+  extends AbstractMailNotification<SimulatePolicyFormTemplateData> {
   static templateMJML = SimulatePolicyFormMJMLTemplate;
   static templateText = SimulatePolicyFormTextTemplate;
-  static readonly subject = 'Demande de simulation';
+  static readonly subject = "Demande de simulation";
 
   constructor(to: string, data: Partial<SimulatePolicyFormTemplateData>) {
     super(to, {
-      app_url: 'https://covoiturage.beta.gouv.fr',
-      contact_email: 'contact@covoiturage.beta.gouv.fr',
-      header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
-      header_alt: 'Demande de simulation',
+      app_url: "https://covoiturage.beta.gouv.fr",
+      contact_email: "contact@covoiturage.beta.gouv.fr",
+      header_image_src: "https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png",
+      header_alt: "Demande de simulation",
       ...data,
     });
   }

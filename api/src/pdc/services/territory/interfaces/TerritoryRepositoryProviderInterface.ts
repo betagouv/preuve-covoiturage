@@ -1,40 +1,40 @@
-import {
+import type {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
-} from '@shared/territory/create.contract';
+} from "@/shared/territory/create.contract.ts";
 
-import {
+import type {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
-} from '@shared/territory/list.contract';
+} from "@/shared/territory/list.contract.ts";
 
-import {
+import type {
   ParamsInterface as FindParamsInterface,
   ResultInterface as FindResultInterface,
-} from '@shared/territory/find.contract';
+} from "@/shared/territory/find.contract.ts";
 
-import {
+import type {
   ParamsInterface as UpdateParamsInterface,
   ResultInterface as UpdateResultInterface,
-} from '@shared/territory/update.contract';
+} from "@/shared/territory/update.contract.ts";
 
-import {
+import type {
   ParamsInterface as PatchContactsParamsInterface,
   ResultInterface as PatchContactsResultInterface,
-} from '@shared/territory/patchContacts.contract';
-import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from "@/shared/territory/patchContacts.contract.ts";
+import type { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
-export {
+export type {
   CreateParamsInterface,
   CreateResultInterface,
-  ListParamsInterface,
-  ListResultInterface,
   FindParamsInterface,
   FindResultInterface,
-  UpdateParamsInterface,
-  UpdateResultInterface,
+  ListParamsInterface,
+  ListResultInterface,
   PatchContactsParamsInterface,
   PatchContactsResultInterface,
+  UpdateParamsInterface,
+  UpdateResultInterface,
 };
 export interface TerritoryRepositoryProviderInterface {
   list(params: ListParamsInterface): Promise<ListResultInterface>;
@@ -42,12 +42,19 @@ export interface TerritoryRepositoryProviderInterface {
   create(data: CreateParamsInterface): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
   update(data: UpdateParamsInterface): Promise<UpdateResultInterface>;
-  patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface>;
-  getRelationCodes(params: { _id: number }): Promise<TerritorySelectorsInterface>;
-  getRelationCodesCom(params: { _id: number }): Promise<TerritorySelectorsInterface>;
+  patchContacts(
+    params: PatchContactsParamsInterface,
+  ): Promise<PatchContactsResultInterface>;
+  getRelationCodes(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface>;
+  getRelationCodesCom(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface>;
 }
 
-export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
+export abstract class TerritoryRepositoryProviderInterfaceResolver
+  implements TerritoryRepositoryProviderInterface {
   async list(params: ListParamsInterface): Promise<ListResultInterface> {
     throw new Error();
   }
@@ -56,7 +63,9 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
+  async patchContacts(
+    params: PatchContactsParamsInterface,
+  ): Promise<PatchContactsResultInterface> {
     throw new Error();
   }
 
@@ -72,11 +81,15 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async getRelationCodes(params: { _id: number }): Promise<TerritorySelectorsInterface> {
+  async getRelationCodes(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface> {
     throw new Error();
   }
 
-  async getRelationCodesCom(params: { _id: number }): Promise<TerritorySelectorsInterface> {
+  async getRelationCodesCom(
+    params: { _id: number },
+  ): Promise<TerritorySelectorsInterface> {
     throw new Error();
   }
 }

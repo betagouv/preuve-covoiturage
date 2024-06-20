@@ -1,4 +1,4 @@
-import { PositionInterface } from '.';
+import { PositionInterface } from "./index.ts";
 
 // shared
 export interface GeoInterface {

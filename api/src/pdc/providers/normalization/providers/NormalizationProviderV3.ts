@@ -1,12 +1,18 @@
-import { provider } from '@ilos/common';
+import { provider } from "@/ilos/common/index.ts";
 
-import { GeoNormalizerProvider } from './GeoNormalizerProvider';
-import { RouteNormalizerProvider } from './RouteNormalizerProvider';
-import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces';
-import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
+import { GeoNormalizerProvider } from "./GeoNormalizerProvider.ts";
+import { RouteNormalizerProvider } from "./RouteNormalizerProvider.ts";
+import {
+  Acquisition,
+  NormalizationProviderInterface,
+  PayloadV3,
+  ResultInterface,
+} from "../interfaces/index.ts";
+import { IdentityNormalizerProvider } from "./IdentityNormalizerProvider.ts";
 
 @provider()
-export class NormalizationProviderV3 implements NormalizationProviderInterface<PayloadV3> {
+export class NormalizationProviderV3
+  implements NormalizationProviderInterface<PayloadV3> {
   constructor(
     protected geoNormalizer: GeoNormalizerProvider,
     protected routeNormalizer: RouteNormalizerProvider,
@@ -16,12 +22,17 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
   public async handle(data: Acquisition<PayloadV3>): Promise<ResultInterface> {
     const geoParams = { start: data.payload.start, end: data.payload.end };
     const { start, end } = await this.geoNormalizer.handle(geoParams);
-    const { calc_distance, calc_duration } = await this.routeNormalizer.handle(geoParams);
-    const duration = Math.floor(
-      (new Date(data.payload.end.datetime).getTime() - new Date(data.payload.start.datetime).getTime()) / 1000,
+    const { calc_distance, calc_duration } = await this.routeNormalizer.handle(
+      geoParams,
     );
-    const cost =
-      data.payload.incentives.reduce((total, current) => total + current.amount, 0) +
+    const duration = Math.floor(
+      (new Date(data.payload.end.datetime).getTime() -
+        new Date(data.payload.start.datetime).getTime()) / 1000,
+    );
+    const cost = data.payload.incentives.reduce(
+      (total, current) => total + current.amount,
+      0,
+    ) +
       data.payload.passenger.contribution;
 
     const common = {
@@ -40,7 +51,9 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
 
     const driver = {
       ...common,
-      identity: await this.identityNormalizer.handle(data.payload.driver.identity),
+      identity: await this.identityNormalizer.handle(
+        data.payload.driver.identity,
+      ),
       is_driver: true,
       seats: 0,
       payment: data.payload.driver.revenue,
@@ -52,7 +65,9 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
 
     const passenger = {
       ...common,
-      identity: await this.identityNormalizer.handle(data.payload.passenger.identity),
+      identity: await this.identityNormalizer.handle(
+        data.payload.passenger.identity,
+      ),
       is_driver: false,
       seats: data.payload.passenger.seats || 1,
       payment: data.payload.passenger.contribution,

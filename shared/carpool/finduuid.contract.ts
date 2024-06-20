@@ -1,4 +1,4 @@
-import { IdentityInterface } from '../common/interfaces/IdentityInterface';
+import { IdentityInterface } from '../common/interfaces/IdentityInterface.ts';
 
 export interface ParamsInterface {
   identity: IdentityInterface;

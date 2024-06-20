@@ -4,26 +4,30 @@ import {
   handler,
   KernelInterfaceResolver,
   NotFoundException,
-} from '@ilos/common';
-import { Action } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { StorageRepositoryProviderInterfaceResolver } from '../interfaces/StorageRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultsInterface } from '@shared/apdf/list.contract';
-import { alias } from '@shared/apdf/list.schema';
+} from "@/ilos/common/index.ts";
+import { Action } from "@/ilos/core/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultsInterface,
+} from "@/shared/apdf/list.contract.ts";
+import { alias } from "@/shared/apdf/list.schema.ts";
 import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
-} from '@shared/policy/find.contract';
+} from "@/shared/policy/find.contract.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.apdf.list',
-      operator: 'operator.apdf.list',
-      registry: 'registry.apdf.list',
+      territory: "territory.apdf.list",
+      operator: "operator.apdf.list",
+      registry: "registry.apdf.list",
     }),
-    ['validate', alias],
+    ["validate", alias],
   ],
 })
 export class ListAction extends Action {
@@ -35,16 +39,19 @@ export class ListAction extends Action {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultsInterface> {
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultsInterface> {
     const { campaign_id, operator_id } = params;
 
     // fetch the policy by id
     let campaign: CampaignFindResult;
     try {
       campaign = await this.kernel.call<CampaignFindParams, CampaignFindResult>(
-        'campaign:find',
+        "campaign:find",
         { _id: campaign_id },
-        { channel: { service: 'apdf' }, call: context.call },
+        { channel: { service: "apdf" }, call: context.call },
       );
     } catch (e) {
       console.error(`[apdf:list -> campaign:find] ${e.message}`);
@@ -56,7 +63,9 @@ export class ListAction extends Action {
 
     // curry operators and campaign filters
     // find policies, enrich and filter by operator
-    const opsFilter = this.storageRepository.operatorsFilter(operator_id ? [operator_id] : []);
+    const opsFilter = this.storageRepository.operatorsFilter(
+      operator_id ? [operator_id] : [],
+    );
     const cmpFilter = this.storageRepository.campaignsFilter([campaign_id]);
 
     // month filter. We can hide the current month to operators and territories
@@ -64,10 +73,12 @@ export class ListAction extends Action {
     // default: true
     const monthFilter = this.storageRepository.showCurrentMonthFilter(
       context.call.user.permissions,
-      this.config.get('apdf.showLastMonth'),
+      this.config.get("apdf.showLastMonth"),
     );
 
-    return (await this.storageRepository.enrich(await this.storageRepository.findByCampaign(campaign)))
+    return (await this.storageRepository.enrich(
+      await this.storageRepository.findByCampaign(campaign),
+    ))
       .filter(cmpFilter)
       .filter(opsFilter)
       .filter(monthFilter);

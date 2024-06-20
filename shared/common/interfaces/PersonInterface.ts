@@ -1,8 +1,8 @@
-import { PositionInterface } from './PositionInterface';
-import { IdentityInterface } from './IdentityInterface';
-import { PaymentInterface } from './PaymentInterface';
-import { IncentiveInterface } from './IncentiveInterface';
-import { GeoPositionInterface } from './GeoPositionInterface';
+import { PositionInterface } from './PositionInterface.ts';
+import { IdentityInterface } from './IdentityInterface.ts';
+import { PaymentInterface } from './PaymentInterface.ts';
+import { IncentiveInterface } from './IncentiveInterface.ts';
+import { GeoPositionInterface } from './GeoPositionInterface.ts';
 
 export interface PersonInterface {
   is_driver?: boolean;

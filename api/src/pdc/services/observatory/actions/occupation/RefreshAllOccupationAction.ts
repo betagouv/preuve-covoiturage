@@ -1,18 +1,20 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { handlerConfig } from '@shared/observatory/occupation/refreshAllOccupation.contract';
-import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { handlerConfig } from "@/shared/observatory/occupation/refreshAllOccupation.contract.ts";
+import { OccupationRepositoryInterfaceResolver } from "../../interfaces/OccupationRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class RefreshAllOccupationAction extends AbstractAction {
-  constructor(private occupationRepository: OccupationRepositoryInterfaceResolver) {
+  constructor(
+    private occupationRepository: OccupationRepositoryInterfaceResolver,
+  ) {
     super();
   }
-  private readonly startDate = new Date('2020-01-01');
+  private readonly startDate = new Date("2020-01-01");
 
   get today() {
     return new Date();

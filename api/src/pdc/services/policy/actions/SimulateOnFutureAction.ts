@@ -1,32 +1,32 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { v4 } from "@/deps.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ParamsInterfaceV3,
   ResultInterface,
-} from '@shared/policy/simulateOnFuture.contract';
-import { alias } from '@shared/policy/simulateOnFuture.schema';
-import { v4 } from 'uuid';
-import { Policy } from '../engine/entities/Policy';
+} from "@/shared/policy/simulateOnFuture.contract.ts";
+import { alias } from "@/shared/policy/simulateOnFuture.schema.ts";
+import { Policy } from "../engine/entities/Policy.ts";
 import {
   CarpoolInterface,
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
   TerritoryRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+} from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      operator: 'operator.simulate.future',
-      registry: 'registry.simulate.future',
+      operator: "operator.simulate.future",
+      registry: "registry.simulate.future",
     }),
-    ['validate', alias],
+    ["validate", alias],
   ],
 })
 export class SimulateOnFutureAction extends AbstractAction {
@@ -68,7 +68,9 @@ export class SimulateOnFutureAction extends AbstractAction {
     }
 
     // 6. Get siret code for applied policies
-    const uuidList = await this.territoryRepository.findUUIDById(policies.map((c) => c.territory_id));
+    const uuidList = await this.territoryRepository.findUUIDById(
+      policies.map((c) => c.territory_id),
+    );
 
     // 7. Normalize incentives output and return
     const normalizedIncentives = incentives
@@ -76,7 +78,10 @@ export class SimulateOnFutureAction extends AbstractAction {
       .filter((i) => i.statelessAmount > 0)
       .map((i) => ({
         amount: i.statelessAmount,
-        siret: uuidList.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).uuid,
+        siret:
+          uuidList.find((s) =>
+            s._id === policies.find((c) => c._id === i.policy_id).territory_id
+          ).uuid,
       }));
 
     return {
@@ -96,11 +101,13 @@ export class SimulateOnFutureAction extends AbstractAction {
       passenger_identity_key: v4(),
       operator_trip_id: v4(),
       operator_journey_id: v4(),
-      operator_uuid: await this.territoryRepository.findUUIDByOperatorId(input.operator_id),
+      operator_uuid: await this.territoryRepository.findUUIDByOperatorId(
+        input.operator_id,
+      ),
       operator_class: input.operator_class,
       passenger_is_over_18: input.passenger.identity.over_18,
-      driver_has_travel_pass: 'travel_pass' in input.driver.identity,
-      passenger_has_travel_pass: 'travel_pass' in input.passenger.identity,
+      driver_has_travel_pass: "travel_pass" in input.driver.identity,
+      passenger_has_travel_pass: "travel_pass" in input.passenger.identity,
       seats: input.passenger.seats,
       driver_revenue: input.driver.revenue,
       passenger_contribution: input.passenger.contribution,
@@ -108,7 +115,7 @@ export class SimulateOnFutureAction extends AbstractAction {
     };
 
     switch (input.api_version) {
-      case 'v3':
+      case "v3":
         const inputv3 = input as ParamsInterfaceV3;
         return {
           ...common,

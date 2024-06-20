@@ -1,4 +1,4 @@
-import { ceeJourneyTypeEnumSchema, lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
+import { ceeJourneyTypeEnumSchema, lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema.ts';
 
 export const alias = 'cee.importCeeApplication';
 export const schema = {

@@ -1,5 +1,5 @@
-import { ApiVersion, CancelCode, CancelMessage, Id, Uuid } from './common';
-import { InsertableCarpool, UpdatableCarpool } from './database/carpool';
+import { ApiVersion, CancelCode, CancelMessage, Id, Uuid } from "./common.ts";
+import { InsertableCarpool, UpdatableCarpool } from "./database/carpool.ts";
 
 interface ApiVersionObject {
   api_version: ApiVersion;

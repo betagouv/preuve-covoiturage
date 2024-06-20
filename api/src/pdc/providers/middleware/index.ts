@@ -1,6 +1,6 @@
-export * from './middlewares';
-export * from './helpers';
-export * from './interfaces';
-import { bindings } from './bindings';
+export * from "./middlewares.ts";
+export * from "./helpers.ts";
+export * from "./interfaces.ts";
+import { bindings } from "./bindings.ts";
 
 export const defaultMiddlewareBindings = [...bindings];

@@ -1,24 +1,25 @@
 import {
-  RegisterHookInterface,
-  InitHookInterface,
-  ServiceContainerInterface,
+  extension,
   HandlerInterface,
+  InitHookInterface,
   NewableType,
   QueueConfigType,
   QueueTargetType,
-  extension,
-} from '@ilos/common';
-import { env } from '@ilos/core';
-import { Extensions } from '@ilos/core';
-import { queueHandlerFactory } from '@ilos/handler-redis';
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { env } from "@/ilos/core/index.ts";
+import { Extensions } from "@/ilos/core/index.ts";
+import { queueHandlerFactory } from "@/ilos/handler-redis/index.ts";
 
 @extension({
-  name: 'queues',
+  name: "queues",
   require: [Extensions.Config, Extensions.Handlers],
 })
-export class QueueExtension implements RegisterHookInterface, InitHookInterface {
+export class QueueExtension
+  implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {
-    return Symbol.for('queues:handlers');
+    return Symbol.for("queues:handlers");
   }
 
   protected isWorker = false;
@@ -35,7 +36,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    if (env.or_false('APP_WORKER')) {
+    if (env.or_false("APP_WORKER")) {
       this.isProcessable(serviceContainer);
     }
   }
@@ -46,24 +47,35 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
       new Set(
         rootContainer
           .getHandlers()
-          .filter((cfg) => 'local' in cfg && cfg.local && 'queue' in cfg && !cfg.queue)
+          .filter((cfg) =>
+            "local" in cfg && cfg.local && "queue" in cfg && !cfg.queue
+          )
           .map((cfg) => cfg.service),
       ),
     );
     const targets = rootContainer.getAll<string>(QueueExtension.containerKey);
-    const unprocessableTargets = targets.filter((service: string) => registredHandlers.indexOf(service) < 0);
+    const unprocessableTargets = targets.filter((service: string) =>
+      registredHandlers.indexOf(service) < 0
+    );
 
     if (unprocessableTargets.length > 0) {
-      throw new Error(`Unprocessable queue listeners: ${unprocessableTargets.join(', ')}`);
+      throw new Error(
+        `Unprocessable queue listeners: ${unprocessableTargets.join(", ")}`,
+      );
     }
   }
 
-  protected filterTargets(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface): QueueTargetType[] {
+  protected filterTargets(
+    targets: QueueTargetType[],
+    serviceContainer: ServiceContainerInterface,
+  ): QueueTargetType[] {
     const rootContainer = serviceContainer.getContainer().root;
 
     let registredQueues: QueueTargetType[] = [];
     if (rootContainer.isBound(QueueExtension.containerKey)) {
-      registredQueues = rootContainer.getAll<QueueTargetType>(QueueExtension.containerKey);
+      registredQueues = rootContainer.getAll<QueueTargetType>(
+        QueueExtension.containerKey,
+      );
     }
     return targets.filter((target) => {
       // if already registred, filter it
@@ -74,16 +86,25 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
     });
   }
 
-  protected registerQueue(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface) {
+  protected registerQueue(
+    targets: QueueTargetType[],
+    serviceContainer: ServiceContainerInterface,
+  ) {
     for (const target of targets) {
-      serviceContainer.getContainer().root.bind(QueueExtension.containerKey).toConstantValue(target);
+      serviceContainer.getContainer().root.bind(QueueExtension.containerKey)
+        .toConstantValue(target);
     }
     this.registerQueueHandlers(targets, serviceContainer);
   }
 
-  protected registerQueueHandlers(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface) {
+  protected registerQueueHandlers(
+    targets: QueueTargetType[],
+    serviceContainer: ServiceContainerInterface,
+  ) {
     for (const target of targets) {
-      const handler: NewableType<HandlerInterface> = queueHandlerFactory(target);
+      const handler: NewableType<HandlerInterface> = queueHandlerFactory(
+        target,
+      );
       serviceContainer.getContainer().setHandler(handler);
       serviceContainer.registerHooks(handler.prototype, handler);
     }

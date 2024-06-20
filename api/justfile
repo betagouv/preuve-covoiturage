@@ -8,22 +8,17 @@ docker_compose_e2e_file:=join(parent_directory(justfile_directory()),"docker-com
 default:
   @just --list
 
-# Build api
-build:
-    npm run build
+# Run test:integration
+test-integration:
+  just test '**/*.integration.spec.ts'
 
-# Refresh your env
-clean:
-  rm -rf node_modules
-  rm -rf dist
-
-# Install
-install target="local":
-  npm {{ if target == "production" { "ci" } else { "install" } }}
+# Run test:unit
+test-unit:
+  just test --parallel '**/*.unit.spec.ts'
 
 # Run test
-test type pattern="":
-  npm run test:{{ type }} -- {{ pattern }}
+test *pattern:
+  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
 # Start docker services (detached)
 start *services="s3 postgres redis mailer":
@@ -84,7 +79,7 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
 
 # Seed data
 seed:
-  npm run ilos seed
+  just api seed
 
 # Create a new bucket
 [private]
@@ -98,40 +93,18 @@ wait domain port:
   sleep 10
 
 # CI integration test
-ci_test_integration: rebuild generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
+ci_test_integration: generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
 
 # CI unit test
-ci_test_unit: rebuild (test "unit") 
+ci_test_unit: (test-unit) 
 
-# Rebuild for production
-rebuild: (install "production") build
-
-# Refresh local install for development
-refresh: clean install build
-
-# Run the API for local development (:8080)
-dev:
-  npm run dev
-
-# Watch changes and recompile TypeScript
-watch:
-  npm run watch
-
-# Run ilos commands
-ilos *command:
-  npm run ilos -- {{ command }}
-
-# Run any npm script from the API
+# Run api command
 api *command:
-  npm run {{ command }}
+  deno run --allow-net --allow-env --allow-read --allow-write --allow-ffi --allow-sys --allow-run --unstable-fs src/main.ts {{ command }}
 
 # Start the HTTP API server on port 8080
 serve:
-  if command -v pm2-runtime >/dev/null 2>&1; then \
-    pm2-runtime start pm2-api.json; \
-  else \
-    npm run -- ilos http 8080; \
-  fi
+  just api http 8080
 
 # List all the APP_ environment variables
 env:

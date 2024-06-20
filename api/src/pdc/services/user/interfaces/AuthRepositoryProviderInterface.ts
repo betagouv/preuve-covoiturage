@@ -9,17 +9,26 @@ export interface AuthRepositoryProviderInterface {
   readonly UNCONFIRMED_STATUS: string;
   readonly INVITED_STATUS: string;
 
-  createTokenByEmail(email: string, type: string, status?: string): Promise<string | undefined>;
+  createTokenByEmail(
+    email: string,
+    type: string,
+    status?: string,
+  ): Promise<string | undefined>;
   clearTokenByEmail(email: string, status?: string): Promise<boolean>;
   challengePasswordByEmail(email: string, password: string): Promise<boolean>;
   challengePasswordById(_id: number, password: string): Promise<boolean>;
   challengeTokenByEmail(email: string, clearToken: string): Promise<boolean>;
   updatePasswordById(_id: number, password: string): Promise<boolean>;
-  updatePasswordByEmail(email: string, password: string, status?: string): Promise<boolean>;
+  updatePasswordByEmail(
+    email: string,
+    password: string,
+    status?: string,
+  ): Promise<boolean>;
   updateEmailById(_id: number, email: string, status?: string): Promise<string>;
 }
 
-export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRepositoryProviderInterface {
+export abstract class AuthRepositoryProviderInterfaceResolver
+  implements AuthRepositoryProviderInterface {
   readonly table: string;
 
   readonly CONFIRMATION_TOKEN: string;
@@ -30,7 +39,11 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
   readonly UNCONFIRMED_STATUS: string;
   readonly INVITED_STATUS: string;
 
-  async createTokenByEmail(email: string, type: string, status?: string): Promise<string | undefined> {
+  async createTokenByEmail(
+    email: string,
+    type: string,
+    status?: string,
+  ): Promise<string | undefined> {
     throw new Error();
   }
 
@@ -38,7 +51,10 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
     throw new Error();
   }
 
-  async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
+  async challengePasswordByEmail(
+    email: string,
+    password: string,
+  ): Promise<boolean> {
     throw new Error();
   }
 
@@ -46,7 +62,10 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
     throw new Error();
   }
 
-  async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
+  async challengeTokenByEmail(
+    email: string,
+    clearToken: string,
+  ): Promise<boolean> {
     throw new Error();
   }
 
@@ -62,7 +81,11 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
     throw new Error();
   }
 
-  async updateEmailById(_id: number, email: string, status?: string): Promise<string> {
+  async updateEmailById(
+    _id: number,
+    email: string,
+    status?: string,
+  ): Promise<string> {
     throw new Error();
   }
 }

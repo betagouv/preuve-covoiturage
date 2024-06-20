@@ -1,6 +1,5 @@
-import { Timezone } from '@pdc/providers/validator';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { LogFn } from 'ava';
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -14,7 +13,7 @@ import {
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
   UnboundedSlices,
-} from '.';
+} from "../index.ts";
 
 export interface PolicyInterface {
   _id: number;
@@ -28,7 +27,9 @@ export interface PolicyInterface {
   status: PolicyStatusEnum;
 
   export(): SerializedPolicyInterface;
-  processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface>;
+  processStateless(
+    carpool: CarpoolInterface,
+  ): Promise<StatelessIncentiveInterface>;
   processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
@@ -73,21 +74,22 @@ export interface PolicyHandlerParamsInterface {
   booster_dates?: Array<string>;
 }
 
-// Let the policy handler define its own log function
-// when test suites have their own logging requirements (e.g. ava)
-export type TestingLogFn = LogFn;
-
 export interface PolicyHandlerInterface {
   max_amount?: number;
   load(): Promise<void>;
-  processStateless(context: StatelessContextInterface, log?: TestingLogFn): void;
-  processStateful(context: StatefulContextInterface, log?: TestingLogFn): void;
+  processStateless(
+    context: StatelessContextInterface,
+  ): void;
+  processStateful(context: StatefulContextInterface): void;
   params(): PolicyHandlerParamsInterface;
   describe(): string;
   getOperators?(datetime?: Date): OperatorsEnum[]; // TODO generalise this from GrandPoitiers campaign
 }
 
-export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P) => boolean;
+export type StatelessRuleHelper<P> = (
+  ctx: StatelessContextInterface,
+  params: P,
+) => boolean;
 
 export interface StatefulContextInterface {
   incentive: StatefulIncentiveInterface;

@@ -1,1 +1,0 @@
-ALTER TABLE carpool.incentives DROP CONSTRAINT IF EXISTS incentives_acquisition_id_fkey;

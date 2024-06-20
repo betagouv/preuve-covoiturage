@@ -1,4 +1,5 @@
-export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 <p>Campagne d’incitation au covoiturage du <b> 01 octobre 2023 au 22 Juin 2024</b>
 </p>
 <p>Cette campagne est limitée à

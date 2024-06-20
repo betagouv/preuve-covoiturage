@@ -1,5 +1,5 @@
-import { UserCreateInterface } from './common/interfaces/UserCreateInterface';
-import { UserFindInterface } from './common/interfaces/UserFindInterface';
+import { UserCreateInterface } from './common/interfaces/UserCreateInterface.ts';
+import { UserFindInterface } from './common/interfaces/UserFindInterface.ts';
 
 export interface ParamsInterface extends UserCreateInterface {}
 

@@ -1,5 +1,11 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from '@pdc/providers/carpool/interfaces';
-import { CeeJourneyTypeEnum, JourneyId } from '@shared/cee/common/CeeApplicationInterface';
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/index.ts";
+import {
+  CeeJourneyTypeEnum,
+  JourneyId,
+} from "@/shared/cee/common/CeeApplicationInterface.ts";
 export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {
@@ -60,7 +66,7 @@ export interface SearchJourney {
 }
 
 export interface ValidJourneyConstraint {
-  operator_class: 'A' | 'B' | 'C';
+  operator_class: "A" | "B" | "C";
   start_date: Date;
   end_date: Date;
   max_distance: number;
@@ -90,13 +96,13 @@ export interface TimeRangeConstraint {
 
 export enum CeeApplicationErrorEnum {
   /** Payload validation error */
-  Validation = 'validation',
+  Validation = "validation",
   /** Date validation error (application too early) */
-  Date = 'date',
+  Date = "date",
   /** Short distance journey not eligible (or not found) */
-  NonEligible = 'non-eligible',
+  NonEligible = "non-eligible",
   /** Another application is already registered */
-  Conflict = 'conflict',
+  Conflict = "conflict",
 }
 
 export interface CeeApplicationError {
@@ -122,7 +128,10 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<ExistingCeeApplication | void>;
-  abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
+  abstract searchForValidJourney(
+    search: SearchJourney,
+    constraint: ValidJourneyConstraint,
+  ): Promise<ValidJourney>;
   abstract registerShortApplication(
     data: ShortCeeApplication,
     constraint: ApplicationCooldownConstraint,
@@ -131,7 +140,9 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     data: LongCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication>;
-  abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
+  abstract importApplication(
+    data: CeeApplication & { journey_type: CeeJourneyTypeEnum },
+  ): Promise<void>;
   abstract registerApplicationError(data: CeeApplicationError): Promise<void>;
   abstract importSpecificApplicationIdentity(
     data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum },

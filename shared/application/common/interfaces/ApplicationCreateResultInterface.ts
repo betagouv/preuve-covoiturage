@@ -1,4 +1,4 @@
-import { ApplicationInterface } from './ApplicationInterface';
+import { ApplicationInterface } from './ApplicationInterface.ts';
 
 export interface ApplicationCreateResultInterface {
   application: ApplicationInterface;

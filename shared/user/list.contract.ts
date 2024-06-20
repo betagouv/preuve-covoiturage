@@ -1,6 +1,6 @@
-import { UserStatusInterface } from './common/interfaces/UserStatusInterface';
-import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface';
-import { PaginationResultInterface } from '../common/interfaces/PaginationResultInterface';
+import { UserStatusInterface } from './common/interfaces/UserStatusInterface.ts';
+import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface.ts';
+import { PaginationResultInterface } from '../common/interfaces/PaginationResultInterface.ts';
 
 export interface ParamsInterface extends PaginationParamsInterface {
   operator_id?: number;

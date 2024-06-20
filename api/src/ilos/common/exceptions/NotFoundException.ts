@@ -1,8 +1,8 @@
-import { RPCException } from './RPCException';
+import { RPCException } from "./RPCException.ts";
 
 export class NotFoundException extends RPCException {
   constructor(data?: any) {
-    super('Not found');
+    super("Not found");
     this.nolog = true;
     this.rpcError = {
       data,

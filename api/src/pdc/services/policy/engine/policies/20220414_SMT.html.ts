@@ -1,4 +1,5 @@
-export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 <p>Campagne d’incitation au covoiturage du <b> jeudi 14 avril 2022 au mercredi 15 février 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à

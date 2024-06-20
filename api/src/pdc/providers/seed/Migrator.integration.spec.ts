@@ -1,28 +1,25 @@
-import anyTest, { TestFn } from 'ava';
-import { Migrator } from './Migrator';
+import { process } from "@/deps.ts";
+import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { Migrator } from "./Migrator.ts";
 
-interface TestContext {
-  db: Migrator;
-}
-
-const test = anyTest as TestFn<TestContext>;
-
-test.before(async (t) => {
-  t.context.db = new Migrator(process.env.APP_POSTGRES_URL);
-  await t.context.db.create();
-  await t.context.db.up();
-  await t.context.db.migrate();
-  await t.context.db.seed();
-});
-
-test.after.always(async (t) => {
-  await t.context.db.down();
-  await t.context.db.drop();
-});
-
-test('should seed territories', async (t) => {
-  const result = await t.context.db.connection.getClient().query({
-    text: 'SELECT count(*) FROM geo.perimeters',
+describe("seed", () => {
+  const db = new Migrator(process.env.APP_POSTGRES_URL);
+  beforeAll(async () => {
+    await db.create();
+    await db.up();
+    await db.migrate();
+    await db.seed();
   });
-  t.is(result.rows[0].count, '17');
+
+  afterAll(async () => {
+    await db.drop();
+    await db.down();
+  });
+
+  it("should seed territories", async () => {
+    const result = await db.testConn.getClient().query({
+      text: "SELECT count(*) FROM geo.perimeters",
+    });
+    assertEquals(result.rows[0].count, "17");
+  });
 });

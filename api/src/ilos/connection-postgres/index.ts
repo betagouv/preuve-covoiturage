@@ -1,4 +1,4 @@
-import Cursor from 'pg-cursor';
-export { PoolClient } from 'pg';
+import { Cursor } from "@/deps.ts";
+export type { PoolClient } from "@/deps.ts";
+export { PostgresConnection } from "./PostgresConnection.ts";
 export { Cursor };
-export { PostgresConnection } from './PostgresConnection';

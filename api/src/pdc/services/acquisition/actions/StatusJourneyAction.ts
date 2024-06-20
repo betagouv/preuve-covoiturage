@@ -1,16 +1,22 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, NotFoundException } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler, NotFoundException } from "@/ilos/common/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { alias } from '@shared/acquisition/status.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/status.contract';
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { alias } from "@/shared/acquisition/status.schema.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/acquisition/status.contract.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.status' }),
+    ["validate", alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: "operator.acquisition.status",
+    }),
   ],
 })
 export class StatusJourneyAction extends AbstractAction {
@@ -21,7 +27,10 @@ export class StatusJourneyAction extends AbstractAction {
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { operator_journey_id, operator_id } = params;
 
-    const acquisition = await this.acquisitionRepository.getStatus(operator_id, operator_journey_id);
+    const acquisition = await this.acquisitionRepository.getStatus(
+      operator_id,
+      operator_journey_id,
+    );
     if (!acquisition) {
       throw new NotFoundException();
     }

@@ -1,5 +1,8 @@
-import { toZonedTime } from './toZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
+import { toZonedTime } from "./toZonedTime.ts";
 
 interface IsAfterParams {
   date: Date;

@@ -1,26 +1,34 @@
-import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import {
+  KernelInterfaceResolver,
+  NotFoundException,
+  provider,
+} from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
 
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
-} from '../interfaces/OperatorRepositoryProviderInterface';
-import { OperatorDbInterface } from '@shared/operator/common/interfaces/OperatorDbInterface';
-import { OperatorInterface } from '@shared/operator/common/interfaces/OperatorInterface';
-import { OperatorListInterface } from '@shared/operator/common/interfaces/OperatorListInterface';
+} from "../interfaces/OperatorRepositoryProviderInterface.ts";
+import { OperatorDbInterface } from "@/shared/operator/common/interfaces/OperatorDbInterface.ts";
+import { OperatorInterface } from "@/shared/operator/common/interfaces/OperatorInterface.ts";
+import { OperatorListInterface } from "@/shared/operator/common/interfaces/OperatorListInterface.ts";
 
-import { signature as companyFetchSignature } from '@shared/company/fetch.contract';
+import { signature as companyFetchSignature } from "@/shared/company/fetch.contract.ts";
 import {
-  signature as companyFindSignature,
   ParamsInterface as CompanyParamsInterface,
   ResultInterface as CompanyResultInterface,
-} from '@shared/company/find.contract';
+  signature as companyFindSignature,
+} from "@/shared/company/find.contract.ts";
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
 })
-export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderInterface {
-  public readonly table = 'operator.operators';
+export class OperatorPgRepositoryProvider
+  implements OperatorRepositoryProviderInterface {
+  public readonly table = "operator.operators";
 
   constructor(
     protected connection: PostgresConnection,
@@ -28,8 +36,12 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   ) {}
 
   async find(id: number, withThumbnail = false): Promise<OperatorDbInterface> {
-    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
-    const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
+    const selectThumbnail = withThumbnail
+      ? ", encode(ot.data, 'hex')::text AS thumbnail"
+      : "";
+    const joinThumbnail = withThumbnail
+      ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id"
+      : "";
 
     const query = {
       text: `
@@ -50,10 +62,16 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     const operator = result.rows[0];
     if (operator.siret) {
-      operator.company = await this.kernel.call<CompanyParamsInterface, CompanyResultInterface>(
+      operator.company = await this.kernel.call<
+        CompanyParamsInterface,
+        CompanyResultInterface
+      >(
         companyFindSignature,
         { query: { siret: operator.siret } },
-        { channel: { service: 'operator' }, call: { user: { permissions: ['common.company.find'] } } },
+        {
+          channel: { service: "operator" },
+          call: { user: { permissions: ["common.company.find"] } },
+        },
       );
     }
 
@@ -67,9 +85,15 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   async quickFind(
     _id: number,
     withThumbnail = false,
-  ): Promise<{ uuid: string; name: string; support: string; thumbnail?: string }> {
-    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
-    const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
+  ): Promise<
+    { uuid: string; name: string; support: string; thumbnail?: string }
+  > {
+    const selectThumbnail = withThumbnail
+      ? ", encode(ot.data, 'hex')::text AS thumbnail"
+      : "";
+    const joinThumbnail = withThumbnail
+      ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id"
+      : "";
 
     const result = await this.connection.getClient().query<any>({
       text: `
@@ -83,7 +107,9 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       values: [_id],
     });
 
-    if (!result.rowCount) throw new NotFoundException(`Operator with _id (${_id}) not found`);
+    if (!result.rowCount) {
+      throw new NotFoundException(`Operator with _id (${_id}) not found`);
+    }
 
     const operator = result.rows[0];
 
@@ -136,13 +162,13 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   async create(data: OperatorInterface): Promise<OperatorDbInterface> {
     if (data.siret) {
       await this.kernel.call(companyFetchSignature, data.siret, {
-        channel: { service: 'operator' },
-        call: { user: { permissions: ['common.company.fetch'] } },
+        channel: { service: "operator" },
+        call: { user: { permissions: ["common.company.fetch"] } },
       });
     }
 
     const connection = await this.connection.getClient().connect();
-    connection.query<any>('BEGIN');
+    connection.query<any>("BEGIN");
     try {
       const query = {
         text: `
@@ -169,10 +195,10 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           data.name,
           data.legal_name,
           data.siret,
-          data.company || '{}',
-          data.address || '{}',
-          data.bank || '{}',
-          data.contacts || '{}',
+          data.company || "{}",
+          data.address || "{}",
+          data.bank || "{}",
+          data.contacts || "{}",
         ],
       };
 
@@ -185,14 +211,18 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
       // store the thumbnail
       if (data?.thumbnail?.length) {
-        await this.insertThumbnail(connection, result.rows[0]._id, data.thumbnail);
+        await this.insertThumbnail(
+          connection,
+          result.rows[0]._id,
+          data.thumbnail,
+        );
       }
 
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
 
       return result.rows[0];
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();
@@ -227,40 +257,43 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     const { _id, ...patch } = data;
 
     return this.patch(_id, {
-      company: '{}',
-      address: '{}',
-      contacts: '{}',
+      company: "{}",
+      address: "{}",
+      contacts: "{}",
       cgu_accepted_at: null,
       cgu_accepted_by: null,
       ...patch,
     });
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {
+  async patch(
+    id: number,
+    patch: { [k: string]: any },
+  ): Promise<OperatorDbInterface> {
     if (patch.siret) {
       await this.kernel.call(companyFetchSignature, patch.siret, {
-        channel: { service: 'operator' },
-        call: { user: { permissions: ['common.company.fetch'] } },
+        channel: { service: "operator" },
+        call: { user: { permissions: ["common.company.fetch"] } },
       });
     }
     const connection = await this.connection.getClient().connect();
-    await connection.query<any>('BEGIN');
+    await connection.query<any>("BEGIN");
 
     try {
       const updatablefields = [
-        'name',
-        'legal_name',
-        'siret',
-        'company',
-        'address',
-        'bank',
-        'contacts',
-        'cgu_accepted_at',
-        'cgu_accepted_by',
+        "name",
+        "legal_name",
+        "siret",
+        "company",
+        "address",
+        "bank",
+        "contacts",
+        "cgu_accepted_at",
+        "cgu_accepted_by",
       ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
 
       const sets = {
-        text: ['updated_at = NOW()'],
+        text: ["updated_at = NOW()"],
         values: [],
       };
 
@@ -272,7 +305,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       const query = {
         text: `
           UPDATE ${this.table}
-          SET ${sets.text.join(',')}
+          SET ${sets.text.join(",")}
           WHERE _id = $#
           AND deleted_at IS NULL
           RETURNING *
@@ -280,13 +313,16 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         values: [...sets.values, id],
       };
 
-      query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-        if (idx === origin.length - 1) {
-          return `${acc}${current}`;
-        }
+      query.text = query.text.split("$#").reduce(
+        (acc, current, idx, origin) => {
+          if (idx === origin.length - 1) {
+            return `${acc}${current}`;
+          }
 
-        return `${acc}${current}$${idx + 1}`;
-      }, '');
+          return `${acc}${current}$${idx + 1}`;
+        },
+        "",
+      );
 
       const result = await connection.query<any>(query);
 
@@ -296,7 +332,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
       // store or remove the thumbnail
       // if prop is missing, do nothing
-      if ('thumbnail' in patch) {
+      if ("thumbnail" in patch) {
         if (patch.thumbnail && patch.thumbnail.length) {
           await this.insertThumbnail(connection, id, patch.thumbnail);
         } else if (patch.thumbnail === null) {
@@ -304,57 +340,68 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         }
       }
 
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
 
       return result.rows[0];
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();
     }
   }
 
-  public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
+  public async patchThumbnail(
+    operator_id: number,
+    base64Thumbnail: string,
+  ): Promise<void> {
     const connection = await this.connection.getClient().connect();
-    await connection.query<any>('BEGIN');
+    await connection.query<any>("BEGIN");
     try {
       if (base64Thumbnail && base64Thumbnail.length) {
         await this.insertThumbnail(connection, operator_id, base64Thumbnail);
       } else if (base64Thumbnail === null) {
         await this.removeThumbnail(connection, operator_id);
       }
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();
     }
   }
 
-  private async insertThumbnail(connection: PoolClient, operator_id: number, base64Thumbnail: string): Promise<void> {
+  private async insertThumbnail(
+    connection: PoolClient,
+    operator_id: number,
+    base64Thumbnail: string,
+  ): Promise<void> {
     // cleanup
     await this.removeThumbnail(connection, operator_id);
     // insert
     await connection.query<any>({
-      text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
+      text:
+        `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
       values: [operator_id, this.b64ToHex(base64Thumbnail)],
     });
   }
 
-  private async removeThumbnail(connection: PoolClient, operator_id: number): Promise<void> {
+  private async removeThumbnail(
+    connection: PoolClient,
+    operator_id: number,
+  ): Promise<void> {
     await connection.query<any>({
-      text: 'DELETE FROM operator.thumbnails WHERE operator_id = $1',
+      text: "DELETE FROM operator.thumbnails WHERE operator_id = $1",
       values: [operator_id],
     });
   }
 
   private b64ToHex(b64: string): string {
-    return Buffer.from(b64, 'base64').toString('hex');
+    return Buffer.from(b64, "base64").toString("hex");
   }
 
   private hexToB64(hex: string): string {
-    return Buffer.from(hex, 'hex').toString('base64');
+    return Buffer.from(hex, "hex").toString("base64");
   }
 }

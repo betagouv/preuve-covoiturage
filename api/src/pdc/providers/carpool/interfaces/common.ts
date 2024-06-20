@@ -19,9 +19,9 @@ export type GeoCode = string;
 export type SerializableError = Error;
 
 export enum OperatorClass {
-  A = 'A',
-  B = 'B',
-  C = 'C',
+  A = "A",
+  B = "B",
+  C = "C",
 }
 
 export type CarpoolIncentive = {
@@ -31,8 +31,8 @@ export type CarpoolIncentive = {
 };
 
 export enum IncentiveCounterpartTarget {
-  Driver = 'driver',
-  Passenger = 'passenger',
+  Driver = "driver",
+  Passenger = "passenger",
 }
 
 export type CarpoolIncentiveCounterpart = {
@@ -62,24 +62,24 @@ export type CancelMessage = string;
  * Use the statusConverter() function to convert these statuses to a single status.
  */
 export enum CarpoolV1StatusEnum {
-  Ok = 'ok',
-  Expired = 'expired',
-  Canceled = 'canceled',
-  FraudcheckError = 'fraudcheck_error',
-  AnomalyError = 'anomaly_error',
+  Ok = "ok",
+  Expired = "expired",
+  Canceled = "canceled",
+  FraudcheckError = "fraudcheck_error",
+  AnomalyError = "anomaly_error",
 }
 
 export enum CarpoolAcquisitionStatusEnum {
-  Received = 'received',
-  Updated = 'updated',
-  Processed = 'processed',
-  Failed = 'failed',
-  Canceled = 'canceled',
-  Expired = 'expired',
+  Received = "received",
+  Updated = "updated",
+  Processed = "processed",
+  Failed = "failed",
+  Canceled = "canceled",
+  Expired = "expired",
 }
 
 export enum CarpoolFraudStatusEnum {
-  Pending = 'pending',
-  Passed = 'passed',
-  Failed = 'failed',
+  Pending = "pending",
+  Passed = "passed",
+  Failed = "failed",
 }

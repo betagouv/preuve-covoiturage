@@ -1,5 +1,5 @@
-import { PointInterface } from '../../../common/interfaces/PointInterface';
-import { MetaPersonInterface } from './CertificateMetaInterface';
+import { PointInterface } from '../../../common/interfaces/PointInterface.ts';
+import { MetaPersonInterface } from './CertificateMetaInterface.ts';
 
 export enum RowType {
   OK = 'ok',

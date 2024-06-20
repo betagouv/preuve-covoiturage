@@ -1,7 +1,10 @@
-import { QRCode } from './lib/QRCode';
-import { provider } from '@ilos/common';
+import { QRCode } from "./lib/QRCode.ts";
+import { provider } from "@/ilos/common/index.ts";
 
-import { QrcodeProviderInterface, QrcodeProviderInterfaceResolver } from './interfaces/QrcodeProviderInterfaceResolver';
+import {
+  QrcodeProviderInterface,
+  QrcodeProviderInterfaceResolver,
+} from "./interfaces/QrcodeProviderInterfaceResolver.ts";
 
 /**
  * QRCode SVG is a library by papnkukn
@@ -23,7 +26,10 @@ export class QrcodeProvider implements QrcodeProviderInterface {
       height: 256,
     }).svg();
 
-    return svg.substr(svg.indexOf('crispEdges;" d="') + 16).replace(' " /></svg>', '');
+    return svg.substr(svg.indexOf('crispEdges;" d="') + 16).replace(
+      ' " /></svg>',
+      "",
+    );
   }
 
   svg(url: string): string {

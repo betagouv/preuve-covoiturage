@@ -1,5 +1,9 @@
-import { ConfigInterface } from '@ilos/common';
-import { CronFrequency, MatviewItem, CronFrequencies } from '../interfaces/StatsRefreshInterfaces';
+import { ConfigInterface } from "@/ilos/common/index.ts";
+import {
+  CronFrequencies,
+  CronFrequency,
+  MatviewItem,
+} from "../interfaces/StatsRefreshInterfaces.ts";
 
 export function filterTables(
   config: ConfigInterface,
@@ -7,15 +11,17 @@ export function filterTables(
   schema: string,
   rows: MatviewItem[],
 ): string[] {
-  const toSkip = config.get<Set<string>>('refresh.skip', new Set());
+  const toSkip = config.get<Set<string>>("refresh.skip", new Set());
   return rows
     .map((t: MatviewItem) => t.matviewname)
     .filter((table: string) => !toSkip.has(`${schema}.${table}`))
     .map((table: string) => {
-      const [freq] = table.split('_', 1);
+      const [freq] = table.split("_", 1);
       return {
         table,
-        freq: CronFrequencies.indexOf(freq as CronFrequency) > -1 ? freq : 'daily',
+        freq: CronFrequencies.indexOf(freq as CronFrequency) > -1
+          ? freq
+          : "daily",
       };
     })
     .filter(({ freq }) => frequencies.indexOf(freq as CronFrequency) > -1)

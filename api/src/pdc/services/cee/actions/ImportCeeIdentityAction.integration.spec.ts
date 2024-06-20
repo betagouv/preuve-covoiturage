@@ -1,106 +1,98 @@
-import { ContextType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
+import { describe, it } from "@/dev_deps.ts";
+import { ContextType } from "@/ilos/common/index.ts";
 import {
-  ceeJourneyTypeEnumSchema,
-  lastNameTruncSchema,
-  phoneTruncSchema,
-  timestampSchema,
-} from '@shared/cee/common/ceeSchema';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplicationIdentity.contract';
-import anyTest, { TestFn } from 'ava';
-import { ServiceProvider } from '../ServiceProvider';
+  assertErrorHandler,
+  KernelContext,
+} from "@/pdc/providers/test/index.ts";
+import { handlerConfig } from "@/shared/cee/importApplicationIdentity.contract.ts";
 
-const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
-const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+describe("ImportCeeIdentityAction", () => {
+  let kernel: KernelContext;
 
-interface TestContext extends HandlerMacroContext {
-  db: DbContext;
-}
+  const defaultContext: ContextType = {
+    call: { user: { permissions: ["test.run"], operator_id: 1 } },
+    channel: { service: "dummy" },
+  };
 
-const test = anyTest as TestFn<TestContext>;
-test.before(async (t) => {
-  const db = await dbBefore();
-  const { kernel } = await before();
-  kernel
-    .getContainer()
-    .rebind(PostgresConnection)
-    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
-  t.context = { db, kernel };
+  type Payload = {
+    cee_application_type: string;
+    identity_key: string;
+    journey_type: string;
+    last_name_trunc: string;
+    phone_trunc: string;
+    datetime: string;
+  };
+
+  const defaultPayload: Payload = {
+    cee_application_type: "specific",
+    identity_key: "0".repeat(64),
+    journey_type: "short",
+    last_name_trunc: "ABC",
+    phone_trunc: "+336273488",
+    datetime: "2023-01-02T00:00:00.000Z",
+  };
+
+  // ---------------------------------------------------------------------------
+  // Tests
+  // ---------------------------------------------------------------------------
+
+  it("Invalid params empty", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [],
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Invalid params last_name_trunc", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [{ ...defaultPayload, last_name_trunc: "abcd" }],
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Invalid params unsupported journey type", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [{ ...defaultPayload, journey_type: "bip" }],
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Invalid params datetime", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [{ ...defaultPayload, datetime: "bip" }],
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Invalid params phone_trunc", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [{ ...defaultPayload, phone_trunc: "bip" }],
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Unauthorized", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      [defaultPayload],
+      [],
+      { ...defaultContext, call: { user: {} } },
+    );
+  });
 });
-
-test.after(async (t) => {
-  await after(t.context);
-  await dbAfter(t.context.db);
-});
-
-const defaultContext: ContextType = {
-  call: { user: { permissions: ['test.run'], operator_id: 1 } },
-  channel: { service: 'dummy' },
-};
-
-const defaultPayload: any = {
-  cee_application_type: 'specific',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
-  journey_type: 'short',
-  last_name_trunc: 'ABC',
-  phone_trunc: '+336273488',
-  datetime: '2023-01-02T00:00:00.000Z',
-};
-
-test.serial(
-  'Invalid params empty',
-  error,
-  [],
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], ': must NOT have fewer than 1 items');
-  },
-  defaultContext,
-);
-
-test.serial(
-  'Invalid params last_name_trunc',
-  error,
-  [{ ...defaultPayload, last_name_trunc: 'abcd' }],
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
-  },
-  defaultContext,
-);
-
-test.serial(
-  'Invalid params unsupported journey type',
-  error,
-  [{ ...defaultPayload, journey_type: 'bip' }],
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
-  },
-  defaultContext,
-);
-
-test.serial(
-  'Invalid params datetime',
-  error,
-  [{ ...defaultPayload, datetime: 'bip' }],
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/datetime: ${timestampSchema.errorMessage}`);
-  },
-  defaultContext,
-);
-
-test.serial(
-  'Invalid params phone_trunc',
-  error,
-  [{ ...defaultPayload, phone_trunc: 'bip' }],
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/0/phone_trunc: ${phoneTruncSchema.errorMessage}`);
-  },
-  defaultContext,
-);
-
-test.serial('Unauthorized', error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });

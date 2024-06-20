@@ -1,8 +1,13 @@
-import { _Object } from '@aws-sdk/client-s3';
+import { S3Object } from "@/deps.ts";
 
-export { APDFNameParamsInterface, APDFNameProvider, APDFNameResultsInterface } from './APDFNameProvider';
-export { extensionHelper } from './helpers/extensionHelper';
-export { BucketName } from './interfaces/BucketName';
-export { S3StorageProvider } from './S3StorageProvider';
-export type S3Object = _Object;
-export type S3ObjectList = _Object[];
+export { APDFNameProvider } from "./APDFNameProvider.ts";
+export type {
+  APDFNameParamsInterface,
+  APDFNameResultsInterface,
+} from "./APDFNameProvider.ts";
+export { S3StorageProvider } from "./S3StorageProvider.ts";
+export { extensionHelper } from "./helpers/extensionHelper.ts";
+export { BucketName } from "./interfaces/BucketName.ts";
+
+export type { S3Object };
+export type S3ObjectList = S3Object[];

@@ -1,10 +1,14 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/deleteAssociated.contract';
-import { alias } from '@shared/user/deleteAssociated.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/user/deleteAssociated.contract.ts";
+import { alias } from "@/shared/user/deleteAssociated.schema.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
 /*
  *  Find user by id and delete user
@@ -13,7 +17,10 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 // What is the difference with DeleteUserAction
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], ...internalOnlyMiddlewares('territory', 'operator')],
+  middlewares: [
+    ["validate", alias],
+    ...internalOnlyMiddlewares("territory", "operator"),
+  ],
 })
 export class DeleteAssociatedUserAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {

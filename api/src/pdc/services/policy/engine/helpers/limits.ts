@@ -1,5 +1,9 @@
-import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../../interfaces';
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
+import {
+  MetadataLifetime,
+  StatefulContextInterface,
+  StatelessContextInterface,
+} from "../../interfaces/index.ts";
+import { MisconfigurationException } from "../exceptions/MisconfigurationException.ts";
 
 export enum LimitTargetEnum {
   Driver,
@@ -12,20 +16,38 @@ export enum LimitCounterTypeEnum {
   Other,
 }
 
-export type ConfiguredLimitInterface = [string, number, LimitStatelessStageHelper, LimitTargetEnum?];
+export type ConfiguredLimitInterface = [
+  string,
+  number,
+  LimitStatelessStageHelper,
+  LimitTargetEnum?,
+];
 
 interface LimitStatelessStageHelper {
   counter: LimitCounterTypeEnum;
   priority: number;
-  (ctx: StatelessContextInterface, uuid: string, target?: LimitTargetEnum): void;
+  (
+    ctx: StatelessContextInterface,
+    uuid: string,
+    target?: LimitTargetEnum,
+  ): void;
 }
 
-function getTargetUuid(target: LimitTargetEnum, ctx: StatelessContextInterface): string {
-  const uuid = target === LimitTargetEnum.Driver ? ctx.carpool.driver_identity_key : ctx.carpool.passenger_identity_key;
+function getTargetUuid(
+  target: LimitTargetEnum,
+  ctx: StatelessContextInterface,
+): string {
+  const uuid = target === LimitTargetEnum.Driver
+    ? ctx.carpool.driver_identity_key
+    : ctx.carpool.passenger_identity_key;
 
-  if (uuid === null || typeof uuid === 'undefined') {
-    const targetName = target === LimitTargetEnum.Driver ? 'driver_identity_key' : 'passenger_identity_key';
-    throw new Error(`[getTargetUuid] Missing ${targetName} to build the limit key.`);
+  if (uuid === null || typeof uuid === "undefined") {
+    const targetName = target === LimitTargetEnum.Driver
+      ? "driver_identity_key"
+      : "passenger_identity_key";
+    throw new Error(
+      `[getTargetUuid] Missing ${targetName} to build the limit key.`,
+    );
   }
 
   return `${target.toString()}-${uuid}`;
@@ -45,7 +67,10 @@ export function applyLimitsOnStatefulStage(
   ctx: StatefulContextInterface,
 ): void {
   const sortedLimits = [...limits];
-  sortedLimits.sort(([_a, _aa, fna], [_b, _bb, fnb]) => (fnb.priority > fna.priority ? -1 : 1));
+  sortedLimits.sort((
+    [_a, _aa, fna],
+    [_b, _bb, fnb],
+  ) => (fnb.priority > fna.priority ? -1 : 1));
 
   for (const [uuid, max, fn] of sortedLimits) {
     applyLimitOnStatefulStage(ctx, uuid, max, fn);
@@ -56,7 +81,7 @@ export const watchForGlobalMaxAmount: LimitStatelessStageHelper = (() => {
   function fn(ctx: StatelessContextInterface, uuid: string): void {
     ctx.meta.register({
       uuid,
-      name: 'max_amount_restriction',
+      name: "max_amount_restriction",
       lifetime: MetadataLifetime.Always,
     });
   }
@@ -65,25 +90,34 @@ export const watchForGlobalMaxAmount: LimitStatelessStageHelper = (() => {
   return fn;
 })();
 
-export const watchForPersonMaxAmountByMonth: LimitStatelessStageHelper = (() => {
-  function fn(ctx: StatelessContextInterface, uuid: string, target: LimitTargetEnum): void {
-    ctx.meta.register({
-      uuid,
-      name: 'max_amount_restriction',
-      scope: getTargetUuid(target, ctx),
-      lifetime: MetadataLifetime.Month,
-    });
-  }
-  fn.counter = LimitCounterTypeEnum.Amount;
-  fn.priority = 32;
-  return fn;
-})();
+export const watchForPersonMaxAmountByMonth: LimitStatelessStageHelper =
+  (() => {
+    function fn(
+      ctx: StatelessContextInterface,
+      uuid: string,
+      target: LimitTargetEnum,
+    ): void {
+      ctx.meta.register({
+        uuid,
+        name: "max_amount_restriction",
+        scope: getTargetUuid(target, ctx),
+        lifetime: MetadataLifetime.Month,
+      });
+    }
+    fn.counter = LimitCounterTypeEnum.Amount;
+    fn.priority = 32;
+    return fn;
+  })();
 
 export const watchForPersonMaxAmountByYear: LimitStatelessStageHelper = (() => {
-  function fn(ctx: StatelessContextInterface, uuid: string, target: LimitTargetEnum): void {
+  function fn(
+    ctx: StatelessContextInterface,
+    uuid: string,
+    target: LimitTargetEnum,
+  ): void {
     ctx.meta.register({
       uuid,
-      name: 'max_amount_restriction',
+      name: "max_amount_restriction",
       scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Year,
     });
@@ -97,7 +131,7 @@ export const watchForGlobalMaxTrip: LimitStatelessStageHelper = (() => {
   function fn(ctx: StatelessContextInterface, uuid: string): void {
     ctx.meta.register({
       uuid,
-      name: 'max_trip_restriction',
+      name: "max_trip_restriction",
       lifetime: MetadataLifetime.Always,
     });
   }
@@ -107,10 +141,14 @@ export const watchForGlobalMaxTrip: LimitStatelessStageHelper = (() => {
 })();
 
 export const watchForPersonMaxTripByMonth: LimitStatelessStageHelper = (() => {
-  function fn(ctx: StatelessContextInterface, uuid: string, target: LimitTargetEnum): void {
+  function fn(
+    ctx: StatelessContextInterface,
+    uuid: string,
+    target: LimitTargetEnum,
+  ): void {
     ctx.meta.register({
       uuid,
-      name: 'max_trip_restriction',
+      name: "max_trip_restriction",
       scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Month,
     });
@@ -121,10 +159,14 @@ export const watchForPersonMaxTripByMonth: LimitStatelessStageHelper = (() => {
 })();
 
 export const watchForPersonMaxTripByDay: LimitStatelessStageHelper = (() => {
-  function fn(ctx: StatelessContextInterface, uuid: string, target: LimitTargetEnum): void {
+  function fn(
+    ctx: StatelessContextInterface,
+    uuid: string,
+    target: LimitTargetEnum,
+  ): void {
     ctx.meta.register({
       uuid,
-      name: 'max_trip_restriction',
+      name: "max_trip_restriction",
       scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Day,
     });
@@ -134,22 +176,25 @@ export const watchForPersonMaxTripByDay: LimitStatelessStageHelper = (() => {
   return fn;
 })();
 
-export const watchForPassengerMaxByTripByDay: LimitStatelessStageHelper = (() => {
-  function fn(ctx: StatelessContextInterface, uuid: string): void {
-    if ('operator_trip_id' in ctx.carpool && ctx.carpool.operator_trip_id.length) {
-      ctx.meta.register({
-        uuid,
-        name: 'max_passenger_restriction',
-        scope: `${ctx.carpool.operator_id}.${ctx.carpool.operator_trip_id}`,
-        lifetime: MetadataLifetime.Day,
-        carpoolValue: ctx.carpool.seats,
-      });
+export const watchForPassengerMaxByTripByDay: LimitStatelessStageHelper =
+  (() => {
+    function fn(ctx: StatelessContextInterface, uuid: string): void {
+      if (
+        "operator_trip_id" in ctx.carpool && ctx.carpool.operator_trip_id.length
+      ) {
+        ctx.meta.register({
+          uuid,
+          name: "max_passenger_restriction",
+          scope: `${ctx.carpool.operator_id}.${ctx.carpool.operator_trip_id}`,
+          lifetime: MetadataLifetime.Day,
+          carpoolValue: ctx.carpool.seats,
+        });
+      }
     }
-  }
-  fn.counter = LimitCounterTypeEnum.Other;
-  fn.priority = 10;
-  return fn;
-})();
+    fn.counter = LimitCounterTypeEnum.Other;
+    fn.priority = 10;
+    return fn;
+  })();
 
 export function applyLimitOnStatefulStage(
   ctx: StatefulContextInterface,
@@ -186,7 +231,7 @@ export function applyLimitOnStatefulStage(
     case LimitCounterTypeEnum.Other:
       const raw = ctx.meta.getRaw(uuid);
       if (!raw.carpoolValue) {
-        throw new MisconfigurationException('Missing carpool value');
+        throw new MisconfigurationException("Missing carpool value");
       }
       ctx.meta.set(uuid, state + raw.carpoolValue);
       return;

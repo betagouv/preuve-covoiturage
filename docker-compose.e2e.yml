@@ -94,7 +94,7 @@ services:
 
   api:
     build:
-      dockerfile: ./docker/api/prod/Dockerfile
+      dockerfile: ./docker/api/Dockerfile
       context: .
     environment:
       LOG_LEVEL: 'debug'

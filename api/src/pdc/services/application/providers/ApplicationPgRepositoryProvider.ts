@@ -1,28 +1,35 @@
-import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import {
+  ConfigInterfaceResolver,
+  NotFoundException,
+  provider,
+} from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
-import { RepositoryInterface as ListInterface } from '@shared/application/list.contract';
-import { RepositoryInterface as FindInterface } from '@shared/application/find.contract';
-import { RepositoryInterface as CreateInterface } from '@shared/application/create.contract';
-import { RepositoryInterface as RevokeInterface } from '@shared/application/revoke.contract';
-import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
+import { RepositoryInterface as ListInterface } from "@/shared/application/list.contract.ts";
+import { RepositoryInterface as FindInterface } from "@/shared/application/find.contract.ts";
+import { RepositoryInterface as CreateInterface } from "@/shared/application/create.contract.ts";
+import { RepositoryInterface as RevokeInterface } from "@/shared/application/revoke.contract.ts";
+import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
 import {
   ApplicationRepositoryProviderInterface,
   ApplicationRepositoryProviderInterfaceResolver,
-} from '../interfaces/ApplicationRepositoryProviderInterface';
+} from "../interfaces/ApplicationRepositoryProviderInterface.ts";
 
 @provider({
   identifier: ApplicationRepositoryProviderInterfaceResolver,
 })
-export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
-  public readonly table = 'application.applications';
+export class ApplicationPgRepositoryProvider
+  implements ApplicationRepositoryProviderInterface {
+  public readonly table = "application.applications";
 
   constructor(
     protected connection: PostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {}
 
-  async list({ owner_id, owner_service }: ListInterface): Promise<ApplicationInterface[]> {
+  async list(
+    { owner_id, owner_service }: ListInterface,
+  ): Promise<ApplicationInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -40,17 +47,18 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     return result.rows.map((a) => this.applyDefaultPermissions(a));
   }
 
-  async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
-    const ownerParams =
-      owner_id && typeof owner_id !== 'string'
-        ? {
-            text: 'AND owner_id = $3::int',
-            values: [owner_id],
-          }
-        : {
-            text: '',
-            values: [],
-          };
+  async find(
+    { uuid, owner_id, owner_service }: FindInterface,
+  ): Promise<ApplicationInterface> {
+    const ownerParams = owner_id && typeof owner_id !== "string"
+      ? {
+        text: "AND owner_id = $3::int",
+        values: [owner_id],
+      }
+      : {
+        text: "",
+        values: [],
+      };
 
     const query = {
       text: `
@@ -73,7 +81,9 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     return this.applyDefaultPermissions(result.rows[0]);
   }
 
-  async create({ name, owner_id, owner_service, permissions }: CreateInterface): Promise<ApplicationInterface> {
+  async create(
+    { name, owner_id, owner_service, permissions }: CreateInterface,
+  ): Promise<ApplicationInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -94,7 +104,9 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     return this.applyDefaultPermissions(result.rows[0]);
   }
 
-  async revoke({ uuid, owner_id, owner_service }: RevokeInterface): Promise<void> {
+  async revoke(
+    { uuid, owner_id, owner_service }: RevokeInterface,
+  ): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table}
@@ -114,10 +126,12 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     }
   }
 
-  applyDefaultPermissions(application: ApplicationInterface): ApplicationInterface {
+  applyDefaultPermissions(
+    application: ApplicationInterface,
+  ): ApplicationInterface {
     return {
       ...application,
-      permissions: this.config.get('permissions.application', []),
+      permissions: this.config.get("permissions.application", []),
     };
   }
 }

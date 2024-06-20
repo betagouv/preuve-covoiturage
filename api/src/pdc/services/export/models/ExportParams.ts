@@ -1,6 +1,6 @@
-import { Timezone } from '@pdc/providers/validator';
-import { subMonthsTz, today } from '../helpers';
-import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { subMonthsTz, today } from "../helpers/index.ts";
+import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export type Config = Partial<Params>;
 
@@ -15,13 +15,13 @@ export type Params = {
 export class ExportParams {
   protected params: Params;
 
-  protected readonly tz = 'Europe/Paris' as Timezone;
+  protected readonly tz = "Europe/Paris" as Timezone;
   protected readonly schema = {};
   protected readonly defaultConfig: Params = {
     start_at: subMonthsTz(today(this.tz), 1),
     end_at: today(),
     operator_id: [],
-    geo_selector: { country: ['XXXXX'] }, // FRANCE
+    geo_selector: { country: ["XXXXX"] }, // FRANCE
     tz: this.tz,
   };
 
@@ -46,7 +46,7 @@ export class ExportParams {
 
   // convert geo_selector to SQL WHERE clause
   // using AND or OR to join start and end positions
-  public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
+  public geoToSQL(mode: "AND" | "OR" = "OR"): string {
     const { geo_selector } = this.params;
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
@@ -56,18 +56,20 @@ export class ExportParams {
           local.push(`gps.${type} = '${code}'`);
         });
 
-        p.push(local.join(' OR '));
+        p.push(local.join(" OR "));
         return p;
       }, [])
-      .join(' OR ');
+      .join(" OR ");
 
-    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, 'gpe.')}))`;
+    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
   }
 
   // convert operator_id to SQL WHERE clause
   public operatorToSQL(): string {
     const { operator_id } = this.params;
-    return operator_id.length ? `AND cc.operator_id IN (${operator_id.join(',')})` : '';
+    return operator_id.length
+      ? `AND cc.operator_id IN (${operator_id.join(",")})`
+      : "";
   }
 
   // TODO to AbstractParams class

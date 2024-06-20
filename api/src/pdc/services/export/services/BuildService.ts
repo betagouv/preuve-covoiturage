@@ -1,32 +1,44 @@
-import { provider } from '@ilos/common';
-import { ExportParams } from '../models/ExportParams';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { CampaignRepository } from '../repositories/CampaignRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import { ExportProgress } from '../repositories/ExportRepository';
+import { provider } from "@/ilos/common/index.ts";
+import { ExportParams } from "../models/ExportParams.ts";
+import { XLSXWriter } from "../models/XLSXWriter.ts";
+import { CampaignRepository } from "../repositories/CampaignRepository.ts";
+import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
+import { ExportProgress } from "../repositories/ExportRepository.ts";
 
 export type BuildServiceInterface = {
-  write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void>;
+  write(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void>;
 };
 
-export abstract class BuildServiceInterfaceResolver implements BuildServiceInterface {
-  protected async configure(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
-    throw new Error('Not implemented');
+export abstract class BuildServiceInterfaceResolver
+  implements BuildServiceInterface {
+  protected async configure(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+  ): Promise<void> {
+    throw new Error("Not implemented");
   }
   protected async initialize(): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   protected async data(): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   protected async help(): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
   protected async wrap(): Promise<void> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
-  public async write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
-    throw new Error('Not implemented');
+  public async write(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void> {
+    throw new Error("Not implemented");
   }
 }
 
@@ -43,7 +55,11 @@ export class BuildService {
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  protected async configure(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
     this.progress = progress;
@@ -60,9 +76,13 @@ export class BuildService {
     const campaigns = await this.campaignRepository.list();
 
     // add boosters as data source to file writer
-    this.fileWriter.addDatasource('campaigns', campaigns);
+    this.fileWriter.addDatasource("campaigns", campaigns);
 
-    await this.carpoolRepository.list(this.params, this.fileWriter, this.progress);
+    await this.carpoolRepository.list(
+      this.params,
+      this.fileWriter,
+      this.progress,
+    );
   }
 
   protected async help(): Promise<void> {
@@ -74,7 +94,11 @@ export class BuildService {
     await this.fileWriter.compress();
   }
 
-  public async write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  public async write(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void> {
     try {
       await this.configure(params, fileWriter, progress);
       await this.initialize();

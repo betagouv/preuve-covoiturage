@@ -1,42 +1,58 @@
-import anyTest, { TestFn } from 'ava';
-import { RedisConnection } from '@ilos/connection-redis';
-import { QueueHandler } from './QueueHandler';
-import { queueHandlerFactory } from './helpers/queueHandlerFactory';
-import { ContextType } from '@ilos/common';
+import {
+  afterAll,
+  assert,
+  assertObjectMatch,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { ContextType } from "@/ilos/common/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import process from "node:process";
+import { QueueHandler } from "./QueueHandler.ts";
+import { queueHandlerFactory } from "./helpers/queueHandlerFactory.ts";
 
-interface Context {
-  handler: QueueHandler;
-  context: ContextType;
-}
-
-const test = anyTest as TestFn<Context>;
-
-test.beforeEach(async (t) => {
-  t.context.context = {
+describe("QueueHandler", () => {
+  let handler: QueueHandler | null = null;
+  const context: ContextType = {
     channel: {
-      service: '',
+      service: "",
     },
   };
+  const connection = new RedisConnection(
+    process.env.APP_REDIS_URL ?? "redis://127.0.0.1:6379",
+    {
+      lazyConnect: true,
+    },
+  );
 
-  const connection = new RedisConnection(process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379');
+  beforeAll(async () => {
+    await connection.up();
+  });
 
-  t.context.handler = new (queueHandlerFactory('basic', '0.0.1'))(connection);
-  await t.context.handler.init();
-});
+  afterAll(async () => {
+    await connection.down();
+  });
 
-test.serial('Queue handler: works', async (t) => {
-  const queueProvider = t.context.handler;
-  const defaultContext = t.context.context;
-  const result = (await queueProvider.call({
-    method: 'basic@latest:method',
-    params: { add: [1, 2] },
-    context: defaultContext,
-  })) as any;
+  beforeEach(async () => {
+    handler = new (queueHandlerFactory("basic", "0.0.1"))(connection);
+    await handler.init();
+  });
 
-  t.deepEqual(result.data, {
-    jsonrpc: '2.0',
-    id: null,
-    method: 'basic@latest:method',
-    params: { params: { add: [1, 2] }, _context: defaultContext },
+  it("should call the queue provider", async () => {
+    const result = handler && await handler.call({
+      method: "basic@latest:method",
+      params: { add: [1, 2] },
+      context,
+    });
+
+    assert(result);
+    assertObjectMatch(result.data, {
+      jsonrpc: "2.0",
+      id: null,
+      method: "basic@latest:method",
+      params: { params: { add: [1, 2] }, _context: context },
+    });
   });
 });

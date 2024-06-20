@@ -1,12 +1,12 @@
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
-import { StatInterface } from '../interfaces/StatInterface';
+import { StatInterface } from "../interfaces/StatInterface.ts";
 import {
   StatCacheRepositoryProviderInterface,
   StatCacheRepositoryProviderInterfaceResolver,
-} from '../interfaces/StatCacheRepositoryProviderInterface';
+} from "../interfaces/StatCacheRepositoryProviderInterface.ts";
 
 /*
  * Trip stat repository
@@ -14,8 +14,9 @@ import {
 @provider({
   identifier: StatCacheRepositoryProviderInterfaceResolver,
 })
-export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderInterface {
-  public readonly table = 'trip.stat_cache';
+export class StatCacheRepositoryProvider
+  implements StatCacheRepositoryProviderInterface {
+  public readonly table = "trip.stat_cache";
 
   constructor(
     public connection: PostgresConnection,
@@ -33,7 +34,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
         AND (extract(epoch from age(now(), updated_at)) / 3600) < $2
         LIMIT 1
       `,
-      values: [hash, this.config.get('cache.expireInHours', 24)],
+      values: [hash, this.config.get("cache.expireInHours", 24)],
     });
 
     if (result.rowCount !== 1) {
@@ -56,7 +57,11 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
   /**
    * Save the stat_cache entry
    */
-  protected async save(hash: string, target: any, data: StatInterface): Promise<void> {
+  protected async save(
+    hash: string,
+    target: any,
+    data: StatInterface,
+  ): Promise<void> {
     // first, clean up the matching target before recreating
     // UNIQUE index fails on NULL values. It is safer to force delete
     // the entry before redoing the insert.
@@ -77,12 +82,16 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
       });
 
       if (result.rowCount !== 1) {
-        throw new Error(`Unable to create or update stats cache for ${JSON.stringify(target)}`);
+        throw new Error(
+          `Unable to create or update stats cache for ${
+            JSON.stringify(target)
+          }`,
+        );
       }
 
       return;
     } catch (e) {
-      console.info('[stat cache save]', e.message);
+      console.info("[stat cache save]", e.message);
     }
   }
 
@@ -98,7 +107,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
 
       return deleted.rowCount === 1;
     } catch (e) {
-      console.info('[stat cache cleanup]', e.message);
+      console.info("[stat cache cleanup]", e.message);
       return false;
     }
   }

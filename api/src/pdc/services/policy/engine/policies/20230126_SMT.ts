@@ -1,82 +1,114 @@
-import { dateWithTz, today } from '../../helpers';
+import {
+  getOperatorsAt,
+  TimestampedOperators,
+} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
+import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
+import {
+  LimitTargetEnum,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
+  watchForPersonMaxTripByDay,
+} from "@/pdc/services/policy/engine/helpers/limits.ts";
+import {
+  onDistanceRange,
+  onDistanceRangeOrThrow,
+} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
+import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
+import { dateWithTz, today } from "@/pdc/services/policy/helpers/index.ts";
+import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
-import {
-  LimitTargetEnum,
-  isOperatorClassOrThrow,
-  isOperatorOrThrow,
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-  perKm,
-  perSeat,
-  watchForGlobalMaxAmount,
-  watchForPersonMaxAmountByMonth,
-  watchForPersonMaxTripByDay,
-} from '../helpers';
-import { TimestampedOperators, getOperatorsAt } from '../helpers/getOperatorsAt';
-import { description } from './20230126_SMT.html';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+} from "@/pdc/services/policy/interfaces/index.ts";
+import { description } from "./20230126_SMT.html.ts";
 
 // Politique du Syndicat des Mobilités de Touraine
 export const SMT2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'smt_2023';
+  implements PolicyHandlerInterface {
+  static readonly id = "smt_2023";
 
   protected operators: TimestampedOperators = [
     {
-      date: new Date('2023-01-26T00:00:00+0100'),
+      date: new Date("2023-01-26T00:00:00+0100"),
       operators: [OperatorsEnum.KLAXIT],
     },
     {
-      date: new Date('2024-02-215T00:00:00+0100'),
+      date: new Date("2024-02-215T00:00:00+0100"),
       operators: [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY],
     },
   ];
 
-  protected relaunch_update_date = new Date('15/02/2024');
+  protected relaunch_update_date = new Date("15/02/2024");
 
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 2_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+    },
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
 
   protected slices_after_april: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 2_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+    },
     {
       start: 20_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
     },
   ];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      [
+        "A34719E4-DCA0-78E6-38E4-701631B106C2",
+        6,
+        watchForPersonMaxTripByDay,
+        LimitTargetEnum.Driver,
+      ],
       // 120€ to 150€ from 15/02/2024
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
+      [
+        "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
+        150_00,
+        watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    isOperatorOrThrow(
+      ctx,
+      getOperatorsAt(this.operators, ctx.carpool.datetime),
+    );
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
     onDistanceRangeOrThrow(
       ctx,
-      this.isAfter15April2023(ctx.carpool.datetime) ? { min: 2_000, max: 30_001 } : { min: 2_000 },
+      this.isAfter15April2023(ctx.carpool.datetime)
+        ? { min: 2_000, max: 30_001 }
+        : { min: 2_000 },
     );
   }
 
@@ -96,20 +128,22 @@ export const SMT2023: PolicyHandlerStaticInterface = class
   }
 
   private getSlices() {
-    return this.isAfter15April2023(today()) ? this.slices_after_april : this.slices;
+    return this.isAfter15April2023(today())
+      ? this.slices_after_april
+      : this.slices;
   }
 
   private isAfter15February2024(date: Date): boolean {
-    return date >= dateWithTz(new Date('2024-02-15'));
+    return date >= dateWithTz(new Date("2024-02-15"));
   }
 
   private isAfter15April2023(date: Date): boolean {
-    return date >= dateWithTz(new Date('2023-04-15'));
+    return date >= dateWithTz(new Date("2023-04-15"));
   }
 
   params(): PolicyHandlerParamsInterface {
     return {
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       slices: this.getSlices(),
       operators: getOperatorsAt(this.operators),
       limits: {

@@ -1,9 +1,9 @@
 export enum TerritoryCodeEnum {
-  Arr = 'arr',
-  City = 'com',
-  CityGroup = 'epci',
-  Mobility = 'aom',
-  Id = '_id',
+  Arr = "arr",
+  City = "com",
+  CityGroup = "epci",
+  Mobility = "aom",
+  Id = "_id",
 }
 
 export interface TerritorySelectorsInterface {
@@ -35,22 +35,22 @@ export interface TerritoryGroupInterface {
 
 export type CreateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  "created_at" | "updated_at" | "deleted_at" | "shortname"
 >;
 
 export const idfm: CreateTerritoryGroupInterface = {
   _id: 1,
   company_id: 1,
-  name: 'Ile-De-France-Mobilité',
+  name: "Ile-De-France-Mobilité",
   contacts: {},
   address: {
-    street: '39 bis-41 rue de Châteaudun',
-    postcode: '75009 Paris',
-    cedex: 'Paris',
-    city: 'Paris',
-    country: 'France',
+    street: "39 bis-41 rue de Châteaudun",
+    postcode: "75009 Paris",
+    cedex: "Paris",
+    city: "Paris",
+    country: "France",
   },
-  selector: { aom: ['217500016'] },
+  selector: { aom: ["217500016"] },
 };
 
 export const territory_groups: CreateTerritoryGroupInterface[] = [idfm];

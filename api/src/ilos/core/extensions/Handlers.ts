@@ -1,15 +1,15 @@
 import {
-  RegisterHookInterface,
-  NewableType,
-  ServiceContainerInterface,
-  HandlerInterface,
   extension,
-} from '@ilos/common';
+  HandlerInterface,
+  NewableType,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
 
-import { Middlewares } from './Middlewares';
+import { Middlewares } from "./Middlewares.ts";
 
 @extension({
-  name: 'handlers',
+  name: "handlers",
   require: [Middlewares],
 })
 export class Handlers implements RegisterHookInterface {
@@ -17,7 +17,9 @@ export class Handlers implements RegisterHookInterface {
     //
   }
 
-  public async register(serviceContainer: ServiceContainerInterface): Promise<void> {
+  public async register(
+    serviceContainer: ServiceContainerInterface,
+  ): Promise<void> {
     for (const handler of this.handlers) {
       serviceContainer.getContainer().setHandler(handler);
       serviceContainer.registerHooks(handler.prototype, handler);

@@ -1,31 +1,29 @@
 import {
-  FunctionalHandlerInterface,
-  SingleMiddlewareConfigType,
-  FunctionMiddlewareInterface,
-  NewableType,
-  HandlerInterface,
-  HandlerConfigType,
-  ContainerInterface,
-  HandlerMeta,
   CallType,
-  ParamsType,
+  ContainerInterface,
   ContextType,
-  ResultType,
+  FunctionalHandlerInterface,
+  FunctionMiddlewareInterface,
+  HandlerConfigType,
+  HandlerInterface,
+  HandlerMeta,
   MiddlewareInterface,
-} from '@ilos/common';
-
-import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
-import { compose } from '../helpers';
+  NewableType,
+  ParamsType,
+  ResultType,
+  SingleMiddlewareConfigType,
+} from "@/ilos/common/index.ts";
+import { compose } from "../helpers/index.ts";
+import { normalizeHandlerConfig } from "../helpers/normalizeHandlerConfig.ts";
 
 export class HandlerRegistry {
-  static readonly key: symbol = Symbol.for('handlers');
+  static readonly key: symbol = Symbol.for("handlers");
 
-  constructor(protected container: ContainerInterface) {
-    //
-  }
+  constructor(protected container: ContainerInterface) {}
 
   /**
    * Get all registred handlers
+   *
    * @returns {HandlerConfigType[]}
    * @memberof Container
    */
@@ -37,9 +35,11 @@ export class HandlerRegistry {
     }
   }
 
-  protected buildHandlerMiddlewares(middlewaresConfig: SingleMiddlewareConfigType[]): FunctionMiddlewareInterface {
+  protected buildHandlerMiddlewares(
+    middlewaresConfig: SingleMiddlewareConfigType[],
+  ): FunctionMiddlewareInterface {
     const middlewares = middlewaresConfig.map((value) => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         return this.container.get<MiddlewareInterface>(value);
       }
       const [key, config] = value;
@@ -61,8 +61,15 @@ export class HandlerRegistry {
     const local = Reflect.getMetadata(HandlerMeta.LOCAL, handler);
     const queue = Reflect.getMetadata(HandlerMeta.QUEUE, handler);
 
-    const middlewares = Reflect.getMetadata(HandlerMeta.MIDDLEWARES, handler) || [];
-    const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
+    const middlewares = Reflect.getMetadata(HandlerMeta.MIDDLEWARES, handler) ||
+      [];
+    const handlerConfig = normalizeHandlerConfig({
+      service,
+      method,
+      version,
+      local,
+      queue,
+    });
 
     this.container.bind(handler).toSelf();
 
@@ -91,25 +98,27 @@ export class HandlerRegistry {
 
   /**
    * Get a particular handler
+   *
    * [local, sync] => [local/sync, local/sync/*, remote/sync, remote/sync/*]
    * [local, async] => [local/async, local/async/*, local/sync, local/sync/*, remote/sync, remote/sync/*]
    * [remote, sync] => [remote/sync, remote/sync/*]
    * [remote, async] => [remote/sync, remote/sync/*]
-   * @param {HandlerConfigType} config
+   *
+   * @param {HandlerConfigType} initialConfig
    * @returns {HandlerInterface}
    * @memberof Container
    */
   get<P = ParamsType, C = ContextType, R = ResultType>(
     initialConfig: HandlerConfigType,
-  ): FunctionalHandlerInterface<P, C, R> {
+  ): FunctionalHandlerInterface<P, C, R> | null {
     const config = normalizeHandlerConfig(initialConfig);
 
     // local is true by default
-    if (!('local' in config) || config.local === undefined) {
+    if (!("local" in config) || config.local === undefined) {
       config.local = true;
     }
     // remote/async is not possible now
-    if ('local' in config && !config.local && 'queue' in config && config) {
+    if ("local" in config && !config.local && "queue" in config && config) {
       config.queue = false;
     }
 
@@ -119,7 +128,7 @@ export class HandlerRegistry {
           // same service
           config.service === hconfig.service &&
           // same method or *
-          (config.method === hconfig.method || hconfig.method === '*') &&
+          (config.method === hconfig.method || hconfig.method === "*") &&
           // local + remote or just remote if asked
           (config.local || !hconfig.local) &&
           // async + sync or just sync if asked
@@ -140,6 +149,16 @@ export class HandlerRegistry {
 
         return 0;
       });
-    return handlers.length > 0 ? (handlers.shift().resolver as FunctionalHandlerInterface<P, C, R>) : undefined;
+
+    const firstHandler = handlers.length > 0 && handlers.shift();
+    if (!firstHandler || !firstHandler.resolver) {
+      return null;
+    }
+
+    /**
+     * resolver type is 'Function'
+     * @todo: fix resolver type to be FunctionalHandlerInterface
+     */
+    return firstHandler.resolver as FunctionalHandlerInterface<P, C, R>;
   }
 }

@@ -1,4 +1,4 @@
-import { Timezone } from '@pdc/providers/validator';
+import { Timezone } from '@/pdc/providers/validator/index.ts';
 
 export type ParamsInterface = Partial<{
   policy_id: number;

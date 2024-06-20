@@ -1,8 +1,13 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+} from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
+import { process } from "@/deps.ts";
 
-import { ParamsInterface } from '@shared/user/create.contract';
+import { ParamsInterface } from "@/shared/user/create.contract.ts";
 
 interface CreateUserInterface extends ParamsInterface {
   password: string;
@@ -12,20 +17,20 @@ interface CreateUserInterface extends ParamsInterface {
 export class SeedUsersCommand implements CommandInterface {
   private readonly users: CreateUserInterface[] = [
     {
-      email: 'admin@example.com',
-      firstname: 'Admin',
-      lastname: 'Registry',
-      password: 'admin1234',
-      role: 'registry.admin',
+      email: "admin@example.com",
+      firstname: "Admin",
+      lastname: "Registry",
+      password: "admin1234",
+      role: "registry.admin",
     },
   ];
 
-  static readonly signature: string = 'seed:users';
-  static readonly description: string = 'Seed local users';
+  static readonly signature: string = "seed:users";
+  static readonly description: string = "Seed local users";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-u, --database-uri <uri>',
-      description: 'Postgres connection string',
+      signature: "-u, --database-uri <uri>",
+      description: "Postgres connection string",
       default: process.env.APP_POSTGRES_URL,
     },
   ];
@@ -33,16 +38,26 @@ export class SeedUsersCommand implements CommandInterface {
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
   public async call(options): Promise<string> {
-    if (['local', 'dev', 'test', 'ci'].indexOf(process.env.NODE_ENV) === -1) {
-      throw new Error('Cannot seed users in this environment');
+    if (["local", "dev", "test", "ci"].indexOf(process.env.NODE_ENV) === -1) {
+      throw new Error("Cannot seed users in this environment");
     }
 
-    const pgConnection = new PostgresConnection({ connectionString: options.databaseUri });
+    const pgConnection = new PostgresConnection({
+      connectionString: options.databaseUri,
+    });
     await pgConnection.up();
     const pgClient = pgConnection.getClient();
 
     while (this.users.length > 0) {
-      const { email, password, firstname, lastname, role, operator_id, territory_id } = this.users.shift();
+      const {
+        email,
+        password,
+        firstname,
+        lastname,
+        role,
+        operator_id,
+        territory_id,
+      } = this.users.shift();
 
       try {
         const insert = await pgClient.query<any>({
@@ -59,7 +74,7 @@ export class SeedUsersCommand implements CommandInterface {
             role,
             operator_id,
             territory_id,
-            'active',
+            "active",
           ],
         });
 
@@ -73,6 +88,6 @@ export class SeedUsersCommand implements CommandInterface {
       }
     }
 
-    return 'Users seeded!';
+    return "Users seeded!";
   }
 }

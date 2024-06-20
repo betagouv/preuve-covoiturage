@@ -1,6 +1,10 @@
-export function passwordMacro(): { type: string; minLength: number; maxLength: number } {
+export function passwordMacro(): {
+  type: string;
+  minLength: number;
+  maxLength: number;
+} {
   return {
-    type: 'string',
+    type: "string",
     minLength: 6,
     maxLength: 256,
   };

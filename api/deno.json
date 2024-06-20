@@ -1,0 +1,12 @@
+{
+  "imports": {
+    "@/": "./src/",
+    "reflect-metadata": "https://cdn.esm.sh/reflect-metadata?deno",
+    "inversify": "https://cdn.esm.sh/inversify?deno"
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["geojson"]
+  }
+}

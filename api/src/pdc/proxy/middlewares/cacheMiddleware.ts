@@ -1,31 +1,32 @@
 // create Redis connection
-import { ForbiddenException } from '@ilos/common';
-import { NextFunction, Request, Response } from 'express';
-import { cacheStore } from './cache/redis';
-import { deflate, getKey, inflate } from './cache/transformers';
-import {
+import { ForbiddenException } from "@/ilos/common/index.ts";
+import { NextFunction, Request, Response } from "@/deps.ts";
+
+import { cacheStore } from "./cache/redis.ts";
+import { deflate, getKey, inflate } from "./cache/transformers.ts";
+import { CacheTTL } from "./cache/types.ts";
+import type {
   CacheFlushResponse,
   CacheMiddleware,
   CachePrefix,
   CacheStore,
-  CacheTTL,
   GlobalCacheConfig,
   RouteCacheConfig,
   StoreConnection,
-} from './cache/types';
-import { validate } from './cache/validators';
+} from "./cache/types.ts";
+import { validate } from "./cache/validators.ts";
 
 const defaultGlobalConfig: GlobalCacheConfig = {
-  authorizedMethods: ['HEAD', 'GET'],
-  authToken: '',
+  authorizedMethods: ["HEAD", "GET"],
+  authToken: "",
   enabled: true,
   gzipped: true,
-  prefix: 'routecache',
+  prefix: "routecache",
   driver: null,
 };
 
 const defaultRouteConfig: RouteCacheConfig = {
-  prefix: 'default',
+  prefix: "default",
   ttl: CacheTTL.MINUTE,
 };
 
@@ -39,24 +40,42 @@ export {
   StoreConnection,
 };
 
-export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {}): CacheMiddleware {
+export function cacheMiddleware(
+  userGlobalConfig: Partial<GlobalCacheConfig> = {},
+): CacheMiddleware {
   const globalConfig = { ...defaultGlobalConfig, ...userGlobalConfig };
   const store: CacheStore = cacheStore(globalConfig);
 
   return {
     set(userRouteConfig: Partial<RouteCacheConfig> = {}) {
-      const routeConfig: RouteCacheConfig = { ...defaultRouteConfig, ...userRouteConfig };
+      const routeConfig: RouteCacheConfig = {
+        ...defaultRouteConfig,
+        ...userRouteConfig,
+      };
 
       // On disabled cache, set the header for user feedback and skip
       if (!globalConfig.enabled || !globalConfig.driver) {
-        return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-          res.setHeader('X-Route-Cache', 'disabled');
+        return async (
+          req: Request,
+          res: Response,
+          next: NextFunction,
+        ): Promise<void> => {
+          res.setHeader("X-Route-Cache", "disabled");
           next();
         };
       }
 
-      return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const { isValid, errors, warnings, headers } = await validate({ globalConfig, routeConfig, req, res });
+      return async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> => {
+        const { isValid, errors, warnings, headers } = await validate({
+          globalConfig,
+          routeConfig,
+          req,
+          res,
+        });
         if (!isValid) {
           for (const [key, value] of headers.entries()) {
             res.setHeader(key, value);
@@ -64,15 +83,15 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
 
           for (const warn of warnings.values()) {
             console.warn({
-              'X-Route-Cache-Url': req.url,
-              'X-Route-Cache-Warn': warn.message,
+              "X-Route-Cache-Url": req.url,
+              "X-Route-Cache-Warn": warn.message,
             });
           }
 
           for (const error of errors.values()) {
             console.error({
-              'X-Route-Cache-Url': req.url,
-              'X-Route-Cache-Error': error.message,
+              "X-Route-Cache-Url": req.url,
+              "X-Route-Cache-Error": error.message,
             });
           }
 
@@ -88,16 +107,18 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
 
         // return the cached value
         if (buf) {
-          res.setHeader('X-Route-Cache', 'HIT');
-          res.setHeader('X-Route-Cache-TTL', ttl);
+          res.setHeader("X-Route-Cache", "HIT");
+          res.setHeader("X-Route-Cache-TTL", ttl);
 
-          const acceptGzip = (req.header('accept-encoding') || '').includes('gzip');
+          const acceptGzip = (req.header("accept-encoding") || "").includes(
+            "gzip",
+          );
           if (acceptGzip && globalConfig.gzipped) {
-            res.setHeader('Content-Encoding', 'gzip');
-            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.setHeader("Content-Encoding", "gzip");
+            res.setHeader("Content-Type", "application/json; charset=utf-8");
             res.send(buf);
           } else {
-            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.setHeader("Content-Type", "application/json; charset=utf-8");
             res.send(inflate(buf));
           }
 
@@ -105,7 +126,7 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
         }
 
         // process the request and cache the response
-        res.setHeader('X-Route-Cache', 'MISS');
+        res.setHeader("X-Route-Cache", "MISS");
 
         // patch the res.send function to intercept the response
         const _res_send = res.send;
@@ -120,12 +141,16 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
     },
 
     auth() {
-      return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      return async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> => {
         const token = String(globalConfig.authToken);
-        const header = req.headers['x-route-cache-auth'];
+        const header = req.headers["x-route-cache-auth"];
 
-        if (token === '') {
-          return next(new Error('Please set APP_ROUTECACHE_AUTHTOKEN'));
+        if (token === "") {
+          return next(new Error("Please set APP_ROUTECACHE_AUTHTOKEN"));
         }
 
         if (token !== header) {
@@ -136,13 +161,15 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
       };
     },
 
-    async flush(prefix: CachePrefix = '*'): Promise<CacheFlushResponse> {
-      const userPrefix = prefix === '*' ? '*' : `${prefix}:*`;
+    async flush(prefix: CachePrefix = "*"): Promise<CacheFlushResponse> {
+      const userPrefix = prefix === "*" ? "*" : `${prefix}:*`;
       const pattern = `${globalConfig.prefix}:${userPrefix}`;
       const keys = await store.scan(pattern);
       if (keys && keys.size) await store.del(keys);
 
-      console.debug(`[route-cache] flushed ${keys.size} keys from pattern: ${pattern}`);
+      console.debug(
+        `[route-cache] flushed ${keys.size} keys from pattern: ${pattern}`,
+      );
 
       return {
         size: keys.size,

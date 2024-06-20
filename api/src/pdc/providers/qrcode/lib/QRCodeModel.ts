@@ -1,8 +1,8 @@
-import { QR8bitByte } from './QR8bitByte';
-import { QRUtil } from './QRUtil';
-import { QRRSBlock } from './QRRSBlock';
-import { QRBitBuffer } from './QRBitBuffer';
-import { QRPolynomial } from './QRPolynomial';
+import { QR8bitByte } from "./QR8bitByte.ts";
+import { QRUtil } from "./QRUtil.ts";
+import { QRRSBlock } from "./QRRSBlock.ts";
+import { QRBitBuffer } from "./QRBitBuffer.ts";
+import { QRPolynomial } from "./QRPolynomial.ts";
 
 function QRCodeModel(typeNumber, errorCorrectLevel) {
   this.typeNumber = typeNumber;
@@ -20,7 +20,9 @@ QRCodeModel.prototype = {
     this.dataCache = null;
   },
   isDark: function (row, col) {
-    if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+    if (
+      row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col
+    ) {
       throw new Error(`${row},${col}`);
     }
     return this.modules[row][col];
@@ -50,7 +52,11 @@ QRCodeModel.prototype = {
       this.setupTypeNumber(test);
     }
     if (this.dataCache == null) {
-      this.dataCache = QRCodeModel.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+      this.dataCache = QRCodeModel.createData(
+        this.typeNumber,
+        this.errorCorrectLevel,
+        this.dataList,
+      );
     }
     this.mapData(this.dataCache, maskPattern);
   },
@@ -228,7 +234,11 @@ QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
     totalDataCount += rsBlocks[i].dataCount;
   }
   if (buffer.getLengthInBits() > totalDataCount * 8) {
-    throw new Error(`code length overflow. (${buffer.getLengthInBits()}>${totalDataCount * 8})`);
+    throw new Error(
+      `code length overflow. (${buffer.getLengthInBits()}>${
+        totalDataCount * 8
+      })`,
+    );
   }
   if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
     buffer.put(0, 4);

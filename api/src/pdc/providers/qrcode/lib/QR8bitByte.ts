@@ -1,4 +1,4 @@
-import { QRMode } from './QRMode';
+import { QRMode } from "./QRMode.ts";
 
 function QR8bitByte(data) {
   this.mode = QRMode.MODE_8BIT_BYTE;

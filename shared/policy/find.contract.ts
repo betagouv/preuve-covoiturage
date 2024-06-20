@@ -1,4 +1,4 @@
-import { PolicyInterface } from './common/interfaces/PolicyInterface';
+import { PolicyInterface } from './common/interfaces/PolicyInterface.ts';
 export interface ParamsInterface {
   _id: number;
   territory_id?: number;

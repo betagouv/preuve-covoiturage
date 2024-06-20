@@ -1,19 +1,25 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/list.contract';
+import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/TerritoryRepositoryProviderInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/territory/list.contract.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     // ['validate', 'territory.list'],
-    hasPermissionMiddleware('common.territory.list'),
+    hasPermissionMiddleware("common.territory.list"),
   ],
 })
 export class ListTerritoryAction extends AbstractAction {
-  constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
+  constructor(
+    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 

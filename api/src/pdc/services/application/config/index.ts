@@ -1,5 +1,5 @@
-import * as ajv from './ajv';
-import * as permissions from './permissions';
+import * as ajv from "./ajv.ts";
+import * as permissions from "./permissions.ts";
 
 export const config = {
   ajv,

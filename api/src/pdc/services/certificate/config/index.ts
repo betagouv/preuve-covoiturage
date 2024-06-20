@@ -1,5 +1,5 @@
-import * as templates from './templates';
-import * as url from './url';
+import * as templates from "./templates.ts";
+import * as url from "./url.ts";
 
 export const config = {
   templates,

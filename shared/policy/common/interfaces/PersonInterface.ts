@@ -1,4 +1,4 @@
-import { TerritoryCodeInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface.ts';
 
 export interface PersonInterface {
   identity_uuid: string;

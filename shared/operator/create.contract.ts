@@ -1,5 +1,5 @@
-import { OperatorInterface } from './common/interfaces/OperatorInterface';
-import { OperatorDbInterface } from './common/interfaces/OperatorDbInterface';
+import { OperatorInterface } from './common/interfaces/OperatorInterface.ts';
+import { OperatorDbInterface } from './common/interfaces/OperatorDbInterface.ts';
 
 export interface ParamsInterface extends OperatorInterface {}
 

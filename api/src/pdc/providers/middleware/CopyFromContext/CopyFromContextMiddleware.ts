@@ -1,12 +1,19 @@
-import { get, set } from 'lodash';
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import { _ } from "@/deps.ts";
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * Extract data from context and copy to request params
  */
 @middleware()
-export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromContextMiddlewareParams> {
+export class CopyFromContextMiddleware
+  implements MiddlewareInterface<CopyFromContextMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -17,11 +24,11 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
 
     const [fromPath, toPath, preserve] = mappings;
     const notFound = Symbol();
-    const valueToCopy = get(context, fromPath, notFound);
+    const valueToCopy = _.get(context, fromPath, notFound);
 
     if (valueToCopy !== notFound && valueToCopy !== null) {
-      if (!preserve || get(newParams, toPath, notFound) === notFound) {
-        set(newParams, toPath, valueToCopy);
+      if (!preserve || _.get(newParams, toPath, notFound) === notFound) {
+        _.set(newParams, toPath, valueToCopy);
       }
     }
 
@@ -31,9 +38,12 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
 
 export type CopyFromContextMiddlewareParams = [string, string, boolean];
 
-const alias = 'copy.from_context';
+const alias = "copy.from_context";
 
-export const copyFromContextMiddlewareBinding = [alias, CopyFromContextMiddleware];
+export const copyFromContextMiddlewareBinding = [
+  alias,
+  CopyFromContextMiddleware,
+];
 
 export function copyFromContextMiddleware(
   fromPath: string,

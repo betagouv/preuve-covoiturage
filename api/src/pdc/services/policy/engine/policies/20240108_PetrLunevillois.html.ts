@@ -1,6 +1,7 @@
 /* eslint-disable */
 
-export const description = `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 8 janvier 2024 au 7 juin 2024</b>, toute la semaine</p>
   <p>Cette campagne est limitée à <b>10 000 euros</b>.</p>

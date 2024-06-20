@@ -1,82 +1,101 @@
-import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { Id } from '../interfaces';
+import {
+  afterAll,
+  assertObjectMatch,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { Id } from "../interfaces/index.ts";
+import {
+  insertableCarpool,
+  updatableCarpool,
+} from "../mocks/database/carpool.ts";
+import { CarpoolRepository } from "./CarpoolRepository.ts";
 
-interface TestContext {
-  repository: CarpoolRepository;
-  db: DbContext;
-}
+describe("Carpool Repository", () => {
+  let repository: CarpoolRepository;
+  let db: DbContext;
 
-const test = anyTest as TestFn<TestContext>;
-const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
-  const db = await before();
-  t.context.db = db;
-  t.context.repository = new CarpoolRepository(t.context.db.connection);
-});
-
-test.after.always(async (t) => {
-  await after(t.context.db);
-});
-
-async function getCarpool(context: TestContext, id: Id) {
-  const result = await context.db.connection.getClient().query({
-    text: `
-      SELECT *,
-        json_build_object(
-          'lat', ST_Y(start_position::geometry),
-          'lon', ST_X(start_position::geometry)
-        ) AS start_position,
-        json_build_object(
-          'lat', ST_Y(end_position::geometry),
-          'lon', ST_X(end_position::geometry)
-        ) AS end_position
-      FROM ${context.repository.table}
-      WHERE _id = $1
-    `,
-    values: [id],
+  beforeAll(async () => {
+    db = await before();
+    repository = new CarpoolRepository(db.connection);
   });
 
-  const incentiveResult = await context.db.connection.getClient().query({
-    text: `SELECT idx, siret, amount FROM ${context.repository.incentiveTable} WHERE carpool_id = $1`,
-    values: [id],
+  afterAll(async () => {
+    await after(db);
   });
 
-  return {
-    ...result.rows.pop(),
-    incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
-  };
-}
+  async function getCarpool(id: Id) {
+    const result = await db.connection.getClient().query({
+      text: `
+        SELECT *,
+          json_build_object(
+            'lat', ST_Y(start_position::geometry),
+            'lon', ST_X(start_position::geometry)
+          ) AS start_position,
+          json_build_object(
+            'lat', ST_Y(end_position::geometry),
+            'lon', ST_X(end_position::geometry)
+          ) AS end_position
+        FROM ${repository.table}
+        WHERE _id = $1
+      `,
+      values: [id],
+    });
 
-test.serial('Should create carpool', async (t) => {
-  const data = { ...insertableCarpool };
+    const incentiveResult = await db.connection.getClient().query({
+      text:
+        `SELECT idx, siret, amount FROM ${repository.incentiveTable} WHERE carpool_id = $1`,
+      values: [id],
+    });
 
-  const carpool = await t.context.repository.register(data);
-  const result = await getCarpool(t.context, carpool._id);
+    return {
+      ...result.rows.pop(),
+      incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({
+        index: idx,
+        siret,
+        amount,
+      })),
+    };
+  }
 
-  t.like(result, { ...carpool, ...data });
-});
+  it("Should create carpool", async () => {
+    const data = { ...insertableCarpool };
 
-test.serial('Should do nothing on duplicate carpool', async (t) => {
-  const data = { ...insertableCarpool };
+    const carpool = await repository.register(data);
+    const result = await getCarpool(carpool._id);
 
-  const carpool = await t.context.repository.register(data);
-  const result = await getCarpool(t.context, carpool._id);
+    assertObjectMatch(result, { ...carpool, ...data });
+  });
 
-  t.like(result, { ...carpool, ...data });
-});
+  it("Should do nothing on duplicate carpool", async () => {
+    const data = { ...insertableCarpool };
 
-test.serial('Should update acquisition', async (t) => {
-  const insertData = { ...insertableCarpool, operator_journey_id: 'journey_2' };
+    const carpool = await repository.register(data);
+    const result = await getCarpool(carpool._id);
 
-  const carpool = await t.context.repository.register(insertData);
+    assertObjectMatch(result, { ...carpool, ...data });
+  });
 
-  const updateData = { ...updatableCarpool };
-  await t.context.repository.update(insertData.operator_id, insertData.operator_journey_id, updateData);
+  it("Should update acquisition", async () => {
+    const insertData = {
+      ...insertableCarpool,
+      operator_journey_id: "journey_2",
+    };
 
-  const result = await getCarpool(t.context, carpool._id);
-  t.like(result, { ...carpool, ...insertData, ...updateData });
+    const carpool = await repository.register(insertData);
+
+    const updateData = { ...updatableCarpool };
+    await repository.update(
+      insertData.operator_id,
+      insertData.operator_journey_id,
+      updateData,
+    );
+
+    const result = await getCarpool(carpool._id);
+    assertObjectMatch(result, { ...carpool, ...insertData, ...updateData });
+  });
 });

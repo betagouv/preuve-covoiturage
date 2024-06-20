@@ -1,8 +1,8 @@
-import { RPCException } from './RPCException';
+import { RPCException } from "./RPCException.ts";
 
 export class InvalidRequestException extends RPCException {
   constructor(data?: any) {
-    super('Invalid Request');
+    super("Invalid Request");
     this.nolog = true;
     this.rpcError = {
       data,

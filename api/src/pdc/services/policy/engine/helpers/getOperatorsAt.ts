@@ -1,4 +1,4 @@
-import { OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from "../../interfaces/index.ts";
 
 /**
  * Define a list of operators from a given datetime onwards
@@ -62,7 +62,10 @@ export type TimestampedOperators = Array<{
  * @param {Date} [current] defaults to the latest
  * @returns {OperatorsEnum[]}
  */
-export function getOperatorsAt(list: TimestampedOperators, current?: Date): OperatorsEnum[] {
+export function getOperatorsAt(
+  list: TimestampedOperators,
+  current?: Date,
+): OperatorsEnum[] {
   if (!Array.isArray(list) || !list.length) return [];
 
   // sort list by date ascending
@@ -85,7 +88,7 @@ export function getOperatorsAt(list: TimestampedOperators, current?: Date): Oper
   // return the last one or fallback
   if (Array.isArray(sorted) && sorted.length) {
     const last = sorted[sorted.length - 1];
-    if ('operators' in last) return last.operators;
+    if ("operators" in last) return last.operators;
   }
 
   return [];

@@ -1,34 +1,52 @@
-import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
+import {
+  ConfigInterfaceResolver,
+  ContextType,
+  handler,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '@pdc/providers/middleware';
-import { omit } from 'lodash';
-import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper';
-import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper';
-import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper';
-import { mapFromCarpools } from '../helpers/mapFromCarpools';
+} from "@/pdc/providers/middleware/index.ts";
+import { _ } from "@/deps.ts";
+import {
+  createCastParamsHelper,
+  CreateCastParamsInterface,
+} from "../helpers/createCastParamsHelper.ts";
+import {
+  findOperator,
+  FindOperatorInterface,
+} from "../helpers/findOperatorHelper.ts";
+import {
+  findPerson,
+  FindPersonInterface,
+} from "../helpers/findPersonHelper.ts";
+import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";
 import {
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
-} from '../interfaces/CarpoolRepositoryProviderInterface';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/create.contract';
-import { alias } from '@shared/certificate/create.schema';
-import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus';
+} from "../interfaces/CarpoolRepositoryProviderInterface.ts";
+import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/CertificateRepositoryProviderInterface.ts";
+import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/certificate/create.contract.ts";
+import { alias } from "@/shared/certificate/create.schema.ts";
+import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      operator: 'operator.certificate.create',
-      registry: 'registry.certificate.create',
+      operator: "operator.certificate.create",
+      registry: "registry.certificate.create",
     }),
-    channelServiceWhitelistMiddleware('proxy'),
-    ['validate', alias],
+    channelServiceWhitelistMiddleware("proxy"),
+    ["validate", alias],
   ],
 })
 export class CreateCertificateAction extends AbstractAction {
@@ -48,8 +66,12 @@ export class CreateCertificateAction extends AbstractAction {
     this.castParams = createCastParamsHelper(this.config);
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<WithHttpStatus<ResultInterface>> {
-    const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<WithHttpStatus<ResultInterface>> {
+    const { identity, tz, operator_id, start_at, end_at, positions } = this
+      .castParams(params);
 
     // fetch the data for this identity and operator and map to template object
     const identities = await this.findPerson({ identity, operator_id });
@@ -58,8 +80,17 @@ export class CreateCertificateAction extends AbstractAction {
     const operator = await this.findOperator({ operator_id, context });
 
     // fetch the data for this identity and operator and store the compiled data
-    const findParams: FindParamsInterface = { identities: id_list, operator_id, tz, start_at, end_at, positions };
-    const carpools: CarpoolInterface[] = await this.carpoolRepository.find(findParams);
+    const findParams: FindParamsInterface = {
+      identities: id_list,
+      operator_id,
+      tz,
+      start_at,
+      end_at,
+      positions,
+    };
+    const carpools: CarpoolInterface[] = await this.carpoolRepository.find(
+      findParams,
+    );
     const certificate: CertificateInterface = await this.certRepository.create(
       mapFromCarpools({
         person: { uuid },
@@ -74,7 +105,7 @@ export class CreateCertificateAction extends AbstractAction {
       data: {
         uuid: certificate.uuid,
         created_at: certificate.created_at,
-        meta: omit(certificate.meta, ['identity', 'operator']),
+        meta: _.omit(certificate.meta, ["identity", "operator"]),
       },
     };
   }

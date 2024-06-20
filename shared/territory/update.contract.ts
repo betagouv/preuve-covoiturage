@@ -1,4 +1,4 @@
-import { TerritoryGroupInterface, UpdateTerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface, UpdateTerritoryGroupInterface } from './common/interfaces/TerritoryInterface.ts';
 
 export interface ParamsInterface extends UpdateTerritoryGroupInterface {}
 export interface ResultInterface extends TerritoryGroupInterface {}

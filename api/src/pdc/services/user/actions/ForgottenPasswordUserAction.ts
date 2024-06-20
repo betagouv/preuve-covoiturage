@@ -1,16 +1,20 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/forgottenPassword.contract';
-import { alias } from '@shared/user/forgottenPassword.schema';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/user/forgottenPassword.contract.ts";
+import { alias } from "@/shared/user/forgottenPassword.schema.ts";
+import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
+import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
 
 /*
  * find user by email and send email to set new password
  */
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({ ...handlerConfig, middlewares: [["validate", alias]] })
 export class ForgottenPasswordUserAction extends AbstractAction {
   constructor(
     private authRepository: AuthRepositoryProviderInterfaceResolver,
@@ -26,8 +30,15 @@ export class ForgottenPasswordUserAction extends AbstractAction {
       return;
     }
 
-    const token = await this.authRepository.createTokenByEmail(params.email, this.authRepository.RESET_TOKEN);
+    const token = await this.authRepository.createTokenByEmail(
+      params.email,
+      this.authRepository.RESET_TOKEN,
+    );
 
-    await this.notification.passwordForgotten(token, params.email, `${user.firstname} ${user.lastname}`);
+    await this.notification.passwordForgotten(
+      token,
+      params.email,
+      `${user.firstname} ${user.lastname}`,
+    );
   }
 }

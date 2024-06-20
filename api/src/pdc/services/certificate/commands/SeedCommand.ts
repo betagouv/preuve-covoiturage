@@ -1,6 +1,11 @@
-import { faker } from '@faker-js/faker';
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+} from "@/ilos/common/index.ts";
+import type { PoolClient } from "@/ilos/connection-postgres/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { faker, process } from "@/deps.ts";
 
 interface CommandOptions {
   databaseUri: string;
@@ -13,35 +18,38 @@ interface CommandOptions {
 export class SeedCommand implements CommandInterface {
   private db: PoolClient;
 
-  static readonly signature: string = 'seed:certificate';
-  static readonly description: string = 'Seed fake identities, carpools and policies to fill out certificates';
+  static readonly signature: string = "seed:certificate";
+  static readonly description: string =
+    "Seed fake identities, carpools and policies to fill out certificates";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-u, --database-uri <uri>',
-      description: 'Postgres connection string',
+      signature: "-u, --database-uri <uri>",
+      description: "Postgres connection string",
       default: process.env.APP_POSTGRES_URL,
     },
     {
-      signature: '-n, --number <number>',
-      description: 'Number of carpools to seed',
+      signature: "-n, --number <number>",
+      description: "Number of carpools to seed",
       default: 1000,
       coerce: (s: string): number => Number(s),
     },
     {
-      signature: '-d, --driver <phone>',
-      description: 'Driver phone number',
-      default: '+33612345678',
+      signature: "-d, --driver <phone>",
+      description: "Driver phone number",
+      default: "+33612345678",
     },
     {
-      signature: '-p, --passenger <phone>',
-      description: 'Passenger phone number',
-      default: '+33687654321',
+      signature: "-p, --passenger <phone>",
+      description: "Passenger phone number",
+      default: "+33687654321",
     },
   ];
 
   public async call(options: CommandOptions): Promise<string> {
     // connect DB
-    const postgres = new PostgresConnection({ connectionString: options.databaseUri });
+    const postgres = new PostgresConnection({
+      connectionString: options.databaseUri,
+    });
     await postgres.up();
     this.db = await postgres.getClient().connect();
 
@@ -50,7 +58,7 @@ export class SeedCommand implements CommandInterface {
     // 3. créer une policy.incentives avec le carpool_id et un amount ~ 180
 
     try {
-      await this.db.query<any>('BEGIN');
+      await this.db.query<any>("BEGIN");
 
       // Create driver and passenger identities
       const driver = await this.upsertIdentity(options.driver);
@@ -68,13 +76,15 @@ export class SeedCommand implements CommandInterface {
         await this.fakeIncentive(cpP._id);
       }
 
-      await this.db.query<any>('COMMIT');
+      await this.db.query<any>("COMMIT");
 
-      return 'Done!';
+      return "Done!";
     } catch (e) {
-      console.error('Failed to seed identities, carpools and incentives for certificates');
+      console.error(
+        "Failed to seed identities, carpools and incentives for certificates",
+      );
       console.error(e.message);
-      await this.db.query<any>('ROLLBACK');
+      await this.db.query<any>("ROLLBACK");
     } finally {
       this.db.release();
     }
@@ -89,16 +99,22 @@ export class SeedCommand implements CommandInterface {
     if (result.rowCount > 0) return result.rows[0];
 
     const created = await this.db.query<any>({
-      text: ` INSERT INTO carpool.identities ( phone, over_18 ) VALUES ( $1, $2 ) RETURNING _id`,
+      text:
+        ` INSERT INTO carpool.identities ( phone, over_18 ) VALUES ( $1, $2 ) RETURNING _id`,
       values: [id, true],
     });
 
-    if (created.rowCount === 0) throw new Error(`Failed to create identity: ${id}`);
+    if (created.rowCount === 0) {
+      throw new Error(`Failed to create identity: ${id}`);
+    }
 
     return created.rows[0];
   }
 
-  private async fakeCarpool(identity_id: number, is_driver: boolean): Promise<any> {
+  private async fakeCarpool(
+    identity_id: number,
+    is_driver: boolean,
+  ): Promise<any> {
     const result = await this.db.query<any>({
       text: `
         INSERT INTO carpool.carpools
@@ -106,7 +122,12 @@ export class SeedCommand implements CommandInterface {
         VALUES ( $1, $2, $3, $4 )
         RETURNING *
       `,
-      values: [is_driver, (Math.random() * 10000) | 0, faker.date.past({ years: 2 }), identity_id],
+      values: [
+        is_driver,
+        (Math.random() * 10000) | 0,
+        faker.date.past({ years: 2 }),
+        identity_id,
+      ],
     });
 
     return result.rows[0];
@@ -119,7 +140,7 @@ export class SeedCommand implements CommandInterface {
         ( policy_id, status, carpool_id, amount )
         VALUES ( $1, $2, $3::varchar, $4 )
       `,
-      values: [1, 'validated', carpool_id, (Math.random() * 200) | 0],
+      values: [1, "validated", carpool_id, (Math.random() * 200) | 0],
     });
   }
 }

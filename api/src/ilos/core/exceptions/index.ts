@@ -1,2 +1,2 @@
-export { ConfigNotFoundException } from './ConfigNotFoundException';
-export { EnvNotFoundException } from './EnvNotFoundException';
+export { ConfigNotFoundException } from "./ConfigNotFoundException.ts";
+export { EnvNotFoundException } from "./EnvNotFoundException.ts";

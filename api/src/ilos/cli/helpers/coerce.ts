@@ -1,7 +1,7 @@
 export function coerceIntList(s: string): number[] {
   if (!s || !s.length) return [];
   return s
-    .split(',')
+    .split(",")
     .map((i) => parseInt(i))
     .filter((i) => i && !isNaN(i));
 }
@@ -15,7 +15,7 @@ export function coerceDate(s: string | null): Date | null {
 
 export function coerceInt(s: string): number | undefined {
   const i = parseInt(s);
-  if(isNaN(i)) {
+  if (isNaN(i)) {
     return undefined;
   }
   return i;

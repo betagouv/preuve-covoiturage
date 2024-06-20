@@ -1,15 +1,20 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface } from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { OccupationRepositoryInterfaceResolver } from "../../interfaces/OccupationRepositoryProviderInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+} from "@/shared/observatory/occupation/insertMonthlyOccupation.contract.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class InsertLastMonthOccupationAction extends AbstractAction {
-  constructor(private occupationRepository: OccupationRepositoryInterfaceResolver) {
+  constructor(
+    private occupationRepository: OccupationRepositoryInterfaceResolver,
+  ) {
     super();
   }
 

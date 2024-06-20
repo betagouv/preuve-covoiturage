@@ -1,20 +1,20 @@
-import { v4 } from 'uuid';
+import { v4 } from "@/deps.ts";
 import {
   CarpoolInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
-} from '../../interfaces';
+} from "../../interfaces/index.ts";
 
 const defaultPosition = {
-  arr: '91377',
-  com: '91377',
-  aom: '217500016',
-  epci: '200056232',
-  dep: '91',
-  reg: '11',
-  country: 'XXXXX',
-  reseau: '232',
+  arr: "91377",
+  com: "91377",
+  aom: "217500016",
+  epci: "200056232",
+  dep: "91",
+  reg: "11",
+  country: "XXXXX",
+  reseau: "232",
 };
 
 const defaultLat = 48.72565703413325;
@@ -24,12 +24,12 @@ const dftCarpool: CarpoolInterface = {
   operator_trip_id: v4(),
   driver_identity_key: v4(),
   passenger_identity_key: v4(),
-  operator_uuid: '0b361f5b-4651-45f1-8f59-5952d5e745fd',
-  operator_class: 'C',
+  operator_uuid: "0b361f5b-4651-45f1-8f59-5952d5e745fd",
+  operator_class: "C",
   passenger_is_over_18: true,
   driver_has_travel_pass: true,
   passenger_has_travel_pass: true,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date("2019-01-15"),
   seats: 1,
   distance: 5000,
   operator_journey_id: v4(),
@@ -56,7 +56,7 @@ const defaultIncentive: SerializedIncentiveInterface = {
   policy_id: 1,
   operator_id: 1,
   operator_journey_id: dftCarpool.operator_journey_id,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date("2019-01-15"),
   statelessAmount: 100,
   statefulAmount: 100,
   status: IncentiveStatusEnum.Draft,
@@ -64,7 +64,9 @@ const defaultIncentive: SerializedIncentiveInterface = {
   meta: [],
 };
 
-export function generateIncentive(incentive: Partial<SerializedIncentiveInterface> = {}): SerializedIncentiveInterface {
+export function generateIncentive(
+  incentive: Partial<SerializedIncentiveInterface> = {},
+): SerializedIncentiveInterface {
   return { ...defaultIncentive, ...incentive };
 }
 
@@ -80,9 +82,9 @@ export function generateIncentive(incentive: Partial<SerializedIncentiveInterfac
  * same month when testing for limits.
  *
  * @example
- * test(
+ * it(
  *   'should work with driver amount month limits',
- *   process,
+ *   async () => await process(
  *   {
  *     policy: { handler: Handler.id },
  *     carpool: generatePartialCarpools(80, new Date('2023-10-01')),
@@ -107,16 +109,21 @@ export function generateIncentive(incentive: Partial<SerializedIncentiveInterfac
  * @param {Date} date datetime of the first carpool
  * @returns {Partial<CarpoolInterface>[]}
  */
-export function generatePartialCarpools(count = 75, date = new Date('2022-01-01')): Partial<CarpoolInterface>[] {
+export function generatePartialCarpools(
+  count = 75,
+  date = new Date("2022-01-01"),
+): Partial<CarpoolInterface>[] {
   return [
     ...Array(count + 1 + 1)
       .slice(1)
       .keys(),
   ].map((x) => ({
     // every 3rd carpool is the next day
-    datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
+    datetime: x % 3 == 0
+      ? date.setDate(date.getDate() + 1) && new Date(date)
+      : new Date(date),
     distance: 25_000,
-    driver_identity_key: 'three',
+    driver_identity_key: "three",
     passenger_identity_key: v4(),
   }));
 }

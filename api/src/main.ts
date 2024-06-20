@@ -1,9 +1,14 @@
-import 'module-alias/register';
-import { bootstrap as app } from './pdc/proxy/bootstrap';
+import { process } from "@/deps.ts";
+import { bootstrap as app } from "./pdc/proxy/bootstrap.ts";
 
-const [, , command, ...opts] = process.argv;
+async function run() {
+  const [, , command, ...opts] = process.argv;
+  try {
+    await app.boot(command || "seed", ...opts);
+  } catch (e) {
+    console.error(e.message, e);
+    process.exit(1);
+  }
+}
 
-app.boot(command, ...opts).catch((e) => {
-  console.error(e.message, e);
-  process.exit(1);
-});
+run();

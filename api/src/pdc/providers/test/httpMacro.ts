@@ -1,50 +1,54 @@
+import { assertEquals, supertest as spt, SuperTestAgent } from "@/dev_deps.ts";
 import {
   ContextType,
   NewableType,
   ParamsType,
-  ResultType,
   ServiceContainerInterface,
   TransportInterface,
-} from '@ilos/common';
-import { Bootstrap } from '@ilos/framework';
-import test, { ExecutionContext, Macro } from 'ava';
-import spt, { Test } from 'supertest';
-import TestAgent from 'supertest/lib/agent';
-import { makeKernelCtor } from './helpers';
+} from "@/ilos/common/index.ts";
+import { Bootstrap } from "@/ilos/framework/index.ts";
+import { makeKernelCtor } from "./helpers.ts";
 
-export interface HttpMacroContext {
+export interface HttpContext {
   transport: TransportInterface;
-  supertest: TestAgent<Test>;
-  request: <P = ParamsType, R = ResultType>(method: string, params: P, context: Partial<ContextType>) => Promise<R>;
+  supertest: SuperTestAgent;
+  request: <P = ParamsType, R = any>(
+    method: string,
+    params: P,
+    context: Partial<ContextType>,
+  ) => Promise<R>;
 }
 
-interface HttpMacroInterface<C = unknown> {
-  before(): Promise<HttpMacroContext>;
-  after(ctxt: HttpMacroContext): Promise<void>;
-  query: Macro<[string, any, any, any], HttpMacroContext & C>;
+interface HttpMacroInterface {
+  before(): Promise<HttpContext>;
+  after(ctx: HttpContext): Promise<void>;
 }
 
-export function httpMacro<TestContext = unknown>(
+export function makeHttpBeforeAfter(
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
-): HttpMacroInterface<TestContext> {
+): HttpMacroInterface {
   async function before() {
     const kernel = makeKernelCtor(serviceProviderCtor);
     const bootstrap = Bootstrap.create({ kernel: () => kernel });
-    const transport = await bootstrap.boot('http', '0');
+    const transport = await bootstrap.boot("http", "0");
     const supertest = spt(transport.getInstance());
-    const request = async <P = ParamsType>(method: string, params: P, context: Partial<ContextType>) => {
+    const request = async <P = ParamsType, R = unknown>(
+      method: string,
+      params: P,
+      context: Partial<ContextType>,
+    ): Promise<R> => {
       const mergedContext: ContextType = {
         call: { user: {}, ...context.call },
-        channel: { service: '', ...context.channel },
+        channel: { service: "", ...context.channel },
       };
 
       const result = await supertest
-        .post('/')
-        .set('Accept', 'application/json')
-        .set('Content-type', 'application/json')
+        .post("/")
+        .set("Accept", "application/json")
+        .set("Content-type", "application/json")
         .send({
           id: 1,
-          jsonrpc: '2.0',
+          jsonrpc: "2.0",
           method,
           params: {
             params,
@@ -61,29 +65,23 @@ export function httpMacro<TestContext = unknown>(
     };
   }
 
-  async function after(ctxt: HttpMacroContext) {
-    await ctxt.transport.down();
+  async function after(ctx: HttpContext) {
+    await ctx.transport.down();
   }
 
-  const query: Macro<[string, any, any, any], TestContext & HttpMacroContext> = test.macro({
-    async exec(
-      t: ExecutionContext<TestContext & HttpMacroContext>,
-      method: string,
-      params: any,
-      context: any,
-      result: any,
-    ) {
-      const response = await t.context.request(method, params, context);
-      t.like(response, result);
-    },
-    title(providedTitle = '', method: string) {
-      return `${providedTitle}: calling ${method}`;
-    },
-  });
-
   return {
-    query,
     before,
     after,
   };
+}
+
+export async function assertHttpCall(
+  ctx: HttpContext,
+  method: string,
+  params: unknown,
+  result: unknown,
+  context: Partial<ContextType> = {},
+) {
+  const response = await ctx.request(method, params, context);
+  assertEquals(response, result);
 }

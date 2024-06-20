@@ -1,19 +1,36 @@
-import { get } from 'lodash';
-import { Action as AbstractAction, env } from '@ilos/core';
-import { handler, ContextType, ParseErrorException, ConflictException, ValidatorInterfaceResolver } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
+import { _ } from "@/deps.ts";
+import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import {
+  ConflictException,
+  ContextType,
+  handler,
+  ParseErrorException,
+  ValidatorInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/create.contract';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/acquisition/create.contract.ts";
 
-import { PayloadV3 } from '@shared/acquisition/create.contract';
-import { v3alias } from '@shared/acquisition/create.schema';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { PayloadV3 } from "@/shared/acquisition/create.contract.ts";
+import { v3alias } from "@/shared/acquisition/create.schema.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import {
+  AcquisitionErrorStageEnum,
+  AcquisitionStatusEnum,
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.create' })],
+  middlewares: [
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: "operator.acquisition.create",
+    }),
+  ],
 })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
@@ -24,16 +41,23 @@ export class CreateJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const request_id = get(context, 'call.metadata.req.headers.x-request-id');
-    const operator_id = get(context, 'call.user.operator_id');
-    const application_id = get(context, 'call.user.application_id');
+  protected async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    const request_id = _.get(context, "call.metadata.req.headers.x-request-id");
+    const operator_id = _.get(context, "call.user.operator_id");
+    const application_id = _.get(context, "call.user.application_id");
     const { api_version: apiVersionString, ...payload } = params;
-    const api_version = parseInt((apiVersionString || '').substring(1), 10);
+    const api_version = parseInt((apiVersionString || "").substring(1), 10);
     if (Number.isNaN(api_version)) {
-      throw new ParseErrorException(`Api version should be a number ${apiVersionString}`);
+      throw new ParseErrorException(
+        `Api version should be a number ${apiVersionString}`,
+      );
     }
-    const operator_journey_id = api_version === 2 ? get(params, 'journey_id') : get(params, 'operator_journey_id');
+    const operator_journey_id = api_version === 2
+      ? _.get(params, "journey_id")
+      : _.get(params, "operator_journey_id");
 
     // validate the payload manually to log rejected journeys
     try {
@@ -51,10 +75,10 @@ export class CreateJourneyAction extends AbstractAction {
       ]);
 
       if (acquisitions.length !== 1) {
-        throw new ConflictException('Journey already registered');
+        throw new ConflictException("Journey already registered");
       }
 
-      if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
+      if (env.or_false("APP_ENABLE_CARPOOL_V2")) {
         await this.acquisitionService.registerRequest({
           api_version,
           operator_id,
@@ -78,14 +102,18 @@ export class CreateJourneyAction extends AbstractAction {
           driver_phone: payload.driver.identity.phone,
           driver_phone_trunc: payload.driver.identity.phone_trunc,
           driver_travelpass_name: payload.driver.identity.travel_pass?.name,
-          driver_travelpass_user_id: payload.driver.identity.travel_pass?.user_id,
+          driver_travelpass_user_id: payload.driver.identity.travel_pass
+            ?.user_id,
           driver_revenue: payload.driver.revenue,
           passenger_identity_key: payload.passenger.identity.identity_key,
-          passenger_operator_user_id: payload.passenger.identity.operator_user_id,
+          passenger_operator_user_id:
+            payload.passenger.identity.operator_user_id,
           passenger_phone: payload.passenger.identity.phone,
           passenger_phone_trunc: payload.passenger.identity.phone_trunc,
-          passenger_travelpass_name: payload.passenger.identity.travel_pass?.name,
-          passenger_travelpass_user_id: payload.passenger.identity.travel_pass?.user_id,
+          passenger_travelpass_name: payload.passenger.identity.travel_pass
+            ?.name,
+          passenger_travelpass_user_id: payload.passenger.identity.travel_pass
+            ?.user_id,
           passenger_over_18: payload.passenger.identity.over_18,
           passenger_seats: payload.passenger.seats,
           passenger_contribution: payload.passenger.contribution,
@@ -123,16 +151,19 @@ export class CreateJourneyAction extends AbstractAction {
     }
   }
 
-  protected async validate(apiVersionString: string, journey: PayloadV3): Promise<void> {
+  protected async validate(
+    apiVersionString: string,
+    journey: PayloadV3,
+  ): Promise<void> {
     switch (apiVersionString) {
-      case 'v3': {
+      case "v3": {
         const v3Journey = journey as PayloadV3;
         await this.validator.validate(v3Journey, v3alias);
         const now = new Date();
-        const start = get(v3Journey, 'start.datetime');
-        const end = get(v3Journey, 'end.datetime');
+        const start = _.get(v3Journey, "start.datetime");
+        const end = _.get(v3Journey, "end.datetime");
         if (end > now || start > end) {
-          throw new ParseErrorException('Journeys cannot happen in the future');
+          throw new ParseErrorException("Journeys cannot happen in the future");
         }
         return;
       }

@@ -1,4 +1,4 @@
-import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface';
+import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface.ts';
 
 export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
 

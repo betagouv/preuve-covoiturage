@@ -1,11 +1,11 @@
-import { ProviderInterface, provider } from '@ilos/common';
+import { provider, ProviderInterface } from "@/ilos/common/index.ts";
 
 @provider()
 export class CustomProvider implements ProviderInterface {
-  private value: string;
+  private value: string = "not-set";
 
   boot() {
-    this.value = 'default';
+    this.value = "default";
   }
 
   get() {

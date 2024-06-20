@@ -1,6 +1,6 @@
-import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface';
-import { PointInterface } from '../common/interfaces/PointInterface';
-import { CertificateMetaInterface } from './common/interfaces/CertificateMetaInterface';
+import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface.ts';
+import { PointInterface } from '../common/interfaces/PointInterface.ts';
+import { CertificateMetaInterface } from './common/interfaces/CertificateMetaInterface.ts';
 
 export interface ParamsInterface {
   tz: string;

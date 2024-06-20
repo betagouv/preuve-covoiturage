@@ -1,61 +1,67 @@
-import anyTest, { TestFn } from 'ava';
-import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
+import { afterAll, beforeAll, describe, it } from "@/dev_deps.ts";
+import {
+  ContextType,
+  handler as handlerDecorator,
+  serviceProvider as serviceProviderDecorator,
+} from "@/ilos/common/index.ts";
+import {
+  Action as AbstractAction,
+  ServiceProvider as AbstractServiceProvider,
+} from "@/ilos/core/index.ts";
+import { makeKernelBeforeAfter } from "@/pdc/providers/test/helpers.ts";
+import {
+  assertErrorHandler,
+  assertSuccessHandler,
+  KernelContext,
+} from "@/pdc/providers/test/index.ts";
 
-import { handlerMacro, HandlerMacroContext } from './handlerMacro';
+describe("handler macro", () => {
+  const handlerConfig = {
+    service: "test",
+    method: "hello",
+  } as const;
+  type ParamsInterface = string;
+  type ResultInterface = string;
 
-const handlerConfig = {
-  service: 'test',
-  method: 'hello',
-} as const;
-type ParamsInterface = string;
-type ResultInterface = string;
-
-class CustomError extends Error {
-  constructor(message: string) {
-    super(`custom:${message}`);
-  }
-}
-
-@handlerDecorator(handlerConfig)
-class Action extends AbstractAction {
-  async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (params === 'error') {
-      throw new CustomError('test');
+  class CustomError extends Error {
+    constructor(message: string) {
+      super(`custom:${message}`);
     }
-    return `hello ${params}`;
   }
-}
 
-@serviceProviderDecorator({
-  handlers: [Action],
-})
-class ServiceProvider extends AbstractServiceProvider {}
+  @handlerDecorator(handlerConfig)
+  class Action extends AbstractAction {
+    async handle(
+      params: ParamsInterface,
+      context: ContextType,
+    ): Promise<ResultInterface> {
+      if (params === "error") {
+        throw new CustomError("test");
+      }
+      return `hello ${params}`;
+    }
+  }
 
-interface CustomInterface extends HandlerMacroContext {
-  hi: string;
-}
+  @serviceProviderDecorator({
+    handlers: [Action],
+  })
+  class ServiceProvider extends AbstractServiceProvider {}
 
-const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface, CustomError, CustomInterface>(
-  ServiceProvider,
-  handlerConfig,
-);
+  const { before, after } = makeKernelBeforeAfter(ServiceProvider);
+  let context: KernelContext;
 
-const test = anyTest as TestFn<CustomInterface>;
+  beforeAll(async () => {
+    context = await before();
+  });
 
-test.before(async (t) => {
-  const { kernel } = await before();
-  t.context.kernel = kernel;
-  t.context.hi = 'you';
-});
+  afterAll(async () => {
+    await after(context);
+  });
+  it("Success", async () => {
+    await assertSuccessHandler(context, handlerConfig, "toto", "hello toto");
+  });
 
-test.after(async (t) => {
-  await after({ kernel: t.context.kernel });
-});
-
-test('Success', success, 'toto', 'hello toto');
-test('Error', error, 'error', 'custom:test');
-
-test('should preserve context type and before hook', (t) => {
-  t.is(t.context.hi, 'you');
+  it("Error", async () => {
+    await assertErrorHandler(context, handlerConfig, "error", "custom:test");
+  });
 });

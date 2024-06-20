@@ -1,13 +1,25 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
-import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import {
+  ConflictException,
+  ContextType,
+  handler,
+  UnauthorizedException,
+} from "@/ilos/common/index.ts";
+import {
+  contentWhitelistMiddleware,
+  copyGroupIdAndApplyGroupPermissionMiddlewares,
+} from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/patch.contract';
-import { alias } from '@shared/user/patch.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/user/patch.contract.ts";
+import { alias } from "@/shared/user/patch.schema.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
+import { userWhiteListFilterOutput } from "../config/filterOutput.ts";
+import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
+import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
 
 /*
  * Update properties of user ( firstname, lastname, phone )
@@ -17,12 +29,12 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
+    ["validate", alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      user: 'common.user.update',
-      registry: 'registry.user.update',
-      territory: 'territory.user.update',
-      operator: 'operator.user.update',
+      user: "common.user.update",
+      registry: "registry.user.update",
+      territory: "territory.user.update",
+      operator: "operator.user.update",
     }),
     contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
@@ -36,8 +48,15 @@ export class PatchUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    const scope = params.territory_id
+      ? "territory_id"
+      : params.operator_id
+      ? "operator_id"
+      : "none";
 
     const _id = params._id;
     const { email, ...patch } = params.patch;
@@ -45,17 +64,20 @@ export class PatchUserAction extends AbstractAction {
     let user;
 
     if (params.patch.email) {
-      await this.userRepository.checkForDoubleEmailAndFail(params.patch.email, params._id);
+      await this.userRepository.checkForDoubleEmailAndFail(
+        params.patch.email,
+        params._id,
+      );
     }
 
     switch (scope) {
-      case 'territory_id':
+      case "territory_id":
         user = await this.userRepository.findByTerritory(_id, params[scope]);
         break;
-      case 'operator_id':
+      case "operator_id":
         user = await this.userRepository.findByOperator(_id, params[scope]);
         break;
-      case 'none':
+      case "none":
         user = await this.userRepository.find(_id);
         break;
     }

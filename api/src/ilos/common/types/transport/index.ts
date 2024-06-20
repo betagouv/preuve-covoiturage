@@ -1,1 +1,1 @@
-export { TransportInterface } from './TransportInterface';
+export type { TransportInterface } from "./TransportInterface.ts";

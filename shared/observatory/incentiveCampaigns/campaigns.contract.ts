@@ -1,5 +1,5 @@
-import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter';
-import { Feature } from 'geojson';
+import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter.ts';
+import type { Feature } from '../../geo/GeoJson.ts';
 
 export interface SingleResultInterface {
   type: PerimeterType;

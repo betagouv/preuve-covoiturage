@@ -1,5 +1,5 @@
-import { IncentiveInterface } from '../common/interfaces/IncentiveInterface';
-import { FinalizedPersonInterface } from '../common/interfaces/PersonInterface';
+import { IncentiveInterface } from '../common/interfaces/IncentiveInterface.ts';
+import { FinalizedPersonInterface } from '../common/interfaces/PersonInterface.ts';
 
 export interface ParamsInterface {
   operator_trip_id?: string;

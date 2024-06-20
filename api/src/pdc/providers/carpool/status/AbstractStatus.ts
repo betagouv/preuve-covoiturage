@@ -1,4 +1,4 @@
-import { Id } from '../interfaces';
+import { Id } from "../interfaces/index.ts";
 
 export abstract class AbstractStatus {
   abstract status: unknown;

@@ -1,4 +1,4 @@
-import { ContextType, KernelInterface } from '@ilos/common';
+import { ContextType, KernelInterface } from "@/ilos/common/index.ts";
 
 export interface ParamsInterface {
   operator_id: number;
@@ -18,15 +18,17 @@ export interface FindOperatorInterface {
 }
 
 export const findOperator = (kernel: KernelInterface): FindOperatorInterface =>
-  async function findOperator(params: ParamsInterface): Promise<ResultsInterface> {
+  async function findOperator(
+    params: ParamsInterface,
+  ): Promise<ResultsInterface> {
     const { operator_id, context } = params;
 
     const operator = await kernel.call(
-      'operator:quickfind',
+      "operator:quickfind",
       { _id: operator_id, thumbnail: false },
       {
         ...context,
-        channel: { service: 'certificate' },
+        channel: { service: "certificate" },
       },
     );
 

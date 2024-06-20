@@ -1,1 +1,0 @@
-ALTER TABLE operator.operators ADD COLUMN support VARCHAR(256);

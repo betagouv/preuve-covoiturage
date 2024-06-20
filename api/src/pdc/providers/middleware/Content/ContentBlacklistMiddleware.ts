@@ -1,13 +1,20 @@
-import { set } from 'lodash';
+import { _ } from "@/deps.ts";
 
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * Delete properties from model or array of models on output of handler
  */
 @middleware()
-export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBlacklistMiddlewareParams> {
+export class ContentBlacklistMiddleware
+  implements MiddlewareInterface<ContentBlacklistMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -23,9 +30,9 @@ export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBl
     }
 
     const configKeys = config
-      .map((k: string) => k.split('.'))
+      .map((k: string) => k.split("."))
       .reduce((acc: object, keys: string[]) => {
-        set(acc, keys, true);
+        _.set(acc, keys, true);
         return acc;
       }, {});
 
@@ -44,8 +51,8 @@ export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBl
       const keyValue = keys[key];
       if (!keyValue) {
         result[key] = model[key];
-      } else if (typeof keyValue === 'object' && '*' in keyValue) {
-        result[key] = this.blacklist(model[key], keyValue['*']);
+      } else if (typeof keyValue === "object" && "*" in keyValue) {
+        result[key] = this.blacklist(model[key], keyValue["*"]);
       }
     });
     return result;
@@ -54,9 +61,12 @@ export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBl
 
 export type ContentBlacklistMiddlewareParams = string[];
 
-const alias = 'content.except';
+const alias = "content.except";
 
-export const contentBlacklistMiddlewareBinding = [alias, ContentBlacklistMiddleware];
+export const contentBlacklistMiddlewareBinding = [
+  alias,
+  ContentBlacklistMiddleware,
+];
 
 export function contentBlacklistMiddleware(
   ...params: ContentBlacklistMiddlewareParams

@@ -1,20 +1,26 @@
-import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { SimulateOnPastGeoRequiredParams } from "@/shared/policy/simulateOnPastGeo.contract.ts";
+import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
+import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
 import {
   ParamsInterface as SimulateOnPasGeoParams,
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastGeoSignature,
-} from '@shared/policy/simulateOnPastGeo.contract';
+} from "@/shared/policy/simulateOnPastGeo.contract.ts";
 
-import { handlerConfig, ParamsInterface } from '@shared/user/simulatePolicyform.contract';
-import { alias } from '@shared/user/simulatePolicyform.schema';
+import {
+  handlerConfig,
+  ParamsInterface,
+} from "@/shared/user/simulatePolicyform.contract.ts";
+import { alias } from "@/shared/user/simulatePolicyform.schema.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('common.user.policySimulate')],
+  middlewares: [
+    ["validate", alias],
+    hasPermissionMiddleware("common.user.policySimulate"),
+  ],
 })
 export class SimulatePolicyformAction extends AbstractAction {
   readonly NB_MONHTHES_SIMULATION: number[] = [1, 3, 6];
@@ -29,7 +35,10 @@ export class SimulatePolicyformAction extends AbstractAction {
   public async handle(params: ParamsInterface): Promise<void> {
     const simulations: { [key: number]: SimulateOnPastResult } = {};
     for (const nbMonthes of this.NB_MONHTHES_SIMULATION) {
-      const result: SimulateOnPastResult = await this.simulatePolicy(nbMonthes, params.simulation);
+      const result: SimulateOnPastResult = await this.simulatePolicy(
+        nbMonthes,
+        params.simulation,
+      );
       simulations[nbMonthes] = result;
     }
 
@@ -44,13 +53,17 @@ export class SimulatePolicyformAction extends AbstractAction {
       ...simulation,
       months: nbMonths,
     };
-    return this.kernel.call<SimulateOnPasGeoParams>(simulateOnPastGeoSignature, simulateOnPasGeoParams, {
-      call: {
-        user: {},
+    return this.kernel.call<SimulateOnPasGeoParams>(
+      simulateOnPastGeoSignature,
+      simulateOnPasGeoParams,
+      {
+        call: {
+          user: {},
+        },
+        channel: {
+          service: handlerConfig.service,
+        },
       },
-      channel: {
-        service: handlerConfig.service,
-      },
-    });
+    );
   }
 }

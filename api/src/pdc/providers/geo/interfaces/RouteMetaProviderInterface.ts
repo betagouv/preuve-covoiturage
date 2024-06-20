@@ -1,4 +1,4 @@
-import { PointInterface } from './PointInterface';
+import { PointInterface } from "./PointInterface.ts";
 
 export interface RouteMeta {
   distance: number;

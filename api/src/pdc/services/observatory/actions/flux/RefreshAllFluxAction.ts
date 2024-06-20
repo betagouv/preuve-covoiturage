@@ -1,8 +1,8 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { handlerConfig } from '@shared/observatory/flux/refreshAllFlux.contract';
-import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { handlerConfig } from "@/shared/observatory/flux/refreshAllFlux.contract.ts";
+import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
@@ -12,7 +12,7 @@ export class RefreshAllFluxAction extends AbstractAction {
   constructor(private fluxRepository: FluxRepositoryInterfaceResolver) {
     super();
   }
-  private readonly startDate = new Date('2020-01-01');
+  private readonly startDate = new Date("2020-01-01");
 
   get today() {
     return new Date();

@@ -1,10 +1,14 @@
-import { command, KernelInterfaceResolver, ResultType, CommandOptionType } from '@ilos/common';
-
-import { Command } from '../parents/Command';
+import {
+  command,
+  CommandOptionType,
+  KernelInterfaceResolver,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { Command } from "../parents/Command.ts";
 
 function coerceToJson(s: string): object {
   try {
-    if ('string' !== typeof s) return {};
+    if ("string" !== typeof s) return {};
     if (!s.length) return {};
     return JSON.parse(s);
   } catch (e) {
@@ -21,18 +25,18 @@ function coerceToJson(s: string): object {
  */
 @command()
 export class CallCommand extends Command {
-  static readonly signature: string = 'call <method>';
-  static readonly description: string = 'Make an RPC call';
+  static readonly signature: string = "call <method>";
+  static readonly description: string = "Make an RPC call";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-p, --params <params>',
-      description: 'Set call parameters',
+      signature: "-p, --params <params>",
+      description: "Set call parameters",
       default: {},
       coerce: coerceToJson,
     },
     {
-      signature: '-c, --context <context>',
-      description: 'Set call context',
+      signature: "-c, --context <context>",
+      description: "Set call context",
       default: {},
       coerce: coerceToJson,
     },
@@ -42,32 +46,32 @@ export class CallCommand extends Command {
     super();
   }
 
-  public async call(method, options?): Promise<ResultType> {
+  public async call(method: string, options?: any): Promise<ResultType> {
     const call = {
       method,
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: 1,
       params: {
         params: undefined,
         _context: {
           channel: {
-            service: '',
-            transport: 'cli',
+            service: "",
+            transport: "cli",
           },
         },
       },
     };
 
-    if (options && ('params' in options || 'context' in options)) {
-      if ('params' in options) {
+    if (options && ("params" in options || "context" in options)) {
+      if ("params" in options) {
         call.params.params = options.params;
       }
 
-      if ('context' in options) {
+      if ("context" in options) {
         call.params._context = options.context;
         call.params._context.channel = {
-          transport: 'cli',
-          service: '',
+          transport: "cli",
+          service: "",
           ...options.context.channel,
         };
       }

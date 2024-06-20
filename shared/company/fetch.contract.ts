@@ -1,4 +1,4 @@
-import { CompanyInterface } from '../common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '../common/interfaces/CompanyInterface2.ts';
 
 export type ParamsInterface = string;
 

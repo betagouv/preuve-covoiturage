@@ -1,4 +1,4 @@
-import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
+import { CarpoolV1StatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
 
 export enum CeeJourneyTypeEnum {
   Short = 'short',

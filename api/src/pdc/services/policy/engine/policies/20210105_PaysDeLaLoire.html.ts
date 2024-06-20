@@ -1,4 +1,5 @@
-export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description =
+  `<p _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 <p>Campagne d’incitation au covoiturage du <b> mardi 05 janvier 2021 au mardi 31 janvier 2023</b>, limitée à lundi,
   mardi, mercredi, jeudi, vendredi, samedi, dimanche
 </p>

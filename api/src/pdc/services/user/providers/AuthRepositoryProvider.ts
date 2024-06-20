@@ -1,25 +1,25 @@
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/providers/crypto';
+import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
 import {
   AuthRepositoryProviderInterface,
   AuthRepositoryProviderInterfaceResolver,
-} from '../interfaces/AuthRepositoryProviderInterface';
+} from "../interfaces/AuthRepositoryProviderInterface.ts";
 
 @provider({
   identifier: AuthRepositoryProviderInterfaceResolver,
 })
 export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
-  public readonly table = 'auth.users';
+  public readonly table = "auth.users";
 
-  public readonly CONFIRMATION_TOKEN = 'confirmation';
-  public readonly INVITATION_TOKEN = 'invitation';
-  public readonly RESET_TOKEN = 'reset';
+  public readonly CONFIRMATION_TOKEN = "confirmation";
+  public readonly INVITATION_TOKEN = "invitation";
+  public readonly RESET_TOKEN = "reset";
 
-  public readonly CONFIRMED_STATUS = 'active';
-  public readonly UNCONFIRMED_STATUS = 'pending';
-  public readonly INVITED_STATUS = 'invited';
+  public readonly CONFIRMED_STATUS = "active";
+  public readonly UNCONFIRMED_STATUS = "pending";
+  public readonly INVITED_STATUS = "invited";
 
   constructor(
     protected connection: PostgresConnection,
@@ -78,7 +78,9 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Get token and expires at by email or null if not found
    */
-  protected async getTokenByEmail(email: string): Promise<{ token: string | null; token_expires_at: Date | null }> {
+  protected async getTokenByEmail(
+    email: string,
+  ): Promise<{ token: string | null; token_expires_at: Date | null }> {
     const query = {
       text: `
         SELECT
@@ -107,13 +109,20 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
    * Get expires at from token type, return current date if type not found
    */
   protected getTokenExpiresAt(type: string): Date {
-    return new Date(new Date().getTime() + this.config.get(`user.tokenExpiration.${type}`, 0) * 1000);
+    return new Date(
+      new Date().getTime() +
+        this.config.get(`user.tokenExpiration.${type}`, 0) * 1000,
+    );
   }
 
   /**
    * Create a token by email, set status to unconfirmed by default, return the token
    */
-  async createTokenByEmail(email: string, type: string, status?: string): Promise<string | undefined> {
+  async createTokenByEmail(
+    email: string,
+    type: string,
+    status?: string,
+  ): Promise<string | undefined> {
     const plainToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
@@ -124,7 +133,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       UPDATE ${this.table}
         SET token = $2,
         token_expires_at = $3::timestamp
-        ${status ? ', status = $4' : ''}
+        ${status ? ", status = $4" : ""}
       WHERE email = $1
       `,
       values: status ? [...values, status] : values,
@@ -147,7 +156,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       text: `
       UPDATE ${this.table}
         SET token = null, token_expires_at = null
-        ${status ? ', status = $2' : ''}
+        ${status ? ", status = $2" : ""}
       WHERE email = $1
       `,
       values: [email],
@@ -165,7 +174,10 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Challenge password by email
    */
-  async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
+  async challengePasswordByEmail(
+    email: string,
+    password: string,
+  ): Promise<boolean> {
     const hashedPassword = await this.getPasswordByEmail(email);
     if (!hashedPassword) {
       return false;
@@ -189,7 +201,10 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Challenge token by email
    */
-  async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
+  async challengeTokenByEmail(
+    email: string,
+    clearToken: string,
+  ): Promise<boolean> {
     const tokenData = await this.getTokenByEmail(email);
     if (!tokenData) {
       return false;
@@ -197,7 +212,9 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
     const { token, token_expires_at } = tokenData;
 
-    if (!token || !(await this.cryptoProvider.compareToken(clearToken, token))) {
+    if (
+      !token || !(await this.cryptoProvider.compareToken(clearToken, token))
+    ) {
       return false;
     }
 
@@ -258,7 +275,11 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Update email by id, update status
    */
-  async updateEmailById(_id: number, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
+  async updateEmailById(
+    _id: number,
+    email: string,
+    status: string = this.UNCONFIRMED_STATUS,
+  ): Promise<string> {
     const clearToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(clearToken);
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);

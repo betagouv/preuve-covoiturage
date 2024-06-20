@@ -1,3 +1,3 @@
-import { RPCSingleResponseType } from './RPCSingleResponseType';
+import { RPCSingleResponseType } from "./RPCSingleResponseType.ts";
 
 export type RPCResponseType = RPCSingleResponseType | RPCSingleResponseType[];

@@ -1,8 +1,7 @@
-import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
-import { serviceProvider } from '@ilos/common';
-
-import { AddAction } from './actions/AddAction';
-import { CustomProvider } from '../Providers/CustomProvider';
+import { serviceProvider } from "@/ilos/common/index.ts";
+import { ServiceProvider as BaseServiceProvider } from "@/ilos/core/index.ts";
+import { CustomProvider } from "../Providers/CustomProvider.ts";
+import { AddAction } from "./actions/AddAction.ts";
 
 @serviceProvider({
   providers: [CustomProvider],
@@ -11,6 +10,6 @@ import { CustomProvider } from '../Providers/CustomProvider';
 export class ServiceProvider extends BaseServiceProvider {
   async init() {
     await super.init();
-    this.getContainer().get(CustomProvider).set('math:');
+    this.getContainer().get(CustomProvider).set("math:");
   }
 }

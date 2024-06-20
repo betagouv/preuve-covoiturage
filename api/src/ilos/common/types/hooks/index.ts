@@ -1,6 +1,6 @@
-export { BootstrapHookInterface } from './BootstrapHookInterface';
-export { ShutdownHookInterface } from './ShutdownHookInterface';
-export { DestroyHookInterface } from './DestroyHookInterface';
-export { InitHookInterface } from './InitHookInterface';
-export { RegisterHookInterface } from './RegisterHookInterface';
-export { HookInterface } from './HookInterface';
+export type { BootstrapHookInterface } from "./BootstrapHookInterface.ts";
+export type { ShutdownHookInterface } from "./ShutdownHookInterface.ts";
+export type { DestroyHookInterface } from "./DestroyHookInterface.ts";
+export type { InitHookInterface } from "./InitHookInterface.ts";
+export type { RegisterHookInterface } from "./RegisterHookInterface.ts";
+export type { HookInterface } from "./HookInterface.ts";

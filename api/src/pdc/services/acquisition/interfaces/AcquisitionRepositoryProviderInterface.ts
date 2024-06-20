@@ -1,16 +1,19 @@
-import { AnomalyErrorDetails, StatusEnum } from '@shared/acquisition/status.contract';
+import {
+  AnomalyErrorDetails,
+  StatusEnum,
+} from "@/shared/acquisition/status.contract.ts";
 
 export enum AcquisitionStatusEnum {
-  Ok = 'ok',
-  Error = 'error',
-  Pending = 'pending',
-  Canceled = 'canceled',
+  Ok = "ok",
+  Error = "error",
+  Pending = "pending",
+  Canceled = "canceled",
 }
 
 export enum AcquisitionErrorStageEnum {
-  Acquisition = 'acquisition',
-  Normalisation = 'normalization',
-  Fraud = 'fraud',
+  Acquisition = "acquisition",
+  Normalisation = "normalization",
+  Fraud = "fraud",
 }
 
 export interface AcquisitionCreateInterface<P = any> {
@@ -77,18 +80,34 @@ export interface AcquisitionRepositoryProviderInterface {
     data: Array<AcquisitionCreateInterface<P>>,
   ): Promise<Array<AcquisitionCreateResultInterface>>;
 
-  updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>): Promise<void>;
+  updateManyStatus(
+    data: Array<AcquisitionStatusUpdateInterface>,
+  ): Promise<void>;
 
   patchPayload<P = any>(
-    search: { operator_id: number; operator_journey_id: string; status: Array<AcquisitionStatusEnum> },
+    search: {
+      operator_id: number;
+      operator_journey_id: string;
+      status: Array<AcquisitionStatusEnum>;
+    },
     payload: P,
   ): Promise<void>;
 
-  getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined>;
+  getStatus(
+    operator_id: number,
+    operator_journey_id: string,
+  ): Promise<AcquisitionStatusInterface | undefined>;
 
-  list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>>;
+  list(
+    search: StatusSearchInterface,
+  ): Promise<Array<{ operator_journey_id: string }>>;
 
-  cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void>;
+  cancel(
+    operator_id: number,
+    operator_journey_id: string,
+    code?: string,
+    message?: string,
+  ): Promise<void>;
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,

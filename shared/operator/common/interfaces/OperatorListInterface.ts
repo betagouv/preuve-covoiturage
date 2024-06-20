@@ -1,5 +1,5 @@
-import { CompanyInterface } from '../../../common/interfaces/CompanyInterface';
-import { AddressInterface } from '../../../common/interfaces/AddressInterface';
+import { CompanyInterface } from '../../../common/interfaces/CompanyInterface.ts';
+import { AddressInterface } from '../../../common/interfaces/AddressInterface.ts';
 
 export interface OperatorListInterface {
   _id: number;

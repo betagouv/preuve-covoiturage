@@ -1,16 +1,23 @@
-import { provider } from '@ilos/common';
-import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/providers/storage';
-import { subMonths } from 'date-fns';
+import { subMonths } from "@/deps.ts";
+import { provider } from "@/ilos/common/index.ts";
+import {
+  APDFNameProvider,
+  BucketName,
+  S3Object,
+  S3ObjectList,
+  S3StorageProvider,
+} from "@/pdc/providers/storage/index.ts";
+import { EnrichedApdfType } from "@/shared/apdf/list.contract.ts";
 import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
-} from '../interfaces/StorageRepositoryProviderInterface';
-import { EnrichedApdfType } from '@shared/apdf/list.contract';
+} from "../interfaces/StorageRepositoryProviderInterface.ts";
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,
 })
-export class StorageRepositoryProvider implements StorageRepositoryProviderInterfaceResolver {
+export class StorageRepositoryProvider
+  implements StorageRepositoryProviderInterfaceResolver {
   private bucket: BucketName = BucketName.APDF;
 
   constructor(
@@ -18,9 +25,14 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
     private APDFNameProvider: APDFNameProvider,
   ) {}
 
-  async findByCampaign(campaign: SerializedPolicyInterface): Promise<S3ObjectList> {
+  async findByCampaign(
+    campaign: SerializedPolicyInterface,
+  ): Promise<S3ObjectList> {
     try {
-      const list = await this.s3StorageProvider.list(this.bucket, `${campaign._id}`);
+      const list = await this.s3StorageProvider.list(
+        this.bucket,
+        `${campaign._id}`,
+      );
       return list.filter((obj: S3Object) => obj.Size > 0);
     } catch (e) {
       console.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
@@ -33,7 +45,11 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
     return Promise.all(
       list.map(async (o: S3Object) => ({
         ...this.APDFNameProvider.parse(o.Key),
-        signed_url: await this.s3StorageProvider.getSignedUrl(this.bucket, o.Key, S3StorageProvider.TEN_MINUTES),
+        signed_url: await this.s3StorageProvider.getSignedUrl(
+          this.bucket,
+          o.Key,
+          S3StorageProvider.TEN_MINUTES,
+        ),
         key: o.Key,
         size: o.Size,
       })),
@@ -61,13 +77,16 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
       if (show) return true;
 
       // from permissions
-      if (permissions.indexOf('registry.apdf.listCurrentMonth') > -1) {
+      if (permissions.indexOf("registry.apdf.listCurrentMonth") > -1) {
         return true;
       }
 
       // show all but last month
       const fileMonth = obj.datetime.toISOString().substring(0, 7);
-      const lastMonth = subMonths(new Date(), 1).toISOString().substring(0, 7);
+      const lastMonth = subMonths(new Date(), 1).toISOString().substring(
+        0,
+        7,
+      );
 
       return fileMonth !== lastMonth;
     };

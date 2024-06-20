@@ -1,43 +1,44 @@
-import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { CarpoolRepository } from './CarpoolRepository';
-import { CarpoolStatusRepository } from './CarpoolStatusRepository';
-import { insertableCarpool } from '../mocks/database/carpool';
-import { Id } from '../interfaces';
-import { insertableAcquisitionStatus } from '../mocks/database/status';
-import sql, { raw } from '../helpers/sql';
+import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import sql, { raw } from "../helpers/sql.ts";
+import { Id } from "../interfaces/index.ts";
+import { insertableCarpool } from "../mocks/database/carpool.ts";
+import { insertableAcquisitionStatus } from "../mocks/database/status.ts";
+import { CarpoolRepository } from "./CarpoolRepository.ts";
+import { CarpoolStatusRepository } from "./CarpoolStatusRepository.ts";
 
-interface TestContext {
-  repository: CarpoolStatusRepository;
-  carpoolRepository: CarpoolRepository;
-  db: DbContext;
-  carpool_id: Id;
-}
+describe("CarpoolStatusRepository", () => {
+  let repository: CarpoolStatusRepository;
+  let carpoolRepository: CarpoolRepository;
+  let db: DbContext;
+  let carpool_id: Id;
 
-const test = anyTest as TestFn<TestContext>;
-const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeDbBeforeAfter();
 
-test.before(async (t) => {
-  const db = await before();
-  t.context.db = db;
-  t.context.repository = new CarpoolStatusRepository(t.context.db.connection);
-  t.context.carpoolRepository = new CarpoolRepository(t.context.db.connection);
-  const carpool = await t.context.carpoolRepository.register(insertableCarpool);
-  t.context.carpool_id = carpool._id;
-});
+  beforeAll(async () => {
+    db = await before();
+    repository = new CarpoolStatusRepository(db.connection);
+    carpoolRepository = new CarpoolRepository(db.connection);
+    const carpool = await carpoolRepository.register(insertableCarpool);
+    carpool_id = carpool._id;
+  });
 
-test.after.always(async (t) => {
-  await after(t.context.db);
-});
+  afterAll(async () => {
+    await after(db);
+  });
 
-test.serial('Should create acquisition status', async (t) => {
-  const data = { ...insertableAcquisitionStatus, carpool_id: t.context.carpool_id };
+  it("Should create acquisition status", async () => {
+    const data = {
+      ...insertableAcquisitionStatus,
+      carpool_id: carpool_id,
+    };
 
-  await t.context.repository.saveAcquisitionStatus(data);
-  const result = await t.context.db.connection.getClient().query(sql`
-    SELECT * FROM ${raw(t.context.repository.table)}
-    WHERE carpool_id = ${t.context.carpool_id}
-  `);
+    await repository.saveAcquisitionStatus(data);
+    const result = await db.connection.getClient().query(sql`
+      SELECT * FROM ${raw(repository.table)}
+      WHERE carpool_id = ${carpool_id}
+    `);
 
-  t.is(result.rows.pop()?.acquisition_status, data.status);
+    assertEquals(result.rows.pop()?.acquisition_status, data.status);
+  });
 });

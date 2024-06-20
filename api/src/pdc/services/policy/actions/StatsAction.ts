@@ -1,15 +1,17 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig } from '@shared/policy/stats.contract';
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { handlerConfig } from "@/shared/policy/stats.contract.ts";
+import { IncentiveRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class StatsAction extends AbstractAction {
-  constructor(private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver) {
+  constructor(
+    private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
