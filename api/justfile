@@ -77,6 +77,17 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
     openssl x509 -req -in {{ cert_dir }}/cert.csr -CA {{ cert_dir }}/localCA.pem -CAkey {{ cert_dir }}/localCA.key -CAcreateserial -out {{ cert_dir }}/cert.crt -days 500 -sha256
   fi
 
+# Run migrations
+migrate:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    src/db/main.ts
+
 # Seed data
 seed:
   just api seed
