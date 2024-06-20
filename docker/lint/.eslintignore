@@ -1,6 +1,0 @@
-node_modules
-db/*
-dist
-.env
-coverage
-.nyc_output

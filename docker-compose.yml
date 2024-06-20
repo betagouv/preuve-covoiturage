@@ -134,13 +134,6 @@ services:
     depends_on:
       - api
 
-  lint:
-    build: './docker/lint'
-    tty: true
-    volumes:
-      - ./api:/code/api:ro
-      - ./dashboard:/code/dashboard:ro
-
   k6:
     image: 'grafana/k6:latest'
     tty: true
