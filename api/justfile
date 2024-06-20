@@ -98,9 +98,22 @@ ci_test_integration: generate_certs generate_keys (start_e2e "proxy") start_e2e 
 # CI unit test
 ci_test_unit: (test-unit) 
 
+# compatibility with previous justfile using npm
+# TODO remove when fully migrated to Deno
+alias ilos := api
+
 # Run api command
 api *command:
-  deno run --allow-net --allow-env --allow-read --allow-write --allow-ffi --allow-sys --allow-run --unstable-fs src/main.ts {{ command }}
+  deno run \
+  --allow-net \
+  --allow-env \
+  --allow-read \
+  --allow-write \
+  --allow-ffi \
+  --allow-sys \
+  --allow-run \
+  --unstable-fs \
+  src/main.ts {{ command }}
 
 # Start the HTTP API server on port 8080
 serve:
@@ -109,6 +122,19 @@ serve:
 # List all the APP_ environment variables
 env:
   env | grep APP_ | sort | column -t -s=
+
+# Eval and run a file
+eval *filepath:
+  deno eval \
+    --allow-net \
+    --allow-env \
+    # --allow-read \
+    # --allow-write \
+    # --allow-ffi \
+    # --allow-sys \
+    # --allow-run \
+    # --unstable-fs \
+    {{ filepath }}
 
 # drop remaining test databases
 drop_test_databases:
