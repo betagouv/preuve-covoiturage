@@ -103,12 +103,12 @@ const permissions = {
   'user.policySimulate': ['common'],
 };
 
-function scopeToGroup(permissionName: string, group: string) {
+function scopeToGroup(permissionName, group) {
   return `${group}.${permissionName}`;
 }
 
-function dispatchPermissionsFromMatrix(permissionsObject: Record<string, Array<string>>) {
-  const permissionsByGroup: Record<string, Array<string>> = {
+function dispatchPermissionsFromMatrix(permissionsObject) {
+  const permissionsByGroup = {
     common: [],
     'territory.demo': [],
     'territory.user': [],
@@ -120,7 +120,7 @@ function dispatchPermissionsFromMatrix(permissionsObject: Record<string, Array<s
     'registry.admin': [],
   };
 
-  for (const permissionName of Object.keys(permissionsObject)) {
+  for (const permissionName of Reflect.ownKeys(permissionsObject)) {
     const permissionRoles = permissionsObject[permissionName];
 
     for (const permissionRole of permissionRoles) {

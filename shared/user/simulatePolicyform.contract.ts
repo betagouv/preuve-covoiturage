@@ -1,11 +1,11 @@
-import { SimulateOnPastGeoRequiredParams } from '../policy/simulateOnPastGeo.contract.ts';
+import { SimulateOnPastGeoRequiredParams } from '../policy/simulateOnPastGeo.contract';
 
 export interface ParamsInterface {
   name: string;
   firstname: string;
   job: string;
   email: string;
-  territory_name: string;
+  territory_name;
   simulation: SimulateOnPastGeoRequiredParams;
 }
 

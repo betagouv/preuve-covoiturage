@@ -1,4 +1,4 @@
-import { ApplicationInterface } from './common/interfaces/ApplicationInterface.ts';
+import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
 
 export interface ParamsInterface {
   owner_id: number;

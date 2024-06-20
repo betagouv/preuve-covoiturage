@@ -1,5 +1,5 @@
-import { TerritoryTripsInterface } from './common/interfaces/TerritoryTripsInterface.ts';
-import { TripSearchInterface } from './common/interfaces/TripSearchInterface.ts';
+import { TerritoryTripsInterface } from './common/interfaces/TerritoryTripsInterface';
+import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
 
 export interface ParamsInterface {
   filepath: string;

@@ -1,4 +1,4 @@
-import { PersonInterface } from './PersonInterface.ts';
+import { PersonInterface } from './PersonInterface';
 
 export interface TripInterface {
   _id?: number;

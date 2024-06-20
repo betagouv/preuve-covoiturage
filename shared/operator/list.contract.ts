@@ -1,4 +1,4 @@
-import { OperatorDbInterface } from './common/interfaces/OperatorDbInterface.ts';
+import { OperatorDbInterface } from './common/interfaces/OperatorDbInterface';
 
 export type ParamsInterface = void;
 

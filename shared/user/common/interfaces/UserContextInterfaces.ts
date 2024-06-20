@@ -1,4 +1,4 @@
-import { UserInterface } from './UserInterface.ts';
+import { UserInterface } from './UserInterface';
 
 export interface UserContextInterface {
   call?: { user: UserInterface };

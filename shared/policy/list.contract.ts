@@ -1,4 +1,4 @@
-import { PolicyInterface, PolicyStatusEnum } from './common/interfaces/PolicyInterface.ts';
+import { PolicyInterface, PolicyStatusEnum } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
   datetime?: Date;

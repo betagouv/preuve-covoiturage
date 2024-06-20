@@ -1,4 +1,4 @@
-import { PaginationResultInterface } from './PaginationResultInterface.ts';
+import { PaginationResultInterface } from './PaginationResultInterface';
 
 export interface ResultWithPagination<T> {
   data: T[];

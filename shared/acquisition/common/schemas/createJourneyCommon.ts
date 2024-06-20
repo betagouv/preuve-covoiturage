@@ -1,4 +1,4 @@
-import { payment } from '../../../common/schemas/payment.ts';
+import { payment } from '../../../common/schemas/payment';
 
 export const distanceSchema = {
   type: 'integer',

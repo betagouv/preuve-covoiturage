@@ -1,4 +1,4 @@
-import { directionTypes, perimeterTypes } from '../../geo/shared/Perimeter.ts';
+import { directionTypes, perimeterTypes } from '../../geo/shared/Perimeter';
 
 export const alias = 'observatory.journeysByDistances';
 export const schema = {

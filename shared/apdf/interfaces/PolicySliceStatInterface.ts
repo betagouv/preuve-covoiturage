@@ -1,4 +1,4 @@
-import { SliceInterface } from '../../policy/common/interfaces/Slices.ts';
+import { SliceInterface } from '../../policy/common/interfaces/Slices';
 
 export interface PolicyStatsInterface {
   total_count: number;

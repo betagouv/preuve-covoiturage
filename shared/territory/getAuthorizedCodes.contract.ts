@@ -1,4 +1,4 @@
-import { TerritorySelectorsInterface } from './common/interfaces/TerritoryCodeInterface.ts';
+import { TerritorySelectorsInterface } from './common/interfaces/TerritoryCodeInterface';
 
 export interface ParamsInterface {
   _id: number;

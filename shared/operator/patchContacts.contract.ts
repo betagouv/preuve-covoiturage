@@ -1,5 +1,5 @@
-import { OperatorInterface } from './common/interfaces/OperatorInterface.ts';
-import { ContactsInterface } from '../common/interfaces/ContactsInterface.ts';
+import { OperatorInterface } from './common/interfaces/OperatorInterface';
+import { ContactsInterface } from '../common/interfaces/ContactsInterface';
 
 export interface ParamsInterface {
   _id: number;

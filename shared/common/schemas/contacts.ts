@@ -1,4 +1,4 @@
-import { contact } from './contact.ts';
+import { contact } from './contact';
 
 export const contacts = {
   type: 'object',

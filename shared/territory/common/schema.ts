@@ -1,5 +1,5 @@
-import { contacts } from '../../common/schemas/contacts.ts';
-import { TerritoryCodeEnum } from './interfaces/TerritoryCodeInterface.ts';
+import { contacts } from '../../common/schemas/contacts';
+import { TerritoryCodeEnum } from './interfaces/TerritoryCodeInterface';
 
 export const territoryCodeSchema = {
   type: 'object',

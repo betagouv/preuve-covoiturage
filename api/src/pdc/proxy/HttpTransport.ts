@@ -1044,9 +1044,9 @@ export class HttpTransport implements TransportInterface {
           res: express.Response,
           next: express.NextFunction,
         ): Promise<void> => {
-          if (req.originalUrl === "/rpc?methods=trip:stats") {
-            res.setTimeout(120000);
-          }
+          // if (req.originalUrl === "/rpc?methods=trip:stats") {
+          //   res.setTimeout(120000);
+          // }
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
           let user = _.get(req, "session.user", null);

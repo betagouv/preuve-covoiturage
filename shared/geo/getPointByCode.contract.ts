@@ -1,4 +1,4 @@
-import { Point } from './shared/Point.ts';
+import { Point } from './shared/Point';
 
 export interface ParamsInterface {
   code: string;

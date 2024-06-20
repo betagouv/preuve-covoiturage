@@ -1,4 +1,4 @@
-import { identity } from './common/identity.schema.ts';
+import { identity } from './common/identity.schema';
 
 const positionSchema = {
   type: 'object',

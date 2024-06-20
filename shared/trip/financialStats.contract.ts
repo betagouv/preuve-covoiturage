@@ -1,4 +1,4 @@
-import { TripStatInterface } from './common/interfaces/TripStatInterface.ts';
+import { TripStatInterface } from './common/interfaces/TripStatInterface';
 
 export interface ParamsInterface extends TripStatInterface {}
 

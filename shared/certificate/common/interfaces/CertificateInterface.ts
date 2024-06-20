@@ -1,5 +1,5 @@
-import { CertificateBaseInterface } from './CertificateBaseInterface.ts';
-import { CertificateAccessLogInterface } from './CertificateAccessLogInterface.ts';
+import { CertificateBaseInterface } from './CertificateBaseInterface';
+import { CertificateAccessLogInterface } from './CertificateAccessLogInterface';
 
 export interface CertificateInterface extends CertificateBaseInterface {
   _id: number;

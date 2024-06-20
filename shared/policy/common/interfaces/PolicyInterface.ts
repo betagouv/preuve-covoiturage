@@ -1,4 +1,4 @@
-import { BoundedSlices, UnboundedSlices } from './Slices.ts';
+import { BoundedSlices, UnboundedSlices } from './Slices';
 
 export enum PolicyStatusEnum {
   ACTIVE = 'active',

@@ -1,4 +1,4 @@
-import { findIdentity } from '../common/schemas/findIdentity.ts';
+import { findIdentity } from '../common/schemas/findIdentity';
 
 export const alias = 'carpool.findidentities';
 export const schema = {

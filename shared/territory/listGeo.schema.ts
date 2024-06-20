@@ -1,4 +1,4 @@
-import { pagination } from '../common/schemas/pagination.ts';
+import { pagination } from '../common/schemas/pagination';
 
 export const alias = 'territory.listGeo';
 export const schema = {

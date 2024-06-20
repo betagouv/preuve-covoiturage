@@ -1,4 +1,4 @@
-import { CertificateMetaInterface } from './CertificateMetaInterface.ts';
+import { CertificateMetaInterface } from './CertificateMetaInterface';
 
 export interface CertificateBaseInterface {
   identity_uuid: string;

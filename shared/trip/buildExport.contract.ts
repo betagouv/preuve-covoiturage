@@ -1,5 +1,5 @@
-import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface.ts';
-import { ExportType } from './sendExport.contract.ts';
+import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface';
+import { ExportType } from './sendExport.contract';
 
 export interface FormatInterface {
   tz: string;

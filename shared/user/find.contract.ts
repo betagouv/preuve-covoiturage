@@ -1,4 +1,4 @@
-import { UserFindInterface } from './common/interfaces/UserFindInterface.ts';
+import { UserFindInterface } from './common/interfaces/UserFindInterface';
 
 export interface ParamsInterface {
   _id: number;

@@ -1,6 +1,6 @@
-import { ResultWithPagination } from '../common/interfaces/ResultWithPagination.ts';
-import { LightTripInterface } from './common/interfaces/LightTripInterface.ts';
-import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface.ts';
+import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
+import { LightTripInterface } from './common/interfaces/LightTripInterface';
+import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface';
 
 export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
 

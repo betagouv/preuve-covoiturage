@@ -1,4 +1,4 @@
-import { CeeImportIdentityInterface, CeeImportResultInterface } from './common/CeeApplicationInterface.ts';
+import { CeeImportIdentityInterface, CeeImportResultInterface } from './common/CeeApplicationInterface';
 
 export type ParamsInterface = Array<CeeImportIdentityInterface>;
 

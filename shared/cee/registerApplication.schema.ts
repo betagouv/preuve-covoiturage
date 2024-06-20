@@ -6,7 +6,7 @@ import {
   operatorJourneyIdSchema,
   phoneTruncSchema,
   timestampSchema,
-} from './common/ceeSchema.ts';
+} from './common/ceeSchema';
 
 export const alias = 'cee.registerCeeApplication';
 export const schema = {

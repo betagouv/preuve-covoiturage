@@ -1,4 +1,4 @@
-import { position } from './position.ts';
+import { position } from './position';
 
 // deep copy start schema to avoid side effects
 const schema = JSON.parse(JSON.stringify(position));

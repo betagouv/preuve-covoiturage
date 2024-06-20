@@ -6,7 +6,7 @@ import {
   lastNameTruncSchema,
   phoneTruncSchema,
   timestampSchema,
-} from './common/ceeSchema.ts';
+} from './common/ceeSchema';
 
 export const alias = 'cee.importCeeApplicationIdentity';
 export const schema = {

@@ -1,4 +1,4 @@
-import { ApiGraphTimeMode } from './ApiGraphTimeMode.ts';
+import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 
 export interface PublicTripSearchInterface {
   tz?: string;

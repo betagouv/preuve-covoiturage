@@ -1,4 +1,4 @@
-import { StatusEnum } from './status.contract.ts';
+import { StatusEnum } from './status.contract';
 
 export interface ParamsInterface {
   operator_id: number;

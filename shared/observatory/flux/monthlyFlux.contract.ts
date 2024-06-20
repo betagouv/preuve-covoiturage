@@ -1,4 +1,4 @@
-import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter.ts';
+import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter';
 
 export interface SingleResultInterface {
   ter_1: string;

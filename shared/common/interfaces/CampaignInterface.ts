@@ -1,5 +1,5 @@
-import { CampaignReducedStats } from './CampaignReducedStats.ts';
-import { RuleInterface } from './RuleInterface.ts';
+import { CampaignReducedStats } from './CampaignReducedStats';
+import { RuleInterface } from './RuleInterface';
 
 export interface CampaignInterface {
   _id?: number;

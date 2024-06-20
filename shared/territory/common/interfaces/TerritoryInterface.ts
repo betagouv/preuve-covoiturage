@@ -1,5 +1,5 @@
-import { ContactsInterface } from '../../../common/interfaces/ContactsInterface.ts';
-import { TerritorySelectorsInterface } from './TerritoryCodeInterface.ts';
+import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
+import { TerritorySelectorsInterface } from './TerritoryCodeInterface';
 
 export interface TerritoryGroupInterface {
   _id: number;

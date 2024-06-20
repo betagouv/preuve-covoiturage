@@ -1,4 +1,4 @@
-import { ResultRowInterface } from './common/interfaces/ResultRowInterface.ts';
+import { ResultRowInterface } from './common/interfaces/ResultRowInterface';
 
 export interface ParamsInterface {
   uuid: string;

@@ -1,4 +1,4 @@
-import { driverSchema, passengerSchema, timeGeoPointSchema } from '../acquisition/common/schemas/createJourneySchemaV3.ts';
+import { driverSchema, passengerSchema, timeGeoPointSchema } from '../acquisition/common/schemas/createJourneySchemaV3';
 
 export const aliasv3 = 'policy.simulateOnFuture.v3';
 export const schemav3 = {

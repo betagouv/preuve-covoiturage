@@ -1,4 +1,4 @@
-import { findIdentity } from '../common/schemas/findIdentity.ts';
+import { findIdentity } from '../common/schemas/findIdentity';
 
 export const alias = 'certificate.create';
 export const schema = {

@@ -1,4 +1,4 @@
-import { SingleResultInterface as GeoSingleResultInterface } from './listGeo.contract.ts';
+import { SingleResultInterface as GeoSingleResultInterface } from './listGeo.contract';
 
 /**
  * Peut être un code siren d'une EPCI ou d'une AOM

@@ -1,4 +1,4 @@
-import { UserInterface } from './common/interfaces/UserInterface.ts';
+import { UserInterface } from './common/interfaces/UserInterface';
 
 export interface ParamsInterface {
   email: string;

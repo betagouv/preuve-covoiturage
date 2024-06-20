@@ -1,4 +1,4 @@
-import { policyStatusValues } from './common/interfaces/PolicyInterface.ts';
+import { policyStatusValues } from './common/interfaces/PolicyInterface';
 
 export const alias = 'campaign.list';
 export const schema = {

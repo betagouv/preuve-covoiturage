@@ -1,4 +1,4 @@
-import { schema as createSchema } from './create.schema.ts';
+import { schema as createSchema } from './create.schema';
 
 const update = JSON.parse(JSON.stringify(createSchema));
 
