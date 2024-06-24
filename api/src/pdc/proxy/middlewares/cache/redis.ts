@@ -1,3 +1,4 @@
+import { Buffer } from "@/deps.ts";
 import {
   CacheKey,
   CachePattern,
