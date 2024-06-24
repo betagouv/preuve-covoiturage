@@ -1,15 +1,15 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
-  CarpoolRepositoryProviderInterface,
-  CarpoolRepositoryProviderInterfaceResolver,
-  FindParamsInterface,
-} from "../interfaces/CarpoolRepositoryProviderInterface.ts";
-import {
   CarpoolInterface,
   DBCarpoolInterface,
 } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
+import {
+  CarpoolRepositoryProviderInterface,
+  CarpoolRepositoryProviderInterfaceResolver,
+  FindParamsInterface,
+} from "../interfaces/CarpoolRepositoryProviderInterface.ts";
 
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,
@@ -69,7 +69,7 @@ export class CarpoolPgRepositoryProvider
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREAit(
+          GREATEST(
             COALESCE(meta_payments.sum, 0)::int,
             payment
           ) AS payment
@@ -95,7 +95,7 @@ export class CarpoolPgRepositoryProvider
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREAit(
+          GREATEST(
             COALESCE(meta_payments.sum, 0)::int,
             payment
           ) AS payment
