@@ -19,13 +19,32 @@ export class PgPool extends Pool {
   constructor(config?: PoolConfig) {
     super(config);
 
+    /**
+     * @doc https://node-postgres.com/apis/pool#events
+     *
+     * acquire: Whenever the pool establishes a new client connection to the
+     *          PostgreSQL backend it will emit the connect event with the
+     *          newly connected client.
+     * error:   When a client is sitting idly in the pool it can still emit
+     *          errors because it is connected to a live backend.
+     * release: Whenever a client is released back into the pool.
+     * remove:  Whenever a client is closed & removed from the pool.
+     */
     this.on("acquire", () => {
       this._status = PgPoolStatus.UP;
     });
 
     this.on("error", (err: Error) => {
-      console.error("PgPool error", err.message);
+      console.error("[pg] pool error", err.message);
       this._status = PgPoolStatus.ERROR;
+    });
+
+    this.on("remove", () => {
+      const { totalCount, idleCount, waitingCount } = this;
+      console.info(
+        `[pg] client removed ` +
+          `(total: ${totalCount}, idle: ${idleCount}, waiting: ${waitingCount})`,
+      );
     });
   }
 
@@ -96,13 +115,15 @@ export class PostgresConnection
     return this.pool;
   }
 
-  async getCursor<T = any>(
+  async getCursor<T = unknown>(
     text: string,
-    values: any[],
+    values: unknown[],
     config: CursorQueryConfig | undefined = undefined,
   ): Promise<{ read: Cursor["read"]; release: () => Promise<void> }> {
     const client = await this.pool.connect();
-    const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
+    const cursor = config
+      ? client.query<Cursor<T>>(new Cursor(text, values, config))
+      : client.query<Cursor<T>>(new Cursor(text, values));
 
     return {
       read: cursor.read.bind(cursor),
