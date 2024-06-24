@@ -33,7 +33,8 @@ export class StorageRepositoryProvider
         this.bucket,
         `${campaign._id}`,
       );
-      return list.filter((obj: S3Object) => obj.Size > 0);
+
+      return list.filter((obj: S3Object) => obj.size > 0);
     } catch (e) {
       console.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
       console.debug(e.stack);
@@ -44,14 +45,14 @@ export class StorageRepositoryProvider
   async enrich(list: S3ObjectList): Promise<EnrichedApdfType[]> {
     return Promise.all(
       list.map(async (o: S3Object) => ({
-        ...this.APDFNameProvider.parse(o.Key),
+        ...this.APDFNameProvider.parse(o.key),
         signed_url: await this.s3StorageProvider.getSignedUrl(
           this.bucket,
-          o.Key,
+          o.key,
           S3StorageProvider.TEN_MINUTES,
         ),
-        key: o.Key,
-        size: o.Size,
+        key: o.key,
+        size: o.size,
       })),
     );
   }

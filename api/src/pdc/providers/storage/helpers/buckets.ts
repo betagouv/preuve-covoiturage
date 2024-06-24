@@ -1,5 +1,5 @@
-import { env } from "@/ilos/core/index.ts";
 import { path } from "@/deps.ts";
+import { env } from "@/ilos/core/index.ts";
 import { BucketName } from "../interfaces/BucketName.ts";
 
 export function getBucketPrefix(): string {
