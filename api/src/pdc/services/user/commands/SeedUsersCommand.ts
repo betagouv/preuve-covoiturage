@@ -1,3 +1,4 @@
+import { process } from "@/deps.ts";
 import {
   command,
   CommandInterface,
@@ -5,12 +6,15 @@ import {
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
-import { process } from "@/deps.ts";
 
 import { ParamsInterface } from "@/shared/user/create.contract.ts";
 
 interface CreateUserInterface extends ParamsInterface {
   password: string;
+}
+
+interface Options {
+  databaseUri: string;
 }
 
 @command()
@@ -22,6 +26,22 @@ export class SeedUsersCommand implements CommandInterface {
       lastname: "Registry",
       password: "admin1234",
       role: "registry.admin",
+    },
+    {
+      email: "operator@example.com",
+      firstname: "Admin",
+      lastname: "Operator",
+      password: "admin1234",
+      role: "operator.admin",
+      operator_id: 1,
+    },
+    {
+      email: "territory@example.com",
+      firstname: "Territory",
+      lastname: "Registry",
+      password: "admin1234",
+      role: "territory.admin",
+      territory_id: 1,
     },
   ];
 
@@ -37,8 +57,9 @@ export class SeedUsersCommand implements CommandInterface {
 
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
-  public async call(options): Promise<string> {
-    if (["local", "dev", "test", "ci"].indexOf(process.env.NODE_ENV) === -1) {
+  public async call(options: Options): Promise<string> {
+    const env = Deno.env.get("NODE_ENV") || "";
+    if (["local", "dev", "test", "ci"].indexOf(env) === -1) {
       throw new Error("Cannot seed users in this environment");
     }
 
@@ -57,15 +78,16 @@ export class SeedUsersCommand implements CommandInterface {
         role,
         operator_id,
         territory_id,
-      } = this.users.shift();
+      } = this.users.shift()!;
 
       try {
-        const insert = await pgClient.query<any>({
+        const insert = await pgClient.query({
           text: `
-              INSERT INTO auth.users
-              ( email, password, firstname, lastname, role, operator_id, territory_id, status )
-              VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
-            `,
+            INSERT INTO auth.users
+            ( email, password, firstname, lastname, role, operator_id, territory_id, status )
+            VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+            ON CONFLICT ( email ) DO NOTHING
+          `,
           values: [
             email,
             await this.crypto.cryptPassword(password),
@@ -80,6 +102,12 @@ export class SeedUsersCommand implements CommandInterface {
 
         if (insert.rowCount !== 1) {
           console.info(`--- Failed to insert ${email}`);
+        }
+
+        if ("operator_id" in insert || "territory_id" in insert) {
+          console.warn(
+            "operator_id or territory_id are set to 1. Please change them.",
+          );
         }
 
         console.info(`+++ Inserted ${email}`);
