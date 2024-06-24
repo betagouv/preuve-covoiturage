@@ -1,0 +1,34 @@
+version: 2
+models:
+  - name: occupation_by_month
+    columns:
+      - name: code
+        description: ''
+        data_type: character varying
+      - name: one_way
+        description: ''
+        data_type: text
+      - name: year
+        description: ''
+        data_type: integer
+      - name: month
+        description: ''
+        data_type: integer
+      - name: journeys
+        description: ''
+        data_type: numeric
+      - name: drivers
+        description: ''
+        data_type: numeric
+      - name: passengers
+        description: ''
+        data_type: numeric
+      - name: passenger_seats
+        description: ''
+        data_type: numeric
+      - name: distance
+        description: ''
+        data_type: numeric
+      - name: duration
+        description: ''
+        data_type: interval

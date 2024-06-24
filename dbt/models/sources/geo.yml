@@ -3,6 +3,22 @@ version: 2
 sources:
   - name: geo
     tables:
+      - name: com_evolution
+        columns:
+          - name: year
+            data_type: smallint
+          - name: mod
+            description: ''
+            data_type: smallint
+          - name: old_com
+            description: ''
+            data_type: character varying
+          - name: new_com
+            description: ''
+            data_type: character varying
+          - name: l_mod
+            description: ''
+            data_type: character varying
       - name: perimeters
         columns:
           - name: id

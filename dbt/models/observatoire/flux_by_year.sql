@@ -5,7 +5,6 @@ WITH flux AS (
     origin,
     destination,
     extract('year' from start_date)::int as year,
-    extract('month' from start_date)::int as month,
     sum(journeys) as journeys,
     sum(drivers) as drivers,
     sum(passengers) as passengers,
@@ -14,15 +13,14 @@ WITH flux AS (
     sum(duration) as duration
   FROM {{ ref('flux_by_day') }}
   {% if is_incremental() %}
-    where concat(extract('year' from start_date),extract('month' from start_date))::int >= (SELECT MAX(concat(year,month)::int) FROM {{ this }})
+    where extract('year' from start_date)::int >= (SELECT MAX(year) FROM {{ this }})
   {% endif %}
   GROUP BY
-  1, 2, 3, 4
+  1, 2, 3
 ),
 flux_agg as (
   SELECT 
     a.year,
-    a.month,
     'com' AS type,
     LEAST(b.arr, c.arr) as territory_1,
     GREATEST(b.arr, c.arr) as territory_2,
@@ -33,12 +31,11 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year =  geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year =  geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING  LEAST(b.arr, c.arr) IS NOT NULL OR GREATEST(b.arr, c.arr) IS NOT NULL
   UNION
   SELECT 
     a.year,
-    a.month,
     'epci' AS type,
     LEAST(b.epci, c.epci) as territory_1,
     GREATEST(b.epci, c.epci) as territory_2,
@@ -49,12 +46,11 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING LEAST(b.epci, c.epci) IS NOT NULL OR GREATEST(b.epci, c.epci) IS NOT NULL
   UNION
   SELECT 
     a.year,
-    a.month,
     'aom' AS type,
     LEAST(b.aom, c.aom) as territory_1,
     GREATEST(b.aom, c.aom) as territory_2,
@@ -65,12 +61,11 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING LEAST(b.aom, c.aom) IS NOT NULL OR LEAST(b.aom, c.aom) IS NOT NULL
   UNION
   SELECT 
     a.year,
-    a.month,
     'dep' AS type,
     LEAST(b.dep, c.dep) as territory_1,
     GREATEST(b.dep, c.dep) as territory_2,
@@ -81,12 +76,11 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING LEAST(b.dep, c.dep) IS NOT NULL OR GREATEST(b.dep, c.dep) IS NOT NULL
   UNION
   SELECT 
     a.year,
-    a.month,
     'reg' AS type,
     LEAST(b.reg, c.reg) as territory_1,
     GREATEST(b.reg, c.reg) as territory_2,
@@ -97,12 +91,11 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING LEAST(b.reg, c.reg) IS NOT NULL OR GREATEST(b.reg, c.reg) IS NOT NULL
   UNION
   SELECT 
     a.year,
-    a.month,
     'country' AS type,
     LEAST(b.country, c.country) as territory_1,
     GREATEST(b.country, c.country) as territory_2,
@@ -113,13 +106,12 @@ flux_agg as (
     FROM flux a
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) b ON a.origin=b.arr
     LEFT JOIN  (SELECT * from {{ source('geo','perimeters') }} WHERE year = geo.get_latest_millesime()) c ON a.destination=c.arr
-    GROUP BY 1, 2, 4, 5
+    GROUP BY 1, 3, 4
     HAVING LEAST(b.country, c.country) IS NOT NULL OR GREATEST(b.country, c.country) IS NOT NULL
 )
 
 SELECT 
   a.year, 
-  a.month, 
   a.type,
   a.territory_1,
   b.l_territory as l_territory_1,

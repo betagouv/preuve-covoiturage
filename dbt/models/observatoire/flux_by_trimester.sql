@@ -5,7 +5,7 @@ WITH flux AS (
     origin,
     destination,
     extract('year' from start_date)::int as year,
-    extract('month' from start_date)::int as month,
+    extract('quarter' from start_date)::int as trimester,
     sum(journeys) as journeys,
     sum(drivers) as drivers,
     sum(passengers) as passengers,
@@ -14,7 +14,7 @@ WITH flux AS (
     sum(duration) as duration
   FROM {{ ref('flux_by_day') }}
   {% if is_incremental() %}
-    where concat(extract('year' from start_date),extract('month' from start_date))::int >= (SELECT MAX(concat(year,month)::int) FROM {{ this }})
+    where concat(extract('year' from start_date),extract('quarter' from start_date))::int >= (SELECT MAX(concat(year,trimester)::int) FROM {{ this }})
   {% endif %}
   GROUP BY
   1, 2, 3, 4
@@ -22,7 +22,7 @@ WITH flux AS (
 flux_agg as (
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'com' AS type,
     LEAST(b.arr, c.arr) as territory_1,
     GREATEST(b.arr, c.arr) as territory_2,
@@ -38,7 +38,7 @@ flux_agg as (
   UNION
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'epci' AS type,
     LEAST(b.epci, c.epci) as territory_1,
     GREATEST(b.epci, c.epci) as territory_2,
@@ -54,7 +54,7 @@ flux_agg as (
   UNION
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'aom' AS type,
     LEAST(b.aom, c.aom) as territory_1,
     GREATEST(b.aom, c.aom) as territory_2,
@@ -70,7 +70,7 @@ flux_agg as (
   UNION
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'dep' AS type,
     LEAST(b.dep, c.dep) as territory_1,
     GREATEST(b.dep, c.dep) as territory_2,
@@ -86,7 +86,7 @@ flux_agg as (
   UNION
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'reg' AS type,
     LEAST(b.reg, c.reg) as territory_1,
     GREATEST(b.reg, c.reg) as territory_2,
@@ -102,7 +102,7 @@ flux_agg as (
   UNION
   SELECT 
     a.year,
-    a.month,
+    a.trimester,
     'country' AS type,
     LEAST(b.country, c.country) as territory_1,
     GREATEST(b.country, c.country) as territory_2,
@@ -119,7 +119,7 @@ flux_agg as (
 
 SELECT 
   a.year, 
-  a.month, 
+  a.trimester, 
   a.type,
   a.territory_1,
   b.l_territory as l_territory_1,

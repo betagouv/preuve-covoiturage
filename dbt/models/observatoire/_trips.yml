@@ -1,0 +1,13 @@
+version: 2
+models:
+  - name: trips
+    columns:
+      - name: _id
+        description: ''
+        data_type: uuid
+      - name: carpool_id
+        description: ''
+        data_type: integer
+      - name: start_datetime
+        description: ''
+        data_type: timestamp without time zone
