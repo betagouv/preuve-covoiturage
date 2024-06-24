@@ -8,6 +8,7 @@ import axiosRetry from "npm:axios-retry@^4";
 import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Console } from "node:console";
+export { Buffer } from "node:buffer";
 export { createHash, randomBytes } from "node:crypto";
 export {
   constants as fsConstants,
