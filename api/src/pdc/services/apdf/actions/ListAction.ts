@@ -7,7 +7,6 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -18,6 +17,7 @@ import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
 } from "@/shared/policy/find.contract.ts";
+import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
@@ -46,7 +46,7 @@ export class ListAction extends Action {
     const { campaign_id, operator_id } = params;
 
     // fetch the policy by id
-    let campaign: CampaignFindResult;
+    let campaign: CampaignFindResult | null = null;
     try {
       campaign = await this.kernel.call<CampaignFindParams, CampaignFindResult>(
         "campaign:find",
@@ -55,6 +55,7 @@ export class ListAction extends Action {
       );
     } catch (e) {
       console.error(`[apdf:list -> campaign:find] ${e.message}`);
+      throw e;
     }
 
     if (!campaign) {
@@ -72,7 +73,7 @@ export class ListAction extends Action {
     // by setting the env var APP_APDF_SHOW_LAST_MONTH to 'false'
     // default: true
     const monthFilter = this.storageRepository.showCurrentMonthFilter(
-      context.call.user.permissions,
+      context.call!.user.permissions,
       this.config.get("apdf.showLastMonth"),
     );
 

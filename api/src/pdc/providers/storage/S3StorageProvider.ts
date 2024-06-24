@@ -58,15 +58,18 @@ export class S3StorageProvider implements ProviderInterface {
   async list(bucket: BucketName, folder?: string): Promise<S3ObjectList> {
     const client = this.s3Instances.get(bucket);
     if (!client) {
-      throw new Error();
+      throw new Error(`Failed to create a client for the bucket: ${bucket}`);
     }
+
     const params = {
       prefix: folder,
       bucketName: getBucketName(bucket),
     };
+
     console.info(
       `[S3StorageProvider:list] bucket ${params.bucketName}/${params.prefix}`,
     );
+
     const generator = client.listObjects(params);
     const result = [];
     for await (const r of generator) {

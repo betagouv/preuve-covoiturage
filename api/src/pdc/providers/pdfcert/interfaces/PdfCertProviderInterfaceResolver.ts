@@ -1,3 +1,4 @@
+import { Buffer } from "@/deps.ts";
 import { ProviderInterface } from "@/ilos/common/index.ts";
 import { PdfTemplateData } from "./PdfTemplateData.ts";
 

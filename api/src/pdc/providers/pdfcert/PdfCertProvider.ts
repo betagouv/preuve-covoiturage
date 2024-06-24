@@ -1,12 +1,11 @@
-import { intlFormat, pdf } from "@/deps.ts";
+import { Buffer, intlFormat, pdf } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { MariannePaths } from "./assets/marianne.ts";
-
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
 } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { MetaPersonInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
+import { MariannePaths } from "./assets/marianne.ts";
 import {
   PdfCertProviderInterface,
   PdfCertProviderInterfaceResolver,
@@ -35,7 +34,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
   private tableLineHeight = 13;
   private tablePageSize = 36;
 
-  private pdfDoc: pdf.PDFDocument;
+  private pdfDoc: pdf.PDFDocument | null = null;
   private fonts: {
     regular?: pdf.PDFFont;
     bold?: pdf.PDFFont;
@@ -85,6 +84,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
   }
 
   private async drawPageLayout(data: PdfTemplateData): Promise<pdf.PDFPage> {
+    if (!this.pdfDoc) throw new Error("PDF document not initialized");
     const page = this.pdfDoc.addPage(PAGE_SIZE);
     await this.drawHeader(page, data);
     return page;
@@ -153,34 +153,40 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     // Some help?
     this.text(page, `Un problème, une question ?`, { x: 46, y: 190 });
     this.text(page, "Contactez nous :", { x: 46, y: 176 });
-    this.text(page, data.support, { x: 124, y: 176, color: rgb(0, 0, 0.8) });
+    this.text(page, data.support, {
+      x: 124,
+      y: 176,
+      color: pdf.rgb(0, 0, 0.8),
+    });
 
     // Notes
-    if ("notes" in data.header && data.header.notes !== "") {
-      // title
-      this.text(page, "Notes", {
-        x: 48,
-        y: 128,
-        size: 9,
-        font: this.fonts.bold,
-      });
+    if ("header" in data && data.header) {
+      if ("notes" in data.header && data.header.notes) {
+        // title
+        this.text(page, "Notes", {
+          x: 48,
+          y: 128,
+          size: 9,
+          font: this.fonts.bold,
+        });
 
-      // multilines text field
-      this.text(page, data.header.notes.trim().substring(0, 440), {
-        x: 48,
-        y: 112,
-        size: 8,
-        font: this.fonts.italic,
-        maxWidth: 380,
-        lineHeight: 11,
-      });
+        // multilines text field
+        this.text(page, data.header.notes.trim().substring(0, 440), {
+          x: 48,
+          y: 112,
+          size: 8,
+          font: this.fonts.italic,
+          maxWidth: 380,
+          lineHeight: 11,
+        });
+      }
     }
 
     // QR-code
     page.drawSvgPath(data.validation.qrcode, {
       x: 450,
       y: 128,
-      color: rgb(0, 0, 0),
+      color: pdf.rgb(0, 0, 0),
       scale: 0.3333,
     });
     this.text(page, `Vérifiez la validité de cette attestation sur`, {
@@ -276,7 +282,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(
       page,
       `${
-        String(data.total.distance === 0 ? 0 : data.total.distance / 1000)
+        String(data.total.distance === 0 ? 0 : data.total.distance || 0 / 1000)
           .replace(".", ",")
       } km`,
       {
@@ -343,6 +349,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
   }
 
   private async drawPageNumbers(): Promise<void> {
+    if (!this.pdfDoc) throw new Error("PDF document not initialized");
     const count = this.pdfDoc.getPageCount();
     this.pdfDoc.getPages().forEach((page, i) => {
       this.text(page, `page ${i + 1} / ${count}`, {
@@ -359,6 +366,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     page: pdf.PDFPage,
     data: PdfTemplateData,
   ): Promise<void> {
+    if (!this.pdfDoc) throw new Error("PDF document not initialized");
+
     // fill the header with light gray rectangle
     page.drawRectangle({
       x: 0,
@@ -424,8 +433,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       color: pdf.rgb(0.92, 0.92, 0.92),
     });
 
-    if ("header" in data) {
-      if ("operator" in data.header) {
+    if ("header" in data && data.header) {
+      if ("operator" in data.header && data.header.operator) {
         if (data.header.operator.name && data.header.operator.name !== "") {
           this.text(page, data.header.operator.name.trim().substring(0, 26), {
             x: 522,
@@ -445,7 +454,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
             size: 9,
             maxChars: 42,
             maxLines: 6,
-            align: TextAlignment.Right,
+            align: pdf.TextAlignment.Right,
           });
         }
 
@@ -470,7 +479,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
         }
       }
 
-      if ("identity" in data.header) {
+      if ("identity" in data.header && data.header.identity) {
         if (data.header.identity.name && data.header.identity.name !== "") {
           this.text(page, data.header.identity.name.trim().substring(0, 26), {
             x: 578,
@@ -509,6 +518,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
   private text(page: pdf.PDFPage, str: string, opts: TextOptions = {}): void {
     const options = this.getDefaultOptions(page, opts);
+    if (!options.font) throw new Error("Font not set");
 
     // filter out unsupported chars
     const charSet = options.font.getCharacterSet();
@@ -567,14 +577,14 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       .map((s: string) => s.trim().substring(0, options.maxChars))
       .forEach((line) => {
         this.text(page, line, options);
-        options.y -= options.lineHeight;
+        options.y -= options.lineHeight || 0;
       });
   }
 
   private getDefaultOptions(
     page: pdf.PDFPage,
     opts: TextOptions = {},
-  ): TextOptions {
+  ): Required<TextOptions> {
     return {
       ...page.getPosition(),
       font: this.fonts.regular,
@@ -624,7 +634,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       { x: this.tableX + 40, y: rowY, size },
     );
 
-    const km = `${String(row.distance / 1000 || row.km).replace(".", ",")} km`;
+    const km = `${
+      String(row.distance || 0 / 1000 || row.km).replace(".", ",")
+    } km`;
     const eu = `${this.currency(row.amount)} €`;
 
     this.text(page, `${row.trips}`, {
