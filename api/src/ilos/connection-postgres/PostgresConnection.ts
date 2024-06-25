@@ -121,9 +121,7 @@ export class PostgresConnection
     config: CursorQueryConfig | undefined = undefined,
   ): Promise<{ read: Cursor["read"]; release: () => Promise<void> }> {
     const client = await this.pool.connect();
-    const cursor = config
-      ? client.query<Cursor<T>>(new Cursor(text, values, config))
-      : client.query<Cursor<T>>(new Cursor(text, values));
+    const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
 
     return {
       read: cursor.read.bind(cursor),
