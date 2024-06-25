@@ -136,6 +136,8 @@ export class TripRepositoryProvider
         }
       } catch (e) {
         await cursor.release();
+        console.error(e.message);
+        console.debug(e.stack);
         throw e;
       }
     } while (count > 0);

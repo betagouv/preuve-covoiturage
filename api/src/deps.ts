@@ -7,8 +7,8 @@ import Stream from "node:stream";
 import axiosRetry from "npm:axios-retry@^4";
 import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
-export { Console } from "node:console";
 export { Buffer } from "node:buffer";
+export { Console } from "node:console";
 export { createHash, randomBytes } from "node:crypto";
 export {
   constants as fsConstants,
@@ -46,6 +46,7 @@ export type { RedisKey, RedisOptions } from "npm:ioredis@^5.3";
 import pg from "npm:pg@^8.12";
 // @deno-types="npm:@types/pg@^8.11"
 export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
+const { Pool } = pg;
 // @deno-types="npm:@types/pg-cursor@^2.7"
 import Cursor from "npm:pg-cursor@^2.11";
 import pino from "npm:pino@^9.1";
@@ -65,14 +66,13 @@ import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
 // @deno-types="npm:@types/lodash@^4"
 import _ from "npm:lodash@^4";
-// @deno-types="npm:@types/steam-json@^1.7"
+// @deno-types="npm:@types/stream-json@^1.7"
 import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
 import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
 // @deno-types="npm:@types/node-7z@^2"
 export { extractFull } from "npm:node-7z@^3.0";
 // @deno-types="npm:@types/node-7z@^2"
 export type { SevenZipOptions } from "npm:node-7z@^3";
-const { Pool } = pg;
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.2/package/types/index.d.ts"
 import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs";
 import excel from "npm:exceljs@^4.4";
