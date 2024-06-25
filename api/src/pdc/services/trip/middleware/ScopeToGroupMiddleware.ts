@@ -1,7 +1,7 @@
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
-  FunctionMiddlewareInterface,
   InvalidParamsException,
   middleware,
   MiddlewareInterface,
@@ -31,7 +31,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
   async process(
     params: Partial<ParamsInterface>,
     context: ContextType,
-    next: FunctionMiddlewareInterface,
+    next: NextFunction,
     options: ScopeToGroupMiddlewareParams,
   ): Promise<ResultType> {
     const _params = await this.unnestComCode({ geo_selector: {}, ...params });

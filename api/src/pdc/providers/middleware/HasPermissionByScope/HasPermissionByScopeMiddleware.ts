@@ -1,8 +1,7 @@
-import { _ } from "@/deps.ts";
+import { _, NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
-  FunctionMiddlewareInterface,
   InvalidParamsException,
   middleware,
   MiddlewareInterface,
@@ -24,7 +23,7 @@ export class HasPermissionByScopeMiddleware
   async process(
     params: ParamsType,
     context: ContextType,
-    next: FunctionMiddlewareInterface,
+    next: NextFunction,
     options: HasPermissionByScopeMiddlewareParams,
   ): Promise<ResultType> {
     const [basePermission, permissionScopes] = options;
