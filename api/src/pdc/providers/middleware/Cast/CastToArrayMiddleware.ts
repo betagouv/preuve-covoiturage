@@ -1,6 +1,12 @@
-import { ContextType, MiddlewareInterface, ParamsType, ResultType, middleware } from '@ilos/common';
-import { get, set } from 'lodash';
-import { ConfiguredMiddleware } from '../interfaces';
+import { _, NextFunction } from "@/deps.ts";
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * CastToArrayMiddleware middleware and its companion helper function
@@ -11,7 +17,12 @@ import { ConfiguredMiddleware } from '../interfaces';
  */
 @middleware()
 export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
-  async process(params: ParamsType, context: ContextType, next: Function, helperArgs: HelperArgs): Promise<ResultType> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: NextFunction,
+    helperArgs: HelperArgs,
+  ): Promise<ResultType> {
     const paths = Array.isArray(helperArgs) ? helperArgs : [helperArgs];
 
     for (const path of paths) {
@@ -19,7 +30,7 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
       // using a symbol is a safer equality check than undefined
       // and preserves null values
       const notFound = Symbol();
-      const oldValue = get(params, path, notFound);
+      const oldValue = _.get(params, path, notFound);
 
       // skip the cast if the property is not found
       if (oldValue === notFound) {
@@ -27,7 +38,7 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
       }
 
       // cast the property to an array
-      set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
+      _.set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
     }
 
     return next(params, context);
@@ -37,10 +48,12 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
 type PropertyPath = string;
 export type HelperArgs = PropertyPath | PropertyPath[];
 
-const alias = 'cast.to_array';
+const alias = "cast.to_array";
 
 export const castToArrayMiddlewareBinding = [alias, CastToArrayMiddleware];
 
-export function castToArrayMiddleware(properties: HelperArgs): ConfiguredMiddleware<HelperArgs> {
+export function castToArrayMiddleware(
+  properties: HelperArgs,
+): ConfiguredMiddleware<HelperArgs> {
   return [alias, properties];
 }
