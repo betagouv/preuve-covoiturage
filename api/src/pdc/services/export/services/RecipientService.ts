@@ -8,7 +8,8 @@ export type RecipientServiceInterface = {
   ): Promise<ExportRecipient[]>;
 };
 
-export abstract class RecipientServiceInterfaceResolver implements RecipientServiceInterface {
+export abstract class RecipientServiceInterfaceResolver
+  implements RecipientServiceInterface {
   /**
    * Add the creator as recipient if no recipient is provided
    *
@@ -18,8 +19,11 @@ export abstract class RecipientServiceInterfaceResolver implements RecipientServ
    * @param {number} created_by
    * @returns {Promise<ExportRecipient[]>}
    */
-  public maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]> {
-    throw new Error('Not implemented');
+  public maybeAddCreator(
+    recipients: ExportRecipient[],
+    created_by: number,
+  ): Promise<ExportRecipient[]> {
+    throw new Error("Not implemented");
   }
 }
 
@@ -29,7 +33,10 @@ export abstract class RecipientServiceInterfaceResolver implements RecipientServ
 export class RecipientService {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]> {
+  public async maybeAddCreator(
+    recipients: ExportRecipient[],
+    created_by: number,
+  ): Promise<ExportRecipient[]> {
     if (recipients.length) return recipients;
 
     try {

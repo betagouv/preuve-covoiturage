@@ -1,6 +1,13 @@
-import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import {
+  ConfigInterfaceResolver,
+  KernelInterfaceResolver,
+  provider,
+} from "@/ilos/common/index.ts";
+import {
+  signature as campaignListSignature,
+  SingleResultInterface,
+} from "@/shared/policy/list.contract.ts";
 import { Campaign } from "../models/Campaign.ts";
-import { signature as campaignListSignature } from "@/shared/policy/list.contract.ts";
 
 export interface CampaignRepositoryInterface {
   list(): Promise<Map<number, Campaign>>;
@@ -33,9 +40,15 @@ export class CampaignRepository implements CampaignRepositoryInterface {
       },
     );
 
-    return campaigns.reduce((acc, c) => {
-      acc.set(c._id, new Campaign(c, this.config));
-      return acc;
-    }, new Map());
+    return campaigns.reduce(
+      (
+        acc: Map<SingleResultInterface["_id"], Campaign>,
+        c: SingleResultInterface,
+      ) => {
+        acc.set(c._id, new Campaign(c, this.config));
+        return acc;
+      },
+      new Map(),
+    );
   }
 }

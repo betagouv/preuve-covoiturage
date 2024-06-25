@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
-import { AbstractQuery } from './AbstractQuery';
+import { AbstractQuery } from "./AbstractQuery.ts";
 
 // List the {{template}} used in the query for string replacement
-export type TemplateKeys = 'geo_selectors' | 'operator_id';
+export type TemplateKeys = "geo_selectors" | "operator_id";
 
 export type CarpoolListType = {
   operator_trip_id: string;

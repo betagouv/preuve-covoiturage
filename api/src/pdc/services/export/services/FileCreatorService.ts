@@ -5,7 +5,7 @@ import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { ExportProgress } from "../repositories/ExportRepository.ts";
 
-export type BuildServiceInterface = {
+export type FileCreatorServiceInterface = {
   write(
     params: ExportParams,
     fileWriter: XLSXWriter,
@@ -13,8 +13,8 @@ export type BuildServiceInterface = {
   ): Promise<void>;
 };
 
-export abstract class BuildServiceInterfaceResolver
-  implements BuildServiceInterface {
+export abstract class FileCreatorServiceInterfaceResolver
+  implements FileCreatorServiceInterface {
   protected async configure(
     params: ExportParams,
     fileWriter: XLSXWriter,
@@ -62,7 +62,7 @@ export class FileCreatorService {
   ): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
-    this.progress = progress;
+    this.progress = progress || (async () => {});
   }
 
   protected async initialize(): Promise<void> {

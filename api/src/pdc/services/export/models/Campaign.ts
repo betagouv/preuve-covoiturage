@@ -1,7 +1,8 @@
-import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { _ } from "@/deps.ts";
-import { castUserStringToUTC, toTzString } from "../helpers/index.ts";
+import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
+import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { SingleResultInterface as RawCampaignInterface } from "@/shared/policy/list.contract.ts";
+import { toTzString } from "../helpers/index.ts";
 
 export enum CampaignMode {
   Normal = "normal",
@@ -26,7 +27,9 @@ export class Campaign {
     // boosters are configured in the campaign timezone
     // convert them to UTC but keep the date only.
     this.boosters_utc = new Set(
-      get(raw, 'params.booster_dates', []).map((s: string) => toTzString(s, this.tz, 'yyyy-MM-dd')),
+      _.get(raw, "params.booster_dates", []).map((s: string) =>
+        toTzString(s, this.tz, "yyyy-MM-dd")
+      ),
     );
   }
 
@@ -50,7 +53,7 @@ export class Campaign {
     let mode = CampaignMode.Normal;
 
     for (const date of dates) {
-      const date_str = toTzString(date, this.tz, 'yyyy-MM-dd');
+      const date_str = toTzString(date, this.tz, "yyyy-MM-dd");
       if (!this.isActiveAt(date)) return CampaignMode.Inactive;
       if (this.boosters.has(date_str)) mode = CampaignMode.Booster;
     }

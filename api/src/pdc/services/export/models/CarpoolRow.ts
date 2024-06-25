@@ -1,4 +1,5 @@
 import { _ } from "@/deps.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
   campaign_mode: string;
@@ -45,7 +46,7 @@ export class CarpoolRow {
     // TODO transform if needed (dates, etc...)
 
     // pick fields or return the whole data
-    return fields.length ? _.pick(this.data, fields) : this.data;
+    return fields && fields.length ? _.pick(this.data, fields) : this.data;
   }
 
   // type makes sure the field exists in the root dataset to avoid having
@@ -57,7 +58,7 @@ export class CarpoolRow {
     return this.data[name] ?? defaultResult;
   }
 
-  public addField(name: string, value: any): CarpoolRow {
+  public addField(name: string, value: unknown): CarpoolRow {
     if (name in this.data) throw new Error(`Field ${name} already exists`);
     this.data[name] = value;
 

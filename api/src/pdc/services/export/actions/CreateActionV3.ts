@@ -1,38 +1,37 @@
-import { ContextType, handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
 import {
-  castToArrayMiddleware,
-  copyFromContextMiddleware,
-  hasPermissionMiddleware,
-  validateDateMiddleware,
-} from '@pdc/providers/middleware';
-import { ParamsInterfaceV3, ResultInterfaceV3, handlerConfigV3 } from '@shared/export/create.contract';
-import { aliasV3 } from '@shared/export/create.schema';
-import { maxEndDefault, minStartDefault } from '../config/export';
-import { DefaultTimezoneMiddleware } from '../middlewares/DefaultTimezoneMiddleware';
-import { Export } from '../models/Export';
-import { ExportParams } from '../models/ExportParams';
-import { ExportRecipient } from '../models/ExportRecipient';
-import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
-import { RecipientServiceInterfaceResolver } from '../services/RecipientService';
-import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
+  ContextType,
+  handler,
+  InvalidParamsException,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import {
+  handlerConfigV3,
+  ParamsInterfaceV3,
+  ResultInterfaceV3,
+} from "@/shared/export/create.contract.ts";
+import { Export } from "../models/Export.ts";
+import { ExportParams } from "../models/ExportParams.ts";
+import { ExportRecipient } from "../models/ExportRecipient.ts";
+import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
+import { RecipientServiceInterfaceResolver } from "../services/RecipientService.ts";
+import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.ts";
 
 @handler({
   ...handlerConfigV3,
   middlewares: [
-    hasPermissionMiddleware('common.export.create'),
-    castToArrayMiddleware(['operator_id', 'territory_id', 'recipients']),
-    ['timezone', DefaultTimezoneMiddleware],
-    copyFromContextMiddleware(`call.user._id`, 'created_by', true),
-    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
-    copyFromContextMiddleware(`call.user.territory_id`, 'territory_id', true),
-    validateDateMiddleware({
-      startPath: 'start_at',
-      endPath: 'end_at',
-      minStart: () => new Date(new Date().getTime() - minStartDefault),
-      maxEnd: () => new Date(new Date().getTime() - maxEndDefault),
-    }),
-    ['validate', aliasV3],
+    // hasPermissionMiddleware("common.export.create"),
+    // castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
+    // ["timezone", DefaultTimezoneMiddleware],
+    // copyFromContextMiddleware(`call.user._id`, "created_by", true),
+    // copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
+    // copyFromContextMiddleware(`call.user.territory_id`, "territory_id", true),
+    // validateDateMiddleware({
+    //   startPath: "start_at",
+    //   endPath: "end_at",
+    //   minStart: () => new Date(new Date().getTime() - minStartDefault),
+    //   maxEnd: () => new Date(new Date().getTime() - maxEndDefault),
+    // }),
+    // ["validate", aliasV3],
   ],
 })
 export class CreateActionV3 extends AbstractAction {
@@ -44,7 +43,10 @@ export class CreateActionV3 extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterfaceV3, context: ContextType): Promise<ResultInterfaceV3> {
+  protected async handle(
+    params: ParamsInterfaceV3,
+    context: ContextType,
+  ): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
 
     // make sure we have at least one recipient
@@ -52,9 +54,11 @@ export class CreateActionV3 extends AbstractAction {
       (params.recipients || []).map(ExportRecipient.fromEmail),
       params.created_by,
     );
+
     if (!emails.length) {
-      console.error('No recipient found! You must set "created_by" or "recipients"');
-      return;
+      throw new InvalidParamsException(
+        'No recipient found! You must set "created_by" or "recipients"',
+      );
     }
 
     // Create the export request

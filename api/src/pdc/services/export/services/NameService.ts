@@ -1,4 +1,6 @@
+import { defaultTimezone } from "@/config/time.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { ExportTarget } from "../models/Export.ts";
 
 export type Options = {
@@ -33,8 +35,12 @@ export class NameService {
   public get(config: Partial<Options>): string {
     this.options = { ...this.options, ...config };
 
-    const date = toTzString(today(), this.config.get('app.defaultTz'), 'yyyy-MM-dd');
-    const prefix = this.config.get('workbook.prefix', 'export');
+    const date = toTzString(
+      today(),
+      defaultTimezone,
+      "yyyy-MM-dd",
+    );
+    const prefix = this.config.get("workbook.prefix", "export");
 
     /* prettier-ignore */
     return [

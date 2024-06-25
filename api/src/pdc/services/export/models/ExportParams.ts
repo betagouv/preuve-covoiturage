@@ -1,6 +1,6 @@
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { subMonthsTz, today } from "../helpers/index.ts";
 import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { subMonthsTz, today } from "../helpers/index.ts";
 
 export type Config = Partial<Params>;
 
@@ -72,12 +72,12 @@ export class ExportParams {
    * @param {string} mode
    * @returns {string}
    */
-  public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
+  public geoToSQL(mode: "AND" | "OR" = "OR"): string {
     const { geo_selector } = this.params;
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
         // join all codes per type
-        const local = [];
+        const local: string[] = [];
         geo_selector[type].forEach((code: string) => {
           local.push(`gps.${type} = '${code}'`);
         });

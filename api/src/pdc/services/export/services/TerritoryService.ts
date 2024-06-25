@@ -48,40 +48,43 @@ export class TerritoryService {
     // use the territory service to get geo_selectors from the territory_id / territory SIREN
 
     if (!params.geo) {
+      console.debug("MISSING GEO");
       return this.defaultResolveResult;
     }
 
     const { geo } = params;
-    const selectors = geo.reduce(
-      (p, c) => {
-        const [type, code] = c.split(":")
-          .map((s) => String(s).toLowerCase().trim()) as [
+    const selectors = geo
+      .reduce((p, c) => {
+        const [type, code] = c
+          .split(":")
+          .map((s: string) => String(s).toLowerCase().trim()) as [
             keyof TerritorySelectorsInterface,
-            string[],
+            string,
           ];
 
-        if (p[type] && Array.isArray(p[type])) {
-          p[type] = [...p[type]!, ...code];
+        if (type && code) {
+          p[type] = p[type] || [];
+          p[type] = [...p[type]!, code.toUpperCase()];
         }
 
         return p;
-      },
-      {
+      }, {
         [TerritoryCodeEnum.City]: [],
         [TerritoryCodeEnum.Mobility]: [],
         [TerritoryCodeEnum.CityGroup]: [],
         [TerritoryCodeEnum.District]: [],
         [TerritoryCodeEnum.Region]: [],
         [TerritoryCodeEnum.Country]: [],
-      } as TerritorySelectorsInterface,
-    );
+      } as TerritorySelectorsInterface);
 
     // clean up empty selectors
-    Object.keys(selectors).forEach((key: keyof TerritorySelectorsInterface) => {
-      if (selectors[key]?.length === 0) {
-        delete selectors[key];
-      }
-    });
+    Object
+      .keys(selectors)
+      .forEach((key: keyof TerritorySelectorsInterface) => {
+        if (selectors[key]?.length === 0) {
+          delete selectors[key];
+        }
+      });
 
     return Object.keys(selectors).length
       ? selectors
