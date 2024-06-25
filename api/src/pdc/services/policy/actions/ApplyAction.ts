@@ -1,3 +1,4 @@
+import { defaultTimezone } from "@/config/time.ts";
 import { isAfter, maxDate, minDate } from "@/deps.ts";
 import {
   ContextType,
@@ -14,7 +15,7 @@ import {
 } from "@/shared/policy/apply.contract.ts";
 import { alias } from "@/shared/policy/apply.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
-import { defaultTz, subDaysTz, today, toTzString } from "../helpers/index.ts";
+import { subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -64,7 +65,7 @@ export class ApplyAction extends AbstractAction {
    * Finalization will be applied until the last 5 days
    */
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
-    const tz = params.tz ?? defaultTz;
+    const tz = params.tz ?? defaultTimezone;
 
     return {
       tz,
@@ -135,7 +136,7 @@ export class ApplyAction extends AbstractAction {
       if (total === 0) console.time(`[policy ${policy._id}] Fetched carpools`);
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
-      done = results.done;
+      done = !!results.done;
       if (total === 0) {
         console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
       }

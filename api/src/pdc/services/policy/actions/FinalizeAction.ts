@@ -1,3 +1,4 @@
+import { defaultTimezone } from "@/config/time.ts";
 import {
   ConfigInterfaceResolver,
   handler,
@@ -16,7 +17,6 @@ import { MetadataStore } from "../engine/entities/MetadataStore.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import {
   castUserStringToUTC,
-  defaultTz,
   subDaysTz,
   today,
   toTzString,
@@ -131,7 +131,7 @@ export class FinalizeAction extends AbstractAction {
   protected async defaultParams(
     params: ParamsInterface,
   ): Promise<DefaultParamsInterface> {
-    const tz = params.tz ?? defaultTz;
+    const tz = params.tz ?? defaultTimezone;
     const to = castUserStringToUTC(params.to) ||
       subDaysTz(today(tz), this.config.get("policies.finalize.to"));
     const from = castUserStringToUTC(params.from) ||

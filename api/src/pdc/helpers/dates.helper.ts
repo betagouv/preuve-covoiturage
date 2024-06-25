@@ -1,3 +1,4 @@
+import { defaultTimezone } from "@/config/time.ts";
 import {
   addDays,
   addMonths,
@@ -6,11 +7,8 @@ import {
   subDays,
   subMonths,
 } from "@/deps.ts";
-import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { toZonedTime } from "@/pdc/services/policy/engine/helpers/toZonedTime.ts";
 import { startOfMonth } from "@/pdc/services/trip/helpers/getDefaultDates.ts";
-
-export const defaultTz = "Europe/Paris";
 
 /**
  * Regular UTC toISOString.
@@ -25,7 +23,7 @@ export const defaultTz = "Europe/Paris";
 export function toISOString(d: Date): string {
   try {
     return d.toISOString();
-  } catch (e) {
+  } catch {
     return d?.toString();
   }
 }
@@ -42,21 +40,21 @@ export function toISOString(d: Date): string {
  * @param string
  * @returns string
  */
-export function toTzString(d: Date | string | number, tz = defaultTz, format = "yyyy-MM-dd'T'HH:mm:ssXX"): string {
+export function toTzString(
+  d: Date | string | number,
+  tz = defaultTimezone,
+  format = "yyyy-MM-dd'T'HH:mm:ssXX",
+): string {
   try {
-    return formatInTimeZone(
-      d,
-      tz || defaultTz,
-      "yyyy-MM-dd'T'HH:mm:ssXX",
-    );
-  } catch (e) {
+    return formatInTimeZone(d, tz || defaultTimezone, format);
+  } catch {
     return d?.toString();
   }
 }
 
 export function castUserStringToUTC(
   d: Date | string | undefined | null,
-  tz?: Timezone,
+  tz = defaultTimezone,
 ): Date | undefined {
   if (d === null || typeof d === "undefined") return;
 
@@ -80,10 +78,10 @@ export function castUserStringToUTC(
   return dd;
 }
 
-export function dateWithTz(date: Date, tz?: Timezone): Date {
+export function dateWithTz(date: Date, tz = defaultTimezone): Date {
   return fromZonedTime(
     date.toISOString().substring(0, 11),
-    tz || defaultTz,
+    tz || defaultTimezone,
   );
 }
 
@@ -93,41 +91,49 @@ export function dateWithTz(date: Date, tz?: Timezone): Date {
  * @example today()
  * @example today('Europe/Paris')
  */
-export function today(tz = defaultTz): Date {
+export function today(tz = defaultTimezone): Date {
   return dateWithTz(new Date(), tz);
 }
 
-export function addDaysTz(d: Date, days: number, tz?: Timezone): Date {
+export function addDaysTz(d: Date, days: number, tz = defaultTimezone): Date {
   return fromZonedTime(
-    addDays(toZonedTime(d, tz || defaultTz), days),
-    tz || defaultTz,
+    addDays(toZonedTime(d, tz || defaultTimezone), days),
+    tz || defaultTimezone,
   );
 }
 
-export function subDaysTz(d: Date, days: number, tz?: Timezone): Date {
+export function subDaysTz(d: Date, days: number, tz = defaultTimezone): Date {
   return fromZonedTime(
-    subDays(toZonedTime(d, tz || defaultTz), days),
-    tz || defaultTz,
+    subDays(toZonedTime(d, tz || defaultTimezone), days),
+    tz || defaultTimezone,
   );
 }
 
-export function addMonthsTz(d: Date, months: number, tz?: Timezone): Date {
+export function addMonthsTz(
+  d: Date,
+  months: number,
+  tz = defaultTimezone,
+): Date {
   return fromZonedTime(
-    addMonths(toZonedTime(d, tz || defaultTz), months),
-    tz || defaultTz,
+    addMonths(toZonedTime(d, tz || defaultTimezone), months),
+    tz || defaultTimezone,
   );
 }
 
-export function subMonthsTz(d: Date, months: number, tz?: Timezone): Date {
+export function subMonthsTz(
+  d: Date,
+  months: number,
+  tz = defaultTimezone,
+): Date {
   return fromZonedTime(
-    subMonths(toZonedTime(d, tz || defaultTz), months),
-    tz || defaultTz,
+    subMonths(toZonedTime(d, tz || defaultTimezone), months),
+    tz || defaultTimezone,
   );
 }
 
-export function startOfMonthTz(d: Date, tz?: Timezone): Date {
+export function startOfMonthTz(d: Date, tz = defaultTimezone): Date {
   return fromZonedTime(
-    startOfMonth(toZonedTime(d, tz || defaultTz)),
-    tz || defaultTz,
+    startOfMonth(toZonedTime(d, tz || defaultTimezone)),
+    tz || defaultTimezone,
   );
 }
