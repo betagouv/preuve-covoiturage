@@ -1,8 +1,8 @@
-import { provider, ProviderInterface } from '@ilos/common';
-import { toTzString } from '@pdc/helpers/dates.helper';
-import { sanitize } from '@pdc/helpers/string.helper';
-import os from 'os';
-import path from 'path';
+import { os, path } from "@/deps.ts";
+import { provider } from "@/ilos/common/Decorators.ts";
+import { ProviderInterface } from "@/ilos/common/index.ts";
+import { toTzString } from "@/pdc/helpers/dates.helper.ts";
+import { sanitize } from "@/pdc/helpers/string.helper.ts";
 
 export interface APDFNameParamsInterface {
   name: string;
@@ -63,14 +63,13 @@ export class APDFNameProvider implements ProviderInterface {
   }
 
   public parse(str: APDFNameResultsInterface): APDFNameParamsInterface {
-    const parts = str.split("/").pop().replace(`${this.prefix}-`, "").replace(
-      `.${this.ext}`,
-      "",
-    ).split("-");
-    const name = parts.pop();
+    const parts = (str.split("/").pop() || "")
+      .replace(`${this.prefix}-`, "")
+      .replace(`.${this.ext}`, "")
+      .split("-");
 
     return {
-      name,
+      name: parts.pop() || "",
       datetime: new Date(`${parts[0]}-${parts[1]}-01T00:00:00Z`),
       campaign_id: parseInt(parts[2], 10),
       operator_id: parseInt(parts[3], 10),
