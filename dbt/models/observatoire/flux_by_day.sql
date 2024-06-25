@@ -5,8 +5,8 @@ SELECT
   CASE WHEN c.new_com IS null then a.end_geo_code else c.new_com end as destination,
   a.start_datetime::date AS start_date,
   COUNT(*) AS journeys,
-  count(distinct a.driver_id) as drivers,
-  count(distinct a.passenger_id) as passengers,
+  count(distinct a.driver_id) + count(distinct case when a.driver_id is null then a.driver_phone end) as drivers,
+  count(distinct a.passenger_id) + count(distinct case when a.passenger_id is null then a.passenger_phone end) as passengers,
   sum(a.passenger_seats) as passenger_seats,
   sum(a.distance) as distance,
   sum(a.duration) as duration
