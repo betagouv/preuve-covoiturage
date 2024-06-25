@@ -1,10 +1,10 @@
-import { RPCResponseType } from '@shared/common/rpc/RPCResponseType';
-import { get } from 'lodash';
-import { HttpTransport } from '../HttpTransport';
-import { asyncHandler } from '../helpers/asyncHandler';
-import { createRPCPayload } from '../helpers/createRPCPayload';
-import { rateLimiter } from '../middlewares/rateLimiter';
-import { serverTokenMiddleware } from '../middlewares/serverTokenMiddleware';
+import { _, Request, Response } from "@/deps.ts";
+import { RPCResponseType } from "@/ilos/common/index.ts";
+import { HttpTransport } from "../HttpTransport.ts";
+import { asyncHandler } from "../helpers/asyncHandler.ts";
+import { createRPCPayload } from "../helpers/createRPCPayload.ts";
+import { rateLimiter } from "../middlewares/rateLimiter.ts";
+import { serverTokenMiddleware } from "../middlewares/serverTokenMiddleware.ts";
 
 /**
  * Export routes
@@ -27,76 +27,86 @@ export function register(transport: HttpTransport): void {
   const kernel = transport.getKernel();
 
   app.post(
-    '/v3/exports',
+    "/v3/exports",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
-      const response = await kernel.handle(createRPCPayload('export:create', req.body, user, { req }));
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
+      const response = await kernel.handle(
+        createRPCPayload("export:create", req.body, user, { req }),
+      );
       send(res, response);
     }),
   );
 
   app.get(
-    '/v3/exports',
+    "/v3/exports",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
       const response = (await kernel.handle(
-        createRPCPayload('export:list', req.query, user, { req }),
+        createRPCPayload("export:list", req.query, user, { req }),
       )) as RPCResponseType;
       send(res, response);
     }),
   );
 
   app.get(
-    '/v3/exports/:uuid',
+    "/v3/exports/:uuid",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
       const response = (await kernel.handle(
-        createRPCPayload('export:get', { uuid: req.params.uuid }, user, { req }),
+        createRPCPayload("export:get", { uuid: req.params.uuid }, user, {
+          req,
+        }),
       )) as RPCResponseType;
       send(res, response);
     }),
   );
 
   app.get(
-    '/v3/exports/:uuid/status',
+    "/v3/exports/:uuid/status",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
       const response = (await kernel.handle(
-        createRPCPayload('export:status', { uuid: req.params.uuid }, user, { req }),
+        createRPCPayload("export:status", { uuid: req.params.uuid }, user, {
+          req,
+        }),
       )) as RPCResponseType;
       send(res, response);
     }),
   );
 
   app.get(
-    '/v3/exports/:uuid/attachment',
+    "/v3/exports/:uuid/attachment",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
       const response = (await kernel.handle(
-        createRPCPayload('export:download', { uuid: req.params.uuid }, user, { req }),
+        createRPCPayload("export:download", { uuid: req.params.uuid }, user, {
+          req,
+        }),
       )) as RPCResponseType;
       send(res, response);
     }),
   );
 
   app.delete(
-    '/v3/exports/:uuid',
+    "/v3/exports/:uuid",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
-    asyncHandler(async (req, res, next) => {
-      const user = get(req, 'session.user', {});
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = _.get(req, "session.user", {});
       const response = (await kernel.handle(
-        createRPCPayload('export:delete', { uuid: req.params.uuid }, user, { req }),
+        createRPCPayload("export:delete", { uuid: req.params.uuid }, user, {
+          req,
+        }),
       )) as RPCResponseType;
       send(res, response);
     }),
