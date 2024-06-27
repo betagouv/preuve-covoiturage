@@ -1,5 +1,5 @@
-import { path } from "@/deps.ts";
 import { env } from "@/ilos/core/index.ts";
+import { basename, extname } from "@/lib/path/index.ts";
 import { BucketName } from "../interfaces/BucketName.ts";
 
 export function getBucketPrefix(): string {
@@ -33,11 +33,8 @@ export function getBucketEndpoint(
 }
 
 export function filenameFromPath(filepath: string): string {
-  const ext = path.extname(filepath);
-  return (
-    path
-      .basename(filepath)
-      .replace(ext, "")
-      .replace(/[^a-z0-9_-]/g, "") + ext
-  );
+  const ext = extname(filepath);
+  return (basename(filepath)
+    .replace(ext, "")
+    .replace(/[^a-z0-9_-]/g, "") + ext);
 }

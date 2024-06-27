@@ -1,6 +1,5 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
-import path from "node:path";
 import process from "node:process";
 import Stream from "node:stream";
 import axiosRetry from "npm:axios-retry@^4";
@@ -27,7 +26,6 @@ export {
   writeFile,
 } from "node:fs/promises";
 export type { FileHandle } from "node:fs/promises";
-export { basename, extname, join } from "node:path";
 export { Readable } from "node:stream";
 export { URL, URLSearchParams } from "node:url";
 export { isMainThread } from "node:worker_threads";
@@ -244,7 +242,6 @@ export {
   mapshaper,
   mjml2html,
   net,
-  path,
   pdf,
   pg,
   pino,
@@ -266,3 +263,5 @@ import CryptoJS from "npm:crypto-js@^4.2";
 import bcrypt from "npm:bcryptjs@^2.4";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
+export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
+

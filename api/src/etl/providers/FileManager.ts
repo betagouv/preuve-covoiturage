@@ -1,5 +1,5 @@
-import { axios, mapshaper } from "@/deps.ts";
-import { access, basename, join, mkdir, Readable } from "@/deps.ts";
+import { access, axios, mapshaper, mkdir, Readable } from "@/deps.ts";
+import { basename, join } from "@/lib/path/index.ts";
 import {
   getAllFiles,
   getFileExtensions,

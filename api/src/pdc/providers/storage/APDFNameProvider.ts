@@ -1,7 +1,7 @@
-import { path } from "@/deps.ts";
 import { provider } from "@/ilos/common/Decorators.ts";
 import { ProviderInterface } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 
@@ -60,7 +60,7 @@ export class APDFNameProvider implements ProviderInterface {
     const filename = typeof params === "string"
       ? params
       : this.filename(params);
-    return path.join(getTmpDir(), filename);
+    return join(getTmpDir(), filename);
   }
 
   public parse(str: APDFNameResultsInterface): APDFNameParamsInterface {

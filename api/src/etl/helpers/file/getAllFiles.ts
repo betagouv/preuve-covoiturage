@@ -1,4 +1,5 @@
-import { extname, join, readdir, stat } from "@/deps.ts";
+import { readdir, stat } from "@/deps.ts";
+import { extname, join } from "@/lib/path/index.ts";
 
 export async function getAllFiles(
   baseDirectory: string,

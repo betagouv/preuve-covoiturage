@@ -1,4 +1,4 @@
-import { _, AdmZip, path, unlink } from "@/deps.ts";
+import { _, AdmZip, unlink } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -6,6 +6,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { join, parse } from "@/lib/path/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   BucketName,
@@ -244,7 +245,7 @@ export class BuildExportAction extends Action {
     const type = _.get(params, "type", "export");
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     const isOpendata: boolean = this.isOpendata(type);
-    let excluded_territories: TerritoryTripsInterface[];
+    let excluded_territories: TerritoryTripsInterface[] = [];
 
     if (isOpendata) {
       excluded_territories = await this.tripRepository
@@ -274,8 +275,8 @@ export class BuildExportAction extends Action {
   private async handleCSVExport(
     isOpenData: boolean,
     filepath: string,
-    queryParams,
-    excluded_territories,
+    queryParams: any,
+    excluded_territories: any,
   ): Promise<string> {
     if (isOpenData) {
       return this.processOpendataExport(
@@ -289,7 +290,7 @@ export class BuildExportAction extends Action {
   }
 
   private async processOtherTypeExport(filepath: string): Promise<string> {
-    const filename: string = path.parse(filepath).base;
+    const filename: string = parse(filepath).base;
     const { zippath, zipname } = this.zip(filename, filepath);
     const fileKey = await this.fileProvider.upload(
       BucketName.Export,
@@ -317,7 +318,7 @@ export class BuildExportAction extends Action {
 
   private zip(filename: string, filepath: string) {
     const zipname = `${filename.replace(".csv", "")}.zip`;
-    const zippath = path.join(getTmpDir(), zipname);
+    const zippath = join(getTmpDir(), zipname);
     const zip = new AdmZip();
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);

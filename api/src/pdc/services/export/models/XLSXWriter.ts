@@ -1,5 +1,6 @@
-import { AdmZip, excel, path } from "@/deps.ts";
+import { AdmZip, excel } from "@/deps.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import {
   AllowedComputedFields,
@@ -165,7 +166,7 @@ export class XLSXWriter {
   }
 
   public get workbookPath(): string {
-    return path.join(this.folder, this.workbookFilename);
+    return join(this.folder, this.workbookFilename);
   }
 
   public get archiveFilename(): string {
@@ -173,7 +174,7 @@ export class XLSXWriter {
   }
 
   public get archivePath(): string {
-    return path.join(this.folder, this.archiveFilename);
+    return join(this.folder, this.archiveFilename);
   }
 
   public addDatasource(key: string, value: any): XLSXWriter {
