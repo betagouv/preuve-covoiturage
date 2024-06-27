@@ -10,6 +10,15 @@ export type RecipientServiceInterface = {
 
 export abstract class RecipientServiceInterfaceResolver
   implements RecipientServiceInterface {
+  /**
+   * Add the creator as recipient if no recipient is provided
+   *
+   * @todo check the evolution of the user's service
+   *
+   * @param {ExportRecipient[]} recipients
+   * @param {number} created_by
+   * @returns {Promise<ExportRecipient[]>}
+   */
   public maybeAddCreator(
     recipients: ExportRecipient[],
     created_by: number,
@@ -24,7 +33,6 @@ export abstract class RecipientServiceInterfaceResolver
 export class RecipientService {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  // add the creator as recipient if no recipient is provided
   public async maybeAddCreator(
     recipients: ExportRecipient[],
     created_by: number,

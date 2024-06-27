@@ -1,8 +1,8 @@
+import { NextFunction } from "@/deps.ts";
 import { assertEquals, assertRejects, describe, it } from "@/dev_deps.ts";
 import {
   ContextType,
   FunctionalHandlerInterface,
-  FunctionMiddlewareInterface,
   handler,
   HandlerInterface,
   middleware,
@@ -28,7 +28,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: FunctionMiddlewareInterface,
+        next: NextFunction,
       ) {
         const result = await next(params, context);
         return result - 1;
@@ -40,7 +40,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: FunctionMiddlewareInterface,
+        next: NextFunction,
       ) {
         const result = await next(params, context);
         return `hello ${result}?`;
@@ -52,7 +52,7 @@ describe("Foundation: Action", () => {
       async process(
         params: ParamsType,
         context: ContextType,
-        next: FunctionMiddlewareInterface,
+        next: NextFunction,
       ) {
         const result = await next(params, context);
         return `world ${result}!`;

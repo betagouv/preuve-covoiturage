@@ -1,6 +1,6 @@
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
-  FunctionMiddlewareInterface,
   middleware,
   MiddlewareInterface,
   ParamsType,
@@ -15,7 +15,7 @@ export class ValidatorMiddleware implements MiddlewareInterface {
   async process(
     params: ParamsType,
     context: ContextType,
-    next: FunctionMiddlewareInterface,
+    next: NextFunction,
     schema: string,
   ): Promise<ResultType> {
     await this.validator.validate(params, schema);

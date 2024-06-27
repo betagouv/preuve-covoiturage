@@ -1,11 +1,15 @@
-import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { CarpoolRow } from "../models/CarpoolRow.ts";
-import { ExportParams } from "../models/ExportParams.ts";
-import { XLSXWriter } from "../models/XLSXWriter.ts";
-import { ExportProgress } from "./ExportRepository.ts";
-import { CarpoolListQuery, TemplateKeys } from "./queries/CarpoolListQuery.ts";
-import { QueryTemplates } from "./queries/Query.ts";
+import { provider } from "@/ilos/common/Decorators.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
+import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
+import { XLSXWriter } from "@/pdc/services/export/models/XLSXWriter.ts";
+import { ExportProgress } from "@/pdc/services/export/repositories/ExportRepository.ts";
+import { QueryTemplates } from "@/pdc/services/export/repositories/queries/AbstractQuery.ts";
+import {
+  CarpoolListQuery,
+  CarpoolListType,
+  TemplateKeys,
+} from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
@@ -51,7 +55,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
       let count = 0; // number of rows read in the current batch
 
       const text = new CarpoolListQuery().getText(templates);
-      cursor = await this.connection.getCursor(text, values);
+      cursor = await this.connection.getCursor<CarpoolListType>(text, values);
       do {
         const results = await cursor.read(this.batchSize);
         count = results.length;
@@ -64,11 +68,12 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
         if (progress) await progress(((done / total) * 100) | 0);
       } while (count !== 0);
-    } catch (e) {
-      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
-      console.debug(e.stack);
-    } finally {
+
       await cursor.release();
+    } catch (e) {
+      await cursor.release();
+      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      throw e;
     }
   }
 

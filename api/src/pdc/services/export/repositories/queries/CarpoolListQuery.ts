@@ -1,20 +1,93 @@
 /* eslint-disable max-len */
-import { Query } from "./Query.ts";
+import { AbstractQuery } from "./AbstractQuery.ts";
 
+// List the {{template}} used in the query for string replacement
 export type TemplateKeys = "geo_selectors" | "operator_id";
 
-export class CarpoolListQuery extends Query {
+export type CarpoolListType = {
+  operator_trip_id: string;
+  operator_journey_id: string;
+  operator_class: string;
+  status: string;
+
+  start_datetime_utc: Date;
+  start_date_utc: string;
+  start_time_utc: string;
+  end_datetime_utc: Date;
+  end_date_utc: string;
+  end_time_utc: string;
+  duration: number;
+  distance: number;
+
+  start_lat: number;
+  start_lon: number;
+  end_lat: number;
+  end_lon: number;
+
+  start_insee: string;
+  start_commune: string;
+  start_departement: string;
+  start_epci: string;
+  start_aom: string;
+  start_region: string;
+  start_pays: string;
+
+  end_insee: string;
+  end_commune: string;
+  end_departement: string;
+  end_epci: string;
+  end_aom: string;
+  end_region: string;
+  end_pays: string;
+
+  operator: string;
+  operator_passenger_id: string;
+  passenger_identity_key: string;
+  operator_driver_id: string;
+  driver_identity_key: string;
+
+  driver_revenue: number;
+  passenger_contribution: number;
+
+  cee_application: boolean;
+  campaigns: number[];
+
+  incentive_0_index: number;
+  incentive_0_siret: string;
+  incentive_0_amount: number;
+  incentive_1_index: number;
+  incentive_1_siret: string;
+  incentive_1_amount: number;
+  incentive_2_index: number;
+  incentive_2_siret: string;
+
+  incentive_rpc_0_campaign_id: number;
+  incentive_rpc_0_campaign_name: number;
+  incentive_rpc_0_amount: number;
+  incentive_rpc_1_campaign_id: number;
+  incentive_rpc_1_campaign_name: number;
+  incentive_rpc_1_amount: number;
+  incentive_rpc_2_campaign_id: number;
+  incentive_rpc_2_campaign_name: number;
+  incentive_rpc_2_amount: number;
+
+  offer_public: boolean;
+  offer_accepted_at: Date;
+};
+
+export class CarpoolListQuery extends AbstractQuery {
   protected countQuery = `
-    SELECT count(*) as count
-    FROM carpool.carpools cc
+    SELECT count(cc.*) as count
+    FROM carpool_v2.carpools cc
 
     -- geo selection
-    LEFT JOIN geo.perimeters gps ON cc.start_geo_code = gps.arr AND gps.year = $3::smallint
-    LEFT JOIN geo.perimeters gpe ON cc.end_geo_code = gpe.arr AND gpe.year = $3::smallint
+    LEFT JOIN carpool_v2.geo cg ON cc._id = cg.carpool_id
+    LEFT JOIN geo.perimeters gps ON cg.start_geo_code = gps.arr AND gps.year = $3::smallint
+    LEFT JOIN geo.perimeters gpe ON cg.end_geo_code = gpe.arr AND gpe.year = $3::smallint
 
-    WHERE cc.is_driver = false
-      AND cc.datetime >= $1
-      AND cc.datetime <  $2
+    WHERE true
+      AND cc.start_datetime >= $1
+      AND cc.start_datetime <  $2
       {{geo_selectors}}
       {{operator_id}}
   `;
@@ -22,14 +95,13 @@ export class CarpoolListQuery extends Query {
   protected query = `
     WITH trips AS (
       SELECT
-        cc.acquisition_id,
-        cc.trip_id,
-        cc.status as status,
+        cc._id,
+        cs.acquisition_status as status,
 
         -- time
-        cc.datetime as start_at,
-        cc.datetime + (cc.duration::text || ' seconds')::interval as end_at,
-        (cc.duration::text || ' seconds')::interval as duration,
+        cc.start_datetime as start_at,
+        cc.end_datetime as end_at,
+        cc.end_datetime - cc.start_datetime as duration,
 
         -- distance
         cc.distance,
@@ -39,21 +111,22 @@ export class CarpoolListQuery extends Query {
         ST_X(cc.end_position::geometry) as end_lon,
 
         -- administration
-        cc.start_geo_code,
-        cc.end_geo_code,
+        cg.start_geo_code,
+        cg.end_geo_code,
 
         -- operator data
         cc.operator_class,
         oo.name as operator,
+        cc.operator_trip_id,
         cc.operator_journey_id,
-        id_p.operator_user_id as operator_passenger_id,
-        id_p.identity_key as passenger_identity_key,
-        id_d.operator_user_id as operator_driver_id,
-        id_d.identity_key as driver_identity_key,
+        cc.driver_operator_user_id as operator_passenger_id,
+        cc.passenger_identity_key,
+        cc.driver_operator_user_id as operator_driver_id,
+        cc.driver_identity_key,
 
-        -- root carpool is from the passenger
-        cc.cost as passenger_contribution,
-        cc_driver.cost as driver_revenue,
+        -- money, money, money
+        cc.passenger_contribution,
+        cc.driver_revenue,
 
         -- an array of json objects with the incentives
         -- to be split in numbered columns by the sql to csv exporter
@@ -69,57 +142,59 @@ export class CarpoolListQuery extends Query {
         -- CEE application data
         cee._id IS NOT NULL as cee_application
 
-      FROM carpool.carpools cc
+      FROM carpool_v2.carpools cc
 
-      -- join the driver's carpool
-      LEFT JOIN carpool.carpools cc_driver ON cc.acquisition_id = cc_driver.acquisition_id AND cc_driver.is_driver = TRUE
+      -- join the carpool tables
+      LEFT JOIN carpool_v2.status cs ON cc._id = cs.carpool_id
+      LEFT JOIN carpool_v2.geo cg ON cc._id = cg.carpool_id
 
       -- get operator data
       LEFT JOIN operator.operators oo ON cc.operator_id = oo._id
 
       -- get CEE applications data
-      LEFT JOIN cee.cee_applications cee ON cc_driver._id = cee.carpool_id
+      LEFT JOIN cee.cee_applications cee ON cc._id = cee.carpool_id
 
-      -- get incentive from carpool.incentives
+      -- get incentive from carpool_v2.operator_incentives
       LEFT JOIN LATERAL (
         SELECT json_agg(json_build_object(
           'index', ci.idx,
           'siret', ci.siret,
           'amount', ci.amount
         ) ORDER BY ci.idx) as incentive
-        FROM carpool.incentives ci
-        WHERE ci.acquisition_id = cc.acquisition_id
+        FROM carpool_v2.operator_incentives ci
+        WHERE ci.carpool_id = cc._id
       ) as agg_incentives ON TRUE
 
       -- get RPC incentives from policy.incentives
       LEFT JOIN LATERAL (
         SELECT json_agg(json_build_object(
           'campaign_id', pi_rpc.policy_id,
+          'campaign_name', pp.name,
           'amount', pi_rpc.amount
         )) as incentive_rpc
         FROM policy.incentives pi_rpc
-        WHERE pi_rpc.carpool_id = cc_driver._id
+        LEFT JOIN policy.policies pp ON pi_rpc.policy_id = pp._id
+        WHERE pi_rpc.carpool_id = cc._id
       ) as agg_incentives_rpc ON TRUE
 
-      -- identities
-      LEFT JOIN carpool.identities id_p ON cc.identity_id = id_p._id
-      LEFT JOIN carpool.identities id_d ON cc_driver.identity_id = id_d._id
-
       -- geo selection
-      LEFT JOIN geo.perimeters gps ON cc.start_geo_code = gps.arr AND gps.year = $3::smallint
-      LEFT JOIN geo.perimeters gpe ON cc.end_geo_code = gpe.arr AND gpe.year = $3::smallint
+      LEFT JOIN geo.perimeters gps ON cg.start_geo_code = gps.arr AND gps.year = $3::smallint
+      LEFT JOIN geo.perimeters gpe ON cg.end_geo_code = gpe.arr AND gpe.year = $3::smallint
 
+      -- TODO add campaign details (id, name)
       -- campaigns can be many on one carpool
       LEFT JOIN LATERAL (
-        SELECT array_agg(policy_id) as campaigns
+        SELECT array_agg(json_build_object(
+          'id', policy_id,
+          'name', name
+        )) as campaigns
         FROM policy.incentives
-        WHERE carpool_id = cc_driver._id
+        WHERE carpool_id = cc._id
       ) AS pi ON TRUE
 
-      -- target the passenger for the root carpools
-      WHERE cc.is_driver = false
-        AND cc.datetime >= $1
-        AND cc.datetime <  $2
+      WHERE true
+        AND cc.start_datetime >= $1
+        AND cc.start_datetime <  $2
         {{geo_selectors}}
         {{operator_id}}
     ),
@@ -148,7 +223,7 @@ export class CarpoolListQuery extends Query {
     -- fields to export
     SELECT
       -- general trip identifiers
-      trips.trip_id,
+      trips.operator_trip_id,
       trips.operator_journey_id,
       trips.operator_class,
       trips.status,
@@ -180,6 +255,7 @@ export class CarpoolListQuery extends Query {
       gps.l_aom as start_aom,
       gps.l_reg as start_region,
       gps.l_country as start_pays,
+
       gpe.arr as end_insee,
       gpe.l_arr as end_commune,
       gpe.l_dep as end_departement,
@@ -218,14 +294,17 @@ export class CarpoolListQuery extends Query {
 
       -- RPC incentives
       trips.incentive_rpc[0]->>'campaign_id' as incentive_rpc_0_campaign_id,
+      trips.incentive_rpc[0]->>'campaign_name' as incentive_rpc_0_campaign_name,
       trips.incentive_rpc[0]->>'amount' as incentive_rpc_0_amount,
       trips.incentive_rpc[1]->>'campaign_id' as incentive_rpc_1_campaign_id,
+      trips.incentive_rpc[1]->>'campaign_name' as incentive_rpc_1_campaign_name,
       trips.incentive_rpc[1]->>'amount' as incentive_rpc_1_amount,
       trips.incentive_rpc[2]->>'campaign_id' as incentive_rpc_2_campaign_id,
+      trips.incentive_rpc[2]->>'campaign_name' as incentive_rpc_2_campaign_name,
       trips.incentive_rpc[2]->>'amount' as incentive_rpc_2_amount,
 
       -- offer data (to be completed)
-      true as offer_public,
+      true as offer_public, -- TODO
       trips.start_at as offer_accepted_at -- TODO
 
     FROM trips

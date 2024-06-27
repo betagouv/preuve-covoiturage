@@ -134,6 +134,10 @@ api *command:
 env:
   env | grep APP_ | sort | column -t -s=
 
+# refresh the deno.lock file
+lock:
+  deno cache --lock=deno.lock --lock-write src/deps.ts src/dev_deps.ts
+
 # Eval and run a file
 eval *filepath:
   deno eval \

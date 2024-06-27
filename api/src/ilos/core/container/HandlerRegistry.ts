@@ -1,9 +1,9 @@
+import { NextFunction } from "@/deps.ts";
 import {
   CallType,
   ContainerInterface,
   ContextType,
   FunctionalHandlerInterface,
-  FunctionMiddlewareInterface,
   HandlerConfigType,
   HandlerInterface,
   HandlerMeta,
@@ -37,7 +37,7 @@ export class HandlerRegistry {
 
   protected buildHandlerMiddlewares(
     middlewaresConfig: SingleMiddlewareConfigType[],
-  ): FunctionMiddlewareInterface {
+  ): NextFunction {
     const middlewares = middlewaresConfig.map((value) => {
       if (typeof value === "string") {
         return this.container.get<MiddlewareInterface>(value);

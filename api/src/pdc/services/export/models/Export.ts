@@ -1,3 +1,4 @@
+import { ContextType } from "@/ilos/common/index.ts";
 import { ExportParams } from "./ExportParams.ts";
 
 export enum ExportStatus {
@@ -55,5 +56,18 @@ export class Export {
       error: export_.error,
       stats: export_.stats,
     };
+  }
+
+  public static target(
+    context: ContextType,
+    target: ExportTarget | null = null,
+  ): ExportTarget {
+    if (target) return target;
+
+    const { operator_id, territory_id } = context.call?.user || {};
+    if (parseInt(operator_id) > 0) return ExportTarget.OPERATOR;
+    if (parseInt(territory_id) > 0) return ExportTarget.TERRITORY;
+
+    return ExportTarget.OPENDATA;
   }
 }

@@ -1,4 +1,5 @@
 import {
+  castToArrayMiddlewareBinding,
   channelServiceBlacklistMiddlewareBinding,
   channelServiceWhitelistMiddlewareBinding,
   contentBlacklistMiddlewareBinding,
@@ -13,6 +14,7 @@ import {
 } from "./middlewares.ts";
 
 export const bindings = [
+  castToArrayMiddlewareBinding,
   channelServiceBlacklistMiddlewareBinding,
   channelServiceWhitelistMiddlewareBinding,
   contentBlacklistMiddlewareBinding,
@@ -20,8 +22,8 @@ export const bindings = [
   copyFromContextMiddlewareBinding,
   environmentBlacklistMiddlewareBinding,
   environmentWhitelistMiddlewareBinding,
-  hasPermissionMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
-  validateDateMiddlewareBinding,
+  hasPermissionMiddlewareBinding,
   loggerMiddlewareBinding,
+  validateDateMiddlewareBinding,
 ];

@@ -6,8 +6,8 @@ import {
 import { Export, ExportStatus } from "../models/Export.ts";
 import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
-import { BuildServiceInterfaceResolver } from "../services/BuildService.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
+import { FileCreatorServiceInterfaceResolver } from "../services/FileCreatorService.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
 import { NameServiceInterfaceResolver } from "../services/NameService.ts";
 
@@ -21,23 +21,23 @@ export class ProcessCommand implements CommandInterface {
 
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
-    protected buildService: BuildServiceInterfaceResolver,
+    protected fileCreatorService: FileCreatorServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
     protected nameService: NameServiceInterfaceResolver,
     protected logger: LogServiceInterfaceResolver,
   ) {}
 
   public async call(options: Options): Promise<void> {
-    let killswitch = 50;
+    let counter = 50;
 
     // process pending exports until there are no more
     // picking one at a time to avoid concurrency issues
     // and let multiple workers process the queue in parallel
     let exp = await this.exportRepository.pickPending();
-    while (exp && killswitch > 0) {
+    while (exp && counter > 0) {
       await this.process(exp);
       exp = await this.exportRepository.pickPending();
-      killswitch--;
+      counter--;
     }
 
     console.info("No more pending exports. Bye!");
@@ -52,7 +52,7 @@ export class ProcessCommand implements CommandInterface {
       console.time(`Export finished processing ${uuid}`);
 
       await this.exportRepository.status(_id, ExportStatus.RUNNING);
-      await this.buildService.write(
+      await this.fileCreatorService.write(
         params,
         new XLSXWriter(filename, { fields }),
         await this.exportRepository.progress(_id),
