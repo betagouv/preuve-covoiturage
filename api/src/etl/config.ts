@@ -1,10 +1,5 @@
 import { readFileSync } from "@/deps.ts";
-import {
-  env,
-  env_or_default,
-  env_or_fail,
-  env_or_int,
-} from "@/lib/env/index.ts";
+import { env, env_or_default, env_or_int } from "@/lib/env/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { datasets, datastructures } from "./datasets.ts";
 import { ConfigInterface } from "./interfaces/ConfigInterface.ts";
@@ -35,7 +30,7 @@ const postgresTls = {
 
 export const config: ConfigInterface = {
   pool: {
-    connectionString: env_or_fail("POSTGRES_URL"),
+    connectionString: env("POSTGRES_URL"),
     user: env_or_default("POSTGRES_USER", "postgres"),
     password: env_or_default("POSTGRES_PASSWORD", "postgres"),
     database: env_or_default("POSTGRES_DB", "local"),

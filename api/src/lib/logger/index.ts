@@ -24,4 +24,10 @@ export function getPerformanceTimer() {
 
 const { info, warn, debug, error } = log;
 
-export const logger = { debug, error, info, warn };
+export const logger = {
+  debug,
+  error,
+  info,
+  warn,
+  log: (...args: unknown[]) => debug(...args),
+};

@@ -1,3 +1,7 @@
+let tmpDir: string;
 export function getTmpDir(): string {
-  return Deno.makeTempDirSync();
+  if (!tmpDir) {
+    tmpDir = Deno.makeTempDirSync();
+  }
+  return tmpDir;
 }

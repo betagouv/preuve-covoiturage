@@ -1,5 +1,6 @@
-import { os, path } from "@/deps.ts";
 import { assertEquals, assertObjectMatch, describe, it } from "@/dev_deps.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { APDFNameProvider } from "./APDFNameProvider.ts";
 
 describe("APDFNameProvider", () => {
@@ -31,7 +32,7 @@ describe("APDFNameProvider", () => {
         subsidized: 0,
         amount: 0,
       }),
-      path.join(os.tmpdir(), "APDF-2022-01-1-2-0-0-0-yolo.xlsx"),
+      join(getTmpDir(), "APDF-2022-01-1-2-0-0-0-yolo.xlsx"),
     );
   });
 
@@ -47,7 +48,7 @@ describe("APDFNameProvider", () => {
         subsidized: 100,
         amount: 222_99,
       }),
-      path.join(os.tmpdir(), "APDF-2022-01-1-2-111-100-22299-yolo.xlsx"),
+      join(getTmpDir(), "APDF-2022-01-1-2-111-100-22299-yolo.xlsx"),
     );
   });
 
@@ -55,7 +56,7 @@ describe("APDFNameProvider", () => {
     const provider = new APDFNameProvider();
     assertEquals(
       provider.filepath("APDF-2022-01-1-2-3-4-yolo.xlsx"),
-      path.join(os.tmpdir(), "APDF-2022-01-1-2-3-4-yolo.xlsx"),
+      join(getTmpDir(), "APDF-2022-01-1-2-3-4-yolo.xlsx"),
     );
   });
 
@@ -71,7 +72,7 @@ describe("APDFNameProvider", () => {
         subsidized: 100,
         amount: 222_00,
       }),
-      path.join(os.tmpdir(), "APDF-2022-01-1-2-111-100-22200-yolo.xlsx"),
+      join(getTmpDir(), "APDF-2022-01-1-2-111-100-22200-yolo.xlsx"),
     );
   });
 

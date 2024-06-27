@@ -242,7 +242,6 @@ export {
   net,
   pdf,
   pg,
-  pino,
   Pool,
   process,
   promClient,
