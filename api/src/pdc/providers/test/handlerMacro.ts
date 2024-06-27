@@ -21,7 +21,7 @@ export async function assertHandler<P = unknown, R = unknown>(
   currentContext: ContextType = {} as ContextType,
   handlerConfig: HandlerConfigInterface,
   params: P,
-  callback: (result: R) => Promise<void>,
+  callback: (result: R) => void | Promise<void>,
 ) {
   const callContext = { ...emptyContext, ...currentContext };
   const result = await context.kernel.call<P, R>(

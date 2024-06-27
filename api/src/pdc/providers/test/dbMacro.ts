@@ -16,6 +16,28 @@ export interface DbBeforeAfter {
   after(cfg: DbContext): Promise<void>;
 }
 
+/**
+ * Export helpers to create a clean up a test database before and after tests
+ *
+ * You can pass a connectionString in the config to override the default
+ * APP_POSTGRES_URL environment variable.
+ *
+ * @example
+ * import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
+ *
+ * const { before, after } = makeDbBeforeAfter();
+ * let db: DbContext;
+ *
+ * beforeAll(async () => {
+ *    db = await before();
+ * });
+ * afterAll(async () => {
+ *   await after(db);
+ * });
+ *
+ * @param {Config} cfg
+ * @returns
+ */
 export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
   return {
     before: async (): Promise<DbContext> => {

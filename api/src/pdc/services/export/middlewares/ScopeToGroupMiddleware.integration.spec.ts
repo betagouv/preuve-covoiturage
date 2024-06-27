@@ -8,6 +8,7 @@ import {
 } from "@/dev_deps.ts";
 import { ContextType, ForbiddenException } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 import { ScopeToGroupMiddleware } from "./ScopeToGroupMiddleware.ts";
 
 describe("ScopeToGroupMiddleware", () => {
@@ -97,7 +98,8 @@ describe("ScopeToGroupMiddleware", () => {
         territory_id: 1,
         authorizedZoneCodes: geo_selector,
       }),
-      (params: any) => params.geo_selector,
+      (params: { geo_selector: TerritorySelectorsInterface }) =>
+        params.geo_selector,
       middlewareConfig,
     );
     assertEquals(result, { com: geo_selector.com });
@@ -111,7 +113,8 @@ describe("ScopeToGroupMiddleware", () => {
         territory_id: 1,
         authorizedZoneCodes: geo_selector,
       }),
-      (params: any) => params.geo_selector,
+      (params: { geo_selector: TerritorySelectorsInterface }) =>
+        params.geo_selector,
       middlewareConfig,
     );
     assertEquals(result, { com: geo_selector.com });
@@ -170,7 +173,7 @@ describe("ScopeToGroupMiddleware", () => {
         permissions: ["operator.trip.list"],
         operator_id: 2,
       }),
-      (params: any) => params.operator_id,
+      (params: { operator_id: number }) => params.operator_id,
       middlewareConfig,
     );
 
