@@ -1,35 +1,35 @@
-import { territoryCodeSchema } from '../territory/common/schema';
+import { territoryCodeSchema } from "../territory/common/schema";
 
 export const schemaV2 = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['date'],
+  required: ["date"],
   properties: {
     tz: {
-      macro: 'tz',
+      macro: "tz",
     },
     date: {
-      type: 'object',
+      type: "object",
       additionalProperties: false,
-      required: ['start', 'end'],
+      required: ["start", "end"],
       properties: {
         start: {
-          macro: 'timestamp',
+          macro: "timestamp",
         },
         end: {
-          macro: 'timestamp',
+          macro: "timestamp",
         },
       },
     },
     operator_id: {
       oneOf: [
         {
-          type: 'array',
+          type: "array",
           minItems: 1,
-          items: { macro: 'serial' },
+          items: { macro: "serial" },
         },
         {
-          macro: 'serial',
+          macro: "serial",
         },
       ],
     },
@@ -38,42 +38,42 @@ export const schemaV2 = {
 };
 
 export const schemaV3 = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['tz', 'start_at', 'end_at', 'operator_id'],
+  required: ["tz", "start_at", "end_at", "operator_id"],
   properties: {
     tz: {
-      macro: 'tz',
+      macro: "tz",
     },
     start_at: {
-      macro: 'timestamp',
+      macro: "timestamp",
     },
     end_at: {
-      macro: 'timestamp',
+      macro: "timestamp",
     },
     created_by: {
-      macro: 'serial',
+      macro: "serial",
     },
     operator_id: {
-      type: 'array',
+      type: "array",
       minItems: 0,
-      items: { macro: 'serial' },
+      items: { macro: "serial" },
     },
     territory_id: {
-      type: 'array',
+      type: "array",
       minItems: 0,
-      items: { macro: 'serial' },
+      items: { macro: "serial" },
     },
     recipients: {
-      type: 'array',
+      type: "array",
       minItems: 0,
-      items: { macro: 'varchar' },
+      items: { macro: "varchar" },
     },
     geo_selector: territoryCodeSchema,
   },
 };
 
-export const aliasV2 = 'export.create.v2';
-export const aliasV3 = 'export.create.v3';
+export const aliasV2 = "export.create.v2";
+export const aliasV3 = "export.create.v3";
 export const bindingV2 = [aliasV2, schemaV2];
 export const bindingV3 = [aliasV3, schemaV3];
