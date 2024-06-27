@@ -1,10 +1,10 @@
-import { InvalidParamsException } from '@ilos/common';
-import { isValid } from 'date-fns';
+import { isValidDate } from "@/deps.ts";
+import { InvalidParamsException } from "@/ilos/common/index.ts";
 
 export function getDateOrFail(data: any, message: string): Date {
-  const date = new Date(data);
-  if (!isValid(date)) {
+  const dateData = new Date(data);
+  if (!isValidDate(dateData)) {
     throw new InvalidParamsException(message);
   }
-  return date;
+  return dateData;
 }

@@ -1,23 +1,28 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { toISOString } from '../helpers';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { toISOString } from "../helpers/index.ts";
 
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   PolicyRepositoryProviderInterfaceResolver,
   SerializedPolicyInterface,
-} from '../interfaces';
+} from "../interfaces/index.ts";
 
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,
 })
-export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfaceResolver {
-  public readonly table = 'policy.policies';
-  public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
+export class PolicyRepositoryProvider
+  implements PolicyRepositoryProviderInterfaceResolver {
+  public readonly table = "policy.policies";
+  public readonly getTerritorySelectorFn =
+    "territory.get_selector_by_territory_id";
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
+  async find(
+    id: number,
+    territoryId?: number,
+  ): Promise<SerializedPolicyInterface | undefined> {
     const query = {
       text: `
         SELECT
@@ -38,7 +43,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         ) as sel
         WHERE pp._id = $1
         AND pp.deleted_at IS NULL
-        ${!!territoryId ? 'AND pp.territory_id = $2' : ''}
+        ${!!territoryId ? "AND pp.territory_id = $2" : ""}
         LIMIT 1
       `,
       values: [id, ...(territoryId ? [territoryId] : [])],
@@ -53,7 +58,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     return result.rows[0];
   }
 
-  async create(data: Omit<SerializedPolicyInterface, '_id'>): Promise<SerializedPolicyInterface> {
+  async create(
+    data: Omit<SerializedPolicyInterface, "_id">,
+  ): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -73,7 +80,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         )
         RETURNING _id
       `,
-      values: [data.territory_id, data.start_date, data.end_date, data.name, data.status, data.handler],
+      values: [
+        data.territory_id,
+        data.start_date,
+        data.end_date,
+        data.name,
+        data.status,
+        data.handler,
+      ],
     };
 
     const result = await this.connection.getClient().query<any>(query);
@@ -84,7 +98,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     return await this.find(result.rows[0]._id);
   }
 
-  async patch(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface> {
+  async patch(
+    data: SerializedPolicyInterface,
+  ): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -98,7 +114,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         AND deleted_at IS NULL
         RETURNING _id
       `,
-      values: [data._id, data.name, data.start_date, data.end_date, data.handler, data.status],
+      values: [
+        data._id,
+        data.name,
+        data.start_date,
+        data.end_date,
+        data.handler,
+        data.status,
+      ],
     };
 
     const result = await this.connection.getClient().query<any>(query);
@@ -130,7 +153,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   async listApplicablePoliciesId(): Promise<number[]> {
     const results = await this.connection.getClient().query<any>({
-      text: 'SELECT _id FROM policy.policies WHERE status = $1',
+      text: "SELECT _id FROM policy.policies WHERE status = $1",
       values: [PolicyStatusEnum.ACTIVE],
     });
     return results.rows.map((r) => r._id);
@@ -144,37 +167,39 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     ends_in_the_future?: boolean;
   }): Promise<SerializedPolicyInterface[]> {
     const values = [];
-    const whereClauses = ['deleted_at IS NULL and handler is not null'];
+    const whereClauses = ["deleted_at IS NULL and handler is not null"];
     for (const key of Reflect.ownKeys(search)) {
       switch (key) {
-        case '_id':
+        case "_id":
           values.push(search[key]);
           whereClauses.push(`pp._id = $${values.length}`);
           break;
-        case 'status':
+        case "status":
           values.push(search[key]);
           whereClauses.push(`pp.status = $${values.length}`);
           break;
-        case 'territory_id':
+        case "territory_id":
           const tid = search[key];
           if (tid === null) {
-            whereClauses.push('pp.territory_id IS NULL');
+            whereClauses.push("pp.territory_id IS NULL");
           } else if (Array.isArray(tid)) {
             values.push(tid);
-            whereClauses.push(`pp.territory_id = ANY($${values.length}::int[])`);
+            whereClauses.push(
+              `pp.territory_id = ANY($${values.length}::int[])`,
+            );
           } else {
             values.push(tid);
             whereClauses.push(`pp.territory_id = $${values.length}::int`);
           }
           break;
-        case 'datetime':
+        case "datetime":
           values.push(search[key]);
           whereClauses.push(
             `pp.start_date <= $${values.length}::timestamp AND pp.end_date >= $${values.length}::timestamp`,
           );
           break;
-        case 'ends_in_the_future':
-          whereClauses.push(`pp.end_date ${search[key] ? '>' : '<'} NOW()`);
+        case "ends_in_the_future":
+          whereClauses.push(`pp.end_date ${search[key] ? ">" : "<"} NOW()`);
           break;
         default:
           break;
@@ -198,7 +223,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
         ) as sel
-        WHERE ${whereClauses.join(' AND ')}
+        WHERE ${whereClauses.join(" AND ")}
       `,
     };
 
@@ -235,7 +260,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     };
 
     const result = await this.connection.getClient().query<any>(query);
-    return result.rowCount ? result.rows.map((o: { operator_id: number }) => o.operator_id) : [];
+    return result.rowCount
+      ? result.rows.map((o: { operator_id: number }) => o.operator_id)
+      : [];
   }
 
   /**
@@ -248,12 +275,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
    *       create the key. #FIXME
    */
   async syncIncentiveSum(campaign_id: number): Promise<void> {
-    const pf = '[campaign:syncincentivesum]';
-    const key_name = 'max_amount_restriction.global.campaign.global';
+    const pf = "[campaign:syncincentivesum]";
+    const key_name = "max_amount_restriction.global.campaign.global";
 
     // update the campaign with the sum of validated incentives
     // get the key
-    const resKey = await this.connection.getClient().query<{ _id: number; datetime: Date }>({
+    const resKey = await this.connection.getClient().query<
+      { _id: number; datetime: Date }
+    >({
       text: `
           SELECT _id, datetime FROM policy.policy_metas
           WHERE policy_id = $1 AND key = $2
@@ -264,14 +293,18 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     });
 
     if (!resKey.rowCount) {
-      console.warn(`${pf} ${key_name} key not found for campaign ${campaign_id}`);
+      console.warn(
+        `${pf} ${key_name} key not found for campaign ${campaign_id}`,
+      );
       return;
     }
 
     const { _id: key_id, datetime } = resKey.rows[0];
 
     // compute incentive_sum
-    const resSum = await this.connection.getClient().query<{ incentive_sum: number }>({
+    const resSum = await this.connection.getClient().query<
+      { incentive_sum: number }
+    >({
       text: `
           WITH latest_incentive AS (
             SELECT MAX(datetime)
@@ -289,7 +322,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     });
 
     if (!resSum.rowCount) {
-      console.warn(`${pf} Could not calculate incentive sum for campaign ${campaign_id}`);
+      console.warn(
+        `${pf} Could not calculate incentive sum for campaign ${campaign_id}`,
+      );
       return;
     }
 
@@ -309,7 +344,9 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     });
 
     // update incentive_sum in the policy
-    console.info(`${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`);
+    console.info(
+      `${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`,
+    );
     await this.connection.getClient().query<any>({
       text: `UPDATE policy.policies SET incentive_sum = $2 WHERE _id = $1`,
       values: [campaign_id, incentive_sum],

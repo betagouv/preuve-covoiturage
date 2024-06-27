@@ -1,1 +1,0 @@
-ALTER TABLE honor.tracking DROP COLUMN employer;

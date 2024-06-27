@@ -1,1 +1,1 @@
-export { CommandRegistry } from './CommandRegistry';
+export { CommandRegistry } from "./CommandRegistry.ts";

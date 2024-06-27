@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider } from "@/ilos/common/index.ts";
 
 import {
   GeoCoderInterface,
@@ -11,9 +11,14 @@ import {
   PointInterface,
   RouteMeta,
   RouteMetaProviderInterface,
-} from './interfaces';
+} from "./interfaces/index.ts";
 
-import { EtalabBaseAdresseNationaleProvider, EtalabAPIGeoProvider, LocalGeoProvider, OSRMProvider } from './providers';
+import {
+  EtalabAPIGeoProvider,
+  EtalabBaseAdresseNationaleProvider,
+  LocalGeoProvider,
+  OSRMProvider,
+} from "./providers/index.ts";
 
 @provider({
   identifier: GeoProviderInterfaceResolver,
@@ -34,7 +39,11 @@ export class GeoProvider implements GeoProviderInterface {
     this.geoCoderProviders = [etalabBANProvider];
 
     // InseeCoders => point to insee
-    this.inseeCoderProviders = [localGeoProvider, etalabAPIGeoProvider, etalabBANProvider];
+    this.inseeCoderProviders = [
+      localGeoProvider,
+      etalabAPIGeoProvider,
+      etalabBANProvider,
+    ];
 
     // InseeReverseCoders => insee to point
     this.inseeReverseCoderProviders = [etalabAPIGeoProvider];
@@ -49,11 +58,13 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await geocoder.literalToPosition(literal);
       } catch (e) {
-        console.error(`[GeoProvider:literalToPosition] (${literal}) ${e.message}`);
+        console.error(
+          `[GeoProvider:literalToPosition] (${literal}) ${e.message}`,
+        );
         failure.push(`literalToPosition ${e.message}`);
       }
     }
-    throw new Error(failure.join(', '));
+    throw new Error(failure.join(", "));
   }
 
   async inseeToPosition(insee: string): Promise<PointInterface> {
@@ -67,7 +78,7 @@ export class GeoProvider implements GeoProviderInterface {
       }
     }
 
-    throw new Error(failure.join(', '));
+    throw new Error(failure.join(", "));
   }
 
   async positionToInsee(geo: PointInterface): Promise<string> {
@@ -76,24 +87,31 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        console.error(`[GeoProvider:positionToInsee] (${geo.lon},${geo.lat}) ${e.message}`);
+        console.error(
+          `[GeoProvider:positionToInsee] (${geo.lon},${geo.lat}) ${e.message}`,
+        );
         failure.push(`positionToInsee ${e.message}`);
       }
     }
-    throw new Error(failure.join(', '));
+    throw new Error(failure.join(", "));
   }
 
-  async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
+  async getRouteMeta(
+    start: PointInterface,
+    end: PointInterface,
+  ): Promise<RouteMeta> {
     const failure = [];
     for (const routeMeta of this.routeMetaProviders) {
       try {
         return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
-        console.error(`[GeoProvider:getRouteMeta] (${start.lon},${start.lat};${end.lon},${end.lat}) ${e.message}`);
+        console.error(
+          `[GeoProvider:getRouteMeta] (${start.lon},${start.lat};${end.lon},${end.lat}) ${e.message}`,
+        );
         failure.push(`getRouteMeta ${e.message}`);
       }
     }
-    throw new Error(failure.join(', '));
+    throw new Error(failure.join(", "));
   }
 
   async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
@@ -101,25 +119,25 @@ export class GeoProvider implements GeoProviderInterface {
     let { lat, lon, geo_code } = data;
 
     if ((!lat || !lon) && !literal && !geo_code) {
-      throw new Error('Missing point param (lat/lon or literal or insee)');
+      throw new Error("Missing point param (lat/lon or literal or insee)");
     }
 
     if (!lat || !lon) {
       if (literal) {
         ({ lat, lon } = await this.literalToPosition(literal));
-      } else {
+      } else if (geo_code) {
         ({ lat, lon } = await this.inseeToPosition(geo_code));
       }
     }
 
-    if (!geo_code) {
+    if (!geo_code && (lat && lon)) {
       geo_code = await this.positionToInsee({ lat, lon });
     }
 
     return {
-      lat,
-      lon,
-      geo_code,
+      lat: lat || 0,
+      lon: lon || 0,
+      geo_code: geo_code || "",
     };
   }
 }

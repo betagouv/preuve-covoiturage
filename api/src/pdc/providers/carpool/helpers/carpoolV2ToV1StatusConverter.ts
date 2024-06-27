@@ -1,4 +1,8 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolV1StatusEnum } from '../interfaces';
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolFraudStatusEnum,
+  CarpoolV1StatusEnum,
+} from "../interfaces/index.ts";
 
 /**
  * Convert Carpool V2 statuses to Carpool V1 status

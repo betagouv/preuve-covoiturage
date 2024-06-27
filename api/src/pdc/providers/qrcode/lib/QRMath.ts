@@ -23,8 +23,8 @@ for (let i = 0; i < 8; i++) {
 }
 
 for (let i = 8; i < 256; i++) {
-  QRMath.EXP_TABLE[i] =
-    QRMath.EXP_TABLE[i - 4] ^ QRMath.EXP_TABLE[i - 5] ^ QRMath.EXP_TABLE[i - 6] ^ QRMath.EXP_TABLE[i - 8];
+  QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4] ^ QRMath.EXP_TABLE[i - 5] ^
+    QRMath.EXP_TABLE[i - 6] ^ QRMath.EXP_TABLE[i - 8];
 }
 
 for (let i = 0; i < 255; i++) {

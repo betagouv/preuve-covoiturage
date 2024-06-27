@@ -1,8 +1,8 @@
-import { PaymentInterface } from '@shared/common/interfaces/PaymentInterface';
-import { GeoPositionInterface } from '@shared/common/interfaces/GeoPositionInterface';
+import { PaymentInterface } from "@/shared/common/interfaces/PaymentInterface.ts";
+import { GeoPositionInterface } from "@/shared/common/interfaces/GeoPositionInterface.ts";
 
-export { IdentityInterface } from '@shared/common/interfaces/IdentityInterface';
-export { IncentiveInterface } from '@shared/common/interfaces/IncentiveInterface';
+export type { IdentityInterface } from "@/shared/common/interfaces/IdentityInterface.ts";
+export type { IncentiveInterface } from "@/shared/common/interfaces/IncentiveInterface.ts";
 
 export interface PeopleMetaInterface {
   payments: PaymentInterface[];

@@ -1,6 +1,9 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { castStatus, fromStatus } from '../helpers/castStatus';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
+import { castStatus, fromStatus } from "../helpers/castStatus.ts";
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
@@ -11,12 +14,13 @@ import {
   AcquisitionStatusInterface,
   AcquisitionStatusUpdateInterface,
   StatusSearchInterface,
-} from '../interfaces/AcquisitionRepositoryProviderInterface';
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
 
 @provider()
-export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProviderInterface {
-  public readonly table = 'acquisition.acquisitions';
-  public readonly carpoolTable = 'carpool.carpools';
+export class AcquisitionRepositoryProvider
+  implements AcquisitionRepositoryProviderInterface {
+  public readonly table = "acquisition.acquisitions";
+  public readonly carpoolTable = "carpool.carpools";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -111,11 +115,18 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values,
     };
 
-    const result = await this.connection.getClient().query<AcquisitionCreateResultInterface>(query);
+    const result = await this.connection.getClient().query<
+      AcquisitionCreateResultInterface
+    >(query);
     return result.rows;
   }
 
-  async cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void> {
+  async cancel(
+    operator_id: number,
+    operator_journey_id: string,
+    code?: string,
+    message?: string,
+  ): Promise<void> {
     await this.connection.getClient().query<any>({
       text: `
         UPDATE ${this.table}
@@ -131,9 +142,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     });
   }
 
-  async getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined> {
+  async getStatus(
+    operator_id: number,
+    operator_journey_id: string,
+  ): Promise<AcquisitionStatusInterface | undefined> {
     const whereClauses = {
-      text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
+      text: ["aa.operator_id = $1", "aa.journey_id = $2"],
       values: [operator_id, operator_journey_id],
     };
     const query = {
@@ -153,7 +167,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         LEFT JOIN carpool.carpools AS cc ON aa._id = cc.acquisition_id
         LEFT JOIN fraudcheck.labels as fl ON cc._id = fl.carpool_id
         LEFT JOIN anomaly.labels as al on cc._id = al.carpool_id
-        WHERE ${whereClauses.text.join(' AND ')}
+        WHERE ${whereClauses.text.join(" AND ")}
       `,
       values: whereClauses.values,
     };
@@ -161,14 +175,27 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     if (!result.rows.length) {
       return;
     }
-    const { _id, created_at, updated_at, carpool_status, acquisition_status, acquisition_error_stage } = result.rows[0];
+    const {
+      _id,
+      created_at,
+      updated_at,
+      carpool_status,
+      acquisition_status,
+      acquisition_error_stage,
+    } = result.rows[0];
     return {
       _id,
       operator_journey_id,
       created_at,
       updated_at,
-      status: castStatus(carpool_status, acquisition_status, acquisition_error_stage),
-      fraud_error_labels: result.rows.map((r) => r.fraud_label).filter((l) => !!l),
+      status: castStatus(
+        carpool_status,
+        acquisition_status,
+        acquisition_error_stage,
+      ),
+      fraud_error_labels: result.rows.map((r) => r.fraud_label).filter((l) =>
+        !!l
+      ),
       anomaly_error_details: result.rows
         .filter((l) => !!l.anomaly_label)
         .map((a) => ({
@@ -190,21 +217,21 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       () => Promise<void>,
     ]
   > {
-    const whereClauses = ['from', 'to', 'status']
+    const whereClauses = ["from", "to", "status"]
       .filter((k) => k in search)
       .map((k, i) => {
         switch (k) {
-          case 'from':
+          case "from":
             return {
               text: `created_at >= $${i + 1}::timestamp`,
               values: [search[k]],
             };
-          case 'to':
+          case "to":
             return {
               text: `created_at < $${i + 1}::timestamp`,
               values: [search[k]],
             };
-          case 'status':
+          case "status":
             return {
               text: `status = $${i + 1}::acquisition.acquisition_status_enum`,
               values: [search[k]],
@@ -230,7 +257,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           created_at,
           payload
         FROM ${this.table}
-        WHERE ${whereClauses.text.join(' AND ')}
+        WHERE ${whereClauses.text.join(" AND ")}
         ORDER BY _id
         LIMIT $${whereClauses.values.length + 1}
         FOR UPDATE SKIP LOCKED
@@ -242,7 +269,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     const poolClient = await pool.connect();
 
     try {
-      await poolClient.query<any>('BEGIN');
+      await poolClient.query<any>("BEGIN");
       const result = await poolClient.query<any>(query);
 
       return [
@@ -255,22 +282,25 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
         // commit and release
         async () => {
-          console.info('  >>> COMMIT');
-          await poolClient.query<any>('COMMIT');
+          console.info("  >>> COMMIT");
+          await poolClient.query<any>("COMMIT");
           poolClient.release();
         },
       ];
     } catch (e) {
-      await poolClient.query<any>('ROLLBACK');
+      await poolClient.query<any>("ROLLBACK");
       poolClient.release();
 
       throw e;
     }
   }
 
-  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
+  async updateManyStatus(
+    data: Array<AcquisitionStatusUpdateInterface>,
+    poolClient?: PoolClient,
+  ): Promise<void> {
     const pool = poolClient ?? (await this.connection.getClient().connect());
-    await pool.query<any>(poolClient ? 'SAVEPOINT results' : 'BEGIN');
+    await pool.query<any>(poolClient ? "SAVEPOINT results" : "BEGIN");
     const values = data.reduce(
       (acc, d) => {
         const [acquisition_id, status, error_stage, errors] = acc;
@@ -318,10 +348,14 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
     try {
       await pool.query<any>(query);
-      await pool.query<any>(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
+      await pool.query<any>(
+        poolClient ? "RELEASE SAVEPOINT results" : "COMMIT",
+      );
       return;
     } catch (e) {
-      await pool.query<any>(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
+      await pool.query<any>(
+        poolClient ? "ROLLBACK TO SAVEPOINT results" : "ROLLBACK",
+      );
       if (!poolClient) {
         throw e;
       }
@@ -332,9 +366,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>> {
+  async list(
+    search: StatusSearchInterface,
+  ): Promise<Array<{ operator_journey_id: string }>> {
     const { start, end, limit, offset, operator_id, status } = search;
-    const { carpool_status, acquisition_status, acquisition_error } = fromStatus(status);
+    const { carpool_status, acquisition_status, acquisition_error } =
+      fromStatus(status);
     if (!carpool_status) {
       const result = await this.connection.getClient().query<any>({
         text: `
@@ -344,7 +381,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
             created_at >= $1 AND
             created_at < $2 AND
             operator_id = $3 AND
-            status = $4 ${acquisition_error ? 'AND error_stage = $7' : ''}
+            status = $4 ${acquisition_error ? "AND error_stage = $7" : ""}
           ORDER BY created_at DESC
           LIMIT $5
           OFFSET $6
@@ -381,11 +418,15 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   }
 
   async patchPayload<P = any>(
-    search: { operator_id: number; operator_journey_id: string; status: Array<AcquisitionStatusEnum> },
+    search: {
+      operator_id: number;
+      operator_journey_id: string;
+      status: Array<AcquisitionStatusEnum>;
+    },
     payload: P,
   ): Promise<void> {
     const connection = await this.connection.getClient().connect();
-    await connection.query<any>('BEGIN');
+    await connection.query<any>("BEGIN");
     try {
       const oldPayloadResult = await connection.query<any>({
         text: `
@@ -406,11 +447,16 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           UPDATE ${this.table} SET payload = $4
           WHERE operator_id = $1 AND journey_id = $2 AND status = ANY($3)
         `,
-        values: [search.operator_id, search.operator_journey_id, search.status, JSON.stringify(newPayload)],
+        values: [
+          search.operator_id,
+          search.operator_journey_id,
+          search.status,
+          JSON.stringify(newPayload),
+        ],
       });
-      await connection.query<any>('COMMIT');
+      await connection.query<any>("COMMIT");
     } catch (e) {
-      await connection.query<any>('ROLLBACK');
+      await connection.query<any>("ROLLBACK");
       throw e;
     } finally {
       connection.release();

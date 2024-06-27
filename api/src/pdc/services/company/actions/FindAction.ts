@@ -1,16 +1,27 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import {
+  handler,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from "@/ilos/common/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
+import { CompanyRepositoryProviderInterfaceResolver } from "../interfaces/CompanyRepositoryProviderInterface.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/company/find.contract';
-import { alias } from '@shared/company/find.schema';
-import { signature as fetchSignature } from '@shared/company/fetch.contract';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/company/find.contract.ts";
+import { alias } from "@/shared/company/find.schema.ts";
+import { signature as fetchSignature } from "@/shared/company/fetch.contract.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [hasPermissionMiddleware('common.company.find'), ['validate', alias]],
+  middlewares: [hasPermissionMiddleware("common.company.find"), [
+    "validate",
+    alias,
+  ]],
 })
 export class FindAction extends AbstractAction {
   constructor(
@@ -54,7 +65,7 @@ export class FindAction extends AbstractAction {
     await this.kernel.call(fetchSignature, siret, {
       call: {
         user: {
-          permissions: ['common.company.fetch'],
+          permissions: ["common.company.fetch"],
         },
       },
       channel: {

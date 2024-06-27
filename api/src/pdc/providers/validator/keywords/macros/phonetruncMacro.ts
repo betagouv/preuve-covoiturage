@@ -6,9 +6,9 @@ export function phonetruncMacro(): {
   maxLength: number;
 } {
   return {
-    type: 'string',
-    format: 'phonetrunc',
-    cast: 'phonetrunc',
+    type: "string",
+    format: "phonetrunc",
+    cast: "phonetrunc",
     minLength: 8,
     maxLength: 20,
   };

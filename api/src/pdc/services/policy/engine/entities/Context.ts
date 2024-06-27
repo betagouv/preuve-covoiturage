@@ -8,9 +8,9 @@ import {
   StatefulIncentiveInterface,
   StatelessContextInterface,
   StatelessIncentiveInterface,
-} from '../../interfaces';
-import { Incentive } from './Incentive';
-import { MetadataRegistry } from './MetadataRegistry';
+} from "../../interfaces/index.ts";
+import { Incentive } from "./Incentive.ts";
+import { MetadataRegistry } from "./MetadataRegistry.ts";
 
 export class StatelessContext implements StatelessContextInterface {
   constructor(
@@ -19,10 +19,19 @@ export class StatelessContext implements StatelessContextInterface {
     public carpool: CarpoolInterface,
   ) {}
 
-  static fromCarpool(policy_id: number, carpool: CarpoolInterface): StatelessContext {
+  static fromCarpool(
+    policy_id: number,
+    carpool: CarpoolInterface,
+  ): StatelessContext {
     const registry = MetadataRegistry.create(policy_id, carpool.datetime);
     return new StatelessContext(
-      Incentive.create(policy_id, carpool.operator_id, carpool.operator_journey_id, carpool.datetime, registry),
+      Incentive.create(
+        policy_id,
+        carpool.operator_id,
+        carpool.operator_journey_id,
+        carpool.datetime,
+        registry,
+      ),
       registry,
       carpool,
     );
@@ -40,6 +49,9 @@ export class StatefulContext implements StatefulContextInterface {
     incentiveData: SerializedIncentiveInterface,
   ): Promise<StatefulContext> {
     const incentive = Incentive.import(incentiveData);
-    return new StatefulContext(incentive, await store.load(incentive.getMeta()));
+    return new StatefulContext(
+      incentive,
+      await store.load(incentive.getMeta()),
+    );
   }
 }

@@ -1,17 +1,28 @@
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
 
-import { UnconfiguredMiddleware } from '../interfaces';
+import { UnconfiguredMiddleware } from "../interfaces.ts";
 
 @middleware()
-export class LoggerMiddleware implements MiddlewareInterface<LoggerMiddlewareParams> {
-  async process(params: ParamsType, context: ContextType, next: Function): Promise<ResultType> {
+export class LoggerMiddleware
+  implements MiddlewareInterface<LoggerMiddlewareParams> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+  ): Promise<ResultType> {
     try {
-      console.debug('Before middlewares', { params, context });
+      console.debug("Before middlewares", { params, context });
       const response = await next(params, context);
-      console.debug('After middlewares', { response, params, context });
+      console.debug("After middlewares", { response, params, context });
       return response;
     } catch (e) {
-      console.debug('ERROR', e);
+      console.debug("ERROR", e);
       throw e;
     }
   }
@@ -19,7 +30,7 @@ export class LoggerMiddleware implements MiddlewareInterface<LoggerMiddlewarePar
 
 export type LoggerMiddlewareParams = void;
 
-const alias = 'logger';
+const alias = "logger";
 
 export const loggerMiddlewareBinding = [alias, LoggerMiddleware];
 

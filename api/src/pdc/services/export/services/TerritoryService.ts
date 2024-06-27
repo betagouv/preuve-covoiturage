@@ -1,20 +1,21 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { Options } from '../commands/CreateCommand';
+import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { Options } from "../commands/CreateCommand.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
-export type ResolveParams = Partial<Pick<Options, 'territory_id' | 'geo'>>;
+export type ResolveParams = Partial<Pick<Options, "territory_id" | "geo">>;
 export type ResolveResults = TerritorySelectorsInterface;
 
 export type TerritoryServiceInterface = {
   resolve(params: ResolveParams): Promise<ResolveResults>;
 };
 
-export abstract class TerritoryServiceInterfaceResolver implements TerritoryServiceInterface {
+export abstract class TerritoryServiceInterfaceResolver
+  implements TerritoryServiceInterface {
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -22,7 +23,9 @@ export abstract class TerritoryServiceInterfaceResolver implements TerritoryServ
   identifier: TerritoryServiceInterfaceResolver,
 })
 export class TerritoryService {
-  protected readonly defaultResolveResult = { [TerritoryCodeEnum.Country]: ['XXXXX'] }; // FRANCE
+  protected readonly defaultResolveResult = {
+    [TerritoryCodeEnum.Country]: ["XXXXX"],
+  }; // FRANCE
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
@@ -35,8 +38,10 @@ export class TerritoryService {
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
     // select the whole country if all params are missing
     if (
-      Object.keys(params).filter((k) => params[k] !== null && typeof params[k] !== 'undefined').length === 0 ||
-      ('geo' in params && Object.keys(params.geo).length === 0)
+      Object.keys(params).filter((k) =>
+          params[k] !== null && typeof params[k] !== "undefined"
+        ).length === 0 ||
+      ("geo" in params && Object.keys(params.geo).length === 0)
     ) {
       return this.defaultResolveResult;
     }
@@ -47,7 +52,9 @@ export class TerritoryService {
     const { geo } = params;
     const selectors = geo.reduce(
       (p, c) => {
-        const [type, code] = c.split(':').map((s) => String(s).toLowerCase().trim());
+        const [type, code] = c.split(":").map((s) =>
+          String(s).toLowerCase().trim()
+        );
 
         switch (type as TerritoryCodeEnum) {
           case TerritoryCodeEnum.City:
@@ -89,6 +96,8 @@ export class TerritoryService {
       }
     });
 
-    return Object.keys(selectors).length ? selectors : this.defaultResolveResult;
+    return Object.keys(selectors).length
+      ? selectors
+      : this.defaultResolveResult;
   }
 }

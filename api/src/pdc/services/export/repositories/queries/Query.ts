@@ -8,14 +8,19 @@ export abstract class Query {
     return this.replaceTemplates<TKey>(this.query, templates);
   }
 
-  public getCountText<TKey>(templates: QueryTemplates<TKey> = new Map()): string {
+  public getCountText<TKey>(
+    templates: QueryTemplates<TKey> = new Map(),
+  ): string {
     return this.replaceTemplates<TKey>(this.countQuery, templates);
   }
 
   // replace templates in the query wrapped in {{template_name}}
-  private replaceTemplates<TKey>(query: string, templates: QueryTemplates<TKey>): string {
+  private replaceTemplates<TKey>(
+    query: string,
+    templates: QueryTemplates<TKey>,
+  ): string {
     templates.forEach((value, key) => {
-      query = query.replace(new RegExp(`{{${key}}}`, 'g'), value);
+      query = query.replace(new RegExp(`{{${key}}}`, "g"), value);
     });
 
     return query;

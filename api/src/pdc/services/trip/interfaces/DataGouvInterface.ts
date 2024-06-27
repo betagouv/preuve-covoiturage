@@ -1,43 +1,43 @@
-import { InitHookInterface } from '@ilos/common';
+import { InitHookInterface } from "@/ilos/common/index.ts";
 
 export enum Frequency {
-  'unknown',
-  'punctual',
-  'continuous',
-  'hourly',
-  'fourTimesADay',
-  'threeTimesADay',
-  'semidaily',
-  'daily',
-  'fourTimesAWeek',
-  'threeTimesAWeek',
-  'semiweekly',
-  'weekly',
-  'biweekly',
-  'threeTimesAMonth',
-  'semimonthly',
-  'monthly',
-  'bimonthly',
-  'quarterly',
-  'threeTimesAYear',
-  'semiannual',
-  'annual',
-  'biennial',
-  'triennial',
-  'quinquennial',
-  'irregular',
+  "unknown",
+  "punctual",
+  "continuous",
+  "hourly",
+  "fourTimesADay",
+  "threeTimesADay",
+  "semidaily",
+  "daily",
+  "fourTimesAWeek",
+  "threeTimesAWeek",
+  "semiweekly",
+  "weekly",
+  "biweekly",
+  "threeTimesAMonth",
+  "semimonthly",
+  "monthly",
+  "bimonthly",
+  "quarterly",
+  "threeTimesAYear",
+  "semiannual",
+  "annual",
+  "biennial",
+  "triennial",
+  "quinquennial",
+  "irregular",
 }
 
 export interface Resource {
   checksum?: {
-    type?: 'sha1' | 'sha2' | 'sha256' | 'md5' | 'crc';
+    type?: "sha1" | "sha2" | "sha256" | "md5" | "crc";
     value: string;
   };
   created_at?: string;
   description?: string;
   extras?: { [k: string]: any };
   filesize?: number;
-  filetype: 'file' | 'remote';
+  filetype: "file" | "remote";
   format: string;
   id?: string;
   last_modified?: string;
@@ -48,7 +48,7 @@ export interface Resource {
   published?: string;
   schema?: { [k: string]: any };
   title: string;
-  type: 'main' | 'documentation' | 'update' | 'api' | 'code' | 'other';
+  type: "main" | "documentation" | "update" | "api" | "code" | "other";
   url: string;
 }
 export interface CommonReference {
@@ -117,6 +117,13 @@ export interface UploadedResource extends Resource {
 export interface DataGouvProviderInterface extends InitHookInterface {
   getDataset(slug: string): Promise<Dataset>;
   updateResource(datasetSlug: string, resource: Resource): Promise<Resource>;
-  uploadDatasetResource(slug: string, filepath: string): Promise<UploadedResource>;
-  updateDatasetResource(slug: string, filepath: string, resourceId: string): Promise<UploadedResource>;
+  uploadDatasetResource(
+    slug: string,
+    filepath: string,
+  ): Promise<UploadedResource>;
+  updateDatasetResource(
+    slug: string,
+    filepath: string,
+    resourceId: string,
+  ): Promise<UploadedResource>;
 }

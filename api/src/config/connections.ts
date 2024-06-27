@@ -1,6 +1,5 @@
-import { readFileSync } from 'fs';
-import { URL } from 'url';
-import { env } from '@ilos/core';
+import { process, readFileSync, URL } from "@/deps.ts";
+import { env } from "@/ilos/core/index.ts";
 
 function unnestRedisConnectionString(connectionString: string): {
   host?: string;
@@ -13,9 +12,9 @@ function unnestRedisConnectionString(connectionString: string): {
   return {
     host: connectionURL.hostname,
     port: parseInt(connectionURL.port, 10) || 6379,
-    username: connectionURL.username || null,
-    password: connectionURL.password || null,
-    db: parseInt(connectionURL.pathname.replace(/\//g, ''), 10) || 0,
+    username: connectionURL.username || undefined,
+    password: connectionURL.password || undefined,
+    db: parseInt(connectionURL.pathname.replace(/\//g, ""), 10) || 0,
   };
 }
 
@@ -25,9 +24,9 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
 
   let cert: string;
   if (asVarEnvName in process.env) {
-    cert = env.or_fail(asVarEnvName).replace(/\\n/g, '\n');
+    cert = env.or_fail(asVarEnvName).replace(/\\n/g, "\n");
   } else if (asPathEnvName in process.env) {
-    cert = readFileSync(env.or_fail(asPathEnvName), 'utf-8');
+    cert = readFileSync(env.or_fail(asPathEnvName), "utf-8");
   } else {
     return {};
   }
@@ -35,25 +34,27 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
 }
 
 const redisTls = {
-  ...tlsSetup('ca', 'APP_REDIS_CA'),
-  ...tlsSetup('cert', 'APP_REDIS_CERT'),
-  ...tlsSetup('key', 'APP_REDIS_KEY'),
+  ...tlsSetup("ca", "APP_REDIS_CA"),
+  ...tlsSetup("cert", "APP_REDIS_CERT"),
+  ...tlsSetup("key", "APP_REDIS_KEY"),
 };
 
 export const redis = {
   ...(Object.keys(redisTls).length ? { tls: redisTls } : {}),
-  ...unnestRedisConnectionString(env.or_fail('APP_REDIS_URL')),
+  ...unnestRedisConnectionString(env.or_fail("APP_REDIS_URL")),
 };
 
 const postgresTls = {
-  ...tlsSetup('ca', 'APP_POSTGRES_CA'),
-  ...tlsSetup('cert', 'APP_POSTGRES_CERT'),
-  ...tlsSetup('key', 'APP_POSTGRES_KEY'),
+  ...tlsSetup("ca", "APP_POSTGRES_CA"),
+  ...tlsSetup("cert", "APP_POSTGRES_CERT"),
+  ...tlsSetup("key", "APP_POSTGRES_KEY"),
 };
 
 export const postgres = {
-  connectionString: env.or_fail('APP_POSTGRES_URL'),
+  connectionString: env.or_fail("APP_POSTGRES_URL"),
   // FIXME: add host is a workarround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
-  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env.or_fail('APP_POSTGRES_HOST') } } : {}),
+  ...(Object.keys(postgresTls).length
+    ? { ssl: { ...postgresTls, host: env.or_fail("APP_POSTGRES_HOST") } }
+    : {}),
 };

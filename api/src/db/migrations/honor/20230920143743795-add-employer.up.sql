@@ -1,3 +1,0 @@
-ALTER TABLE honor.tracking
-  ADD COLUMN IF NOT EXISTS employer VARCHAR(255) NOT NULL DEFAULT ''
-;

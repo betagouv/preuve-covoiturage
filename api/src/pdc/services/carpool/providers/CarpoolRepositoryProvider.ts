@@ -1,12 +1,18 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
+import { provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
 
 import {
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
-} from '../interfaces/CarpoolRepositoryProviderInterface';
+} from "../interfaces/CarpoolRepositoryProviderInterface.ts";
 
-import { PeopleWithIdInterface, IncentiveInterface } from '../interfaces/Carpool';
+import {
+  IncentiveInterface,
+  PeopleWithIdInterface,
+} from "../interfaces/Carpool.ts";
 
 /*
  * Trip specific repository
@@ -14,13 +20,17 @@ import { PeopleWithIdInterface, IncentiveInterface } from '../interfaces/Carpool
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
-export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  public readonly table = 'carpool.carpools';
-  public readonly incentiveTable = 'carpool.incentives';
+export class CarpoolRepositoryProvider
+  implements CarpoolRepositoryProviderInterface {
+  public readonly table = "carpool.carpools";
+  public readonly incentiveTable = "carpool.incentives";
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async updateStatus(acquisition_id: number, status: string): Promise<void> {
+  public async updateStatus(
+    acquisition_id: number,
+    status: string,
+  ): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table}
@@ -48,14 +58,19 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
   ): Promise<void> {
     const client = await this.connection.getClient().connect();
     try {
-      await client.query<any>('BEGIN');
+      await client.query<any>("BEGIN");
       for (const person of people) {
         await this.addParticipant(client, shared, person);
       }
-      await this.addIncentives(client, shared.acquisition_id, people[0].datetime, shared.incentives);
-      await client.query<any>('COMMIT');
+      await this.addIncentives(
+        client,
+        shared.acquisition_id,
+        people[0].datetime,
+        shared.incentives,
+      );
+      await client.query<any>("COMMIT");
     } catch (e) {
-      await client.query<any>('ROLLBACK');
+      await client.query<any>("ROLLBACK");
       throw e;
     } finally {
       client.release();
@@ -69,7 +84,13 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
     incentives: IncentiveInterface[],
   ) {
     const values = incentives
-      .map((i) => ({ acquisition_id: acquisition_id, idx: i.index, datetime, siret: i.siret, amount: i.amount }))
+      .map((i) => ({
+        acquisition_id: acquisition_id,
+        idx: i.index,
+        datetime,
+        siret: i.siret,
+        amount: i.amount,
+      }))
       .reduce(
         ([acq, idx, datet, siret, amount], i) => {
           acq.push(i.acquisition_id);

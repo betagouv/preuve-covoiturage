@@ -1,4 +1,10 @@
-import { CallType, ResultType, ParamsType, ContextType, HandlerInterface } from '@ilos/common';
+import {
+  CallType,
+  ContextType,
+  HandlerInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
 
 /**
  * Action parent class, must be decorated
@@ -8,8 +14,11 @@ import { CallType, ResultType, ParamsType, ContextType, HandlerInterface } from 
  * @implements {HandlerInterface}
  */
 export abstract class Action implements HandlerInterface {
-  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
-    throw new Error('No implementation found');
+  protected async handle(
+    _params: ParamsType,
+    _context: ContextType,
+  ): Promise<ResultType> {
+    throw new Error("No implementation found");
   }
 
   public async call(call: CallType): Promise<ResultType> {

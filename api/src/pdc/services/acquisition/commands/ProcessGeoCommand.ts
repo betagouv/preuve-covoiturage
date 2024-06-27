@@ -1,43 +1,47 @@
-import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
-import { coerceDate, coerceInt } from '@ilos/cli';
-import { subDays } from 'date-fns';
+import { subDays } from "@/deps.ts";
+import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+} from "@/ilos/common/index.ts";
+import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 
 @command()
 export class ProcessGeoCommand implements CommandInterface {
-  static readonly signature: string = 'acquisition:geo';
-  static readonly description: string = 'Process acquisition geo';
+  static readonly signature: string = "acquisition:geo";
+  static readonly description: string = "Process acquisition geo";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-l, --loop',
-      description: 'Process acquisition while remaining',
+      signature: "-l, --loop",
+      description: "Process acquisition while remaining",
       default: false,
     },
     {
-      signature: '-s, --size <size>',
-      description: 'Batch size',
+      signature: "-s, --size <size>",
+      description: "Batch size",
       coerce: coerceInt,
       default: 100,
     },
     {
-      signature: '-a, --after <after>',
-      description: 'Start date',
+      signature: "-a, --after <after>",
+      description: "Start date",
       coerce: coerceDate,
     },
     {
-      signature: '-u, --until <until>',
-      description: 'end date',
+      signature: "-u, --until <until>",
+      description: "end date",
       coerce: coerceDate,
     },
     {
-      signature: '-d, --last-days <days>',
-      description: 'Process x last days from now',
+      signature: "-d, --last-days <days>",
+      description: "Process x last days from now",
       default: 1,
       coerce: coerceInt,
     },
     {
-      signature: '-f, --failed',
-      description: 'Process failed geo only',
+      signature: "-f, --failed",
+      description: "Process failed geo only",
       default: false,
     },
   ];
@@ -64,10 +68,20 @@ export class ProcessGeoCommand implements CommandInterface {
     } while (shouldContinue && options.loop);
 
     console.timeEnd(timerMessage);
-    return 'done';
+    return "done";
   }
 
-  protected async encode(batchSize = 100, failedOnly: boolean, after?: Date, until?: Date): Promise<number> {
-    return await this.carpool.processGeo({ batchSize, failedOnly, from: after, to: until });
+  protected async encode(
+    batchSize = 100,
+    failedOnly: boolean,
+    after?: Date,
+    until?: Date,
+  ): Promise<number> {
+    return await this.carpool.processGeo({
+      batchSize,
+      failedOnly,
+      from: after,
+      to: until,
+    });
   }
 }

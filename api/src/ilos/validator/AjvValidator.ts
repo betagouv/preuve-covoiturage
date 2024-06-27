@@ -1,22 +1,28 @@
-import * as ajv from 'ajv';
-import ajvErrors from 'ajv-errors';
-import addFormats from 'ajv-formats';
-import ajvKeywords from 'ajv-keywords';
-import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
-
+import {
+  addFormats,
+  Ajv,
+  ajvErrors,
+  ajvKeywords,
+  ErrorObject,
+  Format,
+  jsonSchemaSecureJson,
+  KeywordDefinition,
+  ValidateFunction,
+} from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   InvalidParamsException,
   NewableType,
-  ValidatorInterface,
   provider,
-} from '@ilos/common';
+  ValidatorInterface,
+} from "@/ilos/common/index.ts";
+import { uuid } from "@/pdc/providers/test/helpers.ts";
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
-  protected ajv: ajv.default;
-  protected bindings: Map<any, ajv.ValidateFunction> = new Map();
-  protected isSchemaSecure: ajv.ValidateFunction;
+  protected ajv: Ajv | null = null;
+  protected bindings: Map<any, ValidateFunction> = new Map();
+  protected isSchemaSecure: ValidateFunction | null = null;
 
   constructor(protected config: ConfigInterfaceResolver) {}
 
@@ -28,74 +34,99 @@ export class AjvValidator implements ValidatorInterface {
       removeAdditional: false,
       useDefaults: true,
       coerceTypes: false,
-      ...this.config.get('ajv.config', {}),
+      ...this.config.get("ajv.config", {}),
       allErrors: true, // for all errors for ajv errors plugin
     };
 
-    this.ajv = new ajv.default(ajvConfig);
+    this.ajv = new Ajv(ajvConfig);
 
     // activate ajv-keywords plugin
-    ajvKeywords(this.ajv);
-    addFormats(this.ajv);
-    ajvErrors(this.ajv);
+    ajvKeywords.default(this.ajv);
+    addFormats.default(this.ajv);
+    ajvErrors.default(this.ajv);
 
-    this.isSchemaSecure = new ajv.default({ strict: false }).compile(jsonSchemaSecureJson);
+    this.isSchemaSecure = new Ajv({ strict: false }).compile(
+      jsonSchemaSecureJson,
+    );
   }
 
-  registerValidator(definition: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
+  registerValidator(
+    definition: { [k: string]: any },
+    target?: NewableType<any> | string,
+  ): ValidatorInterface {
     return this.addSchema(definition, target);
   }
 
   registerCustomKeyword(def: {
     name?: string;
     type: string;
-    definition: ajv.Format | ajv.KeywordDefinition;
+    definition: Format | KeywordDefinition;
   }): ValidatorInterface {
     const { name, type, definition } = def;
     switch (type) {
-      case 'format':
-        return this.addFormat(name, definition as ajv.Format);
-      case 'keyword':
-        return this.addKeyword(definition as ajv.KeywordDefinition);
+      case "format": {
+        // generate a unique name if not provided
+        const n = name || `${type}:${uuid()}`;
+        return this.addFormat(n, definition as Format);
+      }
+      case "keyword":
+        return this.addKeyword(definition as KeywordDefinition);
       default:
         return this;
     }
   }
 
   protected validateSchema(schema: { [k: string]: any }): void {
-    if (!this.ajv.validateSchema(schema)) {
-      throw new Error(this.ajv.errorsText(this.ajv.errors));
+    if (!this.ajv?.validateSchema(schema)) {
+      throw new Error(this.ajv?.errorsText(this.ajv.errors));
     }
 
-    if (!this.isSchemaSecure(schema)) {
-      throw new Error(this.ajv.errorsText(this.isSchemaSecure.errors));
+    if (this.isSchemaSecure && !this.isSchemaSecure(schema)) {
+      throw new Error(this.ajv.errorsText(this.isSchemaSecure?.errors));
     }
   }
 
-  protected addSchema(schema: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
+  protected addSchema(
+    schema: { [k: string]: any },
+    target?: NewableType<any> | string,
+  ): ValidatorInterface {
     try {
       this.validateSchema(schema);
       if (target) {
-        const compiledSchema =
-          typeof target === 'string'
-            ? this.ajv.compile({
-                $id: target,
-                ...schema,
-              })
-            : this.ajv.compile(schema);
-        this.bindings.set(target, compiledSchema);
+        const isString = typeof target === "string";
+        const compiledSchema = this.ajv?.compile(
+          isString ? { $id: target, ...schema } : schema,
+        );
+        compiledSchema && this.bindings.set(target, compiledSchema);
       } else {
-        this.ajv.addSchema(schema);
+        this.ajv?.addSchema(schema);
       }
       return this;
     } catch (e) {
-      console.error(`Error during adding validator ${schema.$id} | ${target} | ${e.message}`);
+      console.error(
+        `Error during adding validator ${schema.$id} | ${target} | ${e.message}`,
+      );
       console.error(e.message, e);
       throw e;
     }
   }
 
-  async validate(data: any, schema?: string): Promise<boolean> {
+  protected addFormat(name: string, format: Format): ValidatorInterface {
+    this.ajv?.addFormat(name, format);
+    return this;
+  }
+
+  protected addKeyword(definition: KeywordDefinition): ValidatorInterface {
+    this.ajv?.addKeyword(definition);
+    return this;
+  }
+
+  protected mapErrors(errors: ErrorObject[]): string[] {
+    if (!errors || !Array.isArray(errors)) return [];
+    return errors.map((error) => `${error.instancePath}: ${error.message}`);
+  }
+
+  async validate(data: object, schema?: string): Promise<boolean> {
     const resolver = schema ? schema : data.constructor;
 
     if (!this.bindings.has(resolver)) {
@@ -103,25 +134,16 @@ export class AjvValidator implements ValidatorInterface {
       throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);
-    const valid = validator(data);
+    const valid = validator && validator(data);
 
-    if (!valid) throw new InvalidParamsException(this.mapErrors(validator.errors));
+    if (!valid) {
+      if (!validator || !validator?.errors) {
+        throw new Error("No validator found");
+      }
+
+      throw new InvalidParamsException(this.mapErrors(validator.errors));
+    }
 
     return true;
-  }
-
-  protected mapErrors(errors: ajv.ErrorObject[]): string[] {
-    if (!errors || !Array.isArray(errors)) return [];
-    return errors.map((error) => `${error.instancePath}: ${error.message}`);
-  }
-
-  protected addFormat(name: string, format: ajv.Format): ValidatorInterface {
-    this.ajv.addFormat(name, format);
-    return this;
-  }
-
-  protected addKeyword(definition: ajv.KeywordDefinition): ValidatorInterface {
-    this.ajv.addKeyword(definition);
-    return this;
   }
 }

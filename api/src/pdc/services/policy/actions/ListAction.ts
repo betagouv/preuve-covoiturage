@@ -1,25 +1,33 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/providers/middleware';
-import { SerializedPolicyInterface } from '../interfaces/engine/PolicyInterface';
+import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import {
+  copyFromContextMiddleware,
+  hasPermissionMiddleware,
+} from "@/pdc/providers/middleware/index.ts";
+import { SerializedPolicyInterface } from "../interfaces/engine/PolicyInterface.ts";
 
-import { Policy } from '../engine/entities/Policy';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from '@shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '@shared/policy/list.contract';
-import { alias } from '@shared/policy/list.schema';
+} from "@/shared/operator/find.contract.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+  SingleResultInterface,
+} from "@/shared/policy/list.contract.ts";
+import { alias } from "@/shared/policy/list.schema.ts";
+import { Policy } from "../engine/entities/Policy.ts";
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    hasPermissionMiddleware('common.policy.list'),
-    copyFromContextMiddleware('call.user.territory_id', 'territory_id'),
-    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id'),
-    ['validate', alias],
+    hasPermissionMiddleware("common.policy.list"),
+    copyFromContextMiddleware("call.user.territory_id", "territory_id"),
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id"),
+    ["validate", alias],
   ],
 })
 export class ListAction extends AbstractAction {
@@ -31,7 +39,8 @@ export class ListAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const policies: SerializedPolicyInterface[] = await this.repository.findWhere(params);
+    const policies: SerializedPolicyInterface[] = await this.repository
+      .findWhere(params);
 
     const result: ResultInterface = await Promise.all(
       policies.map(async (r) => {
@@ -51,23 +60,31 @@ export class ListAction extends AbstractAction {
       return result;
     }
 
-    const operator: OperatorResultInterface = await this.kernel.call<OperatorParamsInterface, OperatorResultInterface>(
+    const operator: OperatorResultInterface = await this.kernel.call<
+      OperatorParamsInterface,
+      OperatorResultInterface
+    >(
       operatorFindSignature,
       { _id: params.operator_id },
       {
         channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['registry.operator.find'] } },
+        call: { user: { permissions: ["registry.operator.find"] } },
       },
     );
 
-    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.withoutDraft(p));
+    return result.filter((p) => this.withOperator(p, operator)).filter((p) =>
+      this.withoutDraft(p)
+    );
   }
 
   private withoutDraft(p: SingleResultInterface): boolean {
-    return p.status !== 'draft';
+    return p.status !== "draft";
   }
 
-  private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
+  private withOperator(
+    p: SingleResultInterface,
+    operator: OperatorResultInterface,
+  ): boolean {
     return p.params?.operators?.includes(operator.uuid);
   }
 }

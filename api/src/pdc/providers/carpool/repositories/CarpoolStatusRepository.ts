@@ -1,28 +1,40 @@
-import { provider } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { raw } from '../helpers/sql';
-import { Id, InsertableCarpoolAcquisitionStatus } from '../interfaces';
+import { provider } from "@/ilos/common/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "../helpers/sql.ts";
+import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 
 @provider()
 export class CarpoolStatusRepository {
-  readonly table = 'carpool_v2.status';
+  readonly table = "carpool_v2.status";
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async saveIncentiveStatus(data: unknown, client?: PoolClient): Promise<void> {
+  public async saveIncentiveStatus(
+    data: unknown,
+    client?: PoolClient,
+  ): Promise<void> {
     throw new Error();
   }
-  public async saveFraudStatus(data: unknown, client?: PoolClient): Promise<void> {
+  public async saveFraudStatus(
+    data: unknown,
+    client?: PoolClient,
+  ): Promise<void> {
     throw new Error();
   }
 
-  public async saveAcquisitionStatus(data: InsertableCarpoolAcquisitionStatus, client?: PoolClient): Promise<void> {
-    await this.setStatus(data.carpool_id, 'acquisition', data.status, client);
+  public async saveAcquisitionStatus(
+    data: InsertableCarpoolAcquisitionStatus,
+    client?: PoolClient,
+  ): Promise<void> {
+    await this.setStatus(data.carpool_id, "acquisition", data.status, client);
   }
 
   public async setStatus(
     carpool_id: Id,
-    statusType: 'acquisition' | 'fraud',
+    statusType: "acquisition" | "fraud",
     statusValue: string,
     client?: PoolClient,
   ): Promise<void> {

@@ -1,7 +1,15 @@
-import { fromZonedTime } from 'date-fns-tz';
+import { fromZonedTime } from "@/deps.ts";
 
 export function endOfMonth(date: Date = new Date(), tz?: string): Date {
-  const endOfMonth: Date = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, -1);
+  const endOfMonth: Date = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    1,
+    0,
+    0,
+    0,
+    -1,
+  );
   return tz ? fromZonedTime(endOfMonth, tz) : endOfMonth;
 }
 

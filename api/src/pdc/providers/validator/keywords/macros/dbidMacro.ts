@@ -3,7 +3,7 @@ export function dbidMacro(): { anyOf: object[] } {
     anyOf: [
       // regular string
       {
-        type: 'string',
+        type: "string",
         minLength: 1,
         maxLength: 64,
         sanitize: true,
@@ -11,12 +11,12 @@ export function dbidMacro(): { anyOf: object[] } {
 
       // UUID
       {
-        macro: 'uuid',
+        macro: "uuid",
       },
 
       // serial
       {
-        type: 'integer',
+        type: "integer",
         minimum: 1,
       },
     ],

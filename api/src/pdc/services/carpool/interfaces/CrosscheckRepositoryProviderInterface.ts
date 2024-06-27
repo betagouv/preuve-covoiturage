@@ -1,4 +1,4 @@
-import { PositionInterface } from './Carpool';
+import { PositionInterface } from "./Carpool.ts";
 
 export interface CrosscheckRepositoryProviderInterface {
   getTripId(data: {
@@ -9,7 +9,8 @@ export interface CrosscheckRepositoryProviderInterface {
     identity_uuid: string;
   }): Promise<string>;
 }
-export abstract class CrosscheckRepositoryProviderInterfaceResolver implements CrosscheckRepositoryProviderInterface {
+export abstract class CrosscheckRepositoryProviderInterfaceResolver
+  implements CrosscheckRepositoryProviderInterface {
   public async getTripId(data: {
     operator_trip_id?: string;
     datetime: Date;

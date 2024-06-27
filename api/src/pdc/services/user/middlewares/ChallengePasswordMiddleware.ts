@@ -1,21 +1,24 @@
-import { get } from 'lodash';
+import { _ } from "@/deps.ts";
 
 import {
+  ContextType,
+  ForbiddenException,
+  InvalidParamsException,
   middleware,
   MiddlewareInterface,
   ParamsType,
-  ContextType,
   ResultType,
-  ForbiddenException,
-  InvalidParamsException,
-} from '@ilos/common';
+} from "@/ilos/common/index.ts";
 
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { ConfiguredMiddleware } from '@pdc/providers/middleware';
+import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
+import { ConfiguredMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 @middleware()
-export class ChallengePasswordMiddleware implements MiddlewareInterface<ChallengePasswordMiddlewareParams> {
-  constructor(protected authRepository: AuthRepositoryProviderInterfaceResolver) {}
+export class ChallengePasswordMiddleware
+  implements MiddlewareInterface<ChallengePasswordMiddlewareParams> {
+  constructor(
+    protected authRepository: AuthRepositoryProviderInterfaceResolver,
+  ) {}
 
   async process(
     params: ParamsType,
@@ -25,15 +28,15 @@ export class ChallengePasswordMiddleware implements MiddlewareInterface<Challeng
   ): Promise<ResultType> {
     const { idPath, emailPath, passwordPath } = options;
     if (!passwordPath || (!idPath && !emailPath)) {
-      throw new InvalidParamsException('Misconfigured middleware');
+      throw new InvalidParamsException("Misconfigured middleware");
     }
 
-    const password = get(params, passwordPath);
+    const password = _.get(params, passwordPath);
 
     if (idPath) {
-      await this.challengeById(password, get(params, idPath));
+      await this.challengeById(password, _.get(params, idPath));
     } else if (emailPath) {
-      await this.challengeByEmail(password, get(params, emailPath));
+      await this.challengeByEmail(password, _.get(params, emailPath));
     }
 
     return next(params, context);
@@ -41,21 +44,23 @@ export class ChallengePasswordMiddleware implements MiddlewareInterface<Challeng
 
   protected async challengeById(password: string, id: number) {
     if (!id || !password) {
-      throw new InvalidParamsException('Missing data');
+      throw new InvalidParamsException("Missing data");
     }
 
     if (!(await this.authRepository.challengePasswordById(id, password))) {
-      throw new ForbiddenException('Wrong credentials');
+      throw new ForbiddenException("Wrong credentials");
     }
   }
 
   protected async challengeByEmail(password: string, email: string) {
     if (!email || !password) {
-      throw new InvalidParamsException('Missing data');
+      throw new InvalidParamsException("Missing data");
     }
 
-    if (!(await this.authRepository.challengePasswordByEmail(email, password))) {
-      throw new ForbiddenException('Wrong credentials');
+    if (
+      !(await this.authRepository.challengePasswordByEmail(email, password))
+    ) {
+      throw new ForbiddenException("Wrong credentials");
     }
   }
 }
@@ -66,8 +71,11 @@ export interface ChallengePasswordMiddlewareParams {
   passwordPath: string;
 }
 
-const alias = 'challenge_password';
-export const challengePasswordMiddlewareBinding = [alias, ChallengePasswordMiddleware];
+const alias = "challenge_password";
+export const challengePasswordMiddlewareBinding = [
+  alias,
+  ChallengePasswordMiddleware,
+];
 
 export function challengePasswordMiddleware(
   params: ChallengePasswordMiddlewareParams,

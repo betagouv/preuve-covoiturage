@@ -1,11 +1,17 @@
-import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@ilos/common';
-import { signature as distrib } from '@shared/observatory/distribution/insertMonthlyDistribution.contract';
-import { signature as flux } from '@shared/observatory/flux/insertMonthlyFlux.contract';
-import { signature as occupation } from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
+import {
+  command,
+  CommandInterface,
+  CommandOptionType,
+  KernelInterfaceResolver,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { signature as distrib } from "@/shared/observatory/distribution/insertMonthlyDistribution.contract.ts";
+import { signature as flux } from "@/shared/observatory/flux/insertMonthlyFlux.contract.ts";
+import { signature as occupation } from "@/shared/observatory/occupation/insertMonthlyOccupation.contract.ts";
 
 @command()
 export class InsertCommand implements CommandInterface {
-  static readonly signature: string = 'observatory:insert';
+  static readonly signature: string = "observatory:insert";
   static readonly options: CommandOptionType[] = [];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
@@ -17,7 +23,9 @@ export class InsertCommand implements CommandInterface {
 
     for (const h of handlers) {
       console.info(`[observatory:insert] insert ${h} at ${month}/${year}`);
-      await this.kernel.call(h, { year, month }, { channel: { service: 'observatory' } });
+      await this.kernel.call(h, { year, month }, {
+        channel: { service: "observatory" },
+      });
     }
   }
 }

@@ -1,276 +1,348 @@
-import { ContextType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
-import { DbContext, HandlerMacroContext, handlerMacro, makeDbBeforeAfter } from '@pdc/providers/test';
+import { createSign } from "@/deps.ts";
 import {
-  ceeJourneyTypeEnumSchema,
-  drivingLicenseSchema,
-  lastNameTruncSchema,
-  operatorJourneyIdSchema,
-  phoneTruncSchema,
-  timestampSchema,
-} from '@shared/cee/common/ceeSchema';
-import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/registerApplication.contract';
-import anyTest, { TestFn } from 'ava';
-import { createSign } from 'crypto';
-import { ServiceProvider } from '../ServiceProvider';
-import { config } from '../config';
-
-const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
-  ServiceProvider,
+  afterAll,
+  assertEquals,
+  assertObjectMatch,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import { ContextType } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
+import {
+  assertErrorHandler,
+  assertHandler,
+  DbContext,
+  KernelContext,
+  makeDbBeforeAfter,
+  makeKernelBeforeAfter,
+} from "@/pdc/providers/test/index.ts";
+import {
+  CeeJourneyTypeEnum,
+  CeeLongApplicationInterface,
+  CeeShortApplicationInterface,
+} from "@/shared/cee/common/CeeApplicationInterface.ts";
+import {
   handlerConfig,
-);
-const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/cee/registerApplication.contract.ts";
+import { ServiceProvider } from "../ServiceProvider.ts";
+import { config } from "../config/index.ts";
 
-interface TestContext extends HandlerMacroContext {
-  db: DbContext;
-}
+describe("RegisterCeeAction", () => {
+  let db: DbContext;
+  let kernel: KernelContext;
+  config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
 
-const test = anyTest as TestFn<TestContext>;
-test.before(async (t) => {
-  const db = await dbBefore();
-  config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
-  const { kernel } = await before();
-  kernel
-    .getContainer()
-    .rebind(PostgresConnection)
-    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
-  t.context = { db, kernel };
-});
+  const defaultContext: ContextType = {
+    call: { user: { permissions: ["test.run"], operator_id: 1 } },
+    channel: { service: "dummy" },
+  };
 
-test.after(async (t) => {
-  await after(t.context);
-  await dbAfter(t.context.db);
-});
+  const defaultShortPayload: CeeShortApplicationInterface = {
+    journey_type: CeeJourneyTypeEnum.Short,
+    last_name_trunc: "ABC",
+    driving_license: "051227308989",
+    application_timestamp: "2022-01-02T00:00:00.000Z",
+    operator_journey_id: "operator_journey_id-1",
+    identity_key: "0".repeat(64),
+  };
 
-const defaultContext: ContextType = {
-  call: { user: { permissions: ['test.run'], operator_id: 1 } },
-  channel: { service: 'dummy' },
-};
+  const defaultLongPayload: Omit<CeeLongApplicationInterface, "datetime"> & {
+    datetime: string;
+  } = {
+    journey_type: CeeJourneyTypeEnum.Long,
+    last_name_trunc: "ABC",
+    driving_license: "051227308989",
+    datetime: "2022-01-02T00:00:00.000Z",
+    application_timestamp: "2022-01-02T00:00:00.000Z",
+    phone_trunc: "+336273488",
+    identity_key: "0".repeat(64),
+  };
 
-const defaultShortPayload: any = {
-  journey_type: 'short',
-  last_name_trunc: 'ABC',
-  driving_license: '051227308989',
-  application_timestamp: '2022-01-02T00:00:00.000Z',
-  operator_journey_id: 'operator_journey_id-1',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
-};
+  // ---------------------------------------------------------------------------
+  // Hooks
+  // ---------------------------------------------------------------------------
 
-const defaultLongPayload: any = {
-  journey_type: 'long',
-  last_name_trunc: 'ABC',
-  driving_license: '051227308989',
-  datetime: '2022-01-02T00:00:00.000Z',
-  application_timestamp: '2022-01-02T00:00:00.000Z',
-  phone_trunc: '+336273488',
-  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
-};
+  const { before, after } = makeKernelBeforeAfter(ServiceProvider);
+  const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 
-test.serial(
-  'Invalid last_name_trunc param',
-  error,
-  { ...defaultShortPayload, last_name_trunc: 'abcd' },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/last_name_trunc: ${lastNameTruncSchema.errorMessage}`);
-  },
-  defaultContext,
-);
+  beforeAll(async () => {
+    db = await dbBefore();
+    kernel = await before();
 
-test.serial(
-  'Invalid journey_type param',
-  error,
-  { ...defaultShortPayload, journey_type: 'bip' },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/journey_type: ${ceeJourneyTypeEnumSchema.errorMessage}`);
-  },
-  defaultContext,
-);
+    // close the existing Postgres connection as the rebind does
+    // not call the destroy hook.
+    await kernel.kernel.getContainer().get(PostgresConnection).down();
 
-test.serial(
-  'Invalid driving_license param',
-  error,
-  { ...defaultShortPayload, driving_license: 'bip' },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data[0], `/driving_license: ${drivingLicenseSchema.errorMessage}`);
-  },
-  defaultContext,
-);
+    // set the test connection to let it access seeded data
+    kernel.kernel
+      .getContainer()
+      .rebind(PostgresConnection)
+      .toConstantValue(db.connection);
+  });
 
-test.serial(
-  'Invalid operator_journey_id param',
-  error,
-  { ...defaultShortPayload, operator_journey_id: 1 },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [
-      `/operator_journey_id: ${operatorJourneyIdSchema.errorMessage}`,
-      ': must match "then" schema',
-    ]);
-  },
-  defaultContext,
-);
+  afterAll(async () => {
+    await after(kernel);
+    await dbAfter(db);
+  });
 
-test.serial(
-  'Invalid identity_key param',
-  error,
-  { ...defaultLongPayload, datetime: 'bip' },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [`/datetime: ${timestampSchema.errorMessage}`, ': must match "then" schema']);
-  },
-  defaultContext,
-);
+  // ---------------------------------------------------------------------------
+  // Tests
+  // ---------------------------------------------------------------------------
 
-test.serial(
-  'Invalid phone_trunc param',
-  error,
-  { ...defaultLongPayload, phone_trunc: 'bip' },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.deepEqual(e.rpcError?.data, [`/phone_trunc: ${phoneTruncSchema.errorMessage}`, ': must match "then" schema']);
-  },
-  defaultContext,
-);
+  it("Invalid params last_name_trunc", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, last_name_trunc: "abcd" },
+      [],
+      defaultContext,
+    );
+  });
 
-test.serial('Unauthorized user', error, defaultShortPayload, 'Unauthorized Error', {
-  ...defaultContext,
-  call: { user: {} },
-});
+  it("Invalid params unsupported journey type", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, journey_type: "bip" },
+      [],
+      defaultContext,
+    );
+  });
 
-test.serial(
-  'Invalid datetime param',
-  error,
-  { ...defaultLongPayload, datetime: new Date().toISOString() },
-  (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `Date should be before 7 days from now`);
-  },
-  defaultContext,
-);
+  it("Invalid params unsupported driving license", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, driving_license: "bip" },
+      [],
+      defaultContext,
+    );
+  });
 
-test.serial(
-  'Successful registration 1',
-  success,
-  defaultShortPayload,
-  {
-    journey_id: 1,
-    datetime: '2024-03-15T00:15:00.000Z',
-    status: CarpoolV1StatusEnum.Ok,
-    token: (function (): string {
-      const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
-      signer.write(
-        ['89248032800012', 'short', defaultShortPayload.driving_license, '2024-03-15T00:15:00.000Z'].join('/'),
-      );
-      signer.end();
-      return signer.sign(private_key, 'base64');
-    })(),
-  },
-  defaultContext,
-);
+  it("Invalid params unsupported operator_journey_id", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, operator_journey_id: 1 },
+      [],
+      defaultContext,
+    );
+  });
 
-/**
- * @deprecated [carpool_v2_migration]
- */
-test.serial(
-  'Successful registration 2',
-  success,
-  {
-    ...defaultShortPayload,
-    operator_journey_id: 'operator_journey_id-2',
-    last_name_trunc: 'DEF',
-    driving_license: '051227308990',
-    identity_key: '1'.repeat(64),
-  },
-  {
-    journey_id: 2,
-    datetime: '2024-03-16T00:15:00.000Z',
-    status: CarpoolV1StatusEnum.Ok,
-    token: (function (): string {
-      const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
-      signer.write(['89248032800012', 'short', '051227308990', '2024-03-16T00:15:00.000Z'].join('/'));
-      signer.end();
-      return signer.sign(private_key, 'base64');
-    })(),
-  },
-  defaultContext,
-);
+  it("Invalid params unsupported identity_key", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, identity_key: "bip" },
+      [],
+      defaultContext,
+    );
+  });
 
-/**
- * @deprecated [carpool_v2_migration]
- */
-test.serial(
-  'Successful registration 3',
-  success,
-  {
-    ...defaultShortPayload,
-    operator_journey_id: 'operator_journey_id-3',
-    last_name_trunc: 'GHI',
-    driving_license: '051227308991',
-    identity_key: '2'.repeat(64),
-  },
-  {
-    journey_id: 3,
-    datetime: '2024-03-16T00:15:00.000Z',
-    status: CarpoolV1StatusEnum.Ok,
-    token: (function (): string {
-      const private_key = config.signature.private_key as string;
-      const signer = createSign('RSA-SHA512');
-      signer.write(['89248032800012', 'short', '051227308991', '2024-03-16T00:15:00.000Z'].join('/'));
-      signer.end();
-      return signer.sign(private_key, 'base64');
-    })(),
-  },
-  defaultContext,
-);
+  it("Invalid params unsupported phone_trunc", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, phone_trunc: "bip" },
+      [],
+      defaultContext,
+    );
+  });
 
-/**
- * @deprecated [carpool_v2_migration]
- */
-test.serial('Ensure deprecated carpool_id are properly inserted', async (t) => {
-  const result = await t.context.db.connection.getClient().query<any>(`
-    SELECT carpool_id, operator_id, operator_journey_id
-    FROM cee.cee_applications
-    ORDER BY operator_journey_id
-  `);
-  t.is(result.rowCount, 3);
-  t.deepEqual(result.rows[0], { carpool_id: 1, operator_id: 1, operator_journey_id: 'operator_journey_id-1' });
-  t.deepEqual(result.rows[1], { carpool_id: 3, operator_id: 1, operator_journey_id: 'operator_journey_id-2' });
-  t.deepEqual(result.rows[2], { carpool_id: 5, operator_id: 1, operator_journey_id: 'operator_journey_id-3' });
-});
+  it("Unauthorized", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      defaultShortPayload,
+      [],
+      { ...defaultContext, call: { user: {} } },
+    );
+  });
 
-test.serial(
-  'Conflict',
-  error,
-  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
-  (e: any, t) => {
-    t.is(e.message, 'Conflict');
-    t.like(e.rpcError.data, { datetime: '2024-03-15T00:15:00.000Z' });
-  },
-  defaultContext,
-);
+  it("Invalid datetime from now()", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultLongPayload, datetime: new Date().toISOString() },
+      [],
+      defaultContext,
+    );
+  });
 
-test.serial(
-  'Not found',
-  error,
-  { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
-  (e: any, t) => {
-    t.is(e.message, 'Not found');
-  },
-  defaultContext,
-);
+  it("Successful registration 1", async () => {
+    await assertHandler<ParamsInterface, ResultInterface>(
+      kernel,
+      defaultContext,
+      handlerConfig,
+      defaultShortPayload,
+      async (response) => {
+        const { uuid: _uuid, ...resp } = response;
+        await assertEquals(resp, {
+          journey_id: 1,
+          datetime: "2024-03-15T00:15:00.000Z",
+          status: CarpoolV1StatusEnum.Ok,
+          token: (function (): string {
+            const private_key = config.signature.private_key as string;
+            const signer = createSign("RSA-SHA512");
+            signer.write(
+              [
+                "89248032800012",
+                "short",
+                defaultShortPayload.driving_license,
+                "2024-03-15T00:15:00.000Z",
+              ].join("/"),
+            );
+            signer.end();
+            return signer.sign(private_key, "base64");
+          })(),
+        });
+      },
+    );
+  });
 
-test.serial('Should have register errors', async (t) => {
-  const result = await t.context.db.connection.getClient().query(`
-    SELECT * FROM cee.cee_application_errors ORDER BY created_at
-  `);
-  t.is(result.rowCount, 3);
-  t.like(result.rows[0], { error_type: 'date' });
-  t.like(result.rows[1], { error_type: 'conflict' });
-  t.like(result.rows[2], { error_type: 'non-eligible' });
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
+  it("Successful registration 2", async () => {
+    await assertHandler<ParamsInterface, ResultInterface>(
+      kernel,
+      defaultContext,
+      handlerConfig,
+      {
+        ...defaultShortPayload,
+        operator_journey_id: "operator_journey_id-2",
+        last_name_trunc: "DEF",
+        driving_license: "051227308990",
+        identity_key: "1".repeat(64),
+      },
+      async (response) => {
+        const { uuid: _uuid, ...resp } = response;
+        await assertEquals(resp, {
+          journey_id: 2,
+          datetime: "2024-03-16T00:15:00.000Z",
+          status: CarpoolV1StatusEnum.Ok,
+          token: (function (): string {
+            const private_key = config.signature.private_key as string;
+            const signer = createSign("RSA-SHA512");
+            signer.write(
+              [
+                "89248032800012",
+                "short",
+                "051227308990",
+                "2024-03-16T00:15:00.000Z",
+              ]
+                .join("/"),
+            );
+            signer.end();
+            return signer.sign(private_key, "base64");
+          })(),
+        });
+      },
+    );
+  });
+
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
+  it("Successful registration 3", async () => {
+    await assertHandler<ParamsInterface, ResultInterface>(
+      kernel,
+      defaultContext,
+      handlerConfig,
+      {
+        ...defaultShortPayload,
+        operator_journey_id: "operator_journey_id-3",
+        last_name_trunc: "GHI",
+        driving_license: "051227308991",
+        identity_key: "2".repeat(64),
+      },
+      async (response) => {
+        const { uuid: _uuid, ...resp } = response;
+        await assertEquals(resp, {
+          journey_id: 3,
+          datetime: "2024-03-16T00:15:00.000Z",
+          status: CarpoolV1StatusEnum.Ok,
+          token: (function (): string {
+            const private_key = config.signature.private_key as string;
+            const signer = createSign("RSA-SHA512");
+            signer.write(
+              [
+                "89248032800012",
+                "short",
+                "051227308991",
+                "2024-03-16T00:15:00.000Z",
+              ]
+                .join("/"),
+            );
+            signer.end();
+            return signer.sign(private_key, "base64");
+          })(),
+        });
+      },
+    );
+  });
+
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
+  it("Ensure deprecated carpool_id are properly inserted", async () => {
+    const result = await db.connection.getClient().query(`
+      SELECT carpool_id, operator_id, operator_journey_id
+      FROM cee.cee_applications
+      ORDER BY operator_journey_id
+    `);
+    assertEquals(result.rowCount, 3);
+    assertObjectMatch(result.rows[0], {
+      carpool_id: 1,
+      operator_id: 1,
+      operator_journey_id: "operator_journey_id-1",
+    });
+    assertObjectMatch(result.rows[1], {
+      carpool_id: 3,
+      operator_id: 1,
+      operator_journey_id: "operator_journey_id-2",
+    });
+    assertObjectMatch(result.rows[2], {
+      carpool_id: 5,
+      operator_id: 1,
+      operator_journey_id: "operator_journey_id-3",
+    });
+  });
+
+  it("Conflict", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      { ...defaultShortPayload, operator_journey_id: "operator_journey_id-2" },
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Not Found", async () => {
+    await assertErrorHandler(
+      kernel,
+      handlerConfig,
+      {
+        ...defaultShortPayload,
+        operator_journey_id: "operator_journey_id-wrong",
+      },
+      [],
+      defaultContext,
+    );
+  });
+
+  it("Should have register errors", async () => {
+    const result = await db.connection.getClient().query(`
+      SELECT * FROM cee.cee_application_errors ORDER BY created_at
+    `);
+    assertEquals(result.rowCount, 3);
+    assertObjectMatch(result.rows[0], { error_type: "date" });
+    assertObjectMatch(result.rows[1], { error_type: "conflict" });
+    assertObjectMatch(result.rows[2], { error_type: "non-eligible" });
+  });
 });

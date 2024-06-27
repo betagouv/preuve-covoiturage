@@ -1,6 +1,6 @@
-import { KernelInterface, TransportInterface } from '@ilos/common';
+import { KernelInterface, TransportInterface } from "@/ilos/common/index.ts";
 
-import { CommandRegistry } from '../providers/CommandRegistry';
+import { CommandRegistry } from "../providers/CommandRegistry.ts";
 
 /**
  * Cli Transport
@@ -24,7 +24,10 @@ export class CliTransport implements TransportInterface<void> {
   }
 
   async up(opts: string[] = []) {
-    this.kernel.getContainer().get<CommandRegistry>(CommandRegistry).parse(opts);
+    await this.kernel.getContainer().get<CommandRegistry>(CommandRegistry)
+      .parseAsync(
+        opts,
+      );
   }
 
   async down() {

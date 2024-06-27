@@ -5,10 +5,13 @@ import {
   ContextType,
   KernelInterfaceResolver,
   ResultType,
-} from '@ilos/common';
-import { Timezone } from '@pdc/providers/validator';
-import { castUserStringToUTC, toISOString } from '../helpers';
-import { ParamsInterface, signature as finalize } from '@shared/policy/finalize.contract';
+} from "@/ilos/common/index.ts";
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import {
+  ParamsInterface,
+  signature as finalize,
+} from "@/shared/policy/finalize.contract.ts";
+import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 
 interface CommandOptions {
   from: string;
@@ -20,25 +23,25 @@ interface CommandOptions {
 
 @command()
 export class FinalizeCommand implements CommandInterface {
-  static readonly signature: string = 'campaign:finalize';
-  static readonly description: string = 'Finalize stateful campaign rules';
+  static readonly signature: string = "campaign:finalize";
+  static readonly description: string = "Finalize stateful campaign rules";
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-f, --from <from>',
-      description: 'from date <YYYY-MM-DD>',
+      signature: "-f, --from <from>",
+      description: "from date <YYYY-MM-DD>",
     },
     {
-      signature: '-t, --to <to>',
-      description: 'to date <YYYY-MM-DD>',
+      signature: "-t, --to <to>",
+      description: "to date <YYYY-MM-DD>",
     },
     {
-      signature: '--tz <tz>',
-      description: 'timezone',
-      default: 'Europe/Paris',
+      signature: "--tz <tz>",
+      description: "timezone",
+      default: "Europe/Paris",
     },
     {
-      signature: '--resync',
-      description: 'resync the max_amount_restriction keys to incentive_sum',
+      signature: "--resync",
+      description: "resync the max_amount_restriction keys to incentive_sum",
       default: false,
     },
   ];
@@ -48,22 +51,22 @@ export class FinalizeCommand implements CommandInterface {
   public async call(options: CommandOptions): Promise<ResultType> {
     try {
       const { tz, resync: sync_incentive_sum, clear } = options;
-      const context: ContextType = { channel: { service: 'campaign' } };
+      const context: ContextType = { channel: { service: "campaign" } };
       const params: ParamsInterface = { tz, sync_incentive_sum };
 
-      if ('from' in options && options.from) {
+      if ("from" in options && options.from) {
         const from = castUserStringToUTC(options.from, tz);
         if (from) params.from = toISOString(from);
       }
 
-      if ('to' in options && options.to) {
+      if ("to" in options && options.to) {
         const to = castUserStringToUTC(options.to, tz);
         if (to) params.to = toISOString(to);
       }
 
       await this.kernel.call(finalize, params, context);
 
-      return '';
+      return "";
     } catch (e) {
       console.error(e.rpcError?.data || e.message);
     }

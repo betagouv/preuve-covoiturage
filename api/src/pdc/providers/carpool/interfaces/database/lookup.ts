@@ -1,5 +1,10 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, Id, Uuid } from '../common';
-import { InsertableCarpool } from './carpool';
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolFraudStatusEnum,
+  Id,
+  Uuid,
+} from "../common.ts";
+import { InsertableCarpool } from "./carpool.ts";
 
 export interface SelectableCarpoolStatus {
   _id: Id;

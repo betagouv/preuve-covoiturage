@@ -1,2 +1,3 @@
-export * from './TemplateInterface';
-export { TemplateProviderInterface, TemplateProviderInterfaceResolver } from './TemplateProviderInterface';
+export type * from "./TemplateInterface.ts";
+export { TemplateProviderInterfaceResolver } from "./TemplateProviderInterface.ts";
+export type { TemplateProviderInterface } from "./TemplateProviderInterface.ts";

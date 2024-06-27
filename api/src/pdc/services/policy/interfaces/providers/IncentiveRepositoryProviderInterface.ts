@@ -1,11 +1,13 @@
-import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
+import { IncentiveStatusEnum, SerializedIncentiveInterface } from "../index.ts";
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract updateStatefulAmount(
     data: Array<SerializedIncentiveInterface<number>>,
     status?: IncentiveStatusEnum,
   ): Promise<void>;
-  abstract createOrUpdateMany(data: Array<SerializedIncentiveInterface<undefined>>): Promise<void>;
+  abstract createOrUpdateMany(
+    data: Array<SerializedIncentiveInterface<undefined>>,
+  ): Promise<void>;
   abstract disableOnCanceledTrip(from: Date, to: Date): Promise<void>;
   abstract setStatus(from: Date, to: Date, hasFailed?: boolean): Promise<void>;
   abstract findDraftIncentive(

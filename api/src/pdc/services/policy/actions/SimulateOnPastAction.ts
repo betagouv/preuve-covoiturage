@@ -1,26 +1,30 @@
-import { handler } from '@ilos/common';
-import { RedisConnection } from '@ilos/connection-redis';
-import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract';
-import { alias } from '@shared/policy/simulateOnPast.schema';
-import { RedisKey } from 'ioredis';
-import { MetadataStore } from '../engine/entities/MetadataStore';
-import { Policy } from '../engine/entities/Policy';
+import { RedisKey } from "@/deps.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/simulateOnPast.contract.ts";
+import { alias } from "@/shared/policy/simulateOnPast.schema.ts";
+import { MetadataStore } from "../engine/entities/MetadataStore.ts";
+import { Policy } from "../engine/entities/Policy.ts";
 import {
   SerializedPolicyInterface,
   TerritoryRepositoryProviderInterfaceResolver,
   TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+} from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
+    ["validate", alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.policy.simulate.past',
-      registry: 'registry.policy.simulate.past',
+      territory: "territory.policy.simulate.past",
+      registry: "registry.policy.simulate.past",
     }),
   ],
 })
@@ -41,7 +45,9 @@ export class SimulateOnPastAction extends AbstractAction {
     start_date.setMonth(today.getMonth() - params.months);
 
     // 0. Returns Redis cache result for a given territory and month number if present
-    const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
+    const cachedResult: string = await this.connection.getClient().get(
+      this.getSimulationCachingKey(params),
+    );
     if (cachedResult) {
       console.debug(
         `[policy] Found cached policy simulation for territory ${params.territory_id} and ${params.months} months`,
@@ -50,13 +56,14 @@ export class SimulateOnPastAction extends AbstractAction {
     }
 
     // 1. Find selector and instanciate policy
-    const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
+    const territory_selector = await this.territoryRepository
+      .findSelectorFromId(params.territory_id);
     const serialized_policy: SerializedPolicyInterface = {
       ...params,
       status: PolicyStatusEnum.ACTIVE,
       start_date,
       end_date: today,
-      tz: 'Europe/Paris',
+      tz: "Europe/Paris",
       incentive_sum: 0,
       territory_selector,
       max_amount: 10_000_000_00,
@@ -64,7 +71,11 @@ export class SimulateOnPastAction extends AbstractAction {
     };
     const policy = await Policy.import(serialized_policy);
     // 2. Start a cursor to find trips
-    const cursor = this.tripRepository.findTripByPolicy(policy, policy.start_date, policy.end_date);
+    const cursor = this.tripRepository.findTripByPolicy(
+      policy,
+      policy.start_date,
+      policy.end_date,
+    );
     let done = false;
 
     let carpool_subsidized = 0;
@@ -79,7 +90,10 @@ export class SimulateOnPastAction extends AbstractAction {
           // 3. For each trip, process stateless and stateful safely
           try {
             const incentive = await policy.processStateless(carpool);
-            const finalIncentive = await policy.processStateful(store, incentive.export());
+            const finalIncentive = await policy.processStateful(
+              store,
+              incentive.export(),
+            );
             const finalAmount = finalIncentive.get();
             if (finalAmount > 0) {
               carpool_subsidized += 1;
@@ -102,10 +116,18 @@ export class SimulateOnPastAction extends AbstractAction {
     return result;
   }
 
-  private cacheSimultionResult(params: ParamsInterface, result: ResultInterface): void {
+  private cacheSimultionResult(
+    params: ParamsInterface,
+    result: ResultInterface,
+  ): void {
     this.connection
       .getClient()
-      .set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.TEN_DAYS_IN_SECONDS);
+      .set(
+        this.getSimulationCachingKey(params),
+        JSON.stringify(result),
+        "EX",
+        this.TEN_DAYS_IN_SECONDS,
+      );
   }
 
   private getSimulationCachingKey(params: ParamsInterface): RedisKey {

@@ -1,5 +1,5 @@
-import { ConfigInterfaceResolver, provider } from '@ilos/common';
-import { ExportTarget } from '../models/Export';
+import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { ExportTarget } from "../models/Export.ts";
 
 export type Options = {
   uuid: string;
@@ -11,9 +11,10 @@ export type NameServiceInterface = {
   get(config: Partial<Options>): string;
 };
 
-export abstract class NameServiceInterfaceResolver implements NameServiceInterface {
+export abstract class NameServiceInterfaceResolver
+  implements NameServiceInterface {
   public get(config: Partial<Options>): string {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -22,7 +23,7 @@ export abstract class NameServiceInterfaceResolver implements NameServiceInterfa
 })
 export class NameService {
   protected options: Options = {
-    uuid: '',
+    uuid: "",
     target: ExportTarget.OPENDATA,
     territory: null,
   };
@@ -33,7 +34,7 @@ export class NameService {
     this.options = { ...this.options, ...config };
 
     const date = new Date().toISOString().slice(0, 10);
-    const prefix = this.config.get('workbook.prefix', 'export');
+    const prefix = this.config.get("workbook.prefix", "export");
 
     /* prettier-ignore */
     return [
@@ -45,6 +46,6 @@ export class NameService {
     ].filter((i) => !!i)
       .map((s) => String(s))
       .filter((s) => s.length)
-      .join('-');
+      .join("-");
   }
 }

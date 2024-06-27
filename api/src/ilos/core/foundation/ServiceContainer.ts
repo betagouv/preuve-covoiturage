@@ -1,34 +1,42 @@
 import {
   ContainerInterface,
+  DestroyHookInterface,
+  ExtensionInterface,
+  IdentifierType,
+  InitHookInterface,
+  NewableType,
+  RegisterHookInterface,
   ServiceContainerInterface,
   ServiceContainerInterfaceResolver,
-  DestroyHookInterface,
-  InitHookInterface,
-  RegisterHookInterface,
-  IdentifierType,
-  NewableType,
-  ExtensionInterface,
-} from '@ilos/common';
-
-import { Container, HookRegistry } from '../container';
-import { ExtensionRegistry } from '../container/ExtensionRegistry';
+} from "@/ilos/common/index.ts";
+import { ExtensionRegistry } from "../container/ExtensionRegistry.ts";
+import { Container, HookRegistry } from "../container/index.ts";
 
 /**
  * Service container parent class
+ *
  * @export
  * @abstract
  * @class ServiceContainer
  * @implements {ServiceContainerInterface}
  */
 export abstract class ServiceContainer
-  implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface
-{
+  implements
+    ServiceContainerInterface,
+    InitHookInterface,
+    DestroyHookInterface,
+    RegisterHookInterface {
   readonly extensions: NewableType<ExtensionInterface>[] = [];
 
-  protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);
-  protected initHookRegistry = new HookRegistry<InitHookInterface>('init');
-  protected destroyHookRegistry = new HookRegistry<DestroyHookInterface>('destroy');
-  protected extensionRegistry: ExtensionRegistry;
+  protected registerHookRegistry = new HookRegistry<RegisterHookInterface>(
+    "register",
+    false,
+  );
+  protected initHookRegistry = new HookRegistry<InitHookInterface>("init");
+  protected destroyHookRegistry = new HookRegistry<DestroyHookInterface>(
+    "destroy",
+  );
+  protected extensionRegistry: ExtensionRegistry | null = null;
 
   protected readonly container: ContainerInterface;
   protected readonly parent?: ServiceContainerInterface;
@@ -39,8 +47,14 @@ export abstract class ServiceContainer
   }
 
   protected registerSelf() {
-    this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
+    this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(
+      this,
+    );
     this.extensionRegistry = new ExtensionRegistry(this);
+
+    if (!this.extensionRegistry) {
+      throw new Error("Extension registry is not set");
+    }
     this.extensionRegistry.importFromParent();
   }
 
@@ -49,9 +63,14 @@ export abstract class ServiceContainer
    * @memberof ServiceContainer
    */
   async register() {
+    if (!this.extensionRegistry) {
+      throw new Error("Extension registry is not set");
+    }
+
     for (const extension of this.extensions) {
       this.extensionRegistry.register(extension);
     }
+
     this.extensionRegistry.apply();
 
     this.registerChildren();
@@ -79,16 +98,20 @@ export abstract class ServiceContainer
     this.registerHookRegistry.register(hooker, identifier);
     this.initHookRegistry.register(hooker, identifier);
     this.destroyHookRegistry.register(hooker, identifier);
-    return;
   }
 
   protected registerChildren() {
-    if (Reflect.hasMetadata(Symbol.for('extension:children'), this.constructor)) {
-      const children = Reflect.getMetadata(Symbol.for('extension:children'), this.constructor);
+    if (
+      Reflect.hasMetadata(Symbol.for("extension:children"), this.constructor)
+    ) {
+      const children = Reflect.getMetadata(
+        Symbol.for("extension:children"),
+        this.constructor,
+      );
       for (const child of children) {
         const childInstance = new child(this.getContainer());
         this.getContainer().bind(child).toConstantValue(childInstance);
-        this.getContainer().bind('children').toConstantValue(child);
+        this.getContainer().bind("children").toConstantValue(child);
         this.registerHooks(childInstance);
       }
     }
@@ -105,7 +128,10 @@ export abstract class ServiceContainer
       return;
     }
 
-    const taggedIdentifier = Reflect.getMetadata(Symbol.for('extension:identifier'), ctor) as
+    const taggedIdentifier = Reflect.getMetadata(
+      Symbol.for("extension:identifier"),
+      ctor,
+    ) as
       | IdentifierType
       | IdentifierType[];
     if (taggedIdentifier) {
@@ -119,7 +145,11 @@ export abstract class ServiceContainer
     }
   }
 
-  public ensureIsBound(identifier: IdentifierType, fallback?: NewableType<any>, fallbackIdentifier?: IdentifierType) {
+  public ensureIsBound(
+    identifier: IdentifierType,
+    fallback?: NewableType<any>,
+    fallbackIdentifier?: IdentifierType,
+  ) {
     if (this.container.isBound(identifier)) {
       return;
     }
@@ -129,12 +159,11 @@ export abstract class ServiceContainer
       return;
     }
 
-    const name =
-      typeof identifier === 'string'
-        ? identifier
-        : typeof identifier === 'function'
-        ? identifier.name
-        : identifier.toString();
+    const name = typeof identifier === "string"
+      ? identifier
+      : typeof identifier === "function"
+      ? identifier.name
+      : identifier.toString();
     throw new Error(`Unable to find bindings for ${name}`);
   }
 
