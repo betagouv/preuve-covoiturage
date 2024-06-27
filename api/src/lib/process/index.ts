@@ -2,6 +2,10 @@ export function exit(code: number | undefined) {
   Deno.exit(code);
 }
 
+export function cwd(): string {
+  return Deno.cwd();
+}
+
 export function registerOnSignal(
   signal: Deno.Signal,
   f: () => void | Promise<void>,
