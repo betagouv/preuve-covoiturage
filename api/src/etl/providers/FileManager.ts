@@ -11,6 +11,7 @@ import {
   writeFile,
 } from "../helpers/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   ArchiveFileTypeEnum,
   FileManagerConfigInterface,
@@ -100,7 +101,7 @@ export class FileManager implements FileManagerInterface {
       await getAllFiles(extractPath, getFileExtensions(fileType), files);
       return [...files];
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       throw err;
     }
   }
@@ -152,11 +153,11 @@ export class FileManager implements FileManagerInterface {
         `format=${format}`,
         `precision=${precision}`,
       ];
-      console.debug(`Running mapshaper with options ${options.join(" ")}`);
+      logger.debug(`Running mapshaper with options ${options.join(" ")}`);
       await mapshaper.runCommands(options.join(" "));
       return outFilepath;
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       throw err;
     }
   }

@@ -6,6 +6,7 @@ import {
   CommandOptionType,
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   CarpoolGeoRepository,
   CarpoolRepository,
@@ -57,18 +58,13 @@ export class AcquisitionMigrateCommand implements CommandInterface {
     let shouldContinue = true;
 
     const batchSize = options.size;
-    const timerMessage = `Migrating to v2`;
-    console.time(timerMessage);
-
     do {
       const did = await this.migration(batchSize, options.after, options.until);
       // eslint-disable-next-line no-console
-      console.timeLog(timerMessage);
-      console.info(`Processed: ${did}`);
+      logger.info(`Processed: ${did}`);
       shouldContinue = did === batchSize;
     } while (shouldContinue && options.loop);
 
-    console.timeEnd(timerMessage);
     return "done";
   }
 
@@ -246,7 +242,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
       await conn.query<any>("COMMIT");
       return result.rows.length;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       await conn.query<any>("ROLLBACK");
     } finally {
       conn.release();

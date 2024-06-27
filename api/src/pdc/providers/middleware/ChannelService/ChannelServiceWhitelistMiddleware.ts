@@ -8,6 +8,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -24,7 +25,7 @@ export class ChannelServiceWhitelistMiddleware
   ): Promise<ResultType> {
     const service = _.get(context, "channel.service", "");
     if (config.indexOf(service) < 0) {
-      console.error(
+      logger.error(
         `Service is not reachable from ${service}, only [${config.join(", ")}]`,
       );
       throw new ForbiddenException(`Service is not reachable from ${service}`);

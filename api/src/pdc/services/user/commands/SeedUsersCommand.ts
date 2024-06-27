@@ -7,6 +7,7 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
 import { env } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ParamsInterface } from "@/shared/user/create.contract.ts";
 
 interface CreateUserInterface extends ParamsInterface {
@@ -101,18 +102,18 @@ export class SeedUsersCommand implements CommandInterface {
         });
 
         if (insert.rowCount !== 1) {
-          console.info(`--- Failed to insert ${email}`);
+          logger.info(`--- Failed to insert ${email}`);
         }
 
         if ("operator_id" in insert || "territory_id" in insert) {
-          console.warn(
+          logger.warn(
             "operator_id or territory_id are set to 1. Please change them.",
           );
         }
 
-        console.info(`+++ Inserted ${email}`);
+        logger.info(`+++ Inserted ${email}`);
       } catch (e) {
-        console.error(`--- Failed to insert ${email}:\n\t${e.message}`);
+        logger.error(`--- Failed to insert ${email}:\n\t${e.message}`);
       }
     }
 

@@ -4,6 +4,7 @@ import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { SentryProvider } from "@/pdc/providers/sentry/index.ts";
 
 import { env_or_false, env_or_int } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
@@ -58,7 +59,7 @@ export class MyQueueTransport extends QueueTransport
     const port = env_or_int("PORT", 8080);
     this.server = this.app.listen(
       port,
-      () => console.info(`Listening on port ${port}`),
+      () => logger.info(`Listening on port ${port}`),
     );
   }
 }

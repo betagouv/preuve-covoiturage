@@ -1,3 +1,6 @@
+import { Pool } from "@/deps.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
 import {
   getDatasetUuid,
   loadFileAsString,
@@ -8,16 +11,12 @@ import {
   DatasetInterface,
   FileManagerInterface,
   FileTypeEnum,
-  StaticAbstractDataset,
-  StaticMigrable,
-} from "../interfaces/index.ts";
-import { Pool } from "@/deps.ts";
-import {
   State,
   StateManagerInterface,
+  StaticAbstractDataset,
+  StaticMigrable,
   StreamDataOptions,
 } from "../interfaces/index.ts";
-import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
 
 export abstract class AbstractDataset implements DatasetInterface {
   static get uuid(): string {
@@ -138,7 +137,7 @@ export abstract class AbstractDataset implements DatasetInterface {
           const results = await cursor.next();
           done = !!results.done;
           if (results.value) {
-            console.debug(`Batch ${i}`);
+            logger.debug(`Batch ${i}`);
             const query = {
               text: `
                         INSERT INTO ${this.tableWithSchema} (

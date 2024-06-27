@@ -7,6 +7,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
@@ -51,7 +52,7 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
       this.getSimulationCachingKey(params),
     );
     if (cachedResult) {
-      console.debug(
+      logger.debug(
         `[policy] Found cached policy simulation for territory ${params.territory_id} and ${params.months} months`,
       );
       return JSON.parse(cachedResult);

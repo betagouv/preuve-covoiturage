@@ -1,9 +1,10 @@
-import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { excel } from "@/deps.ts";
-import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
+import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
 import { ResultInterface as Campaign } from "@/shared/policy/find.contract.ts";
+import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
 import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
@@ -84,11 +85,11 @@ export class BuildExcel {
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.TripsWsWriter.call(tripCursor, booster_dates, wkw);
     } catch (e) {
-      console.error(
+      logger.error(
         `[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`,
       );
-      console.error(e.message);
-      console.error(e.stack);
+      logger.error(e.message);
+      logger.error(e.stack);
     }
   }
 
@@ -100,8 +101,8 @@ export class BuildExcel {
       if (!slices.length) return;
       await this.slicesWsWriter.call(wkw, slices);
     } catch (e) {
-      console.error("[apdf:buildExcel] Error while computing slices");
-      console.error(e.message);
+      logger.error("[apdf:buildExcel] Error while computing slices");
+      logger.error(e.message);
     }
   }
 

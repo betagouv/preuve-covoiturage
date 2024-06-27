@@ -1,5 +1,6 @@
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env, env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 interface Config {
@@ -58,7 +59,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       if (
         env_or_false("APP_POSTGRES_KEEP_TEST_DATABASES")
       ) {
-        console.info(
+        logger.info(
           `[db-macro] Keeping the test database: ${
             ctx?.db?.dbName || "undefined"
           } run 'just drop_test_databases to clear'`,

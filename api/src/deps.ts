@@ -6,7 +6,6 @@ import axiosRetry from "npm:axios-retry@^4";
 import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
-export { Console } from "node:console";
 export { createHash, randomBytes } from "node:crypto";
 export {
   constants as fsConstants,
@@ -45,7 +44,6 @@ export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
 const { Pool } = pg;
 // @deno-types="npm:@types/pg-cursor@^2.7"
 import Cursor from "npm:pg-cursor@^2.11";
-import pino from "npm:pino@^9.1";
 // @deno-types="npm:@types/pg-cursor@^2.7"
 export type { CursorQueryConfig } from "npm:pg-cursor@^2.11";
 // @deno-types="npm:@types/express@^4"

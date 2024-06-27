@@ -25,6 +25,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
@@ -1007,7 +1008,7 @@ export class HttpTransport implements TransportInterface {
    */
   private registerStaticFolder() {
     const __dirname = new URL(".", import.meta.url).pathname;
-    console.debug(
+    logger.debug(
       `registerStaticFolder: ${path.join(__dirname, "public/.well-known")}`,
     );
     this.app.use(
@@ -1093,7 +1094,7 @@ export class HttpTransport implements TransportInterface {
     this.server = this.app.listen(
       port,
       () =>
-        console.info(
+        logger.info(
           `Listening on port ${port}. Version ${
             this.config.get("sentry.version")
           }`,

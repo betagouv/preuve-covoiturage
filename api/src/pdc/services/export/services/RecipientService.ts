@@ -1,4 +1,5 @@
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ExportRecipient } from "../models/ExportRecipient.ts";
 
 export type RecipientServiceInterface = {
@@ -57,7 +58,7 @@ export class RecipientService {
         ]
         : [];
     } catch (e) {
-      console.error(
+      logger.error(
         `[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}: ${e.message}`,
       );
       return [];

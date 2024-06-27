@@ -1,5 +1,6 @@
 import { Command } from "@/deps.ts";
 import { provider, ProviderInterface } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 /**
  * Commander provider
@@ -10,7 +11,7 @@ import { provider, ProviderInterface } from "@/ilos/common/index.ts";
  */
 @provider()
 export class CommandRegistry extends Command implements ProviderInterface {
-  output(...args: any[]) {
-    console.info(...args);
+  output(...args: unknown[]) {
+    logger.info(...args);
   }
 }

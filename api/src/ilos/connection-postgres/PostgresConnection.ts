@@ -6,6 +6,7 @@ import {
   InitHookInterface,
 } from "@/ilos/common/index.ts";
 import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 export enum PgPoolStatus {
   UP = "UP",
@@ -35,13 +36,13 @@ export class PgPool extends Pool {
     });
 
     this.on("error", (err: Error) => {
-      console.error("[pg] pool error", err.message);
+      logger.error("[pg] pool error", err.message);
       this._status = PgPoolStatus.ERROR;
     });
 
     this.on("remove", () => {
       const { totalCount, idleCount, waitingCount } = this;
-      console.info(
+      logger.info(
         `[pg] client removed ` +
           `(total: ${totalCount}, idle: ${idleCount}, waiting: ${waitingCount})`,
       );
@@ -99,7 +100,7 @@ export class PostgresConnection
 
   async up(): Promise<void> {
     await this.pool.query("SELECT NOW()");
-    console.debug("[pg] connect to", this.database);
+    logger.debug("[pg] connect to", this.database);
   }
 
   async destroy(): Promise<void> {
@@ -107,7 +108,7 @@ export class PostgresConnection
   }
 
   async down(): Promise<void> {
-    console.debug("[pg] disconnect from", this.database);
+    logger.debug("[pg] disconnect from", this.database);
     this.pool.connected && await this.pool.end();
   }
 

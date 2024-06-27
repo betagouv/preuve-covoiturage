@@ -7,6 +7,7 @@ import {
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 
 import { env, env_or_true } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
@@ -75,7 +76,7 @@ async function logRequest(
     ),
   );
 
-  console.debug(
+  logger.debug(
     `logRequest [${_.get(request, "headers.x-request-id", "")}] ${
       _.get(request, "body.journey_id", "")
     }`,
@@ -106,7 +107,7 @@ export function serverTokenMiddleware(
       try {
         await logRequest(kernel, req, payload);
       } catch (e) {
-        console.error(`logRequest ERROR ${e.message}`);
+        logger.error(`logRequest ERROR ${e.message}`);
       }
 
       /**
@@ -138,7 +139,7 @@ export function serverTokenMiddleware(
 
       next();
     } catch (e) {
-      console.error(`[acquisition:create] ${e.message}`, e);
+      logger.error(`[acquisition:create] ${e.message}`, e);
       next(e);
     }
   };

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { Command, Console, InvalidArgumentError, process } from "@/deps.ts";
+import { Command, InvalidArgumentError, process } from "@/deps.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
 import { hash } from "./helpers/index.ts";
 import {
@@ -76,10 +77,6 @@ function getMigrator(options: Partial<Options>): Migrator {
 }
 
 async function importAction(opts: Partial<Options>) {
-  const logger = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-  });
   const migrator = getMigrator(opts);
   migrator.on("start", (event: { uuid: string; state: State }) => {
     logger.info(`${event.uuid} - ${event.state}`);
@@ -96,11 +93,7 @@ async function statusAction(opts: Partial<Options>) {
   await migrator.prepare();
   const done = await migrator.getDone();
   const todo = await migrator.getTodo();
-  const logger = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-  });
-  logger.table([
+  logger.info([
     ...done.map((mig) => ({ name: mig.uuid, done: true })),
     ...todo.map((mig) => ({ name: mig.uuid, done: false })),
   ]);
@@ -109,10 +102,6 @@ async function statusAction(opts: Partial<Options>) {
 async function getSourceAction(opts: Partial<Options>) {
   const migrator = getMigrator(opts);
   const datasets = migrator.getDatasets();
-  const logger = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-  });
   datasets.map((d) => logger.info(`${hash(d.url)} : ${d.url}`));
 }
 
@@ -190,6 +179,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
-  console.error(e);
+  logger.error(e);
   exit(1);
 });

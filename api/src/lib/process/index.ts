@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger/index.ts";
+
 export function exit(code: number | undefined) {
   Deno.exit(code);
 }
@@ -19,11 +21,11 @@ export function registerGracefulShutdown(
 ) {
   function gracefullShutDown(signal: Deno.Signal) {
     return async () => {
-      console.info(`got kill signal (${signal}), starting graceful shut down`);
+      logger.info(`got kill signal (${signal}), starting graceful shut down`);
       // shut down anyway after `timeout` seconds
       if (timeout) {
         setTimeout(() => {
-          console.error("could not finish in time, forcefully exiting");
+          logger.error("could not finish in time, forcefully exiting");
           exit(1);
         }, timeout * 1000);
       }
@@ -33,7 +35,7 @@ export function registerGracefulShutdown(
         try {
           await Promise.resolve(handler());
         } catch (err) {
-          console.error("error happened during graceful shut down", err);
+          logger.error("error happened during graceful shut down", err);
           isError = true;
         }
       }
@@ -41,7 +43,7 @@ export function registerGracefulShutdown(
         exit(1);
       }
 
-      console.info("graceful shut down finished");
+      logger.info("graceful shut down finished");
       exit(0);
     };
   }
@@ -61,12 +63,12 @@ export function catchErrors(
 ) {
   async function uncaughtExceptionHandler(e: Event) {
     e.preventDefault();
-    console.error("uncaught exception", e);
+    logger.error("uncaught exception", e);
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
       setTimeout(() => {
-        console.error("could not finish in time, forcefully exiting");
+        logger.error("could not finish in time, forcefully exiting");
         exit(1);
       }, timeout * 1000);
     }
@@ -75,7 +77,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        console.error("failed to close resource", err);
+        logger.error("failed to close resource", err);
       }
     }
 
@@ -85,12 +87,12 @@ export function catchErrors(
 
   async function unhandledRejectionHandler(e: Event) {
     e.preventDefault();
-    console.error("unhandled promise rejection", e);
+    logger.error("unhandled promise rejection", e);
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
       setTimeout(() => {
-        console.error("could not finish in time, forcefully exiting");
+        logger.error("could not finish in time, forcefully exiting");
         exit(1);
       }, timeout * 1000);
     }
@@ -99,7 +101,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        console.error("failed to close resource", err);
+        logger.error("failed to close resource", err);
       }
     }
 

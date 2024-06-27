@@ -26,6 +26,7 @@ import {
 } from "../notifications/index.ts";
 
 import { env } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
 
 @provider()
@@ -96,7 +97,7 @@ export class UserNotificationProvider {
     link: string,
   ): void {
     if (env("ENV") === "local") {
-      console.info(`
+      logger.info(`
 ******************************************
 [test] ${message}
 email: ${email}

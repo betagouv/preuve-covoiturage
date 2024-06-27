@@ -4,6 +4,7 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Command } from "../parents/Command.ts";
 
 function coerceToJson(s: string): object {
@@ -12,7 +13,7 @@ function coerceToJson(s: string): object {
     if (!s.length) return {};
     return JSON.parse(s);
   } catch (e) {
-    console.error(e.message);
+    logger.error(e.message);
     return {};
   }
 }

@@ -9,6 +9,7 @@ import {
 } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import {
   FormatInterface,
@@ -56,13 +57,13 @@ export class BuildFile {
       stringifier.end();
       await fd.close();
 
-      console.debug(`Finished exporting file: ${filepath}`);
+      logger.debug(`Finished exporting file: ${filepath}`);
 
       return filepath;
     } catch (e) {
       await cursor.release();
       await fd.close();
-      console.error(e.message, e.stack);
+      logger.error(e.message, e.stack);
       throw e;
     }
   }
@@ -106,11 +107,11 @@ export class BuildFile {
     });
 
     stringifier.on("end", () => {
-      console.debug(`Finished exporting CSV`);
+      logger.debug(`Finished exporting CSV`);
     });
 
     stringifier.on("error", (err) => {
-      console.error(err.message);
+      logger.error(err.message);
     });
 
     return stringifier;

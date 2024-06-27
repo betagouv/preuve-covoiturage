@@ -16,6 +16,7 @@ import {
   provider,
   ValidatorInterface,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { uuid } from "@/pdc/providers/test/helpers.ts";
 
 @provider()
@@ -30,7 +31,7 @@ export class AjvValidator implements ValidatorInterface {
     const ajvConfig = {
       strict: false,
       $data: true,
-      logger: console,
+      logger,
       removeAdditional: false,
       useDefaults: true,
       coerceTypes: false,
@@ -103,10 +104,10 @@ export class AjvValidator implements ValidatorInterface {
       }
       return this;
     } catch (e) {
-      console.error(
+      logger.error(
         `Error during adding validator ${schema.$id} | ${target} | ${e.message}`,
       );
-      console.error(e.message, e);
+      logger.error(e.message, e);
       throw e;
     }
   }
@@ -130,7 +131,7 @@ export class AjvValidator implements ValidatorInterface {
     const resolver = schema ? schema : data.constructor;
 
     if (!this.bindings.has(resolver)) {
-      console.error(`No schema provided for this type (${resolver})`);
+      logger.error(`No schema provided for this type (${resolver})`);
       throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);

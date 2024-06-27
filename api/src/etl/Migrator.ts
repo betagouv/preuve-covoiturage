@@ -1,4 +1,5 @@
 import { pg, Stream } from "@/deps.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { createStateManager } from "./helpers/index.ts";
 import {
   AppConfigInterface,
@@ -29,7 +30,7 @@ export class Migrator extends Stream.EventEmitter {
   }
 
   async prepare(): Promise<void> {
-    console.info(`[db] Connecting to database`);
+    logger.info(`[db] Connecting to database`);
 
     const client = await this.pool.connect();
     await client.query(
@@ -37,12 +38,12 @@ export class Migrator extends Stream.EventEmitter {
     );
     client.release();
 
-    console.info(`[db] Connected!`);
+    logger.info(`[db] Connected!`);
     await this.dbStateManager.install();
 
-    console.info(`[fs] Ensure filesystem is ready`);
+    logger.info(`[fs] Ensure filesystem is ready`);
     await this.file.install();
-    console.info(`[fs] ok`);
+    logger.info(`[fs] ok`);
   }
 
   protected getInstance(ctor: StaticMigrable): DatasetInterface {
@@ -86,37 +87,37 @@ export class Migrator extends Stream.EventEmitter {
     try {
       switch (migrableState) {
         case State.Planned:
-          // console.debug(`${migrableCtor.uuid} : start processing`);
+          // logger.debug(`${migrableCtor.uuid} : start processing`);
           await migrable.validate(stateManager);
           stateManager.set(migrableCtor, State.Validated);
           break;
         case State.Validated:
-          // console.debug(`${migrableCtor.uuid} : before`);
+          // logger.debug(`${migrableCtor.uuid} : before`);
           await migrable.before();
           stateManager.set(migrableCtor, State.Created);
           break;
         case State.Created:
-          // console.debug(`${migrableCtor.uuid} : download`);
+          // logger.debug(`${migrableCtor.uuid} : download`);
           await migrable.download();
           stateManager.set(migrableCtor, State.Downloaded);
           break;
         case State.Downloaded:
-          // console.debug(`${migrableCtor.uuid} : transform`);
+          // logger.debug(`${migrableCtor.uuid} : transform`);
           await migrable.transform();
           stateManager.set(migrableCtor, State.Transformed);
           break;
         case State.Transformed:
-          // console.debug(`${migrableCtor.uuid} : load`);
+          // logger.debug(`${migrableCtor.uuid} : load`);
           await migrable.load();
           stateManager.set(migrableCtor, State.Loaded);
           break;
         case State.Loaded:
-          // console.debug(`${migrableCtor.uuid} : import`);
+          // logger.debug(`${migrableCtor.uuid} : import`);
           await migrable.import();
           stateManager.set(migrableCtor, State.Imported);
           break;
         case State.Imported:
-          // console.debug(`${migrableCtor.uuid} : after`);
+          // logger.debug(`${migrableCtor.uuid} : after`);
           if (!this.config.noCleanup) {
             await migrable.after();
           }
@@ -125,10 +126,10 @@ export class Migrator extends Stream.EventEmitter {
             : stateManager.set(migrableCtor, State.Done);
           break;
         case State.DoneSkipPersistence:
-          // console.debug(`${migrableCtor.uuid} : done with skip persistence`);
+          // logger.debug(`${migrableCtor.uuid} : done with skip persistence`);
           break;
         case State.Done:
-          // console.debug(`${migrableCtor.uuid} : done`);
+          // logger.debug(`${migrableCtor.uuid} : done`);
           break;
         default:
           throw new Error();
@@ -150,7 +151,7 @@ export class Migrator extends Stream.EventEmitter {
         await this.do(migrable, state, stateManager);
       }
     } catch (e) {
-      console.error(`${migrableCtor.uuid} : ${(e as Error).message}`);
+      logger.error(`${migrableCtor.uuid} : ${(e as Error).message}`);
       throw e;
     }
   }
@@ -171,7 +172,7 @@ export class Migrator extends Stream.EventEmitter {
           const migrable = this.getInstance(migrableCtor);
           await this.do(migrable, migrableState, state);
         } catch (e) {
-          console.error(
+          logger.error(
             `Error during processing ${migrableCtor.uuid} - ${migrableState} : ${
               (e as Error).message
             }`,

@@ -1,7 +1,8 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -31,7 +32,7 @@ export class DeleteAssociatedUserAction extends AbstractAction {
     const key = Object.keys(params)[0];
 
     // KEEP ME
-    console.info(`> [user:deleteAssociated] ${key}: ${params[key]}`);
+    logger.info(`> [user:deleteAssociated] ${key}: ${params[key]}`);
 
     await this.userRepository.deleteAssociated(key, params[key]);
   }

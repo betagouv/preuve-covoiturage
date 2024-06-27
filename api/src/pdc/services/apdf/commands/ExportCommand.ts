@@ -7,6 +7,7 @@ import {
   ContextType,
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   ParamsInterface as ExportParams,
   signature as exportSignature,
@@ -104,7 +105,7 @@ export class ExportCommand implements CommandInterface {
     _.set(params, "query.campaign_id", campaign_list);
 
     // eslint-disable-next-line max-len,prettier/prettier
-    console.info(
+    logger.info(
       `Running [${exportSignature}] from ${start_date.toISOString()} to ${end_date.toISOString()} for campaigns: ${
         campaign_list.join(", ")
       }`,

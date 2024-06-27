@@ -1,4 +1,5 @@
 import { args } from "@/lib/cli/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
 import { bootstrap as app } from "./pdc/proxy/bootstrap.ts";
 
@@ -7,7 +8,7 @@ async function run() {
   try {
     await app.boot(command, ...opts);
   } catch (e) {
-    console.error(e.message, e);
+    logger.error(e.message, e);
     exit(1);
   }
 }

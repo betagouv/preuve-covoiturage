@@ -2,6 +2,7 @@ import {
   KernelInterfaceResolver,
   NotFoundException,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   ParamsInterface as FindByUuidParamsInterface,
   ResultInterface as FindByUuidResultInterface,
@@ -24,7 +25,7 @@ export async function getCampaignOperators(
   } catch (e) {
     // catch and log to avoid blocking the whole export
     // on error, the list will not be filtered
-    console.warn(
+    logger.warn(
       `[apdf:export] (campaign_id: ${_id}) Get declared operators failed: ${e.message}`,
     );
     return [];

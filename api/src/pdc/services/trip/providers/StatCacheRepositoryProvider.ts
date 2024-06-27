@@ -2,11 +2,12 @@ import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
-import { StatInterface } from "../interfaces/StatInterface.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   StatCacheRepositoryProviderInterface,
   StatCacheRepositoryProviderInterfaceResolver,
 } from "../interfaces/StatCacheRepositoryProviderInterface.ts";
+import { StatInterface } from "../interfaces/StatInterface.ts";
 
 /*
  * Trip stat repository
@@ -38,14 +39,14 @@ export class StatCacheRepositoryProvider
     });
 
     if (result.rowCount !== 1) {
-      console.info(`[stat cache miss] hash ${hash}`);
+      logger.info(`[stat cache miss] hash ${hash}`);
 
       const data = await fn();
       await this.save(hash, target, data);
       return data;
     }
 
-    console.info(`[stat cache hit] hash ${hash}`);
+    logger.info(`[stat cache hit] hash ${hash}`);
 
     return result.rows[0].data;
   }
@@ -91,7 +92,7 @@ export class StatCacheRepositoryProvider
 
       return;
     } catch (e) {
-      console.info("[stat cache save]", e.message);
+      logger.info("[stat cache save]", e.message);
     }
   }
 
@@ -107,7 +108,7 @@ export class StatCacheRepositoryProvider
 
       return deleted.rowCount === 1;
     } catch (e) {
-      console.info("[stat cache cleanup]", e.message);
+      logger.info("[stat cache cleanup]", e.message);
       return false;
     }
   }

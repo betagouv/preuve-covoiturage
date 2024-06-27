@@ -8,6 +8,7 @@ import {
   URL,
 } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
 import { Operator, operators } from "./operators.ts";
@@ -81,7 +82,7 @@ export class Migrator {
 
   async create() {
     if (this.hasTmpDb) {
-      console.debug(`[migrator] creating database ${this.dbName}`);
+      logger.debug(`[migrator] creating database ${this.dbName}`);
       await this.baseConn.getClient().query(
         `CREATE DATABASE ${this.dbName}`,
       );
@@ -95,7 +96,7 @@ export class Migrator {
   async seed() {
     await this.up();
 
-    console.debug("[migrator] seeding...");
+    logger.debug("[migrator] seeding...");
 
     await this.testConn.getClient().query(
       `SET session_replication_role = 'replica'`,
@@ -103,37 +104,37 @@ export class Migrator {
 
     for (const company of companies) {
       this.verbose &&
-        console.debug(`Seeding company ${company.legal_name}`);
+        logger.debug(`Seeding company ${company.legal_name}`);
       await this.seedCompany(company);
     }
 
-    this.verbose && console.debug(`Seeding geo`);
+    this.verbose && logger.debug(`Seeding geo`);
     await this.seedTerritory();
 
     for (const operator of operators) {
-      this.verbose && console.debug(`Seeding operator ${operator.name}`);
+      this.verbose && logger.debug(`Seeding operator ${operator.name}`);
       await this.seedOperator(operator);
     }
 
     for (const user of users) {
-      this.verbose && console.debug(`Seeding user ${user.email}`);
+      this.verbose && logger.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
     }
 
     for (const territory_group of territory_groups) {
       this.verbose &&
-        console.debug(`Seeding territory group ${territory_group.name}`);
+        logger.debug(`Seeding territory group ${territory_group.name}`);
       await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpools) {
       this.verbose &&
-        console.debug(`Seeding carpool ${carpool.acquisition_id}`);
+        logger.debug(`Seeding carpool ${carpool.acquisition_id}`);
       await this.seedCarpool(carpool);
     }
     for (const carpool of carpoolsV2) {
       this.verbose &&
-        console.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+        logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
       await this.seedCarpoolV2(carpool);
     }
 
@@ -167,7 +168,7 @@ export class Migrator {
     await this.testConn.getClient().query<any>(
       `SET session_replication_role = 'origin'`,
     );
-    console.debug("[migrator] seeding...done");
+    logger.debug("[migrator] seeding...done");
   }
 
   protected async *dataFromCsv<P>(

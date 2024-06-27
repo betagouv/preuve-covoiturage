@@ -6,6 +6,7 @@ import {
 } from "@/ilos/common/index.ts";
 import type { PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 interface CommandOptions {
   databaseUri: string;
@@ -62,10 +63,10 @@ export class SeedCommand implements CommandInterface {
 
       // Create driver and passenger identities
       const driver = await this.upsertIdentity(options.driver);
-      console.debug(`> upserted driver: ${driver._id}`);
+      logger.debug(`> upserted driver: ${driver._id}`);
 
       const passenger = await this.upsertIdentity(options.passenger);
-      console.debug(`> upserted passenger: ${passenger._id}`);
+      logger.debug(`> upserted passenger: ${passenger._id}`);
 
       for (let i = 0; i < options.number; i++) {
         const cpD = await this.fakeCarpool(driver._id, true);
@@ -80,10 +81,10 @@ export class SeedCommand implements CommandInterface {
 
       return "Done!";
     } catch (e) {
-      console.error(
+      logger.error(
         "Failed to seed identities, carpools and incentives for certificates",
       );
-      console.error(e.message);
+      logger.error(e.message);
       await this.db.query<any>("ROLLBACK");
     } finally {
       this.db.release();

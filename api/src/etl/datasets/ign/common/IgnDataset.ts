@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger/index.ts";
 import { AbstractDataset } from "../../../common/AbstractDataset.ts";
 import { SqlError } from "../../../errors/SqlError.ts";
 import { TransformError } from "../../../errors/TransformError.ts";
@@ -92,7 +93,7 @@ export abstract class IgnDataset extends AbstractDataset {
     try {
       for (const { file, key } of this.transformedFiles) {
         if (file && file.length) {
-          console.debug(`Processing file ${file} : ${key}`);
+          logger.debug(`Processing file ${file} : ${key}`);
           const cursor = streamData(file, this.fileType, this.sheetOptions);
           let done = false;
           const comField = this.rows.get("com") || [];
@@ -103,7 +104,7 @@ export abstract class IgnDataset extends AbstractDataset {
               const values = [
                 JSON.stringify(results.value.map((r) => r.value)),
               ];
-              console.debug(`Batch ${i}`);
+              logger.debug(`Batch ${i}`);
               switch (key) {
                 case "geom":
                   await connection.query({
@@ -182,7 +183,7 @@ export abstract class IgnDataset extends AbstractDataset {
     } catch (e) {
       await connection.query("ROLLBACK");
       connection.release();
-      console.error(e);
+      logger.error(e);
       throw new SqlError(this, (e as Error).message);
     }
   }

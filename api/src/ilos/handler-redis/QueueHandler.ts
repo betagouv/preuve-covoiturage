@@ -5,6 +5,7 @@ import {
   InitHookInterface,
 } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
@@ -67,7 +68,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         for (const job of jobs) {
           if (job.id === options.jobId) {
             await this.client?.removeRepeatableByKey(job.key);
-            console.debug(`Removed repeatable job ${options.jobId}`);
+            logger.debug(`Removed repeatable job ${options.jobId}`);
           }
         }
 
@@ -75,7 +76,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         for (const job of delayedJobs) {
           if (_.get(job, "opts.repeat.jobId") === options.jobId) {
             await job.remove();
-            console.debug(`Removed delayed job ${options.jobId}`);
+            logger.debug(`Removed delayed job ${options.jobId}`);
           }
         }
       }
@@ -100,7 +101,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
       return job;
     } catch (e) {
-      console.error(`Async call ${call.method} failed`, e);
+      logger.error(`Async call ${call.method} failed`, e);
       throw new Error("An error occured");
     }
   }

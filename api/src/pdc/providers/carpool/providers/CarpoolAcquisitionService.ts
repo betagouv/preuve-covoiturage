@@ -1,10 +1,7 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
-import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
-import { CarpoolAcquisitionStatus } from "../status/index.ts";
-import { CarpoolRequestRepository } from "../repositories/CarpoolRequestRepository.ts";
-import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import {
   CancelRequest,
   CarpoolAcquisitionStatusEnum,
@@ -12,7 +9,11 @@ import {
   UpdateRequest,
 } from "../interfaces/index.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
-import { GeoProvider } from "@/pdc/providers/geo/index.ts";
+import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
+import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
+import { CarpoolRequestRepository } from "../repositories/CarpoolRequestRepository.ts";
+import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
+import { CarpoolAcquisitionStatus } from "../status/index.ts";
 
 @provider()
 export class CarpoolAcquisitionService {
@@ -178,7 +179,7 @@ export class CarpoolAcquisitionService {
             },
             conn,
           );
-          console.error(
+          logger.error(
             `[geo] error encoding ${toEncode.carpool_id} : ${e.message}`,
           );
         }

@@ -17,6 +17,7 @@ import {
 } from "@/shared/acquisition/create.contract.ts";
 
 import { env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { PayloadV3 } from "@/shared/acquisition/create.contract.ts";
 import { v3alias } from "@/shared/acquisition/create.schema.ts";
 import {
@@ -128,7 +129,7 @@ export class CreateJourneyAction extends AbstractAction {
         created_at: acquisitions[0].created_at,
       };
     } catch (e) {
-      console.error(e.message, { operator_journey_id, operator_id });
+      logger.error(e.message, { operator_journey_id, operator_id });
 
       if (e instanceof ConflictException) {
         throw e;

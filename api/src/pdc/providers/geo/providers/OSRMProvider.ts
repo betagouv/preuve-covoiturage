@@ -1,6 +1,7 @@
 import { _, axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   PointInterface,
   RouteMeta,
@@ -39,7 +40,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      console.error(
+      logger.error(
         `[OSRMProvider] (${start.lon},${start.lat};${end.lon},${end.lat})`,
       );
       switch (e.response?.status) {

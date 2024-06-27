@@ -5,6 +5,7 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { signature as distrib } from "@/shared/observatory/distribution/insertMonthlyDistribution.contract.ts";
 import { signature as flux } from "@/shared/observatory/flux/insertMonthlyFlux.contract.ts";
 import { signature as occupation } from "@/shared/observatory/occupation/insertMonthlyOccupation.contract.ts";
@@ -22,7 +23,7 @@ export class InsertCommand implements CommandInterface {
     const month = new Date().getMonth();
 
     for (const h of handlers) {
-      console.info(`[observatory:insert] insert ${h} at ${month}/${year}`);
+      logger.info(`[observatory:insert] insert ${h} at ${month}/${year}`);
       await this.kernel.call(h, { year, month }, {
         channel: { service: "observatory" },
       });

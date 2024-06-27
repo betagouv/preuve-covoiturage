@@ -1,4 +1,3 @@
-import { pino } from "@/deps.ts";
 import { CliTransport } from "@/ilos/cli/index.ts";
 import {
   BootstrapType,
@@ -8,10 +7,9 @@ import {
   ServiceContainerInterface,
   TransportInterface,
 } from "@/ilos/common/index.ts";
-import { interceptConsole } from "@/ilos/tools/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
-import { env, env_or_default } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
 import { Kernel } from "./Kernel.ts";
 
@@ -50,24 +48,6 @@ export class Bootstrap {
     this.transports = bootstrapObject.transport;
   }
 
-  /**
-   * Setting log_level for pino
-   * https://getpino.io/#/docs/api?id=loggerlevel-string-gettersetter
-   *
-   * Level: 	trace 	debug 	info 	warn 	error 	fatal 	silent
-   * Value: 	10 	    20 	    30 	  40 	  50 	    60 	    Infinity
-   */
-  static interceptConsole(): void {
-    const logger = pino.default({
-      level: env_or_default(
-        "APP_LOG_LEVEL",
-        env("ENV") === "production" ? "debug" : "error",
-      ),
-    });
-
-    interceptConsole(logger);
-  }
-
   static create(bootstrapObject: BootstrapType): Bootstrap {
     return new Bootstrap(bootstrapObject);
   }
@@ -104,10 +84,10 @@ export class Bootstrap {
     })
     class CustomKernel extends kernelConstructor {}
 
-    console.debug("Kernel: starting");
+    logger.debug("Kernel: starting");
     const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
-    console.debug("Kernel: started");
+    logger.debug("Kernel: started");
 
     let transport: TransportInterface;
 
@@ -126,9 +106,9 @@ export class Bootstrap {
 
     this.registerShutdownHook(kernelInstance, transport);
 
-    console.debug("Transport: starting");
+    logger.debug("Transport: starting");
     await transport.up(options);
-    console.debug("Transport: started");
+    logger.debug("Transport: started");
 
     if (shouldBeKilled) {
       await transport.down();
@@ -156,8 +136,7 @@ export class Bootstrap {
     command: string | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
-    Bootstrap.interceptConsole();
-    console.info("Bootstraping app...");
+    logger.info("Bootstraping app...");
 
     return await this.start(command, ...opts);
   }

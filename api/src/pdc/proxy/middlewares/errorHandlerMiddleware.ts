@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "@/deps.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
@@ -57,7 +58,7 @@ export function errorHandlerMiddleware(
       ? _req.body.pop()
       : _req.body;
 
-    console.error(
+    logger.error(
       `[errorHandler] ${err.name} ${code} ${err.message}\n${err.stack}`,
       { id, method },
     );

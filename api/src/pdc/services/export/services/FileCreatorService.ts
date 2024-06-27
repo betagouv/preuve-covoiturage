@@ -1,4 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
@@ -106,7 +107,7 @@ export class FileCreatorService {
       await this.data();
       await this.help();
       await this.wrap();
-      console.info(`File written to ${this.fileWriter.workbookPath}`);
+      logger.info(`File written to ${this.fileWriter.workbookPath}`);
     } catch (e) {
       await this.wrap(e);
     }

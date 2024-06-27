@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger/index.ts";
 import {
   MetadataAccessorInterface,
   SerializedAccessibleMetadataInterface,
@@ -25,7 +26,7 @@ export class MetadataAccessor implements MetadataAccessorInterface {
   get(uuid: string): number {
     const meta = this.data.get(uuid);
     if (!meta || !("value" in meta)) {
-      console.error(
+      logger.error(
         `key ${uuid} not found in [${[...this.data.keys()].join(", ")}] (${
           JSON.stringify(meta)
         })`,

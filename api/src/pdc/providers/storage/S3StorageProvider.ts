@@ -5,6 +5,7 @@ import {
   ProviderInterface,
 } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
 import { S3ObjectList } from "./index.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
@@ -66,7 +67,7 @@ export class S3StorageProvider implements ProviderInterface {
       bucketName: getBucketName(bucket),
     };
 
-    console.info(
+    logger.info(
       `[S3StorageProvider:list] bucket ${params.bucketName}/${params.prefix}`,
     );
 
@@ -106,7 +107,7 @@ export class S3StorageProvider implements ProviderInterface {
 
       return key;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
+      logger.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
     }
   }
@@ -135,7 +136,7 @@ export class S3StorageProvider implements ProviderInterface {
       });
       return url;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
+      logger.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
 
       throw e;
     }

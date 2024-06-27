@@ -5,6 +5,7 @@ import {
   TemplateProviderInterfaceResolver,
 } from "@/pdc/providers/template/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
 import {
   MailTemplateNotificationInterface,
@@ -72,7 +73,7 @@ export class NotificationMailTransporter
         try {
           await this.transporter.verify();
         } catch (e) {
-          console.error("Failed to connect to SMTP server");
+          logger.error("Failed to connect to SMTP server");
           exit(1);
         }
       }

@@ -1,4 +1,5 @@
 import { Pool } from "@/deps.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   AppConfigInterface,
   DatabaseStateManagerInterface,
@@ -43,7 +44,7 @@ export class DatabaseStateManager implements DatabaseStateManagerInterface {
     for (const { key } of result.rows) {
       const migrable = this.migrations.get(key);
       if (!migrable) {
-        console.error(`Migration ${key} is not found`);
+        logger.error(`Migration ${key} is not found`);
       } else {
         setResult.add(migrable);
       }

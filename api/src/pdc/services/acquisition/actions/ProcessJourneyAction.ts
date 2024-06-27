@@ -1,3 +1,4 @@
+import { randomUUID } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   handler,
@@ -6,14 +7,8 @@ import {
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
-import { randomUUID } from "@/deps.ts";
 
-import { callContext } from "../config/callContext.ts";
-import {
-  AcquisitionErrorStageEnum,
-  AcquisitionStatusEnum,
-} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -24,6 +19,12 @@ import {
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
 } from "@/shared/carpool/crosscheck.contract.ts";
+import { callContext } from "../config/callContext.ts";
+import {
+  AcquisitionErrorStageEnum,
+  AcquisitionStatusEnum,
+} from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -55,13 +56,12 @@ export class ProcessJourneyAction extends AbstractAction {
       },
     );
 
-    const msg = `[acquisition:${runUUID}] processed (${acquisitions.length})`;
-    console.debug(
+    logger.debug(
       `[acquisition:${runUUID}] processing batch ${
         acquisitions.map((a) => a._id).join(", ")
       }`,
     );
-    console.time(msg);
+    const timer = getPerformanceTimer();
 
     // We set a timeout to avoid the action to be stuck in case of error
     // and acquisitions to be locked forever
@@ -72,7 +72,7 @@ export class ProcessJourneyAction extends AbstractAction {
       // clear the timer on every loop and reset it
       timerId && clearTimeout(timerId);
       timerId = setTimeout(async () => {
-        console.error(`[acquisition:${runUUID}] timeout ${acquisition._id}`);
+        logger.error(`[acquisition:${runUUID}] timeout ${acquisition._id}`);
         await update({
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,
@@ -80,17 +80,15 @@ export class ProcessJourneyAction extends AbstractAction {
           errors: ["Timeout"],
         });
         failed.push(acquisition._id);
-        console.debug(` >>> Update TIMED OUT: ${acquisition._id}`);
+        logger.debug(` >>> Update TIMED OUT: ${acquisition._id}`);
       }, timeout);
 
       try {
         // track how much time the action takes
-        const timerMsg =
-          `[acquisition:${runUUID}] processed (${acquisition._id}`;
-        console.time(timerMsg);
+        const subtimer = getPerformanceTimer();
 
         // Normalize geo, route and cost data
-        console.debug(` >>> Normalise acquisition: ${acquisition._id}`);
+        logger.debug(` >>> Normalise acquisition: ${acquisition._id}`);
         const normalizedAcquisition = await this.normalizer.handle(acquisition);
 
         // Cross check with carpool
@@ -100,7 +98,7 @@ export class ProcessJourneyAction extends AbstractAction {
         // The PG client cannot be passed to the crosscheck action because it is called
         // through the kernel.
         // The crosscheck action will run its own transaction to update the records.
-        console.debug(` >>> Crosscheck: ${acquisition._id}`);
+        logger.debug(` >>> Crosscheck: ${acquisition._id}`);
         await this.kernel.call<
           CrosscheckParamsInterface,
           CrosscheckResultInterface
@@ -112,15 +110,18 @@ export class ProcessJourneyAction extends AbstractAction {
 
         // Update the acquisition status
         if (!failed.includes(acquisition._id)) {
-          console.debug(` >>> Update OK: ${acquisition._id}`);
+          logger.debug(` >>> Update OK: ${acquisition._id}`);
           await update({
             acquisition_id: acquisition._id,
             status: AcquisitionStatusEnum.Ok,
           });
         }
-        console.timeEnd(timerMsg);
+        const subperformance = subtimer.stop();
+        logger.info(
+          `[acquisition:${runUUID}] processed (${acquisition._id} in ${subperformance} ms`,
+        );
       } catch (e) {
-        console.error(
+        logger.error(
           `[acquisition:${runUUID}] error ${e.message} processing ${acquisition._id}`,
         );
         await update({
@@ -129,14 +130,17 @@ export class ProcessJourneyAction extends AbstractAction {
           error_stage: AcquisitionErrorStageEnum.Normalisation,
           errors: [e.message],
         });
-        console.debug(` >>> Update FAILED: ${acquisition._id}`);
+        logger.debug(` >>> Update FAILED: ${acquisition._id}`);
       } finally {
         timerId && clearTimeout(timerId);
       }
     }
 
     await commit();
-    console.timeEnd(msg);
+    const performance = timer.stop();
+    logger.info(
+      `[acquisition:${runUUID}] processed (${acquisitions.length}) in ${performance} ms`,
+    );
     return acquisitions.length === batchSize;
   }
 }
