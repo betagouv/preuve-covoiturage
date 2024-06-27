@@ -1,4 +1,5 @@
-import { os, process, readFileSync } from "@/deps.ts";
+import { process, readFileSync } from "@/deps.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
 import { datasets, datastructures } from "./datasets.ts";
 import { ConfigInterface } from "./interfaces/ConfigInterface.ts";
 
@@ -42,7 +43,7 @@ export const config: ConfigInterface = {
     level: process.env.LOG_LEVEL || "debug",
   },
   file: {
-    basePath: process.env.CACHE_DIRECTORY || os.tmpdir(),
+    basePath: process.env.CACHE_DIRECTORY || getTmpDir(),
     downloadPath: process.env.DOWNLOAD_DIRECTORY,
     mirrorUrl: process.env.MIRROR_URL,
   },

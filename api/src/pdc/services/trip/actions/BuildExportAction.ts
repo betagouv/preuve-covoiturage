@@ -1,10 +1,11 @@
-import { _, AdmZip, os, path, unlink } from "@/deps.ts";
+import { _, AdmZip, path, unlink } from "@/deps.ts";
 import {
   ContextType,
   handler,
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   BucketName,
@@ -316,7 +317,7 @@ export class BuildExportAction extends Action {
 
   private zip(filename: string, filepath: string) {
     const zipname = `${filename.replace(".csv", "")}.zip`;
-    const zippath = path.join(os.tmpdir(), zipname);
+    const zippath = path.join(getTmpDir(), zipname);
     const zip = new AdmZip();
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);

@@ -1,4 +1,5 @@
-import { AdmZip, excel, os, path } from "@/deps.ts";
+import { AdmZip, excel, path } from "@/deps.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import {
   AllowedComputedFields,
@@ -79,7 +80,7 @@ export class XLSXWriter {
 
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.options, ...config } as Options;
-    this.folder = os.tmpdir();
+    this.folder = getTmpDir();
     this.basename = sanitize(filename, 128);
   }
 

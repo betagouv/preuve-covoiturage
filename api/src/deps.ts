@@ -1,6 +1,5 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import Stream from "node:stream";
@@ -28,7 +27,6 @@ export {
   writeFile,
 } from "node:fs/promises";
 export type { FileHandle } from "node:fs/promises";
-export { hostname, tmpdir } from "node:os";
 export { basename, extname, join } from "node:path";
 export { Readable } from "node:stream";
 export { URL, URLSearchParams } from "node:url";
@@ -246,7 +244,6 @@ export {
   mapshaper,
   mjml2html,
   net,
-  os,
   path,
   pdf,
   pg,

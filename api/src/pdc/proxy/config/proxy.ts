@@ -1,5 +1,5 @@
-import { hostname as osHostname } from "@/deps.ts";
 import { env } from "@/ilos/core/index.ts";
+import { getHostName } from "@/lib/net/index.ts";
 
 export const appUrl = env.or_fail("APP_APP_URL", "http://localhost:4200");
 export const apiUrl = env.or_fail("APP_API_URL", "http://localhost:8080");
@@ -10,7 +10,7 @@ export const showcase = env.or_fail(
 );
 
 export const port = env.or_int("PORT", 8080);
-export const hostname = osHostname();
+export const hostname = getHostName();
 
 export const session = {
   secret: env.or_fail("APP_SESSION_SECRET"),
