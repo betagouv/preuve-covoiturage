@@ -47,7 +47,10 @@ export class ExportParams {
    * @returns {Params}
    */
   protected normalize(config: Config): Params {
-    return { ...this.defaultConfig, ...config };
+    const n = { ...this.defaultConfig, ...config };
+    n.start_at = new Date(n.start_at);
+    n.end_at = new Date(n.end_at);
+    return n;
   }
 
   /**
