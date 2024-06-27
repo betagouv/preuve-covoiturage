@@ -1,13 +1,7 @@
-import {
-  extname,
-  join,
-  PgClient,
-  PgPool,
-  process,
-  readdir,
-  readFile,
-} from "@/deps.ts";
+import { PgClient, PgPool, readdir, readFile } from "@/deps.ts";
 import { buildMigrator } from "@/etl/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
+import { extname, join } from "@/lib/path/index.ts";
 
 const __dirname = import.meta.dirname || "";
 
@@ -70,7 +64,7 @@ async function runMigrations(config: string) {
 }
 
 export async function migrate(config: string, skipDatasets = true) {
-  if (!("SKIP_GEO_MIGRATIONS" in process.env)) {
+  if (!(env_or_false("SKIP_GEO_MIGRATIONS"))) {
     const geoInstance = buildMigrator({
       pool: {
         connectionString: config,
@@ -90,7 +84,7 @@ export async function migrate(config: string, skipDatasets = true) {
     await geoInstance.run();
     await geoInstance.pool.end();
   }
-  if (!("SKIP_SQL_MIGRATIONS" in process.env)) {
+  if (!(env_or_false("SKIP_SQL_MIGRATIONS"))) {
     await runMigrations(config);
   }
 }

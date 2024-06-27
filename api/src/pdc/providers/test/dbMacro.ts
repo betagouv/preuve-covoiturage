@@ -1,5 +1,5 @@
-import { process } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { env, env_or_false } from "@/lib/env/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 interface Config {
@@ -42,7 +42,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
   return {
     before: async (): Promise<DbContext> => {
       const connectionString = cfg?.connectionString ||
-        process.env.APP_POSTGRES_URL ||
+        env("APP_POSTGRES_URL") ||
         "postgresql://postgres:postgres@localhost:5432/local";
       const db = new Migrator(connectionString);
       await db.create();
@@ -56,8 +56,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
       // use `just drop_test_databases` in your shell to clear them.
       if (
-        "APP_POSTGRES_KEEP_TEST_DATABASES" in process.env &&
-        process.env.APP_POSTGRES_KEEP_TEST_DATABASES === "true"
+        env_or_false("APP_POSTGRES_KEEP_TEST_DATABASES")
       ) {
         console.info(
           `[db-macro] Keeping the test database: ${

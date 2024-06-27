@@ -1,12 +1,11 @@
-import { ValidatorExtension as ValidatorParentExtension } from "@/ilos/validator/index.ts";
 import {
   extension,
   ServiceContainerInterface,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
+import { ValidatorExtension as ValidatorParentExtension } from "@/ilos/validator/index.ts";
 
 import { bicCustomFormat } from "./formats/bicCustomFormat.ts";
-import { coordinatesKeyword } from "./keywords/coordinatesKeyword.ts";
 import { countryCustomFormat } from "./formats/countryCustomFormat.ts";
 import { departmentCustomFormat } from "./formats/departmentCustomFormat.ts";
 import { euVatCustomFormat } from "./formats/euVatCustomFormat.ts";
@@ -21,9 +20,10 @@ import { postcodeCustomFormat } from "./formats/postcodeCustomFormat.ts";
 import { rnaCustomFormat } from "./formats/rnaCustomFormat.ts";
 import { sirenCustomFormat } from "./formats/sirenCustomFormat.ts";
 import { siretCustomFormat } from "./formats/siretCustomFormat.ts";
+import { coordinatesKeyword } from "./keywords/coordinatesKeyword.ts";
 
-import { macroKeyword } from "./keywords/macroKeyword.ts";
 import { castKeyword } from "./keywords/castKeyword.ts";
+import { macroKeyword } from "./keywords/macroKeyword.ts";
 import { sanitizeKeyword } from "./keywords/sanitizeKeyword.ts";
 
 @extension({
@@ -134,13 +134,5 @@ export class ValidatorExtension extends ValidatorParentExtension {
       definition: sanitizeKeyword,
     });
     await super.init(serviceContainer);
-
-    // dump the registered schema for debug - uncomment for use
-    // if (require('@/ilos/core').env.or_fail('APP_ENV', 'unknown') === 'local') {
-    //   //@ts-ignore
-    //   [...validator.bindings].map((b) => {
-    //     console.info(b[0], b[1].schema);
-    //   });
-    // }
   }
 }

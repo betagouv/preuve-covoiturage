@@ -6,7 +6,7 @@ import {
   InvalidParamsException,
   NotFoundException,
 } from "@/ilos/common/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
 import {
   handlerConfig,
@@ -16,6 +16,18 @@ import {
 
 import { alias } from "@/shared/cee/registerApplication.schema.ts";
 
+import { ConflictException } from "@/ilos/common/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
+import {
+  CeeLongApplicationInterface,
+  CeeShortApplicationInterface,
+} from "@/shared/cee/common/CeeApplicationInterface.ts";
+import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
+import { carpoolV2ToV1StatusConverter } from "../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter.ts";
+import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
+import { getDateOrFail } from "../helpers/getDateOrFail.ts";
+import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
+import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";
 import {
   ApplicationCooldownConstraint,
   CeeApplicationError,
@@ -26,17 +38,6 @@ import {
   TimeRangeConstraint,
   ValidJourneyConstraint,
 } from "../interfaces/index.ts";
-import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
-import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
-import { getDateOrFail } from "../helpers/getDateOrFail.ts";
-import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
-import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";
-import { ConflictException } from "@/ilos/common/index.ts";
-import {
-  CeeLongApplicationInterface,
-  CeeShortApplicationInterface,
-} from "@/shared/cee/common/CeeApplicationInterface.ts";
-import { carpoolV2ToV1StatusConverter } from "../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter.ts";
 
 @handler({
   ...handlerConfig,
@@ -65,7 +66,7 @@ export class RegisterCeeAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_CEE_REGISTER")) {
+    if (env_or_false("APP_DISABLE_CEE_REGISTER")) {
       throw new ServiceDisabledError();
     }
 

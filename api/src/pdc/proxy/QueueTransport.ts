@@ -2,8 +2,8 @@ import { _, express, http } from "@/deps.ts";
 import { TransportInterface } from "@/ilos/common/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { SentryProvider } from "@/pdc/providers/sentry/index.ts";
-import { env } from "@/ilos/core/index.ts";
 
+import { env_or_false, env_or_int } from "@/lib/env/index.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
@@ -27,7 +27,7 @@ export class MyQueueTransport extends QueueTransport
 
   async up(opts: string[] = []): Promise<void> {
     await super.up(opts);
-    if (env.or_false("MONITORING")) {
+    if (env_or_false("MONITORING")) {
       this.app = express();
       this.setupServer();
       this.startServer();
@@ -55,7 +55,7 @@ export class MyQueueTransport extends QueueTransport
   }
 
   async startServer() {
-    const port = env.or_int("PORT", 8080);
+    const port = env_or_int("PORT", 8080);
     this.server = this.app.listen(
       port,
       () => console.info(`Listening on port ${port}`),

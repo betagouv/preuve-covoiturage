@@ -1,4 +1,4 @@
-import { _, process, Request as ExpressRequest, Response } from "@/deps.ts";
+import { _, Request as ExpressRequest, Response } from "@/deps.ts";
 import {
   ForbiddenException,
   KernelInterface,
@@ -6,6 +6,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 
+import { env, env_or_true } from "@/lib/env/index.ts";
 import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
@@ -53,11 +54,7 @@ async function logRequest(
   request: Request,
   payload: TokenPayloadInterface,
 ): Promise<void> {
-  if (_.get(process.env, "NODE_ENV", "") === "production") return;
-  if (
-    _.get(process.env, "APP_DEBUG_REQUEST", "false").trim().toLowerCase() !==
-      "true"
-  ) {
+  if (env("ENV") !== "local" || env_or_true("APP_DEBUG_REQUEST")) {
     return;
   }
 

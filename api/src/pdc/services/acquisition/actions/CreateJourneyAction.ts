@@ -1,5 +1,4 @@
 import { _ } from "@/deps.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
 import {
   ConflictException,
   ContextType,
@@ -7,8 +6,9 @@ import {
   ParseErrorException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import {
   handlerConfig,
@@ -16,13 +16,14 @@ import {
   ResultInterface,
 } from "@/shared/acquisition/create.contract.ts";
 
+import { env_or_false } from "@/lib/env/index.ts";
 import { PayloadV3 } from "@/shared/acquisition/create.contract.ts";
 import { v3alias } from "@/shared/acquisition/create.schema.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 import {
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
 } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -78,7 +79,7 @@ export class CreateJourneyAction extends AbstractAction {
         throw new ConflictException("Journey already registered");
       }
 
-      if (env.or_false("APP_ENABLE_CARPOOL_V2")) {
+      if (env_or_false("APP_ENABLE_CARPOOL_V2")) {
         await this.acquisitionService.registerRequest({
           api_version,
           operator_id,

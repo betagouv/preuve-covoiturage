@@ -1,4 +1,10 @@
-import { process, readFileSync } from "@/deps.ts";
+import { readFileSync } from "@/deps.ts";
+import {
+  env,
+  env_or_default,
+  env_or_fail,
+  env_or_int,
+} from "@/lib/env/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { datasets, datastructures } from "./datasets.ts";
 import { ConfigInterface } from "./interfaces/ConfigInterface.ts";
@@ -9,11 +15,11 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
 
   let cert: string;
   let envContent: string;
-  if (asVarEnvName in process.env) {
-    envContent = process.env[asVarEnvName] || "";
+  if (env(asVarEnvName)) {
+    envContent = env_or_default(asVarEnvName, "");
     cert = envContent.toString().replace(/\\n/g, "\n");
-  } else if (asPathEnvName in process.env) {
-    envContent = process.env[asPathEnvName] || "";
+  } else if (env(asPathEnvName)) {
+    envContent = env_or_default(asPathEnvName, "");
     cert = readFileSync(envContent.toString(), "utf-8");
   } else {
     return {};
@@ -29,29 +35,27 @@ const postgresTls = {
 
 export const config: ConfigInterface = {
   pool: {
-    connectionString: process.env.POSTGRES_URL,
-    user: process.env.POSTGRES_USER || "postgres",
-    password: process.env.POSTGRES_PASSWORD || "postgres",
-    database: process.env.POSTGRES_DB || "local",
-    host: process.env.POSTGRES_HOST || "127.0.0.1",
-    port: process.env.POSTGRES_PORT
-      ? parseInt(process.env.POSTGRES_PORT, 10)
-      : 5432,
+    connectionString: env_or_fail("POSTGRES_URL"),
+    user: env_or_default("POSTGRES_USER", "postgres"),
+    password: env_or_default("POSTGRES_PASSWORD", "postgres"),
+    database: env_or_default("POSTGRES_DB", "local"),
+    host: env_or_default("POSTGRES_HOST", "127.0.0.1"),
+    port: env_or_int("POSTGRES_PORT", 5432),
     ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
   },
   logger: {
-    level: process.env.LOG_LEVEL || "debug",
+    level: env_or_default("LOG_LEVEL", "debug"),
   },
   file: {
-    basePath: process.env.CACHE_DIRECTORY || getTmpDir(),
-    downloadPath: process.env.DOWNLOAD_DIRECTORY,
-    mirrorUrl: process.env.MIRROR_URL,
+    basePath: env_or_default("CACHE_DIRECTORY", getTmpDir()),
+    downloadPath: env("DOWNLOAD_DIRECTORY"),
+    mirrorUrl: env("MIRROR_URL"),
   },
   app: {
     noCleanup: false,
-    targetSchema: process.env.POSTGRES_SCHEMA || "public",
+    targetSchema: env_or_default("POSTGRES_SCHEMA", "public"),
     datasets,
     datastructures,
-    sevenZipBinPath: process.env.SEVEN_ZIP_BIN_PATH,
+    sevenZipBinPath: env("SEVEN_ZIP_BIN_PATH"),
   },
 };

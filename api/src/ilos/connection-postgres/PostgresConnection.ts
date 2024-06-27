@@ -5,7 +5,7 @@ import {
   DestroyHookInterface,
   InitHookInterface,
 } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
 
 export enum PgPoolStatus {
   UP = "UP",
@@ -73,8 +73,8 @@ export class PostgresConnection
   protected _status: PgPoolStatus = PgPoolStatus.DOWN;
 
   constructor(protected config: PoolConfig) {
-    const timeout = env.or_int("APP_POSTGRES_TIMEOUT", 60000);
-    this.pgUrl = config.connectionString || env.or_fail("APP_POSTGRES_URL");
+    const timeout = env_or_int("APP_POSTGRES_TIMEOUT", 60000);
+    this.pgUrl = config.connectionString || env_or_fail("APP_POSTGRES_URL");
     this.database = new URL(this.pgUrl)?.pathname || "";
 
     this.pool = new PgPool({

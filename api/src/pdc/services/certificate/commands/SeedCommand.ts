@@ -1,3 +1,4 @@
+import { faker } from "@/deps.ts";
 import {
   command,
   CommandInterface,
@@ -5,7 +6,6 @@ import {
 } from "@/ilos/common/index.ts";
 import type { PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { faker, process } from "@/deps.ts";
 
 interface CommandOptions {
   databaseUri: string;
@@ -25,7 +25,7 @@ export class SeedCommand implements CommandInterface {
     {
       signature: "-u, --database-uri <uri>",
       description: "Postgres connection string",
-      default: process.env.APP_POSTGRES_URL,
+      default: env("APP_POSTGRES_URL"),
     },
     {
       signature: "-n, --number <number>",

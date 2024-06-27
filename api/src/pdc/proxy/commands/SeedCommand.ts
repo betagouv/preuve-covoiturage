@@ -1,9 +1,9 @@
-import { process } from "@/deps.ts";
 import {
   command,
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { env } from "@/lib/env/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 @command()
@@ -19,7 +19,7 @@ export class SeedCommand implements CommandInterface {
     {
       signature: "-u, --database-uri <uri>",
       description: "Postgres connection string",
-      default: process.env.APP_POSTGRES_URL,
+      default: env("APP_POSTGRES_URL"),
     },
   ];
 

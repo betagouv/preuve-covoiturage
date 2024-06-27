@@ -1,6 +1,6 @@
 import { _, axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
 import {
   PointInterface,
   RouteMeta,
@@ -9,7 +9,7 @@ import {
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
-  protected domain = env.or_fail(
+  protected domain = env_or_fail(
     "OSRM_URL",
     "http://osrm.covoiturage.beta.gouv.fr:5000",
   );

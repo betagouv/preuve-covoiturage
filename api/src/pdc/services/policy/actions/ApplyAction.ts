@@ -6,7 +6,8 @@ import {
   InvalidParamsException,
   NotFoundException,
 } from "@/ilos/common/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
@@ -49,7 +50,7 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_POLICY_PROCESSING")) {
+    if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
       return console.warn(
         "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
       );

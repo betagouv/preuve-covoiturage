@@ -1,21 +1,21 @@
 import { process } from "@/deps.ts";
-import { EnvNotFoundException } from "../exceptions/index.ts";
+export class EnvNotFoundException extends Error {}
 
-export function or_int(k: string, fallback: number): number {
+export function env_or_int(k: string, fallback: number): number {
   const rawEnv = parseInt(process.env[k] ?? "", 10);
   return Number.isNaN(rawEnv) ? fallback : rawEnv;
 }
 
-export function or_false(k: string): boolean {
+export function env_or_false(k: string): boolean {
   return k in process.env && process.env[k] === "true";
 }
 
-export function or_true(k: string): boolean {
+export function env_or_true(k: string): boolean {
   if (k in process.env) return process.env[k] === "true";
   return true;
 }
 
-export function or_fail(k: string, fallback?: string): string {
+export function env_or_fail(k: string, fallback?: string): string {
   const val = k in process.env ? process.env[k] : fallback;
 
   if (val === null || typeof val === "undefined") {
@@ -23,4 +23,11 @@ export function or_fail(k: string, fallback?: string): string {
   }
 
   return val;
+}
+export function env_or_default(k: string, fallback: string): string {
+  return process.env[k] ?? fallback;
+}
+
+export function env(k: string): string | undefined {
+  return process.env[k];
 }

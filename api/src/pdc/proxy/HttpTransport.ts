@@ -8,7 +8,6 @@ import {
   http,
   NextFunction,
   path,
-  process,
   Redis,
   RedisStore,
   Request,
@@ -24,8 +23,8 @@ import {
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
+import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
@@ -168,8 +167,8 @@ export class HttpTransport implements TransportInterface {
         httpOnly: true,
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
-        secure: env.or_fail("APP_ENV", "local") !== "local",
-        sameSite: env.or_fail("APP_ENV", "local") !== "local"
+        secure: env_or_fail("APP_ENV", "local") !== "local",
+        sameSite: env_or_fail("APP_ENV", "local") !== "local"
           ? "none"
           : "strict",
       },
@@ -246,7 +245,7 @@ export class HttpTransport implements TransportInterface {
   private registerGlobalMiddlewares(): void {
     // maintenance mode
     this.app.use((_req: Request, res: Response, next: NextFunction) => {
-      if (env.or_false("APP_MAINTENANCE")) {
+      if (env_or_false("APP_MAINTENANCE")) {
         res.status(503).json({ code: 503, error: "Service Unavailable" });
         return;
       }
@@ -914,7 +913,7 @@ export class HttpTransport implements TransportInterface {
         );
         res.status(201).header(
           "Location",
-          `${process.env.APP_APP_URL}/honor/stats`,
+          `${env_or_fail("APP_APP_URL")}/honor/stats`,
         ).json({ saved: true });
       }),
     );
@@ -1027,7 +1026,7 @@ export class HttpTransport implements TransportInterface {
      * List all RPC actions
      * - disabled when deployed
      */
-    if (env.or_fail("APP_ENV", "local") === "local") {
+    if (env_or_fail("APP_ENV", "local") === "local") {
       this.app.get(
         endpoint,
         rateLimiter(),

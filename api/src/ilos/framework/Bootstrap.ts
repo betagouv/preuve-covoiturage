@@ -1,4 +1,4 @@
-import { pino, process } from "@/deps.ts";
+import { pino } from "@/deps.ts";
 import { CliTransport } from "@/ilos/cli/index.ts";
 import {
   BootstrapType,
@@ -15,6 +15,7 @@ import {
 } from "@/ilos/tools/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
+import { env, env_or_default } from "@/lib/env/index.ts";
 import { Kernel } from "./Kernel.ts";
 
 const defaultBootstrapObject: BootstrapType = {
@@ -52,13 +53,6 @@ export class Bootstrap {
     this.transports = bootstrapObject.transport;
   }
 
-  static setEnv(): void {
-    process.env.APP_ENV =
-      "NODE_ENV" in process.env && process.env.NODE_ENV !== undefined
-        ? process.env.NODE_ENV
-        : "local";
-  }
-
   /**
    * Setting log_level for pino
    * https://getpino.io/#/docs/api?id=loggerlevel-string-gettersetter
@@ -68,8 +62,10 @@ export class Bootstrap {
    */
   static interceptConsole(): void {
     const logger = pino.default({
-      level: process.env.APP_LOG_LEVEL ??
-        (process.env.NODE_ENV !== "production" ? "debug" : "error"),
+      level: env_or_default(
+        "APP_LOG_LEVEL",
+        env("ENV") === "production" ? "debug" : "error",
+      ),
     });
 
     interceptConsole(logger);
@@ -165,8 +161,6 @@ export class Bootstrap {
   ): Promise<TransportInterface> {
     Bootstrap.interceptConsole();
     console.info("Bootstraping app...");
-
-    Bootstrap.setEnv();
 
     return await this.start(command, ...opts);
   }

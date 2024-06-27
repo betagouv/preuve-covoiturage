@@ -1,5 +1,5 @@
-import { process, readFileSync, URL } from "@/deps.ts";
-import { env } from "@/ilos/core/index.ts";
+import { readFileSync, URL } from "@/deps.ts";
+import { env, env_or_fail } from "@/lib/env/index.ts";
 
 function unnestRedisConnectionString(connectionString: string): {
   host?: string;
@@ -23,10 +23,10 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   const asPathEnvName = `${baseEnvKey}_PATH`;
 
   let cert: string;
-  if (asVarEnvName in process.env) {
-    cert = env.or_fail(asVarEnvName).replace(/\\n/g, "\n");
-  } else if (asPathEnvName in process.env) {
-    cert = readFileSync(env.or_fail(asPathEnvName), "utf-8");
+  if (env(asVarEnvName)) {
+    cert = env_or_fail(asVarEnvName).replace(/\\n/g, "\n");
+  } else if (env(asPathEnvName)) {
+    cert = readFileSync(env_or_fail(asPathEnvName), "utf-8");
   } else {
     return {};
   }
@@ -41,7 +41,7 @@ const redisTls = {
 
 export const redis = {
   ...(Object.keys(redisTls).length ? { tls: redisTls } : {}),
-  ...unnestRedisConnectionString(env.or_fail("APP_REDIS_URL")),
+  ...unnestRedisConnectionString(env_or_fail("APP_REDIS_URL")),
 };
 
 const postgresTls = {
@@ -51,10 +51,10 @@ const postgresTls = {
 };
 
 export const postgres = {
-  connectionString: env.or_fail("APP_POSTGRES_URL"),
+  connectionString: env_or_fail("APP_POSTGRES_URL"),
   // FIXME: add host is a workarround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
   ...(Object.keys(postgresTls).length
-    ? { ssl: { ...postgresTls, host: env.or_fail("APP_POSTGRES_HOST") } }
+    ? { ssl: { ...postgresTls, host: env_or_fail("APP_POSTGRES_HOST") } }
     : {}),
 };

@@ -1,16 +1,17 @@
 import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { filterTables } from "../helpers/filterTables.helper.ts";
-import { todayFrequencies } from "../helpers/todayFrequencies.helper.ts";
-import { MatviewItem } from "../interfaces/StatsRefreshInterfaces.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/monitoring/statsrefresh.contract.ts";
 import { alias } from "@/shared/monitoring/statsrefresh.schema.ts";
+import { filterTables } from "../helpers/filterTables.helper.ts";
+import { todayFrequencies } from "../helpers/todayFrequencies.helper.ts";
+import { MatviewItem } from "../interfaces/StatsRefreshInterfaces.ts";
 
 @handler({
   ...handlerConfig,
@@ -25,7 +26,7 @@ export class StatsRefreshAction extends AbstractAction {
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_STATS_REFRESH")) {
+    if (env_or_false("APP_DISABLE_STATS_REFRESH")) {
       return;
     }
     const cn = await this.pg.getClient().connect();

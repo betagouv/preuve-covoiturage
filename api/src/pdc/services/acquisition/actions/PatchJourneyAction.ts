@@ -1,9 +1,9 @@
 import { _ } from "@/deps.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
 import { ContextType, handler } from "@/ilos/common/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { OperatorClass } from "@/pdc/providers/carpool/interfaces/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import {
   handlerConfig,
@@ -13,8 +13,9 @@ import {
 
 import { alias } from "@/shared/acquisition/patch.schema.ts";
 
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 import { AcquisitionStatusEnum } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -44,7 +45,7 @@ export class PatchJourneyAction extends AbstractAction {
       },
       params,
     );
-    if (env.or_false("APP_ENABLE_CARPOOL_V2")) {
+    if (env_or_false("APP_ENABLE_CARPOOL_V2")) {
       const toUpdate = {
         ...params,
         ...(params.operator_class

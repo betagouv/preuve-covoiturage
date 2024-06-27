@@ -11,6 +11,9 @@ import {
   StaticMailTemplateNotificationInterface,
 } from "@/pdc/providers/notification/index.ts";
 
+import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
+import { ResultInterface as SimulateOnPastResult } from "@/shared/policy/simulateOnPastGeo.contract.ts";
+import { ParamsInterface as SimulationPolicyParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
 import {
   ConfirmEmailNotification,
   ContactFormNotification,
@@ -21,10 +24,8 @@ import {
   InviteNotification,
   SimulatePolicyNotification,
 } from "../notifications/index.ts";
-import { ParamsInterface as SimulationPolicyParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
-import { ResultInterface as SimulateOnPastResult } from "@/shared/policy/simulateOnPastGeo.contract.ts";
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
 
+import { env } from "@/lib/env/index.ts";
 import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
 
 @provider()
@@ -94,7 +95,7 @@ export class UserNotificationProvider {
     token: string,
     link: string,
   ): void {
-    if (process.env.NODE_ENV === "local") {
+    if (env("ENV") === "local") {
       console.info(`
 ******************************************
 [test] ${message}
