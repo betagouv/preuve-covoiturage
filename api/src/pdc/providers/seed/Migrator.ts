@@ -4,11 +4,11 @@ import {
   createReadStream,
   CsvOptions as ParseOptions,
   parse,
-  path,
   URL,
 } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
 import { Operator, operators } from "./operators.ts";
@@ -175,7 +175,7 @@ export class Migrator {
     filename: string,
     options: ParseOptions = {},
   ): AsyncIterator<P> {
-    const filepath = path.join(import.meta.dirname!, filename);
+    const filepath = join(import.meta.dirname!, filename);
     const parser = createReadStream(filepath).pipe(
       parse({
         cast: (v: any) => (v === "" ? null : v),

@@ -7,7 +7,6 @@ import {
   helmet,
   http,
   NextFunction,
-  path,
   Redis,
   RedisStore,
   Request,
@@ -26,6 +25,7 @@ import {
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
@@ -1009,11 +1009,11 @@ export class HttpTransport implements TransportInterface {
   private registerStaticFolder() {
     const __dirname = new URL(".", import.meta.url).pathname;
     logger.debug(
-      `registerStaticFolder: ${path.join(__dirname, "public/.well-known")}`,
+      `registerStaticFolder: ${join(__dirname, "public/.well-known")}`,
     );
     this.app.use(
       "/.well-known",
-      express.static(path.join(__dirname, "public/.well-known")),
+      express.static(join(__dirname, "public/.well-known")),
     );
   }
 

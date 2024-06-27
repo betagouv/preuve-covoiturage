@@ -2,7 +2,6 @@ import {
   FileHandle,
   fsConstants,
   open,
-  path,
   Stringifier,
   stringify,
   v4,
@@ -10,6 +9,7 @@ import {
 import { provider } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import {
   FormatInterface,
@@ -35,7 +35,7 @@ export class BuildFile {
   ): Promise<string> {
     // CSV file
     const { filename, tz } = this.cast(params.type, params, date);
-    const filepath = path.join(getTmpDir(), filename);
+    const filepath = join(getTmpDir(), filename);
     const fd = await open(filepath, fsConstants.O_APPEND);
 
     // Transform data
