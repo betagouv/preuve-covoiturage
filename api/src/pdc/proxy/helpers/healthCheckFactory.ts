@@ -1,12 +1,13 @@
 // from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/health-check.ts
-import { process, Request, RequestHandler, Response } from "@/deps.ts";
+import { Request, RequestHandler, Response } from "@/deps.ts";
+import { registerOnSignal } from "@/lib/process/index.ts";
 
 export function healthCheckFactory(
   checks: Array<() => Promise<any>> = [],
 ): RequestHandler {
   // respond with '503 Service Unavailable' once the termination signal is received
   let shuttingDown = false;
-  process.once("SIGTERM", () => {
+  registerOnSignal("SIGTERM", () => {
     shuttingDown = true;
   });
 

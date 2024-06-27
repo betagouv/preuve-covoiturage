@@ -1,6 +1,5 @@
-import { catchErrors } from "./catchErrors.ts";
+import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
 import { INameToValueMap, interceptConsole } from "./interceptConsole.ts";
-import { registerGracefulShutdown } from "./registerGracefulShutdown.ts";
 
 export function bootstrap(
   customConsole: INameToValueMap = console,

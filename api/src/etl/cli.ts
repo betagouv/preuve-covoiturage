@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { Command, Console, InvalidArgumentError, process } from "@/deps.ts";
+import { exit } from "@/lib/process/index.ts";
+import { hash } from "./helpers/index.ts";
 import {
   buildMigrator,
   defaultConfig,
@@ -7,7 +9,6 @@ import {
   PartialConfigInterface,
   State,
 } from "./index.ts";
-import { hash } from "./helpers/index.ts";
 
 interface Options {
   url: string;
@@ -190,5 +191,5 @@ async function main(): Promise<void> {
 
 main().catch((e) => {
   console.error(e);
-  process.exit(1);
+  exit(1);
 });

@@ -8,14 +8,11 @@ import {
   ServiceContainerInterface,
   TransportInterface,
 } from "@/ilos/common/index.ts";
-import {
-  catchErrors,
-  interceptConsole,
-  registerGracefulShutdown,
-} from "@/ilos/tools/index.ts";
+import { interceptConsole } from "@/ilos/tools/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
+import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
 import { Kernel } from "./Kernel.ts";
 
 const defaultBootstrapObject: BootstrapType = {
