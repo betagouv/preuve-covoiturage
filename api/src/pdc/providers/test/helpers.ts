@@ -10,9 +10,26 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Kernel as AbstractKernel } from "@/ilos/framework/index.ts";
 
+/**
+ * AJV inputs require dates to be strings when they are of type Date in the code.
+ * This helper allows to define the type of the params and the key that should be a string.
+ *
+ * @example
+ * const payload: AJVParamsInterface<ParamsInterface, "start_at" | "end_at"> = {
+ *   start_at: new Date().toISOString(),
+ *   end_at: new Date().toISOString(),
+ * }
+ *
+ * @params {T} An imported ResultParamsInterface from *.contract.ts
+ * @params {K} A union of keys from T that should be converted to strings
+ */
+export type AJVParamsInterface<T, K extends keyof T> =
+  & Omit<T, K>
+  & { [P in K]: string };
+
 export interface KernelContext {
   kernel: KernelInterface;
-  service: ServiceContainerInterface;
+  services: ServiceContainerInterface[];
 }
 export interface KernelBeforeAfter {
   before(): Promise<KernelContext>;
@@ -20,10 +37,10 @@ export interface KernelBeforeAfter {
 }
 
 export function makeKernelCtor(
-  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+  ...serviceProviderCtor: NewableType<ServiceContainerInterface>[]
 ): NewableType<KernelInterface> {
   @kernelDecorator({
-    children: [serviceProviderCtor],
+    children: [...serviceProviderCtor],
     connections: [
       [RedisConnection, new RedisConnection(connections.redis)],
       [PostgresConnection, new PostgresConnection(connections.postgres)],
@@ -34,24 +51,59 @@ export function makeKernelCtor(
 }
 
 export function makeKernel(
-  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+  ...serviceProviderCtor: NewableType<ServiceContainerInterface>[]
 ): KernelInterface {
-  return new (makeKernelCtor(serviceProviderCtor))();
+  return new (makeKernelCtor(...serviceProviderCtor))();
 }
 
 // let other packages use uuid without npm install to limit deps
+// TODO move to a common package or replace with Deno std !
 export function uuid(): string {
   return v4();
 }
 
+/**
+ * Create Kernel before and after helpers for integration tests
+ *
+ * @example
+ * // with 2 ServiceProviders
+ * const { before, after } = makeKernelBeforeAfter(ServiceProviderA, ServiceProviderB);
+ * let kc: KernelContext;
+ * beforeAll(async () => {
+ *   kc = await before();
+ * });
+ * afterAll(async () => {
+ *   await after(kc);
+ * });
+ *
+ * @example
+ * // with a test database connection
+ * const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+ * const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(ServiceProvider);
+ * let db: DbContext;
+ * let kc: KernelContext;
+ * beforeAll(async () => {
+ *   db = await dbBefore();
+ *   kc = await kernelBefore();
+ * });
+ * afterAll(async () => {
+ *   await kernelAfter(kc);
+ *   await dbAfter(db);
+ * });
+ *
+ * @param {NewableType<ServiceContainerInterface>[]} serviceProviderCtor
+ * @returns {before, after}
+ */
 export function makeKernelBeforeAfter(
-  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+  ...serviceProviderCtor: NewableType<ServiceContainerInterface>[]
 ): KernelBeforeAfter {
   async function before(): Promise<KernelContext> {
-    const kernel = makeKernel(serviceProviderCtor);
+    const kernel = makeKernel(...serviceProviderCtor);
     await kernel.bootstrap();
-    const service = kernel.get(serviceProviderCtor);
-    return { kernel, service };
+    const services = serviceProviderCtor.map((
+      s: NewableType<ServiceContainerInterface>,
+    ) => kernel.get(s));
+    return { kernel, services };
   }
 
   async function after(cfg: KernelContext): Promise<void> {
