@@ -93,8 +93,8 @@ export class CreateActionV3 extends AbstractAction {
       uuid,
       target,
       status,
-      start_at: createParams.get().start_at,
-      end_at: createParams.get().end_at,
+      start_at: new Date(createParams.get().start_at),
+      end_at: new Date(createParams.get().end_at),
     };
   }
 }
