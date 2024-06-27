@@ -63,6 +63,7 @@ export class APDFNameProvider implements ProviderInterface {
   }
 
   public parse(str: APDFNameResultsInterface): APDFNameParamsInterface {
+    // Extract parts by removing prefix and extension, then split by hyphen
     const parts = (str.split("/").pop() || "")
       .replace(`${this.prefix}-`, "")
       .replace(`.${this.ext}`, "")
