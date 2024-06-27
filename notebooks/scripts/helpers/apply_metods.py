@@ -1,6 +1,6 @@
 import pandas as pd
 
-def add_overlap_columns(df, with_ratio=False):
+def add_overlap_columns(df):
     """Return an alterned dataframe with computed columns for group and duration"""
     for i in range(len(df)):
         if df.loc[df.index[i], 'overlap_group'] == 100 :
@@ -11,8 +11,7 @@ def add_overlap_columns(df, with_ratio=False):
                     # Compute three columns
                     df.loc[df.index[j], 'overlap_group'] = i
                     df.loc[df.index[j], 'overlap_duration'] = overlap_duration
-                    if with_ratio is True:
-                        df.loc[df.index[j], 'overlap_duration_ratio'] =  overlap_duration / df.iloc[j]['duration']
+                    df.loc[df.index[j], 'overlap_duration_ratio'] =  overlap_duration / df.iloc[j]['duration']
             df.loc[df.index[i], 'overlap_group'] = i
     return df
 
