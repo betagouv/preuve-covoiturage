@@ -1,5 +1,4 @@
 import {
-  _,
   addMonths,
   fromZonedTime,
   startOfMonth,
@@ -14,6 +13,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   BucketName,
@@ -166,16 +166,16 @@ export class ExportAction extends Action {
   }
 
   private isVerbose(context: ContextType): boolean {
-    return _.get(context, "channel.transport") === "cli" &&
-      _.get(context, "call.metadata.verbose", false);
+    return get(context, "channel.transport") === "cli" &&
+      get(context, "call.metadata.verbose", false);
   }
 
   private castOrGetDefaultDates(
     params: ParamsInterface,
   ): { start_date: Date; end_date: Date } {
     // use the local times
-    const start_date_lc = _.get(params, "query.date.start", null);
-    const end_date_lc = _.get(params, "query.date.end", null);
+    const start_date_lc = get(params, "query.date.start", null);
+    const end_date_lc = get(params, "query.date.end", null);
 
     // having both
     if (start_date_lc && end_date_lc) {

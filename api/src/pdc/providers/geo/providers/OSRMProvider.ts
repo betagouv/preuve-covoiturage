@@ -1,7 +1,8 @@
-import { _, axios, HttpAgent } from "@/deps.ts";
+import { axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   PointInterface,
   RouteMeta,
@@ -29,8 +30,8 @@ export class OSRMProvider implements RouteMetaProviderInterface {
           httpAgent: OSRMProvider.agent,
         },
       );
-      const distance = _.get(res, "data.routes.0.distance", null);
-      const duration = _.get(res, "data.routes.0.duration", null);
+      const distance = get(res, "data.routes.0.distance", null);
+      const duration = get(res, "data.routes.0.duration", null);
 
       if (distance === null || duration === null) {
         throw new Error(

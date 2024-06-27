@@ -1,4 +1,4 @@
-import { _, fromZonedTime } from "@/deps.ts";
+import { fromZonedTime } from "@/deps.ts";
 import { coerceIntList } from "@/ilos/cli/index.ts";
 import {
   command,
@@ -8,6 +8,7 @@ import {
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { set } from "@/lib/object/index.ts";
 import {
   ParamsInterface as ExportParams,
   signature as exportSignature,
@@ -80,21 +81,21 @@ export class ExportCommand implements CommandInterface {
     };
 
     if (options.start) {
-      _.set(
+      set(
         params,
         "query.date.start",
         fromZonedTime(options.start, options.tz).toISOString(),
       );
     }
     if (options.end) {
-      _.set(
+      set(
         params,
         "query.date.end",
         fromZonedTime(options.end, options.tz).toISOString(),
       );
     }
     if (options.operators?.length) {
-      _.set(params, "query.operator_id", options.operators);
+      set(params, "query.operator_id", options.operators);
     }
 
     // fetch active campaigns at the given date
@@ -102,7 +103,7 @@ export class ExportCommand implements CommandInterface {
     const campaign_list = options.campaigns.length
       ? options.campaigns
       : await this.findActiveCampaigns(start_date.toISOString());
-    _.set(params, "query.campaign_id", campaign_list);
+    set(params, "query.campaign_id", campaign_list);
 
     // eslint-disable-next-line max-len,prettier/prettier
     logger.info(

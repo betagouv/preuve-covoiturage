@@ -1,4 +1,4 @@
-import { _, Job, JobsOptions, Queue, QueueOptions } from "@/deps.ts";
+import { Job, JobsOptions, Queue, QueueOptions } from "@/deps.ts";
 import {
   CallType,
   HandlerInterface,
@@ -6,6 +6,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
@@ -55,7 +56,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       }
 
       // protect against char : in jobId
-      if (options.jobId && _.isString(options.jobId)) {
+      if (options.jobId && typeof options.jobId === "string") {
         if ((options.jobId as string).indexOf(":") > -1) {
           throw new Error('Character ":" is unsupported in jobId');
         }
@@ -74,7 +75,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
         const delayedJobs = await this.client?.getJobs(["delayed"]) || [];
         for (const job of delayedJobs) {
-          if (_.get(job, "opts.repeat.jobId") === options.jobId) {
+          if (get(job, "opts.repeat.jobId") === options.jobId) {
             await job.remove();
             logger.debug(`Removed delayed job ${options.jobId}`);
           }

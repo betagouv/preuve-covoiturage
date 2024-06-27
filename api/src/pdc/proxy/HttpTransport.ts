@@ -1,5 +1,4 @@
 import {
-  _,
   bodyParser,
   cors,
   express,
@@ -25,6 +24,7 @@ import {
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { get, pick } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
@@ -299,9 +299,9 @@ export class HttpTransport implements TransportInterface {
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -333,9 +333,9 @@ export class HttpTransport implements TransportInterface {
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -366,9 +366,9 @@ export class HttpTransport implements TransportInterface {
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -397,9 +397,9 @@ export class HttpTransport implements TransportInterface {
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -430,7 +430,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "campaign:simulateOnFuture",
@@ -480,7 +480,7 @@ export class HttpTransport implements TransportInterface {
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getRouteMeta", req.query, user, { req }),
         )) as RPCResponseType;
@@ -493,7 +493,7 @@ export class HttpTransport implements TransportInterface {
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getPointByAddress", req.query, user, { req }),
         )) as RPCResponseType;
@@ -506,7 +506,7 @@ export class HttpTransport implements TransportInterface {
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getPointByCode", req.query, user, { req }),
         )) as RPCResponseType;
@@ -528,7 +528,7 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { params } = req;
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("acquisition:status", params, user, { req }),
         )) as RPCResponseType;
@@ -541,7 +541,7 @@ export class HttpTransport implements TransportInterface {
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:patch",
@@ -562,7 +562,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:cancel",
@@ -586,10 +586,10 @@ export class HttpTransport implements TransportInterface {
       acquisitionRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = _.get(req, "session.user", {});
+        const user = get(req, "session.user", {});
 
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -619,7 +619,7 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { query } = req;
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("acquisition:list", query, user, { req }),
         )) as RPCResponseType;
@@ -669,7 +669,7 @@ export class HttpTransport implements TransportInterface {
           throw new UnauthorizedException();
         }
 
-        res.json(_.get(req.session, "user"));
+        res.json(get(req.session, "user"));
       },
     );
 
@@ -772,7 +772,7 @@ export class HttpTransport implements TransportInterface {
           );
         }
 
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         if (!user) throw new UnauthorizedException();
         if (!user.operator_id) {
           throw new UnauthorizedException(
@@ -818,14 +818,14 @@ export class HttpTransport implements TransportInterface {
         const call = createRPCPayload(
           "certificate:create",
           req.body,
-          _.get(req, "session.user", undefined),
+          get(req, "session.user", undefined),
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
         res
           .status(
-            _.get(response, "result.meta.httpStatus", mapStatusCode(response)),
+            get(response, "result.meta.httpStatus", mapStatusCode(response)),
           )
-          .send(_.get(response, "result.data", this.parseErrorData(response)));
+          .send(get(response, "result.data", this.parseErrorData(response)));
       }),
     );
 
@@ -842,14 +842,14 @@ export class HttpTransport implements TransportInterface {
         const call = createRPCPayload(
           "certificate:download",
           { ...req.body, uuid: req.params.uuid },
-          _.get(req, "session.user", undefined),
+          get(req, "session.user", undefined),
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
         this.raw(
           res,
-          _.get(response, "result.body", response),
-          _.get(response, "result.headers", {}),
+          get(response, "result.body", response),
+          get(response, "result.headers", {}),
         );
       }),
     );
@@ -867,7 +867,7 @@ export class HttpTransport implements TransportInterface {
           }),
         )) as RPCResponseType;
 
-        this.raw(res, _.get(response, "result.data", response), {
+        this.raw(res, get(response, "result.data", response), {
           "Content-type": "application/json",
         });
       }),
@@ -879,7 +879,7 @@ export class HttpTransport implements TransportInterface {
     this.app.use(
       (error: Error, req: Request, _res: Response, next: NextFunction) => {
         const body = Array.isArray(req.body) ? req.body[0] : req.body;
-        if (body) Sentry.setTag("method", _.get(body, "method", "not set"));
+        if (body) Sentry.setTag("method", get(body, "method", "not set"));
 
         next(error);
       },
@@ -1065,7 +1065,7 @@ export class HttpTransport implements TransportInterface {
           // }
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
-          let user = _.get(req, "session.user", null);
+          let user = get(req, "session.user", null);
 
           if (!user) {
             throw new UnauthorizedException();
@@ -1121,7 +1121,7 @@ export class HttpTransport implements TransportInterface {
     }
 
     // get the HTTP status code from response meta or convert RPC code
-    const status = _.get(
+    const status = get(
       response,
       "result.meta.httpStatus",
       mapStatusCode(response),

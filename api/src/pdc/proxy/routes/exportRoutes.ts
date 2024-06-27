@@ -1,5 +1,6 @@
-import { _, Request, Response } from "@/deps.ts";
+import { Request, Response } from "@/deps.ts";
 import { RPCResponseType } from "@/ilos/common/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { HttpTransport } from "../HttpTransport.ts";
 import { asyncHandler } from "../helpers/asyncHandler.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
@@ -31,7 +32,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = await kernel.handle(
         createRPCPayload("export:create", req.body, user, { req }),
       );
@@ -44,7 +45,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = (await kernel.handle(
         createRPCPayload("export:list", req.query, user, { req }),
       )) as RPCResponseType;
@@ -57,7 +58,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = (await kernel.handle(
         createRPCPayload("export:get", { uuid: req.params.uuid }, user, {
           req,
@@ -72,7 +73,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = (await kernel.handle(
         createRPCPayload("export:status", { uuid: req.params.uuid }, user, {
           req,
@@ -87,7 +88,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = (await kernel.handle(
         createRPCPayload("export:download", { uuid: req.params.uuid }, user, {
           req,
@@ -102,7 +103,7 @@ export function register(transport: HttpTransport): void {
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
-      const user = _.get(req, "session.user", {});
+      const user = get(req, "session.user", {});
       const response = (await kernel.handle(
         createRPCPayload("export:delete", { uuid: req.params.uuid }, user, {
           req,

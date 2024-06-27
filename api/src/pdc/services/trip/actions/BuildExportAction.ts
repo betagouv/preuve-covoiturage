@@ -1,4 +1,4 @@
-import { _, AdmZip, unlink } from "@/deps.ts";
+import { AdmZip, unlink } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -6,6 +6,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { join, parse } from "@/lib/path/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
@@ -242,7 +243,7 @@ export class BuildExportAction extends Action {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const type = _.get(params, "type", "export");
+    const type = get(params, "type", "export");
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     const isOpendata: boolean = this.isOpendata(type);
     let excluded_territories: TerritoryTripsInterface[] = [];

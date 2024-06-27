@@ -58,8 +58,6 @@ export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/fi
 // @deno-types="npm:@types/express@^4"
 import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
-// @deno-types="npm:@types/lodash@^4"
-import _ from "npm:lodash@^4";
 // @deno-types="npm:@types/stream-json@^1.7"
 import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
 import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
@@ -209,7 +207,6 @@ export type {
   Options as MailOptions,
 } from "npm:nodemailer@^6.9/lib/mailer";
 export {
-  _,
   addFormats,
   AdmZip,
   ajvErrors,
@@ -261,4 +258,5 @@ import bcrypt from "npm:bcryptjs@^2.4";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
 export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
+export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
 

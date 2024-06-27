@@ -1,4 +1,4 @@
-import { _, NextFunction, Request, Response, Router } from "@/deps.ts";
+import { NextFunction, Request, Response, Router } from "@/deps.ts";
 import { KernelInterface } from "@/ilos/common/index.ts";
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 
@@ -120,7 +120,7 @@ export function routeMapping(
                 createRPCPayload(
                   serviceDefinition.signature,
                   mapRequestFinal(req.body, req.query, req.params, req.session),
-                  _.get(req, "session.user", {}),
+                  get(req, "session.user", {}),
                 ),
               );
               if (!response) {

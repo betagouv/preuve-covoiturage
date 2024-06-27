@@ -1,8 +1,3 @@
-import { _ } from "@/deps.ts";
-import {
-  ConfiguredMiddleware,
-  UnconfiguredMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
 import {
   ContextType,
   ForbiddenException,
@@ -12,7 +7,12 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import {
+  ConfiguredMiddleware,
+  UnconfiguredMiddleware,
+} from "@/pdc/providers/middleware/index.ts";
 
+import { get } from "@/lib/object/index.ts";
 import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
 
 @middleware()
@@ -32,8 +32,8 @@ export class ChallengeTokenMiddleware
     },
   ): Promise<ResultType> {
     const { tokenPath, emailPath } = options;
-    const token = _.get(params, tokenPath);
-    const email = _.get(params, emailPath);
+    const token = get(params, tokenPath);
+    const email = get(params, emailPath);
 
     if (!token || !email) {
       throw new InvalidParamsException("Missing data");

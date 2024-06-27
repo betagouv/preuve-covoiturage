@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
@@ -14,6 +13,7 @@ import {
 import { alias } from "@/shared/acquisition/patch.schema.ts";
 
 import { env_or_false } from "@/lib/env/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { AcquisitionStatusEnum } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
 import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
@@ -36,7 +36,7 @@ export class PatchJourneyAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const operator_id = _.get(context, "call.user.operator_id");
+    const operator_id = get(context, "call.user.operator_id");
     await this.repository.patchPayload(
       {
         operator_id,

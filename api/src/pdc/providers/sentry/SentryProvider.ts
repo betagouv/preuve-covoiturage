@@ -1,10 +1,10 @@
-import { _ } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   provider,
   ProviderInterface,
 } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { Sentry } from "./Sentry.ts";
 
 @provider()
@@ -26,9 +26,9 @@ export class SentryProvider implements ProviderInterface {
 
           // add method name to event subtitle
           if (event.transaction === "POST|/rpc") {
-            const data = JSON.parse(_.get(event, "request.data", "[]"));
+            const data = JSON.parse(get(event, "request.data", "[]"));
             if (Array.isArray(data)) {
-              event.transaction = `POST|/rpc ${_.get(data[0], "method", "")}`
+              event.transaction = `POST|/rpc ${get(data[0], "method", "")}`
                 .trim();
             }
           }

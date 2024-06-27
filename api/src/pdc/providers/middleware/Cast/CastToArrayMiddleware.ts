@@ -1,4 +1,4 @@
-import { _, NextFunction } from "@/deps.ts";
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   middleware,
@@ -6,6 +6,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { get, set } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -30,7 +31,7 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
       // using a symbol is a safer equality check than undefined
       // and preserves null values
       const notFound = Symbol();
-      const oldValue = _.get(params, path, notFound);
+      const oldValue = get(params, path, notFound);
 
       // skip the cast if the property is not found
       if (oldValue === notFound) {
@@ -38,7 +39,7 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
       }
 
       // cast the property to an array
-      _.set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
+      set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
     }
 
     return next(params, context);

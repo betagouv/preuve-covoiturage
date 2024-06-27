@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import {
   ContextType,
   handler,
@@ -9,6 +8,7 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Sentry } from "@/pdc/providers/sentry/index.ts";
 
 import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -50,7 +50,7 @@ export class DeleteOperatorAction extends AbstractAction {
       logger.error(`> Failed to remove associated users`, e);
 
       // We want errors to be non-blocking but they are logged
-      Sentry.setUser(_.get(context, "call.user", null));
+      Sentry.setUser(get(context, "call.user", null));
       Sentry.captureException(e);
     }
 
@@ -92,7 +92,7 @@ export class DeleteOperatorAction extends AbstractAction {
       }
     } catch (e) {
       logger.error(`> Failed to remove associated applications`, e);
-      Sentry.setUser(_.get(context, "call.user", null));
+      Sentry.setUser(get(context, "call.user", null));
       Sentry.captureException(e);
     }
 
