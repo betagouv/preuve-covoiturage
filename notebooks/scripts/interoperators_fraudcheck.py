@@ -9,14 +9,13 @@
 
 # In[ ]:
 
+
 import os
 
 import pandas as pd
-import sqlalchemy as sa
 from sqlalchemy import create_engine, text
 
-from helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_passenger_and_no_overlap, remove_carpool_with_lowest_overlap_duration
-
+from helpers.apply_metods import add_overlap_columns, remove_carpool_with_lowest_overlap_duration, remove_carpool_with_same_passenger_and_no_overlap
 
 # Input params checks
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
@@ -25,29 +24,84 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME'] 
 
 
-
 # In[ ]:
+
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = f"""SELECT cc._id, cc.is_driver, ci.phone_trunc, ci.identity_key, cc.datetime, cc.duration, cc.operator_id, 
-ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt, 
-cc.operator_journey_id,
-cc.distance,
-ci.operator_user_id,
-cc.end_position,
-cc.operator_trip_id,
- 
-cc2.is_driver as other_is_driver,
-ci2.phone_trunc as other_phone_trunc,
-ci2.identity_key as other_identity_key
-FROM CARPOOL.CARPOOLS cc
-   join carpool.identities ci on cc.identity_id = ci._id
-   JOIN CARPOOL.CARPOOLS AS CC2 ON CC.OPERATOR_JOURNEY_ID = CC2.OPERATOR_JOURNEY_ID and CC.is_driver != cc2.is_driver
-   JOIN CARPOOL.IDENTITIES AS CI2 on CC2.IDENTITY_ID = CI2._id
-    WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
-	AND CC.DATETIME < NOW() - '{delay} hours'::interval
-    AND cc.operator_id != 11
+query = f"""(
+  SELECT
+    CC._ID,
+    CASE
+      WHEN DRIVER_PHONE IS NOT NULL THEN SUBSTR(DRIVER_PHONE, 1, 10)
+      ELSE CC.DRIVER_PHONE_TRUNC
+    END AS PHONE_TRUNC,
+    CC.DRIVER_IDENTITY_KEY AS IDENTITY_KEY,
+    CC.DRIVER_OPERATOR_USER_ID AS OPERATOR_USER_ID,
+    CC.START_DATETIME as datetime,
+    EXTRACT(
+      EPOCH
+      FROM
+        (CC.END_DATETIME - CC.START_DATETIME)
+    )::INT AS DURATION,
+    CC.END_DATETIME,
+    CC.OPERATOR_ID,
+    ST_ASTEXT (CC.START_POSITION) AS START_WKT,
+    ST_ASTEXT (CC.END_POSITION) AS END_WKT,
+    CC.OPERATOR_JOURNEY_ID,
+    CC.DISTANCE,
+    CC.OPERATOR_TRIP_ID,
+    TRUE AS IS_DRIVER,
+    CASE
+      WHEN PASSENGER_PHONE IS NOT NULL THEN SUBSTR(PASSENGER_PHONE, 1, 10)
+      ELSE CC.PASSENGER_PHONE_TRUNC
+    END AS OTHER_PHONE_TRUNC,
+    CC.PASSENGER_IDENTITY_KEY AS OTHER_IDENTITY_KEY,
+    CC.PASSENGER_OPERATOR_USER_ID AS OTHER_OPERATOR_USER_ID
+  FROM
+    CARPOOL_V2.CARPOOLS CC
+  WHERE
+    CC.START_DATETIME >=  NOW() - '{delay} hours'::interval - '{frame} hours'::interval
+    AND CC.START_DATETIME < NOW() - '{delay} hours'::interval
+    AND CC.OPERATOR_ID != 11
+)
+UNION ALL
+(
+  SELECT
+    CC._ID,
+    CASE
+      WHEN PASSENGER_PHONE IS NOT NULL THEN SUBSTR(PASSENGER_PHONE, 1, 10)
+      ELSE CC.PASSENGER_PHONE_TRUNC
+    END AS PHONE_TRUNC,
+    CC.PASSENGER_IDENTITY_KEY AS IDENTITY_KEY,
+    CC.PASSENGER_OPERATOR_USER_ID AS OPERATOR_USER_ID,
+    CC.START_DATETIME as datetime,
+    EXTRACT(
+      EPOCH
+      FROM
+        (CC.END_DATETIME - CC.START_DATETIME)
+    )::INT AS DURATION,
+    CC.END_DATETIME,
+    CC.OPERATOR_ID,
+    ST_ASTEXT (CC.START_POSITION) AS START_WKT,
+    ST_ASTEXT (CC.END_POSITION) AS END_WKT,
+    CC.OPERATOR_JOURNEY_ID,
+    CC.DISTANCE,
+    CC.OPERATOR_TRIP_ID,
+    FALSE::BOOLEAN AS IS_DRIVER,
+    CASE
+      WHEN DRIVER_PHONE IS NOT NULL THEN SUBSTR(DRIVER_PHONE, 1, 10)
+      ELSE CC.DRIVER_PHONE_TRUNC
+    END AS OTHER_PHONE_TRUNC,
+    CC.DRIVER_IDENTITY_KEY AS OTHER_IDENTITY_KEY,
+    CC.DRIVER_OPERATOR_USER_ID AS OTHER_OPERATOR_USER_ID
+  FROM
+    CARPOOL_V2.CARPOOLS CC
+  WHERE
+    CC.START_DATETIME >=  NOW() - '{delay} hours'::interval - '{frame} hours'::interval
+    AND CC.START_DATETIME < NOW() - '{delay} hours'::interval
+    AND CC.OPERATOR_ID != 11
+)
 """
 
 with engine.connect() as conn:
@@ -62,8 +116,8 @@ with engine.connect() as conn:
 # In[ ]:
 
 
-grouped_tmp = df_carpool.groupby(['identity_key'])
-phone_trunc_grouped_filtered = grouped_tmp.filter(lambda x: len(pd.unique(x['operator_id'])) > 1)
+grouped_idkey_tmp = df_carpool.groupby(['identity_key'])
+df_multi_op = grouped_idkey_tmp.filter(lambda x: len(pd.unique(x['operator_id'])) > 1)
 
 
 # # Etape 2
@@ -73,12 +127,11 @@ phone_trunc_grouped_filtered = grouped_tmp.filter(lambda x: len(pd.unique(x['ope
 # In[ ]:
 
 
-df_only_grouped_with_overlap_group_filled = phone_trunc_grouped_filtered.assign(overlap_group=100)
-df_only_grouped_with_overlap_group_filled = df_only_grouped_with_overlap_group_filled.assign(overlap_duration=0)
+df_only_grouped_with_overlap_group_filled = df_multi_op.assign(overlap_group=100, overlap_duration=0, overlap_duration_ratio=0)
 
 grouped_tmp = df_only_grouped_with_overlap_group_filled.groupby(['identity_key'],group_keys=False)
 
-df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
+df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
 
 
 # # Etape 3
@@ -90,8 +143,8 @@ df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_ove
 # In[ ]:
 
 
-grouped_tmp = df_only_grouped_with_overlap_group_filled.groupby(['identity_key', 'overlap_group'],group_keys=False)
-df_more_than_one_occ = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator_id'])) > 1 and x['overlap_group'].count() > 1)
+grouped_tmp = df_with_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
+df_more_than_one_overlap = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator_id'])) > 1 and x['overlap_group'].count() > 1)
 
 
 # # Etape 4
@@ -101,13 +154,13 @@ df_more_than_one_occ = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator_i
 # 
 # Pour comprendre pourquoi ils ne sont pas supprimés sur l'étape 1 : 
 # - On a une ligne par personne par trajet
-# - La ligne passager pour l' `identity_key` est effacée mais pas la ligne driver correspondante, c'est ce qui est fait ici
+# - La ligne passager pour l' `identity_key` est éffacée mais pas la ligne driver correspondante, c'est ce qui est fait ici
 # 
 
 # In[ ]:
 
 
-grouped_tmp = df_more_than_one_occ.groupby(['identity_key', 'overlap_group'], group_keys=False)
+grouped_tmp = df_more_than_one_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
 
 df_more_than_one_occ_enhanced = grouped_tmp.apply(lambda x: remove_carpool_with_same_passenger_and_no_overlap(x)).reset_index(drop=True)
 
@@ -187,6 +240,31 @@ control_matrix = grouped_tmp.agg(unique_operator_count=('operator_id', 'nunique'
 assert (control_matrix['unique_operator_count'] > 1).all()
 
 
+# In[ ]:
+
+
+import sqlalchemy as sa
+
+# Update de carpool_v2 schema for passed status (i.e no fraud detected)
+# Retrieve carpool without fraud
+df_passed_carpool_ids = df_carpool[~df_carpool['_id'].isin(df_final_result['_id'])]['_id']
+
+if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool_v2.status']
+    
+    where_clause = table.c.carpool_id.in_(df_passed_carpool_ids)
+
+    update_stmt = sa.update(table).where(where_clause).values(status='passed')
+
+    with engine.connect() as conn:
+        result = conn.execute(update_stmt)
+        conn.commit()
+
+
 # # Step 8
 # 
 # Mise à jour des carpools retenus en status `fraudcheck_error`
@@ -194,7 +272,32 @@ assert (control_matrix['unique_operator_count'] > 1).all()
 # In[ ]:
 
 
+import sqlalchemy as sa
 
+# Update de carpool_v2 schema for failed status (i.e fraud detected)
+if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool_v2.status']
+    
+    where_clause = table.c.carpool_id.in_(df_final_result['_id'].to_list())
+
+    update_stmt = sa.update(table).where(where_clause).values(fraud_status='failed')
+
+    with engine.connect() as conn:
+        result = conn.execute(update_stmt)
+        print(result.rowcount)
+        conn.commit()
+
+
+# In[ ]:
+
+
+import sqlalchemy as sa
+
+# Update de carpool schema
 if update_carpool_status is True:
 
     metadata = sa.MetaData(schema='carpool')
@@ -202,8 +305,6 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool.carpools']
     
-    print(f"Updating {len(df_final_result['_id'])} carpools with fraudcheck_error")
-
     where_clause = table.c._id.in_(df_final_result['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='fraudcheck_error')
@@ -216,31 +317,33 @@ if update_carpool_status is True:
 # # Step 9
 # 
 # Ajout des labels dans une table
+# 
+# @deprecated : l'info est déjà dans carpool. Pas besoin d'avoir une table de label si pas d'autre type de fraud détectée
 
 # In[ ]:
 
 
-df_labels = pd.DataFrame(df_final_result['_id'])
-df_labels.columns = ['carpool_id']
-df_labels = df_labels.assign(label='interoperator_fraud')
+# df_labels = pd.DataFrame(df_final_result['_id'])
+# df_labels.columns = ['carpool_id']
+# df_labels = df_labels.assign(label='interoperator_fraud')
 
 
 # In[ ]:
 
 
-from sqlalchemy.dialects.postgresql import insert
+# from sqlalchemy.dialects.postgresql import insert
 
-def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
-    insert_stmt = insert(table.table).values(list(data_iter))
-    on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['carpool_id', 'label'])
-    conn.execute(on_duplicate_key_stmt)
+# def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
+#     insert_stmt = insert(table.table).values(list(data_iter))
+#     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['carpool_id', 'label'])
+#     conn.execute(on_duplicate_key_stmt)
 
-df_labels.to_sql(
-    name="labels",
-    schema="fraudcheck",
-    con=engine,
-    if_exists="append",
-    index=False,
-    method=insert_or_do_nothing_on_conflict
-)
+# df_labels.to_sql(
+#     name="labels",
+#     schema="fraudcheck",
+#     con=engine,
+#     if_exists="append",
+#     index=False,
+#     method=insert_or_do_nothing_on_conflict
+# )
 
