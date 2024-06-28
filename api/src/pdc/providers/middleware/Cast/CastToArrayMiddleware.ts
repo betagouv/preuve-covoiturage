@@ -9,13 +9,6 @@ import {
 import { get, set } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
-/*
- * CastToArrayMiddleware middleware and its companion helper function
- * castToArrayMiddleware are used to cast one or many properties
- * to an array.
- *
- * Not found or undefined props are skipped.
- */
 @middleware()
 export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
   async process(
@@ -53,6 +46,16 @@ const alias = "cast.to_array";
 
 export const castToArrayMiddlewareBinding = [alias, CastToArrayMiddleware];
 
+/**
+ * Cast one or many properties to an array. Not found or undefined props are skipped.
+ *
+ * @param properties - single or array of multiple properties to cast to an array
+ *
+ * @example
+ * middlewares: [
+ *   castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
+ * ],
+ */
 export function castToArrayMiddleware(
   properties: HelperArgs,
 ): ConfiguredMiddleware<HelperArgs> {
