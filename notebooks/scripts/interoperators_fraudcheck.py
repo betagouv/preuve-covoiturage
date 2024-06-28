@@ -243,27 +243,26 @@ assert (control_matrix['unique_operator_count'] > 1).all()
 # In[ ]:
 
 
-# import sqlalchemy as sa
+import sqlalchemy as sa
 
-# # Update de carpool_v2 schema for passed status (i.e no fraud detected)
-# # TODO A priori pas besoin mais à double check
-# # Retrieve carpool without fraud
-# df_passed_carpool_ids = df_carpool[~df_carpool['_id'].isin(df_final_result['_id'])]['_id']
+# Update de carpool_v2 schema for passed status (i.e no fraud detected)
+# Retrieve carpool without fraud
+df_passed_carpool_ids = df_carpool[~df_carpool['_id'].isin(df_final_result['_id'])]['_id']
 
-# if update_carpool_status is True:
+if update_carpool_status is True:
 
-#     metadata = sa.MetaData(schema='carpool_v2')
-#     metadata.reflect(bind=engine)
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
 
-#     table = metadata.tables['carpool_v2.status']
+    table = metadata.tables['carpool_v2.status']
     
-#     where_clause = table.c.carpool_id.in_(df_passed_carpool_ids)
+    where_clause = table.c.carpool_id.in_(df_passed_carpool_ids)
 
-#     update_stmt = sa.update(table).where(where_clause).values(status='passed')
+    update_stmt = sa.update(table).where(where_clause).values(status='passed')
 
-#     with engine.connect() as conn:
-#         result = conn.execute(update_stmt)
-#         # conn.commit()
+    with engine.connect() as conn:
+        result = conn.execute(update_stmt)
+        conn.commit()
 
 
 # # Step 8
