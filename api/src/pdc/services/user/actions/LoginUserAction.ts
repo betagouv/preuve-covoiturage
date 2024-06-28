@@ -1,5 +1,5 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler, UnauthorizedException } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { contentWhitelistMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import {
@@ -13,9 +13,6 @@ import { userWhiteListFilterOutput } from "../config/filterOutput.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 import { challengePasswordMiddleware } from "../middlewares/ChallengePasswordMiddleware.ts";
 
-/*
- * Authenticate user by email & pwd - else throws forbidden error
- */
 @handler({
   ...handlerConfig,
   middlewares: [
@@ -34,6 +31,8 @@ export class LoginUserAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const user = await this.userRepository.findByEmail(params.email);
+    if (!user) throw new UnauthorizedException("Invalid email or password");
+
     switch (user.status) {
       case "pending":
         throw new UnauthorizedException("Account is pending validation");
