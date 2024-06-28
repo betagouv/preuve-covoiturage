@@ -247,7 +247,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it.skip("should create a territory export", async () => {
+  it("should create a territory export", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -273,9 +273,6 @@ describe("CreateAction V3", () => {
         assertEquals(last?.target, ExportTarget.TERRITORY);
 
         // TODO
-        // refactor copyFromContextMiddleware() to add support for [] wrapping
-
-        // TODO
         // assert territory_id has been injected and wrapped in an array ?
 
         // TODO: resolve the geo_selector from the territory_id
@@ -285,7 +282,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it.skip("should create an operator export", async () => {
+  it("should create an operator export", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -312,6 +309,7 @@ describe("CreateAction V3", () => {
 
         // assert that operator_id has been replaced by the operator's id
         // from the context (2).
+        assertEquals(last?.params.get().operator_id, [2]);
       },
     );
   });

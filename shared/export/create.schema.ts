@@ -60,9 +60,7 @@ export const schemaV3 = {
       items: { macro: "serial" },
     },
     territory_id: {
-      type: "array",
-      minItems: 0,
-      items: { macro: "serial" },
+      macro: "serial",
     },
     recipients: {
       type: "array",
