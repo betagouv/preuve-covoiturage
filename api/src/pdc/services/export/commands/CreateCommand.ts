@@ -4,6 +4,7 @@ import {
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
@@ -58,7 +59,7 @@ export class CreateCommand implements CommandInterface {
           return value as ExportTarget;
         }
 
-        console.warn(
+        logger.warn(
           `Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`,
         );
         return ExportTarget.OPENDATA;
@@ -118,7 +119,7 @@ export class CreateCommand implements CommandInterface {
       created_by,
     );
     if (!emails.length) {
-      console.error(
+      logger.error(
         'No recipient found! You must set "--created_by" or "--recipient"',
       );
       return;
@@ -143,7 +144,7 @@ export class CreateCommand implements CommandInterface {
       },
     );
 
-    console.info(`Export request created!
+    logger.info(`Export request created!
       UUID: ${uuid}
       Target: ${target}
       Status: ${status}

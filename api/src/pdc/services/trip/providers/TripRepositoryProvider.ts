@@ -1,17 +1,6 @@
 /* eslint-disable max-len */
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { _ } from "@/deps.ts";
-import {
-  ExportTripInterface,
-  TripRepositoryInterface,
-  TripRepositoryProviderInterfaceResolver,
-  TzResultInterface,
-} from "../interfaces/index.ts";
-import {
-  FinancialStatInterface,
-  StatInterface,
-} from "../interfaces/StatInterface.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import { ResultWithPagination } from "@/shared/common/interfaces/ResultWithPagination.ts";
 import { LightTripInterface } from "@/shared/trip/common/interfaces/LightTripInterface.ts";
@@ -21,6 +10,16 @@ import {
   TripSearchInterfaceWithPagination,
 } from "@/shared/trip/common/interfaces/TripSearchInterface.ts";
 import { TripStatInterface } from "@/shared/trip/common/interfaces/TripStatInterface.ts";
+import {
+  FinancialStatInterface,
+  StatInterface,
+} from "../interfaces/StatInterface.ts";
+import {
+  ExportTripInterface,
+  TripRepositoryInterface,
+  TripRepositoryProviderInterfaceResolver,
+  TzResultInterface,
+} from "../interfaces/index.ts";
 
 /*
  * Trip specific repository
@@ -403,7 +402,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       data[index] = result.rows[index];
       data[index]["campaigns_id"] = [
         ...new Set(
-          _.map(result.rows[index]["campaigns_id"] || [], "policy_id"),
+          (result.rows[index]["campaigns_id"] || []).map((r: any) =>
+            r.policy_id
+          ),
         ),
       ];
       index += 1;

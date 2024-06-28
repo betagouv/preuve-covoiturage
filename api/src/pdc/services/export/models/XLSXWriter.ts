@@ -1,12 +1,16 @@
-import { AdmZip, excel, os, path } from "@/deps.ts";
-import { ExportTarget } from "./Export.ts";
+import { AdmZip, excel } from "@/deps.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
+import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import {
   AllowedComputedFields,
   CarpoolRow,
   CarpoolRowData,
 } from "./CarpoolRow.ts";
+import { ExportTarget } from "./Export.ts";
 
-export type Datasources = Map<string, any>;
+export type Datasources = Map<string, unknown>;
 
 export type Fields = Array<keyof CarpoolRowData | keyof AllowedComputedFields>;
 
@@ -78,8 +82,8 @@ export class XLSXWriter {
 
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.options, ...config } as Options;
-    this.folder = os.tmpdir();
-    this.basename = this.sanitize(filename);
+    this.folder = getTmpDir();
+    this.basename = sanitize(filename, 128);
   }
 
   // TODO create the workbook and the worksheets
@@ -134,14 +138,14 @@ export class XLSXWriter {
 
   // TODO print help in a separate sheet
   public async printHelp(): Promise<XLSXWriter> {
-    console.info("TODO print help");
+    logger.info("TODO print help");
     return this;
   }
 
   // TODO compress the file with ZIP (for now)
   public async compress(): Promise<XLSXWriter> {
     if (!this.options.compress) {
-      console.info(`Skipped compression of ${this.workbookPath}`);
+      logger.info(`Skipped compression of ${this.workbookPath}`);
       return this;
     }
 
@@ -163,7 +167,7 @@ export class XLSXWriter {
   }
 
   public get workbookPath(): string {
-    return path.join(this.folder, this.workbookFilename);
+    return join(this.folder, this.workbookFilename);
   }
 
   public get archiveFilename(): string {
@@ -171,23 +175,11 @@ export class XLSXWriter {
   }
 
   public get archivePath(): string {
-    return path.join(this.folder, this.archiveFilename);
+    return join(this.folder, this.archiveFilename);
   }
 
   public addDatasource(key: string, value: any): XLSXWriter {
     this.options.datasources.set(key, value);
     return this;
-  }
-
-  // TODO share with APDF where the code comes from
-  protected sanitize(str: string): string {
-    return str
-      .replace(/\u20AC/g, "e") // € -> e
-      .normalize("NFD")
-      .replace(/[\ \.\/]/g, "_")
-      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, "")
-      .replace("_-_", "-")
-      .toLowerCase()
-      .substring(0, 128);
   }
 }

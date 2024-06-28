@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
@@ -91,10 +92,10 @@ export class Policy implements PolicyInterface {
           context.incentive.set(0);
           return context.incentive;
         }
-        console.error(
+        logger.error(
           `Stateless incentive calculation for carpool ${carpool.operator_id} ${carpool.operator_journey_id} failed : ${e.message}`,
         );
-        console.debug(e);
+        logger.debug(e);
         throw e;
       }
     }
@@ -114,10 +115,10 @@ export class Policy implements PolicyInterface {
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {
-      console.error(
+      logger.error(
         `Stateful incentive calculation failed for ${incentive._id}: ${e.message}`,
       );
-      console.debug(e);
+      logger.debug(e);
       throw e;
     }
   }

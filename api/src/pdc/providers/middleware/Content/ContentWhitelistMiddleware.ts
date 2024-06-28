@@ -1,5 +1,3 @@
-import { _ } from "@/deps.ts";
-
 import {
   ContextType,
   middleware,
@@ -7,6 +5,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { set } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -32,7 +31,7 @@ export class ContentWhitelistMiddleware
     const configKeys = config
       .map((k: string) => k.split("."))
       .reduce((acc: object, keys: string[]) => {
-        _.set(acc, keys, true);
+        set(acc, keys, true);
         return acc;
       }, {});
 

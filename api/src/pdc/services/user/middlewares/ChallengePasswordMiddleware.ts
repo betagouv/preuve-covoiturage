@@ -1,5 +1,3 @@
-import { _ } from "@/deps.ts";
-
 import {
   ContextType,
   ForbiddenException,
@@ -10,8 +8,9 @@ import {
   ResultType,
 } from "@/ilos/common/index.ts";
 
-import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
+import { get } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "@/pdc/providers/middleware/index.ts";
+import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
 
 @middleware()
 export class ChallengePasswordMiddleware
@@ -31,12 +30,12 @@ export class ChallengePasswordMiddleware
       throw new InvalidParamsException("Misconfigured middleware");
     }
 
-    const password = _.get(params, passwordPath);
+    const password = get(params, passwordPath);
 
     if (idPath) {
-      await this.challengeById(password, _.get(params, idPath));
+      await this.challengeById(password, get(params, idPath));
     } else if (emailPath) {
-      await this.challengeByEmail(password, _.get(params, emailPath));
+      await this.challengeByEmail(password, get(params, emailPath));
     }
 
     return next(params, context);

@@ -1,14 +1,11 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
-import os from "node:os";
-import path from "node:path";
 import process from "node:process";
 import Stream from "node:stream";
 import axiosRetry from "npm:axios-retry@^4";
 import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
-export { Console } from "node:console";
 export { createHash, randomBytes } from "node:crypto";
 export {
   constants as fsConstants,
@@ -28,8 +25,6 @@ export {
   writeFile,
 } from "node:fs/promises";
 export type { FileHandle } from "node:fs/promises";
-export { hostname, tmpdir } from "node:os";
-export { basename, extname, join } from "node:path";
 export { Readable } from "node:stream";
 export { URL, URLSearchParams } from "node:url";
 export { isMainThread } from "node:worker_threads";
@@ -49,7 +44,6 @@ export type { PoolClient, PoolConfig } from "npm:pg@^8.12";
 const { Pool } = pg;
 // @deno-types="npm:@types/pg-cursor@^2.7"
 import Cursor from "npm:pg-cursor@^2.11";
-import pino from "npm:pino@^9.1";
 // @deno-types="npm:@types/pg-cursor@^2.7"
 export type { CursorQueryConfig } from "npm:pg-cursor@^2.11";
 // @deno-types="npm:@types/express@^4"
@@ -64,8 +58,6 @@ export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/fi
 // @deno-types="npm:@types/express@^4"
 import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
-// @deno-types="npm:@types/lodash@^4"
-import _ from "npm:lodash@^4";
 // @deno-types="npm:@types/stream-json@^1.7"
 import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
 import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
@@ -215,7 +207,6 @@ export type {
   Options as MailOptions,
 } from "npm:nodemailer@^6.9/lib/mailer";
 export {
-  _,
   addFormats,
   AdmZip,
   ajvErrors,
@@ -246,11 +237,8 @@ export {
   mapshaper,
   mjml2html,
   net,
-  os,
-  path,
   pdf,
   pg,
-  pino,
   Pool,
   process,
   promClient,
@@ -269,3 +257,6 @@ import CryptoJS from "npm:crypto-js@^4.2";
 import bcrypt from "npm:bcryptjs@^2.4";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
+export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
+export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
+

@@ -1,9 +1,9 @@
-import { process } from "@/deps.ts";
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
 import { Migrator } from "./Migrator.ts";
 
 describe("seed", () => {
-  const db = new Migrator(process.env.APP_POSTGRES_URL);
+  const db = new Migrator(env_or_fail("APP_POSTGRES_URL"));
   beforeAll(async () => {
     await db.create();
     await db.up();

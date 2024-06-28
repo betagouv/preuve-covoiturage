@@ -1,4 +1,5 @@
-import { _, format, toZonedTime } from "@/deps.ts";
+import { format, toZonedTime } from "@/deps.ts";
+import { get } from "@/lib/object/index.ts";
 import { FlattenTripInterface } from "../actions/BuildExportAction.ts";
 import { ExportTripInterface } from "../interfaces/index.ts";
 
@@ -12,44 +13,44 @@ export function normalizeExport(
   );
 
   // financial in euros
-  data.driver_revenue = _.get(src, "driver_revenue", 0) / 100;
-  data.passenger_contribution = _.get(src, "passenger_contribution", 0) / 100;
+  data.driver_revenue = get(src, "driver_revenue", 0) / 100;
+  data.passenger_contribution = get(src, "passenger_contribution", 0) / 100;
 
   for (let i = 0; i < 4; i++) {
     // normalize incentive in euro
     const id = i + 1;
-    data[`passenger_incentive_${id}_siret`] = _.get(
+    data[`passenger_incentive_${id}_siret`] = get(
       passenger_incentive_raw,
       `${i}.siret`,
     );
     data[`passenger_incentive_${id}_amount`] =
-      _.get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
-    data[`passenger_incentive_rpc_${id}_siret`] = _.get(
+      get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
+    data[`passenger_incentive_rpc_${id}_siret`] = get(
       data,
       `passenger_incentive_rpc_raw.${i}.siret`,
     );
-    data[`passenger_incentive_rpc_${id}_name`] = _.get(
+    data[`passenger_incentive_rpc_${id}_name`] = get(
       data,
       `passenger_incentive_rpc_raw.${i}.policy_name`,
     );
     data[`passenger_incentive_rpc_${id}_amount`] =
-      _.get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
-    data[`driver_incentive_${id}_siret`] = _.get(
+      get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
+    data[`driver_incentive_${id}_siret`] = get(
       driver_incentive_raw,
       `${i}.siret`,
     );
     data[`driver_incentive_${id}_amount`] =
-      _.get(driver_incentive_raw, `${i}.amount`, 0) / 100;
-    data[`driver_incentive_rpc_${id}_siret`] = _.get(
+      get(driver_incentive_raw, `${i}.amount`, 0) / 100;
+    data[`driver_incentive_rpc_${id}_siret`] = get(
       data,
       `driver_incentive_rpc_raw.${i}.siret`,
     );
-    data[`driver_incentive_rpc_${id}_name`] = _.get(
+    data[`driver_incentive_rpc_${id}_name`] = get(
       data,
       `driver_incentive_rpc_raw.${i}.policy_name`,
     );
     data[`driver_incentive_rpc_${id}_amount`] =
-      _.get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
+      get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
   }
   return data;
 }
@@ -111,10 +112,10 @@ function normalize(
     journey_duration_anounced: Math.round(src.journey_duration_anounced / 60),
   };
 
-  const driver_incentive_raw = (_.get(src, "driver_incentive_raw", []) || [])
+  const driver_incentive_raw = (get(src, "driver_incentive_raw", []) || [])
     .filter((i) => i.type === "incentive");
   const passenger_incentive_raw =
-    (_.get(src, "passenger_incentive_raw", []) || []).filter((i) =>
+    (get(src, "passenger_incentive_raw", []) || []).filter((i) =>
       i.type === "incentive"
     );
 

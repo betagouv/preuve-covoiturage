@@ -1,16 +1,16 @@
 /* eslint-disable max-len */
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { _ } from "@/deps.ts";
+import { set } from "@/lib/object/index.ts";
+import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
+import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
 } from "../interfaces/APDFRepositoryProviderInterface.ts";
 import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
-import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
-import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
-import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
@@ -136,16 +136,16 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         if (!k.includes("slice_")) return p;
         const [, i, prop] = k.split("_");
         if (prop === "start") {
-          _.set(p, `slices.${i}.slice.start`, row[k]);
+          set(p, `slices.${i}.slice.start`, row[k]);
         } else if (prop === "end") {
           // Highest slice can return Infinity as boundary
-          _.set(
+          set(
             p,
             `slices.${i}.slice.end`,
             row[k] === "Infinity" ? undefined : row[k],
           );
         } else {
-          _.set(p, `slices.${i}.${prop}`, row[k]);
+          set(p, `slices.${i}.${prop}`, row[k]);
         }
         return p;
       },

@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
@@ -54,7 +55,7 @@ export class ListAction extends Action {
         { channel: { service: "apdf" }, call: context.call },
       );
     } catch (e) {
-      console.error(`[apdf:list -> campaign:find] ${e.message}`);
+      logger.error(`[apdf:list -> campaign:find] ${e.message}`);
       throw e;
     }
 

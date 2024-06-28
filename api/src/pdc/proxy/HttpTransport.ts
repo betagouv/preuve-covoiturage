@@ -1,14 +1,31 @@
 import {
+  bodyParser,
+  cors,
+  express,
+  expressSession,
+  helmet,
+  http,
+  NextFunction,
+  Redis,
+  RedisStore,
+  Request,
+  Response,
+} from "@/deps.ts";
+import {
   ConfigInterface,
   ConfigInterfaceResolver,
   InvalidRequestException,
   KernelInterface,
+  RPCResponseType,
   RPCSingleCallType,
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
+import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get, pick } from "@/lib/object/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
@@ -16,41 +33,26 @@ import { signature as importCeeSignature } from "@/shared/cee/importApplication.
 import { signature as importIdentityCeeSignature } from "@/shared/cee/importApplicationIdentity.contract.ts";
 import { signature as registerCeeSignature } from "@/shared/cee/registerApplication.contract.ts";
 import { signature as simulateCeeSignature } from "@/shared/cee/simulateApplication.contract.ts";
-import { RPCResponseType } from "@/shared/common/rpc/RPCResponseType.ts";
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from "@/shared/territory/getAuthorizedCodes.contract.ts";
-import { Redis } from "@/deps.ts";
-import {
-  _,
-  bodyParser,
-  cors,
-  express,
-  expressSession,
-  helmet,
-  http,
-  path,
-  RedisStore,
-  Request,
-  Response,
-} from "@/deps.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
 import {
-  dataWrapMiddleware,
-  errorHandlerMiddleware,
-  signResponseMiddleware,
-} from "./middlewares/index.ts";
-import {
   CacheMiddleware,
   cacheMiddleware,
   CacheTTL,
 } from "./middlewares/cacheMiddleware.ts";
+import {
+  dataWrapMiddleware,
+  errorHandlerMiddleware,
+  signResponseMiddleware,
+} from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
   acquisitionRateLimiter,
@@ -64,6 +66,7 @@ import {
   rateLimiter,
 } from "./middlewares/rateLimiter.ts";
 import { serverTokenMiddleware } from "./middlewares/serverTokenMiddleware.ts";
+import { register as registerExportRoutes } from "./routes/exportRoutes.ts";
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -123,6 +126,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
+    registerExportRoutes(this);
     this.registerStaticFolder();
   }
 
@@ -164,8 +168,8 @@ export class HttpTransport implements TransportInterface {
         httpOnly: true,
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
-        secure: env.or_fail("APP_ENV", "local") !== "local",
-        sameSite: env.or_fail("APP_ENV", "local") !== "local"
+        secure: env_or_fail("APP_ENV", "local") !== "local",
+        sameSite: env_or_fail("APP_ENV", "local") !== "local"
           ? "none"
           : "strict",
       },
@@ -177,7 +181,7 @@ export class HttpTransport implements TransportInterface {
       store: new RedisStore({ client: redis, prefix: "proxy:" }),
     });
 
-    this.app.use(function (req, res, next) {
+    this.app.use(function (req: Request, res: Response, next: NextFunction) {
       if (req.headers.authorization) {
         return next();
       }
@@ -241,8 +245,8 @@ export class HttpTransport implements TransportInterface {
 
   private registerGlobalMiddlewares(): void {
     // maintenance mode
-    this.app.use((req, res, next) => {
-      if (env.or_false("APP_MAINTENANCE")) {
+    this.app.use((_req: Request, res: Response, next: NextFunction) => {
+      if (env_or_false("APP_MAINTENANCE")) {
         res.status(503).json({ code: 503, error: "Service Unavailable" });
         return;
       }
@@ -294,10 +298,10 @@ export class HttpTransport implements TransportInterface {
       "/v3/policies/cee",
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -328,10 +332,10 @@ export class HttpTransport implements TransportInterface {
       "/v3/policies/cee/simulate",
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -361,10 +365,10 @@ export class HttpTransport implements TransportInterface {
       "/v3/policies/cee/import",
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -392,10 +396,10 @@ export class HttpTransport implements TransportInterface {
       "/v3/policies/cee/import/identity",
       ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -425,8 +429,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/policies/simulate",
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", null);
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "campaign:simulateOnFuture",
@@ -443,7 +447,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         this.kernel.notify("user:sendSimulationEmail", req.body, {
           call: { user: { permissions: ["common.user.policySimulate"] } },
           channel: {
@@ -459,7 +463,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/geo/search",
       rateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = await this.kernel.handle(
           createRPCPayload(
             "territory:listGeo",
@@ -475,8 +479,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/geo/route",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", null);
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getRouteMeta", req.query, user, { req }),
         )) as RPCResponseType;
@@ -488,8 +492,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/geo/point/by_address",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", null);
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getPointByAddress", req.query, user, { req }),
         )) as RPCResponseType;
@@ -501,8 +505,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/geo/point/by_insee",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", null);
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("geo:getPointByCode", req.query, user, { req }),
         )) as RPCResponseType;
@@ -522,9 +526,9 @@ export class HttpTransport implements TransportInterface {
       "/v3/journeys/:operator_journey_id",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { params } = req;
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("acquisition:status", params, user, { req }),
         )) as RPCResponseType;
@@ -536,8 +540,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/journeys/:operator_journey_id",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", null);
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:patch",
@@ -557,8 +561,8 @@ export class HttpTransport implements TransportInterface {
       "/v3/journeys/:id/cancel",
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:cancel",
@@ -581,11 +585,11 @@ export class HttpTransport implements TransportInterface {
       "/v3/journeys",
       acquisitionRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = _.get(req, "session.user", {});
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
 
         Sentry.setUser(
-          _.pick(user, [
+          pick(user, [
             "_id",
             "application_id",
             "operator_id",
@@ -613,9 +617,9 @@ export class HttpTransport implements TransportInterface {
       "/v3/journeys",
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { query } = req;
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
           createRPCPayload("acquisition:list", query, user, { req }),
         )) as RPCResponseType;
@@ -631,7 +635,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/login",
       loginRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("user:login", req.body),
         )) as RPCResponseType;
@@ -657,25 +661,31 @@ export class HttpTransport implements TransportInterface {
     /**
      * Get the user profile (reads from the session rather than the database)
      */
-    this.app.get("/profile", authRateLimiter(), (req, res, next) => {
-      if (!("user" in req.session)) {
-        throw new UnauthorizedException();
-      }
+    this.app.get(
+      "/profile",
+      authRateLimiter(),
+      (req: Request, res: Response, _next: NextFunction) => {
+        if (!("user" in req.session)) {
+          throw new UnauthorizedException();
+        }
 
-      res.json(_.get(req.session, "user"));
-    });
+        res.json(get(req.session, "user"));
+      },
+    );
 
     /**
-     * Kill the current sesssion
+     * Kill the current session
      */
-    this.app.post("/logout", authRateLimiter(), (req, res, next) => {
-      req.session.destroy((err) => {
-        if (err) {
-          throw new Error(err.message);
-        }
-        res.status(204).end();
-      });
-    });
+    this.app.post(
+      "/logout",
+      authRateLimiter(),
+      (req: Request, res: Response, _next: NextFunction) => {
+        req.session.destroy((err: Error) => {
+          if (err) throw err;
+          res.status(204).end();
+        });
+      },
+    );
 
     /**
      * Let the user request a new password by supplying her email
@@ -683,7 +693,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/auth/reset-password",
       authRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("user:forgottenPassword", { email: req.body.email }),
         )) as RPCResponseType;
@@ -698,7 +708,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/auth/check-token",
       authRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("user:checkForgottenToken", {
             email: req.body.email,
@@ -716,7 +726,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/auth/change-password",
       authRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("user:changePasswordWithToken", {
             email: req.body.email,
@@ -735,7 +745,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/auth/confirm-email",
       authRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("user:confirmEmail", {
             email: req.body.email,
@@ -755,14 +765,14 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/applications",
       rateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         if (Array.isArray(req.body)) {
           throw new InvalidRequestException(
             "Cannot create multiple applications at once",
           );
         }
 
-        const user = _.get(req, "session.user", null);
+        const user = get(req, "session.user", null);
         if (!user) throw new UnauthorizedException();
         if (!user.operator_id) {
           throw new UnauthorizedException(
@@ -804,18 +814,18 @@ export class HttpTransport implements TransportInterface {
       "/v3/certificates",
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const call = createRPCPayload(
           "certificate:create",
           req.body,
-          _.get(req, "session.user", undefined),
+          get(req, "session.user", undefined),
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
         res
           .status(
-            _.get(response, "result.meta.httpStatus", mapStatusCode(response)),
+            get(response, "result.meta.httpStatus", mapStatusCode(response)),
           )
-          .send(_.get(response, "result.data", this.parseErrorData(response)));
+          .send(get(response, "result.data", this.parseErrorData(response)));
       }),
     );
 
@@ -828,18 +838,18 @@ export class HttpTransport implements TransportInterface {
       "/v3/certificates/:uuid/attachment",
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const call = createRPCPayload(
           "certificate:download",
           { ...req.body, uuid: req.params.uuid },
-          _.get(req, "session.user", undefined),
+          get(req, "session.user", undefined),
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
         this.raw(
           res,
-          _.get(response, "result.body", response),
-          _.get(response, "result.headers", {}),
+          get(response, "result.body", response),
+          get(response, "result.headers", {}),
         );
       }),
     );
@@ -850,14 +860,14 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/v3/certificates/:uuid",
       rateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const response = (await this.kernel.handle(
           createRPCPayload("certificate:find", { uuid: req.params.uuid }, {
             permissions: ["common.certificate.find"],
           }),
         )) as RPCResponseType;
 
-        this.raw(res, _.get(response, "result.data", response), {
+        this.raw(res, get(response, "result.data", response), {
           "Content-type": "application/json",
         });
       }),
@@ -866,12 +876,14 @@ export class HttpTransport implements TransportInterface {
 
   private registerAfterAllHandlers(): void {
     // add the RPC method as tag
-    this.app.use((error, req, res, next) => {
-      const body = Array.isArray(req.body) ? req.body[0] : req.body;
-      if (body) Sentry.setTag("method", _.get(body, "method", "not set"));
+    this.app.use(
+      (error: Error, req: Request, _res: Response, next: NextFunction) => {
+        const body = Array.isArray(req.body) ? req.body[0] : req.body;
+        if (body) Sentry.setTag("method", get(body, "method", "not set"));
 
-      next(error);
-    });
+        next(error);
+      },
+    );
 
     Sentry.setupExpressErrorHandler(this.app);
 
@@ -892,7 +904,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/honor",
       monHonorCertificateRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         await this.kernel.handle(
           createRPCPayload(
             "honor:save",
@@ -902,7 +914,7 @@ export class HttpTransport implements TransportInterface {
         );
         res.status(201).header(
           "Location",
-          `${process.env.APP_APP_URL}/honor/stats`,
+          `${env_or_fail("APP_APP_URL")}/honor/stats`,
         ).json({ saved: true });
       }),
     );
@@ -913,14 +925,16 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/honor/stats",
       rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload("honor:stats", {}, {
-            permissions: ["common.honor.stats"],
-          }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
+      asyncHandler(
+        async (_req: Request, res: Response, _next: NextFunction) => {
+          const response = await this.kernel.handle(
+            createRPCPayload("honor:stats", {}, {
+              permissions: ["common.honor.stats"],
+            }),
+          );
+          this.send(res, response as RPCResponseType);
+        },
+      ),
     );
   }
 
@@ -973,7 +987,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/contactform",
       contactformRateLimiter(),
-      asyncHandler(async (req, res, next) => {
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { name, email, company, job, subject, body } = req.body;
         const response = await this.kernel.handle(
           createRPCPayload(
@@ -994,12 +1008,12 @@ export class HttpTransport implements TransportInterface {
    */
   private registerStaticFolder() {
     const __dirname = new URL(".", import.meta.url).pathname;
-    console.debug(
-      `registerStaticFolder: ${path.join(__dirname, "public/.well-known")}`,
+    logger.debug(
+      `registerStaticFolder: ${join(__dirname, "public/.well-known")}`,
     );
     this.app.use(
       "/.well-known",
-      express.static(path.join(__dirname, "public/.well-known")),
+      express.static(join(__dirname, "public/.well-known")),
     );
   }
 
@@ -1013,24 +1027,26 @@ export class HttpTransport implements TransportInterface {
      * List all RPC actions
      * - disabled when deployed
      */
-    if (env.or_fail("APP_ENV", "local") === "local") {
+    if (env_or_fail("APP_ENV", "local") === "local") {
       this.app.get(
         endpoint,
         rateLimiter(),
-        asyncHandler(async (req, res, next) => {
-          const response = await this.kernel
-            .getContainer()
-            .getHandlers()
-            .map((def) => ({
-              service: def.service,
-              method: def.method,
-            }))
-            .reduce((acc, { service, method }) => {
-              acc.push(`${service}:${method}`);
-              return acc;
-            }, []);
-          res.json(response);
-        }),
+        asyncHandler(
+          async (_req: Request, res: Response, _next: NextFunction) => {
+            const response = await this.kernel
+              .getContainer()
+              .getHandlers()
+              .map((def) => ({
+                service: def.service,
+                method: def.method,
+              }))
+              .reduce((acc: string[], { service, method }) => {
+                acc.push(`${service}:${method}`);
+                return acc;
+              }, []);
+            res.json(response);
+          },
+        ),
       );
     }
 
@@ -1040,16 +1056,16 @@ export class HttpTransport implements TransportInterface {
       apiRateLimiter(),
       asyncHandler(
         async (
-          req: express.Request,
-          res: express.Response,
-          next: express.NextFunction,
+          req: Request,
+          res: Response,
+          _next: NextFunction,
         ): Promise<void> => {
           // if (req.originalUrl === "/rpc?methods=trip:stats") {
           //   res.setTimeout(120000);
           // }
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
-          let user = _.get(req, "session.user", null);
+          let user = get(req, "session.user", null);
 
           if (!user) {
             throw new UnauthorizedException();
@@ -1074,18 +1090,18 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private start(port = 8080, timeout = 30000): void {
+  private start(port = 8080, _timeout = 30000): void {
     this.server = this.app.listen(
       port,
       () =>
-        console.info(
+        logger.info(
           `Listening on port ${port}. Version ${
             this.config.get("sentry.version")
           }`,
         ),
     );
     // FIXME
-    // this.server.setTimeout(timeout);
+    // this.server.setTimeout(_timeout);
   }
 
   /**
@@ -1094,18 +1110,18 @@ export class HttpTransport implements TransportInterface {
    * - set the status code (converted from an RPC status code)
    * - set the body. Error patterns are parsed
    */
-  private send(
+  public send(
     res: Response,
     response: RPCResponseType,
     headers: { [key: string]: string } = {},
     unnestResult = false,
   ): void {
-    if ("success" in (response as any)) {
+    if ("success" in (response as Response)) {
       this.setHeaders(res, headers);
     }
 
     // get the HTTP status code from response meta or convert RPC code
-    const status = _.get(
+    const status = get(
       response,
       "result.meta.httpStatus",
       mapStatusCode(response),
@@ -1119,7 +1135,7 @@ export class HttpTransport implements TransportInterface {
    */
   private raw(
     res: Response,
-    data: any,
+    data: RPCResponseType,
     headers: { [key: string]: string } = {},
   ): void {
     if (typeof data === "object" && "error" in data) {
@@ -1150,7 +1166,10 @@ export class HttpTransport implements TransportInterface {
    * Parse JSON payloads passed to the error.data object
    * clean up data key to avoid leaks and reduce size
    */
-  private parseErrorData(response, unnestResult = false): RPCResponseType {
+  private parseErrorData(
+    response: Response,
+    unnestResult = false,
+  ): RPCResponseType {
     if (!("error" in response) || !("data" in response.error)) {
       return unnestResult ? response.result : response;
     }
@@ -1164,7 +1183,7 @@ export class HttpTransport implements TransportInterface {
       });
 
       response.error.data = cleaned;
-    } catch (e) {}
+    } catch {}
 
     return response;
   }
@@ -1172,11 +1191,9 @@ export class HttpTransport implements TransportInterface {
   /**
    * Fetch additional data for territories
    */
-  private async getTerritoryInfos(user): Promise<any> {
+  private async getTerritoryInfos(user: any): Promise<any> {
     if (user.territory_id) {
-      const dt = {
-        com: [],
-      };
+      const dt = { com: [] } as { com: string[] };
 
       try {
         const authorizedCodes = await this.kernel.call<

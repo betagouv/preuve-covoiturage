@@ -5,14 +5,11 @@ import {
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   copyFromContextMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/index.ts";
-import { _ } from "@/deps.ts";
-import * as middlewareConfig from "../config/middlewares.ts";
-import { TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
-import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionMiddlewaresHelper.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -23,6 +20,9 @@ import {
   ParamsInterface as SendExportParamsInterface,
   signature as sendExportSignature,
 } from "@/shared/trip/sendExport.contract.ts";
+import * as middlewareConfig from "../config/middlewares.ts";
+import { TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
+import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionMiddlewaresHelper.ts";
 
 @handler({
   ...handlerConfig,
@@ -55,9 +55,9 @@ export class ExportAction extends Action {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const email = _.get(context, "call.user.email");
-    const fullname = `${_.get(context, "call.user.firstname", "")} ${
-      _.get(context, "call.user.lastname", "")
+    const email = get(context, "call.user.email");
+    const fullname = `${get(context, "call.user.firstname", "")} ${
+      get(context, "call.user.lastname", "")
     }`;
 
     if (!email) {
@@ -67,10 +67,10 @@ export class ExportAction extends Action {
     const tz = await this.tripRepository.validateTz(params.tz);
 
     // use || syntax here in case we get null value from date.{start|end},
-    // which will not use the default value of _.get()
-    const start = _.get(params, "date.start") ||
+    // which will not use the default value of get()
+    const start = get(params, "date.start") ||
       new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-    const end = _.get(params, "date.end") || new Date();
+    const end = get(params, "date.end") || new Date();
 
     const buildParams: SendExportParamsInterface = {
       type: context.call.user.territory_id

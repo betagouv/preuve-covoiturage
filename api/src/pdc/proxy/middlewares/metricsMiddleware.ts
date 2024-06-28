@@ -1,13 +1,14 @@
-import { hostname } from "@/deps.ts";
-import { NextFunction, process, Request, Response } from "@/deps.ts";
+import { NextFunction, Request, Response } from "@/deps.ts";
+import { env } from "@/lib/env/index.ts";
+import { getHostName } from "@/lib/net/index.ts";
 import { rateLimiter } from "./rateLimiter.ts";
 
 export function metricsMiddleware(endpoint: string) {
   const rl = rateLimiter(
     { windowMs: 60 * 1000 * 5, max: 100 },
-    `rate-${endpoint}-${hostname()}`,
+    `rate-${endpoint}-${getHostName()}`,
   );
-  const token = process.env.APP_MONITORING_TOKEN;
+  const token = env("APP_MONITORING_TOKEN");
   return async (
     req: Request,
     res: Response,

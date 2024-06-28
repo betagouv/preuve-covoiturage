@@ -1,5 +1,6 @@
 import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
@@ -102,7 +103,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
             }
             amount += finalAmount;
           } catch (e) {
-            console.error(e);
+            logger.error(e);
           }
         }
       }

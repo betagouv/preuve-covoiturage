@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import { axios } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
@@ -11,6 +10,7 @@ import {
   CompanyDataSourceProviderInterfaceResolver,
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
+import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
 
 @provider({
@@ -36,7 +36,7 @@ export class CompanyDataSourceProvider
       }
 
       const siren = siret.substring(0, 9);
-      const updated_at = _.get(
+      const updated_at = get(
         data,
         "etablissement.dateDernierTraitementEtablissement",
         null,
@@ -45,32 +45,32 @@ export class CompanyDataSourceProvider
       return {
         siret,
         siren,
-        nic: _.get(data, "etablissement.nic", null),
-        legal_name: _.get(
+        nic: get(data, "etablissement.nic", null),
+        legal_name: get(
           data,
           "etablissement.uniteLegale.denominationUniteLegale",
           null,
         ),
         company_naf_code: this.cleanNaf(
-          _.get(
+          get(
             data,
             "etablissement.uniteLegale.activitePrincipaleUniteLegale",
             null,
           ),
         ),
         establishment_naf_code: this.cleanNaf(
-          _.get(
+          get(
             data,
             "etablissement.uniteLegale.activitePrincipaleUniteLegale",
             null,
           ),
         ),
-        legal_nature_code: _.get(
+        legal_nature_code: get(
           data,
           "etablissement.uniteLegale.categorieJuridiqueUniteLegale",
           null,
         ),
-        legal_nature_label: _.get(
+        legal_nature_label: get(
           data,
           "etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale",
           null,
@@ -86,30 +86,30 @@ export class CompanyDataSourceProvider
           "etablissement.adresseEtablissement.codePostalEtablissement",
           "etablissement.adresseEtablissement.libelleCommuneEtablissement",
         ]
-          .map((k) => _.get(data, k, ""))
+          .map((k) => get(data, k, ""))
           .join(" "),
-        address_street: _.get(
+        address_street: get(
           data,
           "etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement",
           null,
         ),
-        address_postcode: _.get(
+        address_postcode: get(
           data,
           "etablissement.etablissement.adresseEtablissement.codePostalEtablissement",
           null,
         ),
-        address_cedex: _.get(
+        address_cedex: get(
           data,
           "etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement",
           null,
         ),
-        address_city: _.get(
+        address_city: get(
           data,
           "etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement",
           null,
         ),
         headquarter:
-          _.get(data, "etablissement.etablissementSiege", null) === true,
+          get(data, "etablissement.etablissementSiege", null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {

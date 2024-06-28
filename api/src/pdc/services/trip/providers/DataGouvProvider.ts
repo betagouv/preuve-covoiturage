@@ -6,6 +6,7 @@ import {
   stat,
 } from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   DataGouvProviderInterface,
   Dataset,
@@ -31,7 +32,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error(
+        logger.error(
           `Error while calling data gouv API; ${error.response?.status} : ${
             JSON.stringify(error.response?.data)
           }`,

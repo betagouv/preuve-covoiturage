@@ -1,6 +1,9 @@
-import { join, process, tmpdir, writeFile } from "@/deps.ts";
+import { writeFile } from "@/deps.ts";
 import { assertObjectMatch, it } from "@/dev_deps.ts";
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
+import { setEnv } from "@/lib/env/index.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { S3StorageProvider } from "./S3StorageProvider.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
 
@@ -13,7 +16,7 @@ it("should be uploading file with bucket as sub-domain", async () => {
   // const config = new ConfigStore({ storage: { bucket: { options: { requestHandler } } } });
   const config = new ConfigStore({});
 
-  process.env.AWS_ENDPOINT = "https://s3.covoiturage.test";
+  setEnv("AWS_ENDPOINT", "https://s3.covoiturage.test");
   const s3 = new S3StorageProvider(config);
 
   console.debug(`Init s3 client`);
@@ -21,7 +24,7 @@ it("should be uploading file with bucket as sub-domain", async () => {
 
   const filename = "test2.csv";
   const filecontent = { hello: "world" };
-  const filepath = join(tmpdir(), filename);
+  const filepath = join(getTmpDir(), filename);
 
   console.debug(`Write file to ${filepath}`);
   await writeFile(filepath, JSON.stringify(filecontent));

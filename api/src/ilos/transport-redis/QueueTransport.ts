@@ -12,6 +12,7 @@ import {
   RedisInterface,
 } from "@/ilos/connection-redis/index.ts";
 import { QueueExtension } from "@/ilos/queue/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 interface WorkerWithScheduler {
   worker: Worker;
@@ -130,27 +131,27 @@ export class QueueTransport
 
   protected registerListeners(queue: Worker, name: string): void {
     queue.on("error", (err: Error) => {
-      console.error(`🐮/${name}: error`, err.message);
+      logger.error(`🐮/${name}: error`, err.message);
       this.errorHandler(err);
     });
 
     queue.on("active", (job: Job) => {
-      console.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
+      logger.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
     queue.on("progress", (job: Job, progress: number | object) => {
-      console.info(
+      logger.info(
         `🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`,
       );
     });
 
     queue.on("completed", (job: Job) => {
-      console.info(`🐮/${name}: completed ${job.id} ${job.data.method}`);
+      logger.info(`🐮/${name}: completed ${job.id} ${job.data.method}`);
     });
 
     queue.on("failed", (job: Job, err: Error) => {
-      console.error(`🐮/${name}: failed ${job.id}`, err.message);
-      console.error(err.stack);
+      logger.error(`🐮/${name}: failed ${job.id}`, err.message);
+      logger.error(err.stack);
       this.errorHandler(err, job);
     });
   }

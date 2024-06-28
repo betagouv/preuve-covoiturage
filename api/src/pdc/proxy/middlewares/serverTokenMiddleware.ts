@@ -1,4 +1,4 @@
-import { _, process, Request as ExpressRequest, Response } from "@/deps.ts";
+import { Request as ExpressRequest, Response } from "@/deps.ts";
 import {
   ForbiddenException,
   KernelInterface,
@@ -6,6 +6,9 @@ import {
 } from "@/ilos/common/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 
+import { env, env_or_true } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get, set } from "@/lib/object/index.ts";
 import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
@@ -33,8 +36,8 @@ async function checkApplication(
     ),
   );
 
-  const app_uuid = _.get(app, "result.uuid", "");
-  const owner_id = _.get(app, "result.owner_id", null);
+  const app_uuid = get(app, "result.uuid", "");
+  const owner_id = get(app, "result.owner_id", null);
   const matchUuid = app_uuid === payload.a;
 
   // V1 tokens have a string owner_id. Check is done on UUID only
@@ -53,11 +56,7 @@ async function logRequest(
   request: Request,
   payload: TokenPayloadInterface,
 ): Promise<void> {
-  if (_.get(process.env, "NODE_ENV", "") === "production") return;
-  if (
-    _.get(process.env, "APP_DEBUG_REQUEST", "false").trim().toLowerCase() !==
-      "true"
-  ) {
+  if (env("ENV") !== "local" || env_or_true("APP_DEBUG_REQUEST")) {
     return;
   }
 
@@ -78,9 +77,9 @@ async function logRequest(
     ),
   );
 
-  console.debug(
-    `logRequest [${_.get(request, "headers.x-request-id", "")}] ${
-      _.get(request, "body.journey_id", "")
+  logger.debug(
+    `logRequest [${get(request, "headers.x-request-id", "")}] ${
+      get(request, "body.journey_id", "")
     }`,
   );
 }
@@ -91,7 +90,7 @@ export function serverTokenMiddleware(
 ) {
   return async (req: Request, res: Response, next: Function): Promise<void> => {
     try {
-      const token = _.get(req, "headers.authorization", null);
+      const token = get(req, "headers.authorization", null);
       if (!token) {
         return next();
       }
@@ -109,7 +108,7 @@ export function serverTokenMiddleware(
       try {
         await logRequest(kernel, req, payload);
       } catch (e) {
-        console.error(`logRequest ERROR ${e.message}`);
+        logger.error(`logRequest ERROR ${e.message}`);
       }
 
       /**
@@ -133,7 +132,7 @@ export function serverTokenMiddleware(
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      _.set(req, "session.user", {
+      set(req, "session.user", {
         application_id: app._id,
         operator_id: app.owner_id,
         permissions: app.permissions,
@@ -141,7 +140,7 @@ export function serverTokenMiddleware(
 
       next();
     } catch (e) {
-      console.error(`[acquisition:create] ${e.message}`, e);
+      logger.error(`[acquisition:create] ${e.message}`, e);
       next(e);
     }
   };

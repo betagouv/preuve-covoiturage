@@ -1,5 +1,6 @@
-import { process } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { env, env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 interface Config {
@@ -16,11 +17,33 @@ export interface DbBeforeAfter {
   after(cfg: DbContext): Promise<void>;
 }
 
+/**
+ * Export helpers to create a clean up a test database before and after tests
+ *
+ * You can pass a connectionString in the config to override the default
+ * APP_POSTGRES_URL environment variable.
+ *
+ * @example
+ * import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
+ *
+ * const { before, after } = makeDbBeforeAfter();
+ * let db: DbContext;
+ *
+ * beforeAll(async () => {
+ *    db = await before();
+ * });
+ * afterAll(async () => {
+ *   await after(db);
+ * });
+ *
+ * @param {Config} cfg
+ * @returns
+ */
 export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
   return {
     before: async (): Promise<DbContext> => {
       const connectionString = cfg?.connectionString ||
-        process.env.APP_POSTGRES_URL ||
+        env("APP_POSTGRES_URL") ||
         "postgresql://postgres:postgres@localhost:5432/local";
       const db = new Migrator(connectionString);
       await db.create();
@@ -34,10 +57,9 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
       // use `just drop_test_databases` in your shell to clear them.
       if (
-        "APP_POSTGRES_KEEP_TEST_DATABASES" in process.env &&
-        process.env.APP_POSTGRES_KEEP_TEST_DATABASES === "true"
+        env_or_false("APP_POSTGRES_KEEP_TEST_DATABASES")
       ) {
-        console.info(
+        logger.info(
           `[db-macro] Keeping the test database: ${
             ctx?.db?.dbName || "undefined"
           } run 'just drop_test_databases to clear'`,

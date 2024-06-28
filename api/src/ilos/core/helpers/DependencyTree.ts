@@ -41,7 +41,7 @@ export class DependencyTree {
       );
       if (unresolvableDependencies.size > 0) {
         // if dependency is no resolvable, just warn
-        // console.warn(
+        // logger.warn(
         //   `Unsolvable extension dependencies : ${
         //     [...unresolvableDependencies].map((k) => k.toString()).join(", ")
         //   }`,

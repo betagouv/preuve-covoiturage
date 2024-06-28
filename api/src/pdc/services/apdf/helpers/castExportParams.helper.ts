@@ -1,18 +1,13 @@
-import {
-  _,
-  addMonths,
-  fromZonedTime,
-  startOfMonth,
-  subMonths,
-} from "@/deps.ts";
+import { addMonths, fromZonedTime, startOfMonth, subMonths } from "@/deps.ts";
+import { get } from "@/lib/object/index.ts";
 import { ParamsInterface } from "@/shared/apdf/export.contract.ts";
 
 export function castExportParams(
   params: ParamsInterface,
 ): { start_date: Date; end_date: Date } {
   // use the local times
-  const start_date_lc = _.get(params, "query.date.start", null);
-  const end_date_lc = _.get(params, "query.date.end", null);
+  const start_date_lc = get(params, "query.date.start", null);
+  const end_date_lc = get(params, "query.date.end", null);
 
   // having both
   if (start_date_lc && end_date_lc) {

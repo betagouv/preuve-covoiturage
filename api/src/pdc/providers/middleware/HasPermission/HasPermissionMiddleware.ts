@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
@@ -8,6 +7,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /**
@@ -26,7 +26,7 @@ export class HasPermissionMiddleware
       throw new InvalidParamsException("No permissions defined");
     }
 
-    const permissions = _.get(context, "call.user.permissions", []);
+    const permissions = get(context, "call.user.permissions", []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException("Invalid permissions");

@@ -1,6 +1,6 @@
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
-  FunctionMiddlewareInterface,
   MiddlewareInterface,
   ParamsType,
   ResultType,
@@ -10,12 +10,12 @@ type middlewareInstancesWithOptionsType =
   (MiddlewareInterface | [MiddlewareInterface, any])[];
 export function compose(
   middlewareInstancesWithOptions: middlewareInstancesWithOptionsType,
-): FunctionMiddlewareInterface {
+): NextFunction {
   if (!Array.isArray(middlewareInstancesWithOptions)) {
     throw new TypeError("Middleware stack must be an array!");
   }
 
-  const middlewares: FunctionMiddlewareInterface[] = [];
+  const middlewares: NextFunction[] = [];
 
   for (const middlewareInstanceWithOptions of middlewareInstancesWithOptions) {
     let options: any;
@@ -30,14 +30,14 @@ export function compose(
     middlewares.push((
       params: ParamsType,
       context: ContextType,
-      next?: FunctionMiddlewareInterface,
+      next?: NextFunction,
     ) => middlewareInstance.process(params, context, next, options));
   }
 
   return async function (
     params: ParamsType,
     context: ContextType,
-    next?: FunctionMiddlewareInterface,
+    next?: NextFunction,
   ): Promise<ResultType> {
     // last called middleware #
     let index = -1;

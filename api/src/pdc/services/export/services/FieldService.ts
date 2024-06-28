@@ -1,4 +1,5 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { FieldFilter, Fields } from "../models/XLSXWriter.ts";
 
@@ -26,7 +27,7 @@ export class FieldService {
     ) => filter.target === target);
 
     if (!filter) {
-      console.warn(`No filter found for target ${target}`);
+      logger.warn(`No filter found for target ${target}`);
       return fields;
     }
 

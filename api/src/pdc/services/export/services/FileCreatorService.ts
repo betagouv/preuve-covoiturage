@@ -1,11 +1,12 @@
 import { provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { ExportProgress } from "../repositories/ExportRepository.ts";
 
-export type BuildServiceInterface = {
+export type FileCreatorServiceInterface = {
   write(
     params: ExportParams,
     fileWriter: XLSXWriter,
@@ -13,8 +14,8 @@ export type BuildServiceInterface = {
   ): Promise<void>;
 };
 
-export abstract class BuildServiceInterfaceResolver
-  implements BuildServiceInterface {
+export abstract class FileCreatorServiceInterfaceResolver
+  implements FileCreatorServiceInterface {
   protected async configure(
     params: ExportParams,
     fileWriter: XLSXWriter,
@@ -43,9 +44,9 @@ export abstract class BuildServiceInterfaceResolver
 }
 
 @provider({
-  identifier: BuildServiceInterfaceResolver,
+  identifier: FileCreatorServiceInterfaceResolver,
 })
-export class BuildService {
+export class FileCreatorService {
   protected fileWriter: XLSXWriter;
   protected params: ExportParams;
   protected progress: ExportProgress;
@@ -62,7 +63,7 @@ export class BuildService {
   ): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
-    this.progress = progress;
+    this.progress = progress || (async () => {});
   }
 
   protected async initialize(): Promise<void> {
@@ -89,8 +90,9 @@ export class BuildService {
     await this.fileWriter.printHelp();
   }
 
-  protected async wrap(): Promise<void> {
+  protected async wrap(e?: Error): Promise<void> {
     await this.fileWriter.close();
+    if (e) throw e;
     await this.fileWriter.compress();
   }
 
@@ -104,12 +106,10 @@ export class BuildService {
       await this.initialize();
       await this.data();
       await this.help();
-    } catch (e) {
-      console.error(e.message);
-    } finally {
       await this.wrap();
-      console.info(`File written to ${this.fileWriter.workbookPath}`);
-      // TODO cleanup on failure
+      logger.info(`File written to ${this.fileWriter.workbookPath}`);
+    } catch (e) {
+      await this.wrap(e);
     }
   }
 }

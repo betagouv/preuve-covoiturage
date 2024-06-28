@@ -1,10 +1,10 @@
 // create Redis connection
-import { ForbiddenException } from "@/ilos/common/index.ts";
 import { NextFunction, Request, Response } from "@/deps.ts";
+import { ForbiddenException } from "@/ilos/common/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { cacheStore } from "./cache/redis.ts";
 import { deflate, getKey, inflate } from "./cache/transformers.ts";
-import { CacheTTL } from "./cache/types.ts";
 import type {
   CacheFlushResponse,
   CacheMiddleware,
@@ -14,6 +14,7 @@ import type {
   RouteCacheConfig,
   StoreConnection,
 } from "./cache/types.ts";
+import { CacheTTL } from "./cache/types.ts";
 import { validate } from "./cache/validators.ts";
 
 const defaultGlobalConfig: GlobalCacheConfig = {
@@ -82,14 +83,14 @@ export function cacheMiddleware(
           }
 
           for (const warn of warnings.values()) {
-            console.warn({
+            logger.warn({
               "X-Route-Cache-Url": req.url,
               "X-Route-Cache-Warn": warn.message,
             });
           }
 
           for (const error of errors.values()) {
-            console.error({
+            logger.error({
               "X-Route-Cache-Url": req.url,
               "X-Route-Cache-Error": error.message,
             });
@@ -167,7 +168,7 @@ export function cacheMiddleware(
       const keys = await store.scan(pattern);
       if (keys && keys.size) await store.del(keys);
 
-      console.debug(
+      logger.debug(
         `[route-cache] flushed ${keys.size} keys from pattern: ${pattern}`,
       );
 

@@ -1,4 +1,4 @@
-import { process } from "@/deps.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
 import { migrate } from "./index.ts";
 
-migrate(process.env.APP_POSTGRES_URL);
+migrate(env_or_fail("APP_POSTGRES_URL"));

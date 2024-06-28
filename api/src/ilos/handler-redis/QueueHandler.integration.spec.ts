@@ -9,7 +9,7 @@ import {
 } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
-import process from "node:process";
+import { env_or_default } from "@/lib/env/index.ts";
 import { QueueHandler } from "./QueueHandler.ts";
 import { queueHandlerFactory } from "./helpers/queueHandlerFactory.ts";
 
@@ -21,7 +21,7 @@ describe("QueueHandler", () => {
     },
   };
   const connection = new RedisConnection(
-    process.env.APP_REDIS_URL ?? "redis://127.0.0.1:6379",
+    env_or_default("APP_REDIS_URL", "redis://127.0.0.1:6379"),
     {
       lazyConnect: true,
     },

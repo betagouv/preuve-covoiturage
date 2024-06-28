@@ -2,6 +2,7 @@ import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { toISOString } from "../helpers/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   PolicyRepositoryProviderInterfaceResolver,
@@ -293,7 +294,7 @@ export class PolicyRepositoryProvider
     });
 
     if (!resKey.rowCount) {
-      console.warn(
+      logger.warn(
         `${pf} ${key_name} key not found for campaign ${campaign_id}`,
       );
       return;
@@ -322,7 +323,7 @@ export class PolicyRepositoryProvider
     });
 
     if (!resSum.rowCount) {
-      console.warn(
+      logger.warn(
         `${pf} Could not calculate incentive sum for campaign ${campaign_id}`,
       );
       return;
@@ -331,7 +332,7 @@ export class PolicyRepositoryProvider
     const { incentive_sum } = resSum.rows[0];
 
     // update max_amount_restriction.global.campaign.global
-    console.info(
+    logger.info(
       `${pf} Setting policy_meta (${key_id}) ` +
         `to ${incentive_sum} ` +
         `at ${toISOString(datetime)} ` +
@@ -344,7 +345,7 @@ export class PolicyRepositoryProvider
     });
 
     // update incentive_sum in the policy
-    console.info(
+    logger.info(
       `${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`,
     );
     await this.connection.getClient().query<any>({

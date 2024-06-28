@@ -1,6 +1,8 @@
-import { _, axios, HttpAgent } from "@/deps.ts";
+import { axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   PointInterface,
   RouteMeta,
@@ -9,7 +11,7 @@ import {
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
-  protected domain = env.or_fail(
+  protected domain = env_or_fail(
     "OSRM_URL",
     "http://osrm.covoiturage.beta.gouv.fr:5000",
   );
@@ -28,8 +30,8 @@ export class OSRMProvider implements RouteMetaProviderInterface {
           httpAgent: OSRMProvider.agent,
         },
       );
-      const distance = _.get(res, "data.routes.0.distance", null);
-      const duration = _.get(res, "data.routes.0.duration", null);
+      const distance = get(res, "data.routes.0.distance", null);
+      const duration = get(res, "data.routes.0.duration", null);
 
       if (distance === null || duration === null) {
         throw new Error(
@@ -39,7 +41,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      console.error(
+      logger.error(
         `[OSRMProvider] (${start.lon},${start.lat};${end.lon},${end.lat})`,
       );
       switch (e.response?.status) {

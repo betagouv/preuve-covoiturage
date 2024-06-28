@@ -1,5 +1,6 @@
 import { subMonths } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   APDFNameProvider,
   BucketName,
@@ -36,8 +37,8 @@ export class StorageRepositoryProvider
 
       return list.filter((obj: S3Object) => obj.size > 0);
     } catch (e) {
-      console.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
-      console.debug(e.stack);
+      logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
+      logger.debug(e.stack);
       throw e;
     }
   }

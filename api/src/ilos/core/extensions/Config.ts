@@ -1,9 +1,9 @@
-import { _ } from "@/deps.ts";
 import type {
   RegisterHookInterface,
   ServiceContainerInterface,
 } from "@/ilos/common/index.ts";
 import { ConfigInterfaceResolver, extension } from "@/ilos/common/index.ts";
+import { get } from "@/lib/object/index.ts";
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {
@@ -11,11 +11,11 @@ export class ConfigStore extends ConfigInterfaceResolver {
   }
 
   get(key: string, fallback?: any): any {
-    if (fallback === undefined && !_.has(this.config, key)) {
+    if (fallback === undefined && get(this.config, key) === undefined) {
       throw new Error(`Unknown config key '${key}'`);
     }
 
-    return _.get(this.config, key, fallback);
+    return get(this.config, key, fallback);
   }
 }
 

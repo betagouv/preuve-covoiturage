@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import { afterAll, beforeAll, describe, it } from "@/dev_deps.ts";
 import {
   ContextType,
@@ -13,6 +12,7 @@ import {
   Action as AbstractAction,
   ServiceProvider as AbstractServiceProvider,
 } from "@/ilos/core/index.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   assertErrorHandler,
   assertSuccessHandler,
@@ -37,7 +37,7 @@ describe("Permission", () => {
       params: ParamsInterface,
       context: ContextType,
     ): Promise<ResultInterface> {
-      return _.get(context, params, []);
+      return get(context, params || "", []);
     }
   }
 

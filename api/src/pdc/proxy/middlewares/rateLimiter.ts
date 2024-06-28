@@ -4,10 +4,11 @@ import {
   RateLimitRedisStore,
   RateLimitRequestHandler,
   Redis as RedisClient,
+  Request,
+  Response,
 } from "@/deps.ts";
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
 import { config } from "../config/index.ts";
-import { Request, Response } from "@/deps.ts";
 
 const minute = 60000;
 
@@ -33,7 +34,7 @@ export function rateLimiter(
     ...opts,
   };
 
-  const factor = parseFloat(env.or_fail("APP_RATE_LIMIT_MAX_FACTOR", "1"));
+  const factor = parseFloat(env_or_fail("APP_RATE_LIMIT_MAX_FACTOR", "1"));
   options.max = Number(options.max) *
     (typeof factor === "number" && !isNaN(factor) ? factor : 1);
 

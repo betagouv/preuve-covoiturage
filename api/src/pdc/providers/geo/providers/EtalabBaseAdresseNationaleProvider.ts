@@ -1,6 +1,11 @@
+import {
+  axios,
+  axiosRetry,
+  HttpsAgent as Agent,
+  URLSearchParams,
+} from "@/deps.ts";
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { axios } from "@/deps.ts";
-import { _, axiosRetry, HttpsAgent as Agent, URLSearchParams } from "@/deps.ts";
+import { get } from "@/lib/object/index.ts";
 import {
   GeoCoderInterface,
   InseeCoderInterface,
@@ -33,11 +38,11 @@ export class EtalabBaseAdresseNationaleProvider
       httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
     });
 
-    if (!_.get(res, "data.features", []).length) {
+    if (!get(res, "data.features", []).length) {
       throw new NotFoundException();
     }
 
-    const [lon, lat] = _.get(res, "data.features.0.geometry.coordinates", [
+    const [lon, lat] = get(res, "data.features.0.geometry.coordinates", [
       null,
       null,
     ]);
@@ -64,11 +69,11 @@ export class EtalabBaseAdresseNationaleProvider
       httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
     });
 
-    if (!_.get(res, "data.features", []).length) {
+    if (!get(res, "data.features", []).length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
-    const data = _.get(res, "data.features.0.properties.citycode", null);
+    const data = get(res, "data.features.0.properties.citycode", null);
     if (!data) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }

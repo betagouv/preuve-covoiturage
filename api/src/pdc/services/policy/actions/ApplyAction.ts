@@ -1,3 +1,4 @@
+import { defaultTimezone } from "@/config/time.ts";
 import { isAfter, maxDate, minDate } from "@/deps.ts";
 import {
   ContextType,
@@ -5,7 +6,9 @@ import {
   InvalidParamsException,
   NotFoundException,
 } from "@/ilos/common/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
@@ -14,7 +17,7 @@ import {
 } from "@/shared/policy/apply.contract.ts";
 import { alias } from "@/shared/policy/apply.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
-import { defaultTz, subDaysTz, today, toTzString } from "../helpers/index.ts";
+import { subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -48,14 +51,14 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_POLICY_PROCESSING")) {
-      return console.warn(
+    if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
+      return logger.warn(
         "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
       );
     }
 
     const { from, to, override } = this.defaultParams(params);
-    console.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    logger.info(`[campaign:apply] processing policy ${params.policy_id}`);
     await this.processPolicy(params.policy_id, from, to, override);
   }
 
@@ -64,7 +67,7 @@ export class ApplyAction extends AbstractAction {
    * Finalization will be applied until the last 5 days
    */
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
-    const tz = params.tz ?? defaultTz;
+    const tz = params.tz ?? defaultTimezone;
 
     return {
       tz,
@@ -116,7 +119,7 @@ export class ApplyAction extends AbstractAction {
       );
     }
 
-    console.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
+    logger.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
 
     const batchSize = 1000;
     const cursor = this.tripRepository.findTripByPolicy(
@@ -130,15 +133,11 @@ export class ApplyAction extends AbstractAction {
 
     do {
       if (total === 0) {
-        console.info(`[policy ${policy._id}] Fetching carpools...`);
+        logger.info(`[policy ${policy._id}] Fetching carpools...`);
       }
-      if (total === 0) console.time(`[policy ${policy._id}] Fetched carpools`);
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
-      done = results.done;
-      if (total === 0) {
-        console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
-      }
+      done = !!results.done;
 
       const bs = new Date(); // benchmark start
       if (results.value) {
@@ -153,7 +152,7 @@ export class ApplyAction extends AbstractAction {
       const ms = new Date().getTime() - bs.getTime();
       if (counter) {
         const rate = ((counter / ms) * 1000).toFixed(0);
-        console.info(
+        logger.info(
           `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`,
         );
       }
@@ -162,17 +161,17 @@ export class ApplyAction extends AbstractAction {
 
       // 4. Save incentives
       if (incentives.length) {
-        const saveMsg =
-          `[policy ${policy_id}] stored ${incentives.length} incentives`;
-        console.time(saveMsg);
+        const timer = getPerformanceTimer();
         await this.incentiveRepository.createOrUpdateMany(
           incentives.map((i) => i.export()),
         );
-        console.timeEnd(saveMsg);
+        logger.info(
+          `[policy ${policy_id}] stored ${incentives.length} incentives in ${timer.stop()} ms`,
+        );
       }
     } while (!done);
 
-    console.info(
+    logger.info(
       `[policy ${policy_id}] finished - ${total} in ${
         new Date().getTime() - bench.getTime()
       }ms`,

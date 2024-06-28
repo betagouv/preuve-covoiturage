@@ -1,14 +1,14 @@
-import { env } from "@/ilos/core/index.ts";
-import { process, readFileSync } from "@/deps.ts";
+import { readFileSync } from "@/deps.ts";
+import { env, env_or_fail } from "@/lib/env/index.ts";
 
 function getKey(type: string): string {
   const asVarEnvName = `APP_CEE_${type}_KEY`;
   const asPathEnvName = `APP_CEE_${type}_KEY_PATH`;
 
-  if (asVarEnvName in process.env) {
-    return env.or_fail(asVarEnvName).toString().replace(/\\n/g, "\n");
-  } else if (asPathEnvName in process.env) {
-    return readFileSync(env.or_fail(asPathEnvName), "utf-8");
+  if (env(asVarEnvName)) {
+    return env_or_fail(asVarEnvName).toString().replace(/\\n/g, "\n");
+  } else if (env(asPathEnvName)) {
+    return readFileSync(env_or_fail(asPathEnvName), "utf-8");
   } else {
     throw new Error(`Var ${asVarEnvName} not found`);
   }

@@ -27,7 +27,7 @@ export class ExportRecipient {
     return recipient;
   }
 
-  public static fromJSON(data: any): ExportRecipient {
+  public static fromJSON(data: ExportRecipient): ExportRecipient {
     const recipient = new ExportRecipient();
     recipient._id = data._id;
     recipient.export_id = data.export_id;
@@ -38,7 +38,7 @@ export class ExportRecipient {
     return recipient;
   }
 
-  public static toJSON(recipient: ExportRecipient): any {
+  public static toJSON(recipient: ExportRecipient): unknown {
     return {
       _id: recipient._id,
       export_id: recipient.export_id,

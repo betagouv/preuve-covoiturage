@@ -1,10 +1,12 @@
+import { mailer, MailOptions, mjml2html } from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import {
   TemplateInterface,
   TemplateProviderInterfaceResolver,
 } from "@/pdc/providers/template/index.ts";
-import { mailer, MailOptions, mjml2html, process } from "@/deps.ts";
 
+import { logger } from "@/lib/logger/index.ts";
+import { exit } from "@/lib/process/index.ts";
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterface,
@@ -71,8 +73,8 @@ export class NotificationMailTransporter
         try {
           await this.transporter.verify();
         } catch (e) {
-          console.error("Failed to connect to SMTP server");
-          process.exit(1);
+          logger.error("Failed to connect to SMTP server");
+          exit(1);
         }
       }
     }

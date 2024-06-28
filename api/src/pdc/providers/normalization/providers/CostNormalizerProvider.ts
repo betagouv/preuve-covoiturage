@@ -6,6 +6,7 @@ import {
   signature as operatorFindSignature,
 } from "@/shared/operator/find.contract.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   CostNormalizerProviderInterface,
   CostParamsInterface,
@@ -34,7 +35,7 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
 
       return siret;
     } catch (e) {
-      console.error(`[normalization]:cost:getSiret ${e.message}`, e);
+      logger.error(`[normalization]:cost:getSiret ${e.message}`, e);
       return null;
     }
   }

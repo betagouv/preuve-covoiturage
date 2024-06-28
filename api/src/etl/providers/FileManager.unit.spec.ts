@@ -1,12 +1,4 @@
-import {
-  axios,
-  AxiosError,
-  join,
-  mkdir,
-  Readable,
-  readFile,
-  rm,
-} from "@/deps.ts";
+import { axios, AxiosError, mkdir, Readable, readFile, rm } from "@/deps.ts";
 import {
   afterAll,
   assert,
@@ -16,6 +8,7 @@ import {
   it,
   sinon,
 } from "@/dev_deps.ts";
+import { join } from "@/lib/path/index.ts";
 import { hash, writeFile } from "../helpers/index.ts";
 import { FileManager } from "./FileManager.ts";
 

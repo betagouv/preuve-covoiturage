@@ -1,4 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ExportLogEvent } from "../models/ExportLog.ts";
 import { LogRepositoryInterfaceResolver } from "../repositories/LogRepository.ts";
 
@@ -75,7 +76,7 @@ export class LogService {
     export_id: number,
     message = "Export created",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} created`);
+    logger.info(` ~ Export #${export_id} created`);
     await this.log(export_id, ExportLogEvent.CREATED, message);
   }
 
@@ -83,7 +84,7 @@ export class LogService {
     export_id: number,
     message = "Export cancelled",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} cancelled`);
+    logger.info(` ~ Export #${export_id} cancelled`);
     await this.log(export_id, ExportLogEvent.CANCELLED, message);
   }
 
@@ -91,7 +92,7 @@ export class LogService {
     export_id: number,
     message = "Export being processed",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} being processed`);
+    logger.info(` ~ Export #${export_id} being processed`);
     await this.log(export_id, ExportLogEvent.RUNNING, message);
   }
 
@@ -99,7 +100,7 @@ export class LogService {
     export_id: number,
     message = "Export succeeded",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} succeeded`);
+    logger.info(` ~ Export #${export_id} succeeded`);
     await this.log(export_id, ExportLogEvent.SUCCESS, message);
   }
 
@@ -107,7 +108,7 @@ export class LogService {
     export_id: number,
     message = "Export failed",
   ): Promise<void> {
-    console.error(` ~ Export #${export_id} failed`);
+    logger.error(` ~ Export #${export_id} failed`);
     await this.log(export_id, ExportLogEvent.FAILURE, message);
   }
 
@@ -115,7 +116,7 @@ export class LogService {
     export_id: number,
     message = "Export sent by email",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} sent by email`);
+    logger.info(` ~ Export #${export_id} sent by email`);
     await this.log(export_id, ExportLogEvent.SEND, message);
   }
 
@@ -123,7 +124,7 @@ export class LogService {
     export_id: number,
     message = "Export uploaded",
   ): Promise<void> {
-    console.info(` ~ Export #${export_id} uploaded`);
+    logger.info(` ~ Export #${export_id} uploaded`);
     await this.log(export_id, ExportLogEvent.UPLOAD, message);
   }
 

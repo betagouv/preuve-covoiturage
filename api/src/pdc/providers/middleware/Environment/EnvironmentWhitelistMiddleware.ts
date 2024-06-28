@@ -1,4 +1,3 @@
-import { env } from "@/ilos/core/index.ts";
 import {
   ContextType,
   middleware,
@@ -7,6 +6,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -21,7 +21,7 @@ export class EnvironmentWhitelistMiddleware
     next: Function,
     environments: Partial<EnvironmentWhitelistMiddlewareParams>,
   ): Promise<ResultType> {
-    const appEnv = env.or_fail("NODE_ENV");
+    const appEnv = env_or_fail("NODE_ENV");
 
     if (environments.indexOf(appEnv) === -1) {
       throw new NotFoundException("Missing action");

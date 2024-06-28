@@ -101,6 +101,14 @@ const permissions = {
   ],
   'user.sendEmail': ['operator.admin', 'territory.admin', 'registry.admin'],
   'user.policySimulate': ['common'],
+
+  // export service
+  'export.create': ['common'],
+  'export.list': ['common'],
+  'export.read': ['common'],
+  'export.status': ['common'],
+  'export.cancel': ['common'],
+  'export.download': ['common'],
 };
 
 function scopeToGroup(permissionName, group) {

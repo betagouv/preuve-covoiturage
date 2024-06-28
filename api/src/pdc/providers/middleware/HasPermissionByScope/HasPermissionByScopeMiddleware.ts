@@ -1,14 +1,14 @@
-import { _ } from "@/deps.ts";
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
-  FunctionMiddlewareInterface,
   InvalidParamsException,
   middleware,
   MiddlewareInterface,
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /**
@@ -24,7 +24,7 @@ export class HasPermissionByScopeMiddleware
   async process(
     params: ParamsType,
     context: ContextType,
-    next: FunctionMiddlewareInterface,
+    next: NextFunction,
     options: HasPermissionByScopeMiddlewareParams,
   ): Promise<ResultType> {
     const [basePermission, permissionScopes] = options;
@@ -33,7 +33,7 @@ export class HasPermissionByScopeMiddleware
       throw new InvalidParamsException("No permissions defined");
     }
 
-    const permissions = _.get(context, "call.user.permissions", []);
+    const permissions = get(context, "call.user.permissions", []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException("Invalid permissions");
@@ -48,8 +48,8 @@ export class HasPermissionByScopeMiddleware
     ) {
       if (
         this.belongsTo(
-          _.get(params, paramsPath, Symbol()),
-          _.get(context, contextPath, Symbol()),
+          get(params, paramsPath, Symbol()),
+          get(context, contextPath, Symbol()),
         ) &&
         permissions.indexOf(scopedPermission) > -1
       ) {
@@ -63,7 +63,7 @@ export class HasPermissionByScopeMiddleware
   private belongsTo(value: any | any[], list: any | any[]): boolean {
     const val = Array.isArray(value) ? value : [value];
     const lst = Array.isArray(list) ? list : [list];
-    return val.reduce((p, c) => p && _.includes(lst, c), true);
+    return val.reduce((p, c) => p && lst.includes(c), true);
   }
 }
 

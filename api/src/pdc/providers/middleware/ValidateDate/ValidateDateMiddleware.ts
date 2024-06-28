@@ -1,4 +1,4 @@
-import { _, endOfDay, startOfDay } from "@/deps.ts";
+import { endOfDay, startOfDay } from "@/deps.ts";
 import {
   ContextType,
   InvalidParamsException,
@@ -7,6 +7,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { get, set } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -42,8 +43,8 @@ export class ValidateDateMiddleware
       ? endOfDay(maxEndFn(params, context))
       : undefined;
     const applyDefault = applyDefaultOpt ?? false;
-    const startDate: Date | undefined = _.get(params, startPath, undefined);
-    const endDate: Date | undefined = _.get(params, endPath, undefined);
+    const startDate: Date | undefined = get(params, startPath, undefined);
+    const endDate: Date | undefined = get(params, endPath, undefined);
 
     if (startDate && endDate && startDate > endDate) {
       throw new InvalidParamsException("Start should be before end");
@@ -68,10 +69,10 @@ export class ValidateDateMiddleware
 
     if (applyDefault) {
       if (!startDate) {
-        _.set(params, startPath, minStart);
+        set(params, startPath, minStart);
       }
       if (!endDate) {
-        _.set(params, endPath, maxEnd);
+        set(params, endPath, maxEnd);
       }
     }
 

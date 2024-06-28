@@ -1,4 +1,3 @@
-import { process } from "@/deps.ts";
 import {
   command,
   CommandInterface,
@@ -7,6 +6,8 @@ import {
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
+import { env, env_or_default } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { ParamsInterface } from "@/shared/user/create.contract.ts";
 
 interface CreateUserInterface extends ParamsInterface {
@@ -51,14 +52,14 @@ export class SeedUsersCommand implements CommandInterface {
     {
       signature: "-u, --database-uri <uri>",
       description: "Postgres connection string",
-      default: process.env.APP_POSTGRES_URL,
+      default: env("APP_POSTGRES_URL"),
     },
   ];
 
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {
-    const env = Deno.env.get("NODE_ENV") || "";
+    const env = env_or_default("NODE_ENV", "");
     if (["local", "dev", "test", "ci"].indexOf(env) === -1) {
       throw new Error("Cannot seed users in this environment");
     }
@@ -101,18 +102,18 @@ export class SeedUsersCommand implements CommandInterface {
         });
 
         if (insert.rowCount !== 1) {
-          console.info(`--- Failed to insert ${email}`);
+          logger.info(`--- Failed to insert ${email}`);
         }
 
         if ("operator_id" in insert || "territory_id" in insert) {
-          console.warn(
+          logger.warn(
             "operator_id or territory_id are set to 1. Please change them.",
           );
         }
 
-        console.info(`+++ Inserted ${email}`);
+        logger.info(`+++ Inserted ${email}`);
       } catch (e) {
-        console.error(`--- Failed to insert ${email}:\n\t${e.message}`);
+        logger.error(`--- Failed to insert ${email}:\n\t${e.message}`);
       }
     }
 
