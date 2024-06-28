@@ -19,6 +19,7 @@
               just
               openssl
               pm2
+              jq
 
               # rpc infra
               nodejs_20
