@@ -32,3 +32,11 @@ export function env_or_default(k: string, fallback: string): string {
 export function env(k: string): string | undefined {
   return Deno.env.get(k);
 }
+
+export function setEnv(k: string, value?: string) {
+  if (!value) {
+    Deno.env.delete(k);
+  } else {
+    Deno.env.set(k, value);
+  }
+}

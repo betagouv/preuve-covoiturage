@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { Command, InvalidArgumentError, process } from "@/deps.ts";
+import { Command, InvalidArgumentError } from "@/deps.ts";
+import { args } from "@/lib/cli/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
 import { hash } from "./helpers/index.ts";
@@ -175,7 +176,7 @@ async function main(): Promise<void> {
       getSourceAction({ ...localOpts, ...command.opts() })
     );
 
-  command.parseAsync(process.argv);
+  command.parseAsync(args());
 }
 
 main().catch((e) => {

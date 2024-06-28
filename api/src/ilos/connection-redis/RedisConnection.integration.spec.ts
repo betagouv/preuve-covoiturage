@@ -1,5 +1,5 @@
-import { process } from "@/deps.ts";
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { env_or_default } from "@/lib/env/index.ts";
 import { RedisConnection } from "./RedisConnection.ts";
 
 describe("RedisConnection", () => {
@@ -10,7 +10,7 @@ describe("RedisConnection", () => {
     // lazyConnect is disabled and creating a new RedisConnection instance
     // connects automatically to the Redis server.
     connection = new RedisConnection(
-      process.env.APP_REDIS_URL ?? "redis://127.0.0.1:6379",
+      env_or_default("APP_REDIS_URL", "redis://127.0.0.1:6379"),
     );
   });
 

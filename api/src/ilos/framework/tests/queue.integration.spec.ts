@@ -1,4 +1,4 @@
-import { axios, os, path, process, readFile } from "@/deps.ts";
+import { axios, readFile } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -15,6 +15,9 @@ import {
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
+import { env, env_or_default, setEnv } from "@/lib/env/index.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { Kernel } from "../Kernel.ts";
 import { ServiceProvider as ParentStringServiceProvider } from "./mock/StringService/ServiceProvider.ts";
 
@@ -22,19 +25,19 @@ import { ServiceProvider as ParentStringServiceProvider } from "./mock/StringSer
  * @fixme SKIP due to timeout leak in bullMQ
  */
 describe.skip("queue", () => {
-  const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
-  process.env.APP_LOG_PATH = logPath;
+  const logPath = join(getTmpDir(), `ilos-test-${new Date().getTime()}`);
+  setEnv("APP_LOG_PATH", logPath);
 
-  const redisUrl = process.env.APP_REDIS_URL ?? "redis://127.0.0.1:6379";
+  const redisUrl = env_or_default("APP_REDIS_URL", "redis://127.0.0.1:6379");
   @serviceProvider({
     config: {
       log: {
-        path: process.env.APP_LOG_PATH,
+        path: env("APP_LOG_PATH"),
       },
     },
     connections: [[
       RedisConnection,
-      new RedisConnection({ redis: process.env.APP_REDIS_URL }),
+      new RedisConnection({ redis: env("APP_REDIS_URL") }),
     ]],
   })
   class StringServiceProvider extends ParentStringServiceProvider {}
@@ -43,7 +46,7 @@ describe.skip("queue", () => {
     children: [StringServiceProvider],
     connections: [[
       RedisConnection,
-      new RedisConnection({ redis: process.env.APP_REDIS_URL }),
+      new RedisConnection({ redis: env("APP_REDIS_URL") }),
     ]],
   })
   class StringKernel extends Kernel {
@@ -62,7 +65,7 @@ describe.skip("queue", () => {
     await stringCallerKernel.bootstrap();
     await stringTransport.up([`${port}`]);
 
-    process.env.APP_WORKER = "true";
+    setEnv("APP_WORKER", "true");
     await stringCalleeKernel.bootstrap();
     await queueTransport.up([redisUrl]);
     await delay(1);
