@@ -13,10 +13,11 @@
  * - store: check response
  * - store: check existence in DB
  */
-import { _, faker } from "@/deps.ts";
+import { faker } from "@/deps.ts";
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { set } from "@/lib/object/index.ts";
 import { User, users } from "@/pdc/providers/seed/users.ts";
 import {
   AJVParamsInterface,
@@ -260,7 +261,7 @@ describe("CreateAction V3", () => {
 
     await assertHandler(
       kc,
-      _.set(defaultContext, "call.user.territory_id", 1),
+      set(defaultContext, "call.user.territory_id", 1),
       handlerConfigV3,
       params,
       async (response: ResultInterfaceV3) => {
@@ -298,7 +299,7 @@ describe("CreateAction V3", () => {
 
     await assertHandler(
       kc,
-      _.set(defaultContext, "call.user.operator_id", 2),
+      set(defaultContext, "call.user.operator_id", 2),
       handlerConfigV3,
       params,
       async (response: ResultInterfaceV3) => {
