@@ -11,7 +11,7 @@ import {
 
 import { createHash } from "@/lib/crypto/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
   ArchiveFileTypeEnum,
   FileManagerConfigInterface,
@@ -42,7 +42,7 @@ export class FileManager implements FileManagerInterface {
   ): Promise<string> {
     return join(
       isDownload ? this.downloadPath : this.basePath,
-      data ? await createHash(data) : v4(),
+      data ? await createHash(data) : uuidV4(),
     );
   }
 

@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 
 import {
   CrosscheckRepositoryProviderInterface,
@@ -42,7 +42,7 @@ export class CrosscheckRepositoryProvider
       );
     }
 
-    return tripId || v4();
+    return tripId || uuidV4();
   }
 
   protected async findTripIdByOperatorTripId(

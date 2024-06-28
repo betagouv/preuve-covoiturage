@@ -2,7 +2,7 @@ import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { bcrypt_compare, bcrypt_hash } from "@/lib/crypto/index.ts";
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
   AuthRepositoryProviderInterface,
   AuthRepositoryProviderInterfaceResolver,
@@ -123,7 +123,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     type: string,
     status?: string,
   ): Promise<string | undefined> {
-    const plainToken = v4();
+    const plainToken = uuidV4();
     const cryptedToken = await bcrypt_hash(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
 
@@ -280,7 +280,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     email: string,
     status: string = this.UNCONFIRMED_STATUS,
   ): Promise<string> {
-    const clearToken = v4();
+    const clearToken = uuidV4();
     const cryptedToken = await bcrypt_hash(clearToken);
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
 

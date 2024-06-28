@@ -1,4 +1,4 @@
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 
 const defaultCarpool: Carpool = {
   acquisition_id: 1,
@@ -24,9 +24,9 @@ const defaultCarpool: Carpool = {
     lon: 2.2604199486295267,
   },
   seats: 1,
-  identity_uuid: v4(),
-  identity_key: v4(),
-  identity_operator_user_id: v4(),
+  identity_uuid: uuidV4(),
+  identity_key: uuidV4(),
+  identity_operator_user_id: uuidV4(),
   identity_travel_pass: "identity_travel_pass",
   identity_travelpass_name: "identity_travel_pass",
   identity_travelpass_user_id: "identity_travel_pass",
@@ -93,14 +93,14 @@ function makeCarpoolsFromAcquisition(
       ...defaultCarpool,
       ...commonData,
       is_driver: true,
-      identity_uuid: v4(),
+      identity_uuid: uuidV4(),
       ...data,
     },
     {
       ...defaultCarpool,
       ...commonData,
       is_driver: false,
-      identity_uuid: v4(),
+      identity_uuid: uuidV4(),
       ...data,
     },
   ];

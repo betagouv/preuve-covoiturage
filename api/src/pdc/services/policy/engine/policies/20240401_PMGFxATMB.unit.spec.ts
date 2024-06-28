@@ -1,5 +1,5 @@
 import { it } from "@/dev_deps.ts";
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { PMGFxATMB2024 as Handler } from "./20240401_PMGFxATMB.ts";
@@ -20,9 +20,9 @@ const defaultLon = 6.487631441991693;
 
 const defaultCarpool = {
   _id: 1,
-  operator_trip_id: v4(),
-  passenger_identity_key: v4(),
-  driver_identity_key: v4(),
+  operator_trip_id: uuidV4(),
+  passenger_identity_key: uuidV4(),
+  driver_identity_key: uuidV4(),
   operator_uuid: OperatorsEnum.BLABLACAR_DAILY,
   operator_class: "C",
   passenger_is_over_18: true,
@@ -32,7 +32,7 @@ const defaultCarpool = {
   seats: 1,
   duration: 600,
   distance: 5_000,
-  operator_journey_id: v4(),
+  operator_journey_id: uuidV4(),
   operator_id: 1,
   driver_revenue: 20,
   passenger_contribution: 20,

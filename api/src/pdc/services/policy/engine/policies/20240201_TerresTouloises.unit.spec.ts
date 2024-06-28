@@ -1,5 +1,5 @@
 import { it } from "@/dev_deps.ts";
-import { v4 } from "@/lib/uuid/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { TerresTouloises2024 as Handler } from "./20240201_TerresTouloises.ts";
@@ -19,9 +19,9 @@ const defaultLon = 5.890172847442269;
 
 const defaultCarpool = {
   _id: 1,
-  operator_trip_id: v4(),
-  passenger_identity_key: v4(),
-  driver_identity_key: v4(),
+  operator_trip_id: uuidV4(),
+  passenger_identity_key: uuidV4(),
+  driver_identity_key: uuidV4(),
   operator_uuid: OperatorsEnum.MOBICOOP,
   operator_class: "C",
   passenger_is_over_18: true,
@@ -30,7 +30,7 @@ const defaultCarpool = {
   datetime: new Date("2024-04-15"),
   seats: 1,
   distance: 5_000,
-  operator_journey_id: v4(),
+  operator_journey_id: uuidV4(),
   operator_id: 1,
   driver_revenue: 20,
   passenger_contribution: 20,
@@ -85,34 +85,34 @@ it(
         carpool: [
           {
             distance: 1_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
           },
           {
             distance: 5_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
           },
           {
             distance: 5_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
             seats: 2,
           },
           {
             distance: 14_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
           },
           {
             distance: 15_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
           },
           {
             distance: 80_000,
-            driver_identity_key: v4(),
-            passenger_identity_key: v4(),
+            driver_identity_key: uuidV4(),
+            passenger_identity_key: uuidV4(),
           },
         ],
         meta: [],
