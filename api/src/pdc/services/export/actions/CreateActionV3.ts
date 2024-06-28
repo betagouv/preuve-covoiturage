@@ -10,13 +10,13 @@ import {
   hasPermissionMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
-import { DefaultTimezoneMiddleware } from "@/pdc/services/export/middlewares/DefaultTimezoneMiddleware.ts";
 import {
   handlerConfigV3,
   ParamsInterfaceV3,
   ResultInterfaceV3,
 } from "@/shared/export/create.contract.ts";
 import { aliasV3 } from "@/shared/export/create.schema.ts";
+import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { Export } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";

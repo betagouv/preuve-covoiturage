@@ -5,6 +5,7 @@ import {
   serviceProvider,
 } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
+import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 import {
@@ -21,7 +22,6 @@ import { CreateCommand } from "./commands/CreateCommand.ts";
 import { DebugCommand } from "./commands/DebugCommand.ts";
 import { ProcessCommand } from "./commands/ProcessCommand.ts";
 import { config } from "./config/index.ts";
-import { DefaultTimezoneMiddleware } from "./middlewares/DefaultTimezoneMiddleware.ts";
 import { CampaignRepository } from "./repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "./repositories/CarpoolRepository.ts";
 import { ExportRepository } from "./repositories/ExportRepository.ts";
