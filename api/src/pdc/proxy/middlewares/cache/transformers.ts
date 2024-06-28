@@ -15,7 +15,7 @@ export async function getKey(
 
   // sha256 the URL to create a unique key
   const body = JSON.stringify(req.body || {});
-  const hash = createHash(`${req.method} ${req.url} ${body}`);
+  const hash = await createHash(`${req.method} ${req.url} ${body}`);
 
   return `${globalConfig.prefix}:${pfx}:${hash}` as CacheKey;
 }

@@ -106,7 +106,7 @@ describe("File Manager", () => {
       axiosStub
         .getCall(1)
         .calledWithExactly(
-          `${fileManager.mirrorUrl}/${createHash(RESSOURCE_URL)}`,
+          `${fileManager.mirrorUrl}/${await createHash(RESSOURCE_URL)}`,
           {
             responseType: "stream",
           },
