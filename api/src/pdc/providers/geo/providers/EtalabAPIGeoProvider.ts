@@ -50,7 +50,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
     });
 
     if (!data.length) {
-      throw new NotFoundException(`Not found on insee code (${insee})`);
+      throw new NotFoundException(`Not found on INSEE Code (${insee})`);
     }
 
     if (Array.isArray(data)) {
@@ -60,7 +60,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
     const [lon, lat] = get(data, "centre.coordinates", [null, null]);
 
     if (!lon || !lat) {
-      throw new NotFoundException(`Not found on insee code (${insee})`);
+      throw new NotFoundException(`Not found on INSEE Code (${insee})`);
     }
 
     return {

@@ -56,10 +56,11 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       }
 
       // protect against char : in jobId
-      if (options.jobId && typeof options.jobId === "string") {
-        if ((options.jobId as string).indexOf(":") > -1) {
-          throw new Error('Character ":" is unsupported in jobId');
-        }
+      if (
+        options.jobId && typeof options.jobId === "string" &&
+        options.jobId.includes(":")
+      ) {
+        throw new Error('Character ":" is unsupported in jobId');
       }
 
       // clean up repeatableJob and their associated delayed job

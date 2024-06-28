@@ -29,7 +29,7 @@ export class MyQueueTransport extends QueueTransport
 
   async up(opts: string[] = []): Promise<void> {
     await super.up(opts);
-    if (env_or_false("MONITORING")) {
+    if (env_or_false("APP_MONITORING_ENABLED")) {
       this.app = express();
       this.setupServer();
       this.startServer();
