@@ -1,5 +1,6 @@
 import { afterAll, assert, beforeAll, describe, it } from "@/dev_deps.ts";
-import { env, Extensions } from "@/ilos/core/index.ts";
+import { Extensions } from "@/ilos/core/index.ts";
+import { env_or_fail, env_or_false, env_or_int } from "@/lib/env/index.ts";
 import {
   AbstractTemplate,
   HandlebarsTemplateProvider,
@@ -21,15 +22,15 @@ describe("Notification", () => {
         },
         debug: true,
         smtp: {
-          host: env.or_fail("INTEGRATION_MAILER_SMTP_HOST", "mailer"),
-          port: env.or_int("INTEGRATION_MAILER_SMTP_PORT", 1025),
-          secure: env.or_false("INTEGRATION_MAILER_SMTP_SECURE"),
+          host: env_or_fail("INTEGRATION_MAILER_SMTP_HOST", "mailer"),
+          port: env_or_int("INTEGRATION_MAILER_SMTP_PORT", 1025),
+          secure: env_or_false("INTEGRATION_MAILER_SMTP_SECURE"),
           auth: {
-            user: env.or_fail(
+            user: env_or_fail(
               "INTEGRATION_MAILER_SMTP_USER",
               "test@example.com",
             ),
-            pass: env.or_fail("INTEGRATION_MAILER_SMTP_PASS", "password"),
+            pass: env_or_fail("INTEGRATION_MAILER_SMTP_PASS", "password"),
           },
         },
       },

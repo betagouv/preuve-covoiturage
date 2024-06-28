@@ -8,6 +8,7 @@ import {
 } from "@/dev_deps.ts";
 import { ContextType, ForbiddenException } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { env_or_default } from "@/lib/env/index.ts";
 import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 import { ScopeToGroupMiddleware } from "./ScopeToGroupMiddleware.ts";
 
@@ -15,8 +16,10 @@ describe("ScopeToGroupMiddleware", () => {
   let connection: PostgresConnection;
   let middleware: ScopeToGroupMiddleware;
 
-  const connectionString = Deno.env.get("APP_POSTGRES_URL") ||
-    "postgresql://postgres:postgres@localhost:5432/local";
+  const connectionString = env_or_default(
+    "APP_POSTGRES_URL",
+    "postgresql://postgres:postgres@localhost:5432/local",
+  );
 
   const contextFactory = (params: Record<string, unknown>): ContextType => {
     return {

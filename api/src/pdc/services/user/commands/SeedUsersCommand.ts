@@ -6,7 +6,7 @@ import {
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
-import { env } from "@/lib/env/index.ts";
+import { env, env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { ParamsInterface } from "@/shared/user/create.contract.ts";
 
@@ -59,7 +59,7 @@ export class SeedUsersCommand implements CommandInterface {
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {
-    const env = Deno.env.get("NODE_ENV") || "";
+    const env = env_or_default("NODE_ENV", "");
     if (["local", "dev", "test", "ci"].indexOf(env) === -1) {
       throw new Error("Cannot seed users in this environment");
     }
