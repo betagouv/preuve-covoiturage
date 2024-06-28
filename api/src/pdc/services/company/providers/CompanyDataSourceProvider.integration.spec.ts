@@ -7,7 +7,7 @@ import { CompanyDataSourceProvider } from "./CompanyDataSourceProvider.ts";
 
 it("should fetch from data source with a siret id", async () => {
   if (
-    !(env("APP_INSEE_API_KEY") === undefined) ||
+    env("APP_INSEE_API_KEY") === undefined ||
     env("APP_INSEE_API_KEY") === ""
   ) {
     assert(true);
