@@ -1,7 +1,7 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
+import { createHash } from "@/lib/crypto/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
   StatCacheRepositoryProviderInterface,
@@ -22,11 +22,10 @@ export class StatCacheRepositoryProvider
   constructor(
     public connection: PostgresConnection,
     private config: ConfigInterfaceResolver,
-    private crypto: CryptoProviderInterfaceResolver,
   ) {}
 
   public async getOrBuild(fn: Function, target: any): Promise<StatInterface[]> {
-    const hash = this.genHash(target);
+    const hash = await createHash(JSON.stringify(target));
     const result = await this.connection.getClient().query<any>({
       text: `
         SELECT data
@@ -51,10 +50,6 @@ export class StatCacheRepositoryProvider
     return result.rows[0].data;
   }
 
-  private genHash(target: any): string {
-    return this.crypto.md5(JSON.stringify(target));
-  }
-
   /**
    * Save the stat_cache entry
    */
@@ -66,7 +61,7 @@ export class StatCacheRepositoryProvider
     // first, clean up the matching target before recreating
     // UNIQUE index fails on NULL values. It is safer to force delete
     // the entry before redoing the insert.
-    await this.cleanup(target);
+    await this.cleanup(hash);
 
     try {
       const result = await this.connection.getClient().query<any>({
@@ -99,11 +94,11 @@ export class StatCacheRepositoryProvider
   /**
    * Remove the matching stat_cache entry
    */
-  protected async cleanup(target: any): Promise<boolean> {
+  protected async cleanup(hash: string): Promise<boolean> {
     try {
       const deleted = await this.connection.getClient().query<any>({
         text: `DELETE FROM ${this.table} WHERE hash = $1`,
-        values: [this.genHash(target)],
+        values: [hash],
       });
 
       return deleted.rowCount === 1;

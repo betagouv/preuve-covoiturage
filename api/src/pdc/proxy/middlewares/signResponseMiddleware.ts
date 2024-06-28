@@ -1,16 +1,8 @@
-import { createHash, expressMung } from "@/deps.ts";
+import { expressMung, Request, Response } from "@/deps.ts";
+import { createHash } from "@/lib/crypto/index.ts";
 
-/**
- * Hash the payload
- */
-const hashPayload = (payload): string => {
-  const hash = createHash("SHA256");
-  hash.update(JSON.stringify(payload) || "");
-  return hash.digest("hex");
-};
-
-export const signResponseMiddleware = expressMung.json(
-  (body, req, res): void => {
-    res.header("X-Response-SHA256", hashPayload(body));
+export const signResponseMiddleware = expressMung.jsonAsync(
+  async (_body: {}, req: Request, res: Response): Promise<void> => {
+    res.header("X-Response-SHA256", await createHash(req.body));
   },
 );

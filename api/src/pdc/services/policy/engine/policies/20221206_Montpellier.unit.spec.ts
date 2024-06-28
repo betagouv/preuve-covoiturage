@@ -1,5 +1,5 @@
-import { v4 } from "@/deps.ts";
 import { it } from "@/dev_deps.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { generatePartialCarpools } from "../tests/helpers.ts";
 import { makeProcessHelper } from "../tests/macro.ts";

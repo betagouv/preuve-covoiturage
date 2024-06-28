@@ -1,6 +1,6 @@
-import { v4 } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {

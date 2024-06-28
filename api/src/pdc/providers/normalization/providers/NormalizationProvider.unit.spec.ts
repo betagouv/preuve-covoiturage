@@ -1,8 +1,8 @@
 import { assertObjectMatch, assertRejects, it } from "@/dev_deps.ts";
 import { Container } from "@/ilos/core/index.ts";
 
-import { randomUUID } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
 import {
   PartialGeoInterface,
@@ -60,8 +60,8 @@ it("Should normalize v3", async () => {
     api_version: 3,
     created_at: new Date(),
     payload: {
-      operator_journey_id: randomUUID(),
-      operator_trip_id: randomUUID(),
+      operator_journey_id: v4(),
+      operator_trip_id: v4(),
       operator_class: "C",
       incentives: [
         {
@@ -83,16 +83,16 @@ it("Should normalize v3", async () => {
       distance: 10000,
       driver: {
         identity: {
-          identity_key: randomUUID(),
-          operator_user_id: randomUUID(),
+          identity_key: v4(),
+          operator_user_id: v4(),
           over_18: true,
         },
         revenue: 200,
       },
       passenger: {
         identity: {
-          identity_key: randomUUID(),
-          operator_user_id: randomUUID(),
+          identity_key: v4(),
+          operator_user_id: v4(),
           travel_pass: {
             name: "navigo",
             user_id: "111",

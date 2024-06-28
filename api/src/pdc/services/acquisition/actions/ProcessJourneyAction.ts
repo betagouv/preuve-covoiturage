@@ -1,4 +1,3 @@
-import { randomUUID } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   handler,
@@ -9,6 +8,7 @@ import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
 
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -41,7 +41,7 @@ export class ProcessJourneyAction extends AbstractAction {
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
-    const runUUID = randomUUID();
+    const runUUID = v4();
     const { timeout, batchSize } = this.config.get("acquisition.processing", {
       timeout: 0,
       batchSize: 1000,

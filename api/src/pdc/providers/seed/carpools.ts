@@ -1,4 +1,4 @@
-import { v4 } from "@/deps.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 
 const defaultCarpool: Carpool = {
   acquisition_id: 1,

@@ -1,5 +1,5 @@
-import { v4 } from "@/deps.ts";
 import { it } from "@/dev_deps.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { CarpoolInterface, OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { LannionTregor2024 as Handler } from "./20240401_LannionTregor.ts";

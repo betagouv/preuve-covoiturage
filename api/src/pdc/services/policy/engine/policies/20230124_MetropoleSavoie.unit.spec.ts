@@ -1,5 +1,5 @@
-import { v4 } from "@/deps.ts";
 import { it } from "@/dev_deps.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { makeProcessHelper } from "@/pdc/services/policy/engine/tests/macro.ts";
 import { OperatorsEnum } from "@/pdc/services/policy/interfaces/index.ts";
 import { MetropoleSavoie as Handler } from "./20230124_MetropoleSavoie.ts";

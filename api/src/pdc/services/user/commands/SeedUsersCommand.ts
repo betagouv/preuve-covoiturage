@@ -4,8 +4,8 @@ import {
   CommandOptionType,
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
+import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { ParamsInterface } from "@/shared/user/create.contract.ts";
@@ -56,7 +56,7 @@ export class SeedUsersCommand implements CommandInterface {
     },
   ];
 
-  constructor(private crypto: CryptoProviderInterfaceResolver) {}
+  constructor() {}
 
   public async call(options: Options): Promise<string> {
     const env = env_or_default("NODE_ENV", "");
@@ -91,7 +91,7 @@ export class SeedUsersCommand implements CommandInterface {
           `,
           values: [
             email,
-            await this.crypto.cryptPassword(password),
+            await bcrypt_hash(password),
             firstname,
             lastname,
             role,

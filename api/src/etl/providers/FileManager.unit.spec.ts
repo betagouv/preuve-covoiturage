@@ -8,8 +8,9 @@ import {
   it,
   sinon,
 } from "@/dev_deps.ts";
+import { createHash } from "@/lib/crypto/index.ts";
 import { join } from "@/lib/path/index.ts";
-import { hash, writeFile } from "../helpers/index.ts";
+import { writeFile } from "../helpers/index.ts";
 import { FileManager } from "./FileManager.ts";
 
 describe("File Manager", () => {
@@ -46,7 +47,7 @@ describe("File Manager", () => {
     // Arrange
     const existingFilepath = join(
       fileManager.downloadPath,
-      hash(RESSOURCE_URL),
+      await createHash(RESSOURCE_URL),
     );
     await mkdir(fileManager.downloadPath, { recursive: true });
     await writeFile(READABLE_STREAM, existingFilepath);
@@ -105,7 +106,7 @@ describe("File Manager", () => {
       axiosStub
         .getCall(1)
         .calledWithExactly(
-          `${fileManager.mirrorUrl}/${hash(RESSOURCE_URL)}`,
+          `${fileManager.mirrorUrl}/${createHash(RESSOURCE_URL)}`,
           {
             responseType: "stream",
           },

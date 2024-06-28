@@ -4,12 +4,12 @@ import {
   open,
   Stringifier,
   stringify,
-  v4,
 } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import {
   FormatInterface,
