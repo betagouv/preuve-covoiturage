@@ -1,5 +1,5 @@
-import { v4 } from "@/deps.ts";
 import { it } from "@/dev_deps.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { PMGFOctobre2023 as Handler } from "./20231001_PMGF.ts";
@@ -19,9 +19,9 @@ const defaultLon = 2.261827843187402;
 
 const defaultCarpool = {
   _id: 1,
-  operator_trip_id: v4(),
-  passenger_identity_key: v4(),
-  driver_identity_key: v4(),
+  operator_trip_id: uuidV4(),
+  passenger_identity_key: uuidV4(),
+  driver_identity_key: uuidV4(),
   operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: "C",
   passenger_is_over_18: true,
@@ -30,7 +30,7 @@ const defaultCarpool = {
   datetime: new Date("2023-10-01"),
   seats: 1,
   distance: 5_000,
-  operator_journey_id: v4(),
+  operator_journey_id: uuidV4(),
   operator_id: 1,
   driver_revenue: 20,
   passenger_contribution: 20,

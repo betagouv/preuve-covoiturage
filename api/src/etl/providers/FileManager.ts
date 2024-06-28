@@ -3,15 +3,15 @@ import { basename, join } from "@/lib/path/index.ts";
 import {
   getAllFiles,
   getFileExtensions,
-  hash,
-  randomString,
   un7zFile,
   ungzFile,
   unzipFile,
   writeFile,
 } from "../helpers/index.ts";
 
+import { createHash } from "@/lib/crypto/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
   ArchiveFileTypeEnum,
   FileManagerConfigInterface,
@@ -32,22 +32,25 @@ export class FileManager implements FileManagerInterface {
     this.mirrorUrl = config.mirrorUrl;
   }
 
-  protected getTemporaryDirectoryPath(name?: string): string {
-    return name ? join(this.basePath, name) : this.getTemporaryFilePath();
+  protected async getTemporaryDirectoryPath(name?: string): Promise<string> {
+    return name ? join(this.basePath, name) : await this.getTemporaryFilePath();
   }
 
-  protected getTemporaryFilePath(data?: string, isDownload = false): string {
+  protected async getTemporaryFilePath(
+    data?: string,
+    isDownload = false,
+  ): Promise<string> {
     return join(
       isDownload ? this.downloadPath : this.basePath,
-      data ? hash(data) : randomString(),
+      data ? await createHash(data) : uuidV4(),
     );
   }
 
-  protected getMirrorUrl(url: string): string | undefined {
+  protected async getMirrorUrl(url: string): Promise<string | undefined> {
     if (!this.mirrorUrl) {
       return;
     }
-    return `${this.mirrorUrl}/${hash(url)}`;
+    return `${this.mirrorUrl}/${await createHash(url)}`;
   }
 
   async install(): Promise<void> {
@@ -73,7 +76,7 @@ export class FileManager implements FileManagerInterface {
     try {
       await this.install();
       await access(filepath);
-      const extractPath = this.getTemporaryDirectoryPath(
+      const extractPath = await this.getTemporaryDirectoryPath(
         `${basename(filepath)}-extract`,
       );
       try {
@@ -107,7 +110,7 @@ export class FileManager implements FileManagerInterface {
   }
 
   async download(url: string): Promise<string> {
-    const filepath = this.getTemporaryFilePath(url, true);
+    const filepath = await this.getTemporaryFilePath(url, true);
     await this.install();
     try {
       await access(filepath);
@@ -120,7 +123,7 @@ export class FileManager implements FileManagerInterface {
         await writeFile(response.data, filepath);
       } catch (e) {
         // If not found and have mirror, try download
-        const mirrorUrl = this.getMirrorUrl(url);
+        const mirrorUrl = await this.getMirrorUrl(url);
         if (mirrorUrl) {
           const response = await axios.get<Readable>(mirrorUrl, {
             responseType: "stream",
@@ -142,7 +145,7 @@ export class FileManager implements FileManagerInterface {
     simplify?: string,
   ): Promise<string> {
     try {
-      const outFilepath = `${this.getTemporaryFilePath()}.${format}`;
+      const outFilepath = `${await this.getTemporaryFilePath()}.${format}`;
       const options = [
         "-i",
         filepath,

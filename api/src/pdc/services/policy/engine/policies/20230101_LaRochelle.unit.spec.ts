@@ -1,5 +1,5 @@
-import { v4 } from "@/deps.ts";
 import { it } from "@/dev_deps.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { LaRochelle20232024 as Handler } from "./20230101_LaRochelle.ts";
@@ -19,8 +19,8 @@ const defaultLon = 2.261827843187402;
 
 const defaultCarpool = {
   _id: 1,
-  operator_trip_id: v4(),
-  passenger_identity_key: v4(),
+  operator_trip_id: uuidV4(),
+  passenger_identity_key: uuidV4(),
   driver_identity_key: "driver_id_one",
   operator_uuid: OperatorsEnum.KLAXIT,
   operator_class: "C",
@@ -30,7 +30,7 @@ const defaultCarpool = {
   datetime: new Date("2023-01-02"),
   seats: 1,
   distance: 6_000,
-  operator_journey_id: v4(),
+  operator_journey_id: uuidV4(),
   operator_id: 1,
   driver_revenue: 20,
   passenger_contribution: 20,

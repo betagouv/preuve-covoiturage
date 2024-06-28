@@ -4,12 +4,12 @@ import {
   open,
   Stringifier,
   stringify,
-  v4,
 } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import {
   FormatInterface,
@@ -77,7 +77,7 @@ export class BuildFile {
       tz: params.format?.tz ?? "Europe/Paris",
       filename: params.format?.filename ?? type === "opendata"
         ? getOpenDataExportName("csv", date)
-        : `covoiturage-${v4()}.csv`,
+        : `covoiturage-${uuidV4()}.csv`,
     };
   }
 

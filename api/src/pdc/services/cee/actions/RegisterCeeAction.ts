@@ -1,4 +1,3 @@
-import { createSign } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   ContextType,
@@ -17,6 +16,7 @@ import {
 import { alias } from "@/shared/cee/registerApplication.schema.ts";
 
 import { ConflictException } from "@/ilos/common/index.ts";
+import { createSignatory } from "@/lib/crypto/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import {
   CeeLongApplicationInterface,
@@ -47,6 +47,7 @@ export class RegisterCeeAction extends AbstractAction {
   readonly timeConstraint: TimeRangeConstraint;
   readonly cooldownConstraint: ApplicationCooldownConstraint;
   readonly validJourneyConstraint: ValidJourneyConstraint;
+  protected signatory: ((message: string) => Promise<string>) | undefined;
   constructor(
     protected ceeRepository: CeeRepositoryProviderInterfaceResolver,
     protected config: ConfigInterfaceResolver,
@@ -239,16 +240,17 @@ export class RegisterCeeAction extends AbstractAction {
   }
 
   public async sign(application: RegisteredCeeApplication): Promise<string> {
-    const private_key = this.config.get("signature.private_key");
-    const signer = createSign("RSA-SHA512");
+    if (!this.signatory) {
+      const private_key = this.config.get("signature.private_key");
+      this.signatory = await createSignatory(private_key);
+    }
     const data = [
       application.operator_siret.toString(),
       application.journey_type.toString(),
       application.driving_license,
       application.datetime.toISOString(),
     ].join("/");
-    signer.write(data);
-    signer.end();
-    return signer.sign(private_key, "base64");
+    const sign = await this.signatory(data);
+    return sign;
   }
 }

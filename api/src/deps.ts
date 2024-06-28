@@ -6,7 +6,6 @@ import axiosRetry from "npm:axios-retry@^4";
 import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
-export { createHash, randomBytes } from "node:crypto";
 export {
   constants as fsConstants,
   createReadStream,
@@ -86,8 +85,6 @@ export type {
   QueueSchedulerOptions,
   WorkerOptions,
 } from "npm:bullmq@^1.91";
-// @deno-types="npm:@types/uuid@^9"
-export { v4 } from "npm:uuid@^9";
 
 export { Ajv } from "npm:ajv@^8.12";
 export type {
@@ -161,7 +158,6 @@ export {
   Client as PgClient,
   Pool as PgPool,
 } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
-export { createSign, randomUUID } from "node:crypto";
 export { Agent as HttpAgent } from "node:http";
 export { Agent as HttpsAgent } from "node:https";
 export { gunzipSync, gzipSync } from "node:zlib";
@@ -213,11 +209,9 @@ export {
   ajvKeywords,
   axios,
   axiosRetry,
-  bcrypt,
   bodyParser,
   booleanPointInPolygon,
   cors,
-  CryptoJS,
   Cursor,
   datefr,
   distance,
@@ -251,12 +245,14 @@ export {
   xlsx,
   xss,
 };
-// @deno-types="npm:@types/crypto-js@^4"
-import CryptoJS from "npm:crypto-js@^4.2";
-// @deno-types="npm:@types/bcryptjs@^2"
-import bcrypt from "npm:bcryptjs@^2.4";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
 export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
+export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+export * as crypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
+export {
+  decodeBase64,
+  encodeBase64,
+} from "https://deno.land/std@0.224.0/encoding/base64.ts";
 

@@ -102,7 +102,7 @@ export function cacheMiddleware(
 
         // check if the key exists, then return the value
         // or call the next middleware and store the response
-        const key = getKey(req, res, globalConfig, routeConfig);
+        const key = await getKey(req, res, globalConfig, routeConfig);
         const buf = await store.get(key);
         const ttl = await store.ttl(key);
 

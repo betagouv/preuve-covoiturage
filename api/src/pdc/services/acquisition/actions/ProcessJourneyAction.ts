@@ -1,10 +1,10 @@
-import { randomUUID } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   handler,
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
 
@@ -41,7 +41,7 @@ export class ProcessJourneyAction extends AbstractAction {
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
-    const runUUID = randomUUID();
+    const runUUID = uuidV4();
     const { timeout, batchSize } = this.config.get("acquisition.processing", {
       timeout: 0,
       batchSize: 1000,

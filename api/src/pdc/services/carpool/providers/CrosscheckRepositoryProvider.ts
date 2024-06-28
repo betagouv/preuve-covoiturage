@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
-import { v4 } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 
 import {
   CrosscheckRepositoryProviderInterface,
@@ -29,7 +29,7 @@ export class CrosscheckRepositoryProvider
     end: PositionInterface;
     identity_uuid?: string;
   }): Promise<string> {
-    let tripId: string;
+    let tripId: string | null = null;
 
     if (data.operator_trip_id) {
       tripId = await this.findTripIdByOperatorTripId(data.operator_trip_id);
@@ -42,7 +42,7 @@ export class CrosscheckRepositoryProvider
       );
     }
 
-    return tripId || v4();
+    return tripId || uuidV4();
   }
 
   protected async findTripIdByOperatorTripId(

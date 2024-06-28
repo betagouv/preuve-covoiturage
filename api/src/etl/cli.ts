@@ -3,7 +3,6 @@ import { Command, InvalidArgumentError } from "@/deps.ts";
 import { args } from "@/lib/cli/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
-import { hash } from "./helpers/index.ts";
 import {
   buildMigrator,
   defaultConfig,
@@ -99,13 +98,6 @@ async function statusAction(opts: Partial<Options>) {
     ...todo.map((mig) => ({ name: mig.uuid, done: false })),
   ]);
 }
-
-async function getSourceAction(opts: Partial<Options>) {
-  const migrator = getMigrator(opts);
-  const datasets = migrator.getDatasets();
-  datasets.map((d) => logger.info(`${hash(d.url)} : ${d.url}`));
-}
-
 async function main(): Promise<void> {
   const command = new Command();
   command
@@ -168,13 +160,6 @@ async function main(): Promise<void> {
     .command("status")
     .description("Get import status")
     .action((localOpts) => statusAction({ ...localOpts, ...command.opts() }));
-
-  command
-    .command("source")
-    .description("Get import sources")
-    .action((localOpts) =>
-      getSourceAction({ ...localOpts, ...command.opts() })
-    );
 
   command.parseAsync(args());
 }

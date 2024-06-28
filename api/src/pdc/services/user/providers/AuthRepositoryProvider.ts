@@ -1,7 +1,8 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { CryptoProviderInterfaceResolver } from "@/pdc/providers/crypto/index.ts";
 
+import { bcrypt_compare, bcrypt_hash } from "@/lib/crypto/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
   AuthRepositoryProviderInterface,
   AuthRepositoryProviderInterfaceResolver,
@@ -23,7 +24,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   constructor(
     protected connection: PostgresConnection,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {}
 
@@ -123,8 +123,8 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     type: string,
     status?: string,
   ): Promise<string | undefined> {
-    const plainToken = this.cryptoProvider.generateToken();
-    const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
+    const plainToken = uuidV4();
+    const cryptedToken = await bcrypt_hash(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
 
     const values = [email, cryptedToken, token_expires_at];
@@ -183,7 +183,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       return false;
     }
 
-    return this.cryptoProvider.comparePassword(password, hashedPassword);
+    return await bcrypt_compare(password, hashedPassword);
   }
 
   /**
@@ -195,7 +195,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       return false;
     }
 
-    return this.cryptoProvider.comparePassword(password, hashedPassword);
+    return await bcrypt_compare(password, hashedPassword);
   }
 
   /**
@@ -213,7 +213,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     const { token, token_expires_at } = tokenData;
 
     if (
-      !token || !(await this.cryptoProvider.compareToken(clearToken, token))
+      !token || !(await bcrypt_compare(clearToken, token))
     ) {
       return false;
     }
@@ -229,7 +229,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
    * Update password by id
    */
   async updatePasswordById(_id: number, password: string): Promise<boolean> {
-    const newHashPassword = await this.cryptoProvider.cryptPassword(password);
+    const newHashPassword = await bcrypt_hash(password);
 
     const query = {
       text: `
@@ -253,7 +253,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     password: string,
     status: string = this.UNCONFIRMED_STATUS,
   ): Promise<boolean> {
-    const newHashPassword = await this.cryptoProvider.cryptPassword(password);
+    const newHashPassword = await bcrypt_hash(password);
 
     const query = {
       text: `
@@ -280,8 +280,8 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     email: string,
     status: string = this.UNCONFIRMED_STATUS,
   ): Promise<string> {
-    const clearToken = this.cryptoProvider.generateToken();
-    const cryptedToken = await this.cryptoProvider.cryptToken(clearToken);
+    const clearToken = uuidV4();
+    const cryptedToken = await bcrypt_hash(clearToken);
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
 
     const query = {

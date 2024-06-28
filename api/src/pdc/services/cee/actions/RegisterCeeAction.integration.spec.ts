@@ -1,4 +1,3 @@
-import { createSign } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -9,6 +8,7 @@ import {
 } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { createSignatory } from "@/lib/crypto/index.ts";
 import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import {
   assertErrorHandler,
@@ -62,6 +62,8 @@ describe("RegisterCeeAction", () => {
     identity_key: "0".repeat(64),
   };
 
+  let sign: (message: string) => Promise<string>;
+
   // ---------------------------------------------------------------------------
   // Hooks
   // ---------------------------------------------------------------------------
@@ -82,6 +84,9 @@ describe("RegisterCeeAction", () => {
       .getContainer()
       .rebind(PostgresConnection)
       .toConstantValue(db.connection);
+
+    const private_key = config.signature.private_key as string;
+    sign = await createSignatory(private_key);
   });
 
   afterAll(async () => {
@@ -181,24 +186,17 @@ describe("RegisterCeeAction", () => {
       defaultShortPayload,
       async (response) => {
         const { uuid: _uuid, ...resp } = response;
-        await assertEquals(resp, {
+        const token = await sign([
+          "89248032800012",
+          "short",
+          defaultShortPayload.driving_license,
+          "2024-03-15T00:15:00.000Z",
+        ].join("/"));
+        assertEquals(resp, {
+          token,
           journey_id: 1,
           datetime: "2024-03-15T00:15:00.000Z",
           status: CarpoolV1StatusEnum.Ok,
-          token: (function (): string {
-            const private_key = config.signature.private_key as string;
-            const signer = createSign("RSA-SHA512");
-            signer.write(
-              [
-                "89248032800012",
-                "short",
-                defaultShortPayload.driving_license,
-                "2024-03-15T00:15:00.000Z",
-              ].join("/"),
-            );
-            signer.end();
-            return signer.sign(private_key, "base64");
-          })(),
         });
       },
     );
@@ -221,25 +219,18 @@ describe("RegisterCeeAction", () => {
       },
       async (response) => {
         const { uuid: _uuid, ...resp } = response;
-        await assertEquals(resp, {
+
+        const token = await sign([
+          "89248032800012",
+          "short",
+          "051227308990",
+          "2024-03-16T00:15:00.000Z",
+        ].join("/"));
+        assertEquals(resp, {
           journey_id: 2,
           datetime: "2024-03-16T00:15:00.000Z",
           status: CarpoolV1StatusEnum.Ok,
-          token: (function (): string {
-            const private_key = config.signature.private_key as string;
-            const signer = createSign("RSA-SHA512");
-            signer.write(
-              [
-                "89248032800012",
-                "short",
-                "051227308990",
-                "2024-03-16T00:15:00.000Z",
-              ]
-                .join("/"),
-            );
-            signer.end();
-            return signer.sign(private_key, "base64");
-          })(),
+          token,
         });
       },
     );
@@ -262,25 +253,17 @@ describe("RegisterCeeAction", () => {
       },
       async (response) => {
         const { uuid: _uuid, ...resp } = response;
-        await assertEquals(resp, {
+        const token = await sign([
+          "89248032800012",
+          "short",
+          "051227308991",
+          "2024-03-16T00:15:00.000Z",
+        ].join("/"));
+        assertEquals(resp, {
           journey_id: 3,
           datetime: "2024-03-16T00:15:00.000Z",
           status: CarpoolV1StatusEnum.Ok,
-          token: (function (): string {
-            const private_key = config.signature.private_key as string;
-            const signer = createSign("RSA-SHA512");
-            signer.write(
-              [
-                "89248032800012",
-                "short",
-                "051227308991",
-                "2024-03-16T00:15:00.000Z",
-              ]
-                .join("/"),
-            );
-            signer.end();
-            return signer.sign(private_key, "base64");
-          })(),
+          token,
         });
       },
     );

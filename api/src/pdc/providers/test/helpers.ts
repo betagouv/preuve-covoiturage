@@ -1,5 +1,4 @@
 import * as connections from "@/config/connections.ts";
-import { v4 } from "@/deps.ts";
 import {
   kernel as kernelDecorator,
   KernelInterface,
@@ -9,6 +8,7 @@ import {
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Kernel as AbstractKernel } from "@/ilos/framework/index.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 
 /**
  * AJV inputs require dates to be strings when they are of type Date in the code.
@@ -59,7 +59,7 @@ export function makeKernel(
 // let other packages use uuid without npm install to limit deps
 // TODO move to a common package or replace with Deno std !
 export function uuid(): string {
-  return v4();
+  return uuidV4();
 }
 
 /**

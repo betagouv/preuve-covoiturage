@@ -1,4 +1,4 @@
-import { v4 } from "@/deps.ts";
+import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
   CarpoolInterface,
   IncentiveStateEnum,
@@ -21,9 +21,9 @@ const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
 
 const dftCarpool: CarpoolInterface = {
-  operator_trip_id: v4(),
-  driver_identity_key: v4(),
-  passenger_identity_key: v4(),
+  operator_trip_id: uuidV4(),
+  driver_identity_key: uuidV4(),
+  passenger_identity_key: uuidV4(),
   operator_uuid: "0b361f5b-4651-45f1-8f59-5952d5e745fd",
   operator_class: "C",
   passenger_is_over_18: true,
@@ -32,7 +32,7 @@ const dftCarpool: CarpoolInterface = {
   datetime: new Date("2019-01-15"),
   seats: 1,
   distance: 5000,
-  operator_journey_id: v4(),
+  operator_journey_id: uuidV4(),
   operator_id: 1,
   driver_revenue: 20,
   passenger_contribution: 20,
@@ -124,6 +124,6 @@ export function generatePartialCarpools(
       : new Date(date),
     distance: 25_000,
     driver_identity_key: "three",
-    passenger_identity_key: v4(),
+    passenger_identity_key: uuidV4(),
   }));
 }
