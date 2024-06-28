@@ -51,7 +51,6 @@ import {
 import {
   dataWrapMiddleware,
   errorHandlerMiddleware,
-  signResponseMiddleware,
 } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
@@ -254,7 +253,8 @@ export class HttpTransport implements TransportInterface {
       next();
     });
 
-    this.app.use(signResponseMiddleware);
+    // FIXME : expressMung.jsonAsync makes the response body undefined
+    // this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }
 
