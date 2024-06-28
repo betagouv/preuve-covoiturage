@@ -1,5 +1,5 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
 import {
   handlerConfig,
@@ -9,11 +9,12 @@ import {
 
 import { alias } from "@/shared/cee/importApplication.schema.ts";
 
-import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
-import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
-import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
-import { getDateOrFail } from "../helpers/getDateOrFail.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
+import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
+import { getDateOrFail } from "../helpers/getDateOrFail.ts";
+import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
+import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
@@ -28,7 +29,7 @@ export class ImportCeeAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_CEE_IMPORT")) {
+    if (env_or_false("APP_DISABLE_CEE_IMPORT")) {
       throw new ServiceDisabledError();
     }
 

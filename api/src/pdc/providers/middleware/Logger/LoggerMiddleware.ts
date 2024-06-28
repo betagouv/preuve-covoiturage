@@ -6,6 +6,7 @@ import {
   ResultType,
 } from "@/ilos/common/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { UnconfiguredMiddleware } from "../interfaces.ts";
 
 @middleware()
@@ -17,12 +18,12 @@ export class LoggerMiddleware
     next: Function,
   ): Promise<ResultType> {
     try {
-      console.debug("Before middlewares", { params, context });
+      logger.debug("Before middlewares", { params, context });
       const response = await next(params, context);
-      console.debug("After middlewares", { response, params, context });
+      logger.debug("After middlewares", { response, params, context });
       return response;
     } catch (e) {
-      console.debug("ERROR", e);
+      logger.debug("ERROR", e);
       throw e;
     }
   }

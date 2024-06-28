@@ -1,5 +1,4 @@
 import {
-  _,
   addMonths,
   fromZonedTime,
   startOfMonth,
@@ -13,6 +12,8 @@ import {
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   BucketName,
@@ -55,7 +56,7 @@ export class ExportAction extends Action {
     const verbose = this.isVerbose(context);
 
     if (verbose) {
-      console.info(
+      logger.info(
         `$$$ Exporting APDF from ${start_date.toISOString()} to ${end_date.toISOString()}`,
       );
     }
@@ -67,7 +68,7 @@ export class ExportAction extends Action {
         const campaign: PolicyResultInterface | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
           .catch((e) =>
-            console.error(
+            logger.error(
               `[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`,
             )
           );
@@ -96,13 +97,13 @@ export class ExportAction extends Action {
         ) => (operators.length ? operators.includes(operator_id) : true));
 
         if (!activeOperatorIds.length) {
-          console.info(
+          logger.info(
             `[apdf:export] (campaign: ${campaign.name}) No active operators`,
           );
         }
 
         if (verbose) {
-          console.info(`
+          logger.info(`
             $$$ Building APDF for campaign ${campaign.name}:
             $$$  - start_date: ${campaign.start_date.toISOString()}
             $$$  - end_date:   ${campaign.end_date.toISOString()}
@@ -118,7 +119,7 @@ export class ExportAction extends Action {
         await Promise.all(
           activeOperatorIds.map(async (o_id) => {
             try {
-              console.info(
+              logger.info(
                 `$$$ > Building APDF for campaign ${campaign.name}, operator id ${o_id}`,
               );
               const { filename, filepath } = await this.buildExcel.call(
@@ -129,7 +130,7 @@ export class ExportAction extends Action {
               );
 
               if (!this.config.get("apdf.s3UploadEnabled")) {
-                console.warn(
+                logger.warn(
                   `APDF Upload disabled! Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file\n > ${filepath}`,
                 );
                 return;
@@ -146,14 +147,14 @@ export class ExportAction extends Action {
               try {
                 await unlink(filepath);
               } catch (e) {
-                console.warn(`Failed to unlink ${filepath}`);
+                logger.warn(`Failed to unlink ${filepath}`);
               }
 
               files.push(file);
             } catch (error) {
               const message =
                 `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
-              console.error(message);
+              logger.error(message);
               files.push(message);
             }
           }),
@@ -165,16 +166,16 @@ export class ExportAction extends Action {
   }
 
   private isVerbose(context: ContextType): boolean {
-    return _.get(context, "channel.transport") === "cli" &&
-      _.get(context, "call.metadata.verbose", false);
+    return get(context, "channel.transport") === "cli" &&
+      get(context, "call.metadata.verbose", false);
   }
 
   private castOrGetDefaultDates(
     params: ParamsInterface,
   ): { start_date: Date; end_date: Date } {
     // use the local times
-    const start_date_lc = _.get(params, "query.date.start", null);
-    const end_date_lc = _.get(params, "query.date.end", null);
+    const start_date_lc = get(params, "query.date.start", null);
+    const end_date_lc = get(params, "query.date.end", null);
 
     // having both
     if (start_date_lc && end_date_lc) {

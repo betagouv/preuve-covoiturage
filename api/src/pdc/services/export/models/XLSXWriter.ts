@@ -1,4 +1,7 @@
-import { AdmZip, excel, os, path } from "@/deps.ts";
+import { AdmZip, excel } from "@/deps.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import {
   AllowedComputedFields,
@@ -79,7 +82,7 @@ export class XLSXWriter {
 
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.options, ...config } as Options;
-    this.folder = os.tmpdir();
+    this.folder = getTmpDir();
     this.basename = sanitize(filename, 128);
   }
 
@@ -135,14 +138,14 @@ export class XLSXWriter {
 
   // TODO print help in a separate sheet
   public async printHelp(): Promise<XLSXWriter> {
-    console.info("TODO print help");
+    logger.info("TODO print help");
     return this;
   }
 
   // TODO compress the file with ZIP (for now)
   public async compress(): Promise<XLSXWriter> {
     if (!this.options.compress) {
-      console.info(`Skipped compression of ${this.workbookPath}`);
+      logger.info(`Skipped compression of ${this.workbookPath}`);
       return this;
     }
 
@@ -164,7 +167,7 @@ export class XLSXWriter {
   }
 
   public get workbookPath(): string {
-    return path.join(this.folder, this.workbookFilename);
+    return join(this.folder, this.workbookFilename);
   }
 
   public get archiveFilename(): string {
@@ -172,7 +175,7 @@ export class XLSXWriter {
   }
 
   public get archivePath(): string {
-    return path.join(this.folder, this.archiveFilename);
+    return join(this.folder, this.archiveFilename);
   }
 
   public addDatasource(key: string, value: any): XLSXWriter {

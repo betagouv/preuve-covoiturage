@@ -1,4 +1,4 @@
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
 import {
   ApplicationCooldownConstraint,
   TimeRangeConstraint,
@@ -8,10 +8,10 @@ import {
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: "C",
   start_date: new Date(
-    env.or_fail("APP_CEE_START_DATE", "2023-01-01T00:00:00+0100"),
+    env_or_fail("APP_CEE_START_DATE", "2023-01-01T00:00:00+0100"),
   ),
   end_date: new Date(
-    env.or_fail("APP_CEE_END_DATE", "2025-01-01T00:00:00+0100"),
+    env_or_fail("APP_CEE_END_DATE", "2025-01-01T00:00:00+0100"),
   ),
   max_distance: 80_000,
   geo_pattern: "99%",
@@ -41,6 +41,6 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
 
 // A partir de combien de jour les demandes peuvent être envoyées
 export const timeRangeConstraint: TimeRangeConstraint = {
-  short: env.or_int("APP_CEE_DELAY", 7),
-  long: env.or_int("APP_CEE_DELAY", 7),
+  short: env_or_int("APP_CEE_DELAY", 7),
+  long: env_or_int("APP_CEE_DELAY", 7),
 };

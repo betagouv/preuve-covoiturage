@@ -1,10 +1,12 @@
-import { _, Job, JobsOptions, Queue, QueueOptions } from "@/deps.ts";
+import { Job, JobsOptions, Queue, QueueOptions } from "@/deps.ts";
 import {
   CallType,
   HandlerInterface,
   InitHookInterface,
 } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
@@ -54,10 +56,11 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
       }
 
       // protect against char : in jobId
-      if (options.jobId && _.isString(options.jobId)) {
-        if ((options.jobId as string).indexOf(":") > -1) {
-          throw new Error('Character ":" is unsupported in jobId');
-        }
+      if (
+        options.jobId && typeof options.jobId === "string" &&
+        options.jobId.includes(":")
+      ) {
+        throw new Error('Character ":" is unsupported in jobId');
       }
 
       // clean up repeatableJob and their associated delayed job
@@ -67,15 +70,15 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         for (const job of jobs) {
           if (job.id === options.jobId) {
             await this.client?.removeRepeatableByKey(job.key);
-            console.debug(`Removed repeatable job ${options.jobId}`);
+            logger.debug(`Removed repeatable job ${options.jobId}`);
           }
         }
 
         const delayedJobs = await this.client?.getJobs(["delayed"]) || [];
         for (const job of delayedJobs) {
-          if (_.get(job, "opts.repeat.jobId") === options.jobId) {
+          if (get(job, "opts.repeat.jobId") === options.jobId) {
             await job.remove();
-            console.debug(`Removed delayed job ${options.jobId}`);
+            logger.debug(`Removed delayed job ${options.jobId}`);
           }
         }
       }
@@ -100,7 +103,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
       return job;
     } catch (e) {
-      console.error(`Async call ${call.method} failed`, e);
+      logger.error(`Async call ${call.method} failed`, e);
       throw new Error("An error occured");
     }
   }

@@ -1,6 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
@@ -165,7 +166,7 @@ export class IncentiveRepositoryProvider
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     });
 
-    console.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
+    logger.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
 
     const query = {
       text: `
@@ -211,11 +212,11 @@ export class IncentiveRepositoryProvider
         await cursor.release();
         throw e;
       }
-      console.log({ count });
+      logger.log({ count });
     } while (count > 0);
-    console.log("Start release");
+    logger.log("Start release");
     await cursor.release();
-    console.log("release done");
+    logger.log("release done");
   }
 
   async createOrUpdateMany(

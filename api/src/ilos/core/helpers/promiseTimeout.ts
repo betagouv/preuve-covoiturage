@@ -1,4 +1,5 @@
 import { TimeoutException } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 
 export function promiseTimeout<T>(
   ms: number,
@@ -14,7 +15,7 @@ export function promiseTimeout<T>(
     if (id) clearTimeout(id);
     id = setTimeout(() => {
       clearTimeout(id);
-      console.debug(`[kernel] ${signature || ""} timeout expired (${ms}ms)`);
+      logger.debug(`[kernel] ${signature || ""} timeout expired (${ms}ms)`);
       reject(new TimeoutException(`Timeout Exception (${ms}ms)`));
     }, ms);
   });
@@ -22,7 +23,7 @@ export function promiseTimeout<T>(
   return Promise.race([promise, timeout])
     .then((res) => {
       clearTimeout(id);
-      console.debug(
+      logger.debug(
         `[kernel] ${signature || ""} succeeded in ${
           (new Date().getTime() - s.getTime()) / 1000
         }s`,
@@ -32,7 +33,7 @@ export function promiseTimeout<T>(
     .catch((err) => {
       clearTimeout(id);
       if (!err.nolog) {
-        console.error(`[kernel] ${signature || ""} failed`, {
+        logger.error(`[kernel] ${signature || ""} failed`, {
           message: err.message,
         });
       }

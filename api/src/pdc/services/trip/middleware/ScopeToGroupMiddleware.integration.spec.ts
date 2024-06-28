@@ -1,4 +1,3 @@
-import { process } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -10,6 +9,7 @@ import {
 } from "@/dev_deps.ts";
 import { ContextType, ForbiddenException } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { env_or_default } from "@/lib/env/index.ts";
 import { ScopeToGroupMiddleware } from "./ScopeToGroupMiddleware.ts";
 
 describe("Middleware Scopetogroup", () => {
@@ -41,9 +41,10 @@ describe("Middleware Scopetogroup", () => {
 
   beforeAll(async () => {
     connection = new PostgresConnection({
-      connectionString: "APP_POSTGRES_URL" in process.env
-        ? process.env.APP_POSTGRES_URL
-        : "postgresql://postgres:postgres@localhost:5432/local",
+      connectionString: env_or_default(
+        "APP_POSTGRES_URL",
+        "postgresql://postgres:postgres@localhost:5432/local",
+      ),
     });
     await connection.up();
     contextFactory = (params): ContextType => {

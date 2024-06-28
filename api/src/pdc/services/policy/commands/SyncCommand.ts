@@ -1,4 +1,5 @@
 import { command, CommandInterface, ResultType } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @command()
@@ -14,11 +15,11 @@ export class SyncCommand implements CommandInterface {
 
   public async call(): Promise<ResultType> {
     // sync status
-    console.info("Syncing campaign statuses");
+    logger.info("Syncing campaign statuses");
     await this.policyRepository.updateAllCampaignStatuses();
 
     // sync incentive sum
-    console.info("Syncing campaign incentive_sum");
+    logger.info("Syncing campaign incentive_sum");
     for (
       const campaign_id of await this.policyRepository
         .listApplicablePoliciesId()

@@ -1,13 +1,12 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { _ } from "@/deps.ts";
+import { CertificateBaseInterface } from "@/shared/certificate/common/interfaces/CertificateBaseInterface.ts";
+import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
+import { Pagination } from "@/shared/certificate/list.contract.ts";
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
 } from "../interfaces/CertificateRepositoryProviderInterface.ts";
-import { CertificateBaseInterface } from "@/shared/certificate/common/interfaces/CertificateBaseInterface.ts";
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
-import { Pagination } from "@/shared/certificate/list.contract.ts";
 
 type QueryConfig = { text: string; values: any[] };
 
@@ -163,7 +162,7 @@ export class CertificatePgRepositoryProvider
         WHERE certificate_id = ANY ($1::int[])
         ORDER BY certificate_id
       `,
-      values: [_.map(certs, "_id")],
+      values: [certs.map((c) => c._id)],
     });
 
     // merge access_log as a table in each certificate

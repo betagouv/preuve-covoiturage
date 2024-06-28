@@ -4,7 +4,8 @@ import {
   provider,
   ProviderInterface,
 } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
+import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
 import { S3ObjectList } from "./index.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
@@ -21,8 +22,8 @@ export class S3StorageProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
-    this.endpoint = env.or_fail("AWS_ENDPOINT");
-    this.region = env.or_fail("AWS_REGION");
+    this.endpoint = env_or_fail("AWS_ENDPOINT");
+    this.region = env_or_fail("AWS_REGION");
 
     // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
@@ -48,8 +49,8 @@ export class S3StorageProvider implements ProviderInterface {
       useSSL: endPointUrl.protocol === "https:",
       region: this.region,
       bucket,
-      accessKey: env.or_fail("AWS_ACCESS_KEY_ID"),
-      secretKey: env.or_fail("AWS_SECRET_ACCESS_KEY"),
+      accessKey: env_or_fail("AWS_ACCESS_KEY_ID"),
+      secretKey: env_or_fail("AWS_SECRET_ACCESS_KEY"),
       ...this.config.get("storage.bucket.options", {}),
     };
     return new S3Client(params);
@@ -66,7 +67,7 @@ export class S3StorageProvider implements ProviderInterface {
       bucketName: getBucketName(bucket),
     };
 
-    console.info(
+    logger.info(
       `[S3StorageProvider:list] bucket ${params.bucketName}/${params.prefix}`,
     );
 
@@ -106,7 +107,7 @@ export class S3StorageProvider implements ProviderInterface {
 
       return key;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
+      logger.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
     }
   }
@@ -135,7 +136,7 @@ export class S3StorageProvider implements ProviderInterface {
       });
       return url;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
+      logger.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
 
       throw e;
     }

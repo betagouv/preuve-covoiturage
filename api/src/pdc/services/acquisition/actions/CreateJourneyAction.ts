@@ -1,5 +1,3 @@
-import { _ } from "@/deps.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
 import {
   ConflictException,
   ContextType,
@@ -7,8 +5,9 @@ import {
   ParseErrorException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import {
   handlerConfig,
@@ -16,13 +15,16 @@ import {
   ResultInterface,
 } from "@/shared/acquisition/create.contract.ts";
 
+import { env_or_false } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { PayloadV3 } from "@/shared/acquisition/create.contract.ts";
 import { v3alias } from "@/shared/acquisition/create.schema.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 import {
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
 } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -45,9 +47,9 @@ export class CreateJourneyAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const request_id = _.get(context, "call.metadata.req.headers.x-request-id");
-    const operator_id = _.get(context, "call.user.operator_id");
-    const application_id = _.get(context, "call.user.application_id");
+    const request_id = get(context, "call.metadata.req.headers.x-request-id");
+    const operator_id = get(context, "call.user.operator_id");
+    const application_id = get(context, "call.user.application_id");
     const { api_version: apiVersionString, ...payload } = params;
     const api_version = parseInt((apiVersionString || "").substring(1), 10);
     if (Number.isNaN(api_version)) {
@@ -56,8 +58,8 @@ export class CreateJourneyAction extends AbstractAction {
       );
     }
     const operator_journey_id = api_version === 2
-      ? _.get(params, "journey_id")
-      : _.get(params, "operator_journey_id");
+      ? get(params, "journey_id")
+      : get(params, "operator_journey_id");
 
     // validate the payload manually to log rejected journeys
     try {
@@ -78,7 +80,7 @@ export class CreateJourneyAction extends AbstractAction {
         throw new ConflictException("Journey already registered");
       }
 
-      if (env.or_false("APP_ENABLE_CARPOOL_V2")) {
+      if (env_or_false("APP_ENABLE_CARPOOL_V2")) {
         await this.acquisitionService.registerRequest({
           api_version,
           operator_id,
@@ -127,7 +129,7 @@ export class CreateJourneyAction extends AbstractAction {
         created_at: acquisitions[0].created_at,
       };
     } catch (e) {
-      console.error(e.message, { operator_journey_id, operator_id });
+      logger.error(e.message, { operator_journey_id, operator_id });
 
       if (e instanceof ConflictException) {
         throw e;
@@ -160,8 +162,8 @@ export class CreateJourneyAction extends AbstractAction {
         const v3Journey = journey as PayloadV3;
         await this.validator.validate(v3Journey, v3alias);
         const now = new Date();
-        const start = _.get(v3Journey, "start.datetime");
-        const end = _.get(v3Journey, "end.datetime");
+        const start = get(v3Journey, "start.datetime");
+        const end = get(v3Journey, "end.datetime");
         if (end > now || start > end) {
           throw new ParseErrorException("Journeys cannot happen in the future");
         }

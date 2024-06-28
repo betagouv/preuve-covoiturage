@@ -6,6 +6,7 @@ import {
 } from "@/pdc/providers/middleware/index.ts";
 import { SerializedPolicyInterface } from "../interfaces/engine/PolicyInterface.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
@@ -49,7 +50,7 @@ export class ListAction extends AbstractAction {
           const importedPolicy = await Policy.import(r);
           policy.params = importedPolicy.params();
         } catch (e) {
-          console.warn(`Could not import policy ${r._id}`, e.message);
+          logger.warn(`Could not import policy ${r._id}`, e.message);
         } finally {
           return policy;
         }

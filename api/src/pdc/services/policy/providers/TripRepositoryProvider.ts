@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   CarpoolInterface,
   PolicyInterface,
@@ -136,8 +137,8 @@ export class TripRepositoryProvider
         }
       } catch (e) {
         await cursor.release();
-        console.error(e.message);
-        console.debug(e.stack);
+        logger.error(e.message);
+        logger.debug(e.stack);
         throw e;
       }
     } while (count > 0);

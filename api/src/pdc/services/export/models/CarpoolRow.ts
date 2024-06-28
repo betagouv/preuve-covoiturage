@@ -1,4 +1,4 @@
-import { _ } from "@/deps.ts";
+import { pick } from "@/lib/object/index.ts";
 import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
@@ -46,7 +46,7 @@ export class CarpoolRow {
     // TODO transform if needed (dates, etc...)
 
     // pick fields or return the whole data
-    return fields && fields.length ? _.pick(this.data, fields) : this.data;
+    return fields && fields.length ? pick(this.data, fields) : this.data;
   }
 
   // type makes sure the field exists in the root dataset to avoid having

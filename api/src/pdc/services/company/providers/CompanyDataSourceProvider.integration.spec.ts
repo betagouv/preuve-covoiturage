@@ -1,14 +1,14 @@
-import { process } from "@/deps.ts";
 import { assert, assertEquals, assertRejects, it } from "@/dev_deps.ts";
 
 import { Extensions } from "@/ilos/core/index.ts";
+import { env } from "@/lib/env/index.ts";
 import * as dataSource from "../config/dataSource.ts";
 import { CompanyDataSourceProvider } from "./CompanyDataSourceProvider.ts";
 
 it("should fetch from data source with a siret id", async () => {
   if (
-    !("APP_INSEE_API_KEY" in process.env) ||
-    process.env.APP_INSEE_API_KEY === ""
+    env("APP_INSEE_API_KEY") === undefined ||
+    env("APP_INSEE_API_KEY") === ""
   ) {
     assert(true);
     return;
@@ -38,8 +38,8 @@ it("should fetch from data source with a siret id", async () => {
 
 it("should fail with a wrong siret id", async () => {
   if (
-    !("APP_INSEE_API_KEY" in process.env) ||
-    process.env.APP_INSEE_API_KEY === ""
+    env("APP_INSEE_API_KEY") === undefined ||
+    env("APP_INSEE_API_KEY") === ""
   ) {
     assert(true);
     return;

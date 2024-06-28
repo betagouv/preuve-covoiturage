@@ -8,9 +8,9 @@ import {
   RegisterHookInterface,
   ServiceContainerInterface,
 } from "@/ilos/common/index.ts";
-import { env } from "@/ilos/core/index.ts";
 import { Extensions } from "@/ilos/core/index.ts";
 import { queueHandlerFactory } from "@/ilos/handler-redis/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 
 @extension({
   name: "queues",
@@ -36,7 +36,7 @@ export class QueueExtension
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    if (env.or_false("APP_WORKER")) {
+    if (env_or_false("APP_WORKER")) {
       this.isProcessable(serviceContainer);
     }
   }

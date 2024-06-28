@@ -1,5 +1,6 @@
 import { Buffer, intlFormat, pdf } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
@@ -342,7 +343,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
       if (!page) return;
 
-      // console.debug({ index, idx: index % this.tablePageSize, row });
+      // logger.debug({ index, idx: index % this.tablePageSize, row });
       this.drawRow(page, index % this.tablePageSize, row);
       index++;
     }
@@ -474,7 +475,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
               height,
             });
           } catch (e) {
-            console.error(e.message, e);
+            logger.error(e.message, e);
           }
         }
       }

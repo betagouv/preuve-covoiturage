@@ -6,6 +6,7 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { signature } from "@/shared/monitoring/statsrefresh.contract.ts";
 
 interface CommandOptions {
@@ -32,7 +33,7 @@ export class StatsRefreshCommand implements CommandInterface {
       call: { user: {} },
     };
 
-    console.info(`Running [monitoring:stats:refresh] for schema ${schema}`);
+    logger.info(`Running [monitoring:stats:refresh] for schema ${schema}`);
     await this.kernel.call(signature, { schema }, context);
 
     return "";

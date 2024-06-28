@@ -3,6 +3,7 @@ import {
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { Export, ExportStatus } from "../models/Export.ts";
 import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
@@ -40,7 +41,7 @@ export class ProcessCommand implements CommandInterface {
       counter--;
     }
 
-    console.info("No more pending exports. Bye!");
+    logger.info("No more pending exports. Bye!");
   }
 
   protected async process(exp: Export): Promise<void> {
@@ -49,7 +50,7 @@ export class ProcessCommand implements CommandInterface {
     const filename = this.nameService.get({ target, uuid }); // TODO add support for territory name
 
     try {
-      console.time(`Export finished processing ${uuid}`);
+      const timer = getPerformanceTimer();
 
       await this.exportRepository.status(_id, ExportStatus.RUNNING);
       await this.fileCreatorService.write(
@@ -59,7 +60,7 @@ export class ProcessCommand implements CommandInterface {
       );
       await this.exportRepository.status(_id, ExportStatus.SUCCESS);
 
-      console.timeEnd(`Export finished processing ${uuid}`);
+      logger.info(`Export finished processing ${uuid} in ${timer.stop()} ms`);
     } catch (e) {
       await this.exportRepository.error(_id, e.message);
     }

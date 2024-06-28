@@ -1,4 +1,3 @@
-import { _ } from "@/deps.ts";
 import {
   ContextType,
   middleware,
@@ -6,6 +5,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { get, set } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
@@ -24,11 +24,11 @@ export class CopyFromContextMiddleware
 
     const [fromPath, toPath, preserve] = mappings;
     const notFound = Symbol();
-    const valueToCopy = _.get(context, fromPath, notFound);
+    const valueToCopy = get(context, fromPath, notFound);
 
     if (valueToCopy !== notFound && valueToCopy !== null) {
-      if (!preserve || _.get(newParams, toPath, notFound) === notFound) {
-        _.set(newParams, toPath, valueToCopy);
+      if (!preserve || get(newParams, toPath, notFound) === notFound) {
+        set(newParams, toPath, valueToCopy);
       }
     }
 

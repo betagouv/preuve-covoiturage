@@ -1,5 +1,6 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   TerritoryCodeEnum,
   TerritoryCodeInterface,
@@ -42,7 +43,7 @@ export class TerritoryRepositoryProvider
       }
       return result.rows[0];
     } catch (e) {
-      console.error(e.message, e);
+      logger.error(e.message, e);
       return null;
     }
   }

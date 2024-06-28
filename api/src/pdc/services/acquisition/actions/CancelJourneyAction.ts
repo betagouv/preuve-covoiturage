@@ -1,25 +1,26 @@
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
 import {
   handler,
   KernelInterfaceResolver,
   NotFoundException,
 } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
+import { env_or_false } from "@/lib/env/index.ts";
+import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/acquisition/cancel.contract.ts";
+import { alias } from "@/shared/acquisition/cancel.schema.ts";
+import { StatusEnum } from "@/shared/acquisition/status.contract.ts";
 import {
   ParamsInterface as UpdateStatusParams,
   signature as updateStatusSignature,
 } from "@/shared/carpool/updateStatus.contract.ts";
-import { alias } from "@/shared/acquisition/cancel.schema.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 import { callContext } from "../config/callContext.ts";
-import { StatusEnum } from "@/shared/acquisition/status.contract.ts";
-import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -75,7 +76,7 @@ export class CancelJourneyAction extends AbstractAction {
       callContext,
     );
 
-    if (env.or_false("APP_ENABLE_CARPOOL_V2")) {
+    if (env_or_false("APP_ENABLE_CARPOOL_V2")) {
       await this.acquisitionService.cancelRequest({
         api_version: 3,
         operator_id,

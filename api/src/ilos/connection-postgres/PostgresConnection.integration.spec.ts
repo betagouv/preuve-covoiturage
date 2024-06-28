@@ -1,4 +1,3 @@
-import { process } from "@/deps.ts";
 import {
   afterAll,
   assert,
@@ -7,12 +6,13 @@ import {
   describe,
   it,
 } from "@/dev_deps.ts";
+import { env } from "@/lib/env/index.ts";
 import { PostgresConnection } from "./PostgresConnection.ts";
 
 // FIXME : failing because missing clearTimer in Cursor lib
 describe.skip("PostgresConnection", () => {
   const connection = new PostgresConnection({
-    connectionString: process.env.APP_POSTGRES_URL,
+    connectionString: env("APP_POSTGRES_URL"),
   });
 
   beforeAll(async () => {

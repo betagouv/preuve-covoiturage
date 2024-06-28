@@ -1,4 +1,3 @@
-import { process } from "@/deps.ts";
 import {
   afterAll,
   afterEach,
@@ -26,6 +25,7 @@ import {
   ServiceProvider,
 } from "@/ilos/core/index.ts";
 import { QueueExtension as ParentQueueExtension } from "@/ilos/queue/index.ts";
+import { setEnv } from "@/lib/env/index.ts";
 import { QueueTransport } from "./QueueTransport.ts";
 
 // FIXME
@@ -42,7 +42,7 @@ describe.skip("QueueTransport", () => {
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox();
-    process.env.APP_WORKER = "true";
+    setEnv("APP_WORKER", "true");
 
     class QueueExtension extends ParentQueueExtension {
       registerQueueHandlers() {

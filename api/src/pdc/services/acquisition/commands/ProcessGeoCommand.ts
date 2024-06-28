@@ -5,6 +5,7 @@ import {
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 
 @command()
@@ -52,22 +53,22 @@ export class ProcessGeoCommand implements CommandInterface {
     let shouldContinue = true;
 
     const batchSize = options.size;
-    const timerMessage = `Encoding carpool geo`;
-    console.time(timerMessage);
-
+    const timer = getPerformanceTimer();
     do {
+      const subtimer = getPerformanceTimer();
       const did = await this.encode(
         batchSize,
         options.failed,
         options.after ?? subDays(new Date(), options.lastDays),
         options.until ?? new Date(),
       );
-      console.timeLog(timerMessage);
-      console.info(`Processed: ${did}`);
+      const subperformance = subtimer.stop();
+      logger.info(`Processed: ${did} in ${subperformance} ms`);
       shouldContinue = did === batchSize;
     } while (shouldContinue && options.loop);
 
-    console.timeEnd(timerMessage);
+    const performance = timer.stop();
+    logger.info(`Geo encoding done in ${performance} ms`);
     return "done";
   }
 

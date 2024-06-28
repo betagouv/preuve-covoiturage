@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { XLSXWriter } from "@/pdc/services/export/models/XLSXWriter.ts";
@@ -72,7 +73,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
       await cursor.release();
     } catch (e) {
       await cursor.release();
-      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
       throw e;
     }
   }

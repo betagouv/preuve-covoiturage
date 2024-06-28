@@ -4,7 +4,9 @@ import {
   handler,
   KernelInterfaceResolver,
 } from "@/ilos/common/index.ts";
-import { Action as AbstractAction, env } from "@/ilos/core/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
@@ -57,20 +59,21 @@ export class FinalizeAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false("APP_DISABLE_POLICY_PROCESSING")) {
-      return console.warn(
+    if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
+      logger.warn(
         "[campaign:finalize] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
       );
+      return;
     }
 
-    console.time("[campaign:finalize] stateful");
+    const timer = getPerformanceTimer();
     const { from, to, sync_incentive_sum } = await this.defaultParams(params);
 
     // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
     // to duplicate the listing of all campaigns
     if (sync_incentive_sum) {
-      console.info("[campaign:finalize] syncIncentiveSum");
+      logger.info("[campaign:finalize] syncIncentiveSum");
       await this.kernel.call(syncincentivesumSignature, {}, {
         channel: { service: handlerConfig.service },
       });
@@ -88,28 +91,30 @@ export class FinalizeAction extends AbstractAction {
 
       try {
         // Update incentive on canceled carpool
-        console.time("[campaign:finalize] disableOnCanceledTrip");
+        const subtimer = getPerformanceTimer();
         await this.incentiveRepository.disableOnCanceledTrip(
           currentFrom,
           currentTo,
         );
-        console.timeEnd("[campaign:finalize] disableOnCanceledTrip");
+        logger.info(
+          `[campaign:finalize] disableOnCanceledTrip in ${subtimer.stop()} ms`,
+        );
 
         // eslint-disable-next-line prettier/prettier,max-len
-        console.info(
+        logger.info(
           `[campaign:finalize] stateful starting from ${
             toTzString(currentFrom)
           } until ${toTzString(currentTo)}`,
         );
         await this.processStatefulPolicies(policyMap, currentTo, currentFrom);
-        console.debug("[campaign:finalize] stateful finished");
+        logger.debug("[campaign:finalize] stateful finished");
 
         // Lock all
-        console.debug(`[campaign:finalize] set status on incentives`);
+        logger.debug(`[campaign:finalize] set status on incentives`);
         await this.incentiveRepository.setStatus(currentFrom, currentTo);
-        console.debug("[campaign:finalize] lock finished");
+        logger.debug("[campaign:finalize] lock finished");
       } catch (e) {
-        console.debug(
+        logger.debug(
           `[campaign:finalize] unlock all incentive until ${
             toTzString(currentTo)
           } in catch block`,
@@ -121,7 +126,7 @@ export class FinalizeAction extends AbstractAction {
       currentTime += timespan; // move to the next hour
     }
 
-    console.timeEnd("[campaign:finalize] stateful");
+    logger.info(`[campaign:finalize] stateful in ${timer.stop()} ms`);
   }
 
   /**
@@ -183,14 +188,14 @@ export class FinalizeAction extends AbstractAction {
       const duration = new Date().getTime() - bench;
       const len = updatedIncentives.length;
       const rate = ((len / duration) * 1000).toFixed(3);
-      console.debug(
+      logger.debug(
         `[campaign:finalize] ${len} incentives done in ${duration}ms (${rate}/s)`,
       );
     } while (!done);
 
     // 5. Persist meta
-    console.debug("[campaign:finalize] store metadata");
+    logger.debug("[campaign:finalize] store metadata");
     await store.store(MetadataLifetime.Day);
-    console.debug("[campaign:finalize] store metadata done");
+    logger.debug("[campaign:finalize] store metadata done");
   }
 }

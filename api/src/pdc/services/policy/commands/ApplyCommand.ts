@@ -6,6 +6,7 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { signature as apply } from "@/shared/policy/apply.contract.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
@@ -100,7 +101,7 @@ export class ApplyCommand implements CommandInterface {
         // of further incentives.
         if (params.override && params.to) {
           // eslint-disable-next-line prettier/prettier,max-len
-          console.warn(
+          logger.warn(
             "[campaign:apply] Be careful when re-processing incentives with the --override option in conjunction with a --to end date. Further incentives will have to be re-processed and finalized too.",
           );
         }
@@ -109,13 +110,13 @@ export class ApplyCommand implements CommandInterface {
         try {
           await this.kernel.call(apply, params, context);
         } catch (e) {
-          console.error(e.message, { params });
+          logger.error(e.message, { params });
         }
       }
 
       return "";
     } catch (e) {
-      console.error(e.rpcError?.data || e.message);
+      logger.error(e.rpcError?.data || e.message);
     }
   }
 }

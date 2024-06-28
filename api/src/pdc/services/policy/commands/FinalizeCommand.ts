@@ -6,6 +6,7 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import {
   ParamsInterface,
@@ -68,7 +69,7 @@ export class FinalizeCommand implements CommandInterface {
 
       return "";
     } catch (e) {
-      console.error(e.rpcError?.data || e.message);
+      logger.error(e.rpcError?.data || e.message);
     }
   }
 }

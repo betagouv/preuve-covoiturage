@@ -129,7 +129,7 @@ export abstract class Kernel extends ServiceProvider
       );
     }
 
-    // console.debug(`[kernel] ${config.signature} ${timeout}ms`);
+    // logger.debug(`[kernel] ${config.signature} ${timeout}ms`);
 
     if (timeout === 0) {
       return handler(call);

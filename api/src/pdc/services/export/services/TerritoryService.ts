@@ -1,4 +1,5 @@
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
@@ -48,7 +49,7 @@ export class TerritoryService {
     // use the territory service to get geo_selectors from the territory_id / territory SIREN
 
     if (!params.geo) {
-      console.debug("MISSING GEO");
+      logger.debug("MISSING GEO");
       return this.defaultResolveResult;
     }
 

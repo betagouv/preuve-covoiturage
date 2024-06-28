@@ -3,6 +3,7 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { castStatus, fromStatus } from "../helpers/castStatus.ts";
 import {
   AcquisitionCreateInterface,
@@ -13,7 +14,6 @@ import {
   AcquisitionStatusEnum,
   AcquisitionStatusInterface,
   AcquisitionStatusUpdateInterface,
-  StatusSearchInterface,
 } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
 
 @provider()
@@ -282,7 +282,7 @@ export class AcquisitionRepositoryProvider
 
         // commit and release
         async () => {
-          console.info("  >>> COMMIT");
+          logger.info("  >>> COMMIT");
           await poolClient.query<any>("COMMIT");
           poolClient.release();
         },

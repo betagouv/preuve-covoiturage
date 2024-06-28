@@ -5,20 +5,20 @@ import {
   provider,
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { _ } from "@/deps.ts";
 
+import { get } from "@/lib/object/index.ts";
+import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
+import { UserCreateInterface } from "@/shared/user/common/interfaces/UserCreateInterface.ts";
 import { UserFindInterface } from "@/shared/user/common/interfaces/UserFindInterface.ts";
 import { UserLastLoginInterface } from "@/shared/user/common/interfaces/UserLastLoginInterface.ts";
 import { UserListFiltersInterface } from "@/shared/user/common/interfaces/UserListFiltersInterface.ts";
 import { UserListInterface } from "@/shared/user/common/interfaces/UserListInterface.ts";
 import { UserPatchInterface } from "@/shared/user/common/interfaces/UserPatchInterface.ts";
+import { ResultInterface as HasUsersResultInterface } from "@/shared/user/hasUsers.contract.ts";
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
 } from "../interfaces/UserRepositoryProviderInterface.ts";
-import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
-import { UserCreateInterface } from "@/shared/user/common/interfaces/UserCreateInterface.ts";
-import { ResultInterface as HasUsersResultInterface } from "@/shared/user/hasUsers.contract.ts";
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -433,7 +433,7 @@ export class UserPgRepositoryProvider
     }
 
     const finalSets = setToProcess
-      .map((key) => ({ key, value: _.get(sets, key) }))
+      .map((key) => ({ key, value: get(sets, key) }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
         (acc: { text: Array<string>; values: Array<unknown> }, current) => {
