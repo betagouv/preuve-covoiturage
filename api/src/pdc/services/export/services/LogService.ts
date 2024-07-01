@@ -109,6 +109,7 @@ export class LogService {
     message = "Export failed",
   ): Promise<void> {
     logger.error(` ~ Export #${export_id} failed`);
+    logger.error(message);
     await this.log(export_id, ExportLogEvent.FAILURE, message);
   }
 

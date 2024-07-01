@@ -2,8 +2,10 @@ import { defaultTimezone } from "@/config/time.ts";
 import { handler } from "@/ilos/common/Decorators.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { get } from "@/lib/object/index.ts";
+import { toISOString } from "@/pdc/helpers/dates.helper.ts";
+import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
-import { toISOString } from "@/pdc/services/export/helpers/index.ts";
 import {
   handlerConfigV2,
   ParamsInterfaceV2,
@@ -13,7 +15,6 @@ import {
   signatureV3,
 } from "@/shared/export/create.contract.ts";
 import { aliasV2 } from "@/shared/export/create.schema.ts";
-import { DefaultTimezoneMiddleware } from "../middlewares/DefaultTimezoneMiddleware.ts";
 
 /**
  * @deprecated
@@ -23,8 +24,8 @@ import { DefaultTimezoneMiddleware } from "../middlewares/DefaultTimezoneMiddlew
   middlewares: [
     ["validate", aliasV2],
     ["timezone", DefaultTimezoneMiddleware],
-    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
-    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", true),
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
+    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", false),
   ],
 })
 export class CreateActionV2 extends AbstractAction {
@@ -48,7 +49,7 @@ export class CreateActionV2 extends AbstractAction {
       start_at: toISOString(paramsV2.date.start),
       end_at: toISOString(paramsV2.date.end),
       operator_id: paramsV2.operator_id || [],
-      created_by: context.call.user._id,
+      created_by: get(context, "call.user._id", null),
     };
 
     if (paramsV2.geo_selector) {

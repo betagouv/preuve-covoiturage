@@ -61,7 +61,7 @@ export class ExportCommand implements CommandInterface {
     },
     {
       signature: "--verbose",
-      description: "Display CLI specific console.info()",
+      description: "Display CLI specific logger.info()",
     },
   ];
 

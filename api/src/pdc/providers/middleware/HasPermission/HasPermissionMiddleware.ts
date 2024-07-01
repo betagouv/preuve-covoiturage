@@ -1,3 +1,4 @@
+import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
@@ -19,7 +20,7 @@ export class HasPermissionMiddleware
   async process(
     params: ParamsType,
     context: ContextType,
-    next: Function,
+    next: NextFunction,
     neededPermissions: HasPermissionMiddlewareParams,
   ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
@@ -51,6 +52,14 @@ const alias = "has_permission";
 
 export const hasPermissionMiddlewareBinding = [alias, HasPermissionMiddleware];
 
+/**
+ * Define allowed permissions to access the handler.
+ *
+ * User's permissions are extracted from context.user.permissions. The list
+ * must contain permissions from the middleware configuration.
+ *
+ * @param params - list of allowed permissions
+ */
 export function hasPermissionMiddleware(
   ...params: HasPermissionMiddlewareParams
 ): ConfiguredMiddleware<HasPermissionMiddlewareParams> {

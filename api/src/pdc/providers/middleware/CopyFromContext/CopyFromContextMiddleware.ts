@@ -45,6 +45,27 @@ export const copyFromContextMiddlewareBinding = [
   CopyFromContextMiddleware,
 ];
 
+/**
+ * Copy context data to request params
+
+ *
+ * @param fromPath - the path in the context to copy from
+ * @param toPath - the path in the request params to copy to
+ * @param preserve - whether to preserve the existing value
+ *                             in the request params or override it
+ *
+ * @example
+ * middlewares: [
+ *   // override the operator_id to scope the request to the owner if it is
+ *   // an operator.
+ *   copyFromContextMiddleware("call.user.operator_id", "operator_id", false),
+ *
+ *   // copy the user id to the created_by field only if it is not already set
+ *   // in the request params.
+ *   copyFromContextMiddleware("call.user._id", "created_by", true),
+ * ],
+ *
+ */
 export function copyFromContextMiddleware(
   fromPath: string,
   toPath: string,

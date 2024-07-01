@@ -10,13 +10,13 @@ import {
   hasPermissionMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
-import { DefaultTimezoneMiddleware } from "@/pdc/services/export/middlewares/DefaultTimezoneMiddleware.ts";
 import {
   handlerConfigV3,
   ParamsInterfaceV3,
   ResultInterfaceV3,
 } from "@/shared/export/create.contract.ts";
 import { aliasV3 } from "@/shared/export/create.schema.ts";
+import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { Export } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
@@ -29,11 +29,11 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
   ...handlerConfigV3,
   middlewares: [
     hasPermissionMiddleware("common.export.create"),
-    castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
     ["timezone", DefaultTimezoneMiddleware],
     copyFromContextMiddleware(`call.user._id`, "created_by", true),
-    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
-    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", true),
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
+    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", false),
+    castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
     validateDateMiddleware({
       startPath: "start_at",
       endPath: "end_at",

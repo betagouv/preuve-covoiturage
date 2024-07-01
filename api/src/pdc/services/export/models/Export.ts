@@ -4,6 +4,9 @@ import { ExportParams } from "./ExportParams.ts";
 export enum ExportStatus {
   PENDING = "pending",
   RUNNING = "running",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  NOTIFY = "notify",
   SUCCESS = "success",
   FAILURE = "failure",
 }
@@ -12,6 +15,9 @@ export enum ExportTarget {
   OPERATOR = "operator",
   TERRITORY = "territory",
 }
+
+export type ExportError = string;
+export type ExportStats = string;
 
 export class Export {
   public _id: number;
@@ -23,8 +29,8 @@ export class Export {
   public download_url_expire_at: Date;
   public download_url: string;
   public params: ExportParams;
-  public error: string; // JSON object
-  public stats: string; // JSON object
+  public error: ExportError; // JSON object
+  public stats: ExportStats; // JSON object
 
   public static fromJSON(data: any): Export {
     const export_ = new Export();

@@ -1,4 +1,4 @@
-import { endOfDay, startOfDay } from "@/deps.ts";
+import { endOfDay, NextFunction, startOfDay } from "@/deps.ts";
 import {
   ContextType,
   InvalidParamsException,
@@ -19,7 +19,7 @@ export class ValidateDateMiddleware
   async process(
     params: ParamsType,
     context: ContextType,
-    next: Function,
+    next: NextFunction,
     options: ValidateDateMiddlewareParams,
   ): Promise<ResultType> {
     if (
@@ -92,6 +92,32 @@ const alias = "validate.date";
 
 export const validateDateMiddlewareBinding = [alias, ValidateDateMiddleware];
 
+/**
+ * Validate start and end date inputs. Make sure start is before end.
+ * Apply limits and defaults.
+ *
+ * @param startPath - Path to the start date in the params object
+ * @param endPath - Path to the end date in the params object
+ * @param minStart - Minimum start date. If the start date is before this date, an error is thrown
+ * @param maxEnd - Maximum end date. If the end date is after this date, an error is thrown
+ * @param applyDefault - If true, set the start date to minStart and end date to maxEnd if they are not provided
+ *
+ * @example
+ * middlewares: [
+ *  validateDateMiddleware({ startPath: "start_at", endPath: "end_at" }),
+ * ],
+ *
+ * @example
+ * middlewares: [
+ *   validateDateMiddleware({
+ *     startPath: "start_at",
+ *     endPath: "end_at",
+ *     minStart: () => new Date(new Date().getTime() - minStartDefault),
+ *     maxEnd: () => new Date(new Date().getTime() - maxEndDefault),
+ *     applyDefault: true,
+ *   }),
+ * ],
+ */
 export function validateDateMiddleware(
   params: ValidateDateMiddlewareParams,
 ): ConfiguredMiddleware<ValidateDateMiddlewareParams> {
