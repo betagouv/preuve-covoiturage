@@ -448,6 +448,38 @@ components:
          - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
          La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 paths:
+  /auth/token:
+    post:
+      tags:
+      - auth
+      summary: Créer un token applicatif à partir de clés d'accès.
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                access_key:
+                  type: string
+                secret_key:
+                  type: string
+              required:
+                - access_key
+                - secret_key
+      responses:
+        '201':
+          description: Le token est crée.
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: un token jwt à durée de vie limité
+                  expires_in:
+                    type: number
   /journeys:
     post:
       tags:
