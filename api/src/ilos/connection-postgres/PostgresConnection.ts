@@ -42,7 +42,7 @@ export class PgPool extends Pool {
 
     this.on("remove", () => {
       const { totalCount, idleCount, waitingCount } = this;
-      logger.info(
+      logger.debug(
         `[pg] client removed ` +
           `(total: ${totalCount}, idle: ${idleCount}, waiting: ${waitingCount})`,
       );
