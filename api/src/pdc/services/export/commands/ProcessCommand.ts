@@ -74,7 +74,7 @@ export class ProcessCommand implements CommandInterface {
 
       // notify the user
       await this.exportRepository.status(_id, ExportStatus.NOTIFY);
-      await this.notify.send(exp, url);
+      await this.notify.success(exp, url);
 
       // :tada:
       await this.exportRepository.status(_id, ExportStatus.SUCCESS);
@@ -83,6 +83,8 @@ export class ProcessCommand implements CommandInterface {
       );
     } catch (e) {
       await this.exportRepository.error(_id, e.message);
+      await this.notify.error(exp);
+      await this.notify.support(exp);
     }
   }
 }

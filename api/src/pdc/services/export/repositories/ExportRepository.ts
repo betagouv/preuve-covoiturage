@@ -23,6 +23,7 @@ export interface ExportRepositoryInterface {
   error(id: number, error: string): Promise<void>;
   progress(id: number): Promise<ExportProgress>;
   pickPending(): Promise<Export | null>;
+  recipients(id: number): Promise<ExportRecipient[]>;
   addRecipient(export_id: number, recipient: ExportRecipient): Promise<void>;
 }
 
@@ -142,6 +143,15 @@ export abstract class ExportRepositoryInterfaceResolver
    * @returns {Promise<Export | null>}
    */
   public async pickPending(): Promise<Export | null> {
+    throw new Error("Not implemented");
+  }
+
+  /**
+   * Get the recipients of an export
+   *
+   * @param id Export _id
+   */
+  public async recipients(id: number): Promise<ExportRecipient[]> {
     throw new Error("Not implemented");
   }
 
@@ -289,6 +299,15 @@ export class ExportRepository implements ExportRepositoryInterface {
       `,
     });
     return rowCount ? Export.fromJSON(rows[0]) : null;
+  }
+
+  public async recipients(id: number): Promise<ExportRecipient[]> {
+    const { rows } = await this.connection.getClient().query({
+      text: `SELECT * FROM ${this.recipientsTable} WHERE export_id = $1`,
+      values: [id],
+    });
+
+    return rows.map(ExportRecipient.fromJSON);
   }
 
   public async addRecipient(

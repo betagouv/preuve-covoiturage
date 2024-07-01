@@ -4,15 +4,16 @@ import {
   KernelInterfaceResolver,
   provider,
 } from "@/ilos/common/index.ts";
-
+import { env } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
   StaticMailTemplateNotificationInterface,
 } from "@/pdc/providers/notification/index.ts";
-
 import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
 import { ResultInterface as SimulateOnPastResult } from "@/shared/policy/simulateOnPastGeo.contract.ts";
+import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
 import { ParamsInterface as SimulationPolicyParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
 import {
   ConfirmEmailNotification,
@@ -20,14 +21,11 @@ import {
   EmailUpdatedNotification,
   ExportCSVErrorNotification,
   ExportCSVNotification,
+  ExportCSVSupportNotification,
   ForgottenPasswordNotification,
   InviteNotification,
   SimulatePolicyNotification,
 } from "../notifications/index.ts";
-
-import { env } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
-import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
 
 @provider()
 export class UserNotificationProvider {
@@ -56,6 +54,7 @@ export class UserNotificationProvider {
       EmailUpdatedNotification: EmailUpdatedNotification,
       ExportCSVErrorNotification: ExportCSVErrorNotification,
       ExportCSVNotification: ExportCSVNotification,
+      ExportCSVSupportNotification: ExportCSVSupportNotification,
       ForgottenPasswordNotification: ForgottenPasswordNotification,
       InviteNotification: InviteNotification,
       SimulatePolicyNotification: SimulatePolicyNotification,

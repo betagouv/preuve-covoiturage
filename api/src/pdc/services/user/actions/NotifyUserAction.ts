@@ -1,5 +1,5 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import {
@@ -15,7 +15,12 @@ import { UserNotificationProvider } from "../providers/UserNotificationProvider.
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...internalOnlyMiddlewares(handlerConfig.service, "trip", "proxy"),
+    ...internalOnlyMiddlewares(
+      handlerConfig.service,
+      "export",
+      "trip",
+      "proxy",
+    ),
   ],
 })
 export class NotifyUserAction extends AbstractAction {
