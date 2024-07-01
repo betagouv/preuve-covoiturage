@@ -20,6 +20,7 @@
               openssl
               pm2
               jq
+              minio-client
 
               # rpc infra
               nodejs_20
