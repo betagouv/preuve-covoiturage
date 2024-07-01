@@ -1,10 +1,4 @@
-import {
-  FileHandle,
-  fsConstants,
-  open,
-  Stringifier,
-  stringify,
-} from "@/deps.ts";
+import { FileHandle, open, Stringifier, stringify } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -36,7 +30,7 @@ export class BuildFile {
     // CSV file
     const { filename, tz } = this.cast(params.type, params, date);
     const filepath = join(getTmpDir(), filename);
-    const fd = await open(filepath, fsConstants.O_APPEND);
+    const fd = await open(filepath, "a");
 
     // Transform data
     const stringifier = this.configure(fd, params.type);
