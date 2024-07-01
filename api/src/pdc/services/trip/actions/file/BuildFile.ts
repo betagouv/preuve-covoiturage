@@ -1,6 +1,6 @@
-import { FileHandle, open, Stringifier, stringify } from "@/deps.ts";
+import { Stringifier, stringify } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { getTmpDir } from "@/lib/file/index.ts";
+import { getTmpDir, open, OpenFileDescriptor } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
@@ -19,6 +19,8 @@ import { BuildExportAction } from "../BuildExportAction.ts";
 
 @provider()
 export class BuildFile {
+  private readonly batchSize = 1000;
+
   constructor() {}
 
   public async buildCsvFromCursor(
@@ -28,9 +30,14 @@ export class BuildFile {
     isOpendata: boolean,
   ): Promise<string> {
     // CSV file
-    const { filename, tz } = this.cast(params.type, params, date);
+    const { filename, tz } = this.cast(
+      params.type || "opendata",
+      params,
+      date,
+    );
     const filepath = join(getTmpDir(), filename);
-    const fd = await open(filepath, "a");
+    const fd = await open(filepath, { write: true, append: true });
+    logger.debug(`Exporting file to ${filepath}`);
 
     // Transform data
     const stringifier = this.configure(fd, params.type);
@@ -39,7 +46,7 @@ export class BuildFile {
     try {
       let count = 0;
       do {
-        const results = await cursor.read(10);
+        const results = await cursor.read(this.batchSize);
         count = results.length;
         for (const line of results) {
           stringifier.write(normalizeMethod(line, tz));
@@ -49,15 +56,18 @@ export class BuildFile {
       // Release the db, end the stream and close the file
       await cursor.release();
       stringifier.end();
-      await fd.close();
+      fd.close();
 
       logger.debug(`Finished exporting file: ${filepath}`);
 
       return filepath;
     } catch (e) {
       await cursor.release();
-      await fd.close();
-      logger.error(e.message, e.stack);
+      stringifier.end();
+      fd.close();
+
+      logger.error(e.message);
+      logger.debug(e.stack);
       throw e;
     }
   }
@@ -76,7 +86,7 @@ export class BuildFile {
   }
 
   private configure(
-    fd: FileHandle,
+    fd: OpenFileDescriptor,
     type = "opendata",
   ): Stringifier {
     const stringifier = stringify({
@@ -84,9 +94,9 @@ export class BuildFile {
       header: true,
       columns: BuildExportAction.getColumns(type),
       cast: {
-        boolean: (b: Boolean): string => (b ? "OUI" : "NON"),
+        boolean: (b: boolean): string => (b ? "OUI" : "NON"),
         date: (d: Date): string => d.toISOString(),
-        number: (n: Number): string => n.toString().replace(".", ","),
+        number: (n: number): string => n.toString().replace(".", ","),
       },
       quoted: true,
       quoted_empty: true,
@@ -96,7 +106,7 @@ export class BuildFile {
     stringifier.on("readable", async () => {
       let row: string;
       while ((row = stringifier.read()) !== null) {
-        await fd.appendFile(row, { encoding: "utf8" });
+        await fd.write(new TextEncoder().encode(row + "\n"));
       }
     });
 
