@@ -85,9 +85,9 @@ export function catchErrors(
   }
   globalThis.addEventListener("error", uncaughtExceptionHandler);
 
-  async function unhandledRejectionHandler(e: Event) {
+  async function unhandledRejectionHandler(e: Event & { reason: unknown }) {
+    logger.error("Unhandled Rejection", e.reason);
     e.preventDefault();
-    logger.error("unhandled promise rejection", e);
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
