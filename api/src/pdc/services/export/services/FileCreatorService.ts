@@ -104,6 +104,7 @@ export class FileCreatorService {
 
       return this.fileWriter.workbookPath;
     } catch (e) {
+      logger.error("FileCreatorService", e.message);
       await this.fileWriter.close();
       throw e;
     }
