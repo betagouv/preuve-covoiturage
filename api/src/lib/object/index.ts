@@ -12,8 +12,8 @@ import { collections } from "@/deps.ts";
 export function get<TObject, TValue>(
   obj: TObject,
   path: string | string[],
-  defaultValue: TValue | null = null,
-): TValue | null {
+  defaultValue: TValue | undefined = undefined,
+): TValue | null | undefined {
   const keys = Array.isArray(path) ? path : path.split(".");
   let result: unknown = obj;
 
@@ -27,7 +27,7 @@ export function get<TObject, TValue>(
     result = (result as Record<string, unknown>)[key];
   }
 
-  return result as TValue | null;
+  return result as TValue | null | undefined;
 }
 
 export function set<T>(obj: T, path: string | string[], value: any): T {

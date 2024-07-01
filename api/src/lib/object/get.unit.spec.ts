@@ -40,10 +40,10 @@ describe("get object helper", () => {
     assertEquals(get(obj, "a.d", 2), 2);
   });
 
-  it("should return null as defaultValue if the defaultValue is not provided", () => {
+  it("should return undefined as defaultValue if the defaultValue is not provided", () => {
     const obj = { a: { b: 1 } };
     assertEquals(get(obj, "a.b"), 1);
     assertEquals(get(obj, "a.c", 2), 2);
-    assertEquals(get(obj, "a.d"), null);
+    assertEquals(get(obj, "a.d"), undefined);
   });
 });
