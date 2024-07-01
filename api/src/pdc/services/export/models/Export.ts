@@ -4,6 +4,9 @@ import { ExportParams } from "./ExportParams.ts";
 export enum ExportStatus {
   PENDING = "pending",
   RUNNING = "running",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  NOTIFY = "notify",
   SUCCESS = "success",
   FAILURE = "failure",
 }

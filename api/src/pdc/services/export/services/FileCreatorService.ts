@@ -11,7 +11,7 @@ export type FileCreatorServiceInterface = {
     params: ExportParams,
     fileWriter: XLSXWriter,
     progress?: ExportProgress,
-  ): Promise<void>;
+  ): Promise<string>;
 };
 
 export abstract class FileCreatorServiceInterfaceResolver
@@ -31,14 +31,11 @@ export abstract class FileCreatorServiceInterfaceResolver
   protected async help(): Promise<void> {
     throw new Error("Not implemented");
   }
-  protected async wrap(): Promise<void> {
-    throw new Error("Not implemented");
-  }
   public async write(
     params: ExportParams,
     fileWriter: XLSXWriter,
     progress?: ExportProgress,
-  ): Promise<void> {
+  ): Promise<string> {
     throw new Error("Not implemented");
   }
 }
@@ -90,26 +87,25 @@ export class FileCreatorService {
     await this.fileWriter.printHelp();
   }
 
-  protected async wrap(e?: Error): Promise<void> {
-    await this.fileWriter.close();
-    if (e) throw e;
-    await this.fileWriter.compress();
-  }
-
   public async write(
     params: ExportParams,
     fileWriter: XLSXWriter,
     progress?: ExportProgress,
-  ): Promise<void> {
+  ): Promise<string> {
     try {
       await this.configure(params, fileWriter, progress);
       await this.initialize();
       await this.data();
       await this.help();
-      await this.wrap();
+      await this.fileWriter.close();
+      await this.fileWriter.compress();
+
       logger.info(`File written to ${this.fileWriter.workbookPath}`);
+
+      return this.fileWriter.workbookPath;
     } catch (e) {
-      await this.wrap(e);
+      await this.fileWriter.close();
+      throw e;
     }
   }
 }
