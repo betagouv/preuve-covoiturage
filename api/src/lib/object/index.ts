@@ -1,21 +1,33 @@
 import { collections } from "@/deps.ts";
 
-export function get<T, K extends keyof T>(
-  obj: T,
+/**
+ * Get the value at the given path of object.
+ * If the resolved value is undefined, the defaultValue is returned in its place.
+ *
+ * @param obj
+ * @param path
+ * @param defaultValue
+ * @returns
+ */
+export function get<TObject, TValue>(
+  obj: TObject,
   path: string | string[],
-  defaultValue?: any,
-): any {
+  defaultValue: TValue | undefined = undefined,
+): TValue | null | undefined {
   const keys = Array.isArray(path) ? path : path.split(".");
-  let result: any = obj;
+  let result: unknown = obj;
 
-  for (const key of keys) {
-    result = result[key as K];
-    if (result === undefined) {
-      return defaultValue;
-    }
+  while (keys.length) {
+    const key = keys.shift()!;
+
+    if (result === undefined) return defaultValue;
+    if (result === null && keys.length) return defaultValue;
+    if (key in Object(result) === false) return defaultValue;
+    if (result === null && !keys.length) return null;
+    result = (result as Record<string, unknown>)[key];
   }
 
-  return result;
+  return result as TValue | null | undefined;
 }
 
 export function set<T>(obj: T, path: string | string[], value: any): T {

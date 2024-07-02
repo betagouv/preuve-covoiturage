@@ -77,8 +77,8 @@ function normalize(
   timeZone: string,
 ): {
   data: FlattenTripInterface;
-  driver_incentive_raw;
-  passenger_incentive_raw;
+  driver_incentive_raw: any;
+  passenger_incentive_raw: any;
 } {
   const jsd = toZonedTime(src.journey_start_datetime, timeZone);
   const jed = toZonedTime(src.journey_end_datetime, timeZone);

@@ -32,7 +32,9 @@ export class CastToArrayMiddleware implements MiddlewareInterface<HelperArgs> {
       }
 
       // cast the property to an array
-      set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
+      if (oldValue !== undefined) {
+        set(params, path, Array.isArray(oldValue) ? oldValue : [oldValue]);
+      }
     }
 
     return next(params, context);

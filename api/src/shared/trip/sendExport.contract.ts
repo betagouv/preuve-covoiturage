@@ -1,4 +1,4 @@
-import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface.ts';
+import { TerritorySelectorsInterface } from "../territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export interface ParamsInterface {
   format: {
@@ -21,13 +21,21 @@ export interface ParamsInterface {
   };
 }
 
-export type ExportType = 'opendata' | 'export' | 'registry' | 'operator' | 'territory';
+export const ExportTypeList = [
+  "opendata",
+  "export",
+  "registry",
+  "operator",
+  "territory",
+] as const;
+export type ExportType = typeof ExportTypeList[number];
 
-export type ResultInterface = void;
+export type ResultInterface = undefined;
 
 export const handlerConfig = {
-  service: 'trip',
-  method: 'sendExport',
+  service: "trip",
+  method: "sendExport",
 } as const;
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature =
+  `${handlerConfig.service}:${handlerConfig.method}` as const;
