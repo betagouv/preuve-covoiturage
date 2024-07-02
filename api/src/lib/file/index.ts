@@ -1,19 +1,19 @@
-import { join } from "@/lib/path/index.ts";
-
-let tmpDir: string;
+import { envs_or_default } from "@/lib/env/index.ts";
 
 /**
  * Create a new temporary directory if it doesn't exist yet.
  * Otherwise, return the existing one from the tmpDir variable.
  */
 export function getTmpDir(): string {
-  if (!tmpDir) {
-    const parts = Deno.makeTempDirSync().split("/");
-    parts.pop();
-    tmpDir = "/" + join(...parts);
-  }
-
-  return tmpDir;
+  return envs_or_default(
+    [
+      "XDG_RUNTIME_DIR",
+      "TMPDIR",
+      "TMP",
+      "TEMP",
+    ],
+    "/tmp",
+  );
 }
 
 export type OpenFileOptions = Deno.OpenOptions;

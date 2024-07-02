@@ -25,6 +25,19 @@ export function env_or_fail(k: string, fallback?: string): string {
 
   return val;
 }
+
+export function envs_or_default(k: string[], fallback: string): string {
+  for (const key of k) {
+    if (Deno.env.has(key)) {
+      const result = Deno.env.get(key);
+      if (result !== undefined) {
+        return result;
+      }
+    }
+  }
+  return fallback;
+}
+
 export function env_or_default(k: string, fallback: string): string {
   return Deno.env.get(k) ?? fallback;
 }
