@@ -30,7 +30,7 @@ export const ExportTypeList = [
 ] as const;
 export type ExportType = typeof ExportTypeList[number];
 
-export type ResultInterface = void;
+export type ResultInterface = undefined;
 
 export const handlerConfig = {
   service: "trip",

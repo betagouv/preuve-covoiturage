@@ -104,8 +104,9 @@ export class BuildFile {
     });
 
     stringifier.on("readable", async () => {
-      let row: string;
+      let row: string = "";
       while ((row = stringifier.read()) !== null) {
+        if (row === "") continue;
         await fd.write(new TextEncoder().encode(row + "\n"));
       }
     });
