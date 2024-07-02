@@ -21,8 +21,6 @@ import { BuildExportAction } from "../BuildExportAction.ts";
 export class BuildFile {
   private readonly batchSize = 1000;
 
-  constructor() {}
-
   public async buildCsvFromCursor(
     cursor: PgCursorHandler<ExportTripInterface>,
     params: ParamsInterface,
