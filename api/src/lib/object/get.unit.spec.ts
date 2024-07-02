@@ -7,6 +7,11 @@ describe("get object helper", () => {
     assertEquals(get(obj, "a.b.c"), 1);
   });
 
+  it("should get object from object", () => {
+    const obj = { a: { b: { c: 1 } } };
+    assertEquals(get(obj, "a.b"), { c: 1 });
+  });
+
   it("should get value from indexed array", () => {
     const obj = { a: { b: { c: [1, 2, 3] } } };
     assertEquals(get(obj, "a.b.c.1"), 2);
