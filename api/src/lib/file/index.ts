@@ -7,7 +7,6 @@ import { envs_or_default } from "@/lib/env/index.ts";
 export function getTmpDir(): string {
   return envs_or_default(
     [
-      "XDG_RUNTIME_DIR",
       "TMPDIR",
       "TMP",
       "TEMP",
