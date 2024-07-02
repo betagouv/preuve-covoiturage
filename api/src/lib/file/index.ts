@@ -1,11 +1,11 @@
-import { envs_or_default } from "@/lib/env/index.ts";
+import { env_or_default } from "@/lib/env/index.ts";
 
 /**
  * Create a new temporary directory if it doesn't exist yet.
  * Otherwise, return the existing one from the tmpDir variable.
  */
 export function getTmpDir(): string {
-  return envs_or_default(
+  return env_or_default(
     [
       "TMPDIR",
       "TMP",

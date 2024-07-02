@@ -26,8 +26,17 @@ export function env_or_fail(k: string, fallback?: string): string {
   return val;
 }
 
-export function envs_or_default(k: string[], fallback: string): string {
-  for (const key of k) {
+/**
+ * Get the first key that is found in the environment variables
+ * or return the fallback value.
+ *
+ * @param k key or ordered list of keys to look for
+ * @param fallback default value if none of the keys are found
+ * @returns
+ */
+export function env_or_default(k: string | string[], fallback: string): string {
+  const keys = Array.isArray(k) ? k : [k];
+  for (const key of keys) {
     if (Deno.env.has(key)) {
       const result = Deno.env.get(key);
       if (result !== undefined) {
@@ -35,11 +44,8 @@ export function envs_or_default(k: string[], fallback: string): string {
       }
     }
   }
-  return fallback;
-}
 
-export function env_or_default(k: string, fallback: string): string {
-  return Deno.env.get(k) ?? fallback;
+  return fallback;
 }
 
 export function env(k: string): string | undefined {
