@@ -7,7 +7,7 @@
 # - `frame`:                 6                                                    -> start_date is 48 + 6 hours from today
 # - `update_carpool_status`: 'True'                                               -> If carpools should be updated or not
 
-# In[ ]:
+# In[31]:
 
 
 import os
@@ -24,7 +24,7 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME'] 
 
 
-# In[ ]:
+# In[32]:
 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
@@ -113,7 +113,7 @@ with engine.connect() as conn:
 # Suppression des trajets dont l'`identity_key` n'apprait pas sur plusieurs opérateur différents.
 # Permet de faire un tri simple avant d'ajouter les clées de regroupements 
 
-# In[ ]:
+# In[33]:
 
 
 grouped_idkey_tmp = df_carpool.groupby(['identity_key'])
@@ -124,14 +124,14 @@ df_multi_op = grouped_idkey_tmp.filter(lambda x: len(pd.unique(x['operator_id'])
 # 
 # Ajout d'une colonne `overlap_group` permettant d'identifier les chevauchements temporels des trajets pour une `identity_key`
 
-# In[ ]:
+# In[34]:
 
 
-df_only_grouped_with_overlap_group_filled = df_multi_op.assign(overlap_group=100, overlap_duration=0, overlap_duration_ratio=0)
+df_only_grouped_with_overlap_group_filled = df_multi_op.assign(overlap_group=100, overlap_duration=0.00, overlap_duration_ratio=0.00)
 
 grouped_tmp = df_only_grouped_with_overlap_group_filled.groupby(['identity_key'],group_keys=False)
 
-df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
+df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df),  include_groups=True).reset_index(drop=True)
 
 
 # # Etape 3
@@ -140,7 +140,7 @@ df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_in
 # 1. plusieurs trajets sur une un même période temporelle (plusieurs trajets sur un même overlap_group)
 # 2. plusieurs opérateurs différents
 
-# In[ ]:
+# In[35]:
 
 
 grouped_tmp = df_with_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -157,7 +157,7 @@ df_more_than_one_overlap = grouped_tmp.filter(lambda x:  len(pd.unique(x['operat
 # - La ligne passager pour l' `identity_key` est éffacée mais pas la ligne driver correspondante, c'est ce qui est fait ici
 # 
 
-# In[ ]:
+# In[36]:
 
 
 grouped_tmp = df_more_than_one_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -170,7 +170,7 @@ df_more_than_one_occ_enhanced = grouped_tmp.apply(lambda x: remove_carpool_with_
 # On supprime les chevauchement sur un même opérateur pour des passagers identiques pour palier au mauvais calibrage de l'algo sur le calcul des groupes de chevauchement.
 # En effet, il se peut qu'un trajet de type aller-retour soit pris dans la fraude sur un chevauchement de quelques secondes
 
-# In[ ]:
+# In[37]:
 
 
 grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_group', 'operator_id', 'other_identity_key'])
@@ -178,7 +178,7 @@ grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_gr
 df_without_overlap_on_same_operator = grouped_tmp.apply(lambda x: remove_carpool_with_lowest_overlap_duration(x)).reset_index(drop=True)
 
 
-# In[ ]:
+# In[38]:
 
 
 grouped_tmp = df_without_overlap_on_same_operator.groupby(['identity_key', 'overlap_group'])
@@ -189,7 +189,7 @@ df_more_than_one_occ_2 = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator
 # 
 # On supprime les conducteurs qui covoiturent avec plusieurs passagers sur des applications différentes.
 
-# In[ ]:
+# In[39]:
 
 
 driver_mask = df_more_than_one_occ_2.is_driver == True 
@@ -214,7 +214,7 @@ df_no_driver_different_operators = df_more_than_one_occ_2.loc[~df_more_than_one_
 # 
 # Une assertion est faite par la suite pour s'assurer qu'aucun trajet n'est supprimé si tous les trajets ne respectent pas la condition
 
-# In[ ]:
+# In[40]:
 
 
 grouped_tmp = df_no_driver_different_operators.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -230,7 +230,7 @@ carpool_id_list_flat = [item for sublist in carpool_id_list for item in sublist]
 df_final_result = df_no_driver_different_operators.loc[~df_no_driver_different_operators._id.isin(carpool_id_list_flat)]
 
 
-# In[ ]:
+# In[41]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -240,13 +240,12 @@ control_matrix = grouped_tmp.agg(unique_operator_count=('operator_id', 'nunique'
 assert (control_matrix['unique_operator_count'] > 1).all()
 
 
-# In[ ]:
+# In[42]:
 
 
 import sqlalchemy as sa
 
 # Update de carpool_v2 schema for passed status (i.e no fraud detected)
-# Retrieve carpool without fraud
 df_passed_carpool_ids = df_carpool[~df_carpool['_id'].isin(df_final_result['_id'])]['_id']
 
 if update_carpool_status is True:
@@ -258,10 +257,11 @@ if update_carpool_status is True:
     
     where_clause = table.c.carpool_id.in_(df_passed_carpool_ids)
 
-    update_stmt = sa.update(table).where(where_clause).values(status='passed')
+    update_stmt = sa.update(table).where(where_clause).values(fraud_status='passed')
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
+        print(f"{result.rowcount} carpools status updated to fraud_status=passed")
         conn.commit()
 
 
@@ -269,7 +269,7 @@ if update_carpool_status is True:
 # 
 # Mise à jour des carpools retenus en status `fraudcheck_error`
 
-# In[ ]:
+# In[43]:
 
 
 import sqlalchemy as sa
@@ -288,14 +288,16 @@ if update_carpool_status is True:
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(result.rowcount)
+        print(f"{result.rowcount} carpools status updated to fraud_status=failed")
         conn.commit()
 
 
-# In[ ]:
+# In[44]:
 
 
 import sqlalchemy as sa
+import warnings
+warnings.filterwarnings("ignore")
 
 # Update de carpool schema
 if update_carpool_status is True:
@@ -307,7 +309,7 @@ if update_carpool_status is True:
     
     where_clause = table.c._id.in_(df_final_result['_id'].to_list())
 
-    update_stmt = sa.update(table).where(where_clause).values(status='fraudcheck_error')
+    update_stmt = sa.update(table).where(where_clause).values(fraud_status='fraudcheck_error')
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
