@@ -1,11 +1,11 @@
 version: 2
 models:
-  - name: flux_by_day
+  - name: carpool_by_day
     columns:
-      - name: origin
+      - name: from
         description: ''
         data_type: character varying
-      - name: destination
+      - name: to
         description: ''
         data_type: character varying
       - name: start_date

@@ -4,6 +4,7 @@ dialect = postgres
 
 [sqlfluff:templater:dbt]
 project_dir = ./
+profiles_dir = ./profiles
 
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
@@ -21,3 +22,7 @@ align_within = select_clause
 # when we hit brackets is usually a good rule of thumb for this
 # configuration.
 align_scope = bracketed
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 2

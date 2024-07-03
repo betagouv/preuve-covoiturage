@@ -1,11 +1,11 @@
 version: 2
 models:
-  - name: occupation_by_month
+  - name: occupation_by_trimester
     columns:
       - name: year
         description: ''
         data_type: integer
-      - name: month
+      - name: trimester
         description: ''
         data_type: integer
       - name: code

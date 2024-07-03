@@ -1,11 +1,11 @@
 version: 2
 models:
-  - name: occupation_by_month
+  - name: occupation_by_semester
     columns:
       - name: year
         description: ''
         data_type: integer
-      - name: month
+      - name: semester
         description: ''
         data_type: integer
       - name: code

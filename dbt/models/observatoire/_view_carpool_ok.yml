@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: view_carpool_ok
+    columns:
+      - name: start
+        description: ''
+        data_type: character varying
+      - name: end
+        description: ''
+        data_type: character varying
+      - name: start_date
+        description: ''
+        data_type: date
+      - name: driver_id
+        description: ''
+        data_type: character varying
+      - name: passenger_id
+        description: ''
+        data_type: character varying
+      - name: passenger_seats
+        description: ''
+        data_type: smallint
+      - name: distance
+        description: ''
+        data_type: integer
+      - name: duration
+        description: ''
+        data_type: interval

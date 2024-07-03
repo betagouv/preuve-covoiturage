@@ -1,4 +1,16 @@
 version: 2
 models:
   - name: view_evolution_com
-    columns: []
+    columns:
+      - name: arr_2020
+        description: ''
+        data_type: character varying
+      - name: arr_2021
+        description: ''
+        data_type: character varying
+      - name: arr_2022
+        description: ''
+        data_type: character varying
+      - name: arr_2023
+        description: ''
+        data_type: character varying
