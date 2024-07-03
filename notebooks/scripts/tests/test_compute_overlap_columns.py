@@ -2,7 +2,8 @@ import datetime
 import unittest
 import pandas as pd
 
-from notebooks.computes.carpool_overlaps import CarpoolOverlaps
+from scripts.helpers.apply_metods import add_overlap_columns
+
 
 class TestComputeCarpoolOverlaps(unittest.TestCase):
 
@@ -19,7 +20,7 @@ class TestComputeCarpoolOverlaps(unittest.TestCase):
         df = pd.DataFrame(data)
 
         # Act
-        filtered_df = CarpoolOverlaps.add_overlap_columns(df)
+        filtered_df = add_overlap_columns(df)
 
         # Assert
         df['overlap_group'] = 0
@@ -40,7 +41,7 @@ class TestComputeCarpoolOverlaps(unittest.TestCase):
         df = pd.DataFrame(data)
 
         # Act
-        filtered_df = CarpoolOverlaps.add_overlap_columns(df, True)
+        filtered_df = add_overlap_columns(df)
 
         # Assert
         df['overlap_group'] = 0
