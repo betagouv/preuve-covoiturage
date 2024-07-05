@@ -10,11 +10,13 @@ select
     a.end_geo_code
   )                              AS end,
   a.start_datetime::date         AS start_date,
-  a.driver_id,
-  a.passenger_id,
-  a.passenger_seats,
-  a.distance,
-  a.duration
+  extract('hour' from  a.start_datetime) as hour,
+  CASE WHEN a.distance < 10000 then '0-10'
+    WHEN (a.distance >= 10000 AND a.distance < 20000) THEN '10-20'
+    WHEN (a.distance >= 20000 AND a.distance < 30000) THEN '20-30'
+    WHEN (a.distance >= 30000 AND a.distance < 40000) THEN '30-40'
+    WHEN (a.distance >= 40000 AND a.distance < 50000) THEN '40-50'
+  ELSE '>50' END as dist_classes
   FROM {{ ref('view_carpool') }} AS a
   LEFT JOIN
     (SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020) AS b

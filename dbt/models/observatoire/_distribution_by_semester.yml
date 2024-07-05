@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: distribution_by_semester
+    columns:
+      - name: year
+        description: ''
+        data_type: numeric
+      - name: semester
+        description: ''
+        data_type: integer
+      - name: code
+        description: ''
+        data_type: character varying
+      - name: libelle
+        description: ''
+        data_type: character varying
+      - name: type
+        description: ''
+        data_type: text
+      - name: direction
+        description: ''
+        data_type: text
+      - name: hours
+        description: ''
+        data_type: json
+      - name: distances
+        description: ''
+        data_type: json
