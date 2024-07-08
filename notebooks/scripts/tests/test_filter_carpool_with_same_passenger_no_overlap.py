@@ -1,7 +1,8 @@
 import unittest
 import pandas as pd
 
-from notebooks.filters.carpool_filters import CarpoolFilters
+from scripts.helpers.apply_metods import remove_carpool_with_same_passenger_and_no_overlap
+
 
 class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
 
@@ -20,7 +21,7 @@ class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
         expected_df = pd.DataFrame(expected_data)
 
         # Act
-        filtered_df = CarpoolFilters.filter_remove_carpool_with_same_passenger_no_overlap(df)
+        filtered_df = remove_carpool_with_same_passenger_and_no_overlap(df)
 
         # Assert
         pd.testing.assert_frame_equal(filtered_df.reset_index(drop=True), expected_df)
