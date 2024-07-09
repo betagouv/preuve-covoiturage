@@ -13,8 +13,8 @@ export const description =
 
   <ul>
     <li><b>De 5 à 17 km : 0.75 euro par trajet par passager.</b></li>
-    <li><b>De 17 à 30 km : 0.10 euro par trajet par km par passager avec un maximum de 2 euros</b></li>
-    <li><b>De 30 à 60 km : 2 euros par passager transporté</b></li>
+    <li><b>De 17 à 29,5 km : 0.10 euro par trajet par km par passager avec un maximum de 2 euros</b></li>
+    <li><b>De 29,5 à 60 km : 2 euros par passager transporté</b></li>
   </ul>
 
   <p>
@@ -23,8 +23,8 @@ export const description =
 
   <ul>
     <li><b>De 5 à 17 km : 1.65 euro par trajet par passager.</b></li>
-    <li><b>De 17 à 30 km : 0.10 euro par trajet par km par passager avec un maximum de 2.90 euros</b></li>
-    <li><b>De 30 à 60 km : 2.90 euros par passager transporté</b></li>
+    <li><b>De 17 à 29,5 km : 0.10 euro par trajet par km par passager avec un maximum de 2.90 euros</b></li>
+    <li><b>De 29,5 à 60 km : 2.90 euros par passager transporté</b></li>
   </ul>
   
   <p>Les restrictions suivantes seront appliquées :</p>
@@ -37,7 +37,7 @@ export const description =
   
   <p>
     La campagne est éligible aux opérateurs de covoiturage
-    BlaBlaCar Daily, Klaxit, Karos et Mobicoop proposant des preuves de classe <b>C</b>
+    BlaBlaCar Daily, Karos et Mobicoop proposant des preuves de classe <b>C</b>
   </p>
 
 </div>`;
