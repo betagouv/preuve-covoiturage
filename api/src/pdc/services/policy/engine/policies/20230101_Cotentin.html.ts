@@ -24,5 +24,9 @@ export const description =
   <li><b>12 trajets maximum pour le conducteur par jour.</b></li>
 </ul>
 
-<p>La campagne est limitée à l'opérateur <b>Klaxit</b> proposant des preuves de classe <b>B ou C</b>.</p>
+<p>
+  La campagne est limitée à l'opérateur <b>Blablacar Daily</b> depuis le 11 mars 2024
+  à la suite de Klaxit.<br />
+  Les preuves de classe <b>B ou C</b> sont autorisées.
+</p>
 `;
