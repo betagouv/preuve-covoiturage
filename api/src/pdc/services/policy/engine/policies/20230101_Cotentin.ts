@@ -55,7 +55,7 @@ export const Cotentin2023: PolicyHandlerStaticInterface = class
       operators: [OperatorsEnum.KLAXIT],
     },
     {
-      date: new Date("2024-03-11T00:00:00+0200"),
+      date: new Date("2024-04-01T00:00:00+0200"),
       operators: [OperatorsEnum.BLABLACAR_DAILY],
     },
   ];

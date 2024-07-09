@@ -50,6 +50,10 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
       date: new Date("2023-01-01T00:00:00+0100"),
       operators: [OperatorsEnum.KLAXIT],
     },
+    {
+      date: new Date("2024-03-11T00:00:00+0100"),
+      operators: [OperatorsEnum.BLABLACAR_DAILY],
+    },
   ];
 
   protected slices: RunnableSlices = [
