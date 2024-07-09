@@ -1,14 +1,20 @@
-import Hero from "@/components/common/Hero";
 import Block from "@/components/common/Block";
-import SectionTitle from "@/components/common/SectionTitle";
-import { Tile } from "@codegouvfr/react-dsfr/Tile";
-import { fr } from "@codegouvfr/react-dsfr";
-import { fetchAPI, shorten } from "@/helpers/cms";
-import RessourceCard from "@/components/ressources/RessourceCard";
-import MDContent from "@/components/common/MDContent";
-import { Metadata } from 'next';
+import Hero from "@/components/common/Hero";
 import Highlight from '@/components/common/Highlight';
+import MDContent from "@/components/common/MDContent";
+import SectionTitle from "@/components/common/SectionTitle";
+import { AppFooter } from '@/components/layout/AppFooter';
+import { AppHeader } from '@/components/layout/AppHeader';
+import { Follow } from '@/components/layout/Follow';
+import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import Rows from '@/components/observatoire/indicators/Rows';
+import RessourceCard from "@/components/ressources/RessourceCard";
+import { ContextProvider } from '@/context/ContextProvider';
+import { fetchAPI, shorten } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Tile } from "@codegouvfr/react-dsfr/Tile";
+import { Metadata } from 'next';
+
 
 export const metadata: Metadata = {
   title: 'Accueil | Observatoire.covoiturage.gouv.fr',
@@ -79,85 +85,95 @@ export default async function Home() {
 ]
 
   return (
-    <div id='content'>
-      { hero && <Hero 
-          title={hero.title} 
-          subtitle={hero.subtitle}
-          content={hero.content} 
-          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
-          alt={hero.alt} 
-          buttons={hero.buttons} 
-        />
-      }
-      {data.content && 
-        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-          <div className={fr.cx('fr-col')}>
-            <div>
-              <MDContent source={data.content} />
-            </div>
-          </div>
-        </div>
-      }
-      {block &&
-        <Block 
-          title={block.title} 
-          content={block.content} 
-          img={block.img.data.attributes.url} 
-          alt={block.alt} 
-          buttons={block.buttons} 
-        />
-      }
-      {rows && 
-        <Rows data={rows} />
-      }
-      {list && 
-        <div className={fr.cx('fr-grid-row')}>
-          {list.map((l:any, i:number) => 
-            l.__component === 'page.highlight' 
-            ? <Highlight key={i} 
-                title={l.title}
-                content={l.content}
-                img={l.img.data.attributes.url}
-                buttons={l.buttons}
-                classes={l.classes} 
-              /> 
-            : <SectionTitle key={i} title={l.title} />        
-          )}
-        </div>
-      }
-      <SectionTitle title='Vous êtes ?' />
-      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-        {tiles && tiles.map( (t, i) => 
-          <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
-            <Tile 
-              title={t.title}
-              desc={t.desc}
-              grey={t.grey}
-              imageUrl={t.imageUrl}
-              imageAlt={''}
-              linkProps={t.linkProps}
-            />
-          </div>
-        )}
-      </div>
-      {resources.data.length > 0 && 
-        <>
-          <SectionTitle title='Ressources' />
-          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-            {resources.data.map((r:any, i:number) =>  
-              <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
-                <RessourceCard 
-                  title={r.attributes.title}
-                  content={shorten(r.attributes.content, 100)}
-                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
-                  href={`/ressources/${r.attributes.slug}`}
-                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
-                />
+    <ContextProvider>
+      <AppHeader />
+        <main tabIndex={-1}>
+          <div className={fr.cx('fr-container')}>
+          <div id='content'>
+            { hero && <Hero 
+                title={hero.title} 
+                subtitle={hero.subtitle}
+                content={hero.content} 
+                img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
+                alt={hero.alt} 
+                buttons={hero.buttons} 
+              />
+            }
+            {data.content && 
+              <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+                <div className={fr.cx('fr-col')}>
+                  <div>
+                    <MDContent source={data.content} />
+                  </div>
+                </div>
               </div>
-            )}
+            }
+            {block &&
+              <Block 
+                title={block.title} 
+                content={block.content} 
+                img={block.img.data.attributes.url} 
+                alt={block.alt} 
+                buttons={block.buttons} 
+              />
+            }
+            {rows && 
+              <Rows data={rows} />
+            }
+            {list && 
+              <div className={fr.cx('fr-grid-row')}>
+                {list.map((l:any, i:number) => 
+                  l.__component === 'page.highlight' 
+                  ? <Highlight key={i} 
+                      title={l.title}
+                      content={l.content}
+                      img={l.img.data.attributes.url}
+                      buttons={l.buttons}
+                      classes={l.classes} 
+                    /> 
+                  : <SectionTitle key={i} title={l.title} />        
+                )}
+              </div>
+            }
+            <SectionTitle title='Vous êtes ?' />
+            <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+              {tiles && tiles.map( (t, i) => 
+                <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
+                  <Tile 
+                    title={t.title}
+                    desc={t.desc}
+                    grey={t.grey}
+                    imageUrl={t.imageUrl}
+                    imageAlt={''}
+                    linkProps={t.linkProps}
+                  />
+                </div>
+              )}
+            </div>
+            {resources.data.length > 0 && 
+              <>
+                <SectionTitle title='Ressources' />
+                <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+                  {resources.data.map((r:any, i:number) =>  
+                    <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+                      <RessourceCard 
+                        title={r.attributes.title}
+                        content={shorten(r.attributes.content, 100)}
+                        date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                        href={`/ressources/${r.attributes.slug}`}
+                        img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            }
           </div>
-        </>
-      }
-    </div>
+            <ScrollToTop />
+          </div>
+          <Follow />
+        </main>
+      <AppFooter />
+    </ContextProvider>
   );
 }
