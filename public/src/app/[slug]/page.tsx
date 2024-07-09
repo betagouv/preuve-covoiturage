@@ -1,13 +1,13 @@
 import Block from "@/components/common/Block";
 import Hero from "@/components/common/Hero";
+import Highlight from '@/components/common/Highlight';
+import MDContent from "@/components/common/MDContent";
 import PageTitle from "@/components/common/PageTitle";
 import SectionTitle from "@/components/common/SectionTitle";
+import Rows from '@/components/observatoire/indicators/Rows';
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
-import MDContent from "@/components/common/MDContent";
-import Highlight from '@/components/common/Highlight';
-import Rows from '@/components/observatoire/indicators/Rows';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
