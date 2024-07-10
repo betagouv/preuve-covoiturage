@@ -574,6 +574,9 @@ paths:
               example:
                 code: 403
                 error: Forbidden
+        '409':
+          description: |
+            Un trajet similaire a déjà enregistré.
     get:
       tags:
       - Trajets
