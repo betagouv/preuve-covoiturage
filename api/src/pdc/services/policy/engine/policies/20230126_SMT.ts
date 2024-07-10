@@ -39,7 +39,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
       operators: [OperatorsEnum.KLAXIT],
     },
     {
-      date: new Date("2024-02-215T00:00:00+0100"),
+      date: new Date("2024-02-15T00:00:00+0100"),
       operators: [OperatorsEnum.KLAXIT, OperatorsEnum.BLABLACAR_DAILY],
     },
   ];
