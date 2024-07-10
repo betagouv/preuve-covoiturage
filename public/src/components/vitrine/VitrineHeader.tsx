@@ -14,7 +14,7 @@ export function VitrineHeader() {
         </>
       }
       homeLinkProps={{
-        href: '/service',
+        href: '/startup-etat',
         title: 'Accueil | Covoiturage.gouv.fr',
         "aria-label": 'Accueil | Covoiturage.gouv.fr',
       }}
