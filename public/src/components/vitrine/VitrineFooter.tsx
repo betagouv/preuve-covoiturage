@@ -86,10 +86,6 @@ export function VitrineFooter() {
         title: 'mentions légales | Observatoire.covoiturage.gouv.fr',
         "aria-label": 'mentions légales'
       }}
-      websiteMapLinkProps={{
-        href: '/plan-site',
-        title: 'Plan du site | Observatoire.covoiturage.gouv.fr'
-      }}
       accessibilityLinkProps={{
         href: '/accessibilite',
         title: 'Accessibilité | Observatoire.covoiturage.gouv.fr',
