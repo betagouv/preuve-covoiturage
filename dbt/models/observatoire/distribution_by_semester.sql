@@ -27,13 +27,8 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      concat(
-        extract('year' from start_date),
-        case
-          when extract('quarter' from start_date)::int > 3 then 2 else 1
-        end
-      )::int
-      >= (select max(concat(year, semester)::int) from {{ this }})
+      (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
+      >= (SELECT max(year * 10 + semester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
 ),
@@ -63,13 +58,8 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      concat(
-        extract('year' from start_date),
-        case
-          when extract('quarter' from start_date)::int > 3 then 2 else 1
-        end
-      )::int
-      >= (select max(concat(year, semester)::int) from {{ this }})
+      (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
+      >= (SELECT max(year * 10 + semester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
 )

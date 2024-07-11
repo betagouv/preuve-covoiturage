@@ -1,9 +1,5 @@
 {{ config(materialized='incremental') }}
 
-WITH com_evol AS (
-  SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020
-)
-
 SELECT
   coalesce(
     b.new_com,
@@ -14,27 +10,21 @@ SELECT
     a.end_geo_code
   )                              AS to,
   a.start_datetime::date         AS start_date,
-  count(
-    *
-  )                              AS journeys,
-  count(DISTINCT a.driver_id)    AS drivers,
-  count(DISTINCT a.passenger_id) AS passengers,
-  sum(
-    a.passenger_seats
-  )                              AS passenger_seats,
-  sum(
-    a.distance
-  )                              AS distance,
-  sum(
-    a.duration
-  )                              AS duration
+  count(distinct a.driver_id) filter (where d.first_date = a.start_datetime::date)  AS new_drivers,
+  count(distinct a.passenger_id) filter (where e.first_date = a.start_datetime::date)  AS new_passengers
 FROM {{ ref('view_carpool') }} AS a
 LEFT JOIN
-  com_evol AS b
+  (SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020) AS b
   ON a.start_geo_code = b.old_com
 LEFT JOIN
-  com_evol AS c
+  (SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020) AS c
   ON a.end_geo_code = c.old_com
+LEFT JOIN 
+(select * from {{ref('view_first_date_driver')}}) AS d
+  ON a.driver_id = d.driver_id
+LEFT JOIN 
+(select * from {{ref('view_first_date_passenger')}}) AS e
+  ON a.passenger_id = e.passenger_id
 WHERE
   a.acquisition_status = 'processed'
   AND a.fraud_status = 'passed'

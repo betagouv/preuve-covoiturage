@@ -25,11 +25,8 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      concat(
-        extract('year' from start_date),
-        extract('month' from start_date)
-      )::int
-      >= (select max(concat(year, month)::int) from {{ this }})
+      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
+      >= (SELECT max(year * 100 + month) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
 ),
@@ -57,11 +54,8 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      concat(
-        extract('year' from start_date),
-        extract('month' from start_date)
-      )::int
-      >= (select max(concat(year, month)::int) from {{ this }})
+      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
+      >= (SELECT max(year * 100 + month) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
 )

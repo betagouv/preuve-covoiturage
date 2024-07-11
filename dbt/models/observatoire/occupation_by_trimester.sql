@@ -14,11 +14,8 @@ WITH sum_distance AS (
   FROM {{ ref('directions_by_day') }}
   {% if is_incremental() %}
     WHERE
-      concat(
-        extract('year' FROM start_date),
-        extract('quarter' FROM start_date)
-      )::int
-      >= (SELECT max(concat(year, trimester)::int) FROM {{ this }})
+      (extract('year' FROM start_date) * 10 + extract('quarter' FROM start_date))
+      >= (SELECT max(year * 10 + trimester) FROM {{ this }})
   {% endif %}
   GROUP BY 1, 2, 3, 4, 5
   HAVING sum(journeys) > 0

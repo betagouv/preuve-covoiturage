@@ -2,7 +2,9 @@
 
 SELECT
   extract('year' FROM start_date)::int  AS year,
-  extract('month' FROM start_date)::int AS month,
+  case
+    when extract('quarter' from start_date)::int > 3 then 2 else 1
+  end                             as semester,
   a.code,
   b.l_territory AS libelle,
   a.type,
@@ -26,8 +28,8 @@ WHERE
   a.code IS NOT null
   {% if is_incremental() %}
     AND
-      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
-      >= (SELECT max(year * 100 + month) FROM {{ this }})
+      (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
+      >= (SELECT max(year * 10 + semester) FROM {{ this }})
   {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6
 

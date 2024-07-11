@@ -2,7 +2,7 @@
 
 SELECT
   extract('year' FROM start_date)::int  AS year,
-  extract('month' FROM start_date)::int AS month,
+  extract('quarter' FROM start_date)::int AS trimester,
   a.code,
   b.l_territory AS libelle,
   a.type,
@@ -26,8 +26,8 @@ WHERE
   a.code IS NOT null
   {% if is_incremental() %}
     AND
-      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
-      >= (SELECT max(year * 100 + month) FROM {{ this }})
+      (extract('year' FROM start_date) * 10 + extract('quarter' FROM start_date))
+      >= (SELECT max(year * 10 + trimester) FROM {{ this }})
   {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6
 
