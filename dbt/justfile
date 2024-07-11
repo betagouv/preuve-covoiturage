@@ -5,4 +5,4 @@ default:
 
 # Run dbt
 dbt cmd:
-    dbt {{cmd}} --profiles-dir local 
+    dbt {{cmd}} --profiles-dir profiles 
