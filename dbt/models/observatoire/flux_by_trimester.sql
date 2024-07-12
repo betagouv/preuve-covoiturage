@@ -2,8 +2,8 @@
 
 WITH flux AS (
   SELECT
-    from,
-    to,
+    "from",
+    "to",
     extract('year' FROM start_date)::int    AS year,
     extract('quarter' FROM start_date)::int AS trimester,
     sum(journeys)                           AS journeys,

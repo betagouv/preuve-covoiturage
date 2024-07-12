@@ -2,8 +2,8 @@
 
 WITH flux AS (
   SELECT
-    from,
-    to,
+    "from",
+    "to",
     extract('year' FROM start_date)::int  AS year,
     extract('month' FROM start_date)::int AS month,
     sum(journeys)                         AS journeys,
