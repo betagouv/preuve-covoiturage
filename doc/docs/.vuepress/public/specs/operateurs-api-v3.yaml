@@ -1,6 +1,7 @@
 openapi: '3.0.2'
 info:
-  title: API Trajets V3.0
+  title: API Trajets
+  version: "3.0"
   description: |
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
@@ -462,6 +463,7 @@ paths:
     post:
       tags:
       - auth
+      - wip
       summary: Créer un token applicatif à partir de clés d'accès.
       requestBody:
         required: true
@@ -720,7 +722,9 @@ paths:
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
                   gcu_error_details:
                     type: array
-                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    description: | 
+                      Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectées.
+                      Actuellement non implementé #wip.
                     items:
                       '$ref': "#/components/schemas/gcu_label"
                   fraud_error_labels:
@@ -741,7 +745,7 @@ paths:
                             type: string
                             description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
                           temporal_overlap_duration_ratio:
-                            type: float
+                            type: number
                             description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
