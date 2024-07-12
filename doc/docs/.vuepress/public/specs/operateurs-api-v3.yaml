@@ -118,6 +118,7 @@ components:
         - validation_error
         - acquisition_error
         - normalization_error
+        - gcu_error
         - ok
         - expired
         - canceled
@@ -415,6 +416,15 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
+    gcu_label:
+      type: string
+      enum:
+        - distance_too_short
+      description: |
+        Etiquette possible pour un cas de non respect des CGU détectée :
+          - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+          - `too_many_trips_by_day` : le participant a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour)
+          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets conducteur (operator_trip_id) impliquant un même usager [identity_key(operator_trip_id#2_start_datetime - operator_trip_id#1_end_datetime) <= 30mn)
     fraudcheck_label:
       type: string
       enum:
@@ -708,6 +718,11 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
+                  gcu_error_details:
+                    type: array
+                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    items:
+                      '$ref': "#/components/schemas/gcu_label"
                   fraud_error_labels:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
