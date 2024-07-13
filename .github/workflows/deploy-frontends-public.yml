@@ -36,6 +36,7 @@ jobs:
           cd public
           npm ci
           NODE_OPTIONS=--openssl-legacy-provider npm run build
+          cp -R out/_next out/startup-etat/_next
 
       - name: Deploy to bucket
         uses: jakejarvis/s3-sync-action@master
