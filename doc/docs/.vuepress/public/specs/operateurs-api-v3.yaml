@@ -417,7 +417,7 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
-    gcu_label:
+    terms_violation_label:
       type: string
       enum:
         - distance_too_short
@@ -481,7 +481,7 @@ paths:
                 - secret_key
       responses:
         '201':
-          description: Le token est crée.
+          description: Le token est créé
           content:
             'application/json':
               schema:
@@ -489,9 +489,10 @@ paths:
                 properties:
                   token:
                     type: string
-                    description: un token jwt à durée de vie limité
+                    description: un token JWT à durée de vie limitée
                   expires_in:
                     type: number
+                    description: durée de vie du token en secondes
   /journeys:
     post:
       tags:
@@ -720,13 +721,13 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
-                  gcu_error_details:
+                  terms_violation_details:
                     type: array
                     description: | 
-                      Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectées.
+                      Liste des raisons ayant abouti au rejet du trajet. Vide si pas de fraude détectée.
                       Actuellement non implementé #wip.
                     items:
-                      '$ref': "#/components/schemas/gcu_label"
+                      '$ref': "#/components/schemas/terms_violation_label"
                   fraud_error_labels:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
