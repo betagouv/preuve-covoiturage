@@ -18,7 +18,7 @@ export default function VitrineRows(props: RowsProps) {
               )
             case 'row.card':
               return(
-                <div className={fr.cx('fr-col')}>
+                <div className={fr.cx('fr-col-12', 'fr-col-md-6')}>
                   <VitrineCard 
                     key={i} 
                     title={r.title}
