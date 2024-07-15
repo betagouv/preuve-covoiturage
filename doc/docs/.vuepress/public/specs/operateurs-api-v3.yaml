@@ -119,7 +119,7 @@ components:
         - validation_error
         - acquisition_error
         - normalization_error
-        - gcu_error
+        - terms_violation_error
         - ok
         - expired
         - canceled
