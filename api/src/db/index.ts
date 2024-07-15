@@ -37,7 +37,7 @@ async function runMigrations(config: string) {
   await createMigrationTable(conn);
   const possible = await getPossibleMigrationsFilePath();
   const done = await getDoneMigrations(conn);
-  const todo = new Set(possible.keys()).difference(done);
+  const todo = [...new Set(possible.keys()).difference(done).values()].sort();
   for (const td of todo) {
     const filepath = possible.get(td);
     if (!filepath) {
