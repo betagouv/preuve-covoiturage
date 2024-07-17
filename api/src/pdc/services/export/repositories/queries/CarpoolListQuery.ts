@@ -137,7 +137,7 @@ export class CarpoolListQuery extends AbstractQuery {
         jsonb_path_query_array(agg_incentives_rpc.incentive_rpc::jsonb, '$[0 to 3]') as incentive_rpc,
 
         -- campaigns
-        pi.campaigns,
+        campaigns.campaigns,
 
         -- CEE application data
         cee._id IS NOT NULL as cee_application
@@ -174,7 +174,8 @@ export class CarpoolListQuery extends AbstractQuery {
         )) as incentive_rpc
         FROM policy.incentives pi_rpc
         LEFT JOIN policy.policies pp ON pi_rpc.policy_id = pp._id
-        WHERE pi_rpc.carpool_id = cc._id
+        WHERE pi_rpc.operator_id = cc.operator_id
+          AND pi_rpc.operator_journey_id = cc.operator_journey_id
       ) as agg_incentives_rpc ON TRUE
 
       -- geo selection
@@ -185,12 +186,14 @@ export class CarpoolListQuery extends AbstractQuery {
       -- campaigns can be many on one carpool
       LEFT JOIN LATERAL (
         SELECT array_agg(json_build_object(
-          'id', policy_id,
-          'name', name
+          'id', pi.policy_id,
+          'name', pp.name
         )) as campaigns
-        FROM policy.incentives
-        WHERE carpool_id = cc._id
-      ) AS pi ON TRUE
+        FROM policy.incentives pi
+        LEFT JOIN policy.policies pp ON pi.policy_id = pp._id
+        WHERE pi.operator_id = cc.operator_id
+          AND pi.operator_journey_id = cc.operator_journey_id
+      ) AS campaigns ON TRUE
 
       WHERE true
         AND cc.start_datetime >= $1
