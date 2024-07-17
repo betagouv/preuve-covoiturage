@@ -34,7 +34,7 @@ export abstract class CarpoolRepositoryInterfaceResolver
   identifier: CarpoolRepositoryInterfaceResolver,
 })
 export class CarpoolRepository implements CarpoolRepositoryInterface {
-  public readonly table = "carpool.carpools";
+  public readonly table = "carpool_v2.carpools";
   private readonly batchSize = 1000;
 
   constructor(public connection: PostgresConnection) {}
