@@ -82,12 +82,12 @@ export function VitrineFooter() {
       ]}
       accessibility='partially compliant'
       termsLinkProps={{
-        href: '/mentions-legales',
+        href: 'https://observatoire.covoiturage.gouv.fr/mentions-legales',
         title: 'mentions légales | Observatoire.covoiturage.gouv.fr',
         "aria-label": 'mentions légales'
       }}
       accessibilityLinkProps={{
-        href: '/accessibilite',
+        href: 'https://observatoire.covoiturage.gouv.fr/accessibilite',
         title: 'Accessibilité | Observatoire.covoiturage.gouv.fr',
         "aria-label": 'Accessibilité'
       }}
@@ -95,7 +95,7 @@ export function VitrineFooter() {
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
       operatorLogo={{
         alt: 'Registre de Preuve de Covoiturage',
-        imgUrl: 'https://cms.covoiturage.beta.gouv.fr/assets/9733ec41-031e-4a93-b253-d4f20a109151.png',
+        imgUrl: 'https://static.covoiturage.beta.gouv.fr/logo_rpc_d82e4b3a4a.png',
         orientation: 'horizontal',
       }}
       partnersLogos={{

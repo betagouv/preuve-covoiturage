@@ -10,10 +10,14 @@ export function VitrineHeader() {
           de la transition
           <br />
           écologique
+          <br />
+          et de la cohésion
+          <br />
+          des territoires
         </>
       }
       homeLinkProps={{
-        href: '/startup-etat',
+        href: '/',
         title: 'Accueil | Covoiturage.beta.gouv.fr',
         "aria-label": 'Accueil | Covoiturage.beta.gouv.fr',
       }}
