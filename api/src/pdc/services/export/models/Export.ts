@@ -79,7 +79,10 @@ export class Export {
     if (parseInt(territory_id) > 0) return ExportTarget.TERRITORY;
 
     // registry
-    if (isNaN(parseInt(operator_id)) && isNaN(parseInt(territory_id))) {
+    if (
+      Number.isNaN(parseInt(operator_id)) &&
+      Number.isNaN(parseInt(territory_id))
+    ) {
       return ExportTarget.TERRITORY;
     }
 
