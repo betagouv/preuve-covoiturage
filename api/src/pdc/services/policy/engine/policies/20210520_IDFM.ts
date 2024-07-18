@@ -130,7 +130,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     "2023-08-12",
     "2023-08-13",
     "2023-08-14",
-    "2024-11-25",
+    "2024-10-25",
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
