@@ -64,7 +64,6 @@ export class TripApiService extends JsonRpcGetList<
       },
     };
 
-    // TODO get API URL and POST to /v2/exports with the payload
     return this.http.post("v2/exports", params, { withCredentials: true }).pipe(
       tap(console.log),
     );
