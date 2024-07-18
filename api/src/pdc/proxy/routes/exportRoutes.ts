@@ -1,6 +1,10 @@
 import { Request, Response } from "@/deps.ts";
 import { RPCResponseType } from "@/ilos/common/index.ts";
 import { get } from "@/lib/object/index.ts";
+import {
+  handlerConfigV2,
+  handlerConfigV3,
+} from "@/shared/export/create.contract.ts";
 import { HttpTransport } from "../HttpTransport.ts";
 import { asyncHandler } from "../helpers/asyncHandler.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
@@ -24,17 +28,44 @@ import { serverTokenMiddleware } from "../middlewares/serverTokenMiddleware.ts";
  * - DELETE /v3/exports/:uuid
  */
 export function register(transport: HttpTransport): void {
-  const { app, send, tokenProvider } = transport;
+  const { app, tokenProvider } = transport;
+  const send = transport.send.bind(transport);
   const kernel = transport.getKernel();
 
+  /**
+   * Export trips from a V2 payload to a V3 output file.
+   *
+   * The V2 way to handle exports is done throught the /rpc route calling
+   * the trip:export method.
+   *
+   * @deprecated This should be removed when the dashboard is updated.
+   */
+  app.post(
+    "/v2/exports",
+    rateLimiter(),
+    serverTokenMiddleware(kernel, tokenProvider),
+    asyncHandler(async (req: Request, res: Response) => {
+      const user = get(req, "session.user", {});
+      const action = `export:${handlerConfigV2.method}`;
+      const response = await kernel.handle(
+        createRPCPayload(action, req.body, user, { req }),
+      );
+      send(res, response);
+    }),
+  );
+
+  /**
+   * Export trips from a V3 payload to a V3 output file
+   */
   app.post(
     "/v3/exports",
     rateLimiter(),
     serverTokenMiddleware(kernel, tokenProvider),
     asyncHandler(async (req: Request, res: Response) => {
       const user = get(req, "session.user", {});
+      const action = `export:${handlerConfigV3.method}`;
       const response = await kernel.handle(
-        createRPCPayload("export:create", req.body, user, { req }),
+        createRPCPayload(action, req.body, user, { req }),
       );
       send(res, response);
     }),
