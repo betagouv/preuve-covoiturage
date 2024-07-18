@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { endOfDay, startOfDay } from "date-fns";
 import { Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { JsonRPCParam } from "~/core/entities/api/jsonRPCParam";
 import { BaseParamsInterface as TripExportParamsInterface } from "~/shared/trip/export.contract";
 // eslint-disable-next-line
@@ -64,8 +64,6 @@ export class TripApiService extends JsonRpcGetList<
       },
     };
 
-    return this.http.post("v2/exports", params, { withCredentials: true }).pipe(
-      tap(console.log),
-    );
+    return this.http.post("v2/exports", params, { withCredentials: true });
   }
 }
