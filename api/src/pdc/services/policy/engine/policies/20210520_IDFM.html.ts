@@ -37,7 +37,7 @@ export const description = `<p id="summary">
     <li><b>Le 25/10/2024</b></li>
   </ul>
   <p>
-  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe C</b>.
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant proposant des preuves de classe C</b>.
   <p>
   Les trajets de classe B ne sont plus éligibles depuis 01/09/2022
   </p>
