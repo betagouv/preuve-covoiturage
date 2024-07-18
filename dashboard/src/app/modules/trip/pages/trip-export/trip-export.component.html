@@ -55,13 +55,32 @@
         </div>
       </div>
     
-      <div>
+      <div *ngIf="showTerritorySelector()">
         <p>Zone géographique</p>
         <app-territories-autocomplete   
         [parentForm]="form"></app-territories-autocomplete>
       </div>
 
-      <div *ngIf="!authenticationService.isOperatorOrAdmin()" style="width: 100%;">
+      <div class="format">
+        <p>
+          Format d'export
+          <a [href]="getExportDocURL()" target="_blank">
+            <mat-icon class="info-small" matTooltip="Consultez notre documention pour avoir plus d'informations sur les différents formats d'export en cliquant sur l'icone.">info</mat-icon>
+          </a>
+        </p>
+        <mat-radio-group formControlName="format" class="format-radio-group">
+          <label>
+            <mat-radio-button value="v2"></mat-radio-button>
+            <span>Version 2 (CSV)</span>
+          </label>
+          <label>
+            <mat-radio-button value="v3"></mat-radio-button>
+            <span>Version 3 (XLSX)</span>
+          </label>
+        </mat-radio-group>
+      </div>
+
+      <div *ngIf="showOperatorSelector()" style="width: 100%;">
         <p>Opérateurs</p>
         <app-operators-checkboxes></app-operators-checkboxes>
       </div>

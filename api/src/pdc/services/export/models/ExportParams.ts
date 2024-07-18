@@ -1,6 +1,8 @@
 import { subMonthsTz, today } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import {
+  TerritorySelectorsInterface,
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export type Config = Partial<Params>;
 
@@ -85,10 +87,12 @@ export class ExportParams {
           local.push(`gps.${type} = '${code}'`);
         });
 
-        p.push(local.join(" OR "));
+        if (local.length) {
+          p.push(local.join(" OR "));
+        }
+
         return p;
-      }, [])
-      .join(" OR ");
+      }, [] as string[]).join(" OR ");
 
     return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
   }
