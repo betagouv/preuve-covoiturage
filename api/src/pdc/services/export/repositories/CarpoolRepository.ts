@@ -72,15 +72,15 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
       await cursor.release();
     } catch (e) {
-      await cursor.release();
       logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      await cursor.release();
       throw e;
     }
   }
 
   public async count(params: ExportParams): Promise<number> {
     const [values, templates] = this.getListValuesAndTemplates(params);
-    const { rows } = await this.connection.getClient().query<any>({
+    const { rows } = await this.connection.getClient().query({
       text: new CarpoolListQuery().getCountText(templates),
       values,
     });

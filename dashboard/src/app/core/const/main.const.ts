@@ -1,5 +1,4 @@
-// prettier-ignore
-/* eslint-disable max-len */
+// deno-fmt-ignore-file
 export const URLS = {
   betagouv: 'https://beta.gouv.fr',
   showcase: 'https://covoiturage.beta.gouv.fr',
@@ -10,6 +9,7 @@ export const URLS = {
   faqOperator: 'https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/devenir-partenaire/je-suis-un-operateur-de-covoiturage/cadre-juridique#foire-a-questions',
   faqTerritory: 'https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/faq-foire-aux-questions',
   technicalDoc: 'https://tech.covoiturage.beta.gouv.fr/',
+  exportDoc: 'https://tech.covoiturage.beta.gouv.fr/operateurs/exports-de-trajets.html',
   contactEmail: 'contact@covoiturage.beta.gouv.fr',
   legalMentions: 'https://doc.covoiturage.beta.gouv.fr/ressources/mentions-legales',
   repository: 'https://github.com/betagouv/preuve-covoiturage',
