@@ -105,7 +105,7 @@ export class BuildFile {
       let row: string = "";
       while ((row = stringifier.read()) !== null) {
         if (row === "") continue;
-        await fd.write(new TextEncoder().encode(row + "\n"));
+        await fd.write(new TextEncoder().encode(row));
       }
     });
 

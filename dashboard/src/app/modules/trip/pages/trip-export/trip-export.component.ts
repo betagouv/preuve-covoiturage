@@ -67,7 +67,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   get format(): "v2" | "v3" {
-    return this.form.get("format").value || "v2";
+    return this.form.get("format").value || "v3";
   }
 
   constructor(
@@ -86,7 +86,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       ? endOfDay(new Date())
       : endOfDay(sub(new Date(), { days: 5 }));
     this.form = this.fb.group({
-      format: "v2",
+      format: "v3",
       date: this.fb.group({
         start: [moment(startOfDay(sub(new Date(), { months: 1 }))), [
           Validators.required,
