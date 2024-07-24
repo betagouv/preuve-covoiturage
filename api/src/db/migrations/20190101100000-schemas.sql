@@ -344,8 +344,8 @@ CREATE TABLE anomaly.labels (
   carpool_id integer  NOT NULL, -- To delete after migration
   label varchar NOT NULL,
   conflicting_carpool_id integer NOT NULL, -- To delete after migration
-  conflicting_operator_journey_id varchar REFERENCES carpool_v2.carpools(operator_journey_id),
-  operator_journey_id varchar REFERENCES carpool_v2.carpools(operator_journey_id), -- Not Null afterward
+  conflicting_operator_journey_id varchar,
+  operator_journey_id varchar, -- Not Null afterward
   overlap_duration_ratio real
 );
 
