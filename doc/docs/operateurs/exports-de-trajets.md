@@ -5,17 +5,18 @@
 
 ## Schema d'export des trajets v3.0
 
-Les trajets sont exportés au format CSV ou XLSX.
+Les trajets sont exportés au format XLSX.
 
 ### Trajet
 
-| Colonne             | Explications                                                                                                  |
-| ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| trip_id             | Identifiant RPC permettant de regrouper des trajets (couples passager / conducteur) au sein d'un même voyage. |
-| operator_journey_id | identifiant opérateur de regroupement du trajet                                                               |
-| operator_class      | La classe de preuve correspondant au spécifications définies dans Classes de preuve de covoiturage.           |
-| operator            | Nom de l'opérateur. vide si l'opérateur ne souhaite pas apparaitre.                                           |
-| status              | statut du trajet pour le RPC : OK; anomaly_error; fraudcheck_error; expired; cancel                           |
+| Colonne             | Explications                                                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| journey_id          | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                                |
+| operator_trip_id    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet.                                                                                                                                      |
+| operator_journey_id | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                          |
+| operator_class      | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c). |
+| operator            | Nom de l'opérateur                                                                                                                                                                                                             |
+| status              | Statut du trajet pour le RPC                                                                                                                                                                                                   |
 
 ### Temps
 
@@ -29,13 +30,13 @@ Les trajets sont exportés au format CSV ou XLSX.
 | end_date_utc       | Date d'arrivée au format ISO 8601 (YYYY-MM-DD).                                        |
 | end_time_utc       | Heure d'arrivée au format Thh:mm:ssZ). Plage de 10 minutes                             |
 |                    |                                                                                        |
-| duration           | durée du trajet (HH:MM:SS)                                                             |
+| duration           | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                              |
 
 ### Lieux
 
 | Colonne           | Explications                                                                                                                            |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| distance          | distance covoiturée en kilomètres                                                                                                       |
+| distance          | Distance covoiturée en kilomètres (précision au mètre).                                                                                 |
 |                   |                                                                                                                                         |
 | start_lat         | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense.   |
 | start_lon         | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense. |
@@ -59,36 +60,141 @@ Les trajets sont exportés au format CSV ou XLSX.
 
 ### Participants
 
-| Colonne                | Explications                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| driver_card            | Information a une carte de transport Oui/Non                          |
-| passenger_card         | Information a une carte de transport Oui/Non                          |
-| passenger_over_18      | Le passager est majeur (Oui) ou mineur (Non) ou non communiqué (vide) |
-| passenger_seats        | Nombre de sièges réservés par l'occupant passager. Défaut : 1         |
-|                        |                                                                       |
-| operator_passenger_id  | identifiant opérateur du passager                                     |
-| passenger_identity_key | identifiant unique inter-opérateur du passager                        |
-| operator_driver_id     | identifiant opérateur du conducteur                                   |
-| driver_identity_key    | identifiant unique inter-opérateur du conducteur                      |
+| Colonne                | Explications                                                  |
+| ---------------------- | ------------------------------------------------------------- |
+| passenger_seats        | Nombre de sièges réservés par l'occupant passager. Défaut : 1 |
+|                        |                                                               |
+| operator_passenger_id  | identifiant opérateur du passager                             |
+| passenger_identity_key | identifiant unique inter-opérateur du passager                |
+| operator_driver_id     | identifiant opérateur du conducteur                           |
+| driver_identity_key    | identifiant unique inter-opérateur du conducteur              |
 
 ### Subventions
 
-| Colonne                         | Explications                                                                                                                                                                                                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| cee_application                 | demande de CEE (Oui/Non)                                                                                                                                                                                                                                     |
-| campaigns                       | List des `id` des campagnes d'incitation                                                                                                                                                                                                                     |
-|                                 |                                                                                                                                                                                                                                                              |
-| driver_revenue                  | La somme réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l’opérateur soit prise. En euros |
-| passenger_contribution          | Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc) En euros                     |
-|                                 |                                                                                                                                                                                                                                                              |
-| incentive_type                  | période "normale" ou "booster"                                                                                                                                                                                                                               |
-| incentive\_{N}\_siret           | SIRET de la contrepartie financière N                                                                                                                                                                                                                        |
-| incentive\_{N}\_amount          | montant en euros de la contrepartie financière N                                                                                                                                                                                                             |
-| incentive_rpc\_{N}\_campaign_id | SIRET de la contrepartie financière N calculée par le RPC                                                                                                                                                                                                    |
-| incentive_rpc\_{N}\_amount      | montant en euros de la contrepartie financière N calculée par le RPC                                                                                                                                                                                         |
+| Colonne                      | Explications                                                                                                                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| cee_application              | Demande de CEE (Oui/Non)                                                                                                                                                                                                                                     |
+|                              |                                                                                                                                                                                                                                                              |
+| driver_revenue               | La somme réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l’opérateur soit prise. En euros |
+| passenger_contribution       | Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc) En euros                     |
+|                              |                                                                                                                                                                                                                                                              |
+| incentive_type               | Période "normale" ou "booster"                                                                                                                                                                                                                               |
+| incentive\_{N}\_siret        | SIRET de la contrepartie financière N                                                                                                                                                                                                                        |
+| incentive\_{N}\_name         | Organisme distributeur                                                                                                                                                                                                                                       |
+| incentive\_{N}\_amount       | Montant en euros de la contrepartie financière N                                                                                                                                                                                                             |
+| incentive_rpc\_{N}\_siret    | SIRET de la contrepartie financière N calculée par le RPC                                                                                                                                                                                                    |
+| incentive_rpc\_{N}\_campaign | Nom de la campagne d'incitation                                                                                                                                                                                                                              |
+| incentive_rpc\_{N}\_amount   | Montant en euros de la contrepartie financière N calculée par le RPC                                                                                                                                                                                         |
 
-## Schema d'export des trajets v2.0
+## Comparatif V2 / V3
 
-Le schema v2.0 est déprécié. Il est recommandé d'utiliser le schema v3.0.
+Tableau comparatif des colonnes entre les versions 2 et 3 de l'export des
+trajets.
 
-> TODO
+| V2                               | V3                       | Remarques sur la migration V2 -> V3                                            |
+| -------------------------------- | ------------------------ | ------------------------------------------------------------------------------ |
+| journey_id                       | journey_id               | Identifiant unique de couple passager/conducteur                               |
+| trip_id                          |                          | Identifiant de regroupement des couples généré par le RPC                      |
+|                                  | operator_trip_id         | Identifiant de regroupement des couples généré par l'opérateur                 |
+|                                  | operator_journey_id      | Identifiant de couple généré par l'opérateur                                   |
+| journey_start_datetime           | start_datetime_utc       | Passage en UTC                                                                 |
+| journey_start_date               | start_date_utc           | Passage en UTC                                                                 |
+| journey_start_time               | start_time_utc           | Passage en UTC                                                                 |
+| journey_start_lon                | start_lon                |                                                                                |
+| journey_start_lat                | start_lat                |                                                                                |
+| journey_start_insee              | start_insee              |                                                                                |
+| journey_start_department         | start_departement        |                                                                                |
+| journey_start_town               | start_commune            |                                                                                |
+| journey_start_towngroup          | start_epci               |                                                                                |
+| journey_start_country            | start_pays               |                                                                                |
+| journey_end_datetime             | end_datetime_utc         | Passage en UTC                                                                 |
+| journey_end_date                 | end_date_utc             | Passage en UTC                                                                 |
+| journey_end_time                 | end_time_utc             | Passage en UTC                                                                 |
+| journey_end_lon                  | end_lon                  |                                                                                |
+| journey_end_lat                  | end_lat                  |                                                                                |
+| journey_end_insee                | end_insee                |                                                                                |
+| journey_end_department           | end_departement          |                                                                                |
+| journey_end_town                 | end_commune              |                                                                                |
+| journey_end_towngroup            | end_epci                 |                                                                                |
+| journey_end_country              | end_pays                 |                                                                                |
+| driver_card                      |                          |                                                                                |
+| passenger_card                   |                          |                                                                                |
+| passenger_over_18                |                          |                                                                                |
+| passenger_seats                  | passenger_seats          |                                                                                |
+| operator_class                   | operator_class           |                                                                                |
+| operator                         | operator                 |                                                                                |
+| journey_distance_anounced        | distance                 | La distance envoyée par l'opérateur. Changement de format (m -> km)            |
+| journey_distance_calculated      |                          |                                                                                |
+| journey_duration_anounced        |                          |                                                                                |
+| journey_duration_calculated      | duration                 | La durée indicative calculée par le RPC. Changement de format (MM -> HH:MM:SS) |
+| operator_passenger_id            | operator_passenger_id    |                                                                                |
+|                                  | passenger_identity_id    | Identifiant personnel inter-opérateurs                                         |
+| operator_driver_id               | operator_driver_id       |                                                                                |
+|                                  | driver_identity_key      | Identifiant personnel inter-opérateurs                                         |
+| status                           | status                   | Détection des anomalies                                                        |
+| passenger_id                     |                          |                                                                                |
+| passenger_contribution           | passenger_contribution   |                                                                                |
+| passenger_incentive_1_siret      |                          |                                                                                |
+| passenger_incentive_1_amount     |                          |                                                                                |
+| passenger_incentive_2_siret      |                          |                                                                                |
+| passenger_incentive_2_amount     |                          |                                                                                |
+| passenger_incentive_3_siret      |                          |                                                                                |
+| passenger_incentive_3_amount     |                          |                                                                                |
+| passenger_incentive_4_siret      |                          |                                                                                |
+| passenger_incentive_4_amount     |                          |                                                                                |
+| passenger_incentive_rpc_1_siret  |                          |                                                                                |
+| passenger_incentive_rpc_1_name   |                          |                                                                                |
+| passenger_incentive_rpc_1_amount |                          |                                                                                |
+| passenger_incentive_rpc_2_siret  |                          |                                                                                |
+| passenger_incentive_rpc_2_name   |                          |                                                                                |
+| passenger_incentive_rpc_2_amount |                          |                                                                                |
+| passenger_incentive_rpc_3_siret  |                          |                                                                                |
+| passenger_incentive_rpc_3_name   |                          |                                                                                |
+| passenger_incentive_rpc_3_amount |                          |                                                                                |
+| passenger_incentive_rpc_4_siret  |                          |                                                                                |
+| passenger_incentive_rpc_4_name   |                          |                                                                                |
+| passenger_incentive_rpc_4_amount |                          |                                                                                |
+| driver_id                        |                          |                                                                                |
+| driver_revenue                   | driver_revenue           |                                                                                |
+| driver_incentive_1_siret         |                          |                                                                                |
+| driver_incentive_1_amount        |                          |                                                                                |
+| driver_incentive_2_siret         |                          |                                                                                |
+| driver_incentive_2_amount        |                          |                                                                                |
+| driver_incentive_3_siret         |                          |                                                                                |
+| driver_incentive_3_amount        |                          |                                                                                |
+| driver_incentive_4_siret         |                          |                                                                                |
+| driver_incentive_4_amount        |                          |                                                                                |
+| driver_incentive_rpc_1_siret     |                          |                                                                                |
+| driver_incentive_rpc_1_name      |                          |                                                                                |
+| driver_incentive_rpc_1_amount    |                          |                                                                                |
+| driver_incentive_rpc_2_siret     |                          |                                                                                |
+| driver_incentive_rpc_2_name      |                          |                                                                                |
+| driver_incentive_rpc_2_amount    |                          |                                                                                |
+| driver_incentive_rpc_3_siret     |                          |                                                                                |
+| driver_incentive_rpc_3_name      |                          |                                                                                |
+| driver_incentive_rpc_3_amount    |                          |                                                                                |
+| driver_incentive_rpc_4_siret     |                          |                                                                                |
+| driver_incentive_rpc_4_name      |                          |                                                                                |
+| driver_incentive_rpc_4_amount    |                          |                                                                                |
+|                                  | cee_application          | Demande de dossier CEE (oui/non)                                               |
+|                                  | incentive_type           | Type d'incitation (normale/booster)                                            |
+|                                  | incentive_0_siret        | Incitation envoyée par l'opérateur : SIRET                                     |
+|                                  | incentive_0_name         | Incitation envoyée par l'opérateur : nom                                       |
+|                                  | incentive_0_amount       | Incitation envoyée par l'opérateur : montant en centimes d'€                   |
+|                                  | incentive_1_siret        | Incitation envoyée par l'opérateur : SIRET                                     |
+|                                  | incentive_1_name         | Incitation envoyée par l'opérateur : nom                                       |
+|                                  | incentive_1_amount       | Incitation envoyée par l'opérateur : montant en centimes d'€                   |
+|                                  | incentive_2_siret        | Incitation envoyée par l'opérateur : SIRET                                     |
+|                                  | incentive_2_name         | Incitation envoyée par l'opérateur : nom                                       |
+|                                  | incentive_2_amount       | Incitation envoyée par l'opérateur : montant en centimes d'€                   |
+|                                  | incentive_rpc_0_siret    | Incitation calculée par le RPC : SIRET                                         |
+|                                  | incentive_rpc_0_campaign | Incitation calculée par le RPC : nom de la campagne                            |
+|                                  | incentive_rpc_0_amount   | Incitation calculée par le RPC : montant en centimes d'€                       |
+|                                  | incentive_rpc_1_siret    | Incitation calculée par le RPC : SIRET                                         |
+|                                  | incentive_rpc_1_campaign | Incitation calculée par le RPC : nom de la campagne                            |
+|                                  | incentive_rpc_1_amount   | Incitation calculée par le RPC : montant en centimes d'€                       |
+|                                  | incentive_rpc_2_siret    | Incitation calculée par le RPC : SIRET                                         |
+|                                  | incentive_rpc_2_campaign | Incitation calculée par le RPC : nom de la campagne                            |
+|                                  | incentive_rpc_2_amount   | Incitation calculée par le RPC : montant en centimes d'€                       |
+|                                  | offer_public             |                                                                                |
+|                                  | offer_accepted_at        |                                                                                |
