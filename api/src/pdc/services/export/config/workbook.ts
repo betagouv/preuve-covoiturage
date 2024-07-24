@@ -27,9 +27,10 @@ export const filters: Array<FieldFilter> = [
 
 // fields are defined in the models/CarpoolRow.ts types
 export const fields: Fields = [
-  'operator_trip_id',
-  'operator_journey_id',
-  'operator_class',
+  "journey_id",
+  "operator_trip_id",
+  "operator_journey_id",
+  "operator_class",
 
   "status",
 
@@ -66,34 +67,43 @@ export const fields: Fields = [
 
   "operator",
   "operator_passenger_id",
+  "passenger_identity_key",
   "operator_driver_id",
+  "driver_identity_key",
 
   "driver_revenue",
   "passenger_contribution",
+  "passenger_seats",
 
   "offer_public",
   "offer_accepted_at",
 
-  "campaign_mode",
+  "incentive_type",
   "has_incentive",
 
-  "incentive_0_index",
   "incentive_0_siret",
+  "incentive_0_name",
   "incentive_0_amount",
-  "incentive_1_index",
   "incentive_1_siret",
+  "incentive_1_name",
   "incentive_1_amount",
-  "incentive_2_index",
   "incentive_2_siret",
+  "incentive_2_name",
   "incentive_2_amount",
 
-  'incentive_rpc_0_campaign_id',
-  'incentive_rpc_0_campaign_name',
-  'incentive_rpc_0_amount',
-  'incentive_rpc_1_campaign_id',
-  'incentive_rpc_1_campaign_name',
-  'incentive_rpc_1_amount',
-  'incentive_rpc_2_campaign_id',
-  'incentive_rpc_2_campaign_name',
-  'incentive_rpc_2_amount',
+  "incentive_rpc_0_campaign_id",
+  "incentive_rpc_0_campaign_name",
+  "incentive_rpc_0_siret",
+  "incentive_rpc_0_name",
+  "incentive_rpc_0_amount",
+  "incentive_rpc_1_campaign_id",
+  "incentive_rpc_1_campaign_name",
+  "incentive_rpc_1_siret",
+  "incentive_rpc_1_name",
+  "incentive_rpc_1_amount",
+  "incentive_rpc_2_campaign_id",
+  "incentive_rpc_2_campaign_name",
+  "incentive_rpc_2_siret",
+  "incentive_rpc_2_name",
+  "incentive_rpc_2_amount",
 ];

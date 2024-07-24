@@ -2,28 +2,8 @@ import { pick } from "@/lib/object/index.ts";
 import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
-  campaign_mode: string;
+  incentive_type: string;
   has_incentive: boolean;
-
-  incentive_0_index: number;
-  incentive_0_siret: string;
-  incentive_0_amount: string;
-  incentive_1_index: number;
-  incentive_1_siret: string;
-  incentive_1_amount: number;
-  incentive_2_index: number;
-  incentive_2_siret: string;
-  incentive_2_amount: number;
-
-  incentive_rpc_0_campaign_id: number;
-  incentive_rpc_0_campaign_name: string;
-  incentive_rpc_0_amount: number;
-  incentive_rpc_1_campaign_id: number;
-  incentive_rpc_1_campaign_name: string;
-  incentive_rpc_1_amount: number;
-  incentive_rpc_2_campaign_id: number;
-  incentive_rpc_2_campaign_name: string;
-  incentive_rpc_2_amount: number;
 };
 
 export type CarpoolRowData = CarpoolListType;
