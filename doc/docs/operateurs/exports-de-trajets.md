@@ -1,62 +1,62 @@
 # Exports des trajets
 
 - [Schema v3.0](#schema-d-export-des-trajets-v3-0)
-- [Comparatif V2.0 / V3.0](#comparatif-v2-v3)
+- [Comparatif V2.0 / V3.0](#comparatif-v2-0-v3-0)
 
 ## Schema d'export des trajets v3.0
 
-Les trajets sont exportés au format XLSX.
+Les trajets sont exportés au format XLSX (CSV à venir).
 
 ### Trajet
 
-| Colonne             | Explications                                                                                                                                                                                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| journey_id          | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                                |
-| operator_trip_id    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet.                                                                                                                                      |
-| operator_journey_id | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                          |
-| operator_class      | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c). |
-| operator            | Nom de l'opérateur                                                                                                                                                                                                             |
-| status              | Statut du trajet pour le RPC                                                                                                                                                                                                   |
+| Colonne             | Explications                                                                                                                                                                                                                  |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| journey_id          | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                               |
+| operator_trip_id    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet                                                                                                                                      |
+| operator_journey_id | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                         |
+| operator_class      | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c) |
+| operator            | Nom de l'opérateur                                                                                                                                                                                                            |
+| status              | Statut du trajet pour le RPC                                                                                                                                                                                                  |
 
 ### Temps
 
 | Colonne            | Explications                                                                           |
 | ------------------ | -------------------------------------------------------------------------------------- |
 | start_datetime_utc | Date et heure du départ au format ISO 8601 (YYYY-MM-DDThh:mm:ssZ). Plage de 10 minutes |
-| start_date_utc     | Date du départ au format ISO 8601 (YYYY-MM-DD).                                        |
+| start_date_utc     | Date du départ au format ISO 8601 (YYYY-MM-DD)                                         |
 | start_time_utc     | Heure du départ au format Thh:mm:ssZ). Plage de 10 minutes                             |
 |                    |                                                                                        |
 | end_datetime_utc   | Date et heure d'arrivée au format ISO 8601 (YYYY-MM-DDThh:mm:ssZ). Plage de 10 minutes |
-| end_date_utc       | Date d'arrivée au format ISO 8601 (YYYY-MM-DD).                                        |
+| end_date_utc       | Date d'arrivée au format ISO 8601 (YYYY-MM-DD)                                         |
 | end_time_utc       | Heure d'arrivée au format Thh:mm:ssZ). Plage de 10 minutes                             |
 |                    |                                                                                        |
 | duration           | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                              |
 
 ### Lieux
 
-| Colonne           | Explications                                                                                                                            |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| distance          | Distance covoiturée en kilomètres (précision au mètre).                                                                                 |
-|                   |                                                                                                                                         |
-| start_lat         | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense.   |
-| start_lon         | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense. |
-| end_lat           | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense.   |
-| end_lon           | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense. |
-|                   |                                                                                                                                         |
-| start_insee       | Code INSEE commune ou arrondissement de la position de départ.                                                                          |
-| start_commune     | Nom commune de départ.                                                                                                                  |
-| start_departement | Nom du département de la position de départ.                                                                                            |
-| start_epci        | EPCI de départ                                                                                                                          |
-| start_aom         | AOM de départ                                                                                                                           |
-| start_region      | Nom de la région de départ.                                                                                                             |
-| start_pays        | Nom du pays de départ.                                                                                                                  |
-| end_insee         | Code INSEE commune ou arrondissement de la position d'arrivée.                                                                          |
-| end_commune       | Nom commune d'arrivée.                                                                                                                  |
-| end_departement   | Nom du département de la position d'arrivée.                                                                                            |
-| end_epci          | EPCI d'arrivée.                                                                                                                         |
-| end_aom           | AOM d'arrivée                                                                                                                           |
-| end_region        | Nom de la région d'arrivée.                                                                                                             |
-| end_pays          | Nom du pays d'arrivée                                                                                                                   |
+| Colonne           | Explications                                                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| distance          | Distance covoiturée en kilomètres (précision au mètre)                                                                                 |
+|                   |                                                                                                                                        |
+| start_lat         | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+| start_lon         | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+| end_lat           | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+| end_lon           | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+|                   |                                                                                                                                        |
+| start_insee       | Code INSEE commune ou arrondissement de la position de départ                                                                          |
+| start_commune     | Nom commune de départ                                                                                                                  |
+| start_departement | Nom du département de la position de départ                                                                                            |
+| start_epci        | EPCI de départ                                                                                                                         |
+| start_aom         | AOM de départ                                                                                                                          |
+| start_region      | Nom de la région de départ                                                                                                             |
+| start_pays        | Nom du pays de départ                                                                                                                  |
+| end_insee         | Code INSEE commune ou arrondissement de la position d'arrivée                                                                          |
+| end_commune       | Nom commune d'arrivée                                                                                                                  |
+| end_departement   | Nom du département de la position d'arrivée                                                                                            |
+| end_epci          | EPCI d'arrivée                                                                                                                         |
+| end_aom           | AOM d'arrivée                                                                                                                          |
+| end_region        | Nom de la région d'arrivée                                                                                                             |
+| end_pays          | Nom du pays d'arrivée                                                                                                                  |
 
 ### Participants
 
@@ -71,22 +71,21 @@ Les trajets sont exportés au format XLSX.
 
 ### Subventions
 
-| Colonne                           | Explications                                                                                                                                                                                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| cee_application                   | Lien avec un dossier CEE (Oui/Non)                                                                                                                                                                                                                           |
-|                                   |                                                                                                                                                                                                                                                              |
-| driver_revenue                    | La somme réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l’opérateur soit prise. En euros |
-| passenger_contribution            | Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc) En euros                     |
-|                                   |                                                                                                                                                                                                                                                              |
-| incentive_type                    | Période "normale" ou "booster"                                                                                                                                                                                                                               |
-| incentive\_{N}\_siret             | SIRET de la contrepartie financière N                                                                                                                                                                                                                        |
-| incentive\_{N}\_name              | Organisme distributeur                                                                                                                                                                                                                                       |
-| incentive\_{N}\_amount            | Montant en € de la contrepartie financière N                                                                                                                                                                                                                 |
-| incentive_rpc\_{N}\_campaign_id   | ID de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                        |
-| incentive_rpc\_{N}\_campaign_name | Nom de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                       |
-| incentive_rpc\_{N}\_siret         | SIRET du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                         |
-| incentive_rpc\_{N}\_name          | Nom du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                           |
-| incentive_rpc\_{N}\_amount        | Montant en € de la contrepartie financière N calculée par le RPC                                                                                                                                                                                             |
+| Colonne                           | Explications                                                                                                                                                                                                                                          |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cee_application                   | Lien avec un dossier CEE (Oui/Non)                                                                                                                                                                                                                    |
+|                                   |                                                                                                                                                                                                                                                       |
+| driver_revenue                    | La somme en € réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers ont été versées et que la commission de l’opérateur soit prise |
+| passenger_contribution            | Coût réel total en € du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations ont été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc)                  |
+| incentive_type                    | Période "normale" ou "booster"                                                                                                                                                                                                                        |
+| incentive\_{N}\_siret             | SIRET de la contrepartie financière N                                                                                                                                                                                                                 |
+| incentive\_{N}\_name              | Organisme distributeur                                                                                                                                                                                                                                |
+| incentive\_{N}\_amount            | Montant en € de la contrepartie financière N                                                                                                                                                                                                          |
+| incentive_rpc\_{N}\_campaign_id   | ID de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                 |
+| incentive_rpc\_{N}\_campaign_name | Nom de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                |
+| incentive_rpc\_{N}\_siret         | SIRET du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                  |
+| incentive_rpc\_{N}\_name          | Nom du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                    |
+| incentive_rpc\_{N}\_amount        | Montant en € de la contrepartie financière N calculée par le RPC                                                                                                                                                                                      |
 
 ## Comparatif V2.0 / V3.0
 
