@@ -78,6 +78,7 @@ export const fields: Fields = [
   "passenger_contribution",
   "passenger_seats",
 
+  "cee_application",
   "incentive_type",
   "has_incentive",
 
