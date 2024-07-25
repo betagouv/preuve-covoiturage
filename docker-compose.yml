@@ -56,7 +56,6 @@ services:
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ./docker/api/certs:/app/certs:ro
-    command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -84,7 +83,6 @@ services:
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ./docker/api/certs:/app/certs:ro
-    command: 'sh -c "pm2-runtime start pm2-worker.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
