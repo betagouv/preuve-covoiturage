@@ -55,11 +55,6 @@ CREATE TYPE carpool_v2.carpool_fraud_status_enum AS ENUM (
     'passed',
     'failed'
 );
-CREATE TYPE carpool_v2.carpool_anomaly_status_enum AS ENUM (
-    'pending',
-    'passed',
-    'failed'
-);
 CREATE TYPE cee.application_error_enum AS ENUM (
     'validation',
     'date',
@@ -341,11 +336,10 @@ CREATE TABLE carpool.carpools (
 CREATE TABLE anomaly.labels (
   _id serial PRIMARY KEY,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
-  carpool_id integer  NOT NULL, -- To delete after migration
+  carpool_id integer REFERENCES carpool.carpools(_id) NOT NULL,
   label varchar NOT NULL,
-  conflicting_carpool_id integer NOT NULL, -- To delete after migration
-  conflicting_operator_journey_id varchar,
-  operator_journey_id varchar, -- Not Null afterward
+  conflicting_carpool_id integer REFERENCES carpool.carpools(_id) NOT NULL,
+  conflicting_operator_journey_id varchar NOT NULL,
   overlap_duration_ratio real
 );
 
@@ -506,8 +500,7 @@ CREATE TABLE carpool_v2.status (
     carpool_id integer NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     acquisition_status carpool_v2.carpool_acquisition_status_enum DEFAULT 'received'::carpool_v2.carpool_acquisition_status_enum NOT NULL,
-    fraud_status carpool_v2.carpool_fraud_status_enum DEFAULT 'pending'::carpool_v2.carpool_fraud_status_enum NOT NULL,
-    anomaly_status carpool_v2.carpool_anomaly_status_enum DEFAULT 'pending'::carpool_v2.carpool_anomaly_status_enum NOT NULL
+    fraud_status carpool_v2.carpool_fraud_status_enum DEFAULT 'pending'::carpool_v2.carpool_fraud_status_enum NOT NULL
 );
 CREATE TABLE cee.cee_application_errors (
     _id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY,
@@ -1581,7 +1574,6 @@ CREATE INDEX carpool_start_datetime_idx ON carpool_v2.carpools USING btree (star
 CREATE INDEX carpool_status_acquisition_idx ON carpool_v2.status USING btree (acquisition_status);
 CREATE UNIQUE INDEX carpool_status_carpool_id_idx ON carpool_v2.status USING btree (carpool_id);
 CREATE INDEX carpool_status_fraud_idx ON carpool_v2.status USING btree (fraud_status);
-CREATE INDEX carpool_status_anomaly_idx ON carpool_v2.status USING btree (anomaly_status);
 CREATE UNIQUE INDEX carpool_v2_carpools_uuid_idx ON carpool_v2.carpools USING btree (uuid);
 CREATE INDEX cee_application_id_idx ON cee.labels USING btree (cee_application_id);
 CREATE INDEX cee_atype_idx ON cee.cee_applications USING btree (is_specific);
