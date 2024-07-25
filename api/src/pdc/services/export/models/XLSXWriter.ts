@@ -55,7 +55,7 @@ export class XLSXWriter {
     fields: [],
     computed: [
       {
-        name: "campaign_mode",
+        name: "incentive_type",
         compute(row, datasources) {
           // for each campaign, get the mode at the start date or the end date
           // and return the higher one (booster)

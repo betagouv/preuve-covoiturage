@@ -73,11 +73,20 @@
             <mat-radio-button value="v3"></mat-radio-button>
             <span>Version 3 (XLSX)</span>
           </label>
-          <label>
-            <mat-radio-button value="v2"></mat-radio-button>
-            <span>Version 2 (CSV)</span>
+          <label aria-disabled="true">
+            <mat-radio-button value="v2" disabled="disabled"></mat-radio-button>
+            <span style="opacity:0.4;cursor:default">Version 2 (CSV) <em>(maintenance)</em></span>
           </label>
         </mat-radio-group>
+      </div>
+
+      <div class="support-notice">
+        <p>
+          Pour toute demande particulière, vous pouvez nous contacter directement :
+          <a href="mailto:technique@covoiturage.beta.gouv.fr">
+            technique@covoiturage.beta.gouv.fr
+          </a>
+        </p>
       </div>
 
       <div *ngIf="showOperatorSelector()" style="width: 100%;">
