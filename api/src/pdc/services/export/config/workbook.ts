@@ -9,8 +9,11 @@ export const filters: Array<FieldFilter> = [
     exclusions: [
       "operator",
       "operator_journey_id",
+      "operator_trip_id",
       "operator_passenger_id",
+      "passenger_identity_key",
       "operator_driver_id",
+      "driver_identity_key",
       "passenger_contribution",
       "driver_revenue",
     ],

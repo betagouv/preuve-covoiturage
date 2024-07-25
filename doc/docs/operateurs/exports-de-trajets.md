@@ -7,16 +7,18 @@
 
 Les trajets sont exportés au format XLSX (CSV à venir).
 
+Le 🔒 indique que ces données ne sont pas présentes dans l'export Open data.
+
 ### Trajet
 
-| Colonne             | Explications                                                                                                                                                                                                                  |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| journey_id          | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                               |
-| operator_trip_id    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet                                                                                                                                      |
-| operator_journey_id | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                         |
-| operator_class      | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c) |
-| operator            | Nom de l'opérateur                                                                                                                                                                                                            |
-| status              | Statut du trajet pour le RPC                                                                                                                                                                                                  |
+| Colonne                     | Explications                                                                                                                                                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| journey_id                  | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                               |
+| operator_trip_id&nbsp;🔒    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet                                                                                                                                      |
+| operator_journey_id&nbsp;🔒 | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                         |
+| operator_class              | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c) |
+| operator&nbsp;🔒            | Nom de l'opérateur                                                                                                                                                                                                            |
+| status                      | Statut du trajet pour le RPC                                                                                                                                                                                                  |
 
 ### Temps
 
@@ -60,14 +62,14 @@ Les trajets sont exportés au format XLSX (CSV à venir).
 
 ### Participants
 
-| Colonne                | Explications                                                  |
-| ---------------------- | ------------------------------------------------------------- |
-| passenger_seats        | Nombre de sièges réservés par l'occupant passager. Défaut : 1 |
-|                        |                                                               |
-| operator_passenger_id  | identifiant opérateur du passager                             |
-| passenger_identity_key | identifiant unique inter-opérateur du passager                |
-| operator_driver_id     | identifiant opérateur du conducteur                           |
-| driver_identity_key    | identifiant unique inter-opérateur du conducteur              |
+| Colonne                        | Explications                                                  |
+| ------------------------------ | ------------------------------------------------------------- |
+| passenger_seats                | Nombre de sièges réservés par l'occupant passager. Défaut : 1 |
+|                                |                                                               |
+| operator_passenger_id&nbsp;🔒  | identifiant opérateur du passager                             |
+| passenger_identity_key&nbsp;🔒 | identifiant unique inter-opérateur du passager                |
+| operator_driver_id&nbsp;🔒     | identifiant opérateur du conducteur                           |
+| driver_identity_key&nbsp;🔒    | identifiant unique inter-opérateur du conducteur              |
 
 ### Subventions
 
@@ -75,8 +77,8 @@ Les trajets sont exportés au format XLSX (CSV à venir).
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | cee_application                   | Lien avec un dossier CEE (Oui/Non)                                                                                                                                                                                                                    |
 |                                   |                                                                                                                                                                                                                                                       |
-| driver_revenue                    | La somme en € réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers ont été versées et que la commission de l’opérateur soit prise |
-| passenger_contribution            | Coût réel total en € du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations ont été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc)                  |
+| driver_revenue&nbsp;🔒            | La somme en € réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers ont été versées et que la commission de l’opérateur soit prise |
+| passenger_contribution&nbsp;🔒    | Coût réel total en € du service pour l’occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations ont été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc)                    |
 | incentive_type                    | Période "normale" ou "booster"                                                                                                                                                                                                                        |
 | incentive\_{N}\_siret             | SIRET de la contrepartie financière N                                                                                                                                                                                                                 |
 | incentive\_{N}\_name              | Organisme distributeur                                                                                                                                                                                                                                |
@@ -178,7 +180,7 @@ trajets.
 | driver_incentive_rpc_4_name      |                               |                                                                                |
 | driver_incentive_rpc_4_amount    |                               |                                                                                |
 |                                  | cee_application               | Demande de dossier CEE (oui/non)                                               |
-|                                  | incentive_type                | Type d'incitation (normale/booster)                                            |
+| campaign_mode                    | incentive_type                | Type d'incitation (normale/booster)                                            |
 |                                  | incentive_0_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
 |                                  | incentive_0_name              | Incitation envoyée par l'opérateur : nom                                       |
 |                                  | incentive_0_amount            | Incitation envoyée par l'opérateur : montant en €                              |
