@@ -333,6 +333,6 @@ export class CarpoolListQuery extends AbstractQuery {
     FROM trips
     LEFT JOIN geo AS gps ON trips.start_geo_code = gps.arr
     LEFT JOIN geo AS gpe ON trips.end_geo_code = gpe.arr
-    ORDER BY 5 ASC
+    ORDER BY start_datetime_utc ASC
   `;
 }
