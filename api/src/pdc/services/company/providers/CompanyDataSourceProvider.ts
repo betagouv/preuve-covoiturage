@@ -10,6 +10,7 @@ import {
   CompanyDataSourceProviderInterfaceResolver,
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
 
@@ -113,6 +114,7 @@ export class CompanyDataSourceProvider
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {
+      logger.error(`[CompanyDataSourceProvider] ${e.message}`);
       if (e.isAxiosError && e.response && e.response.status === 404) {
         throw new NotFoundException(`Company not found (${siret})`);
       }
