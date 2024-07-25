@@ -205,5 +205,3 @@ trajets.
 |                                  | incentive_rpc_2_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
 |                                  | incentive_rpc_2_name          | Incitation calculée par le RPC : nom du sponsor                                |
 |                                  | incentive_rpc_2_amount        | Incitation calculée par le RPC : montant en €                                  |
-|                                  | offer_public                  | Offre du trajet publiée                                                        |
-|                                  | offer_accepted_at             |                                                                                |
