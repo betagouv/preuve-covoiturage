@@ -4,7 +4,7 @@ services:
       context: ./docker/postgres
     shm_size: 2g
     ports:
-      - 5432:5432
+      - "${DC_POSTGRES_PORT:-5432}:5432"
     networks:
       - back
     environment:
@@ -19,7 +19,7 @@ services:
   redis:
     build: './docker/redis'
     ports:
-      - 6379:6379
+      - "${DC_REDIS_PORT:-6379}:6379"
     networks:
       - back
 
