@@ -10,6 +10,7 @@ import {
   CompanyDataSourceProviderInterfaceResolver,
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
 
@@ -113,30 +114,12 @@ export class CompanyDataSourceProvider
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {
+      logger.error(`[CompanyDataSourceProvider] ${e.message}`);
       if (e.isAxiosError && e.response && e.response.status === 404) {
         throw new NotFoundException(`Company not found (${siret})`);
       }
       throw e;
     }
-  }
-
-  async find_many(
-    sirets: string[],
-    parallelCall = 4,
-  ): Promise<CompanyInterface[]> {
-    let company_count = -1;
-    const res: CompanyInterface[] = [];
-
-    const apiCall = async (): Promise<boolean> => {
-      company_count++;
-      if (company_count >= sirets.length) return Promise.resolve(true);
-      res.push(await this.find(sirets[company_count]));
-      return apiCall();
-    };
-
-    const parallelCalls = new Array(parallelCall).map(() => apiCall());
-
-    return Promise.all(parallelCalls).then(() => res);
   }
 
   private cleanNaf(str: string | null): string | null {

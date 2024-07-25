@@ -24,6 +24,11 @@ export class AjvValidator implements ValidatorInterface {
   protected ajv: Ajv | null = null;
   protected bindings: Map<any, ValidateFunction> = new Map();
   protected isSchemaSecure: ValidateFunction | null = null;
+  protected validationErrors: ErrorObject[] = [];
+
+  get errors(): ErrorObject[] {
+    return this.validationErrors || [];
+  }
 
   constructor(protected config: ConfigInterfaceResolver) {}
 
@@ -141,6 +146,8 @@ export class AjvValidator implements ValidatorInterface {
       if (!validator || !validator?.errors) {
         throw new Error("No validator found");
       }
+
+      this.validationErrors = [...validator.errors];
 
       throw new InvalidParamsException(this.mapErrors(validator.errors));
     }
