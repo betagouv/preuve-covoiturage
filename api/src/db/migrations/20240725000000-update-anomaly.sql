@@ -9,6 +9,6 @@ ADD anomaly_status carpool_v2.carpool_anomaly_status_enum DEFAULT 'pending'::car
 
 CREATE INDEX carpool_status_anomaly_idx ON carpool_v2.status USING btree (anomaly_status);
 
-ALTER TABLE anomlay.labels 
-ADD conflicting_operator_journey_id varchar REFERENCES carpool_v2.carpools(operator_journey_id),
-ADD operator_journey_id varchar REFERENCES carpool_v2.carpools(operator_journey_id), -- Not Null afterward
+ALTER TABLE anomaly.labels 
+ADD conflicting_operator_journey_id varchar,
+ADD operator_journey_id varchar; -- Not Null afterward
