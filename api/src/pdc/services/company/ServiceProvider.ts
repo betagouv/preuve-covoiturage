@@ -1,22 +1,23 @@
-import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import {
   ExtensionInterface,
   NewableType,
   serviceProvider,
 } from "@/ilos/common/index.ts";
+import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import {
   ValidatorExtension,
   ValidatorMiddleware,
 } from "@/pdc/providers/validator/index.ts";
 
-import { config } from "./config/index.ts";
+import { FetchCommand } from "@/pdc/services/company/commands/FetchCommand.ts";
 import { binding as fetchBinding } from "@/shared/company/fetch.schema.ts";
 import { binding as findBinding } from "@/shared/company/find.schema.ts";
-import { CompanyRepositoryProvider } from "./providers/CompanyRepositoryProvider.ts";
-import { CompanyDataSourceProvider } from "./providers/CompanyDataSourceProvider.ts";
 import { FetchAction } from "./actions/FetchAction.ts";
 import { FindAction } from "./actions/FindAction.ts";
+import { config } from "./config/index.ts";
+import { CompanyDataSourceProvider } from "./providers/CompanyDataSourceProvider.ts";
+import { CompanyRepositoryProvider } from "./providers/CompanyRepositoryProvider.ts";
 
 @serviceProvider({
   config,
@@ -27,6 +28,7 @@ import { FindAction } from "./actions/FindAction.ts";
     ValidatorMiddleware,
   ]],
   handlers: [FetchAction, FindAction],
+  commands: [FetchCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
