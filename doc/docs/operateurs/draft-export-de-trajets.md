@@ -54,7 +54,7 @@ La durée de conservation des fichiers générés est limitée à 7 jours. Pass�
 
 Les données de trajets sont accessibles en open data sur le site [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/). Elles sont exportées chaque mois au format CSV.
 
-Depuis le ..., le format de données est passé en Version 3 pour intégrer de nouvelles informations. Les données sont désormais exportées au format XLSX.
+Depuis le 25/07/2024, le format de données est passé en Version 3 pour intégrer de nouvelles informations. Les données sont désormais exportées au format XLSX.
 
 ## Schema de données
 
