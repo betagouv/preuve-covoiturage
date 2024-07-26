@@ -1,0 +1,74 @@
+import { provider } from "@/ilos/common/Decorators.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import {
+  TerritoryCodeEnum,
+  TerritorySelectorsInterface,
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+
+interface PivotTerritorySelector {
+  territory_group_id: number;
+  selector_type: TerritoryCodeEnum;
+  selector_value: string;
+}
+
+export interface TerritoryRepositoryInterface {
+  getTerritorySelectors(
+    territoryId: number,
+  ): Promise<TerritorySelectorsInterface>;
+}
+
+export abstract class TerritoryRepositoryInterfaceResolver
+  implements TerritoryRepositoryInterface {
+  public async getTerritorySelectors(
+    territoryId: number,
+  ): Promise<TerritorySelectorsInterface> {
+    throw new Error("Not implemented");
+  }
+}
+
+@provider({
+  identifier: TerritoryRepositoryInterfaceResolver,
+})
+export class TerritoryRepository implements TerritoryRepositoryInterface {
+  public readonly territoryTable = "territory.territory_group";
+  public readonly pivotTable = "territory.territory_group_selector";
+  public readonly geoTable = "geo.perimeters";
+
+  constructor(protected connection: PostgresConnection) {}
+
+  /**
+   * Get the territory selectors for a given territory
+   *
+   * @param territoryId
+   * @returns
+   */
+  public async getTerritorySelectors(
+    territoryId: number,
+  ): Promise<TerritorySelectorsInterface> {
+    const query = {
+      text: `SELECT * FROM ${this.pivotTable} WHERE territory_group_id = $1`,
+      values: [territoryId],
+    };
+
+    const { rows, rowCount } = await this.connection.getClient().query(query);
+
+    return rowCount ? this.formatSelectors(rows) : {};
+  }
+
+  /**
+   * Convert the pivot table rows to a TerritorySelectorsInterface
+   *
+   * @param rows
+   */
+  private formatSelectors(
+    rows: PivotTerritorySelector[],
+  ): TerritorySelectorsInterface {
+    return rows.reduce((acc, row) => {
+      acc[row.selector_type] = [
+        ...(acc[row.selector_type] || []),
+        row.selector_value,
+      ];
+      return acc;
+    }, {} as TerritorySelectorsInterface);
+  }
+}

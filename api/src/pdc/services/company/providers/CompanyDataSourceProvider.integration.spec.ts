@@ -29,7 +29,7 @@ it("should fetch from data source with a siret id", async () => {
   assertEquals(data.legal_nature_code, "7120");
   // assertEquals(data.legal_nature_label, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
   assertEquals(data.intra_vat, "FR58120001011");
-  assertEquals(data.address, "57 RUE DE VARENNE 75007 PARIS 7");
+  assertEquals(data.address, "57 RUE DE VARENNE 75007 PARIS");
   // assertEquals(data.lon, 2.320884);
   // assertEquals(data.lat, 48.854634);
   assertEquals(data.headquarter, true);

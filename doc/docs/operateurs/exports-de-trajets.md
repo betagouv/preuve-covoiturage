@@ -180,7 +180,7 @@ trajets.
 | driver_incentive_rpc_4_name      |                               |                                                                                |
 | driver_incentive_rpc_4_amount    |                               |                                                                                |
 |                                  | cee_application               | Demande de dossier CEE (oui/non)                                               |
-| campaign_mode                    | incentive_type                | Type d'incitation (normale/booster)                                            |
+|                                  | incentive_type                | Type d'incitation (normale/booster)                                            |
 |                                  | incentive_0_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
 |                                  | incentive_0_name              | Incitation envoyée par l'opérateur : nom                                       |
 |                                  | incentive_0_amount            | Incitation envoyée par l'opérateur : montant en €                              |

@@ -32,7 +32,11 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
     ["timezone", DefaultTimezoneMiddleware],
     copyFromContextMiddleware(`call.user._id`, "created_by", true),
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
-    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", false),
+    copyFromContextMiddleware(
+      `call.user.territory_id`,
+      "territory_id",
+      undefined,
+    ),
     castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
     validateDateMiddleware({
       startPath: "start_at",
@@ -85,7 +89,10 @@ export class CreateActionV3 extends AbstractAction {
         start_at: params.start_at,
         end_at: params.end_at,
         operator_id: params.operator_id,
-        geo_selector: params.geo_selector,
+        geo_selector: await this.territoryService.resolve({
+          territory_id: params.territory_id,
+          geo_selector: params.geo_selector,
+        }),
       }),
     });
 
