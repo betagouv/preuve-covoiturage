@@ -37,6 +37,7 @@ export type ParamsInterfaceV3 = {
   recipients?: string[];
   operator_id: number[];
   geo_selector?: TerritorySelectorsInterface;
+  territory_id?: number[];
 };
 
 export type ResultInterfaceV3 = {

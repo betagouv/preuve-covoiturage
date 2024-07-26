@@ -12,6 +12,7 @@ import {
   ValidatorExtension,
   ValidatorMiddleware,
 } from "@/pdc/providers/validator/index.ts";
+import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import {
   bindingV2 as createBindingV2,
   bindingV3 as createBindingV3,
@@ -38,22 +39,23 @@ import { TerritoryService } from "./services/TerritoryService.ts";
 // and are used to implement the business logic of the application.
 // They are injected in commands and handlers.
 const services = [
-  FileCreatorService,
   FieldService,
-  NameService,
-  TerritoryService,
+  FileCreatorService,
   LogService,
+  NameService,
   RecipientService,
+  TerritoryService,
 ];
 
 // Repositories are from the ./repositories folder
 // and are used to access the database or other data sources.
 const repositories = [
-  ExportRepository,
-  RecipientRepository,
   CampaignRepository,
   CarpoolRepository,
+  ExportRepository,
   LogRepository,
+  RecipientRepository,
+  TerritoryRepository,
 ];
 
 // External providers are from the @pdc namespace

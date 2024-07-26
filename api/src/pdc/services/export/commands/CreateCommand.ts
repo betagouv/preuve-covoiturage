@@ -125,6 +125,8 @@ export class CreateCommand implements CommandInterface {
       return;
     }
 
+    const geo_selector = this.territoryService.geoStringToObject(geo);
+
     const { uuid, target, status, params } = await this.exportRepository.create(
       {
         created_by,
@@ -138,7 +140,7 @@ export class CreateCommand implements CommandInterface {
           ),
           // TODO add support for the territory_id (territory_group._id)
           // TODO add support for the SIREN to select the territory
-          geo_selector: await this.territoryService.resolve({ geo }),
+          geo_selector: await this.territoryService.resolve({ geo_selector }),
           tz,
         }),
       },
