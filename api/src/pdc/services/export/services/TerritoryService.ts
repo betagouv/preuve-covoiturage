@@ -13,6 +13,9 @@ export type ResolveResults = TerritorySelectorsInterface;
 export type TerritoryServiceInterface = {
   geoStringToObject(geo: string[]): TerritorySelectorsInterface;
   resolve(params: ResolveParams): Promise<ResolveResults>;
+  mergeSelectors(
+    arr: TerritorySelectorsInterface[],
+  ): TerritorySelectorsInterface;
 };
 
 export abstract class TerritoryServiceInterfaceResolver
@@ -21,6 +24,11 @@ export abstract class TerritoryServiceInterfaceResolver
     throw new Error("Not implemented");
   }
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
+    throw new Error("Not implemented");
+  }
+  public mergeSelectors(
+    arr: TerritorySelectorsInterface[],
+  ): TerritorySelectorsInterface {
     throw new Error("Not implemented");
   }
 }
@@ -89,6 +97,7 @@ export class TerritoryService {
    * When given both params, `geo_selector` takes precedence
    */
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
+    console.log({ params });
     // select the whole country if all params are missing
     if (
       (!params.territory_id && !params.geo_selector) ||
@@ -118,13 +127,13 @@ export class TerritoryService {
     return params.geo_selector;
   }
 
-  protected mergeSelectors(
+  public mergeSelectors(
     arr: TerritorySelectorsInterface[],
   ): TerritorySelectorsInterface {
     return arr.reduce((acc, curr) => {
       Object.keys(curr).forEach((key) => {
         acc[key] = acc[key] || [];
-        acc[key] = [...acc[key]!, ...curr[key]!];
+        acc[key] = [...new Set([...acc[key]!, ...curr[key]!])];
       });
       return acc;
     }, {} as TerritorySelectorsInterface);
