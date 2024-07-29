@@ -295,27 +295,6 @@ if update_carpool_status is True:
 # In[44]:
 
 
-import sqlalchemy as sa
-import warnings
-warnings.filterwarnings("ignore")
-
-# Update de carpool schema
-if update_carpool_status is True:
-
-    metadata = sa.MetaData(schema='carpool')
-    metadata.reflect(bind=engine)
-
-    table = metadata.tables['carpool.carpools']
-    
-    where_clause = table.c._id.in_(df_final_result['_id'].to_list())
-
-    update_stmt = sa.update(table).where(where_clause).values(status='fraudcheck_error')
-
-    with engine.connect() as conn:
-        result = conn.execute(update_stmt)
-        conn.commit()
-
-
 # # Step 9
 # 
 # Ajout des labels dans une table
