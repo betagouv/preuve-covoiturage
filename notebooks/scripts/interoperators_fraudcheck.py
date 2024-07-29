@@ -7,7 +7,7 @@
 # - `frame`:                 6                                                    -> start_date is 48 + 6 hours from today
 # - `update_carpool_status`: 'True'                                               -> If carpools should be updated or not
 
-# In[31]:
+# In[1]:
 
 
 import os
@@ -24,7 +24,7 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME'] 
 
 
-# In[32]:
+# In[2]:
 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
@@ -113,7 +113,7 @@ with engine.connect() as conn:
 # Suppression des trajets dont l'`identity_key` n'apprait pas sur plusieurs opérateur différents.
 # Permet de faire un tri simple avant d'ajouter les clées de regroupements 
 
-# In[33]:
+# In[3]:
 
 
 grouped_idkey_tmp = df_carpool.groupby(['identity_key'])
@@ -124,7 +124,7 @@ df_multi_op = grouped_idkey_tmp.filter(lambda x: len(pd.unique(x['operator_id'])
 # 
 # Ajout d'une colonne `overlap_group` permettant d'identifier les chevauchements temporels des trajets pour une `identity_key`
 
-# In[34]:
+# In[4]:
 
 
 df_only_grouped_with_overlap_group_filled = df_multi_op.assign(overlap_group=100, overlap_duration=0.00, overlap_duration_ratio=0.00)
@@ -140,7 +140,7 @@ df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df),  include
 # 1. plusieurs trajets sur une un même période temporelle (plusieurs trajets sur un même overlap_group)
 # 2. plusieurs opérateurs différents
 
-# In[35]:
+# In[5]:
 
 
 grouped_tmp = df_with_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -157,7 +157,7 @@ df_more_than_one_overlap = grouped_tmp.filter(lambda x:  len(pd.unique(x['operat
 # - La ligne passager pour l' `identity_key` est éffacée mais pas la ligne driver correspondante, c'est ce qui est fait ici
 # 
 
-# In[36]:
+# In[6]:
 
 
 grouped_tmp = df_more_than_one_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -170,7 +170,7 @@ df_more_than_one_occ_enhanced = grouped_tmp.apply(lambda x: remove_carpool_with_
 # On supprime les chevauchement sur un même opérateur pour des passagers identiques pour palier au mauvais calibrage de l'algo sur le calcul des groupes de chevauchement.
 # En effet, il se peut qu'un trajet de type aller-retour soit pris dans la fraude sur un chevauchement de quelques secondes
 
-# In[37]:
+# In[7]:
 
 
 grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_group', 'operator_id', 'other_identity_key'])
@@ -178,7 +178,7 @@ grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_gr
 df_without_overlap_on_same_operator = grouped_tmp.apply(lambda x: remove_carpool_with_lowest_overlap_duration(x)).reset_index(drop=True)
 
 
-# In[38]:
+# In[8]:
 
 
 grouped_tmp = df_without_overlap_on_same_operator.groupby(['identity_key', 'overlap_group'])
@@ -189,7 +189,7 @@ df_more_than_one_occ_2 = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator
 # 
 # On supprime les conducteurs qui covoiturent avec plusieurs passagers sur des applications différentes.
 
-# In[39]:
+# In[9]:
 
 
 driver_mask = df_more_than_one_occ_2.is_driver == True 
@@ -214,7 +214,7 @@ df_no_driver_different_operators = df_more_than_one_occ_2.loc[~df_more_than_one_
 # 
 # Une assertion est faite par la suite pour s'assurer qu'aucun trajet n'est supprimé si tous les trajets ne respectent pas la condition
 
-# In[40]:
+# In[10]:
 
 
 grouped_tmp = df_no_driver_different_operators.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -230,7 +230,7 @@ carpool_id_list_flat = [item for sublist in carpool_id_list for item in sublist]
 df_final_result = df_no_driver_different_operators.loc[~df_no_driver_different_operators._id.isin(carpool_id_list_flat)]
 
 
-# In[41]:
+# In[11]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -240,7 +240,7 @@ control_matrix = grouped_tmp.agg(unique_operator_count=('operator_id', 'nunique'
 assert (control_matrix['unique_operator_count'] > 1).all()
 
 
-# In[42]:
+# In[13]:
 
 
 import sqlalchemy as sa
@@ -269,7 +269,7 @@ if update_carpool_status is True:
 # 
 # Mise à jour des carpools retenus en status `fraudcheck_error`
 
-# In[43]:
+# In[14]:
 
 
 import sqlalchemy as sa
@@ -292,39 +292,36 @@ if update_carpool_status is True:
         conn.commit()
 
 
-# In[44]:
-
-
 # # Step 9
 # 
 # Ajout des labels dans une table
 # 
 # @deprecated : l'info est déjà dans carpool. Pas besoin d'avoir une table de label si pas d'autre type de fraud détectée
 
-# In[ ]:
+# In[15]:
 
 
-# df_labels = pd.DataFrame(df_final_result['_id'])
-# df_labels.columns = ['carpool_id']
-# df_labels = df_labels.assign(label='interoperator_fraud')
+df_labels = pd.DataFrame(df_final_result['_id'])
+df_labels.columns = ['carpool_id']
+df_labels = df_labels.assign(label='interoperator_fraud')
 
 
-# In[ ]:
+# In[16]:
 
 
-# from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.dialects.postgresql import insert
 
-# def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
-#     insert_stmt = insert(table.table).values(list(data_iter))
-#     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['carpool_id', 'label'])
-#     conn.execute(on_duplicate_key_stmt)
+def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
+    insert_stmt = insert(table.table).values(list(data_iter))
+    on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['carpool_id', 'label'])
+    conn.execute(on_duplicate_key_stmt)
 
-# df_labels.to_sql(
-#     name="labels",
-#     schema="fraudcheck",
-#     con=engine,
-#     if_exists="append",
-#     index=False,
-#     method=insert_or_do_nothing_on_conflict
-# )
+df_labels.to_sql(
+    name="labels",
+    schema="fraudcheck",
+    con=engine,
+    if_exists="append",
+    index=False,
+    method=insert_or_do_nothing_on_conflict
+)
 
