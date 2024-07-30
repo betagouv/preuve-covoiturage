@@ -97,7 +97,6 @@ export class TerritoryService {
    * When given both params, `geo_selector` takes precedence
    */
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
-    console.log({ params });
     // select the whole country if all params are missing
     if (
       (!params.territory_id && !params.geo_selector) ||
