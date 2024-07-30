@@ -139,71 +139,25 @@ trajets.
 | status                           | status                        | Détection des anomalies                                                        |
 | passenger_id                     |                               |                                                                                |
 | passenger_contribution           | passenger_contribution        |                                                                                |
-| passenger_incentive_1_siret      |                               |                                                                                |
-| passenger_incentive_1_amount     |                               |                                                                                |
-| passenger_incentive_2_siret      |                               |                                                                                |
-| passenger_incentive_2_amount     |                               |                                                                                |
-| passenger_incentive_3_siret      |                               |                                                                                |
-| passenger_incentive_3_amount     |                               |                                                                                |
-| passenger_incentive_4_siret      |                               |                                                                                |
-| passenger_incentive_4_amount     |                               |                                                                                |
-| passenger_incentive_rpc_1_siret  |                               |                                                                                |
-| passenger_incentive_rpc_1_name   |                               |                                                                                |
-| passenger_incentive_rpc_1_amount |                               |                                                                                |
-| passenger_incentive_rpc_2_siret  |                               |                                                                                |
-| passenger_incentive_rpc_2_name   |                               |                                                                                |
-| passenger_incentive_rpc_2_amount |                               |                                                                                |
-| passenger_incentive_rpc_3_siret  |                               |                                                                                |
-| passenger_incentive_rpc_3_name   |                               |                                                                                |
-| passenger_incentive_rpc_3_amount |                               |                                                                                |
-| passenger_incentive_rpc_4_siret  |                               |                                                                                |
-| passenger_incentive_rpc_4_name   |                               |                                                                                |
-| passenger_incentive_rpc_4_amount |                               |                                                                                |
+| passenger_incentive_N_siret      |                               |                                                                                |
+| passenger_incentive_N_amount     |                               |                                                                                |
+| passenger_incentive_rpc_N_siret  |                               |                                                                                |
+| passenger_incentive_rpc_N_name   |                               |                                                                                |
+| passenger_incentive_rpc_N_amount |                               |                                                                                |
 | driver_id                        |                               |                                                                                |
 | driver_revenue                   | driver_revenue                |                                                                                |
-| driver_incentive_1_siret         |                               |                                                                                |
-| driver_incentive_1_amount        |                               |                                                                                |
-| driver_incentive_2_siret         |                               |                                                                                |
-| driver_incentive_2_amount        |                               |                                                                                |
-| driver_incentive_3_siret         |                               |                                                                                |
-| driver_incentive_3_amount        |                               |                                                                                |
-| driver_incentive_4_siret         |                               |                                                                                |
-| driver_incentive_4_amount        |                               |                                                                                |
-| driver_incentive_rpc_1_siret     |                               |                                                                                |
-| driver_incentive_rpc_1_name      |                               |                                                                                |
-| driver_incentive_rpc_1_amount    |                               |                                                                                |
-| driver_incentive_rpc_2_siret     |                               |                                                                                |
-| driver_incentive_rpc_2_name      |                               |                                                                                |
-| driver_incentive_rpc_2_amount    |                               |                                                                                |
-| driver_incentive_rpc_3_siret     |                               |                                                                                |
-| driver_incentive_rpc_3_name      |                               |                                                                                |
-| driver_incentive_rpc_3_amount    |                               |                                                                                |
-| driver_incentive_rpc_4_siret     |                               |                                                                                |
-| driver_incentive_rpc_4_name      |                               |                                                                                |
-| driver_incentive_rpc_4_amount    |                               |                                                                                |
+| driver_incentive_N_siret         |                               |                                                                                |
+| driver_incentive_N_amount        |                               |                                                                                |
+| driver_incentive_rpc_N_siret     |                               |                                                                                |
+| driver_incentive_rpc_N_name      |                               |                                                                                |
+| driver_incentive_rpc_N_amount    |                               |                                                                                |
 |                                  | cee_application               | Demande de dossier CEE (oui/non)                                               |
 |                                  | incentive_type                | Type d'incitation (normale/booster)                                            |
-|                                  | incentive_0_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
-|                                  | incentive_0_name              | Incitation envoyée par l'opérateur : nom                                       |
-|                                  | incentive_0_amount            | Incitation envoyée par l'opérateur : montant en €                              |
-|                                  | incentive_1_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
-|                                  | incentive_1_name              | Incitation envoyée par l'opérateur : nom                                       |
-|                                  | incentive_1_amount            | Incitation envoyée par l'opérateur : montant en €                              |
-|                                  | incentive_2_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
-|                                  | incentive_2_name              | Incitation envoyée par l'opérateur : nom                                       |
-|                                  | incentive_2_amount            | Incitation envoyée par l'opérateur : montant en €                              |
-|                                  | incentive_rpc_0_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
-|                                  | incentive_rpc_0_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
-|                                  | incentive_rpc_0_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
-|                                  | incentive_rpc_0_name          | Incitation calculée par le RPC : nom du sponsor                                |
-|                                  | incentive_rpc_0_amount        | Incitation calculée par le RPC : montant en €                                  |
-|                                  | incentive_rpc_1_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
-|                                  | incentive_rpc_1_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
-|                                  | incentive_rpc_1_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
-|                                  | incentive_rpc_1_name          | Incitation calculée par le RPC : nom du sponsor                                |
-|                                  | incentive_rpc_1_amount        | Incitation calculée par le RPC : montant en €                                  |
-|                                  | incentive_rpc_2_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
-|                                  | incentive_rpc_2_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
-|                                  | incentive_rpc_2_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
-|                                  | incentive_rpc_2_name          | Incitation calculée par le RPC : nom du sponsor                                |
-|                                  | incentive_rpc_2_amount        | Incitation calculée par le RPC : montant en €                                  |
+|                                  | incentive_N_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
+|                                  | incentive_N_name              | Incitation envoyée par l'opérateur : nom                                       |
+|                                  | incentive_N_amount            | Incitation envoyée par l'opérateur : montant en €                              |
+|                                  | incentive_rpc_N_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
+|                                  | incentive_rpc_N_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
+|                                  | incentive_rpc_N_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
+|                                  | incentive_rpc_N_name          | Incitation calculée par le RPC : nom du sponsor                                |
+|                                  | incentive_rpc_N_amount        | Incitation calculée par le RPC : montant en €                                  |
