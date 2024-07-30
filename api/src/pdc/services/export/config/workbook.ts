@@ -37,12 +37,12 @@ export const fields: Fields = [
 
   "status",
 
-  "start_datetime_utc",
-  "start_date_utc",
-  "start_time_utc",
-  "end_datetime_utc",
-  "end_date_utc",
-  "end_time_utc",
+  "start_datetime",
+  "start_date",
+  "start_time",
+  "end_datetime",
+  "end_date",
+  "end_time",
 
   "duration",
   "distance",

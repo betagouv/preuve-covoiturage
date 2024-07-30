@@ -20,19 +20,21 @@ Le 🔒 indique que ces données ne sont pas présentes dans l'export Open data.
 | operator&nbsp;🔒            | Nom de l'opérateur                                                                                                                                                                                                            |
 | status                      | Statut du trajet pour le RPC                                                                                                                                                                                                  |
 
-### Temps
+### Dates et heures
 
-| Colonne            | Explications                                                                           |
-| ------------------ | -------------------------------------------------------------------------------------- |
-| start_datetime_utc | Date et heure du départ au format ISO 8601 (YYYY-MM-DDThh:mm:ssZ). Plage de 10 minutes |
-| start_date_utc     | Date du départ au format ISO 8601 (YYYY-MM-DD)                                         |
-| start_time_utc     | Heure du départ au format Thh:mm:ssZ). Plage de 10 minutes                             |
-|                    |                                                                                        |
-| end_datetime_utc   | Date et heure d'arrivée au format ISO 8601 (YYYY-MM-DDThh:mm:ssZ). Plage de 10 minutes |
-| end_date_utc       | Date d'arrivée au format ISO 8601 (YYYY-MM-DD)                                         |
-| end_time_utc       | Heure d'arrivée au format Thh:mm:ssZ). Plage de 10 minutes                             |
-|                    |                                                                                        |
-| duration           | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                              |
+| Colonne        | Explications                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| start_datetime | Date et heure locale du départ au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+| start_date     | Date locale du départ au format ISO 8601 (YYYY-MM-DD)                                        |
+| start_time     | Heure locale du départ au format Thh:mm:ss). Plage de 10 minutes                             |
+|                |                                                                                              |
+| end_datetime   | Date et heure locale d'arrivée au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+| end_date       | Date locale d'arrivée au format ISO 8601 (YYYY-MM-DD)                                        |
+| end_time       | Heure locale d'arrivée au format Thh:mm:ss). Plage de 10 minutes                             |
+|                |                                                                                              |
+| duration       | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                                    |
+
+> Les dates et heures sont exprimées dans le fuseau horaire `Europe/Paris`.
 
 ### Lieux
 
@@ -100,9 +102,9 @@ trajets.
 | trip_id                          |                               | Identifiant de regroupement des couples généré par le RPC                      |
 |                                  | operator_trip_id              | Identifiant de regroupement des couples généré par l'opérateur                 |
 |                                  | operator_journey_id           | Identifiant de couple généré par l'opérateur                                   |
-| journey_start_datetime           | start_datetime_utc            | Passage en UTC                                                                 |
-| journey_start_date               | start_date_utc                | Passage en UTC                                                                 |
-| journey_start_time               | start_time_utc                | Passage en UTC                                                                 |
+| journey_start_datetime           | start_datetime                | Passage en UTC                                                                 |
+| journey_start_date               | start_date                    | Passage en UTC                                                                 |
+| journey_start_time               | start_time                    | Passage en UTC                                                                 |
 | journey_start_lon                | start_lon                     |                                                                                |
 | journey_start_lat                | start_lat                     |                                                                                |
 | journey_start_insee              | start_insee                   |                                                                                |
@@ -110,9 +112,9 @@ trajets.
 | journey_start_town               | start_commune                 |                                                                                |
 | journey_start_towngroup          | start_epci                    |                                                                                |
 | journey_start_country            | start_pays                    |                                                                                |
-| journey_end_datetime             | end_datetime_utc              | Passage en UTC                                                                 |
-| journey_end_date                 | end_date_utc                  | Passage en UTC                                                                 |
-| journey_end_time                 | end_time_utc                  | Passage en UTC                                                                 |
+| journey_end_datetime             | end_datetime                  | Passage en UTC                                                                 |
+| journey_end_date                 | end_date                      | Passage en UTC                                                                 |
+| journey_end_time                 | end_time                      | Passage en UTC                                                                 |
 | journey_end_lon                  | end_lon                       |                                                                                |
 | journey_end_lat                  | end_lat                       |                                                                                |
 | journey_end_insee                | end_insee                     |                                                                                |
