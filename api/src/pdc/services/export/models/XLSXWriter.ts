@@ -63,8 +63,8 @@ export class XLSXWriter {
             const campaign = datasources.get("campaigns").get(id);
             if (!campaign) return acc;
             const mode = campaign.getModeAt([
-              row.value("start_datetime_utc"),
-              row.value("end_datetime_utc"),
+              row.value("start_datetime"),
+              row.value("end_datetime"),
             ]);
             return acc === "booster" ? acc : mode;
           }, "normal");

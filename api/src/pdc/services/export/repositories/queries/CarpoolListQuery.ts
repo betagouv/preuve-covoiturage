@@ -11,12 +11,12 @@ export type CarpoolListType = {
   operator_class: string;
   status: string;
 
-  start_datetime_utc: Date;
-  start_date_utc: string;
-  start_time_utc: string;
-  end_datetime_utc: Date;
-  end_date_utc: string;
-  end_time_utc: string;
+  start_datetime: Date;
+  start_date: string;
+  start_time: string;
+  end_datetime: Date;
+  end_date: string;
+  end_time: string;
   duration: number;
   distance: number;
 
@@ -245,12 +245,12 @@ export class CarpoolListQuery extends AbstractQuery {
 
       -- dates and times are in UTC
       -- ceil times to 10 minutes and format for user's convenience
-      ts_ceil(trips.start_at, 600) as start_datetime_utc,
-      to_char(ts_ceil(trips.start_at, 600), 'YYYY-MM-DD') as start_date_utc,
-      to_char(ts_ceil(trips.start_at, 600), 'HH24:MI:SS') as start_time_utc,
-      ts_ceil(trips.end_at, 600) as end_datetime_utc,
-      to_char(ts_ceil(trips.end_at, 600), 'YYYY-MM-DD') as end_date_utc,
-      to_char(ts_ceil(trips.end_at, 600), 'HH24:MI:SS') as end_time_utc,
+      ts_ceil(trips.start_at at time zone 'Europe/Paris', 600) as start_datetime,
+      to_char(ts_ceil(trips.start_at at time zone 'Europe/Paris', 600), 'YYYY-MM-DD') as start_date,
+      to_char(ts_ceil(trips.start_at at time zone 'Europe/Paris', 600), 'HH24:MI:SS') as start_time,
+      ts_ceil(trips.end_at at time zone 'Europe/Paris', 600) as end_datetime,
+      to_char(ts_ceil(trips.end_at at time zone 'Europe/Paris', 600), 'YYYY-MM-DD') as end_date,
+      to_char(ts_ceil(trips.end_at at time zone 'Europe/Paris', 600), 'HH24:MI:SS') as end_time,
       to_char(trips.duration, 'HH24:MI:SS') as duration,
 
       -- distance in km with meter precision (float)
@@ -333,6 +333,6 @@ export class CarpoolListQuery extends AbstractQuery {
     FROM trips
     LEFT JOIN geo AS gps ON trips.start_geo_code = gps.arr
     LEFT JOIN geo AS gpe ON trips.end_geo_code = gpe.arr
-    ORDER BY start_datetime_utc ASC
+    ORDER BY start_datetime ASC
   `;
 }
