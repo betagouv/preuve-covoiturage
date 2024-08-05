@@ -33,6 +33,7 @@ import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
 import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
 import { PolicyHandlerStaticInterface } from "@/pdc/services/policy/interfaces/index.ts";
+import { CCVMM202405 } from "./20240805_CCVMM_2024_05.ts";
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line
@@ -73,6 +74,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
+    CCVMM202405,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );
