@@ -29,7 +29,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import { description } from "./20240201_TerresTouloises.html.ts";
+import { description } from "./20240805_CCVMM_2024_05.html.ts";
 
 /* eslint-disable-next-line */
 export const CCVMM202405: PolicyHandlerStaticInterface = class
