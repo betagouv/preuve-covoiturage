@@ -455,3 +455,42 @@ paths:
             'application/json':
               schema:
                 '$ref': '#/components/schemas/cee_application_identity_import_response'
+  /policies/cee/{uuid}:
+    get:
+      tags:
+      - cee
+      - wip
+      summary: Chercher une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+      security:
+        - token: []
+      operationId: policy:cee:find
+      responses:
+        '200':
+          description: La demande a été trouvée et appartient à l'opérateur.
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application'
+        '404':
+          description: La demande n'a pas été trouvée
+        '403':
+          description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur
+    delete:
+      tags:
+      - cee
+      - wip
+      summary: Supprimer une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+      security:
+        - token: []
+      operationId: policy:cee:delete
+      responses:
+        '200':
+          description: La demande a été trouvée et a bien été supprimée.
+        '404':
+          description: La demande n'a pas été trouvée.
+        '403':
+          description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur.
