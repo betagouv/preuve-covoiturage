@@ -1,54 +1,31 @@
+import { afterAll, assert, beforeAll, describe, it } from "@/dev_deps.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { IBotCredentials } from "@/pdc/providers/keycloak/IBotCredentials.ts";
+import { KeycloakBotAuthenticator } from "./KeycloakBotAuthenticator.ts";
+import { KeycloakManager } from "./KeycloakManager.ts";
 
-import anyTest, { TestFn } from 'ava';
-import { KeycloakManager } from './KeycloakManager.js';
+describe("Keycloack Bot Auth", () => {
+  let bot: IBotCredentials;
 
-interface TestContext {
-  provider: KeycloakManager;
-}
+  const manager = new KeycloakManager();
+  const provider = new KeycloakBotAuthenticator();
 
-const test = anyTest as TestFn<TestContext>;
+  beforeAll(async () => {
+    bot = await manager.createBot(1);
+  });
 
-const user1 = {
-  firstName: 'Jean',
-  lastName: 'Dupond',
-  email: 'registry@admin.com',
-  attributes: {
-    phone: '+33601020304',
-    pdc_role: 'registry.admin',
-  }
-};
+  afterAll(async () => {
+    const result = await manager.listUser();
+    for (
+      const user of result.filter((u) => u.username === `bot:${bot.access_key}`)
+    ) {
+      await manager.deleteUser(user.id);
+    }
+  });
 
-const user2 = {
-  firstName: 'Jeanne',
-  lastName: 'Dupuis',
-  email: 'territory@admin.com',
-  attributes: {
-    phone: '+33601020304',
-    pdc_role: 'territory.admin',
-    territory_id: 12,
-  }
-};
-
-test.before((t) => {
-  t.context.provider = new KeycloakManager();
-});
-
-test.after.always(async (t) => {
-  const result = await t.context.provider.listUser();
-  for(const user of result.filter(u => u.email == user1.email || u.email == user2.email)) {
-    await t.context.provider.deleteUser(user.id);
-  }
-});
-
-test.serial('Should list user', async (t) => {
-  const result = await t.context.provider.listUser();
-  t.is(result.length, 1);
-});
-
-test.serial('Should create a user', async (t) => {
-  await t.context.provider.createUser(user1);
-  await t.context.provider.createUser(user2);
-  const result = await t.context.provider.listUser();
-  t.like(result.find(u => u.email == user1.email), user1);
-  t.like(result.find(u => u.email == user2.email), user2);
+  it("Should login", async () => {
+    const result = await provider.login(bot);
+    logger.log(result);
+    assert(false);
+  });
 });

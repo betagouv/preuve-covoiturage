@@ -35,12 +35,12 @@ describe("Keycloack Manager", () => {
     }
   });
 
-  it("Should list user", async (t) => {
+  it("Should list user", async () => {
     const result = await provider.listUser();
     assertEquals(result.length, 1);
   });
 
-  it("Should create a user", async (t) => {
+  it("Should create a user", async () => {
     await provider.createUser(user1);
     await provider.createUser(user2);
     const result = await provider.listUser();

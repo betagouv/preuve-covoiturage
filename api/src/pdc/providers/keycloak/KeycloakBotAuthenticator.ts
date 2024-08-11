@@ -1,5 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { IBotCredentials } from "@/pdc/providers/keycloak/IBotCredentials.ts";
 
 @provider()
 export class KeycloakBotAuthenticator {
@@ -17,8 +19,8 @@ export class KeycloakBotAuthenticator {
     this.adminClientSecret = env_or_fail("KC_BOT_CLIENT_SECRET");
   }
 
-  protected async login(
-    data: { username: string; password: string },
+  public async login(
+    data: IBotCredentials,
   ): Promise<{ operator_id: number; role: string }> {
     try {
       const response = await fetch(
@@ -32,14 +34,15 @@ export class KeycloakBotAuthenticator {
             client_id: this.adminClient,
             client_secret: this.adminClientSecret,
             grant_type: "password",
-            username: data.username,
-            password: data.password,
+            username: data.access_key,
+            password: data.secret_key,
           }),
         },
       );
+      logger.log(response);
       return { operator_id: 1, role: "" };
     } catch (error) {
-      console.error("Error logging in to Keycloak", error);
+      logger.error("Error logging in to Keycloak", error);
       throw new Error("Login failed");
     }
   }

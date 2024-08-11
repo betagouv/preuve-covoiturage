@@ -1,6 +1,9 @@
 import { KcAdminClient } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { randomString, v4 } from "@/lib/uuid/index.ts";
+import { IBotCredentials } from "@/pdc/providers/keycloak/IBotCredentials.ts";
 
 interface User {
   //username: string;
@@ -25,6 +28,8 @@ export class KeycloakManager {
   protected adminClient: string;
   protected adminClientSecret: string;
 
+  protected botClient: string;
+
   constructor() {
     this.client = new KcAdminClient({
       baseUrl: env_or_fail("KC_URL", "http://auth.covoiturage.test"),
@@ -33,6 +38,7 @@ export class KeycloakManager {
 
     this.adminClient = env_or_fail("KC_ADMIN_CLIENT");
     this.adminClientSecret = env_or_fail("KC_ADMIN_CLIENT_SECRET");
+    this.botClient = env_or_fail("KC_BOT_CLIENT");
   }
 
   private async login(): Promise<void> {
@@ -43,7 +49,7 @@ export class KeycloakManager {
         clientSecret: this.adminClientSecret,
       });
     } catch (error) {
-      console.error("Error logging in to Keycloak", error);
+      logger.error("Error logging in to Keycloak", error);
       throw new Error("Login failed");
     }
   }
@@ -62,7 +68,7 @@ export class KeycloakManager {
         },
       }));
     } catch (error) {
-      console.error("Error fetching users from Keycloak", error);
+      logger.error("Error fetching users from Keycloak", error);
       throw new Error("List user failed");
     }
   }
@@ -74,9 +80,37 @@ export class KeycloakManager {
         { ...user, enabled: true, username: user.email },
       );
     } catch (error) {
-      console.error("Error creating user in Keycloak", error);
+      logger.error("Error creating user in Keycloak", error);
       throw new Error("Create user failed");
     }
+  }
+
+  public async createBot(operator_id: number): Promise<IBotCredentials> {
+    const access_key = v4();
+    const secret_key = randomString(32);
+
+    await this.client.users.create({
+      username: `bot:${access_key}`,
+      enabled: true,
+      attributes: {
+        operator_id,
+        pdc_role: "operator.bot",
+      },
+      credentials: [{
+        temporary: false,
+        value: secret_key,
+        type: "password",
+      }],
+      clientRoles: {
+        [this.botClient]: "toto",
+      },
+      realmRoles: [],
+    });
+
+    return {
+      access_key,
+      secret_key,
+    };
   }
 
   public async deleteUser(id: string): Promise<void> {
@@ -84,7 +118,7 @@ export class KeycloakManager {
     try {
       await this.client.users.del({ id });
     } catch (error) {
-      console.error("Error creating user in Keycloak", error);
+      logger.error("Error creating user in Keycloak", error);
       throw new Error("Create user failed");
     }
   }
