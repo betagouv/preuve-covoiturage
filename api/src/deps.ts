@@ -195,10 +195,10 @@ import xss from "npm:xss@^1";
 // @deno-types="npm:@types/jsonwebtoken@^9"
 import jwt from "npm:jsonwebtoken@^9";
 import mjml2html from "npm:mjml@^4.15";
-// @deno-types="npm:@types/nodemailer@^6.4"
 import KcAdminClient from "npm:@keycloak/keycloak-admin-client@^25.0";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
+// @deno-types="npm:@types/nodemailer@^6.4"
 import mailer from "npm:nodemailer@^6.9";
 // @deno-types="npm:@types/nodemailer@^6.4"
 export type {
