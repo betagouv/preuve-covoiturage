@@ -52,13 +52,17 @@ export class ApplyAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
-      return logger.warn(
+      logger.warn(
         "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
       );
+      return;
     }
 
     const { from, to, override } = this.defaultParams(params);
     logger.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    if (!params.policy_id || params.policy_id === 0) {
+      return;
+    }
     await this.processPolicy(params.policy_id, from, to, override);
   }
 
@@ -71,7 +75,7 @@ export class ApplyAction extends AbstractAction {
 
     return {
       tz,
-      policy_id: params.policy_id,
+      policy_id: params.policy_id || 0,
       from: params.from ?? subDaysTz(today(tz), 7),
       to: params.to ?? today(tz),
       override: !!params.override,

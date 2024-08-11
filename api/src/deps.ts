@@ -154,6 +154,8 @@ export {
   S3Errors,
 } from "https://deno.land/x/s3_lite_client@0.7.0/mod.ts";
 
+import postgres from 'https://deno.land/x/postgresjs@v3.4.4/mod.js';
+
 export {
   Client as PgClient,
   Pool as PgPool,
@@ -234,6 +236,7 @@ export {
   pdf,
   pg,
   Pool,
+  postgres,
   process,
   promClient,
   rateLimit,

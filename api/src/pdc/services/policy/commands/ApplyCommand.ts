@@ -64,6 +64,7 @@ export class ApplyCommand implements CommandInterface {
 
   public async call(options: CommandOptions): Promise<ResultType> {
     try {
+      logger.info("[campaign:apply] started");
       const { tz, override } = options;
 
       // update all campaign statuses
@@ -75,6 +76,8 @@ export class ApplyCommand implements CommandInterface {
         : (await this.policyRepository.findWhere({
           status: PolicyStatusEnum.ACTIVE,
         })).map((c) => c._id);
+
+      logger.info(`[campaign:apply] process ${campaigns.join(", ")}`);
 
       for (const policy_id of campaigns) {
         const context: ContextType = { channel: { service: "campaign" } };
@@ -113,8 +116,7 @@ export class ApplyCommand implements CommandInterface {
           logger.error(e.message, { params });
         }
       }
-
-      return "";
+      logger.info(`[campaign:apply] done`);
     } catch (e) {
       logger.error(e.rpcError?.data || e.message);
     }
