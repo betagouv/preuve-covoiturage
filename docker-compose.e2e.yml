@@ -15,9 +15,9 @@ services:
       - '--entrypoints.websecure.address=:443'
       - '--entrypoints.web.address=:80'
       - '--providers.docker.network=pdce2e_back'
-      - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
-      - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
-      - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
+      # - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
+      # - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
+      # - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
     volumes:
       - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
       - ./docker/traefik/certs:/etc/certs
@@ -26,13 +26,39 @@ services:
       back:
       front:
         aliases:
+          - auth.covoiturage.test
           - api.covoiturage.test
           - app.covoiturage.test
           - mailer.covoiturage.test
           - s3.covoiturage.test
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
-
+  kc:
+    image: keycloak/keycloak:24.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_URL: "jdbc:postgresql://postgres:5432/local"
+      KC_REALM_NAME: covoiturage
+      PDC_URL: http://app.covoiturage.test
+      PDC_ADMIN_USERNAME: admin
+      PDC_ADMIN_PASWORD: admin
+    networks:
+      - back
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.kc-http.rule=Host(`auth.covoiturage.test`)'
+      - 'traefik.http.routers.kc-http.entrypoints=web'
+      - 'traefik.http.routers.kc-https.rule=Host(`auth.covoiturage.test`)'
+      - 'traefik.http.routers.kc-https.entrypoints=websecure'
+      - 'traefik.http.routers.kc-https.tls=true'
+      - 'traefik.http.services.kc.loadbalancer.server.port=8080'
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./docker/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
   mailer:
     image: mailhog/mailhog:v1.0.1
     environment:

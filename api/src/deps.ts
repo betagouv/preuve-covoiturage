@@ -196,6 +196,9 @@ import xss from "npm:xss@^1";
 import jwt from "npm:jsonwebtoken@^9";
 import mjml2html from "npm:mjml@^4.15";
 // @deno-types="npm:@types/nodemailer@^6.4"
+import KcAdminClient from "npm:@keycloak/keycloak-admin-client@^25.0";
+import Handlebars from "npm:handlebars@^4.7";
+import helmet from "npm:helmet@^7.1";
 import mailer from "npm:nodemailer@^6.9";
 // @deno-types="npm:@types/nodemailer@^6.4"
 export type {
@@ -227,6 +230,7 @@ export {
   https,
   jsonSchemaSecureJson,
   jwt,
+  KcAdminClient,
   mailer,
   mapshaper,
   mjml2html,
@@ -245,15 +249,12 @@ export {
   xlsx,
   xss,
 };
-import Handlebars from "npm:handlebars@^4.7";
-import helmet from "npm:helmet@^7.1";
-export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
-export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
-import * as _bcrypt_worker from "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts"; // FIX https://github.com/JamesBroadberry/deno-bcrypt/issues/31
 export * as crypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
 export {
   decodeBase64,
   encodeBase64,
 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 export * as log from "https://deno.land/std@0.224.0/log/mod.ts";
+export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
+export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";

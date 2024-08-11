@@ -1,0 +1,49 @@
+{
+  "id": "covoiturage",
+  "realm": "covoiturage",
+  "sslRequired": "none",
+  "enabled": true,
+  "eventsEnabled": true,
+  "eventsExpiration": 900,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "attributes": {
+    "adminEventsExpiration": "900"
+  },
+  "clients": [
+    {
+      "id": "pdc",
+      "clientId": "pdc",
+      "name": "pdc",
+      "enabled": true,
+      "publicClient": true,
+      "rootUrl": "${PDC_URL}",
+      "adminUrl": "${PDC_URL}",
+      "baseUrl": "${PDC_URL}",
+      "redirectUris": [
+        "${PDC_URL}/*"
+      ],
+      "webOrigins": [
+        "${PDC_URL}"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "admin",
+      "email": "${PDC_ADMIN_USERNAME}@admin",
+      "username": "${PDC_ADMIN_USERNAME}",
+      "firstName": "DevOps",
+      "lastName": "SRE",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "${PDC_ADMIN_PASSWORD}"
+        }
+      ]
+    }
+  ]
+}
