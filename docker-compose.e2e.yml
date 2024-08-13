@@ -46,6 +46,8 @@ services:
       PDC_URL: http://app.covoiturage.test
       PDC_ADMIN_USERNAME: admin
       PDC_ADMIN_PASWORD: admin
+      PDC_KC_ADMIN_CLIENT_SECRET: so_secret_000
+      PDC_KC_BOT_CLIENT_SECRET: so_secret_000
     networks:
       - back
     labels:

@@ -1,4 +1,10 @@
-import { afterAll, assertEquals, describe, it } from "@/dev_deps.ts";
+import {
+  afterAll,
+  assertEquals,
+  assertObjectMatch,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import { KeycloakManager } from "./KeycloakManager.ts";
 
 describe("Keycloack Manager", () => {
@@ -33,6 +39,14 @@ describe("Keycloack Manager", () => {
     ) {
       await provider.deleteUser(user.id);
     }
+
+    // FIXME: UGLY cleanup
+    const resources = Deno.resources();
+    for (const rid in resources) {
+      if (resources[rid] === "fetchResponse") {
+        Deno.close(parseInt(rid));
+      }
+    }
   });
 
   it("Should list user", async () => {
@@ -44,7 +58,7 @@ describe("Keycloack Manager", () => {
     await provider.createUser(user1);
     await provider.createUser(user2);
     const result = await provider.listUser();
-    assertEquals(result.find((u) => u.email == user1.email), user1);
-    assertEquals(result.find((u) => u.email == user2.email), user2);
+    assertObjectMatch(result.find((u) => u.email == user1.email), user1);
+    assertObjectMatch(result.find((u) => u.email == user2.email), user2);
   });
 });

@@ -10,6 +10,14 @@
   "attributes": {
     "adminEventsExpiration": "900"
   },
+  "roles": {
+    "client": {
+      "pdc-bot": {
+        "name": "bot",
+        "clientRole": true
+      }
+    }
+  },
   "clients": [
     {
       "id": "pdc",
@@ -20,11 +28,132 @@
       "rootUrl": "${PDC_URL}",
       "adminUrl": "${PDC_URL}",
       "baseUrl": "${PDC_URL}",
+      "secret": "${TODO}",
       "redirectUris": [
         "${PDC_URL}/*"
       ],
       "webOrigins": [
         "${PDC_URL}"
+      ]
+    },
+    {
+      "id": "pdc-bot",
+      "clientId": "pdc-bot",
+      "name": "pdc-bot",
+      "description": "",
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${PDC_KC_BOT_CLIENT_SECRET}",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "attributes"
+      ]
+    },
+    {
+      "id": "pdc-manager",
+      "clientId": "pdc-manager",
+      "name": "pdc-manager",
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${PDC_KC_ADMIN_CLIENT_SECRET}",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "id": "attributes",
+      "name": "attributes",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false",
+      },
+      "protocolMappers": [
+        {
+          "id": "territory_id",
+          "name": "territory_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "territory_id",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "territory_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "operator_id",
+          "name": "operator_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "operator_id",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "operator_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "pdc_role",
+          "name": "pdc_role",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "pdc_role",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "pdc_role",
+            "jsonType.label": "String"
+          }
+        }
       ]
     }
   ],
@@ -44,6 +173,36 @@
           "value": "${PDC_ADMIN_PASSWORD}"
         }
       ]
+    },
+    {
+      "username": "service-account-pdc-manager",
+      "emailVerified": false,
+      "enabled": true,
+      "serviceAccountClientId": "pdc-manager",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-covoiturage"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ]
+      }
     }
-  ]
-}
+  ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "id": "57af2c57-cfa1-4fdc-9448-ed9388f561f2",
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"territory_id\",\"displayName\":\"\",\"validations\":{\"integer\":{\"min\":\"0\",\"max\":\"640000\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"operator_id\",\"displayName\":\"\",\"validations\":{\"integer\":{\"min\":\"0\",\"max\":\"640000\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"pdc_role\",\"displayName\":\"\",\"validations\":{\"options\":{\"options\":[\"registry.admin\",\"operator.admin\",\"operator.user\",\"territory.admin\",\"territory.user\",\"registry.user\"]}},\"annotations\":{\"inputType\":\"select\"},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\"],\"edit\":[\"admin\"]},\"multivalued\":false},{\"name\":\"phone\",\"displayName\":\"Téléphone\",\"validations\":{\"length\":{\"min\":\"0\",\"max\":\"32\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
+          ]
+        }
+      }
+    ]
+  }
+} 

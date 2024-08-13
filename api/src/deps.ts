@@ -23,6 +23,7 @@ export {
   unlink,
   writeFile,
 } from "node:fs/promises";
+export * as jose from 'https://deno.land/x/jose@v5.6.3/index.ts'
 export type { FileHandle } from "node:fs/promises";
 export { Readable } from "node:stream";
 export { URL, URLSearchParams } from "node:url";

@@ -86,15 +86,19 @@ export class KeycloakManager {
   }
 
   public async createBot(operator_id: number): Promise<IBotCredentials> {
+    await this.login();
     const access_key = v4();
     const secret_key = randomString(32);
-
-    await this.client.users.create({
-      username: `bot:${access_key}`,
+    const payload = {
+      username: `bot@${access_key}`,
+      email: `bot@${access_key}`,
+      firstName: access_key,
+      lastName: operator_id.toString(),
       enabled: true,
+      emailVerified: true,
       attributes: {
         operator_id,
-        pdc_role: "operator.bot",
+        pdc_role: "operator.user",
       },
       credentials: [{
         temporary: false,
@@ -102,10 +106,12 @@ export class KeycloakManager {
         type: "password",
       }],
       clientRoles: {
-        [this.botClient]: "toto",
+        [this.botClient]: ["bot"],
       },
       realmRoles: [],
-    });
+    };
+
+    await this.client.users.create(payload);
 
     return {
       access_key,
