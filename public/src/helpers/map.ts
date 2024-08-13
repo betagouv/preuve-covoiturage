@@ -1,12 +1,19 @@
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 import bbox from '@turf/bbox';
 import { FeatureCollection } from 'geojson';
+import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
+import { MapRef } from 'react-map-gl/maplibre';
 
 export function getBbox(data: MapGeoJSONFeature) {
   const bounds = bbox(data);
-  const coords: [number, number, number, number] = [bounds[0], bounds[1], bounds[2], bounds[3]];
+  const coords: LngLatBoundsLike = [bounds[0], bounds[1], bounds[2], bounds[3]];
   return coords;
 }
+
+export const fitBounds = (map: MapRef | null, bounds?: LngLatBoundsLike) => {
+  if (map && bounds && Array.isArray(bounds) && !bounds.flat().includes(Infinity)) {
+    map.fitBounds(bounds, { padding: 20 });
+  }
+};
 
 export const parseJSONFile = async (path:string) => {
   const response = await fetch(path);

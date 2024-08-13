@@ -1,5 +1,5 @@
 set dotenv-load
-
+set shell := ["bash", "-uc"] 
 cert_dir:=join(parent_directory(justfile_directory()),"docker","traefik","certs")
 key_dir:=join(parent_directory(justfile_directory()),"docker","api","certs")
 docker_compose_dev_file:=join(parent_directory(justfile_directory()),"docker-compose.dev.yml")
