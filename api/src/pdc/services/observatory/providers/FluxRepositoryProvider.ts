@@ -1,6 +1,10 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
+  checkIndicParam,
+  checkTerritoryParam,
+} from "../helpers/checkParams.ts";
+import {
   BestMonthlyFluxParamsInterface,
   BestMonthlyFluxResultInterface,
   DeleteMonthlyFluxParamsInterface,
@@ -13,16 +17,12 @@ import {
   MonthlyFluxParamsInterface,
   MonthlyFluxResultInterface,
 } from "../interfaces/FluxRepositoryProviderInterface.ts";
-import {
-  checkIndicParam,
-  checkTerritoryParam,
-} from "../helpers/checkParams.ts";
 
 @provider({
   identifier: FluxRepositoryInterfaceResolver,
 })
 export class FluxRepositoryProvider implements FluxRepositoryInterface {
-  private readonly table = "observatory.monthly_flux";
+  private readonly table = "observatoire.flux_by_month";
   private readonly perim_table = "geo.perimeters";
   private readonly insert_procedure = "observatory.insert_monthly_flux";
 
@@ -42,7 +42,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   async deleteOneMonthFlux(
     params: DeleteMonthlyFluxParamsInterface,
   ): Promise<void> {
-    await this.pg.getClient().query<any>({
+    await this.pg.getClient().query({
       values: [params.year, params.month],
       text: `
         DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
@@ -64,9 +64,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       FROM ${this.table}
       WHERE year = $1
       AND month = $2
-      AND type = '${
-        checkTerritoryParam(params.observe)
-      }'::observatory.monthly_flux_type_enum
+      AND type = '${checkTerritoryParam(params.observe)}'
       AND (distance/journeys) <= 80
       ${
         params.code
@@ -85,8 +83,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       } 
       AND territory_1 <> territory_2;`,
     };
-    const response: { rowCount: number; rows: MonthlyFluxResultInterface } =
-      await this.pg.getClient().query<any>(sql);
+    const response = await this.pg.getClient().query(sql);
     return response.rows;
   }
 
@@ -95,10 +92,11 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const sql = `SELECT distinct year, month 
       FROM ${this.table} 
       WHERE type ='com' 
+      AND year <= date_part('year', now())
       ORDER BY year DESC,month DESC
       LIMIT 1;
     `;
-    const response = await this.pg.getClient().query<any>(sql);
+    const response = await this.pg.getClient().query(sql);
     return response.rows[0];
   }
 
@@ -123,17 +121,14 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         ${indic == "distance" ? ", sum(journeys) AS journeys" : ""}
         FROM ${this.table}
         WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
-        AND type = $1::observatory.monthly_flux_type_enum
+        AND type = $1
         AND (territory_1 = $2 OR territory_2 = $2)
         GROUP BY year, month
         ORDER BY (year,month) DESC
         LIMIT $3;
       `,
     };
-    const response: { rowCount: number; rows: EvolMonthlyFluxResultInterface } =
-      await this.pg
-        .getClient()
-        .query<any>(sql);
+    const response = await this.pg.getClient().query(sql);
     return response.rows;
   }
 
@@ -159,10 +154,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         LIMIT $4;
       `,
     };
-    const response: { rowCount: number; rows: BestMonthlyFluxResultInterface } =
-      await this.pg
-        .getClient()
-        .query<any>(sql);
+    const response = await this.pg.getClient().query(sql);
     return response.rows;
   }
 }
