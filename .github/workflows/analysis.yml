@@ -140,6 +140,7 @@ jobs:
           sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
 
       - name: Run integration tests
         env:
@@ -160,5 +161,9 @@ jobs:
           APP_SESSION_SECRET: null
           APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
+          KC_BOT_CLIENT: pdc-bot
+          KC_BOT_CLIENT_SECRET: so_secret_000
+          KC_ADMIN_CLIENT: pdc-manager
+          KC_ADMIN_CLIENT_SECRET: so_secret_000
         run: just ci_test_integration
         working-directory: api
