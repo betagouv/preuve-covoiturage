@@ -28,7 +28,7 @@
       "rootUrl": "${PDC_URL}",
       "adminUrl": "${PDC_URL}",
       "baseUrl": "${PDC_URL}",
-      "secret": "${TODO}",
+      "secret": "${PDC_KC_CLIENT_SECRET}",
       "redirectUris": [
         "${PDC_URL}/*"
       ],

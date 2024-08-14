@@ -124,8 +124,8 @@ export class KeycloakManager {
     try {
       await this.client.users.del({ id });
     } catch (error) {
-      logger.error("Error creating user in Keycloak", error);
-      throw new Error("Create user failed");
+      logger.error("Error deleting user in Keycloak", error);
+      throw new Error("Delete user failed");
     }
   }
 }
