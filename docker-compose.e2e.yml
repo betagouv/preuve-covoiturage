@@ -41,7 +41,7 @@ services:
       KC_DB: postgres
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
-      KC_DB_URL: "jdbc:postgresql://postgres:5432/local"
+      KC_DB_URL: "jdbc:postgresql://postgres:5432/test"
       KC_REALM_NAME: covoiturage
       PDC_URL: http://app.covoiturage.test
       PDC_ADMIN_USERNAME: admin
