@@ -1,10 +1,10 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { monthList } from '@/helpers/lists';
 import { useApi } from '@/hooks/useApi';
 import { EvolDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import { useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -16,8 +16,8 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import { useContext } from 'react';
 import { Line } from 'react-chartjs-2';
-import DownloadButton from '@/components/observatoire/DownloadButton';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -68,7 +68,13 @@ export default function DistanceGraph({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour ce graphique...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <div className={fr.cx('fr-callout')}>
           <div className={fr.cx('fr-callout__title','fr-text--xl')}>
             {title}
