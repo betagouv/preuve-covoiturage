@@ -1,9 +1,6 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
 import process from "node:process";
-import Stream from "node:stream";
-import axiosRetry from "npm:axios-retry@^4";
-import axios from "npm:axios@^1.7";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
 export {
@@ -30,8 +27,6 @@ export { URL, URLSearchParams } from "node:url";
 export { isMainThread } from "node:worker_threads";
 export { createGunzip } from "node:zlib";
 export { faker } from "npm:@faker-js/faker@^8.4";
-export { AxiosError } from "npm:axios@^1.7";
-export type { AxiosInstance } from "npm:axios@^1.7";
 export { Command, InvalidArgumentError } from "npm:commander@^12.1";
 export { parse } from "npm:csv-parse@^5.5";
 export type { Options as CsvOptions } from "npm:csv-parse@^5.5";
@@ -211,8 +206,6 @@ export {
   AdmZip,
   ajvErrors,
   ajvKeywords,
-  axios,
-  axiosRetry,
   bodyParser,
   booleanPointInPolygon,
   cors,
@@ -244,7 +237,6 @@ export {
   rateLimit,
   RateLimitRedisStore,
   RedisStore,
-  Stream,
   StreamJsonFilter,
   StreamJsonStreamArray,
   xlsx,

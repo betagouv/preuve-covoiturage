@@ -1,9 +1,4 @@
-import {
-  axios,
-  axiosRetry,
-  HttpsAgent as Agent,
-  URLSearchParams,
-} from "@/deps.ts";
+import { URLSearchParams } from "@/deps.ts";
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { get } from "@/lib/object/index.ts";
 import {
@@ -16,15 +11,6 @@ import {
 export class EtalabBaseAdresseNationaleProvider
   implements GeoCoderInterface, InseeCoderInterface {
   protected domain = "https://api-adresse.data.gouv.fr";
-  private static agent = new Agent({ keepAlive: false });
-
-  constructor() {
-    axiosRetry(axios, {
-      retries: 3,
-      retryDelay: (retryCount) => retryCount * 2000,
-      retryCondition: (error) => (error.response?.status || 500) >= 400,
-    });
-  }
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const params = new URLSearchParams({
@@ -33,19 +19,17 @@ export class EtalabBaseAdresseNationaleProvider
       autocomplete: "0",
     });
 
-    const res = await axios.get(`${this.domain}/search`, {
-      params,
-      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
-    });
+    const response = await fetch(`${this.domain}/search?${params.toString()}`);
+    const data = await response.json();
 
-    if (!get(res, "data.features", []).length) {
+    if (!get(data, "data.features", [])?.length) {
       throw new NotFoundException();
     }
 
-    const [lon, lat] = get(res, "data.features.0.geometry.coordinates", [
+    const [lon, lat] = get(data, "data.features.0.geometry.coordinates", [
       null,
       null,
-    ]);
+    ]) as [number | null, number | null];
 
     if (!lon || !lat) {
       throw new NotFoundException(`Literal not found on BAN (${literal})`);
@@ -64,19 +48,17 @@ export class EtalabBaseAdresseNationaleProvider
       lon: lon.toString(),
     });
 
-    const res = await axios.get(`${this.domain}/reverse`, {
-      params,
-      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
-    });
+    const response = await fetch(`${this.domain}/reverse?${params.toString()}`);
+    const data = await response.json();
 
-    if (!get(res, "data.features", []).length) {
+    if (!get(data, "data.features", [])?.length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
-    const data = get(res, "data.features.0.properties.citycode", null);
-    if (!data) {
+    const citycode = get(data, "data.features.0.properties.citycode", null);
+    if (!citycode) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
-    return data;
+    return citycode;
   }
 }

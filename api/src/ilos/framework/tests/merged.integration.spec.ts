@@ -1,4 +1,3 @@
-import { axios } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -31,7 +30,7 @@ describe.skip("Merged integration", () => {
 
   let port: number;
 
-  function makeRPCCall(
+  async function makeRPCCall(
     port: number,
     req: Array<{ method: string; params?: any }>,
   ) {
@@ -57,12 +56,15 @@ describe.skip("Merged integration", () => {
         }
       }
 
-      return axios.post(`http://127.0.0.1:${port}`, data, {
+      const response = await fetch(`http://127.0.0.1:${port}`, {
+        method: "POST",
+        body: JSON.stringify(data),
         headers: {
           Accept: "application/json",
           "Content-type": "application/json",
         },
       });
+      return await response.json();
     } catch (e) {
       console.error(e.message, e.response.data);
     }

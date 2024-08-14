@@ -1,4 +1,4 @@
-import { axios, readFile } from "@/deps.ts";
+import { readFile } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -78,7 +78,10 @@ describe.skip("queue", () => {
     await stringCallerKernel.shutdown();
   });
 
-  function makeRPCNotify(port: number, req: { method: string; params?: any }) {
+  async function makeRPCNotify(
+    port: number,
+    req: { method: string; params?: any },
+  ) {
     try {
       const data = {
         jsonrpc: "2.0",
@@ -86,12 +89,15 @@ describe.skip("queue", () => {
         params: req.params,
       };
 
-      return axios.post(`http://127.0.0.1:${port}`, data, {
+      const response = await fetch(`http://127.0.0.1:${port}`, {
+        method: "POST",
+        body: JSON.stringify(data),
         headers: {
           Accept: "application/json",
           "Content-type": "application/json",
         },
       });
+      return await response.json();
     } catch (e) {
       console.error(e.message, e.response.data);
     }

@@ -1,4 +1,4 @@
-import { access, axios, mapshaper, mkdir, Readable } from "@/deps.ts";
+import { access, mapshaper, mkdir } from "@/deps.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import {
   getAllFiles,
@@ -117,18 +117,20 @@ export class FileManager implements FileManagerInterface {
     } catch (e) {
       // If file not found download it !
       try {
-        const response = await axios.get<Readable>(url, {
-          responseType: "stream",
-        });
-        await writeFile(response.data, filepath);
+        const response = await fetch(url);
+        if (!response.body) {
+          throw new Error();
+        }
+        await writeFile(response.body, filepath);
       } catch (e) {
         // If not found and have mirror, try download
         const mirrorUrl = await this.getMirrorUrl(url);
         if (mirrorUrl) {
-          const response = await axios.get<Readable>(mirrorUrl, {
-            responseType: "stream",
-          });
-          await writeFile(response.data, filepath);
+          const response = await fetch(mirrorUrl);
+          if (!response.body) {
+            throw new Error();
+          }
+          await writeFile(response.body, filepath);
         } else {
           throw e;
         }

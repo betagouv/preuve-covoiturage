@@ -1,4 +1,4 @@
-import { axios, AxiosError, mkdir, Readable, readFile, rm } from "@/deps.ts";
+import { mkdir, readFile, rm } from "@/deps.ts";
 import {
   afterAll,
   assert,
@@ -17,14 +17,14 @@ describe("File Manager", () => {
   const GEO_PERIMETER_TMP_DIR = "/tmp/perimeter-geo-test";
   const RESSOURCE_URL =
     "http://www.get.domaine.fr/system/files/documents/2022/09/file";
-  const axiosStub = sinon.stub(axios, "get");
+  const fetchStub = sinon.stub(window, "fetch");
   const FILE_CONTENT_STRING = "{}";
-  let READABLE_STREAM: Readable;
+  let READABLE_STREAM: ReadableStream;
   let fileManager: FileManager;
 
   afterAll(async () => {
     await rm(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
-    axiosStub.restore();
+    fetchStub.restore();
   });
 
   beforeEach(async () => {
@@ -36,11 +36,16 @@ describe("File Manager", () => {
       mirrorUrl: "https://s3.domain.fr/bucket",
     });
 
-    axiosStub.reset();
+    fetchStub.reset();
 
-    READABLE_STREAM = new Readable();
-    READABLE_STREAM.push(FILE_CONTENT_STRING);
-    READABLE_STREAM.push(null);
+    READABLE_STREAM = new ReadableStream({
+      start(controller) {
+        // Convert the text to a Uint8Array (or other suitable format) and enqueue it
+        controller.enqueue(new TextEncoder().encode(FILE_CONTENT_STRING));
+        // Close the stream after the text has been enqueued
+        controller.close();
+      },
+    });
   });
 
   it("should return ressource file if available", async () => {
@@ -58,13 +63,13 @@ describe("File Manager", () => {
     );
 
     // Assert
-    sinon.assert.notCalled(axiosStub);
+    sinon.assert.notCalled(fetchStub);
     assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
   });
 
   it("should download ressource url if not on fs", async () => {
     // Arrange
-    axiosStub.resolves({ data: READABLE_STREAM });
+    fetchStub.resolves({ data: READABLE_STREAM });
 
     // Act
     const filepath = await fileManager.download(
@@ -73,7 +78,7 @@ describe("File Manager", () => {
 
     // Assert
     sinon.assert.calledOnceWithExactly(
-      axiosStub,
+      fetchStub,
       RESSOURCE_URL,
       { responseType: "stream" },
     );
@@ -82,10 +87,10 @@ describe("File Manager", () => {
 
   it("should fallback to miror if any error code with download ressource", async () => {
     // Arrange
-    axiosStub.onCall(0).callsFake(() => {
-      throw new AxiosError("Invalid URL", "403");
+    fetchStub.onCall(0).callsFake(() => {
+      throw new Error("Invalid URL");
     });
-    axiosStub.onCall(1).resolves({ data: READABLE_STREAM });
+    fetchStub.onCall(1).resolves({ data: READABLE_STREAM });
 
     // Act
     const filepath = await fileManager.download(
@@ -93,9 +98,9 @@ describe("File Manager", () => {
     );
 
     // Assert
-    sinon.assert.calledTwice(axiosStub);
+    sinon.assert.calledTwice(fetchStub);
     assert(
-      axiosStub.getCall(0).calledWithExactly(
+      fetchStub.getCall(0).calledWithExactly(
         RESSOURCE_URL,
         {
           responseType: "stream",
@@ -103,7 +108,7 @@ describe("File Manager", () => {
       ),
     );
     assert(
-      axiosStub
+      fetchStub
         .getCall(1)
         .calledWithExactly(
           `${fileManager.mirrorUrl}/${await createHash(RESSOURCE_URL)}`,

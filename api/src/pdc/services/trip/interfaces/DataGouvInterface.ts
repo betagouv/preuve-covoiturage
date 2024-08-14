@@ -1,5 +1,3 @@
-import { InitHookInterface } from "@/ilos/common/index.ts";
-
 export enum Frequency {
   "unknown",
   "punctual",
@@ -114,7 +112,7 @@ export interface UploadedResource extends Resource {
   success: boolean;
 }
 
-export interface DataGouvProviderInterface extends InitHookInterface {
+export interface DataGouvProviderInterface {
   getDataset(slug: string): Promise<Dataset>;
   updateResource(datasetSlug: string, resource: Resource): Promise<Resource>;
   uploadDatasetResource(
