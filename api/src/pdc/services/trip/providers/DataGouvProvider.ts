@@ -1,4 +1,5 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { readFile } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
@@ -19,7 +20,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
   ): Promise<Response> {
     try {
       const baseURL = this.config.get("datagouv.baseURL");
-      const response = await fetch(
+      const response = await fetcher.raw(
         `${baseURL}/${url}`,
         {
           method,
@@ -31,9 +32,6 @@ export class DataGouvProvider implements DataGouvProviderInterface {
           body,
         },
       );
-      if (!response.ok) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
       return response;
     } catch (error) {
       logger.error(

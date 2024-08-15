@@ -1,5 +1,6 @@
 import { URLSearchParams } from "@/deps.ts";
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
@@ -16,15 +17,9 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       format: "json",
     });
 
-    const response = await fetch(
+    const response = await fetcher.get(
       `${this.domain}/communes?${params.toString()}`,
     );
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new NotFoundException(`Not found geo (${lat}, ${lon})`);
-      }
-      throw new Error(`HTTP Error ${response.status}`);
-    }
     let data = await response.json();
 
     if (!data.length) {
@@ -49,15 +44,9 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       fields: "centre",
       format: "json",
     });
-    const response = await fetch(
+    const response = await fetcher.get(
       `${this.domain}/communes?${params.toString()}`,
     );
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new NotFoundException(`Not found geo (${insee})`);
-      }
-      throw new Error(`HTTP Error ${response.status}`);
-    }
     let data = await response.json();
 
     if (!data.length) {

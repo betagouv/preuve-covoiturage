@@ -16,6 +16,7 @@ import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { env, env_or_default, setEnv } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Kernel } from "../Kernel.ts";
@@ -89,8 +90,7 @@ describe.skip("queue", () => {
         params: req.params,
       };
 
-      const response = await fetch(`http://127.0.0.1:${port}`, {
-        method: "POST",
+      const response = await fetcher.post(`http://127.0.0.1:${port}`, {
         body: JSON.stringify(data),
         headers: {
           Accept: "application/json",

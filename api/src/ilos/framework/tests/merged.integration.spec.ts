@@ -10,6 +10,7 @@ import {
 } from "@/dev_deps.ts";
 import { kernel as kernelDecorator } from "@/ilos/common/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { Kernel } from "../Kernel.ts";
 import { ServiceProvider as MathServiceProvider } from "./mock/MathService/ServiceProvider.ts";
 import { ServiceProvider as StringServiceProvider } from "./mock/StringService/ServiceProvider.ts";
@@ -56,8 +57,7 @@ describe.skip("Merged integration", () => {
         }
       }
 
-      const response = await fetch(`http://127.0.0.1:${port}`, {
-        method: "POST",
+      const response = await fetcher.post(`http://127.0.0.1:${port}`, {
         body: JSON.stringify(data),
         headers: {
           Accept: "application/json",

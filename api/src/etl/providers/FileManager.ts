@@ -10,6 +10,7 @@ import {
 } from "../helpers/index.ts";
 
 import { createHash } from "@/lib/crypto/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
@@ -117,8 +118,8 @@ export class FileManager implements FileManagerInterface {
     } catch (e) {
       // If file not found download it !
       try {
-        const response = await fetch(url);
-        if (!response.ok || !response.body) {
+        const response = await fetcher.get(url);
+        if (!response.body) {
           throw new Error(`Failed to dowload ${url}`);
         }
         await writeFile(response.body, filepath);
@@ -126,8 +127,8 @@ export class FileManager implements FileManagerInterface {
         // If not found and have mirror, try download
         const mirrorUrl = await this.getMirrorUrl(url);
         if (mirrorUrl) {
-          const response = await fetch(mirrorUrl);
-          if (!response.ok || !response.body) {
+          const response = await fetcher.get(mirrorUrl);
+          if (!response.body) {
             throw new Error(`Failed to dowload ${url}`);
           }
           await writeFile(response.body, filepath);

@@ -1,4 +1,4 @@
-import { assertEquals, describe, it, stub } from "@/dev_deps.ts";
+import { assertEquals, describe, it, sinon } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
   ParamsInterfaceV2,
@@ -14,7 +14,7 @@ describe("CreateActionV2", () => {
   // stub the kernel to avoid calling CreateActionV3
   // but get the converted params
   const kernel = new (class extends KernelInterfaceResolver {})();
-  stub(kernel, "call").callsFake(
+  sinon.stub(kernel, "call").callsFake(
     (_signature: string, params: unknown) =>
       new Promise((resolve) => resolve(params)),
   );

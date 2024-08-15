@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import {
@@ -22,12 +23,9 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     try {
       const query = `${start.lon},${start.lat};${end.lon},${end.lat}`;
 
-      const response = await fetch(
+      const response = await fetcher.get(
         `${this.domain}/route/v1/driving/${encodeURIComponent(query)}`,
       );
-      if (!response.ok) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
       const data = await response.json();
       const distance = get(data, "data.routes.0.distance", null) as
         | number

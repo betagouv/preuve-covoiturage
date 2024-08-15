@@ -1,5 +1,6 @@
 import { URLSearchParams } from "@/deps.ts";
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { get } from "@/lib/object/index.ts";
 import {
   GeoCoderInterface,
@@ -19,13 +20,9 @@ export class EtalabBaseAdresseNationaleProvider
       autocomplete: "0",
     });
 
-    const response = await fetch(`${this.domain}/search?${params.toString()}`);
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new NotFoundException(`Not found geo`);
-      }
-      throw new Error(`HTTP Error ${response.status}`);
-    }
+    const response = await fetcher.get(
+      `${this.domain}/search?${params.toString()}`,
+    );
     const data = await response.json();
 
     if (!get(data, "data.features", [])?.length) {
@@ -54,13 +51,9 @@ export class EtalabBaseAdresseNationaleProvider
       lon: lon.toString(),
     });
 
-    const response = await fetch(`${this.domain}/reverse?${params.toString()}`);
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new NotFoundException(`Not found geo`);
-      }
-      throw new Error(`HTTP Error ${response.status}`);
-    }
+    const response = await fetcher.get(
+      `${this.domain}/reverse?${params.toString()}`,
+    );
     const data = await response.json();
 
     if (!get(data, "data.features", [])?.length) {

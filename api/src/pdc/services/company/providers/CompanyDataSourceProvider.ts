@@ -9,6 +9,7 @@ import {
   CompanyDataSourceProviderInterfaceResolver,
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
@@ -23,20 +24,12 @@ export class CompanyDataSourceProvider
   async find(siret: string): Promise<CompanyInterface> {
     try {
       const { url, token } = this.config.get("dataSource");
-      const response = await fetch(`${url}/siret/${siret}`, {
+      const response = await fetcher.get(`${url}/siret/${siret}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
       });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new NotFoundException(`Company not found (${siret})`);
-        }
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-
       const data = await response.json();
 
       if (data.message) {
