@@ -25,11 +25,11 @@ export class EtalabBaseAdresseNationaleProvider
     );
     const data = await response.json();
 
-    if (!get(data, "data.features", [])?.length) {
+    if (!get(data, "features", [])?.length) {
       throw new NotFoundException();
     }
 
-    const [lon, lat] = get(data, "data.features.0.geometry.coordinates", [
+    const [lon, lat] = get(data, "features.0.geometry.coordinates", [
       null,
       null,
     ]) as [number | null, number | null];
@@ -56,11 +56,11 @@ export class EtalabBaseAdresseNationaleProvider
     );
     const data = await response.json();
 
-    if (!get(data, "data.features", [])?.length) {
+    if (!get(data, "features", [])?.length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
-    const citycode = get(data, "data.features.0.properties.citycode", null);
+    const citycode = get(data, "features.0.properties.citycode", null);
     if (!citycode) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
