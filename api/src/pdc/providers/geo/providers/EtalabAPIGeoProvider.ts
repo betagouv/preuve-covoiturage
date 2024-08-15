@@ -19,6 +19,12 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
     const response = await fetch(
       `${this.domain}/communes?${params.toString()}`,
     );
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new NotFoundException(`Not found geo (${lat}, ${lon})`);
+      }
+      throw new Error(`HTTP Error ${response.status}`);
+    }
     let data = await response.json();
 
     if (!data.length) {
@@ -46,6 +52,12 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
     const response = await fetch(
       `${this.domain}/communes?${params.toString()}`,
     );
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new NotFoundException(`Not found geo (${insee})`);
+      }
+      throw new Error(`HTTP Error ${response.status}`);
+    }
     let data = await response.json();
 
     if (!data.length) {

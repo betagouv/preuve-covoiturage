@@ -25,6 +25,9 @@ export class OSRMProvider implements RouteMetaProviderInterface {
       const response = await fetch(
         `${this.domain}/route/v1/driving/${encodeURIComponent(query)}`,
       );
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
       const data = await response.json();
       const distance = get(data, "data.routes.0.distance", null) as
         | number

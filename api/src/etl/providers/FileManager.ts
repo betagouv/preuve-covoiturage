@@ -118,8 +118,8 @@ export class FileManager implements FileManagerInterface {
       // If file not found download it !
       try {
         const response = await fetch(url);
-        if (!response.body) {
-          throw new Error();
+        if (!response.ok || !response.body) {
+          throw new Error(`Failed to dowload ${url}`);
         }
         await writeFile(response.body, filepath);
       } catch (e) {
@@ -127,8 +127,8 @@ export class FileManager implements FileManagerInterface {
         const mirrorUrl = await this.getMirrorUrl(url);
         if (mirrorUrl) {
           const response = await fetch(mirrorUrl);
-          if (!response.body) {
-            throw new Error();
+          if (!response.ok || !response.body) {
+            throw new Error(`Failed to dowload ${url}`);
           }
           await writeFile(response.body, filepath);
         } else {

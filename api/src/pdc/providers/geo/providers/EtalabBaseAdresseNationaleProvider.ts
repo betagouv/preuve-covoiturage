@@ -20,6 +20,12 @@ export class EtalabBaseAdresseNationaleProvider
     });
 
     const response = await fetch(`${this.domain}/search?${params.toString()}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new NotFoundException(`Not found geo`);
+      }
+      throw new Error(`HTTP Error ${response.status}`);
+    }
     const data = await response.json();
 
     if (!get(data, "data.features", [])?.length) {
@@ -49,6 +55,12 @@ export class EtalabBaseAdresseNationaleProvider
     });
 
     const response = await fetch(`${this.domain}/reverse?${params.toString()}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new NotFoundException(`Not found geo`);
+      }
+      throw new Error(`HTTP Error ${response.status}`);
+    }
     const data = await response.json();
 
     if (!get(data, "data.features", [])?.length) {

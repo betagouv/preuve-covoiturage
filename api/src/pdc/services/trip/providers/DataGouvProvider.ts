@@ -31,6 +31,9 @@ export class DataGouvProvider implements DataGouvProviderInterface {
           body,
         },
       );
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
       return response;
     } catch (error) {
       logger.error(

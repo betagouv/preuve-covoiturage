@@ -30,6 +30,13 @@ export class CompanyDataSourceProvider
         },
       });
 
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new NotFoundException(`Company not found (${siret})`);
+        }
+        throw new Error(`HTTP Error ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.message) {

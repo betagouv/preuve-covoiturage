@@ -51,6 +51,9 @@ export class KeycloakBotAuthenticator {
           body: d,
         },
       );
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
       const tokens: { access_token: string; expires_in: number } =
         await response.json();
       return { token: tokens.access_token, expires_in: tokens.expires_in };
