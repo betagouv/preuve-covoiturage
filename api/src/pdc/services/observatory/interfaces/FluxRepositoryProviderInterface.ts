@@ -1,10 +1,10 @@
-import type {
-  ParamsInterface as MonthlyFluxParamsInterface,
-  ResultInterface as MonthlyFluxResultInterface,
-} from "@/shared/observatory/flux/monthlyFlux.contract.ts";
-
 // eslint-disable-next-line max-len
 import type { ResultInterface as lastRecordMonthlyFluxResultInterface } from "@/shared/observatory/flux/lastRecordMonthlyFlux.contract.ts";
+
+import type {
+  ParamsInterface as GetFluxParamsInterface,
+  ResultInterface as GetFluxResultInterface,
+} from "@/shared/observatory/flux/getFlux.contract.ts";
 
 import type {
   ParamsInterface as EvolMonthlyFluxParamsInterface,
@@ -16,29 +16,20 @@ import type {
   ResultInterface as BestMonthlyFluxResultInterface,
 } from "@/shared/observatory/flux/bestMonthlyFlux.contract.ts";
 
-import type {
-  ParamsInterface as DeleteMonthlyFluxParamsInterface,
-  ParamsInterface as InsertMonthlyFluxParamsInterface,
-} from "@/shared/observatory/flux/insertMonthlyFlux.contract.ts";
-
 export type {
   BestMonthlyFluxParamsInterface,
   BestMonthlyFluxResultInterface,
-  DeleteMonthlyFluxParamsInterface,
   EvolMonthlyFluxParamsInterface,
   EvolMonthlyFluxResultInterface,
-  InsertMonthlyFluxParamsInterface,
+  GetFluxParamsInterface,
+  GetFluxResultInterface,
   lastRecordMonthlyFluxResultInterface,
-  MonthlyFluxParamsInterface,
-  MonthlyFluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
-  insertOneMonthFlux(params: InsertMonthlyFluxParamsInterface): Promise<void>;
-  deleteOneMonthFlux(params: DeleteMonthlyFluxParamsInterface): Promise<void>;
-  getMonthlyFlux(
-    params: MonthlyFluxParamsInterface,
-  ): Promise<MonthlyFluxResultInterface>;
+  getFlux(
+    params: GetFluxParamsInterface,
+  ): Promise<GetFluxResultInterface>;
   lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface>;
   getEvolMonthlyFlux(
     params: EvolMonthlyFluxParamsInterface,
@@ -50,25 +41,9 @@ export interface FluxRepositoryInterface {
 
 export abstract class FluxRepositoryInterfaceResolver
   implements FluxRepositoryInterface {
-  async insertOneMonthFlux(
-    params: InsertMonthlyFluxParamsInterface,
-  ): Promise<void> {
-    throw new Error();
-  }
-
-  async deleteOneMonthFlux(
-    params: DeleteMonthlyFluxParamsInterface,
-  ): Promise<void> {
-    throw new Error();
-  }
-
-  async refreshAllFlux(): Promise<void> {
-    throw new Error();
-  }
-
-  async getMonthlyFlux(
-    params: MonthlyFluxParamsInterface,
-  ): Promise<MonthlyFluxResultInterface> {
+  async getFlux(
+    params: GetFluxParamsInterface,
+  ): Promise<GetFluxResultInterface> {
     throw new Error();
   }
 

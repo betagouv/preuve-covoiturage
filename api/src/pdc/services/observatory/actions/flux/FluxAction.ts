@@ -1,15 +1,15 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from "@/shared/observatory/flux/monthlyFlux.schema.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/flux/monthlyFlux.contract.ts";
-import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
+} from "@/shared/observatory/flux/getFlux.contract.ts";
+import { alias } from "@/shared/observatory/flux/getFlux.schema.ts";
 import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
     alias,
   ]],
 })
-export class MonthlyFluxAction extends AbstractAction {
+export class FluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {
     super();
   }
@@ -29,6 +29,6 @@ export class MonthlyFluxAction extends AbstractAction {
       2020,
       new Date().getFullYear(),
     );
-    return this.repository.getMonthlyFlux(params);
+    return this.repository.getFlux(params);
   }
 }

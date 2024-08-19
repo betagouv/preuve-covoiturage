@@ -7,83 +7,92 @@ import {
 import {
   BestMonthlyFluxParamsInterface,
   BestMonthlyFluxResultInterface,
-  DeleteMonthlyFluxParamsInterface,
   EvolMonthlyFluxParamsInterface,
   EvolMonthlyFluxResultInterface,
   FluxRepositoryInterface,
   FluxRepositoryInterfaceResolver,
-  InsertMonthlyFluxParamsInterface,
+  GetFluxParamsInterface,
+  GetFluxResultInterface,
   lastRecordMonthlyFluxResultInterface,
-  MonthlyFluxParamsInterface,
-  MonthlyFluxResultInterface,
 } from "../interfaces/FluxRepositoryProviderInterface.ts";
 
 @provider({
   identifier: FluxRepositoryInterfaceResolver,
 })
 export class FluxRepositoryProvider implements FluxRepositoryInterface {
-  private readonly table = "observatoire.flux_by_month";
   private readonly perim_table = "geo.perimeters";
-  private readonly insert_procedure = "observatory.insert_monthly_flux";
-
+  private readonly table = (params: GetFluxParamsInterface) => {
+    if (params.month) {
+      return "observatoire.flux_by_month";
+    }
+    if (params.trimester) {
+      return "observatoire.flux_by_trimester";
+    }
+    if (params.semester) {
+      return "observatoire.flux_by_semester";
+    }
+    return "observatoire.flux_by_year";
+  };
   constructor(private pg: PostgresConnection) {}
-
-  async insertOneMonthFlux(
-    params: InsertMonthlyFluxParamsInterface,
-  ): Promise<void> {
-    await this.pg.getClient().query<any>({
-      values: [params.year, params.month],
-      text: `
-        CALL ${this.insert_procedure}($1, $2);
-      `,
-    });
-  }
-
-  async deleteOneMonthFlux(
-    params: DeleteMonthlyFluxParamsInterface,
-  ): Promise<void> {
-    await this.pg.getClient().query({
-      values: [params.year, params.month],
-      text: `
-        DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
-      `,
-    });
-  }
   // Retourne les données de la table observatory.monthly_flux pour le mois et l'année
   // et le type de territoire en paramètres
   // Paramètres optionnels observe et code pour filtrer les résultats sur un territoire
-  async getMonthlyFlux(
-    params: MonthlyFluxParamsInterface,
-  ): Promise<MonthlyFluxResultInterface> {
-    const sql = {
-      values: [params.year, params.month, params.code],
-      text: `SELECT 
-        l_territory_1 as ter_1, lng_1, lat_1,
-        l_territory_2 as ter_2, lng_2, lat_2,
+  async getFlux(
+    params: GetFluxParamsInterface,
+  ): Promise<GetFluxResultInterface> {
+    const tableName = this.table(params);
+    const observeParam = checkTerritoryParam(params.observe);
+    const typeParam = checkTerritoryParam(params.type);
+
+    const perimTableQuery = `
+      SELECT ${observeParam} 
+      FROM (
+        SELECT com, epci, aom, dep, reg, country 
+        FROM ${this.perim_table} 
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
+      ) t 
+      WHERE ${typeParam} = $2
+    `;
+
+    const conditions: string[] = [
+      `type = $3`, // Ajout dynamique du paramètre sécurisé pour "observe"
+      `(distance / journeys) <= 80`,
+      `(territory_1 IN (${perimTableQuery}) OR territory_2 IN (${perimTableQuery}))`,
+      `territory_1 <> territory_2`,
+      `year = $1`,
+    ];
+
+    const queryValues = [
+      params.year,
+      params.code,
+      observeParam,
+    ];
+
+    if (params.month) {
+      queryValues.push(params.month);
+      conditions.push(`month = $4`);
+    }
+    if (params.trimester) {
+      queryValues.push(params.trimester);
+      conditions.push(`trimester = $4`);
+    }
+    if (params.semester) {
+      queryValues.push(params.semester);
+      conditions.push(`semester = $4`);
+    }
+
+    const queryText = `
+      SELECT 
+        l_territory_1 AS ter_1, lng_1, lat_1,
+        l_territory_2 AS ter_2, lng_2, lat_2,
         passengers, distance, duration 
-      FROM ${this.table}
-      WHERE year = $1
-      AND month = $2
-      AND type = '${checkTerritoryParam(params.observe)}'
-      AND (distance/journeys) <= 80
-      ${
-        params.code
-          ? `AND (territory_1 IN (
-          SELECT ${
-            checkTerritoryParam(params.observe)
-          } FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
-          WHERE ${checkTerritoryParam(params.type)} = $3
-        ) OR territory_2 IN (
-          SELECT ${
-            checkTerritoryParam(params.observe)
-          } FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
-          WHERE ${checkTerritoryParam(params.type)} = $3
-        ))`
-          : ""
-      } 
-      AND territory_1 <> territory_2;`,
-    };
-    const response = await this.pg.getClient().query(sql);
+      FROM ${tableName}
+      WHERE ${conditions.join(" AND ")}
+    `;
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
+    });
     return response.rows;
   }
 
