@@ -10,10 +10,8 @@ import {
   ValidatorExtension,
   ValidatorMiddleware,
 } from "@/pdc/providers/validator/index.ts";
-import { InsertLastMonthDistributionAction } from "@/pdc/services/observatory/actions/distribution/InsertLastMonthDistributionAction.ts";
 import { JourneysByDistancesAction } from "@/pdc/services/observatory/actions/distribution/JourneysByDistancesAction.ts";
 import { JourneysByHoursAction } from "@/pdc/services/observatory/actions/distribution/JourneysByHoursAction.ts";
-import { RefreshAllDistributionAction } from "@/pdc/services/observatory/actions/distribution/RefreshAllDistributionAction.ts";
 import { BestFluxAction } from "@/pdc/services/observatory/actions/flux/BestFluxAction.ts";
 import { EvolFluxAction } from "@/pdc/services/observatory/actions/flux/EvolFluxAction.ts";
 import { FluxAction } from "@/pdc/services/observatory/actions/flux/FluxAction.ts";
@@ -42,7 +40,6 @@ import { MonthlyOccupationAction } from "./actions/occupation/MonthlyOccupationA
 import { RefreshAllOccupationAction } from "./actions/occupation/RefreshAllOccupationAction.ts";
 import { TerritoriesListAction } from "./actions/territories/TerritoriesListAction.ts";
 import { TerritoryNameAction } from "./actions/territories/TerritoryNameAction.ts";
-import { InsertCommand } from "./commands/InsertCommand.ts";
 import { config } from "./config/index.ts";
 import { DistributionRepositoryProvider } from "./providers/DistributionRepositoryProvider.ts";
 import { FluxRepositoryProvider } from "./providers/FluxRepositoryProvider.ts";
@@ -56,7 +53,7 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
 /* eslint-enable */
 @serviceProvider({
   config,
-  commands: [InsertCommand],
+  commands: [],
   providers: [
     DistributionRepositoryProvider,
     FluxRepositoryProvider,
@@ -89,7 +86,6 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     BestMonthlyTerritoriesAction,
     EvolFluxAction,
     EvolMonthlyOccupationAction,
-    InsertLastMonthDistributionAction,
     InsertLastMonthOccupationAction,
     JourneysByDistancesAction,
     JourneysByHoursAction,
@@ -97,7 +93,6 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     FluxAction,
     MonthlyKeyfiguresAction,
     MonthlyOccupationAction,
-    RefreshAllDistributionAction,
     RefreshAllOccupationAction,
     TerritoriesListAction,
     TerritoryNameAction,
