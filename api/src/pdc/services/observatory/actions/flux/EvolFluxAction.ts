@@ -1,14 +1,15 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-import { alias } from "@/shared/observatory/flux/bestMonthlyFlux.schema.ts";
+
+import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { FluxRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/FluxRepositoryProviderInterface.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/flux/bestMonthlyFlux.contract.ts";
-import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
-import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+} from "@/shared/observatory/flux/getEvolFlux.contract.ts";
+import { alias } from "@/shared/observatory/flux/getEvolFlux.schema.ts";
 
 @handler({
   ...handlerConfig,
@@ -17,7 +18,7 @@ import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
     alias,
   ]],
 })
-export class BestMonthlyFluxAction extends AbstractAction {
+export class EvolFluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {
     super();
   }
@@ -28,6 +29,6 @@ export class BestMonthlyFluxAction extends AbstractAction {
       2020,
       new Date().getFullYear(),
     );
-    return this.repository.getBestMonthlyFlux(params);
+    return this.repository.getEvolFlux(params);
   }
 }

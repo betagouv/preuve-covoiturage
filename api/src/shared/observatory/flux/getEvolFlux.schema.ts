@@ -1,10 +1,10 @@
-import { perimeterTypes } from "@/shared/geo/shared/Perimeter.ts";
+import { indicTypes, perimeterTypes } from "@/shared/geo/shared/Perimeter.ts";
 
-export const alias = "observatory.getFlux";
+export const alias = "observatory.getEvolFlux";
 export const schema = {
   type: "object",
   additionalProperties: false,
-  required: ["year", "type", "observe", "code"],
+  required: ["year", "type", "code", "indic"],
   properties: {
     year: {
       type: "integer",
@@ -29,10 +29,6 @@ export const schema = {
       type: "string",
       enum: perimeterTypes,
     },
-    observe: {
-      type: "string",
-      enum: perimeterTypes,
-    },
     code: {
       anyOf: [
         { macro: "insee" },
@@ -40,6 +36,16 @@ export const schema = {
         { macro: "country" },
         { macro: "siren" },
       ],
+    },
+    indic: {
+      type: "string",
+      enum: indicTypes,
+    },
+    past: {
+      type: "string",
+      minLength: 1,
+      maxLength: 2,
+      default: "2",
     },
   },
 };

@@ -25,7 +25,7 @@ const Table = styled(TableStyled)(
 export default function BestFluxTable({ title, limit}: { title: string, limit: number }) {
   const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
+  const url = `${apiUrl}/best-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
   const { data, error, loading } = useApi<BestFluxDataInterface[]>(url);
   const dataTable = data ? data.map(d => [`${d.l_territory_1} - ${d.l_territory_2}`, d.journeys]) : []
 

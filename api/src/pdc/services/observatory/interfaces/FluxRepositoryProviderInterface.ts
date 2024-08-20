@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-len
-import type { ResultInterface as lastRecordMonthlyFluxResultInterface } from "@/shared/observatory/flux/lastRecordMonthlyFlux.contract.ts";
 
 import type {
   ParamsInterface as GetFluxParamsInterface,
@@ -7,36 +6,34 @@ import type {
 } from "@/shared/observatory/flux/getFlux.contract.ts";
 
 import type {
-  ParamsInterface as EvolMonthlyFluxParamsInterface,
-  ResultInterface as EvolMonthlyFluxResultInterface,
-} from "@/shared/observatory/flux/evolMonthlyFlux.contract.ts";
+  ParamsInterface as GetEvolFluxParamsInterface,
+  ResultInterface as GetEvolFluxResultInterface,
+} from "@/shared/observatory/flux/getEvolFlux.contract.ts";
 
 import type {
-  ParamsInterface as BestMonthlyFluxParamsInterface,
-  ResultInterface as BestMonthlyFluxResultInterface,
-} from "@/shared/observatory/flux/bestMonthlyFlux.contract.ts";
+  ParamsInterface as GetBestFluxParamsInterface,
+  ResultInterface as GetBestFluxResultInterface,
+} from "@/shared/observatory/flux/getBestFlux.contract.ts";
 
 export type {
-  BestMonthlyFluxParamsInterface,
-  BestMonthlyFluxResultInterface,
-  EvolMonthlyFluxParamsInterface,
-  EvolMonthlyFluxResultInterface,
+  GetBestFluxParamsInterface,
+  GetBestFluxResultInterface,
+  GetEvolFluxParamsInterface,
+  GetEvolFluxResultInterface,
   GetFluxParamsInterface,
   GetFluxResultInterface,
-  lastRecordMonthlyFluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
   getFlux(
     params: GetFluxParamsInterface,
   ): Promise<GetFluxResultInterface>;
-  lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface>;
-  getEvolMonthlyFlux(
-    params: EvolMonthlyFluxParamsInterface,
-  ): Promise<EvolMonthlyFluxResultInterface>;
-  getBestMonthlyFlux(
-    params: BestMonthlyFluxParamsInterface,
-  ): Promise<BestMonthlyFluxResultInterface>;
+  getEvolFlux(
+    params: GetEvolFluxParamsInterface,
+  ): Promise<GetEvolFluxResultInterface>;
+  getBestFlux(
+    params: GetBestFluxParamsInterface,
+  ): Promise<GetBestFluxResultInterface>;
 }
 
 export abstract class FluxRepositoryInterfaceResolver
@@ -47,19 +44,15 @@ export abstract class FluxRepositoryInterfaceResolver
     throw new Error();
   }
 
-  async lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface> {
+  async getEvolFlux(
+    params: GetEvolFluxParamsInterface,
+  ): Promise<GetEvolFluxResultInterface> {
     throw new Error();
   }
 
-  async getEvolMonthlyFlux(
-    params: EvolMonthlyFluxParamsInterface,
-  ): Promise<EvolMonthlyFluxResultInterface> {
-    throw new Error();
-  }
-
-  async getBestMonthlyFlux(
-    params: BestMonthlyFluxParamsInterface,
-  ): Promise<BestMonthlyFluxResultInterface> {
+  async getBestFlux(
+    params: GetBestFluxParamsInterface,
+  ): Promise<GetBestFluxResultInterface> {
     throw new Error();
   }
 }

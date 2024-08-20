@@ -946,9 +946,8 @@ export class HttpTransport implements TransportInterface {
       Object.entries({
         monthlyKeyfigures: "monthly-keyfigures",
         getFlux: "flux",
-        evolMonthlyFlux: "evol-monthly-flux",
-        bestMonthlyFlux: "best-monthly-flux",
-        lastRecordMonthlyFlux: "monthly-flux/last",
+        getEvolFlux: "evol-flux",
+        getBestFlux: "best-flux",
         monthlyOccupation: "monthly-occupation",
         evolMonthlyOccupation: "evol-monthly-occupation",
         bestMonthlyTerritories: "best-monthly-territories",

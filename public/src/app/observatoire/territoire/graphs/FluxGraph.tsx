@@ -34,7 +34,7 @@ export default function TrajetsGraph({ title,indic }: { title: string, indic:Flu
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-flux?indic=${indic}&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const url = `${apiUrl}/evol-flux?indic=${indic}&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<EvolFluxDataInterface[]>(url);
   const dataset = data?.map((d) => d[`${indic}`]).reverse();
   const chartData = () => {

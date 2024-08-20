@@ -1,10 +1,10 @@
 import { perimeterTypes } from "@/shared/geo/shared/Perimeter.ts";
 
-export const alias = "observatory.getFlux";
+export const alias = "observatory.getBestFlux";
 export const schema = {
   type: "object",
   additionalProperties: false,
-  required: ["year", "type", "observe", "code"],
+  required: ["year", "type", "code"],
   properties: {
     year: {
       type: "integer",
@@ -29,10 +29,6 @@ export const schema = {
       type: "string",
       enum: perimeterTypes,
     },
-    observe: {
-      type: "string",
-      enum: perimeterTypes,
-    },
     code: {
       anyOf: [
         { macro: "insee" },
@@ -40,6 +36,12 @@ export const schema = {
         { macro: "country" },
         { macro: "siren" },
       ],
+    },
+    limit: {
+      type: "integer",
+      minimum: 5,
+      maximum: 100,
+      default: 10,
     },
   },
 };
