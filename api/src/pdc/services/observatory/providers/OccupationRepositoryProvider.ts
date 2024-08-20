@@ -1,95 +1,115 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
-  BestMonthlyTerritoriesParamsInterface,
-  BestMonthlyTerritoriesResultInterface,
-  DeleteMonthlyOccupationParamsInterface,
-  EvolMonthlyOccupationParamsInterface,
-  EvolMonthlyOccupationResultInterface,
-  InsertMonthlyOccupationParamsInterface,
-  MonthlyOccupationParamsInterface,
-  MonthlyOccupationResultInterface,
-  OccupationRepositoryInterface,
-  OccupationRepositoryInterfaceResolver,
-} from "../interfaces/OccupationRepositoryProviderInterface.ts";
-import {
   checkIndicParam,
   checkTerritoryParam,
-} from "../helpers/checkParams.ts";
+} from "@/pdc/services/observatory/helpers/checkParams.ts";
+import {
+  BestTerritoriesParamsInterface,
+  BestTerritoriesResultInterface,
+  EvolOccupationParamsInterface,
+  EvolOccupationResultInterface,
+  OccupationParamsInterface,
+  OccupationRepositoryInterface,
+  OccupationRepositoryInterfaceResolver,
+  OccupationResultInterface,
+} from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
 
 @provider({
   identifier: OccupationRepositoryInterfaceResolver,
 })
 export class OccupationRepositoryProvider
   implements OccupationRepositoryInterface {
-  private readonly table = "observatory.monthly_occupation";
+  private readonly table = (
+    params:
+      | OccupationParamsInterface
+      | EvolOccupationParamsInterface
+      | BestTerritoriesParamsInterface,
+  ) => {
+    if (params.month) {
+      return "observatoire.occupation_by_month";
+    }
+    if (params.trimester) {
+      return "observatoire.occupation_by_trimester";
+    }
+    if (params.semester) {
+      return "observatoire.occupation_by_semester";
+    }
+    return "observatoire.occupation_by_year";
+  };
   private readonly perim_table = "geo.perimeters";
-  private readonly insert_procedure = "observatory.insert_monthly_occupation";
 
   constructor(private pg: PostgresConnection) {}
 
-  async insertOneMonthOccupation(
-    params: InsertMonthlyOccupationParamsInterface,
-  ): Promise<void> {
-    await this.pg.getClient().query<any>({
-      values: [params.year, params.month],
-      text: `
-        CALL ${this.insert_procedure}($1, $2);
-      `,
-    });
-  }
+  async getOccupation(
+    params: OccupationParamsInterface,
+  ): Promise<OccupationResultInterface> {
+    const tableName = this.table(params);
+    const observeParam = checkTerritoryParam(params.observe);
+    const typeParam = checkTerritoryParam(params.type);
+    const selectedVar = [
+      "year",
+      "type",
+      "code",
+      "libelle",
+      "journeys",
+      "occupation_rate",
+      "geom",
+    ];
+    const perimTableQuery = `
+      SELECT ${observeParam} 
+      FROM (
+        SELECT com, epci, aom, dep, reg, country 
+        FROM ${this.perim_table} 
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
+      ) t 
+      WHERE ${typeParam} = $2
+    `;
 
-  async deleteOneMonthOccupation(
-    params: DeleteMonthlyOccupationParamsInterface,
-  ): Promise<void> {
-    await this.pg.getClient().query<any>({
-      values: [params.year, params.month],
-      text: `
-        DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
-      `,
+    const conditions = [
+      `year = $1`,
+      `type = $3`,
+      `code IN (${perimTableQuery})`,
+      `direction = $4`,
+    ];
+
+    const queryValues = [
+      params.year,
+      params.code,
+      observeParam,
+      params.direction,
+    ];
+
+    if (params.month) {
+      queryValues.push(params.month);
+      conditions.push(`month = $5`);
+    }
+    if (params.trimester) {
+      queryValues.push(params.trimester);
+      conditions.push(`trimester = $5`);
+    }
+    if (params.semester) {
+      queryValues.push(params.semester);
+      conditions.push(`semester = $5`);
+    }
+
+    const queryText = `
+      SELECT 
+      ${selectedVar.join(", ")}
+      FROM ${tableName}
+      WHERE ${conditions.join(" AND ")}
+    `;
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
     });
-  }
-  // Retourne les données alimentant la carte de flux à partir de la table observatory.monthly_occupation
-  // pour le mois et l'année et le type de territoire en paramètres
-  // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
-  async getMonthlyOccupation(
-    params: MonthlyOccupationParamsInterface,
-  ): Promise<MonthlyOccupationResultInterface> {
-    const sql = {
-      values: [params.year, params.month, params.code],
-      text: `SELECT year, month, type,
-      territory, l_territory, journeys, trips,
-      occupation_rate, geom
-      FROM ${this.table}
-      WHERE year = $1
-      AND month = $2
-      AND type = '${
-        checkTerritoryParam(params.observe)
-      }'::observatory.monthly_occupation_type_enum
-      ${
-        params.code
-          ? `AND territory IN (
-          SELECT ${
-            checkTerritoryParam(params.observe)
-          } FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
-          WHERE ${checkTerritoryParam(params.type)} = $3
-        )`
-          : ""
-      };`,
-    };
-    const response: {
-      rowCount: number;
-      rows: MonthlyOccupationResultInterface;
-    } = await this.pg
-      .getClient()
-      .query<any>(sql);
     return response.rows;
   }
 
-  // Retourne les données pour les graphiques construits à partir de la table observatory.monthly_occupation
-  async getEvolMonthlyOccupation(
-    params: EvolMonthlyOccupationParamsInterface,
-  ): Promise<EvolMonthlyOccupationResultInterface> {
+  // Retourne les données pour les graphiques construits à partir de la table observatory._occupation
+  async getEvolOccupation(
+    params: EvolOccupationParamsInterface,
+  ): Promise<EvolOccupationResultInterface> {
     const checkArray = [
       "journeys",
       "trips",
@@ -106,7 +126,7 @@ export class OccupationRepositoryProvider
       }
         FROM ${this.table}
         WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
-        AND type = $1::observatory.monthly_occupation_type_enum
+        AND type = $1::observatory._occupation_type_enum
         AND territory = $2
         ORDER BY (year,month) DESC
         LIMIT $3;
@@ -114,7 +134,7 @@ export class OccupationRepositoryProvider
     };
     const response: {
       rowCount: number;
-      rows: EvolMonthlyOccupationResultInterface;
+      rows: EvolOccupationResultInterface;
     } = await this.pg
       .getClient()
       .query<any>(sql);
@@ -122,9 +142,9 @@ export class OccupationRepositoryProvider
   }
 
   // Retourne les données pour le top 10 des territoires dans le dashboard
-  async getBestMonthlyTerritories(
-    params: BestMonthlyTerritoriesParamsInterface,
-  ): Promise<BestMonthlyTerritoriesResultInterface> {
+  async getBestTerritories(
+    params: BestTerritoriesParamsInterface,
+  ): Promise<BestTerritoriesResultInterface> {
     const sql = {
       values: [
         params.year,
@@ -138,7 +158,7 @@ export class OccupationRepositoryProvider
         FROM ${this.table}
         WHERE year = $1
         AND month = $2
-        AND type = $3::observatory.monthly_occupation_type_enum
+        AND type = $3::observatory._occupation_type_enum
         AND territory IN (
           SELECT ${
         checkTerritoryParam(params.observe)
@@ -151,7 +171,7 @@ export class OccupationRepositoryProvider
     };
     const response: {
       rowCount: number;
-      rows: BestMonthlyTerritoriesResultInterface;
+      rows: BestTerritoriesResultInterface;
     } = await this.pg
       .getClient()
       .query<any>(sql);

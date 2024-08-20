@@ -25,7 +25,7 @@ const Table = styled(TableStyled)(
 export default function BestTerritoriesTable({ title, limit }: { title: string, limit: number }) {
   const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-monthly-territories?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
+  const url = `${apiUrl}/best-territories?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
   const { data, error, loading } = useApi<BestTerritoriesDataInterface[]>(url);
   const dataTable = data ? data.map(d => [d.l_territory, d.journeys]) : []
 

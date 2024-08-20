@@ -1,15 +1,15 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from "@/shared/observatory/occupation/monthlyOccupation.schema.ts";
+import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/occupation/monthlyOccupation.contract.ts";
-import { OccupationRepositoryInterfaceResolver } from "../../interfaces/OccupationRepositoryProviderInterface.ts";
-import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+} from "../../../../../shared/observatory/occupation/getBestTerritories.contract.ts";
+import { alias } from "../../../../../shared/observatory/occupation/getBestTerritories.schema.ts";
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
     alias,
   ]],
 })
-export class MonthlyOccupationAction extends AbstractAction {
+export class BestTerritoriesAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {
     super();
   }
@@ -29,6 +29,6 @@ export class MonthlyOccupationAction extends AbstractAction {
       2020,
       new Date().getFullYear(),
     );
-    return this.repository.getMonthlyOccupation(params);
+    return this.repository.getBestTerritories(params);
   }
 }

@@ -34,7 +34,7 @@ export default function TrajetsGraph({ title,indic }: { title: string, indic:Occ
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-occupation?indic=${indic}&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const url = `${apiUrl}/evol-occupation?indic=${indic}&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<EvolOccupationDataInterface[]>(url);
   const dataset =data?.map((d) => d[`${indic}`]).reverse();
 

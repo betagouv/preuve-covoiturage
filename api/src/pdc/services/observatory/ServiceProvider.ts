@@ -28,16 +28,14 @@ import { binding as CampaignsBinding } from "@/shared/observatory/incentiveCampa
 import { binding as AiresCovoiturageBinding } from "@/shared/observatory/infra/airesCovoiturage.schema.ts";
 import { binding as MonthlyKeyfiguresBinding } from "@/shared/observatory/keyfigures/monthlyKeyfigures.schema.ts";
 import { binding as LocationBinding } from "@/shared/observatory/location/location.schema.ts";
-import { binding as BestMonthlyTerritoriesBinding } from "@/shared/observatory/occupation/bestMonthlyTerritories.schema.ts";
-import { binding as EvolMonthlyOccupationBinding } from "@/shared/observatory/occupation/evolMonthlyOccupation.schema.ts";
-import { binding as MonthlyOccupationBinding } from "@/shared/observatory/occupation/monthlyOccupation.schema.ts";
 import { binding as TerritoriesListBinding } from "@/shared/observatory/territories/list.schema.ts";
 import { binding as TerritoryNameBinding } from "@/shared/observatory/territories/name.schema.ts";
-import { BestMonthlyTerritoriesAction } from "./actions/occupation/BestMonthlyTerritoriesAction.ts";
-import { EvolMonthlyOccupationAction } from "./actions/occupation/EvolMonthlyOccupationAction.ts";
-import { InsertLastMonthOccupationAction } from "./actions/occupation/InsertLastMonthOccupationAction.ts";
-import { MonthlyOccupationAction } from "./actions/occupation/MonthlyOccupationAction.ts";
-import { RefreshAllOccupationAction } from "./actions/occupation/RefreshAllOccupationAction.ts";
+import { binding as GetBestTerritoriesBinding } from "../../../shared/observatory/occupation/getBestTerritories.schema.ts";
+import { binding as GetEvolOccupationBinding } from "../../../shared/observatory/occupation/getEvolOccupation.schema.ts";
+import { binding as GetOccupationBinding } from "../../../shared/observatory/occupation/getOccupation.schema.ts";
+import { BestTerritoriesAction } from "./actions/occupation/BestTerritoriesAction.ts";
+import { EvolOccupationAction } from "./actions/occupation/EvolOccupationAction.ts";
+import { OccupationAction } from "./actions/occupation/OccupationAction.ts";
 import { TerritoriesListAction } from "./actions/territories/TerritoriesListAction.ts";
 import { TerritoryNameAction } from "./actions/territories/TerritoryNameAction.ts";
 import { config } from "./config/index.ts";
@@ -67,15 +65,15 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
   validator: [
     AiresCovoiturageBinding,
     GetBestFluxBinding,
-    BestMonthlyTerritoriesBinding,
+    GetBestTerritoriesBinding,
     GetEvolFluxBinding,
-    EvolMonthlyOccupationBinding,
+    GetEvolOccupationBinding,
     JourneysByDistancesBinding,
     JourneysByHoursBinding,
     LocationBinding,
     GetFluxBinding,
     MonthlyKeyfiguresBinding,
-    MonthlyOccupationBinding,
+    GetOccupationBinding,
     TerritoriesListBinding,
     TerritoryNameBinding,
     CampaignsBinding,
@@ -83,17 +81,15 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
   handlers: [
     AiresCovoiturageAction,
     BestFluxAction,
-    BestMonthlyTerritoriesAction,
+    BestTerritoriesAction,
     EvolFluxAction,
-    EvolMonthlyOccupationAction,
-    InsertLastMonthOccupationAction,
+    EvolOccupationAction,
     JourneysByDistancesAction,
     JourneysByHoursAction,
     LocationAction,
     FluxAction,
     MonthlyKeyfiguresAction,
-    MonthlyOccupationAction,
-    RefreshAllOccupationAction,
+    OccupationAction,
     TerritoriesListAction,
     TerritoryNameAction,
     CampaignsAction,
