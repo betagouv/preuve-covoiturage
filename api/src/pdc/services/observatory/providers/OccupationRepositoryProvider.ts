@@ -110,34 +110,53 @@ export class OccupationRepositoryProvider
   async getEvolOccupation(
     params: EvolOccupationParamsInterface,
   ): Promise<EvolOccupationResultInterface> {
-    const checkArray = [
+    const tableName = this.table(params);
+    const indics = [
       "journeys",
       "trips",
       "has_incentive",
       "occupation_rate",
     ];
-    const start = Number(params.year + String(params.month).padStart(2, "0"));
+    const indicParam = checkIndicParam(params.indic, indics, "journeys");
+    const typeParam = checkTerritoryParam(params.type);
     const limit = params.past ? Number(params.past) * 12 + 1 : 25;
-    const sql = {
-      values: [checkTerritoryParam(params.type), params.code, limit],
-      text: `
-        SELECT year, month, ${
-        checkIndicParam(params.indic, checkArray, "journeys")
-      }
-        FROM ${this.table}
-        WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
-        AND type = $1::observatory._occupation_type_enum
-        AND territory = $2
-        ORDER BY (year,month) DESC
-        LIMIT $3;
-      `,
-    };
-    const response: {
-      rowCount: number;
-      rows: EvolOccupationResultInterface;
-    } = await this.pg
-      .getClient()
-      .query<any>(sql);
+    const queryValues = [typeParam, params.code, limit];
+    const selectedVar = [
+      "year",
+      `${indicParam}`,
+    ];
+    const conditions = [
+      `type = $1`,
+      `code = $2`,
+      `direction = 'both'`
+    ];
+    const orderBy = [
+      "year",
+    ];
+    if (params.month) {
+      selectedVar.push("month");
+      orderBy.push("month");
+    }
+    if (params.trimester) {
+      selectedVar.push("trimester");
+      orderBy.push("trimester");
+    }
+    if (params.semester) {
+      selectedVar.push("semester");
+      orderBy.push("semester");
+    }
+    const queryText = `
+      SELECT ${selectedVar.join(", ")}
+      FROM ${tableName}
+      WHERE ${conditions.join(" AND ")}
+      ORDER BY (${orderBy.join(", ")}) DESC
+      LIMIT $3;
+    `;
+
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
+    });
     return response.rows;
   }
 
@@ -145,36 +164,49 @@ export class OccupationRepositoryProvider
   async getBestTerritories(
     params: BestTerritoriesParamsInterface,
   ): Promise<BestTerritoriesResultInterface> {
-    const sql = {
-      values: [
-        params.year,
-        params.month,
-        params.observe,
-        params.code,
-        params.limit,
-      ],
-      text: `
-        SELECT territory, l_territory, journeys
-        FROM ${this.table}
-        WHERE year = $1
-        AND month = $2
-        AND type = $3::observatory._occupation_type_enum
-        AND territory IN (
-          SELECT ${
-        checkTerritoryParam(params.observe)
-      } FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
-          WHERE ${checkTerritoryParam(params.type)} = $4
-        ) 
-        ORDER BY journeys DESC
-        LIMIT $5;
-      `,
-    };
-    const response: {
-      rowCount: number;
-      rows: BestTerritoriesResultInterface;
-    } = await this.pg
-      .getClient()
-      .query<any>(sql);
+    const tableName = this.table(params);
+    const typeParam = checkTerritoryParam(params.type);
+    const observeParam = checkTerritoryParam(params.observe);
+    const queryValues = [params.year, params.code, observeParam, params.limit];
+    const perimTableQuery = `
+      SELECT ${observeParam} 
+      FROM (
+        SELECT com, epci, aom, dep, reg, country 
+        FROM ${this.perim_table} 
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
+      ) t 
+      WHERE ${typeParam} = $2
+    `;
+    const conditions = [
+      `year = $1`,
+      `type = $3`,
+      `direction = 'both'`,
+      `code IN (${perimTableQuery})`,
+    ];
+    if (params.month) {
+      queryValues.push(params.month);
+      conditions.push(`month = $5`);
+    }
+    if (params.trimester) {
+      queryValues.push(params.trimester);
+      conditions.push(`trimester = $5`);
+    }
+    if (params.semester) {
+      queryValues.push(params.semester);
+      conditions.push(`semester = $5`);
+    }
+    const queryText = `
+      SELECT code, libelle, journeys
+      FROM ${tableName}
+      WHERE ${conditions.join(" AND ")}
+      ORDER BY journeys DESC
+      LIMIT $4;
+    `;
+
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
+    });
     return response.rows;
   }
 }
