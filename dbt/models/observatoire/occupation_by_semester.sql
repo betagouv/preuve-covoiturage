@@ -34,7 +34,7 @@ SELECT
   round(
     (drivers_distance + passengers_distance) / drivers_distance, 2
   )             AS occupation_rate,
-  b.geom
+  st_asgeojson(b.geom,6) as geom
 FROM sum_distance AS a
 LEFT JOIN
   (

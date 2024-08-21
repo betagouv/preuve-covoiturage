@@ -202,6 +202,11 @@ LEFT JOIN
     SELECT territory, type, l_territory, geom
     FROM {{ source('geo','perimeters_centroid') }}
     WHERE year = geo.get_latest_millesime()
+    UNION
+    SELECT territory, 'com', l_territory, geom
+    FROM {{ source('geo','perimeters_centroid') }}
+    WHERE year = geo.get_latest_millesime()
+    AND type = 'country'
   ) AS b
   ON concat(a.territory_1, a.type) = concat(b.territory, b.type)
 LEFT JOIN
@@ -209,6 +214,11 @@ LEFT JOIN
     SELECT territory, type, l_territory, geom
     FROM {{ source('geo','perimeters_centroid') }}
     WHERE year = geo.get_latest_millesime()
+    UNION
+    SELECT territory, 'com', l_territory, geom
+    FROM {{ source('geo','perimeters_centroid') }}
+    WHERE year = geo.get_latest_millesime()
+    AND type = 'country'
   ) AS c
   ON concat(a.territory_2, a.type) = concat(c.territory, c.type)
 ORDER BY a.territory_1, a.territory_2

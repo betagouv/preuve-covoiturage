@@ -111,6 +111,11 @@ flux_agg AS (
       SELECT arr,dep
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
+      UNION
+      SELECT territory, 'com', l_territory, geom
+      FROM {{ source('geo','perimeters_centroid') }}
+      WHERE year = geo.get_latest_millesime()
+      AND type = 'country'
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
@@ -118,6 +123,11 @@ flux_agg AS (
       SELECT arr,dep
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
+      UNION
+      SELECT territory, 'com', l_territory, geom
+      FROM {{ source('geo','perimeters_centroid') }}
+      WHERE year = geo.get_latest_millesime()
+      AND type = 'country'
     ) AS c
     ON a.to = c.arr
   GROUP BY 1, 2, 4, 5

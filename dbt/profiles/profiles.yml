@@ -1,4 +1,4 @@
-covoiturage:
+default:
   target: dev
   outputs:
     prod:
