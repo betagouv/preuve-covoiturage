@@ -1,10 +1,10 @@
 import { perimeterTypes } from '../../geo/shared/Perimeter.ts';
 
-export const alias = 'observatory.monthlyKeyfigures';
+export const alias = 'observatory.getKeyfigures';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['year', 'month', 'type', 'code'],
+  required: ['year', 'type', 'code'],
   properties: {
     year: {
       type: 'integer',
@@ -14,6 +14,16 @@ export const schema = {
       type: 'integer',
       minimum: 1,
       maximum: 12,
+    },
+    trimester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 4,
+    },
+    semester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 2,
     },
     type: {
       type: 'string',

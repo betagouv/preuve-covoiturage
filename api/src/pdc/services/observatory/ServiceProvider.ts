@@ -17,7 +17,7 @@ import { EvolFluxAction } from "@/pdc/services/observatory/actions/flux/EvolFlux
 import { FluxAction } from "@/pdc/services/observatory/actions/flux/FluxAction.ts";
 import { CampaignsAction } from "@/pdc/services/observatory/actions/incentiveCampaigns/CampaignsAction.ts";
 import { AiresCovoiturageAction } from "@/pdc/services/observatory/actions/infra/AiresCovoiturageAction.ts";
-import { MonthlyKeyfiguresAction } from "@/pdc/services/observatory/actions/keyfigures/MonthlyKeyfiguresAction.ts";
+import { KeyfiguresAction } from "@/pdc/services/observatory/actions/keyfigures/KeyfiguresAction.ts";
 import { LocationAction } from "@/pdc/services/observatory/actions/location/LocationAction.ts";
 import { binding as JourneysByDistancesBinding } from "@/shared/observatory/distribution/journeysByDistances.schema.ts";
 import { binding as JourneysByHoursBinding } from "@/shared/observatory/distribution/journeysByHours.schema.ts";
@@ -26,7 +26,7 @@ import { binding as GetEvolFluxBinding } from "@/shared/observatory/flux/getEvol
 import { binding as GetFluxBinding } from "@/shared/observatory/flux/getFlux.schema.ts";
 import { binding as CampaignsBinding } from "@/shared/observatory/incentiveCampaigns/campaigns.schema.ts";
 import { binding as AiresCovoiturageBinding } from "@/shared/observatory/infra/airesCovoiturage.schema.ts";
-import { binding as MonthlyKeyfiguresBinding } from "@/shared/observatory/keyfigures/monthlyKeyfigures.schema.ts";
+import { binding as GetKeyfiguresBinding } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
 import { binding as LocationBinding } from "@/shared/observatory/location/location.schema.ts";
 import { binding as TerritoriesListBinding } from "@/shared/observatory/territories/list.schema.ts";
 import { binding as TerritoryNameBinding } from "@/shared/observatory/territories/name.schema.ts";
@@ -72,7 +72,7 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     JourneysByHoursBinding,
     LocationBinding,
     GetFluxBinding,
-    MonthlyKeyfiguresBinding,
+    GetKeyfiguresBinding,
     GetOccupationBinding,
     TerritoriesListBinding,
     TerritoryNameBinding,
@@ -88,7 +88,7 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     JourneysByHoursAction,
     LocationAction,
     FluxAction,
-    MonthlyKeyfiguresAction,
+    KeyfiguresAction,
     OccupationAction,
     TerritoriesListAction,
     TerritoryNameAction,

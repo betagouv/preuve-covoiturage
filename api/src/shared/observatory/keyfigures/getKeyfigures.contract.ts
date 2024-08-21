@@ -17,14 +17,16 @@ export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
   year: number;
-  month: number;
+  month?: number;
+  trimester?: number;
+  semester?: number;
   type: PerimeterType; //type de territoire selectionné
   code: INSEECode; //code insee du territoire
 }
 
 export const handlerConfig = {
   service: 'observatory',
-  method: 'monthlyKeyfigures',
+  method: 'getKeyfigures',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

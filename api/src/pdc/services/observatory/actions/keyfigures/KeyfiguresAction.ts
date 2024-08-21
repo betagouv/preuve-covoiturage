@@ -2,12 +2,12 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from "@/shared/observatory/keyfigures/monthlyKeyfigures.schema.ts";
+import { alias } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/keyfigures/monthlyKeyfigures.contract.ts";
+} from "@/shared/observatory/keyfigures/getKeyfigures.contract.ts";
 import { KeyfiguresRepositoryInterfaceResolver } from "../../interfaces/KeyfiguresRepositoryProviderInterface.ts";
 import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
 
@@ -18,7 +18,7 @@ import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
     alias,
   ]],
 })
-export class MonthlyKeyfiguresAction extends AbstractAction {
+export class KeyfiguresAction extends AbstractAction {
   constructor(private repository: KeyfiguresRepositoryInterfaceResolver) {
     super();
   }
@@ -29,6 +29,6 @@ export class MonthlyKeyfiguresAction extends AbstractAction {
       2020,
       new Date().getFullYear(),
     );
-    return this.repository.getMonthlyKeyfigures(params);
+    return this.repository.getKeyfigures(params);
   }
 }

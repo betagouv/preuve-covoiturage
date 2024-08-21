@@ -9,7 +9,7 @@ import { DashboardContext } from '@/context/DashboardProvider';
 export default function KeyFigures() {
   const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-keyfigures?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const url = `${apiUrl}/keyfigures?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data } = useApi<KeyFiguresDataInterface[]>(url);
   const row1 = (data && data.length > 0)
     ? [

@@ -944,7 +944,7 @@ export class HttpTransport implements TransportInterface {
 
     const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
       Object.entries({
-        monthlyKeyfigures: "monthly-keyfigures",
+        getKeyfigures: "keyfigures",
         getFlux: "flux",
         getEvolFlux: "evol-flux",
         getBestFlux: "best-flux",
