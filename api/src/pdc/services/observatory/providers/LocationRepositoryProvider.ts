@@ -14,7 +14,7 @@ import { checkTerritoryParam } from "../helpers/checkParams.ts";
   identifier: LocationRepositoryInterfaceResolver,
 })
 export class LocationRepositoryProvider implements LocationRepositoryInterface {
-  private readonly table = "carpool.carpools";
+  private readonly table = "observatoire.view_location";
   private readonly perim_table = "geo.perimeters";
 
   constructor(private pg: PostgresConnection) {}
@@ -27,12 +27,10 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
     const sql = {
       values: [params.code, params.start_date, params.end_date, year],
       text: `
-        SELECT st_y(start_position::geometry) as lat, 
-        st_x(start_position::geometry) as lon 
+        SELECT start_lat as lat, 
+        start_lon as lon 
         FROM ${this.table} 
-        WHERE datetime BETWEEN $2 AND $3
-        AND status='ok'
-        AND is_driver=false
+        WHERE start_datetime BETWEEN $2 AND $3
         ${
         params.type && params.code
           ? `AND (
@@ -46,14 +44,12 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
           } = $1)
           )`
           : ""
-      }
+        }
         UNION ALL
-        SELECT st_y(end_position::geometry) as lat, 
-        st_x(end_position::geometry) as lon 
+        SELECT end_lat as lat, 
+        end_lon as lon 
         FROM ${this.table} 
-        WHERE datetime BETWEEN $2 AND $3
-        AND status='ok'
-        AND is_driver=false
+        WHERE start_datetime BETWEEN $2 AND $3
         ${
         params.type && params.code
           ? `AND (
