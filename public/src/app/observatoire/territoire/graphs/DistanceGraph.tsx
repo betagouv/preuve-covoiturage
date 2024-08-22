@@ -33,7 +33,7 @@ export default function DistanceGraph({ title }: { title: string }) {
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-flux?indic=distance&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const url = `${apiUrl}/evol-flux?indic=distance&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
   const { data, error, loading } = useApi<EvolDistanceDataInterface[]>(url);
   const dataset = data?.map((d) => d.distance/d.journeys).reverse();
 

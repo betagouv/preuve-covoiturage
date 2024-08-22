@@ -1,5 +1,12 @@
-import { Feature } from 'maplibre-gl';
-import { Direction, Distance, Hour, PerimeterLabel, INSEECode, PerimeterType } from './Perimeter';
+import { Feature } from "maplibre-gl";
+import {
+  Direction,
+  Distance,
+  Hour,
+  INSEECode,
+  PerimeterLabel,
+  PerimeterType,
+} from "./Perimeter";
 
 export interface KeyFiguresDataInterface {
   territory: INSEECode;
@@ -15,8 +22,8 @@ export interface KeyFiguresDataInterface {
 }
 
 export interface LastFluxDataInterface {
-  year: number,
-  month: number
+  year: number;
+  month: number;
 }
 
 export interface FluxDataInterface {
@@ -46,17 +53,17 @@ export interface OccupationDataInterface {
 }
 
 export interface AiresCovoiturageDataInterface {
-  id_lieu: string; 
-  nom_lieu: string; 
-  com_lieu: string; 
-  type: string; 
-  date_maj: Date; 
-  nbre_pl: number; 
-  nbre_pmr: number;  
-  duree: number;  
+  id_lieu: string;
+  nom_lieu: string;
+  com_lieu: string;
+  type: string;
+  date_maj: Date;
+  nbre_pl: number;
+  nbre_pmr: number;
+  duree: number;
   horaires: string;
-  proprio: string; 
-  lumiere: boolean; 
+  proprio: string;
+  lumiere: boolean;
   geom: Feature;
 }
 
@@ -111,7 +118,7 @@ export interface BestFluxDataInterface {
 }
 
 export interface BestTerritoriesDataInterface {
-  territory: INSEECode;
-  l_territory: PerimeterLabel;
+  code: INSEECode;
+  libelle: PerimeterLabel;
   journeys: number;
 }
