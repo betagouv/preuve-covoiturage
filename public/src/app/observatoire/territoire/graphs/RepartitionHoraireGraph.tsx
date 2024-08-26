@@ -24,8 +24,26 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-hours?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
-  const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url);
+  const url = () => {
+    const params = [
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `year=${dashboard.params.year}`,
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/journeys-by-hours?${params.join('&')}`
+  };
+  const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url());
 
   const dataWithNull = (data:Hour[]) => {
     const arrayA = [...data]

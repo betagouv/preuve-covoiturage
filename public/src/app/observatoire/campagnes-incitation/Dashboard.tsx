@@ -1,17 +1,17 @@
 'use client'
-import { useSearchParams } from 'next/navigation';
-import {  useMemo } from 'react';
-import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
-import { fr } from '@codegouvfr/react-dsfr';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
-import SelectYear from '@/components/observatoire/SelectYear';
-import IncentiveMap from './maps/IncentiveMap';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
+import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
+import { fr } from '@codegouvfr/react-dsfr';
+import CircularProgress from '@mui/material/CircularProgress';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
+import { useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
+import SelectIncentiveYear from '../../../components/observatoire/SelectIncentiveYear';
 import Details from './Details';
+import IncentiveMap from './maps/IncentiveMap';
 
 
 export default function Dashboard() {
@@ -77,7 +77,7 @@ export default function Dashboard() {
                 loading={loading} 
                 error={error} 
                 sidebar={<>
-                  <SelectYear params={params} url={'campagnes-incitation'}/>
+                  <SelectIncentiveYear params={params} url={'campagnes-incitation'}/>
                   <SelectTerritory url={'campagnes-incitation'}/>
                 </>}
               />

@@ -24,8 +24,27 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-distances?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&direction=both`;
-  const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url);
+  const url = () => {
+    const params = [
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `year=${dashboard.params.year}`,
+      `direction=both`
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/journeys-by-distances?${params.join('&')}`
+  };
+  const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url());
   const plugins: any = [ChartDataLabels];
   const dataset = data?.find((d) => d.direction === 'both')?.distances.map((d) => d.journeys);
   const datasetSum = (dataset: number[]) => {

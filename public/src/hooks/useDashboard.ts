@@ -4,6 +4,7 @@ import { TerritoryListInterface } from "@/interfaces/observatoire/dataInterfaces
 import { useCallback, useState } from "react";
 import { fetchSearchAPI } from "../helpers/search";
 import { Params } from "../interfaces/common/contextInterface";
+import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 
 export const useDashboard = () => {
   const lastMonth = () => {
@@ -17,10 +18,13 @@ export const useDashboard = () => {
     observe: "com" as PerimeterType,
     year: new Date(lastMonth()).getFullYear(),
     month: new Date(lastMonth()).getMonth(),
+    period: "month" as PeriodType,
+    trimester: Math.floor(new Date(lastMonth()).getMonth() / 3),
+    semester: Math.floor(new Date(lastMonth()).getMonth() / 6),
     map: 1,
     graph: 1,
   });
-  const [lastPeriod, setLastPeriod] = useState(new Date(lastMonth()).getTime());
+  const [lastPeriod] = useState(new Date(lastMonth()).getTime());
   const [loading, setLoading] = useState(true);
 
   const getParams = useCallback((params: Params) => {
@@ -56,15 +60,26 @@ export const useDashboard = () => {
     });
   }, []);
 
-  const onChangePeriod = useCallback(
-    (value: { year: number; month: number }) => {
-      setParams((p) => {
-        return { ...p, year: value.year, month: value.month };
-      });
-      setLastPeriod(new Date(value.year, value.month).getTime());
-    },
-    [],
-  );
+  const onChangePeriod = useCallback((value: PeriodType) => {
+    setParams((p) => {
+      return { ...p, period: value };
+    });
+  }, []);
+  const onChangeMonth = useCallback((value: number) => {
+    setParams((p) => {
+      return { ...p, month: value };
+    });
+  }, []);
+  const onChangeTrimester = useCallback((value: number) => {
+    setParams((p) => {
+      return { ...p, trimester: value };
+    });
+  }, []);
+  const onChangeYear = useCallback((value: number) => {
+    setParams((p) => {
+      return { ...p, year: value };
+    });
+  }, []);
   const onChangeObserve = useCallback((value: PerimeterType) => {
     setParams((p) => {
       return { ...p, observe: value };
@@ -103,6 +118,9 @@ export const useDashboard = () => {
     onChangeTerritory,
     getName,
     onChangePeriod,
+    onChangeMonth,
+    onChangeTrimester,
+    onChangeYear,
     onChangeObserve,
     onChangeGraph,
     onChangeMap,

@@ -1,50 +1,33 @@
-'use client'
-import { monthList, yearList } from '@/helpers/lists';
-import SelectInList from '../common/SelectInList';
-import { useContext } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
-import {useState, useEffect} from 'react';
+import { periodList } from '@/helpers/lists';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useContext } from 'react';
+import { PeriodType } from '../../interfaces/observatoire/componentsInterfaces';
 
+type SelectPeriodProps = {
+  id: string,
+  label: string,
+};
 
-export default function SelectPeriod() {
+export default function SelectPeriod(props: SelectPeriodProps) {
   const { dashboard } =useContext(DashboardContext);
-  const handlerChangeYear = (value: number) => {
-    const period = { year: value, month: dashboard.params.month };
-    dashboard.onChangePeriod(period);
-  };
-  const handlerChangeMonth = (value: number) => {
-    const period = { year: dashboard.params.year, month: value };
-    dashboard.onChangePeriod(period);
-  };
-  const [monthAvailable, setMonthAvailable] = useState<{id: number; name: string; disabled: boolean;}[]>([]);
-  useEffect(()=>{
-      const list = monthList.map((m) => {
-        if(new Date(dashboard.params.year, m.id -1).getTime() > dashboard.lastPeriod) {
-          return {...m, disabled: true}
-        } else {
-          return {...m, disabled: false}
-        }
-      })
-      setMonthAvailable(list)
-  },[dashboard.params.year, dashboard.params.month]);
   return (
     <>
-      <SelectInList
-        labelId='mois'
-        label='Mois'
-        id={dashboard.params.month}
-        list={monthAvailable}
-        sx={{ minWidth: 120 }}
-        onChange={handlerChangeMonth}
-      />
-      <SelectInList
-        labelId='annee'
-        label='Année'
-        id={dashboard.params.year}
-        list={yearList}
-        sx={{ ml: 3, minWidth: 120 }}
-        onChange={handlerChangeYear}
-      />
+      <FormControl sx={{ minWidth: 200 }}>
+        <InputLabel id={props.id}>{props.label}</InputLabel>
+        <Select
+          labelId={props.id}
+          value={dashboard.params.period}
+          label={props.label}
+          onChange={(event) => dashboard.onChangePeriod(event.target.value as PeriodType)}
+        >
+          {periodList.map((d, i: number) => (
+            <MenuItem key={i} value={d.id}>
+              {d.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </>
   );
 }

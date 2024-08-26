@@ -31,10 +31,28 @@ export default function DistanceGraph({ title }: { title: string }) {
       },
     },
   };
-
+  const url = () => {
+    const params = [
+      `indic=distance`,
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `year=${dashboard.params.year}`
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/evol-flux?${params.join('&')}`
+  };
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-flux?indic=distance&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
-  const { data, error, loading } = useApi<EvolDistanceDataInterface[]>(url);
+  const { data, error, loading } = useApi<EvolDistanceDataInterface[]>(url());
   const dataset = data?.map((d) => d.distance/d.journeys).reverse();
 
   const chartData = () => {

@@ -25,8 +25,28 @@ const Table = styled(TableStyled)(
 export default function BestTerritoriesTable({ title, limit }: { title: string, limit: number }) {
   const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-territories?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
-  const { data, error, loading } = useApi<BestTerritoriesDataInterface[]>(url);
+  const url = () => {
+    const params = [
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `observe=${dashboard.params.observe}`,
+      `year=${dashboard.params.year}`,
+      `limit=${limit}`
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/best-territories?${params.join('&')}`
+  };
+  const { data, error, loading } = useApi<BestTerritoriesDataInterface[]>(url());
   const dataTable = data ? data.map(d => [d.libelle, d.journeys]) : []
 
   return (

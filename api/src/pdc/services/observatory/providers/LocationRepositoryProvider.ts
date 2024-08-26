@@ -30,7 +30,7 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
         FROM ${this.perim_table} 
         WHERE year = geo.get_latest_millesime_or($1::smallint)
       ) t 
-      WHERE ${typeParam} = $3
+      WHERE ${typeParam} = $2
     `;
 
     const conditions = [
@@ -41,21 +41,20 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
     const queryValues = [
       params.year,
       params.code,
-      typeParam,
     ];
 
     if (params.month) {
       queryValues.push(params.month);
-      conditions.push(`extract('month' from start_datetime) = $4`);
+      conditions.push(`extract('month' from start_datetime) = $3`);
     }
     if (params.trimester) {
       queryValues.push(params.trimester);
-      conditions.push(`extract('quarter' FROM start_datetime) = $4`);
+      conditions.push(`extract('quarter' FROM start_datetime) = $3`);
     }
     if (params.semester) {
       queryValues.push(params.semester);
       conditions.push(
-        `(CASE WHEN extract('quarter' FROM start_datetime)::int > 3 THEN 2 ELSE 1 END) = $4`,
+        `(CASE WHEN extract('quarter' FROM start_datetime)::int > 3 THEN 2 ELSE 1 END) = $3`,
       );
     }
 

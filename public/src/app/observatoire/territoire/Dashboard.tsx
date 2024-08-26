@@ -1,29 +1,33 @@
 'use client'
-import { useSearchParams } from 'next/navigation';
-import { useContext, useEffect } from 'react';
+import SectionTitle from '@/components/common/SectionTitle';
+import SelectInList from '@/components/common/SelectInList';
+import SelectObserve from '@/components/observatoire/SelectObserve';
+import SelectPeriod from '@/components/observatoire/SelectPeriod';
+import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import { DashboardContext } from '@/context/DashboardProvider';
 import { getPeriod } from '@/helpers/analyse';
+import { graphList, mapList } from '@/helpers/lists';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
-import SelectTerritory from '@/components/observatoire/SelectTerritory';
-import SelectPeriod from '@/components/observatoire/SelectPeriod';
-import SectionTitle from '@/components/common/SectionTitle';
-import SelectObserve from '@/components/observatoire/SelectObserve';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useSearchParams } from 'next/navigation';
+import { useContext, useEffect } from 'react';
+import SelectMonth from '../../../components/observatoire/SelectMonth';
+import SelectSemester from '../../../components/observatoire/SelectSemester';
+import SelectTrimester from '../../../components/observatoire/SelectTrimester';
+import SelectYear from '../../../components/observatoire/SelectYear';
+import DistanceGraph from './graphs/DistanceGraph';
+import FluxGraph from './graphs/FluxGraph';
+import OccupationGraph from './graphs/OccupationGraph';
+import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
+import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
 import KeyFigures from './KeyFigures';
+import AiresCovoiturageMap from './maps/AiresMap';
+import DensiteMap from './maps/DensiteMap';
+import FluxMap from './maps/FluxMap';
+import OccupationMap from './maps/OccupationMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import SelectInList from '@/components/common/SelectInList';
-import { graphList, mapList } from '@/helpers/lists';
-import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
-import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
-import FluxGraph from './graphs/FluxGraph';
-import DistanceGraph from './graphs/DistanceGraph';
-import OccupationGraph from './graphs/OccupationGraph';
-import FluxMap from './maps/FluxMap';
-import DensiteMap from './maps/DensiteMap';
-import OccupationMap from './maps/OccupationMap';
-import AiresCovoiturageMap from './maps/AiresMap';
-import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
@@ -45,7 +49,17 @@ export default function Dashboard() {
           <SelectTerritory url={'territoire'} />
         </div>
         <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-          <SelectPeriod />
+          <SelectPeriod id='period' label='Période' />
+          {dashboard.params.period === 'month' && 
+            <SelectMonth />
+          }
+          {dashboard.params.period === 'trimester' && 
+            <SelectTrimester />
+          }
+          {dashboard.params.period === 'semester' && 
+            <SelectSemester />
+          }
+          <SelectYear />
         </div>
       </div>
       {dashboard.loading ? (

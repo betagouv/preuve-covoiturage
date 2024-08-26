@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 export const useApi = <T>(input: RequestInfo | URL, init?: RequestInit) => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState(null);

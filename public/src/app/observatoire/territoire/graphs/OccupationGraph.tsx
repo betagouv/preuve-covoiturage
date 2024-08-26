@@ -34,8 +34,27 @@ export default function TrajetsGraph({ title,indic }: { title: string, indic:Occ
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-occupation?indic=${indic}&code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
-  const { data, error, loading } = useApi<EvolOccupationDataInterface[]>(url);
+  const url = () => {
+    const params = [
+      `indic=${indic}`,
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `year=${dashboard.params.year}`
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/evol-occupation?${params.join('&')}`
+  };
+  const { data, error, loading } = useApi<EvolOccupationDataInterface[]>(url());
   const dataset =data?.map((d) => d[`${indic}`]).reverse();
 
   const chartData = () => {

@@ -15,8 +15,27 @@ import { useContext, useMemo } from 'react';
 export default function FluxMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const apiUrl = Config.get('next.public_api_url', '');
-  const url = `${apiUrl}/flux?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
-  const { data, error, loading } = useApi<FluxDataInterface[]>(url);
+  const url = () => {
+    const params = [
+      `code=${dashboard.params.code}`,
+      `type=${dashboard.params.type}`,
+      `observe=${dashboard.params.observe}`,
+      `year=${dashboard.params.year}`
+    ]
+    switch(dashboard.params.period){
+      case 'month':
+      params.push( `month=${dashboard.params.month}`);
+      break;
+      case 'trimester':
+      params.push( `trimester=${dashboard.params.trimester}`);
+      break;
+      case 'semester':
+      params.push( `semester=${dashboard.params.semester}`);
+      break;
+    }
+    return `${apiUrl}/flux?${params.join('&')}`
+  };
+  const { data, error, loading } = useApi<FluxDataInterface[]>(url());
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const filteredData = useMemo(() => {
     return data ? data.filter(d=>d.passengers >= 10) : []
