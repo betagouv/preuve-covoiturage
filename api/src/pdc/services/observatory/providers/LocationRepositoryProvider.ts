@@ -21,53 +21,59 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
   async getLocation(
     params: LocationParamsInterface,
   ): Promise<LocationResultInterface> {
-    const year = new Date(params.end_date).getFullYear();
     const result: LocationResultInterface = [];
-    const sql = {
-      values: [params.code, params.start_date, params.end_date, year],
-      text: `
-        SELECT
-          start_lat as lat, 
-          start_lon as lon
-        FROM ${this.table} 
-        WHERE start_datetime BETWEEN $2 AND $3
-        ${
-        params.type && params.code
-          ? `AND (
-              start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${
-            checkTerritoryParam(
-              params.type,
-            )
-          } = $1) 
-              OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${
-            checkTerritoryParam(params.type)
-          } = $1)
-            )`
-          : ""
-      }
-        UNION ALL
-        SELECT
-          end_lat as lat, 
-          end_lon as lon
-        FROM ${this.table} 
-        WHERE start_datetime BETWEEN $2 AND $3
-        ${
-        params.type && params.code
-          ? `AND (
-              start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${
-            checkTerritoryParam(
-              params.type,
-            )
-          } = $1) 
-              OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${
-            checkTerritoryParam(params.type)
-          } = $1)
-            )`
-          : ""
-      }
-      `,
-    };
-    const response = await this.pg.getClient().query(sql);
+    const typeParam = checkTerritoryParam(params.type);
+    const perimTableQuery = `
+      SELECT com 
+      FROM (
+        SELECT com, epci, aom, dep, reg, country 
+        FROM ${this.perim_table} 
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
+      ) t 
+      WHERE ${typeParam} = $3
+    `;
+
+    const conditions = [
+      `extract ('year' from start_datetime) = $1`,
+      `(start_geo_code IN (${perimTableQuery}) OR end_geo_code IN (${perimTableQuery}))`,
+    ];
+
+    const queryValues = [
+      params.year,
+      params.code,
+      typeParam,
+    ];
+
+    if (params.month) {
+      queryValues.push(params.month);
+      conditions.push(`month = $4`);
+    }
+    if (params.trimester) {
+      queryValues.push(params.trimester);
+      conditions.push(`trimester = $4`);
+    }
+    if (params.semester) {
+      queryValues.push(params.semester);
+      conditions.push(`semester = $4`);
+    }
+
+    const queryText = `
+      SELECT 
+        start_lat as lat, 
+        start_lon as lon
+      FROM ${this.table}
+      WHERE ${conditions.join(" AND ")}
+      UNION ALL
+      SELECT
+        end_lat as lat, 
+        end_lon as lon
+      FROM ${this.table} 
+      WHERE ${conditions.join(" AND ")}
+    `;
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
+    });
     const geomToHex = response.rows
       .map((r) => latLngToCell(r.lat, r.lon, params.zoom))
       .reduce<Record<string, number>>(
