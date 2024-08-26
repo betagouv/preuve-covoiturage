@@ -34,7 +34,7 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
     `;
 
     const conditions = [
-      `extract ('year' from start_datetime) = $1`,
+      `extract('year' from start_datetime) = $1`,
       `(start_geo_code IN (${perimTableQuery}) OR end_geo_code IN (${perimTableQuery}))`,
     ];
 
@@ -46,15 +46,17 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
 
     if (params.month) {
       queryValues.push(params.month);
-      conditions.push(`month = $4`);
+      conditions.push(`extract('month' from start_datetime) = $4`);
     }
     if (params.trimester) {
       queryValues.push(params.trimester);
-      conditions.push(`trimester = $4`);
+      conditions.push(`extract('quarter' FROM start_datetime) = $4`);
     }
     if (params.semester) {
       queryValues.push(params.semester);
-      conditions.push(`semester = $4`);
+      conditions.push(
+        `(CASE WHEN extract('quarter' FROM start_datetime)::int > 3 THEN 2 ELSE 1 END) = $4`,
+      );
     }
 
     const queryText = `
