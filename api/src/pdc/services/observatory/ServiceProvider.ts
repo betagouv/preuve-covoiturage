@@ -28,16 +28,12 @@ import { binding as CampaignsBinding } from "@/shared/observatory/incentiveCampa
 import { binding as AiresCovoiturageBinding } from "@/shared/observatory/infra/airesCovoiturage.schema.ts";
 import { binding as GetKeyfiguresBinding } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
 import { binding as LocationBinding } from "@/shared/observatory/location/location.schema.ts";
-import { binding as TerritoriesListBinding } from "@/shared/observatory/territories/list.schema.ts";
-import { binding as TerritoryNameBinding } from "@/shared/observatory/territories/name.schema.ts";
 import { binding as GetBestTerritoriesBinding } from "../../../shared/observatory/occupation/getBestTerritories.schema.ts";
 import { binding as GetEvolOccupationBinding } from "../../../shared/observatory/occupation/getEvolOccupation.schema.ts";
 import { binding as GetOccupationBinding } from "../../../shared/observatory/occupation/getOccupation.schema.ts";
 import { BestTerritoriesAction } from "./actions/occupation/BestTerritoriesAction.ts";
 import { EvolOccupationAction } from "./actions/occupation/EvolOccupationAction.ts";
 import { OccupationAction } from "./actions/occupation/OccupationAction.ts";
-import { TerritoriesListAction } from "./actions/territories/TerritoriesListAction.ts";
-import { TerritoryNameAction } from "./actions/territories/TerritoryNameAction.ts";
 import { config } from "./config/index.ts";
 import { DistributionRepositoryProvider } from "./providers/DistributionRepositoryProvider.ts";
 import { FluxRepositoryProvider } from "./providers/FluxRepositoryProvider.ts";
@@ -46,7 +42,6 @@ import { InfraRepositoryProvider } from "./providers/InfraRepositoryProvider.ts"
 import { KeyfiguresRepositoryProvider } from "./providers/KeyfiguresRepositoryProvider.ts";
 import { LocationRepositoryProvider } from "./providers/LocationRepositoryProvider.ts";
 import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryProvider.ts";
-import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepositoryProvider.ts";
 
 /* eslint-enable */
 @serviceProvider({
@@ -59,7 +54,6 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     KeyfiguresRepositoryProvider,
     LocationRepositoryProvider,
     OccupationRepositoryProvider,
-    TerritoriesRepositoryProvider,
     IncentiveCampaignsRepositoryProvider,
   ],
   validator: [
@@ -74,8 +68,6 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     GetFluxBinding,
     GetKeyfiguresBinding,
     GetOccupationBinding,
-    TerritoriesListBinding,
-    TerritoryNameBinding,
     CampaignsBinding,
   ],
   handlers: [
@@ -90,8 +82,6 @@ import { TerritoriesRepositoryProvider } from "./providers/TerritoriesRepository
     FluxAction,
     KeyfiguresAction,
     OccupationAction,
-    TerritoriesListAction,
-    TerritoryNameAction,
     CampaignsAction,
   ],
   middlewares: [...defaultMiddlewareBindings, [

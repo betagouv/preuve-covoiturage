@@ -951,8 +951,6 @@ export class HttpTransport implements TransportInterface {
         getOccupation: "occupation",
         getEvolOccupation: "evol-occupation",
         getBestTerritories: "best-territories",
-        territoriesList: "territories",
-        territoryName: "territory",
         journeysByHours: "journeys-by-hours",
         journeysByDistances: "journeys-by-distances",
         getLocation: "location",

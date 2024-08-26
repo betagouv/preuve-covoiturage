@@ -41,25 +41,23 @@ export class DistributionRepositoryProvider
       `year = $1`,
       `type = $2`,
       `code = $3`,
-      `direction = $4`,
     ];
     const queryValues = [
       params.year,
       params.type,
       params.code,
-      params.direction,
     ];
     if (params.month) {
       queryValues.push(params.month);
-      conditions.push(`month = $5`);
+      conditions.push(`month = $4`);
     }
     if (params.trimester) {
       queryValues.push(params.trimester);
-      conditions.push(`trimester = $5`);
+      conditions.push(`trimester = $4`);
     }
     if (params.semester) {
       queryValues.push(params.semester);
-      conditions.push(`semester = $5`);
+      conditions.push(`semester = $4`);
     }
     const queryText = `
       SELECT 
