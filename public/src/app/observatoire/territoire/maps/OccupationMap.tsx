@@ -14,33 +14,20 @@ import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { GetApiUrl } from '../../../../helpers/api';
 
 export default function OccupationMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = () => {
-    const params = [
-      `code=${dashboard.params.code}`,
-      `type=${dashboard.params.type}`,
-      `observe=${dashboard.params.observe}`,
-      `year=${dashboard.params.year}`,
-      `direction=both`
-    ]
-    switch(dashboard.params.period){
-      case 'month':
-      params.push( `month=${dashboard.params.month}`);
-      break;
-      case 'trimester':
-      params.push( `trimester=${dashboard.params.trimester}`);
-      break;
-      case 'semester':
-      params.push( `semester=${dashboard.params.semester}`);
-      break;
-    }
-    return `${apiUrl}/occupation?${params.join('&')}`
-  };
-  const { data, error, loading } = useApi<OccupationDataInterface[]>(url());
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`,
+    `direction=both`
+  ];
+  const url = GetApiUrl('occupation', params);
+  const { data, error, loading } = useApi<OccupationDataInterface[]>(url);
   const geojson = useMemo(() => {
     const occupationData = data ? data : [];
     return featureCollection(

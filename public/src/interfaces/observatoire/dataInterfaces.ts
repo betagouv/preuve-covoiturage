@@ -75,7 +75,6 @@ export interface TerritoryListInterface {
 
 export interface EvolDataInterface {
   year: number;
-  month: number;
 }
 
 export interface EvolFluxDataInterface extends EvolDataInterface {

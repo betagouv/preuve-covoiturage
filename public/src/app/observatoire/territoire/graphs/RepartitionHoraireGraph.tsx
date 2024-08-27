@@ -1,5 +1,4 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { Config } from '@/config';
 import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { Hour } from '@/interfaces/observatoire/Perimeter';
@@ -8,6 +7,7 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { BarElement, CategoryScale, ChartData, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { GetApiUrl } from '../../../../helpers/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
@@ -23,27 +23,13 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
     },
   };
 
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = () => {
-    const params = [
-      `code=${dashboard.params.code}`,
-      `type=${dashboard.params.type}`,
-      `year=${dashboard.params.year}`,
-    ]
-    switch(dashboard.params.period){
-      case 'month':
-      params.push( `month=${dashboard.params.month}`);
-      break;
-      case 'trimester':
-      params.push( `trimester=${dashboard.params.trimester}`);
-      break;
-      case 'semester':
-      params.push( `semester=${dashboard.params.semester}`);
-      break;
-    }
-    return `${apiUrl}/journeys-by-hours?${params.join('&')}`
-  };
-  const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url());
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `year=${dashboard.params.year}`,
+  ];
+  const url = GetApiUrl('journeys-by-hours', params);
+  const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url);
 
   const dataWithNull = (data:Hour[]) => {
     const arrayA = [...data]

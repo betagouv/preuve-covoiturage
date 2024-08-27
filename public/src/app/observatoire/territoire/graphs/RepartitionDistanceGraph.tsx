@@ -1,5 +1,4 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { Config } from '@/config';
 import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { DistributionDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -8,6 +7,7 @@ import { ArcElement, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 
 import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
 import { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import { GetApiUrl } from '../../../../helpers/api';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
@@ -22,29 +22,14 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
       },
     },
   };
-
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = () => {
-    const params = [
-      `code=${dashboard.params.code}`,
-      `type=${dashboard.params.type}`,
-      `year=${dashboard.params.year}`,
-      `direction=both`
-    ]
-    switch(dashboard.params.period){
-      case 'month':
-      params.push( `month=${dashboard.params.month}`);
-      break;
-      case 'trimester':
-      params.push( `trimester=${dashboard.params.trimester}`);
-      break;
-      case 'semester':
-      params.push( `semester=${dashboard.params.semester}`);
-      break;
-    }
-    return `${apiUrl}/journeys-by-distances?${params.join('&')}`
-  };
-  const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url());
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `year=${dashboard.params.year}`,
+    `direction=both`
+  ];
+  const url = GetApiUrl('journeys-by-distances', params);
+  const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url);
   const plugins: any = [ChartDataLabels];
   const dataset = data?.find((d) => d.direction === 'both')?.distances.map((d) => d.journeys);
   const datasetSum = (dataset: number[]) => {
