@@ -5,7 +5,6 @@ import SelectObserve from '@/components/observatoire/SelectObserve';
 import SelectPeriod from '@/components/observatoire/SelectPeriod';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import { DashboardContext } from '@/context/DashboardProvider';
-import { getPeriod } from '@/helpers/analyse';
 import { graphList, mapList } from '@/helpers/lists';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -16,6 +15,7 @@ import SelectMonth from '../../../components/observatoire/SelectMonth';
 import SelectSemester from '../../../components/observatoire/SelectSemester';
 import SelectTrimester from '../../../components/observatoire/SelectTrimester';
 import SelectYear from '../../../components/observatoire/SelectYear';
+import { GetPeriod } from '../../../helpers/dashboard';
 import DistanceGraph from './graphs/DistanceGraph';
 import FluxGraph from './graphs/FluxGraph';
 import OccupationGraph from './graphs/OccupationGraph';
@@ -32,7 +32,7 @@ import BestTerritoriesTable from './tables/BestTerritoriesTable';
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const { dashboard } =useContext(DashboardContext);
-  const period = getPeriod(dashboard.params.year, dashboard.params.month);
+  const period = GetPeriod();
   const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
   useEffect(() => {
     const params = {

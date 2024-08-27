@@ -10,7 +10,7 @@ export const chartLabels = (
     case "month":
       data.map((d) => {
         const period = monthList.find((l) => l.id == d.month);
-        labels.push(`${period!.name} ${d.year}`);
+        labels.push(`${period ? period.name : ""} ${d.year}`);
       });
       break;
     case "trimester":

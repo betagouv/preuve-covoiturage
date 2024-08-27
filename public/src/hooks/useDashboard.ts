@@ -75,6 +75,11 @@ export const useDashboard = () => {
       return { ...p, trimester: value };
     });
   }, []);
+  const onChangeSemester = useCallback((value: number) => {
+    setParams((p) => {
+      return { ...p, semester: value };
+    });
+  }, []);
   const onChangeYear = useCallback((value: number) => {
     setParams((p) => {
       return { ...p, year: value };
@@ -120,6 +125,7 @@ export const useDashboard = () => {
     onChangePeriod,
     onChangeMonth,
     onChangeTrimester,
+    onChangeSemester,
     onChangeYear,
     onChangeObserve,
     onChangeGraph,
