@@ -15,7 +15,7 @@ export default function SelectMonth() {
         label='Année'
         id={dashboard.params.year}
         list={yearList}
-        sx={{ minWidth: 120 }}
+        sx={{ minWidth: 120, margin: '0 0.5em' }}
         onChange={(v) => dashboard.onChangeYear(v)}
       />
     </>

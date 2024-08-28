@@ -26,7 +26,7 @@ export default function SelectTrimester() {
         label='Trimestre'
         id={dashboard.params.trimester}
         list={trimesterAvailable}
-        sx={{ minWidth: 120 }}
+        sx={{ minWidth: 120, margin: '0 0.5em' }}
         onChange={(v) => dashboard.onChangeTrimester(v)}
       />
     </>

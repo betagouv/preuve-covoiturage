@@ -26,7 +26,7 @@ export default function SelectMonth() {
         label='Mois'
         id={dashboard.params.month}
         list={monthAvailable}
-        sx={{ minWidth: 120 }}
+        sx={{ minWidth: 120, margin: '0 1em' }}
         onChange={(v) => dashboard.onChangeMonth(v)}
       />
     </>

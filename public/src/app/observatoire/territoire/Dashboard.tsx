@@ -49,7 +49,7 @@ export default function Dashboard() {
           <SelectTerritory url={'territoire'} />
         </div>
         <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-          <SelectPeriod id='period' label='Période' />
+          <SelectPeriod id='period' label='Type de période' />
           {dashboard.params.period === 'month' && 
             <SelectMonth />
           }

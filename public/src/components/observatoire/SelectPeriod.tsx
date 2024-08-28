@@ -13,7 +13,7 @@ export default function SelectPeriod(props: SelectPeriodProps) {
   const { dashboard } =useContext(DashboardContext);
   return (
     <>
-      <FormControl sx={{ minWidth: 200 }}>
+      <FormControl sx={{ minWidth: 200, margin: '0 0.5em' }}>
         <InputLabel id={props.id}>{props.label}</InputLabel>
         <Select
           labelId={props.id}
