@@ -1,0 +1,5 @@
+graph-tool==2.72
+numpy==1.26.4
+plotly==5.22.0
+polars==1.1.0
+sqlalchemy==2.0.30
