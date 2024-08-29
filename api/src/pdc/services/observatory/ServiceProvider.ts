@@ -15,6 +15,7 @@ import { JourneysByHoursAction } from "@/pdc/services/observatory/actions/distri
 import { BestFluxAction } from "@/pdc/services/observatory/actions/flux/BestFluxAction.ts";
 import { EvolFluxAction } from "@/pdc/services/observatory/actions/flux/EvolFluxAction.ts";
 import { FluxAction } from "@/pdc/services/observatory/actions/flux/FluxAction.ts";
+import { IncentiveAction } from "@/pdc/services/observatory/actions/incentive/IncentiveAction.ts";
 import { CampaignsAction } from "@/pdc/services/observatory/actions/incentiveCampaigns/CampaignsAction.ts";
 import { AiresCovoiturageAction } from "@/pdc/services/observatory/actions/infra/AiresCovoiturageAction.ts";
 import { KeyfiguresAction } from "@/pdc/services/observatory/actions/keyfigures/KeyfiguresAction.ts";
@@ -24,6 +25,7 @@ import { binding as JourneysByHoursBinding } from "@/shared/observatory/distribu
 import { binding as GetBestFluxBinding } from "@/shared/observatory/flux/getBestFlux.schema.ts";
 import { binding as GetEvolFluxBinding } from "@/shared/observatory/flux/getEvolFlux.schema.ts";
 import { binding as GetFluxBinding } from "@/shared/observatory/flux/getFlux.schema.ts";
+import { binding as GetIncentiveBinding } from "@/shared/observatory/incentive/getIncentive.schema.ts";
 import { binding as CampaignsBinding } from "@/shared/observatory/incentiveCampaigns/campaigns.schema.ts";
 import { binding as AiresCovoiturageBinding } from "@/shared/observatory/infra/airesCovoiturage.schema.ts";
 import { binding as GetKeyfiguresBinding } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
@@ -38,6 +40,7 @@ import { config } from "./config/index.ts";
 import { DistributionRepositoryProvider } from "./providers/DistributionRepositoryProvider.ts";
 import { FluxRepositoryProvider } from "./providers/FluxRepositoryProvider.ts";
 import { IncentiveCampaignsRepositoryProvider } from "./providers/IncentiveCampaignsRepositoryProvider.ts";
+import { IncentiveRepositoryProvider } from "./providers/IncentiveRepositoryProvider.ts";
 import { InfraRepositoryProvider } from "./providers/InfraRepositoryProvider.ts";
 import { KeyfiguresRepositoryProvider } from "./providers/KeyfiguresRepositoryProvider.ts";
 import { LocationRepositoryProvider } from "./providers/LocationRepositoryProvider.ts";
@@ -54,6 +57,7 @@ import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryPr
     KeyfiguresRepositoryProvider,
     LocationRepositoryProvider,
     OccupationRepositoryProvider,
+    IncentiveRepositoryProvider,
     IncentiveCampaignsRepositoryProvider,
   ],
   validator: [
@@ -66,6 +70,7 @@ import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryPr
     JourneysByHoursBinding,
     LocationBinding,
     GetFluxBinding,
+    GetIncentiveBinding,
     GetKeyfiguresBinding,
     GetOccupationBinding,
     CampaignsBinding,
@@ -80,6 +85,7 @@ import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryPr
     JourneysByHoursAction,
     LocationAction,
     FluxAction,
+    IncentiveAction,
     KeyfiguresAction,
     OccupationAction,
     CampaignsAction,

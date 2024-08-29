@@ -6,7 +6,7 @@ import {
 } from "@/shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
-  code: PerimeterType;
+  code: INSEECode;
   libelle: PerimeterLabel;
   direction: Direction;
   distances: {

@@ -6,7 +6,7 @@ import {
 } from "@/shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
-  territory: PerimeterType;
+  territory: INSEECode;
   l_territory: PerimeterLabel;
   journeys?: number;
   passengers?: number;

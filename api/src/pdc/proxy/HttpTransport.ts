@@ -956,6 +956,7 @@ export class HttpTransport implements TransportInterface {
         getLocation: "location",
         airesCovoiturage: "aires-covoiturage",
         campaigns: "campaigns",
+        getIncentive: "incentive",
       }),
     );
 

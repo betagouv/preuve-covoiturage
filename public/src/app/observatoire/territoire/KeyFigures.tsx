@@ -13,7 +13,8 @@ export default function KeyFigures() {
     const params = [
       `code=${dashboard.params.code}`,
       `type=${dashboard.params.type}`,
-      `year=${dashboard.params.year}`
+      `year=${dashboard.params.year}`,
+      `direction=both`
     ]
     switch(dashboard.params.period){
       case 'month':

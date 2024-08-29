@@ -16,9 +16,8 @@ export interface KeyFiguresDataInterface {
   duration: number;
   journeys: number;
   intra_journeys: number;
-  trips: number;
-  has_incentive: number;
   occupation_rate: number;
+  direction: Direction;
 }
 
 export interface LastFluxDataInterface {
@@ -120,4 +119,12 @@ export interface BestTerritoriesDataInterface {
   code: INSEECode;
   libelle: PerimeterLabel;
   journeys: number;
+}
+export interface IncentiveDataInterface {
+  code: INSEECode;
+  libelle: PerimeterLabel;
+  direction: Direction;
+  collectivite: number;
+  operateur: number;
+  autres: number;
 }

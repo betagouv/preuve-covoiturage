@@ -1,6 +1,9 @@
-import { directionTypes, perimeterTypes } from "../../geo/shared/Perimeter.ts";
+import {
+  directionTypes,
+  perimeterTypes,
+} from "@/shared/geo/shared/Perimeter.ts";
 
-export const alias = "observatory.getKeyfigures";
+export const alias = "observatory.getIncentive";
 export const schema = {
   type: "object",
   additionalProperties: false,
@@ -43,5 +46,4 @@ export const schema = {
     },
   },
 };
-
 export const binding = [alias, schema];

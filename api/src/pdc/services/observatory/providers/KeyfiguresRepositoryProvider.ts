@@ -58,24 +58,39 @@ export class KeyfiguresRepositoryProvider
       typeParam,
       params.code,
     ];
-
+    if (params.direction) {
+      queryValues.push(params.direction);
+      conditions.push(`b.direction = $4`);
+    }
     if (params.month) {
       queryValues.push(params.month);
       joinOn.push("a.month = b.month");
-      intraJourneysConditions.push("month = $4");
-      conditions.push(`a.month = $4`);
+      params.direction
+        ? intraJourneysConditions.push(`month = $5`)
+        : intraJourneysConditions.push(`month = $4`);
+      params.direction
+        ? conditions.push(`a.month = $5`)
+        : conditions.push(`a.month = $4`);
     }
     if (params.trimester) {
       queryValues.push(params.trimester);
       joinOn.push("a.trimester = b.trimester");
-      intraJourneysConditions.push("trimester = $4");
-      conditions.push(`a.trimester = $4`);
+      params.direction
+        ? intraJourneysConditions.push(`trimester = $5`)
+        : intraJourneysConditions.push(`trimester = $4`);
+      params.direction
+        ? conditions.push(`a.trimester = $5`)
+        : conditions.push(`a.trimester = $4`);
     }
     if (params.semester) {
       queryValues.push(params.semester);
       joinOn.push("a.semester = b.semester");
-      intraJourneysConditions.push("semester = $4");
-      conditions.push(`a.semester = $4`);
+      params.direction
+        ? intraJourneysConditions.push(`semester = $5`)
+        : intraJourneysConditions.push(`semester = $4`);
+      params.direction
+        ? conditions.push(`a.semester = $5`)
+        : conditions.push(`a.semester = $4`);
     }
 
     const intraJourneysQuery = `
@@ -86,19 +101,19 @@ export class KeyfiguresRepositoryProvider
 
     const queryText = `
       SELECT 
-        b.code,b.libelle,
+        b.code,b.libelle,b.direction,
         sum(a.passengers)::int AS passengers,
         sum(a.distance)::int AS distance,
         sum(a.duration)::int AS duration,
         b.journeys::int,
-        (${intraJourneysQuery}) as intra_journeys,
+        (${intraJourneysQuery})::int as intra_journeys,
         b.occupation_rate::float
       FROM ${this.table(params, "flux")} a
       LEFT JOIN ${this.table(params, "occupation")} b ON ${
       joinOn.join(" AND ")
     } 
       WHERE ${conditions.join(" AND ")}
-      GROUP BY b.code,b.libelle,b.journeys,b.occupation_rate;
+      GROUP BY b.code,b.libelle,b.direction,b.journeys,b.occupation_rate;
     `;
     const response = await this.pg.getClient().query({
       text: queryText,

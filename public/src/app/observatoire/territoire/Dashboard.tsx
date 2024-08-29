@@ -18,6 +18,7 @@ import SelectYear from '../../../components/observatoire/SelectYear';
 import { GetPeriod } from '../../../helpers/dashboard';
 import DistanceGraph from './graphs/DistanceGraph';
 import FluxGraph from './graphs/FluxGraph';
+import IncentiveGraph from './graphs/IncentiveGraph';
 import OccupationGraph from './graphs/OccupationGraph';
 import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
 import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
@@ -89,6 +90,11 @@ export default function Dashboard() {
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <BestTerritoriesTable title='Top 10 des territoires' limit={10} />
+            </div>
+          </div>
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
+              <IncentiveGraph title="Trajets par types d'incitateurs" />
             </div>
           </div>
           <SectionTitle title='Evolution' />

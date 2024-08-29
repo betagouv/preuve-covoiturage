@@ -7,7 +7,7 @@ import {
 import type { Feature } from "../../geo/GeoJson.ts";
 
 export interface SingleResultInterface {
-  code: PerimeterType;
+  code: INSEECode;
   libelle: PerimeterLabel;
   journeys: number;
   has_incentive?: number;
