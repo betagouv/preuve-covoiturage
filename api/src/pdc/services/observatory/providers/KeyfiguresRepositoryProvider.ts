@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   KeyfiguresParamsInterface,
@@ -17,16 +18,7 @@ export class KeyfiguresRepositoryProvider
     params: KeyfiguresParamsInterface,
     table: "flux" | "occupation",
   ) => {
-    if (params.month) {
-      return `observatoire.${table}_by_month`;
-    }
-    if (params.trimester) {
-      return `observatoire.${table}_by_trimester`;
-    }
-    if (params.semester) {
-      return `observatoire.${table}_by_semester`;
-    }
-    return `observatoire.${table}_by_year`;
+    return getTableName(params, "observatoire_stats", table);
   };
   constructor(private pg: PostgresConnection) {}
 

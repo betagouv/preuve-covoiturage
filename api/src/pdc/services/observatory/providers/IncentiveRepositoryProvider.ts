@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   IncentiveParamsInterface,
   IncentiveRepositoryInterface,
@@ -17,18 +18,8 @@ export class IncentiveRepositoryProvider
       | IncentiveParamsInterface
       | IncentiveParamsInterface,
   ) => {
-    if (params.month) {
-      return "observatoire.incentive_by_month";
-    }
-    if (params.trimester) {
-      return "observatoire.incentive_by_trimester";
-    }
-    if (params.semester) {
-      return "observatoire.incentive_by_semester";
-    }
-    return "observatoire.incentive_by_year";
+    return getTableName(params, "observatoire_stats", "incentive");
   };
-
   constructor(private pg: PostgresConnection) {}
 
   async getIncentive(

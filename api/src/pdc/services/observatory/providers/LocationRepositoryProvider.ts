@@ -13,7 +13,7 @@ import {
   identifier: LocationRepositoryInterfaceResolver,
 })
 export class LocationRepositoryProvider implements LocationRepositoryInterface {
-  private readonly table = "observatoire.view_location";
+  private readonly table = "observatoire_stats.view_location";
   private readonly perim_table = "geo.perimeters";
 
   constructor(private pg: PostgresConnection) {}

@@ -4,6 +4,7 @@ import {
   checkIndicParam,
   checkTerritoryParam,
 } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   BestTerritoriesParamsInterface,
   BestTerritoriesResultInterface,
@@ -26,16 +27,7 @@ export class OccupationRepositoryProvider
       | EvolOccupationParamsInterface
       | BestTerritoriesParamsInterface,
   ) => {
-    if (params.month) {
-      return "observatoire.occupation_by_month";
-    }
-    if (params.trimester) {
-      return "observatoire.occupation_by_trimester";
-    }
-    if (params.semester) {
-      return "observatoire.occupation_by_semester";
-    }
-    return "observatoire.occupation_by_year";
+    return getTableName(params, "observatoire_stats", "occupation");
   };
   private readonly perim_table = "geo.perimeters";
 
@@ -128,7 +120,7 @@ export class OccupationRepositoryProvider
     const conditions = [
       `type = $1`,
       `code = $2`,
-      `direction = 'both'`
+      `direction = 'both'`,
     ];
     const orderBy = [
       "year",

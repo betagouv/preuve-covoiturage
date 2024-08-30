@@ -4,6 +4,7 @@ import {
   checkIndicParam,
   checkTerritoryParam,
 } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   FluxRepositoryInterface,
   FluxRepositoryInterfaceResolver,
@@ -26,16 +27,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       | GetEvolFluxParamsInterface
       | GetBestFluxParamsInterface,
   ) => {
-    if (params.month) {
-      return "observatoire.flux_by_month";
-    }
-    if (params.trimester) {
-      return "observatoire.flux_by_trimester";
-    }
-    if (params.semester) {
-      return "observatoire.flux_by_semester";
-    }
-    return "observatoire.flux_by_year";
+    return getTableName(params, "observatoire_stats", "flux");
   };
   constructor(private pg: PostgresConnection) {}
 

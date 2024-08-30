@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   DistributionRepositoryInterface,
   DistributionRepositoryInterfaceResolver,
@@ -19,16 +20,7 @@ export class DistributionRepositoryProvider
       | JourneysByHoursParamsInterface
       | JourneysByDistancesParamsInterface,
   ) => {
-    if (params.month) {
-      return "observatoire.distribution_by_month";
-    }
-    if (params.trimester) {
-      return "observatoire.distribution_by_trimester";
-    }
-    if (params.semester) {
-      return "observatoire.distribution_by_semester";
-    }
-    return "observatoire.distribution_by_year";
+    return getTableName(params, "observatoire_stats", "distribution");
   };
 
   constructor(private pg: PostgresConnection) {}
