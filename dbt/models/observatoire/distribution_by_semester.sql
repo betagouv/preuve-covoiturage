@@ -27,7 +27,7 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
+      (year * 10 + semester)
       >= (SELECT max(year * 10 + semester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
@@ -58,7 +58,7 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
+      (year * 10 + semester)
       >= (SELECT max(year * 10 + semester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5

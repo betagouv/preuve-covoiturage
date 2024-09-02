@@ -23,7 +23,7 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      extract('year' from start_date)::int
+      year
       >= (select max(year) from {{ this }})
   {% endif %}
   group by 1, 2, 3, 4
@@ -50,7 +50,7 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      extract('year' from start_date)::int
+      year
       >= (select max(year) from {{ this }})
   {% endif %}
   group by 1, 2, 3, 4

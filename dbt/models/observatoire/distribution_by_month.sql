@@ -25,7 +25,7 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
+      (year * 100 + month)
       >= (SELECT max(year * 100 + month) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
@@ -54,7 +54,7 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))
+      (year * 100 + month)
       >= (SELECT max(year * 100 + month) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5

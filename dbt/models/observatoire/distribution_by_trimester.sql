@@ -25,7 +25,7 @@ with distances as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 10 + extract('quarter' FROM start_date))
+      (year * 10 + trimester)
       >= (SELECT max(year * 10 + trimester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
@@ -54,7 +54,7 @@ hours as (
   ) as t
   {% if is_incremental() %}
     where
-      (extract('year' FROM start_date) * 10 + extract('quarter' FROM start_date))
+      (year * 10 + trimester)
       >= (SELECT max(year * 10 + trimester) FROM {{ this }})
   {% endif %}
   group by 1, 2, 3, 4, 5
