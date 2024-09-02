@@ -41,6 +41,7 @@ export default function Dashboard() {
       type: searchParams.get('type') ? searchParams.get('type')! as PerimeterType : 'country'
     }
     dashboard.onLoadTerritory(params);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   return(
@@ -115,7 +116,6 @@ export default function Dashboard() {
               {dashboard.params.graph == 1 && <FluxGraph title={graphList[0].name} indic="journeys"/>}
               {dashboard.params.graph == 2 && <DistanceGraph title={graphList[1].name} />}
               {dashboard.params.graph == 3 && <OccupationGraph title={graphList[2].name} indic="occupation_rate"/>}
-              {dashboard.params.graph == 4 && <OccupationGraph title={graphList[3].name} indic="trips"/>}
             </div>
           </div>
           <SectionTitle title='Cartographie' />

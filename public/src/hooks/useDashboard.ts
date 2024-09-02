@@ -49,6 +49,7 @@ export const useDashboard = () => {
   );
 
   const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
+    setLoading(true);
     setParams((p) => {
       const params = { code: "XXXXX", name: "France", type: "country" };
       if (value) {
@@ -58,12 +59,15 @@ export const useDashboard = () => {
       }
       return { ...p, ...params, observe: "com" } as typeof p;
     });
+    setLoading(false);
   }, []);
 
   const onChangePeriod = useCallback((value: PeriodType) => {
+    setLoading(true);
     setParams((p) => {
       return { ...p, period: value };
     });
+    setLoading(false);
   }, []);
   const onChangeMonth = useCallback((value: number) => {
     setParams((p) => {

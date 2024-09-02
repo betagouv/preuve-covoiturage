@@ -4,6 +4,7 @@ import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import { KeyFiguresDataInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { fr } from '@codegouvfr/react-dsfr';
 import { useContext } from 'react';
 
 export default function KeyFigures() {
@@ -29,7 +30,7 @@ export default function KeyFigures() {
     }
     return `${apiUrl}/keyfigures?${params.join('&')}`
   };
-  const { data } = useApi<KeyFiguresDataInterface[]>(url());
+  const { data, error, loading } = useApi<KeyFiguresDataInterface[]>(url());
   const row1 = (data && data.length > 0)
     ? [
         { __component: 'row.indicator',
@@ -85,8 +86,27 @@ export default function KeyFigures() {
 
   return (
     <>
-      <Rows data={row1} />
-      <Rows data={row2} />
-    </>
+    {loading && (
+      <div className={fr.cx('fr-callout')}>
+        <div>Chargement en cours...</div>
+      </div>
+    )}
+    {error && (
+      <div className={fr.cx('fr-callout')}>
+        <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
+      </div>
+    )}
+    {!data || data.length == 0 && (
+      <div className={fr.cx('fr-callout')}>
+        <div>Pas de données disponibles...</div>
+      </div>
+    )}
+    {!loading && !error && data && data.length > 0 && (
+      <>
+        <Rows data={row1} />
+        <Rows data={row2} />
+      </>
+    )}
+  </>
   );
 }
