@@ -1,10 +1,10 @@
-import { AbstractDatastructure } from '@betagouvpdc/evolution-geo';
+import { AbstractDatastructure } from "../../../api/src/etl";
 
 export class CreateAiresCovoiturageTable extends AbstractDatastructure {
-  static uuid = 'create_aires_covoiturage_table';
-  static table = 'aires_covoiturage';
+  static uuid = "create_aires_covoiturage_table";
+  static table = "aires_covoiturage";
   static year = 2024;
-  readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
+  readonly indexWithSchema = this.tableWithSchema.replace(".", "_");
   readonly sql = `
       DROP TABLE IF EXISTS ${this.tableWithSchema};
       CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (

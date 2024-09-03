@@ -1,38 +1,43 @@
-import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum, StaticAbstractDataset } from '@betagouvpdc/evolution-geo';
+import {
+  AbstractDataset,
+  ArchiveFileTypeEnum,
+  FileTypeEnum,
+  StaticAbstractDataset,
+} from "../../../api/src/etl";
 
 export function AiresCovoiturage(url: string): StaticAbstractDataset {
   return class extends AbstractDataset {
-    static producer = 'transport_data_gouv';
-    static dataset = 'aires_covoiturage';
+    static producer = "transport_data_gouv";
+    static dataset = "aires_covoiturage";
     static year = 2024;
     static url = url;
     static table = `aires_covoiturage_temp`;
     static skipStatePersistence = true;
-    readonly targetTable = 'aires_covoiturage';
-    readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
+    readonly targetTable = "aires_covoiturage";
+    readonly fileArchiveType = "NONE" as ArchiveFileTypeEnum.None;
     readonly rows: Map<string, [string, string]> = new Map([
-      ['id_local', ['id_local', 'varchar']],
-      ['nom_lieu', ['nom_lieu', 'varchar']],
-      ['ad_lieu', ['ad_lieu', 'varchar']],
-      ['com_lieu', ['com_lieu', 'varchar']],
-      ['insee', ['insee', 'varchar']],
-      ['type', ['type', 'varchar']],
-      ['date_maj', ['date_maj', 'date']],
-      ['ouvert', ['ouvert', 'boolean']],
-      ['source', ['source', 'varchar']],
-      ['xlong', ['Xlong', 'varchar']],
-      ['ylat', ['Ylat', 'varchar']],
-      ['nbre_pl', ['nbre_pl', 'varchar']],
-      ['nbre_pmr', ['nbre_pmr', 'varchar']],
-      ['duree', ['duree', 'varchar']],
-      ['horaires', ['horaires', 'varchar']],
-      ['proprio', ['proprio', 'varchar']],
-      ['lumiere', ['lumiere', 'varchar']],
-      ['comm', ['comm', 'varchar']],
+      ["id_local", ["id_local", "varchar"]],
+      ["nom_lieu", ["nom_lieu", "varchar"]],
+      ["ad_lieu", ["ad_lieu", "varchar"]],
+      ["com_lieu", ["com_lieu", "varchar"]],
+      ["insee", ["insee", "varchar"]],
+      ["type", ["type", "varchar"]],
+      ["date_maj", ["date_maj", "date"]],
+      ["ouvert", ["ouvert", "boolean"]],
+      ["source", ["source", "varchar"]],
+      ["xlong", ["Xlong", "varchar"]],
+      ["ylat", ["Ylat", "varchar"]],
+      ["nbre_pl", ["nbre_pl", "varchar"]],
+      ["nbre_pmr", ["nbre_pmr", "varchar"]],
+      ["duree", ["duree", "varchar"]],
+      ["horaires", ["horaires", "varchar"]],
+      ["proprio", ["proprio", "varchar"]],
+      ["lumiere", ["lumiere", "varchar"]],
+      ["comm", ["comm", "varchar"]],
     ]);
-    fileType: FileTypeEnum = FileTypeEnum.Csv;
+    fileType = "CSV" as FileTypeEnum.Csv;
     sheetOptions = {
-      delimiter: ',',
+      delimiter: ",",
       columns: true,
     };
     readonly importSql = `

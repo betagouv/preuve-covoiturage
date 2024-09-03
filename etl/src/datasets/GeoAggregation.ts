@@ -1,9 +1,9 @@
-import { AbstractDatatreatment } from '@betagouvpdc/evolution-geo/dist/common/AbstractDatatreatment';
+import { AbstractDatatreatment } from "../../../api/src/etl/common/AbstractDatatreatment";
 
 export class GeoAggregation extends AbstractDatatreatment {
-  static uuid = 'populate_geo_aggregation';
+  static uuid = "populate_geo_aggregation";
   static year = 2024;
-  static table = 'perimeters_aggregate';
+  static table = "perimeters_aggregate";
   readonly sql = `
     INSERT INTO ${this.tableWithSchema} (
       year,

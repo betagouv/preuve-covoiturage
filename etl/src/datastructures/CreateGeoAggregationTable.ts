@@ -1,10 +1,10 @@
-import { AbstractDatastructure } from '@betagouvpdc/evolution-geo';
+import { AbstractDatastructure } from "../../../api/src/etl";
 
 export class CreateGeoAggregationTable extends AbstractDatastructure {
-  static uuid = 'create_geo_aggregation_table';
-  static table = 'perimeters_aggregate';
+  static uuid = "create_geo_aggregation_table";
+  static table = "perimeters_aggregate";
   static year = 2024;
-  readonly indexWithSchema = this.tableWithSchema.replace('.', '_');
+  readonly indexWithSchema = this.tableWithSchema.replace(".", "_");
   readonly sql = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,

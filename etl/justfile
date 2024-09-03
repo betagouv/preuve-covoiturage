@@ -1,0 +1,17 @@
+set dotenv-load
+set shell := ["bash", "-uc"] 
+
+default:
+  @just --list
+
+# Run migrations
+migrate:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    --unstable-sloppy-imports \
+    src/index.ts
