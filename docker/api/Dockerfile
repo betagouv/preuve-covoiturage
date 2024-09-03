@@ -1,6 +1,6 @@
 FROM alpine:3.20
 
-RUN apk add --no-cache just deno p7zip
+RUN apk add --no-cache just deno p7zip bash
 
 RUN addgroup --gid 1000 deno \
   && adduser --uid 1000 --disabled-password deno --ingroup deno \
