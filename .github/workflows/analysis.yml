@@ -58,8 +58,6 @@ jobs:
       - name: Security vulnerabilities scan
         uses: aufdenpunkt/python-safety-check@master
         with:
-          safety_args: '--debug'
-          api-key: ${{ secrets.SAFETY_API_KEY }}
           scan_requirements_file_only: 'true'
 
   test:
