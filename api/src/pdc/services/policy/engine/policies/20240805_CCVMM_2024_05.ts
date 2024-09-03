@@ -1,10 +1,8 @@
 import { Timezone } from "@/pdc/providers/validator/types.ts";
-import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
 import {
   getOperatorsAt,
   TimestampedOperators,
 } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
-import { endsAt } from "@/pdc/services/policy/engine/helpers/index.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -19,7 +17,6 @@ import {
   onDistanceRangeOrThrow,
 } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import { startsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -101,14 +98,6 @@ export const CCVMM202405: PolicyHandlerStaticInterface = class
       onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_000 });
       isOperatorClassOrThrow(ctx, ["B", "C"]);
       isAdultOrThrow(ctx);
-
-      // Exclusion des trajets qui ne partent pas de la cc
-      if (
-        !startsAt(ctx, { epci: ["200066645"] }) &&
-        !endsAt(ctx, { epci: ["200066645"] })
-      ) {
-        throw new NotEligibleTargetException("Not in scope");
-      }
     } catch (e) {
       throw e;
     }
