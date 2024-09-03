@@ -50,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEP_PATH: notebooks/requirements.txt
+      SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
     steps:
       - name: Check out master
         uses: actions/checkout@master
