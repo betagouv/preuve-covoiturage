@@ -50,7 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEP_PATH: notebooks/requirements.txt
-      SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
     steps:
       - name: Check out master
         uses: actions/checkout@master
@@ -58,7 +57,6 @@ jobs:
       - name: Security vulnerabilities scan
         uses: pyupio/safety-action@v1
         with:
-          scan_requirements_file_only: 'true'
           api-key: ${{ secrets.SAFETY_API_KEY }}
 
   test:
