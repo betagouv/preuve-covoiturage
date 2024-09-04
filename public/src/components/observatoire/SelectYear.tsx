@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import SelectInList from '../common/SelectInList';
 
 
-export default function SelectMonth() {
+export default function SelectYear() {
   const { dashboard } =useContext(DashboardContext);
  
   return (

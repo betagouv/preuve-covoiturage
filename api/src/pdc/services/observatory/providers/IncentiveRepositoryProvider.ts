@@ -14,9 +14,7 @@ import {
 export class IncentiveRepositoryProvider
   implements IncentiveRepositoryInterface {
   private readonly table = (
-    params:
-      | IncentiveParamsInterface
-      | IncentiveParamsInterface,
+    params: IncentiveParamsInterface,
   ) => {
     return getTableName(params, "observatoire_stats", "incentive");
   };
