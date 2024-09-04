@@ -1,20 +1,20 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
+import { useSwitchFilters } from '@/hooks/useSwitchFilters';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { AiresCovoiturageDataInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { SwitchFilterInterface } from '@/interfaces/observatoire/helpersInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
+import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
 import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
-import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useMemo, useState, useContext } from 'react';
-import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { SwitchFilterInterface } from '@/interfaces/observatoire/helpersInterfaces';
-import { useSwitchFilters } from '@/hooks/useSwitchFilters';
-import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
 import { FeatureCollection } from 'geojson';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { LngLatBoundsLike } from 'maplibre-gl';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 
 export default function AiresCovoiturageMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
@@ -127,7 +127,13 @@ export default function AiresCovoiturageMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <AppMap 
           title={mapTitle} 
           mapStyle={mapStyle} 

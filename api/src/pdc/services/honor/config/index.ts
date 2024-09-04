@@ -1,5 +1,5 @@
-import * as ajv from './ajv';
-import * as app from './app';
+import * as ajv from "./ajv.ts";
+import * as app from "./app.ts";
 
 export const config = {
   ajv,

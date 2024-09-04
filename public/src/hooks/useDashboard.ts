@@ -29,6 +29,18 @@ export const useDashboard = () => {
     })
   },[]);
 
+  const getLastPeriod = async () => {
+    const response = await fetch(url);
+    const res = await response.json();
+    if (response.ok) {
+      onChangePeriod({ year: res.result.data.year, month: res.result.data.month });
+      setLastPeriod(new Date(res.result.data.year, res.result.data.month-1).getTime());
+      setError(null);
+    } else {
+      setError(res.error.data);
+    }
+  };
+  
   const onLoadTerritory = useCallback( async (value?: {code: INSEECode, type: PerimeterType}) => {
     setLoading(true);
     const params = value ? value : {code: 'XXXXX', type: 'country' as PerimeterType};
@@ -72,18 +84,6 @@ export const useDashboard = () => {
       return{ ...p, map: value }
     });
   },[]);
-
-  const getLastPeriod = async () => {
-    const response = await fetch(url);
-    const res = await response.json();
-    if (response.ok) {
-      onChangePeriod({ year: res.result.data.year, month: res.result.data.month });
-      setLastPeriod(new Date(res.result.data.year, res.result.data.month-1).getTime());
-      setError(null);
-    } else {
-      setError(res.error.data);
-    }
-  };
   
   const getName = async (value: {code: INSEECode, type: PerimeterType}) => {
     const query = {

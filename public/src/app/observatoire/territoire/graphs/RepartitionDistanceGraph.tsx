@@ -1,14 +1,13 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { DistributionDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcElement, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {Context} from 'chartjs-plugin-datalabels';
-import { Doughnut } from 'react-chartjs-2';
+import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
 import { useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
@@ -101,7 +100,13 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour ce graphique...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <div className={fr.cx('fr-callout')}>
           <div className={fr.cx('fr-callout__title','fr-text--xl')}>
             {title}

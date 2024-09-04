@@ -1,1 +1,0 @@
-CREATE INDEX IF NOT EXISTS carpools_operator_journey_id_idx ON carpool.carpools (operator_journey_id) WHERE datetime >= '2023-01-01';

@@ -1,15 +1,14 @@
 'use client'
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { castPerimeterType, fetchSearchAPI } from '@/helpers/search';
-import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { DashboardContext } from '@/context/DashboardProvider';
 import Tag from '@codegouvfr/react-dsfr/Tag';
 import { fr } from '@codegouvfr/react-dsfr';
 
-export default function SelectTerritory() {
+export default function SelectTerritory(props: { url:string }) {
   const { dashboard } =useContext(DashboardContext)
   const router = useRouter();
   const defaultOption = {
@@ -28,9 +27,7 @@ export default function SelectTerritory() {
     setOptions(response.hits);
   };
 
-  const getUrl = (option?:TerritoryListInterface) => {
-    return `/observatoire/territoire${option ? `?code=${option.territory}&type=${option.type}` : ''}`
-  }
+  
   
 
   return ( 
@@ -59,7 +56,7 @@ export default function SelectTerritory() {
       }}
       
       onChange={(e,v) =>{
-        router.push(getUrl(v!))
+        router.push(getUrl(props.url, v!))
         }
       }
     />

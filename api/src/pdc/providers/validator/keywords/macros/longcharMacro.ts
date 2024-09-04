@@ -1,6 +1,11 @@
-export function longcharMacro(): { type: string; minLength: number; maxLength: number; sanitize: boolean } {
+export function longcharMacro(): {
+  type: string;
+  minLength: number;
+  maxLength: number;
+  sanitize: boolean;
+} {
   return {
-    type: 'string',
+    type: "string",
     minLength: 1,
     maxLength: 512,
     sanitize: true,

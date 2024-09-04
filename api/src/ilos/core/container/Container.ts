@@ -1,20 +1,19 @@
-import 'reflect-metadata';
-import { Container as InversifyContainer, interfaces } from 'inversify';
-
+import { Container as InversifyContainer, ContainerOptions } from "@/deps.ts";
 import {
-  FunctionalHandlerInterface,
-  HandlerInterface,
-  NewableType,
-  HandlerConfigType,
   ContainerInterface,
-  ParamsType,
   ContextType,
+  FunctionalHandlerInterface,
+  HandlerConfigType,
+  HandlerInterface,
+  MethodNotFoundException,
+  NewableType,
+  ParamsType,
   ResultType,
-} from '@ilos/common';
+} from "@/ilos/common/index.ts";
+import { HandlerRegistry } from "./HandlerRegistry.ts";
 
-import { HandlerRegistry } from './HandlerRegistry';
-
-export class Container extends InversifyContainer implements ContainerInterface {
+export class Container extends InversifyContainer
+  implements ContainerInterface {
   protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);
   declare parent: Container | null;
 
@@ -27,19 +26,19 @@ export class Container extends InversifyContainer implements ContainerInterface 
 
   /**
    * Creates an instance of Container.
-   * @param {interfaces.ContainerOptions} [containerOptions]
+   * @param {ContainerOptions} [containerOptions]
    * @memberof Container
    */
-  constructor(containerOptions?: interfaces.ContainerOptions) {
+  constructor(containerOptions?: ContainerOptions) {
     super({
-      defaultScope: 'Singleton',
+      defaultScope: "Singleton",
       autoBindInjectable: true,
       skipBaseClassChecks: true,
       ...containerOptions,
     });
   }
 
-  createChild(containerOptions: interfaces.ContainerOptions = {}): Container {
+  createChild(containerOptions: ContainerOptions = {}): Container {
     const container = new Container(containerOptions);
     container.parent = this;
     return container;
@@ -52,7 +51,16 @@ export class Container extends InversifyContainer implements ContainerInterface 
   getHandler<P = ParamsType, C = ContextType, R = ResultType>(
     config: HandlerConfigType,
   ): FunctionalHandlerInterface<P, C, R> {
-    return this.handlersRegistry.get<P, C, R>(config);
+    const handler = this.handlersRegistry.get<P, C, R>(config);
+
+    // FIXME ?
+    if (!handler) {
+      throw new MethodNotFoundException(
+        `Handler not found for ${config.signature}`,
+      );
+    }
+
+    return handler;
   }
 
   getHandlers(): (HandlerConfigType & { resolver: Function })[] {

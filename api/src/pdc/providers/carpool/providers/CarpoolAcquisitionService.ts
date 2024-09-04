@@ -1,19 +1,25 @@
-import { NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolEventRepository } from '../repositories/CarpoolEventRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import { CarpoolAcquisitionEvent } from '../events';
-import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
-import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
-import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from '../interfaces';
-import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
-import { GeoProvider } from '@pdc/providers/geo';
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { GeoProvider } from "@/pdc/providers/geo/index.ts";
+import {
+  CancelRequest,
+  CarpoolAcquisitionStatusEnum,
+  RegisterRequest,
+  UpdateRequest,
+} from "../interfaces/index.ts";
+import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
+import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
+import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
+import { CarpoolRequestRepository } from "../repositories/CarpoolRequestRepository.ts";
+import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
+import { CarpoolAcquisitionStatus } from "../status/index.ts";
 
 @provider()
 export class CarpoolAcquisitionService {
   constructor(
     protected connection: PostgresConnection,
-    protected eventRepository: CarpoolEventRepository,
+    protected statusRepository: CarpoolStatusRepository,
     protected requestRepository: CarpoolRequestRepository,
     protected lookupRepository: CarpoolLookupRepository,
     protected carpoolRepository: CarpoolRepository,
@@ -23,7 +29,7 @@ export class CarpoolAcquisitionService {
 
   public async registerRequest(data: RegisterRequest): Promise<void> {
     const conn = await this.connection.getClient().connect();
-    await conn.query('BEGIN');
+    await conn.query("BEGIN");
     try {
       const { api_version, ...carpoolData } = data;
       const carpool = await this.carpoolRepository.register(carpoolData, conn);
@@ -37,13 +43,17 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Received),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(
+          carpool._id,
+          request._id,
+          CarpoolAcquisitionStatusEnum.Received,
+        ),
         conn,
       );
-      await conn.query('COMMIT');
+      await conn.query("COMMIT");
     } catch (e) {
-      await conn.query('ROLLBACK');
+      await conn.query("ROLLBACK");
       throw e;
     } finally {
       conn.release();
@@ -52,10 +62,16 @@ export class CarpoolAcquisitionService {
 
   public async updateRequest(data: UpdateRequest): Promise<void> {
     const conn = await this.connection.getClient().connect();
-    await conn.query('BEGIN');
+    await conn.query("BEGIN");
     try {
-      const { api_version, operator_id, operator_journey_id, ...carpoolData } = data;
-      const carpool = await this.carpoolRepository.update(operator_id, operator_journey_id, carpoolData, conn);
+      const { api_version, operator_id, operator_journey_id, ...carpoolData } =
+        data;
+      const carpool = await this.carpoolRepository.update(
+        operator_id,
+        operator_journey_id,
+        carpoolData,
+        conn,
+      );
       const request = await this.requestRepository.save(
         {
           api_version,
@@ -66,13 +82,17 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Updated),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(
+          carpool._id,
+          request._id,
+          CarpoolAcquisitionStatusEnum.Updated,
+        ),
         conn,
       );
-      await conn.query('COMMIT');
+      await conn.query("COMMIT");
     } catch (e) {
-      await conn.query('ROLLBACK');
+      await conn.query("ROLLBACK");
       throw e;
     } finally {
       conn.release();
@@ -81,9 +101,12 @@ export class CarpoolAcquisitionService {
 
   public async cancelRequest(data: CancelRequest): Promise<void> {
     const conn = await this.connection.getClient().connect();
-    await conn.query('BEGIN');
+    await conn.query("BEGIN");
     try {
-      const carpool = await this.lookupRepository.findOneStatus(data.operator_id, data.operator_journey_id);
+      const carpool = await this.lookupRepository.findOneStatus(
+        data.operator_id,
+        data.operator_journey_id,
+      );
       if (!carpool) {
         throw new NotFoundException();
       }
@@ -94,24 +117,35 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      await this.eventRepository.saveAcquisitionEvent(
-        new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Canceled),
+      await this.statusRepository.saveAcquisitionStatus(
+        new CarpoolAcquisitionStatus(
+          carpool._id,
+          request._id,
+          CarpoolAcquisitionStatusEnum.Canceled,
+        ),
         conn,
       );
-      await conn.query('COMMIT');
+      await conn.query("COMMIT");
     } catch (e) {
-      await conn.query('ROLLBACK');
+      await conn.query("ROLLBACK");
       throw e;
     } finally {
       conn.release();
     }
   }
 
-  public async processGeo(search: { batchSize: number; from: Date; to: Date; failedOnly: boolean }): Promise<number> {
+  public async processGeo(
+    search: { batchSize: number; from: Date; to: Date; failedOnly: boolean },
+  ): Promise<number> {
     const conn = await this.connection.getClient().connect();
     try {
       const toProcess = await this.geoRepository.findProcessable(
-        { limit: search.batchSize, from: search.from, to: search.to, failedOnly: search.failedOnly },
+        {
+          limit: search.batchSize,
+          from: search.from,
+          to: search.to,
+          failedOnly: search.failedOnly,
+        },
         conn,
       );
       for (const toEncode of toProcess) {
@@ -119,20 +153,35 @@ export class CarpoolAcquisitionService {
           const start = await this.geoService.positionToInsee(toEncode.start);
           const end = await this.geoService.positionToInsee(toEncode.end);
           await this.geoRepository.upsert(
-            { carpool_id: toEncode.carpool_id, start_geo_code: start, end_geo_code: end },
+            {
+              carpool_id: toEncode.carpool_id,
+              start_geo_code: start,
+              end_geo_code: end,
+            },
             conn,
           );
-          await this.eventRepository.saveAcquisitionEvent(
-            { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Processed },
+          await this.statusRepository.saveAcquisitionStatus(
+            {
+              carpool_id: toEncode.carpool_id,
+              status: CarpoolAcquisitionStatusEnum.Processed,
+            },
             conn,
           );
         } catch (e) {
-          await this.geoRepository.upsert({ carpool_id: toEncode.carpool_id, error: e.message }, conn);
-          await this.eventRepository.saveAcquisitionEvent(
-            { carpool_id: toEncode.carpool_id, status: CarpoolAcquisitionStatusEnum.Failed },
+          await this.geoRepository.upsert({
+            carpool_id: toEncode.carpool_id,
+            error: e.message,
+          }, conn);
+          await this.statusRepository.saveAcquisitionStatus(
+            {
+              carpool_id: toEncode.carpool_id,
+              status: CarpoolAcquisitionStatusEnum.Failed,
+            },
             conn,
           );
-          console.error(`[geo] error encoding ${toEncode.carpool_id} : ${e.message}`);
+          logger.error(
+            `[geo] error encoding ${toEncode.carpool_id} : ${e.message}`,
+          );
         }
       }
       return toProcess.length;

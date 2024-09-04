@@ -1,3 +1,3 @@
-export { Container } from './Container';
-export { HandlerRegistry } from './HandlerRegistry';
-export { HookRegistry } from './HookRegistry';
+export { Container } from "./Container.ts";
+export { HandlerRegistry } from "./HandlerRegistry.ts";
+export { HookRegistry } from "./HookRegistry.ts";

@@ -1,20 +1,35 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { Options } from '../commands/CreateCommand';
+import { provider } from "@/ilos/common/index.ts";
+import { TerritoryRepositoryInterfaceResolver } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
-
-export type ResolveParams = Partial<Pick<Options, 'territory_id' | 'geo'>>;
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+export type ResolveParams = Partial<{
+  territory_id: number[];
+  geo_selector: TerritorySelectorsInterface;
+}>;
 export type ResolveResults = TerritorySelectorsInterface;
 
 export type TerritoryServiceInterface = {
+  geoStringToObject(geo: string[]): TerritorySelectorsInterface;
   resolve(params: ResolveParams): Promise<ResolveResults>;
+  mergeSelectors(
+    arr: TerritorySelectorsInterface[],
+  ): TerritorySelectorsInterface;
 };
 
-export abstract class TerritoryServiceInterfaceResolver implements TerritoryServiceInterface {
+export abstract class TerritoryServiceInterfaceResolver
+  implements TerritoryServiceInterface {
+  public geoStringToObject(geo: string[]): TerritorySelectorsInterface {
+    throw new Error("Not implemented");
+  }
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
+  }
+  public mergeSelectors(
+    arr: TerritorySelectorsInterface[],
+  ): TerritorySelectorsInterface {
+    throw new Error("Not implemented");
   }
 }
 
@@ -22,12 +37,61 @@ export abstract class TerritoryServiceInterfaceResolver implements TerritoryServ
   identifier: TerritoryServiceInterfaceResolver,
 })
 export class TerritoryService {
-  protected readonly defaultResolveResult = { [TerritoryCodeEnum.Country]: ['XXXXX'] }; // FRANCE
+  protected readonly defaultResolveResult = {
+    [TerritoryCodeEnum.Country]: ["XXXXX"],
+  }; // FRANCE
 
-  constructor(protected kernel: KernelInterfaceResolver) {}
+  constructor(
+    protected territoryRepository: TerritoryRepositoryInterfaceResolver,
+  ) {}
 
   /**
-   * Resolve to a geo_selector from a `territory_id` or a `geo_selector`.
+   * Convert a geo_selector string to a geo_selector object
+   *
+   * @param geo
+   * @returns
+   */
+  public geoStringToObject(geo: string[]): TerritorySelectorsInterface {
+    const selectors = geo
+      .reduce((p, c) => {
+        const [type, code] = c
+          .split(":")
+          .map((s: string) => String(s).toLowerCase().trim()) as [
+            keyof TerritorySelectorsInterface,
+            string,
+          ];
+
+        if (type && code) {
+          p[type] = p[type] || [];
+          p[type] = [...p[type]!, code.toUpperCase()];
+        }
+
+        return p;
+      }, {
+        [TerritoryCodeEnum.City]: [],
+        [TerritoryCodeEnum.Mobility]: [],
+        [TerritoryCodeEnum.CityGroup]: [],
+        [TerritoryCodeEnum.District]: [],
+        [TerritoryCodeEnum.Region]: [],
+        [TerritoryCodeEnum.Country]: [],
+      } as TerritorySelectorsInterface);
+
+    // clean up empty selectors
+    Object
+      .keys(selectors)
+      .forEach((key: keyof TerritorySelectorsInterface) => {
+        if (selectors[key]?.length === 0) {
+          delete selectors[key];
+        }
+      });
+
+    return Object.keys(selectors).length
+      ? selectors
+      : this.defaultResolveResult;
+  }
+
+  /**
+   * Resolve to a geo_selector from a `territory_id` or a `geo_selector` string.
    *
    * `territory_id` might differ from an administrative geographical division.
    * When given both params, `geo_selector` takes precedence
@@ -35,60 +99,42 @@ export class TerritoryService {
   public async resolve(params: ResolveParams): Promise<ResolveResults> {
     // select the whole country if all params are missing
     if (
-      Object.keys(params).filter((k) => params[k] !== null && typeof params[k] !== 'undefined').length === 0 ||
-      ('geo' in params && Object.keys(params.geo).length === 0)
+      (!params.territory_id && !params.geo_selector) ||
+      (Array.isArray(params.geo_selector) && params.geo_selector.length === 0)
     ) {
       return this.defaultResolveResult;
     }
 
-    // TODO add support for territory_id
-    // use the territory service to get geo_selectors from the territory_id / territory SIREN
+    if (!params.geo_selector) {
+      // get an array of selectors for each territory_id
+      const territorySelectors = await Promise.all(
+        (params.territory_id || []).map((id) =>
+          this.territoryRepository.getTerritorySelectors(id)
+        ),
+      );
 
-    const { geo } = params;
-    const selectors = geo.reduce(
-      (p, c) => {
-        const [type, code] = c.split(':').map((s) => String(s).toLowerCase().trim());
-
-        switch (type as TerritoryCodeEnum) {
-          case TerritoryCodeEnum.City:
-            p[TerritoryCodeEnum.City].push(code);
-            break;
-          case TerritoryCodeEnum.Mobility:
-            p[TerritoryCodeEnum.Mobility].push(code);
-            break;
-          case TerritoryCodeEnum.CityGroup:
-            p[TerritoryCodeEnum.CityGroup].push(code);
-            break;
-          case TerritoryCodeEnum.District:
-            p[TerritoryCodeEnum.District].push(code);
-            break;
-          case TerritoryCodeEnum.Region:
-            p[TerritoryCodeEnum.Region].push(code);
-            break;
-          case TerritoryCodeEnum.Country:
-            p[TerritoryCodeEnum.Country].push(code);
-            break;
-        }
-
-        return p;
-      },
-      {
-        [TerritoryCodeEnum.City]: [],
-        [TerritoryCodeEnum.Mobility]: [],
-        [TerritoryCodeEnum.CityGroup]: [],
-        [TerritoryCodeEnum.District]: [],
-        [TerritoryCodeEnum.Region]: [],
-        [TerritoryCodeEnum.Country]: [],
-      } as TerritorySelectorsInterface,
-    );
-
-    // clean up empty selectors
-    Object.keys(selectors).forEach((key) => {
-      if (selectors[key].length === 0) {
-        delete selectors[key];
+      // merge all selectors into one
+      const merge = this.mergeSelectors(territorySelectors);
+      if (Object.keys(merge).length > 0) {
+        return merge;
       }
-    });
 
-    return Object.keys(selectors).length ? selectors : this.defaultResolveResult;
+      // fallback to the default country
+      return this.defaultResolveResult;
+    }
+
+    return params.geo_selector;
+  }
+
+  public mergeSelectors(
+    arr: TerritorySelectorsInterface[],
+  ): TerritorySelectorsInterface {
+    return arr.reduce((acc, curr) => {
+      Object.keys(curr).forEach((key) => {
+        acc[key] = acc[key] || [];
+        acc[key] = [...new Set([...acc[key]!, ...curr[key]!])];
+      });
+      return acc;
+    }, {} as TerritorySelectorsInterface);
   }
 }

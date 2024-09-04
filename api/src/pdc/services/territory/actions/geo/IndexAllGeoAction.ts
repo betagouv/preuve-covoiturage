@@ -1,10 +1,10 @@
-import { ConfigInterfaceResolver, handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { SingleResultInterface as AllGeoResultInterface } from '@shared/territory/allGeo.contract';
-import { handlerConfig } from '@shared/territory/indexAllGeo.contract';
-import { indexData } from '../../helpers/meilisearch';
-import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface';
+import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { SingleResultInterface as AllGeoResultInterface } from "@/shared/territory/allGeo.contract.ts";
+import { handlerConfig } from "@/shared/territory/indexAllGeo.contract.ts";
+import { indexData } from "../../helpers/meilisearch.ts";
+import { GeoRepositoryProviderInterfaceResolver } from "../../interfaces/GeoRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,
@@ -19,9 +19,14 @@ export class IndexAllGeoAction extends AbstractAction {
   }
 
   public async handle(): Promise<void> {
-    const { host, apiKey, index, batchSize } = this.config.get('meilisearch');
+    const { host, apiKey, index, batchSize } = this.config.get("meilisearch");
     const allGeo = await this.geoRepository.getAllGeo();
-    const response = await indexData<AllGeoResultInterface>({ host, apiKey }, index, batchSize, allGeo);
+    const response = await indexData<AllGeoResultInterface>(
+      { host, apiKey },
+      index,
+      batchSize,
+      allGeo,
+    );
     return response;
   }
 }

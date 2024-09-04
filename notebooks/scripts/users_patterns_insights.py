@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Parameters
-# 
+#
 #    Parameter name          Example Value                                            Description
 # - `connection_string` : 'postgresql://postgres:postgres@localhost:5432/local'   -> Postgresql URL connection string
 # - `aom_insee` :          '217500016'                                            -> Aom insee code representing geo perimeter to apply the algorithm
@@ -41,14 +41,14 @@ engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 # In[ ]:
 
 query = f"""SELECT cc._id, cc.is_driver, ci.phone_trunc, cc.datetime, cc.duration, cc.operator_id, cc.seats,
-ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt, 
+ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt,
 cc.operator_journey_id,
 cc.distance,
 ci.operator_user_id,
 cc.end_position,
 CASE WHEN pi.result >= 0 THEN pi.result ELSE 0 END as incentive,
 cc.operator_trip_id,
- 
+
 cc2.is_driver as other_is_driver,
 ci2.phone_trunc as other_phone_trunc
 FROM CARPOOL.CARPOOLS cc
@@ -66,7 +66,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# # Etape 1 
+# # Etape 1
 # Conversion des des données.
 
 # In[ ]:
@@ -80,7 +80,7 @@ df_carpool['distance'] = np.round(df_carpool['distance']/1000,1)
 
 
 # # Etape 2
-# 
+#
 # Création de fonctions pour le calcul de changement de rôle par jours etc.
 
 # In[ ]:
@@ -105,8 +105,8 @@ def intra_day_change_percentage(row):
     return percentage
 
 
-# # Etape 3 
-# Calcul des indicateurs par phone_trunc 
+# # Etape 3
+# Calcul des indicateurs par phone_trunc
 
 # In[ ]:
 
@@ -171,7 +171,7 @@ phone_trunc_insights_df['operator_list'] = phone_trunc_insights_df['operator_lis
 
 
 # # Etape 4
-# 
+#
 # Ajout dans la bd des insights par phone trunc?
 
 # In[ ]:
@@ -181,7 +181,7 @@ def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     insert_stmt = insert(table.table).values(list(data_iter))
     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['phone_trunc', 'departure_date', 'end_date'])
     conn.execute(on_duplicate_key_stmt)
-    
+
 phone_trunc_insights_df.to_sql(
     name="phone_insights",
     schema="fraudcheck",
@@ -234,7 +234,7 @@ filtered_df_grouped = filtered_df_grouped[filtered_df_grouped['role_change'].app
 # In[ ]:
 
 
-# algorithme de création de groupe frauduleux 
+# algorithme de création de groupe frauduleux
 
 G = nx.Graph()
 
@@ -270,7 +270,7 @@ for idx, component in enumerate(connected_components):
     group_journeys['date'] = group_journeys['datetime'].dt.date.copy()
     grouped = group_journeys.groupby('phone_trunc').size().reset_index(name='count')
     total_change_percentage = np.unique(group_journeys['total_change_percentage'].to_list())
-    
+
     group_data.append({
         'groupe': idx+1,
         'phone_trunc': group_phones,
@@ -288,7 +288,7 @@ for idx, component in enumerate(connected_components):
         'central_participants' : degree_centrality,
         'intermediate_participants' : betweenness_centrality,
         'journey_id_list' : group_operator_id,
-      
+
     })
 groups_df = pd.DataFrame(group_data)
 
@@ -301,7 +301,7 @@ groups_df['intermediate_participants'] = pd.Series(groups_df['intermediate_parti
 
 
 # # Etape 6
-# 
+#
 # Ajout dans la bd les groupes
 
 # In[ ]:

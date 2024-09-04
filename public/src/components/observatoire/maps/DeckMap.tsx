@@ -1,11 +1,12 @@
 'use client';
-import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox/typed';
-import { Map, useControl, NavigationControl, FullscreenControl, MapRef } from 'react-map-gl/maplibre';
-import Legend from './Legend';
+import { fitBounds } from '@/helpers/map';
 import { DeckMapInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import { useRef, useEffect } from 'react';
 import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
+import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox/typed';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { useEffect, useRef } from 'react';
+import { FullscreenControl, Map, MapRef, NavigationControl, useControl } from 'react-map-gl/maplibre';
+import Legend from './Legend';
 
 function DeckGLOverlay(
   props: MapboxOverlayProps & {
@@ -24,11 +25,9 @@ const DeckMap = (props: DeckMapInterface) => {
     longitude: 1.7,
     zoom: 5,
   };
-  const fitBounds = () => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
-  };
+ 
   useEffect(() => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    fitBounds(mapRef.current, props.bounds);
   }, [props.bounds]);
 
   const inRange = (value: number, min: number, max: number) => {
@@ -60,7 +59,7 @@ const DeckMap = (props: DeckMapInterface) => {
               height: props.height ? props.height : '60vh',
             }}
             mapStyle={props.mapStyle}
-            onLoad={fitBounds}
+            onLoad={() => fitBounds(mapRef.current, props.bounds)}
             scrollZoom={props.scrollZoom}
           >
             <DeckGLOverlay layers={props.layers} getTooltip={props.tooltip} />

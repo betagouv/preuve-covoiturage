@@ -1,5 +1,5 @@
-import { ContextType, KernelInterface } from '@ilos/common';
-import { IdentityIdentifiersInterface } from '@shared/certificate/common/interfaces/IdentityIdentifiersInterface';
+import { ContextType, KernelInterface } from "@/ilos/common/index.ts";
+import { IdentityIdentifiersInterface } from "@/shared/certificate/common/interfaces/IdentityIdentifiersInterface.ts";
 
 export interface ParamsInterface {
   identity: IdentityIdentifiersInterface;
@@ -14,14 +14,16 @@ export interface FindPersonInterface {
 }
 
 export const findPerson = (kernel: KernelInterface): FindPersonInterface =>
-  async function findPerson(params: ParamsInterface): Promise<ResultsInterface> {
+  async function findPerson(
+    params: ParamsInterface,
+  ): Promise<ResultsInterface> {
     const { identity, operator_id } = params;
 
     return kernel.call(
-      'carpool:findidentities',
+      "carpool:findidentities",
       { identity, operator_id },
       {
-        channel: { service: 'certificate' },
+        channel: { service: "certificate" },
         call: { user: {} },
       },
     );

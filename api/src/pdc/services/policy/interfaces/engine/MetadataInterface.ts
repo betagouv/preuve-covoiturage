@@ -24,7 +24,8 @@ export interface SerializedMetadataVariableDefinitionInterface {
   carpoolValue?: number;
 }
 
-export interface StoredMetadataVariableInterface extends SerializedMetadataVariableDefinitionInterface {
+export interface StoredMetadataVariableInterface
+  extends SerializedMetadataVariableDefinitionInterface {
   policy_id: number;
   datetime: Date;
   value: number;
@@ -53,12 +54,15 @@ export interface MetadataAccessorInterface {
   export(): Array<SerializedAccessibleMetadataInterface>;
 }
 
-export interface SerializedStoredMetadataInterface extends SerializedAccessibleMetadataInterface {
+export interface SerializedStoredMetadataInterface
+  extends SerializedAccessibleMetadataInterface {
   datetime: Date;
 }
 
 export interface MetadataStoreInterface {
   load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface>;
   save(data: MetadataAccessorInterface): Promise<void>;
-  store(lifetime: MetadataLifetime): Promise<Array<SerializedStoredMetadataInterface>>;
+  store(
+    lifetime: MetadataLifetime,
+  ): Promise<Array<SerializedStoredMetadataInterface>>;
 }

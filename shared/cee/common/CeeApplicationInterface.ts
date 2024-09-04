@@ -1,3 +1,5 @@
+import { CarpoolV1StatusEnum } from '@pdc/providers/carpool/interfaces';
+
 export enum CeeJourneyTypeEnum {
   Short = 'short',
   Long = 'long',
@@ -8,10 +10,10 @@ export type DrivingLicense = string;
 export type Timestamp = string;
 export type JourneyId = number;
 export type OperatorJourneyId = string;
-export type Status = string;
+export type Status = CarpoolV1StatusEnum;
 export type Token = string;
 
-export interface CeeAplicationResultInterface {
+export interface CeeApplicationResultInterface {
   uuid: string;
   datetime: Timestamp;
   token: Token;

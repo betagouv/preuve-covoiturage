@@ -1,6 +1,6 @@
 export const callContext = {
   channel: {
-    service: 'acquisition',
+    service: "acquisition",
   },
   call: {
     user: {},

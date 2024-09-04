@@ -1,109 +1,140 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { createDatabase, dropDatabase, migrate } from '@db/index';
-import { parse, Options as ParseOptions } from 'csv-parse';
-import fs from 'fs';
-import path from 'path';
+import { migrate } from "@/db/index.ts";
+import {
+  addDate,
+  createReadStream,
+  CsvOptions as ParseOptions,
+  parse,
+  URL,
+} from "@/deps.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { join } from "@/lib/path/index.ts";
+import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
+import { companies, Company } from "./companies.ts";
+import { Operator, operators } from "./operators.ts";
+import {
+  CreateTerritoryGroupInterface,
+  territory_groups,
+  TerritorySelectorsInterface,
+} from "./territories.ts";
+import { User, users } from "./users.ts";
 
-import { URL } from 'url';
-import { Carpool, carpools, carpoolsV2 } from './carpools';
-import { companies, Company } from './companies';
-import { Operator, operators } from './operators';
-import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories';
-import { User, users } from './users';
-import { add } from 'date-fns';
+const __dirname = import.meta.dirname;
 export class Migrator {
-  public connection: PostgresConnection;
-  public currentConnectionString: string;
-  public config: {
-    driver: string;
-    user: string;
-    password: string;
-    host: string;
-    database: string;
-    port: number;
-    ssl: boolean;
-  };
-  public readonly dbName: string;
-  public readonly dbIsCreated: boolean;
+  // base connection to handle the creation of a specific database
+  public baseConn: PostgresConnection;
+  public rootConnectionString: string;
 
-  constructor(dbUrlString: string, newDatabase = true) {
+  // specific connection to a test database
+  public testConn: PostgresConnection;
+  public currentConnectionString: string;
+
+  public readonly dbName: string;
+  public readonly hasTmpDb: boolean;
+  public readonly verbose = false;
+
+  constructor(dbUrlString: string, createTmpDb = true) {
     const dbUrl = new URL(dbUrlString);
-    this.config = {
-      driver: 'pg',
-      user: dbUrl.username,
-      password: dbUrl.password,
-      host: dbUrl.hostname,
-      database: dbUrl.pathname.replace('/', ''),
-      port: parseInt(dbUrl.port, 10),
-      ssl: false,
-    };
-    this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase
-      ? `test_${Date.now().valueOf()}_${(Math.random() + 1).toString(36).substring(7)}`
-      : dbUrl.pathname.replace('/', '');
+    this.hasTmpDb = createTmpDb;
+    this.dbName = createTmpDb
+      ? `test_${Date.now().valueOf()}_${
+        (Math.random() + 1).toString(36).substring(7)
+      }`
+      : dbUrl.pathname.replace("/", "");
+
     const currentConnection = new URL(dbUrlString);
-    if (newDatabase) {
+    this.rootConnectionString = currentConnection.toString();
+    if (createTmpDb) {
       currentConnection.pathname = `/${this.dbName}`;
     }
+
     this.currentConnectionString = currentConnection.toString();
+    this.testConn = new PostgresConnection({
+      connectionString: this.currentConnectionString,
+    });
+
+    this.baseConn = createTmpDb
+      ? new PostgresConnection({ connectionString: this.rootConnectionString })
+      : this.testConn;
   }
 
   async up() {
-    this.connection = new PostgresConnection({
-      ...this.config,
-      database: this.dbName,
-    });
-    await this.connection.up();
+    this.testConn && await this.testConn.up();
+    this.baseConn && await this.baseConn.up();
+  }
+
+  async down() {
+    this.testConn && await this.testConn.down();
+    this.baseConn && await this.baseConn.down();
+  }
+
+  async drop() {
+    if (this.hasTmpDb) {
+      // connection to the test database must be closed before dropping it
+      await this.testConn.down();
+
+      // drop the test database using the base connection
+      await this.baseConn.getClient().query(
+        `DROP DATABASE ${this.dbName}`,
+      );
+    }
   }
 
   async create() {
-    if (this.dbIsCreated) {
-      await createDatabase(this.config, this.dbName);
+    if (this.hasTmpDb) {
+      logger.debug(`[migrator] creating database ${this.dbName}`);
+      await this.baseConn.getClient().query(
+        `CREATE DATABASE ${this.dbName}`,
+      );
     }
   }
 
   async migrate() {
-    await migrate({
-      ...this.config,
-      database: this.dbName,
-    });
+    await migrate(this.currentConnectionString);
   }
 
   async seed() {
-    if (!this.connection) {
-      await this.up();
-    }
-    await this.connection.getClient().query<any>(`SET session_replication_role = 'replica'`);
+    await this.up();
+
+    logger.debug("[migrator] seeding...");
+
+    await this.testConn.getClient().query(
+      `SET session_replication_role = 'replica'`,
+    );
 
     for (const company of companies) {
-      console.debug(`Seeding company ${company.legal_name}`);
+      this.verbose &&
+        logger.debug(`Seeding company ${company.legal_name}`);
       await this.seedCompany(company);
     }
 
-    console.debug(`Seeding geo`);
+    this.verbose && logger.debug(`Seeding geo`);
     await this.seedTerritory();
 
     for (const operator of operators) {
-      console.debug(`Seeding operator ${operator.name}`);
+      this.verbose && logger.debug(`Seeding operator ${operator.name}`);
       await this.seedOperator(operator);
     }
 
     for (const user of users) {
-      console.debug(`Seeding user ${user.email}`);
+      this.verbose && logger.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
     }
 
     for (const territory_group of territory_groups) {
-      console.debug(`Seeding territory group ${territory_group.name}`);
+      this.verbose &&
+        logger.debug(`Seeding territory group ${territory_group.name}`);
       await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpools) {
-      console.debug(`Seeding carpool ${carpool.acquisition_id}`);
+      this.verbose &&
+        logger.debug(`Seeding carpool ${carpool.acquisition_id}`);
       await this.seedCarpool(carpool);
     }
     for (const carpool of carpoolsV2) {
-      console.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+      this.verbose &&
+        logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
       await this.seedCarpoolV2(carpool);
     }
 
@@ -132,16 +163,22 @@ export class Migrator {
             - fraudcheck.fraudchecks
             - policy.policy_metas
             - policy.incentives
-            +++ VIEWS +++ 
+            +++ VIEWS +++
     */
-    await this.connection.getClient().query<any>(`SET session_replication_role = 'origin'`);
+    await this.testConn.getClient().query<any>(
+      `SET session_replication_role = 'origin'`,
+    );
+    logger.debug("[migrator] seeding...done");
   }
 
-  protected async *dataFromCsv<P>(filename: string, options: ParseOptions = {}): AsyncIterator<P> {
-    const filepath = path.join(__dirname, filename);
-    const parser = fs.createReadStream(filepath).pipe(
+  protected async *dataFromCsv<P>(
+    filename: string,
+    options: ParseOptions = {},
+  ): AsyncIterator<P> {
+    const filepath = join(import.meta.dirname!, filename);
+    const parser = createReadStream(filepath).pipe(
       parse({
-        cast: (v: any) => (v === '' ? null : v),
+        cast: (v: any) => (v === "" ? null : v),
         ...options,
       }),
     );
@@ -150,14 +187,20 @@ export class Migrator {
     }
   }
 
-  protected async seedFromCsv(filename: string, tablename: string, csvOptions: ParseOptions = {}) {
+  protected async seedFromCsv(
+    filename: string,
+    tablename: string,
+    _csvOptions: ParseOptions = {},
+  ) {
     const cursor = this.dataFromCsv(filename);
     let done = false;
     do {
       const data = await cursor.next();
       if (data.value && Array.isArray(data.value)) {
-        await this.connection.getClient().query<any>({
-          text: `INSERT INTO ${tablename} VALUES (${data.value.map((_, i) => `$${i + 1}`).join(', ')})`,
+        await this.testConn.getClient().query<any>({
+          text: `INSERT INTO ${tablename} VALUES (${
+            data.value.map((_, i) => `$${i + 1}`).join(", ")
+          })`,
           values: data.value,
         });
       }
@@ -166,7 +209,7 @@ export class Migrator {
   }
 
   async seedCarpoolV2([driverCarpool, passengerCarpool]: [Carpool, Carpool]) {
-    const carpoolResult = await this.connection.getClient().query({
+    const carpoolResult = await this.testConn.getClient().query({
       text: `INSERT INTO carpool_v2.carpools (
         operator_id,
         operator_journey_id,
@@ -194,7 +237,8 @@ export class Migrator {
         passenger_over_18,
         passenger_seats,
         passenger_contribution,
-        passenger_payments
+        passenger_payments,
+        legacy_id
       ) VALUES(
         $1,
         $2,
@@ -222,10 +266,11 @@ export class Migrator {
         $26,
         $27,
         $28,
-        $29
+        $29,
+        $30
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, created_at, updated_at
+      RETURNING _id, uuid, created_at, updated_at
     `,
       values: [
         driverCarpool.operator_id,
@@ -235,7 +280,7 @@ export class Migrator {
         driverCarpool.datetime,
         driverCarpool.start_position.lon,
         driverCarpool.start_position.lat,
-        add(driverCarpool.datetime, { seconds: driverCarpool.duration }),
+        addDate(driverCarpool.datetime, { seconds: driverCarpool.duration }),
         driverCarpool.end_position.lon,
         driverCarpool.end_position.lat,
         driverCarpool.distance,
@@ -257,10 +302,11 @@ export class Migrator {
         passengerCarpool.seats,
         passengerCarpool.cost,
         JSON.stringify(passengerCarpool.payments),
+        driverCarpool.acquisition_id,
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
         INSERT INTO carpool_v2.requests (
           carpool_id, operator_id, operator_journey_id, payload, api_version, cancel_code, cancel_message
@@ -286,7 +332,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
       INSERT INTO carpool_v2.geo (
         carpool_id, start_geo_code, end_geo_code, errors
@@ -303,10 +349,15 @@ export class Migrator {
         end_geo_code = excluded.end_geo_code,
         errors = excluded.errors::jsonb
       `,
-      values: [carpoolResult.rows[0]._id, driverCarpool.start_geo_code, driverCarpool.end_geo_code, JSON.stringify([])],
+      values: [
+        carpoolResult.rows[0]._id,
+        driverCarpool.start_geo_code,
+        driverCarpool.end_geo_code,
+        JSON.stringify([]),
+      ],
     });
 
-    await this.connection.getClient().query({
+    await this.testConn.getClient().query({
       text: `
       INSERT INTO carpool_v2.status (
         carpool_id, acquisition_status
@@ -315,12 +366,12 @@ export class Migrator {
         $2
       )
       `,
-      values: [carpoolResult.rows[0]._id, 'processed'],
+      values: [carpoolResult.rows[0]._id, "processed"],
     });
   }
 
   async seedCarpool(carpool: Carpool) {
-    const result = await this.connection.getClient().query<any>({
+    const result = await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO carpool.identities 
           (uuid, travel_pass_user_id, over_18, phone_trunc)
@@ -341,7 +392,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO carpool.carpools 
           (
@@ -394,7 +445,7 @@ export class Migrator {
       ],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO acquisition.acquisitions
           (
@@ -408,10 +459,17 @@ export class Migrator {
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT DO NOTHING
       `,
-      values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
+      values: [
+        carpool.acquisition_id,
+        1,
+        carpool.operator_id,
+        carpool.operator_journey_id,
+        JSON.stringify({}),
+        "ok",
+      ],
     });
 
-    await this.connection.getClient().query<any>(`
+    await this.testConn.getClient().query<any>(`
         SELECT
           setval(
             'acquisition.acquisitions__id_seq',
@@ -422,7 +480,7 @@ export class Migrator {
   }
 
   async seedCompany(company: Company) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO company.companies
           (_id, siret, siren, nic, legal_name, company_naf_code, establishment_naf_code, headquarter)
@@ -452,7 +510,7 @@ export class Migrator {
   }
 
   async seedOperator(operator: Operator) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO operator.operators
           (_id, name, legal_name, siret, company, address, bank, contacts, uuid)
@@ -484,7 +542,7 @@ export class Migrator {
   }
 
   async seedUser(user: User) {
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO auth.users
           (email, firstname, lastname, password, status, role, territory_id, operator_id)
@@ -514,31 +572,45 @@ export class Migrator {
   }
 
   async seedTerritoryGroup(territory_group: CreateTerritoryGroupInterface) {
-    const fields = ['_id', 'name', 'shortname', 'contacts', 'address', 'company_id'];
+    const fields = [
+      "_id",
+      "name",
+      "shortname",
+      "contacts",
+      "address",
+      "company_id",
+    ];
 
     const values: any[] = [
       territory_group._id,
       territory_group.name,
-      '',
+      "",
       territory_group.contacts,
       territory_group.address,
       territory_group.company_id,
     ];
     const query = {
       text: `
-        INSERT INTO territory.territory_group (${fields.join(',')})
-        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
+        INSERT INTO territory.territory_group (${fields.join(",")})
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(",")})
         RETURNING *
       `,
       values,
     };
-    const resultData = await this.connection.getClient().query<any>(query);
+    const resultData = await this.testConn.getClient().query<any>(query);
     this.syncSelector(resultData.rows[0]._id, territory_group.selector);
   }
 
-  async syncSelector(groupId: number, selector: TerritorySelectorsInterface): Promise<void> {
+  async syncSelector(
+    groupId: number,
+    selector: TerritorySelectorsInterface,
+  ): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
-      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
+      .map((type) =>
+        selector[type].map((
+          value: string | number,
+        ) => [groupId, type, value.toString()])
+      )
       .reduce((arr, v) => [...arr, ...v], [])
       .reduce(
         (arr, v) => {
@@ -549,7 +621,7 @@ export class Migrator {
         },
         [[], [], []],
       );
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query({
       text: `
         DELETE FROM territory.territory_group_selector
         WHERE territory_group_id = $1
@@ -557,7 +629,7 @@ export class Migrator {
       values: [groupId],
     });
 
-    await this.connection.getClient().query<any>({
+    await this.testConn.getClient().query<any>({
       text: `
         INSERT INTO territory.territory_group_selector (
           territory_group_id,
@@ -570,18 +642,6 @@ export class Migrator {
   }
 
   async seedTerritory() {
-    await this.seedFromCsv('./geo.csv', 'geo.perimeters');
-  }
-
-  async down() {
-    if (this.connection) {
-      await this.connection.down();
-    }
-  }
-
-  async drop() {
-    if (this.dbIsCreated) {
-      await dropDatabase(this.config, this.dbName);
-    }
+    await this.seedFromCsv("./geo.csv", "geo.perimeters");
   }
 }

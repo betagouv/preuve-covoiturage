@@ -6,8 +6,8 @@ export function emailMacro(): {
   sanitize: boolean;
 } {
   return {
-    type: 'string',
-    format: 'email',
+    type: "string",
+    format: "email",
     minLength: 5,
     maxLength: 256,
     sanitize: true,

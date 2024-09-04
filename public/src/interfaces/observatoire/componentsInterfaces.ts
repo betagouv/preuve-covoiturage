@@ -1,8 +1,6 @@
 import type { LayersList, PickingInfo } from '@deck.gl/core/typed';
-
-import { LngLatBoundsLike, Map } from 'maplibre-gl';
+import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
 import { ReactNode } from 'react';
-import { MapEvent } from 'react-map-gl/dist/esm/types/events';
 import { INSEECode, PerimeterType } from './Perimeter';
 import { FrCxArg } from '@codegouvfr/react-dsfr';
 
@@ -40,8 +38,10 @@ export interface MapInterface {
   sidebarPosition?: 'left' | 'right',
   sidebarWidth?: number,
   cursor?: string,
-  onMouseEnter?: (e:MapEvent<Map, MouseEvent>) => void;
-  onMouseLeave?:(e:MapEvent<Map, MouseEvent>) => void;
+  onMouseEnter?: (e: MapLayerMouseEvent) => void;
+  onMouseLeave?:(e: MapLayerMouseEvent) => void;
+  onMouseMove?:(e:MapLayerMouseEvent) => void;
+  onClick?:(e: MapLayerMouseEvent) => void;
   interactiveLayerIds?: string[],
 }
 

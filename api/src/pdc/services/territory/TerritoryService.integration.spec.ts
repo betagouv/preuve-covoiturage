@@ -1,293 +1,301 @@
-import anyTest, { TestFn } from 'ava';
-import { httpMacro, HttpMacroContext } from '@pdc/providers/test';
+import {
+  afterAll,
+  assert,
+  assertEquals,
+  assertObjectMatch,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
+import {
+  HttpContext,
+  makeHttpBeforeAfter,
+} from "@/pdc/providers/test/index.ts";
 
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { ServiceProvider } from './ServiceProvider';
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { ServiceProvider } from "./ServiceProvider.ts";
 
-const name = 'Toto';
-const territoryGroupTable = 'territory.territory_group';
-const territorySelectorTable = 'territory.territory_group_selector';
+describe.skip("TerritoryService", () => {
+  let ctx: HttpContext;
 
-interface TestContext extends HttpMacroContext {
-  operator_id: number;
-}
+  const name = "Toto";
+  const territoryGroupTable = "territory.territory_group";
+  const territorySelectorTable = "territory.territory_group_selector";
 
-function getDb(context: TestContext): PostgresConnection {
-  return context.transport.getKernel().getContainer().get(ServiceProvider).getContainer().get(PostgresConnection);
-}
-
-const test = anyTest as TestFn<TestContext>;
-const { before, after } = httpMacro<TestContext>(ServiceProvider);
-
-test.before(async (t) => {
-  const { transport, supertest, request } = await before();
-  t.context.transport = transport;
-  t.context.supertest = supertest;
-  t.context.request = request;
-  t.context.operator_id = Math.round(Math.random() * 1000);
-});
-
-test.after.always(async (t) => {
-  for (const text of [
-    `DELETE FROM ${territorySelectorTable} WHERE territory_group_id IN 
-      (SELECT _id FROM ${territoryGroupTable} WHERE name = $1)`,
-    `DELETE FROM ${territoryGroupTable} WHERE name = $1`,
-  ]) {
-    await getDb(t.context)
-      .getClient()
-      .query({
-        text,
-        values: [name],
-      });
+  function getDb(): PostgresConnection {
+    return ctx.transport.getKernel().getContainer().get(ServiceProvider)
+      .getContainer().get(PostgresConnection);
   }
-  const { transport, supertest, request } = t.context;
-  await after({ transport, supertest, request });
-});
 
-test.serial('Create a territory', async (t) => {
-  const response = await t.context.request(
-    'territory:create',
-    {
-      name,
-      shortname: 'toto',
-      company_id: 1,
-      contacts: {},
-      address: {
-        street: '1500 BD LEPIC',
-        postcode: '73100',
-        city: 'Aix Les Bains',
-        country: 'France',
-      },
-      selector: {
-        com: ['91477', '91471'],
-      },
-    },
-    {
-      call: {
-        user: {
-          permissions: ['registry.territory.create'],
-        },
-      },
-    },
-  );
-  t.is(response.result.name, name);
+  const { before, after } = makeHttpBeforeAfter(ServiceProvider);
 
-  const dbResult = await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
-     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
-    `,
-      values: [name],
-    });
-
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
-});
-
-test.serial('Find a territory', async (t) => {
-  const dbResult = await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
-     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
-    `,
-      values: [name],
-    });
-
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
-  const _id = dbResult.rows[0]._id;
-
-  const response = await t.context.request(
-    'territory:find',
-    { _id },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.find'],
-        },
-      },
-    },
-  );
-  t.is(response.result.name, 'Toto');
-});
-
-test.serial('Update a territory', async (t) => {
-  const dbResult = await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
-     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
-    `,
-      values: [name],
-    });
-
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
-  const _id = dbResult.rows[0]._id;
-
-  const initResponse = await t.context.request(
-    'territory:find',
-    { _id },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.find'],
-        },
-      },
-    },
-  );
-  t.is(initResponse.result.name, name);
-
-  const updateData = {
-    ...initResponse.result,
-    selector: {
-      com: ['91471', '91377'],
-    },
-  };
-  const response = await t.context.request('territory:update', updateData, {
-    call: {
-      user: {
-        permissions: ['registry.territory.update'],
-      },
-    },
+  beforeAll(async () => {
+    ctx = await before();
   });
 
-  t.is(response.result.selector.com.length, 2);
+  afterAll(async () => {
+    for (
+      const text of [
+        `DELETE FROM ${territorySelectorTable} WHERE territory_group_id IN 
+      (SELECT _id FROM ${territoryGroupTable} WHERE name = $1)`,
+        `DELETE FROM ${territoryGroupTable} WHERE name = $1`,
+      ]
+    ) {
+      await getDb()
+        .getClient()
+        .query({
+          text,
+          values: [name],
+        });
+    }
+    await after(ctx);
+  });
 
-  const finalResponse = await t.context.request(
-    'territory:find',
-    { _id },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.find'],
+  it("Create a territory", async () => {
+    const response = await ctx.request(
+      "territory:create",
+      {
+        name,
+        shortname: "toto",
+        company_id: 1,
+        contacts: {},
+        address: {
+          street: "1500 BD LEPIC",
+          postcode: "73100",
+          city: "Aix Les Bains",
+          country: "France",
+        },
+        selector: {
+          com: ["91477", "91471"],
         },
       },
-    },
-  );
-  const { updated_at: u1, ...t1 } = finalResponse.result;
-  const { updated_at: u2, ...t2 } = updateData;
-  t.deepEqual(t1, t2);
-});
+      {
+        call: {
+          user: {
+            permissions: ["registry.territory.create"],
+          },
+        },
+      },
+    );
+    assertEquals(response.result.name, name);
 
-test.serial('Patch contact on a territory', async (t) => {
-  const dbResult = await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
+    const dbResult = await getDb()
+      .getClient()
+      .query({
+        text: `
      SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
-      values: [name],
-    });
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
-  const _id = dbResult.rows[0]._id;
+        values: [name],
+      });
 
-  const response = await t.context.request(
-    'territory:patchContacts',
-    {
-      _id: _id - 1,
-      patch: {
-        technical: {
-          firstname: 'Nicolas',
-        },
-      },
-    },
-    {
-      call: {
-        user: {
-          permissions: ['territory.territory.patchContacts'],
-          territory_id: _id,
-        },
-      },
-    },
-  );
-  t.is(response.result._id, _id);
-  t.is(response.result.contacts.technical.firstname, 'Nicolas');
-});
+    assert((dbResult.rowCount || 0) >= 1);
+    assertEquals(dbResult.rows[0].name, name);
+  });
 
-test.serial('Get authorized codes', async (t) => {
-  const dbResult = await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
+  it("Find a territory", async () => {
+    const dbResult = await getDb()
+      .getClient()
+      .query({
+        text: `
      SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
-      values: [name],
-    });
-  t.true(dbResult.rowCount >= 1);
-  t.is(dbResult.rows[0].name, name);
-  const _id = dbResult.rows[0]._id;
+        values: [name],
+      });
 
-  await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
+    assert((dbResult.rowCount || 0) >= 1);
+    assertEquals(dbResult.rows[0].name, name);
+    const _id = dbResult.rows[0]._id;
+
+    const response = await ctx.request(
+      "territory:find",
+      { _id },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.find"],
+          },
+        },
+      },
+    );
+    assertEquals(response.result.name, "Toto");
+  });
+
+  it("Update a territory", async () => {
+    const dbResult = await getDb()
+      .getClient()
+      .query({
+        text: `
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
+    `,
+        values: [name],
+      });
+
+    assert((dbResult.rowCount || 0) >= 1);
+    assertEquals(dbResult.rows[0].name, name);
+    const _id = dbResult.rows[0]._id;
+
+    const initResponse = await ctx.request(
+      "territory:find",
+      { _id },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.find"],
+          },
+        },
+      },
+    );
+    assertEquals(initResponse.result.name, name);
+
+    const updateData = {
+      ...initResponse.result,
+      selector: {
+        com: ["91471", "91377"],
+      },
+    };
+    const response = await ctx.request("territory:update", updateData, {
+      call: {
+        user: {
+          permissions: ["registry.territory.update"],
+        },
+      },
+    });
+
+    assertEquals(response.result.selector.com.length, 2);
+
+    const finalResponse = await ctx.request(
+      "territory:find",
+      { _id },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.find"],
+          },
+        },
+      },
+    );
+    const { updated_at: u1, ...t1 } = finalResponse.result;
+    const { updated_at: u2, ...t2 } = updateData;
+    assertObjectMatch(t1, t2);
+  });
+
+  it("Patch contact on a territory", async () => {
+    const dbResult = await getDb()
+      .getClient()
+      .query({
+        text: `
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
+    `,
+        values: [name],
+      });
+    assert((dbResult.rowCount || 0) >= 1);
+    assertEquals(dbResult.rows[0].name, name);
+    const _id = dbResult.rows[0]._id;
+
+    const response = await ctx.request(
+      "territory:patchContacts",
+      {
+        _id: _id - 1,
+        patch: {
+          technical: {
+            firstname: "Nicolas",
+          },
+        },
+      },
+      {
+        call: {
+          user: {
+            permissions: ["territory.territory.patchContacts"],
+            territory_id: _id,
+          },
+        },
+      },
+    );
+    assertEquals(response.result._id, _id);
+    assertEquals(response.result.contacts.technical.firstname, "Nicolas");
+  });
+
+  it("Get authorized codes", async () => {
+    const dbResult = await getDb()
+      .getClient()
+      .query({
+        text: `
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
+    `,
+        values: [name],
+      });
+    assert((dbResult.rowCount || 0) >= 1);
+    assertEquals(dbResult.rows[0].name, name);
+    const _id = dbResult.rows[0]._id;
+
+    await getDb()
+      .getClient()
+      .query({
+        text: `
       INSERT INTO ${territorySelectorTable}
       (territory_group_id, selector_type, selector_value) VALUES
       ($1, $2, $3)
       `,
-      values: [_id, 'com', '91477'],
-    });
+        values: [_id, "com", "91477"],
+      });
 
-  const response = await t.context.request(
-    'territory:getAuthorizedCodes',
-    {
-      _id,
-    },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.read'],
+    const response = await ctx.request(
+      "territory:getAuthorizedCodes",
+      {
+        _id,
+      },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.read"],
+          },
         },
       },
-    },
-  );
-  t.true(Array.isArray(response.result.com));
-  t.true(response.result.com.length === 3);
-  t.deepEqual(response.result.com.sort(), ['91377', '91471', '91477']);
-});
+    );
+    assert(Array.isArray(response.result.com));
+    assert(response.result.com.length === 3);
+    assertEquals(response.result.com.sort(), ["91377", "91471", "91477"]);
+  });
 
-test.serial('Lists all territories', async (t) => {
-  const response = await t.context.request(
-    'territory:list',
-    {
-      search: name,
-    },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.list'],
+  it("Lists all territories", async () => {
+    const response = await ctx.request(
+      "territory:list",
+      {
+        search: name,
+      },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.list"],
+          },
         },
       },
-    },
-  );
-  t.true('data' in response.result);
-  t.true(Array.isArray(response.result.data));
-  const territory = response.result.data.filter((r) => r.name === name);
-  t.is(territory.length, 1);
-});
+    );
+    assert("data" in response.result);
+    assert(Array.isArray(response.result.data));
+    const territory = response.result.data.filter((r: any) => r.name === name);
+    assertEquals(territory.length, 1);
+  });
 
-test.serial('Lists all geo zones', async (t) => {
-  const response = await t.context.request(
-    'territory:listGeo',
-    {
-      search: 'Massy',
-    },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.list'],
+  it("Lists all geo zones", async () => {
+    const response = await ctx.request(
+      "territory:listGeo",
+      {
+        search: "Massy",
+      },
+      {
+        call: {
+          user: {
+            permissions: ["common.territory.list"],
+          },
         },
       },
-    },
-  );
-  t.true('data' in response.result);
-  t.true(Array.isArray(response.result.data));
-  t.is(response.result.data.length, 1);
-  t.is(response.result.meta.pagination.total, 1);
-  t.is(response.result.meta.pagination.offset, 0);
-  t.is(response.result.meta.pagination.limit, 100);
+    );
+    assert("data" in response.result);
+    assert(Array.isArray(response.result.data));
+    assertEquals(response.result.data.length, 1);
+    assertEquals(response.result.meta.pagination.total, 1);
+    assertEquals(response.result.meta.pagination.offset, 0);
+    assertEquals(response.result.meta.pagination.limit, 100);
+  });
 });

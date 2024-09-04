@@ -1,16 +1,23 @@
-import { ExportParams } from './ExportParams';
+import { ContextType } from "@/ilos/common/index.ts";
+import { ExportParams } from "./ExportParams.ts";
 
 export enum ExportStatus {
-  PENDING = 'pending',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  FAILURE = 'failure',
+  PENDING = "pending",
+  RUNNING = "running",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  NOTIFY = "notify",
+  SUCCESS = "success",
+  FAILURE = "failure",
 }
 export enum ExportTarget {
-  OPENDATA = 'opendata',
-  OPERATOR = 'operator',
-  TERRITORY = 'territory',
+  OPENDATA = "opendata",
+  OPERATOR = "operator",
+  TERRITORY = "territory",
 }
+
+export type ExportError = string;
+export type ExportStats = string;
 
 export class Export {
   public _id: number;
@@ -22,8 +29,8 @@ export class Export {
   public download_url_expire_at: Date;
   public download_url: string;
   public params: ExportParams;
-  public error: string; // JSON object
-  public stats: string; // JSON object
+  public error: ExportError; // JSON object
+  public stats: ExportStats; // JSON object
 
   public static fromJSON(data: any): Export {
     const export_ = new Export();
@@ -55,5 +62,30 @@ export class Export {
       error: export_.error,
       stats: export_.stats,
     };
+  }
+
+  public static target(
+    context: ContextType,
+    target: ExportTarget | null = null,
+  ): ExportTarget {
+    if (target) return target;
+
+    const { operator_id, territory_id } = context.call?.user || {};
+
+    // operator
+    if (parseInt(operator_id) > 0) return ExportTarget.OPERATOR;
+
+    // territory
+    if (parseInt(territory_id) > 0) return ExportTarget.TERRITORY;
+
+    // registry
+    if (
+      Number.isNaN(parseInt(operator_id)) &&
+      Number.isNaN(parseInt(territory_id))
+    ) {
+      return ExportTarget.TERRITORY;
+    }
+
+    return ExportTarget.OPENDATA;
   }
 }

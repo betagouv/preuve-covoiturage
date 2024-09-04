@@ -36,14 +36,14 @@ export default function Navigation() {
               text: 'Comprendre le covoiturage quotidien sur votre territoire',
               isActive: pathname.startsWith('/observatoire/territoire'),
             },
-            /*{
+            {
               linkProps: {
-                href: '/observatoire/impact-politiques-mobilite',
-                title: 'Impact des différents politiques mobilité',
+                href: '/observatoire/campagnes-incitation',
+                title: 'Impact des campagnes d\'incitation',
               },
-              text: 'Impact des différents politiques mobilité',
-              isActive: pathname === '/observatoire/impact-politiques-mobilite',
-            },*/
+              text: 'Impact des campagnes d\'incitation',
+              isActive: pathname === '/observatoire/campagnes-incitation',
+            },
             {
               linkProps: {
                 href: '/observatoire/evaluation-plan-covoiturage',
@@ -62,14 +62,13 @@ export default function Navigation() {
               text: 'L\'observatoire en quelques mots',
               isActive: pathname === '/observatoire/presentation',
             },
-            /*{
+            {
               linkProps: {
-                href: '/observatoire/impact-actions',
+                href: '/observatoire/glossaire-des-indicateurs',
               },
-              text: 'Impact des actions pour développer le covoiturage',
-              isActive: pathname === '/observatoire/impact-actions',
+              text: 'Glossaire des indicateurs de l\'observatoire',
+              isActive: pathname === '/observatoire/glossaire-des-indicateurs',
             },
-            */
           ],
           text: 'Observatoire',
           isActive: pathname.startsWith('/observatoire'),

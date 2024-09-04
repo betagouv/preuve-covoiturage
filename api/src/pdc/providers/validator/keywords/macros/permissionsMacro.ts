@@ -1,9 +1,9 @@
 export function permissionsMacro() {
   return {
-    type: 'array',
+    type: "array",
     items: {
-      type: 'string',
-      pattern: '^([a-zA-Z]+\\.?)+$',
+      type: "string",
+      pattern: "^([a-zA-Z]+\\.?)+$",
       sanitize: true,
       trim: true,
     },

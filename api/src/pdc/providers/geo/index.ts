@@ -1,2 +1,2 @@
-export { GeoProvider } from './GeoProvider';
-export { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
+export { GeoProvider } from "./GeoProvider.ts";
+export { GeoProviderInterfaceResolver } from "./interfaces/GeoProviderInterface.ts";

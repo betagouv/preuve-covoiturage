@@ -1,23 +1,32 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/syncIncentiveSum.contract';
-import { alias } from '@shared/policy/syncIncentiveSum.schema';
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/syncIncentiveSum.contract.ts";
+import { alias } from "@/shared/policy/syncIncentiveSum.schema.ts";
+import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), [
+    "validate",
+    alias,
+  ]],
 })
 export class syncIncentiveSumAction extends AbstractAction {
-  constructor(private policyRepository: PolicyRepositoryProviderInterfaceResolver) {
+  constructor(
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     let list: number[] = [];
 
-    if ('campaigns' in params && params.campaigns.length) {
+    if ("campaigns" in params && params.campaigns.length) {
       list = [...params.campaigns];
     } else {
       list = await this.policyRepository.listApplicablePoliciesId();

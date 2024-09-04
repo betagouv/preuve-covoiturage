@@ -1,10 +1,14 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { ContextType, handler } from "@/ilos/common/index.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changeRole.contract';
-import { alias } from '@shared/user/changeRole.schema';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/user/changeRole.contract.ts";
+import { alias } from "@/shared/user/changeRole.schema.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
 /*
  * Update role of user
@@ -13,11 +17,11 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
+    ["validate", alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      registry: 'registry.user.update',
-      territory: 'territory.user.update',
-      operator: 'operator.user.update',
+      registry: "registry.user.update",
+      territory: "territory.user.update",
+      operator: "operator.user.update",
     }),
   ],
 })
@@ -26,16 +30,27 @@ export class ChangeRoleUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    const scope = params.territory_id
+      ? "territory_id"
+      : params.operator_id
+      ? "operator_id"
+      : "none";
     switch (scope) {
-      case 'territory_id':
-        await this.userRepository.patchByTerritory(params._id, { role: params.role }, params[scope]);
+      case "territory_id":
+        await this.userRepository.patchByTerritory(params._id, {
+          role: params.role,
+        }, params[scope]);
         break;
-      case 'operator_id':
-        await this.userRepository.patchByOperator(params._id, { role: params.role }, params[scope]);
+      case "operator_id":
+        await this.userRepository.patchByOperator(params._id, {
+          role: params.role,
+        }, params[scope]);
         break;
-      case 'none':
+      case "none":
         await this.userRepository.patch(params._id, { role: params.role });
         break;
     }

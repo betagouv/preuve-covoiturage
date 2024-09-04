@@ -1,22 +1,24 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
+  AiresCovoiturageParamsInterface,
+  AiresCovoiturageResultInterface,
   InfraRepositoryInterface,
   InfraRepositoryInterfaceResolver,
-  AiresCovoiturageResultInterface,
-  AiresCovoiturageParamsInterface,
-} from '../interfaces/InfraRepositoryProviderInterface';
-import { checkTerritoryParam } from '../helpers/checkParams';
+} from "../interfaces/InfraRepositoryProviderInterface.ts";
+import { checkTerritoryParam } from "../helpers/checkParams.ts";
 
 @provider({
   identifier: InfraRepositoryInterfaceResolver,
 })
 export class InfraRepositoryProvider implements InfraRepositoryInterface {
-  private readonly table = 'observatory.aires_covoiturage';
-  private readonly perim_table = 'geo.perimeters';
+  private readonly table = "observatory.aires_covoiturage";
+  private readonly perim_table = "geo.perimeters";
   constructor(private pg: PostgresConnection) {}
 
-  async getAiresCovoiturage(params: AiresCovoiturageParamsInterface): Promise<AiresCovoiturageResultInterface> {
+  async getAiresCovoiturage(
+    params: AiresCovoiturageParamsInterface,
+  ): Promise<AiresCovoiturageResultInterface> {
     const sql = {
       values: [params.code],
       text: `SELECT 
@@ -42,10 +44,13 @@ export class InfraRepositoryProvider implements InfraRepositoryInterface {
           WHERE year = geo.get_latest_millesime() 
           AND ${checkTerritoryParam(params.type)} = $1
         )`
-          : ''
+          : ""
       };`,
     };
-    const response: { rowCount: number; rows: AiresCovoiturageResultInterface } = await this.pg.getClient().query(sql);
+    const response: {
+      rowCount: number;
+      rows: AiresCovoiturageResultInterface;
+    } = await this.pg.getClient().query(sql);
     return response.rows;
   }
 }

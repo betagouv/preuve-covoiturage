@@ -11,7 +11,7 @@ import {
   Position,
   Seat,
   Uuid,
-} from '../common';
+} from "../common.ts";
 
 export interface InsertableCarpool {
   operator_id: Id;
@@ -75,6 +75,7 @@ export interface UpdatableCarpool {
 
 export interface WrittenCarpool {
   _id: Id;
+  uuid: Uuid;
   created_at: Date;
   updated_at: Date;
 }

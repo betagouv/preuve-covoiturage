@@ -1,23 +1,32 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolRow } from '../models/CarpoolRow';
-import { ExportParams } from '../models/ExportParams';
-import { XLSXWriter } from '../models/XLSXWriter';
-import { ExportProgress } from './ExportRepository';
-import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery';
-import { QueryTemplates } from './queries/Query';
+import { provider } from "@/ilos/common/Decorators.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
+import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
+import { XLSXWriter } from "@/pdc/services/export/models/XLSXWriter.ts";
+import { ExportProgress } from "@/pdc/services/export/repositories/ExportRepository.ts";
+import { QueryTemplates } from "@/pdc/services/export/repositories/queries/AbstractQuery.ts";
+import {
+  CarpoolListQuery,
+  CarpoolListType,
+  TemplateKeys,
+} from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
   count(params: ExportParams): Promise<number>;
 }
 
-export abstract class CarpoolRepositoryInterfaceResolver implements CarpoolRepositoryInterface {
-  public async list(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
-    throw new Error('Not implemented');
+export abstract class CarpoolRepositoryInterfaceResolver
+  implements CarpoolRepositoryInterface {
+  public async list(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+  ): Promise<void> {
+    throw new Error("Not implemented");
   }
   public async count(params: ExportParams): Promise<number> {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
 
@@ -25,12 +34,16 @@ export abstract class CarpoolRepositoryInterfaceResolver implements CarpoolRepos
   identifier: CarpoolRepositoryInterfaceResolver,
 })
 export class CarpoolRepository implements CarpoolRepositoryInterface {
-  public readonly table = 'carpool.carpools';
+  public readonly table = "carpool_v2.carpools";
   private readonly batchSize = 1000;
 
   constructor(public connection: PostgresConnection) {}
 
-  public async list(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  public async list(
+    params: ExportParams,
+    fileWriter: XLSXWriter,
+    progress?: ExportProgress,
+  ): Promise<void> {
     const [values, templates] = this.getListValuesAndTemplates(params);
 
     // use a cursor to loop over the entire set of results
@@ -43,7 +56,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
       let count = 0; // number of rows read in the current batch
 
       const text = new CarpoolListQuery().getText(templates);
-      cursor = await this.connection.getCursor(text, values);
+      cursor = await this.connection.getCursor<CarpoolListType>(text, values);
       do {
         const results = await cursor.read(this.batchSize);
         count = results.length;
@@ -56,17 +69,18 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
         if (progress) await progress(((done / total) * 100) | 0);
       } while (count !== 0);
-    } catch (e) {
-      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
-      console.debug(e.stack);
-    } finally {
+
       await cursor.release();
+    } catch (e) {
+      logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      await cursor.release();
+      throw e;
     }
   }
 
   public async count(params: ExportParams): Promise<number> {
     const [values, templates] = this.getListValuesAndTemplates(params);
-    const { rows } = await this.connection.getClient().query<any>({
+    const { rows } = await this.connection.getClient().query({
       text: new CarpoolListQuery().getCountText(templates),
       values,
     });
@@ -74,12 +88,14 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
     return parseInt(rows[0].count, 10);
   }
 
-  private getListValuesAndTemplates(params: ExportParams): [[Date, Date, number], QueryTemplates<TemplateKeys>] {
+  private getListValuesAndTemplates(
+    params: ExportParams,
+  ): [[Date, Date, number], QueryTemplates<TemplateKeys>] {
     const { start_at, end_at } = params.get();
     const values: [Date, Date, number] = [start_at, end_at, 2023];
     const templates: QueryTemplates<TemplateKeys> = new Map();
-    templates.set('geo_selectors', params.geoToSQL());
-    templates.set('operator_id', params.operatorToSQL());
+    templates.set("geo_selectors", params.geoToSQL());
+    templates.set("operator_id", params.operatorToSQL());
 
     return [values, templates];
   }

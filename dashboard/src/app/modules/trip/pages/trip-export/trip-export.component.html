@@ -55,13 +55,44 @@
         </div>
       </div>
     
-      <div>
+      <div *ngIf="showTerritorySelector()">
         <p>Zone géographique</p>
         <app-territories-autocomplete   
         [parentForm]="form"></app-territories-autocomplete>
       </div>
 
-      <div *ngIf="!authenticationService.isOperatorOrAdmin()" style="width: 100%;">
+      <div class="format">
+        <p>
+          Format d'export
+          <a [href]="getExportDocURL()" target="_blank">
+            <mat-icon class="info-small" matTooltip="Consultez notre documention pour avoir plus d'informations sur les différents formats d'export en cliquant sur l'icone.">info</mat-icon>
+          </a>
+        </p>
+        <mat-radio-group formControlName="format" class="format-radio-group">
+          <label>
+            <mat-radio-button value="v3"></mat-radio-button>
+            <span>Version 3 (XLSX)</span>
+          </label>
+          <label aria-disabled="true">
+            <mat-radio-button value="v2" disabled="disabled"></mat-radio-button>
+            <span style="opacity:0.4;cursor:default">Version 2 (CSV) <em>(maintenance)</em></span>
+          </label>
+        </mat-radio-group>
+      </div>
+
+      <div class="support-notice">
+        <p>
+          Retrouvez les spécifications sur <a href="https://tech.covoiturage.beta.gouv.fr/operateurs/exports-de-trajets.html" target="_blank">notre documentation technique</a>.
+        </p>
+        <p>
+          Pour toute demande particulière, vous pouvez nous contacter directement :
+          <a href="mailto:technique@covoiturage.beta.gouv.fr">
+            technique@covoiturage.beta.gouv.fr
+          </a>
+        </p>
+      </div>
+
+      <div *ngIf="showOperatorSelector()" style="width: 100%;">
         <p>Opérateurs</p>
         <app-operators-checkboxes></app-operators-checkboxes>
       </div>

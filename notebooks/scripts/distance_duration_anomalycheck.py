@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[ ]:
 
 
 import os
@@ -10,11 +10,11 @@ import os
 connection_string = os.environ['PG_CONNECTION_STRING']
 delay = os.environ['DELAY']
 frame = os.environ['FRAME']
-update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False 
+update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 osrm_url = os.environ['OSRM_URL']
 
 
-# In[3]:
+# In[ ]:
 
 
 import pandas as pd
@@ -23,34 +23,50 @@ from sqlalchemy import create_engine, text
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 query = f"""
-SELECT cc._id, operator_id, cc.datetime, cc.duration, cc.distance, cc.identity_id, cc.operator_journey_id, start_geo_code, end_geo_code, 
-cc.trip_id,
-cc.is_driver,
-cc.operator_class,
-ci.operator_user_id,
-CASE 
-      WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
-      ELSE ci.phone_trunc
-      END AS phone_trunc,
-ST_X(ST_AsText(cc.start_position)) start_x,
-ST_Y(ST_AsText(cc.start_position)) start_y, 
-ST_X(ST_AsText(cc.end_position)) end_x,
-ST_Y(ST_AsText(cc.end_position)) end_y
-FROM CARPOOL.CARPOOLS CC
-JOIN carpool.identities ci on cc.identity_id = ci._id
- join geo.perimeters gps on cc.start_geo_code = gps.arr and gps.year = 2023
- join geo.perimeters gpe on cc.end_geo_code = gpe.arr and gpe.year = 2023
-JOIN policy.incentives pi on pi.carpool_id = cc._id
-WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
-	AND CC.DATETIME < NOW() - '{delay} hours'::interval and
-      cc.is_driver = true 
+SELECT
+  cc._ID,
+  cc.OPERATOR_ID,
+  cc.START_DATETIME as datetime,
+  EXTRACT(
+    EPOCH
+    FROM
+      (cc.END_DATETIME - cc.START_DATETIME)
+  )::INT AS DURATION,
+  cc.OPERATOR_JOURNEY_ID,
+  cc.OPERATOR_TRIP_ID,
+  cc.operator_class,
+  cc.distance,
+  cc.DRIVER_IDENTITY_KEY as identity_key,
+  cc.DRIVER_OPERATOR_USER_ID as operator_user_id,
+   CASE
+    WHEN cc.DRIVER_PHONE_TRUNC IS NULL THEN LEFT(cc.DRIVER_PHONE, -2)
+    ELSE cc.DRIVER_PHONE_TRUNC
+  END AS PHONE_TRUNC,
+
+  ST_X(ST_AsText(cc.start_position)) start_x,
+  ST_Y(ST_AsText(cc.start_position)) start_y,
+  ST_X(ST_AsText(cc.end_position)) end_x,
+  ST_Y(ST_AsText(cc.end_position)) end_y,
+
+--  cc.START_POSITION,
+--  cc.END_POSITION,
+  
+  cg.start_geo_code,
+  cg.end_geo_code
+  FROM
+  CARPOOL_V2.CARPOOLS cc
+  JOIN carpool_v2.geo cg on cg.carpool_id = cc._id
+  
+  where 
+    cc.START_DATETIME >= NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
+  AND cc.START_DATETIME < NOW() - '{delay} hours'::INTERVAL
 """
 
 with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[6]:
+# In[ ]:
 
 
 import requests
@@ -66,12 +82,16 @@ def get_osrm_data(x):
     logging.warn('Error on osrm call ' + e)
     # Handle exception, e.g., log error and continue, or re-raise with additional context
     pass
+  except KeyError as ke:
+    pass
   return x
 
 df_carpool = df_carpool.apply(get_osrm_data, axis = 1)
+# df_carpool = df_carpool.assign(duration_delta=lambda x: x.duration * 100 / x.osrm_duration)
+# df_carpool = df_carpool.assign(distance_delta=lambda x: x.distance * 100 / x.osrm_distance)
 
 
-# In[7]:
+# In[ ]:
 
 
 operator_class_c_mask = df_carpool.operator_class == 'C'
@@ -96,7 +116,7 @@ df_only_class_c_trip = df_carpool[operator_class_c_mask]
 # - Qui ont une durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
 #     * La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 
-# In[8]:
+# In[ ]:
 
 
 less_than_300_meters_mask = (df_only_class_c_trip.distance < 300) | (df_only_class_c_trip.osrm_distance < 300)
@@ -110,7 +130,7 @@ df_result = df_only_class_c_trip[less_than_300_meters_mask | less_than_1_minutes
 # In[ ]:
 
 
-df_labels = df_result[['_id']]
+df_labels = df_result[['_id', 'operator_journey_id']]
 df_labels = df_labels.assign(label='distance_duration_anomaly')
 df_labels = df_labels.rename(columns={"_id": "carpool_id"})
 
@@ -119,21 +139,24 @@ df_labels = df_labels.rename(columns={"_id": "carpool_id"})
 
 
 import sqlalchemy as sa
+import warnings
+warnings.filterwarnings("ignore")
 
 if update_carpool_status is True:
 
-    metadata = sa.MetaData(schema='carpool')
+    metadata = sa.MetaData(schema='carpool_v2')
     metadata.reflect(bind=engine)
 
-    table = metadata.tables['carpool.carpools']
+    table = metadata.tables['carpool_v2.status']
     
-    where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())
+    where_clause = table.c.carpool_id.in_(df_result['_id'].to_list())
 
-    update_stmt = sa.update(table).where(where_clause).values(status='anomaly_error')
+    update_stmt = sa.update(table).where(where_clause).values(anomaly_status='failed')
 
     with engine.connect() as conn:
-        result = conn.execute(update_stmt)
-        conn.commit()
+       result = conn.execute(update_stmt)
+       print(f"{result.rowcount} carpools status updated to anomaly_status=failed")
+       conn.commit()
 
 
 # In[ ]:
@@ -154,3 +177,21 @@ df_labels.to_sql(
     index=False,
     method=insert_or_do_nothing_on_conflict
 )
+
+
+# In[ ]:
+
+
+# update pending carpool to passed, no anomaly triggered on them
+if update_carpool_status is True:
+    with engine.connect() as conn:
+        update_query = """
+        UPDATE carpool_v2.status 
+        SET anomaly_status = 'passed'
+        FROM carpool_v2.status c2s JOIN carpool_v2.carpools c2c on c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '30 hours'::interval
+        AND c2s.anomaly_status = 'pending'
+        """
+        result = conn.execute(text(update_query))
+        print(f"{result.rowcount} where updated to anomaly_status 'passed'")
+

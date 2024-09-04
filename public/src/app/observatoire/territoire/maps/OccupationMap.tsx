@@ -1,5 +1,7 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { getLegendClasses } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
@@ -10,10 +12,8 @@ import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useMemo, useState, useContext } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
 
 export default function OccupationMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
@@ -88,10 +88,10 @@ export default function OccupationMap({ title }: { title: string }) {
     ];
    
 
-  const bounds = useMemo(() => {
+  const bounds = () => {
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
-    return bounds as unknown as LngLatBoundsLike;
-  },[dashboard.params.code, geojson]);
+    return bounds as LngLatBoundsLike;
+  };
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -126,11 +126,17 @@ export default function OccupationMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <AppMap 
         title={mapTitle} 
         mapStyle={mapStyle} 
-        bounds={bounds} 
+        bounds={bounds()} 
         scrollZoom={false} 
         legend={
           [

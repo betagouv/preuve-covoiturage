@@ -1,9 +1,7 @@
-import * as helpers from './helpers';
-import * as Extensions from './extensions';
-export { env } from './helpers';
+import * as Extensions from "./extensions/index.ts";
+import * as helpers from "./helpers/index.ts";
 
-export { helpers };
-export { Extensions };
+export { Extensions, helpers };
 
-export * from './container';
-export * from './foundation';
+export * from "./container/index.ts";
+export * from "./foundation/index.ts";

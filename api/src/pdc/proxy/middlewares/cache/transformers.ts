@@ -1,33 +1,23 @@
-import { Request, Response } from 'express';
-import { createHash } from 'node:crypto';
-import { gunzipSync, gzipSync } from 'node:zlib';
-import { CacheKey, GlobalCacheConfig, RouteCacheConfig } from './types';
+import { Buffer, gunzipSync, gzipSync, Request, Response } from "@/deps.ts";
+import { createHash } from "@/lib/crypto/index.ts";
+import { CacheKey, GlobalCacheConfig, RouteCacheConfig } from "./types.ts";
 
-export function getKey(
+export async function getKey(
   req: Request,
   res: Response,
   globalConfig: GlobalCacheConfig,
   routeConfig: RouteCacheConfig,
-): CacheKey {
+): Promise<CacheKey> {
   const pfx = routeConfig.prefix
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, '');
+    .replace(/[^a-z0-9]/g, "");
 
   // sha256 the URL to create a unique key
   const body = JSON.stringify(req.body || {});
-  const sha = [];
-  const hash = createHash('sha256');
-  hash.on('readable', () => {
-    const chunk = hash.read();
-    if (chunk) {
-      sha.push(chunk.toString('hex'));
-    }
-  });
-  hash.write(`${req.method} ${req.url} ${body}`);
-  hash.end();
+  const hash = await createHash(`${req.method} ${req.url} ${body}`);
 
-  return `${globalConfig.prefix}:${pfx}:${sha.join('')}` as CacheKey;
+  return `${globalConfig.prefix}:${pfx}:${hash}` as CacheKey;
 }
 
 export function deflate(data: string): Buffer {
@@ -36,5 +26,5 @@ export function deflate(data: string): Buffer {
 
 export function inflate(gzData: Buffer): string {
   const buf = gunzipSync(gzData);
-  return buf.toString('utf8');
+  return buf.toString("utf8");
 }

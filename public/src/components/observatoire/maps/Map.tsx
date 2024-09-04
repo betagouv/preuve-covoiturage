@@ -1,10 +1,11 @@
 'use client';
-import Map, { MapRef, NavigationControl, FullscreenControl } from 'react-map-gl/maplibre';
+import { fitBounds } from '@/helpers/map';
 import { MapInterface, ViewInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import Legend from './Legend';
-import { useCallback, useRef, useState, useEffect } from 'react';
 import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Map, { FullscreenControl, MapRef, NavigationControl } from 'react-map-gl/maplibre';
+import Legend from './Legend';
 
 const AppMap = (props: MapInterface) => {
   const mapRef = useRef<MapRef>(null);
@@ -13,16 +14,15 @@ const AppMap = (props: MapInterface) => {
     longitude: 1.7,
     zoom: 5,
   };
-  const fitBounds = () => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
-  };
+  
   useEffect(() => {
-    if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
+    fitBounds(mapRef.current, props.bounds);
   }, [props.bounds]);
   
   const [cursor, setCursor] = useState<string>('');
   const defaultOnMouseEnter = useCallback(() => setCursor('pointer'), []);
   const defaultOnMouseLeave = useCallback(() => setCursor(''), []);
+
   const inRange = (value: number, min: number, max: number) => {
     return Math.trunc(value) >=min && Math.trunc(value) <= max ? true : false;
   }
@@ -52,11 +52,13 @@ const AppMap = (props: MapInterface) => {
               height: props.height ? props.height : '60vh',
             }}
             mapStyle={props.mapStyle}
-            onLoad={fitBounds}
+            onLoad={() => fitBounds(mapRef.current, props.bounds)}
             scrollZoom={props.scrollZoom}
             cursor={props.cursor ? props.cursor : cursor}
             onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
             onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
+            onMouseMove={props.onMouseMove}
+            onClick={props.onClick}
             interactiveLayerIds={props.interactiveLayerIds}
           >
             <NavigationControl />

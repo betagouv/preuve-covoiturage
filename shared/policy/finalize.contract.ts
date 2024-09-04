@@ -5,7 +5,6 @@ export type ParamsInterface = Partial<{
   from: string;
   tz: Timezone;
   sync_incentive_sum: boolean;
-  clear: boolean;
 }>;
 
 export type ResultInterface = void;

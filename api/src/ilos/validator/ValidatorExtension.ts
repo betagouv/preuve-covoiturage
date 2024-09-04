@@ -1,9 +1,13 @@
-import { RegisterHookInterface, ServiceContainerInterface, ValidatorInterfaceResolver, extension } from '@ilos/common';
-
-import { AjvValidator } from './AjvValidator';
+import {
+  extension,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+  ValidatorInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { AjvValidator } from "./AjvValidator.ts";
 
 @extension({
-  name: 'validator',
+  name: "validator",
 })
 export class ValidatorExtension implements RegisterHookInterface {
   protected validators: [string, any][] = [];
@@ -13,15 +17,15 @@ export class ValidatorExtension implements RegisterHookInterface {
     config:
       | [string, any][]
       | {
-          validators?: [string, any][];
-          keywords?: any[];
-        },
+        validators?: [string, any][];
+        keywords?: any[];
+      },
   ) {
     if (Array.isArray(config)) {
       this.validators = config;
     } else {
-      this.validators = config.validators;
-      this.keywords = config.keywords;
+      this.validators = config?.validators || [];
+      this.keywords = config?.keywords || [];
     }
   }
 
@@ -33,7 +37,9 @@ export class ValidatorExtension implements RegisterHookInterface {
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const validator = serviceContainer.getContainer().get(ValidatorInterfaceResolver);
+    const validator = serviceContainer.getContainer().get(
+      ValidatorInterfaceResolver,
+    );
 
     // Init keywords
     this.keywords.forEach((keyword) => {

@@ -1,7 +1,9 @@
-import { provider, ProviderInterface } from '@ilos/common';
-import { toTzString } from '@pdc/helpers/dates.helper';
-import os from 'os';
-import path from 'path';
+import { provider } from "@/ilos/common/Decorators.ts";
+import { ProviderInterface } from "@/ilos/common/index.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
+import { join } from "@/lib/path/index.ts";
+import { toTzString } from "@/pdc/helpers/dates.helper.ts";
+import { sanitize } from "@/pdc/helpers/string.helper.ts";
 
 export interface APDFNameParamsInterface {
   name: string;
@@ -17,42 +19,59 @@ export type APDFNameResultsInterface = string;
 
 @provider()
 export class APDFNameProvider implements ProviderInterface {
-  private prefix = 'APDF';
-  private ext = 'xlsx';
+  private prefix = "APDF";
+  private ext = "xlsx";
 
   public filename(params: APDFNameParamsInterface): APDFNameResultsInterface {
-    const { name, datetime, campaign_id, operator_id, trips, subsidized, amount } = params;
+    const {
+      name,
+      datetime,
+      campaign_id,
+      operator_id,
+      trips,
+      subsidized,
+      amount,
+    } = params;
 
     // APDF-2022-01-123-456-campaign-operator-hash.ext
     // 123: campaign_id
     // 456: operator_id
     const filename: string = [
       this.prefix,
-      toTzString(datetime, 'Europe/Paris').substring(0, 7),
+      toTzString(datetime, "Europe/Paris").substring(0, 7),
       campaign_id,
       operator_id,
       trips || 0,
       subsidized || 0,
       amount || 0,
-      this.sanitize(name),
+      sanitize(name, 128),
     ]
-      .filter((s: string | number) => ['string', 'number'].indexOf(typeof s) > -1 && String(s).length)
-      .join('-');
+      .filter((s: string | number) =>
+        ["string", "number"].indexOf(typeof s) > -1 && String(s).length
+      )
+      .join("-");
 
     return `${filename}.${this.ext}`;
   }
 
-  public filepath(params: string | APDFNameParamsInterface): APDFNameResultsInterface {
-    const filename = typeof params === 'string' ? params : this.filename(params);
-    return path.join(os.tmpdir(), filename);
+  public filepath(
+    params: string | APDFNameParamsInterface,
+  ): APDFNameResultsInterface {
+    const filename = typeof params === "string"
+      ? params
+      : this.filename(params);
+    return join(getTmpDir(), filename);
   }
 
   public parse(str: APDFNameResultsInterface): APDFNameParamsInterface {
-    const parts = str.split('/').pop().replace(`${this.prefix}-`, '').replace(`.${this.ext}`, '').split('-');
-    const name = parts.pop();
+    // Extract parts by removing prefix and extension, then split by hyphen
+    const parts = (str.split("/").pop() || "")
+      .replace(`${this.prefix}-`, "")
+      .replace(`.${this.ext}`, "")
+      .split("-");
 
     return {
-      name,
+      name: parts.pop() || "",
       datetime: new Date(`${parts[0]}-${parts[1]}-01T00:00:00Z`),
       campaign_id: parseInt(parts[2], 10),
       operator_id: parseInt(parts[3], 10),
@@ -60,16 +79,5 @@ export class APDFNameProvider implements ProviderInterface {
       subsidized: parseInt(parts[5], 10),
       amount: parseInt(parts[6], 10),
     };
-  }
-
-  public sanitize(str: string): string {
-    return str
-      .replace(/\u20AC/g, 'e') // € -> e
-      .normalize('NFD')
-      .replace(/[\ \.\/]/g, '_')
-      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, '')
-      .replace('_-_', '-')
-      .toLowerCase()
-      .substring(0, 128);
   }
 }

@@ -1,19 +1,28 @@
-import { handler } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/providers/middleware';
+import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import {
+  contentBlacklistMiddleware,
+  hasPermissionMiddleware,
+} from "@/pdc/providers/middleware/index.ts";
 
-import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/list.contract';
+import { OperatorRepositoryProviderInterfaceResolver } from "../interfaces/OperatorRepositoryProviderInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/operator/list.contract.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    hasPermissionMiddleware('common.operator.list'),
-    contentBlacklistMiddleware('data.*.contacts', 'data.*.bank'),
+    hasPermissionMiddleware("common.operator.list"),
+    contentBlacklistMiddleware("data.*.contacts", "data.*.bank"),
   ],
 })
 export class ListOperatorAction extends AbstractAction {
-  constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
+  constructor(
+    private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 

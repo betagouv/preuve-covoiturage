@@ -1,5 +1,5 @@
 set dotenv-load
-
+set shell := ["bash", "-uc"] 
 cert_dir:=join(parent_directory(justfile_directory()),"docker","traefik","certs")
 key_dir:=join(parent_directory(justfile_directory()),"docker","api","certs")
 docker_compose_dev_file:=join(parent_directory(justfile_directory()),"docker-compose.dev.yml")
@@ -8,22 +8,17 @@ docker_compose_e2e_file:=join(parent_directory(justfile_directory()),"docker-com
 default:
   @just --list
 
-# Build api
-build:
-    npm run build
+# Run test:integration
+test-integration:
+  just test '**/*.integration.spec.ts'
 
-# Refresh your env
-clean:
-  rm -rf node_modules
-  rm -rf dist
-
-# Install
-install target="local":
-  npm {{ if target == "production" { "ci" } else { "install" } }}
+# Run test:unit
+test-unit:
+  just test --parallel '**/*.unit.spec.ts'
 
 # Run test
-test type pattern="":
-  npm run test:{{ type }} -- {{ pattern }}
+test *pattern:
+  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
 # Start docker services (detached)
 start *services="s3 postgres redis mailer":
@@ -31,7 +26,7 @@ start *services="s3 postgres redis mailer":
 
 # Start docker services for e2e
 [private]
-start_e2e *services="s3 postgres redis mailer":
+start_e2e *services="s3 postgres redis mailer kc":
  just dc_e2e up -d {{ services }}
 
 # Stop docker services
@@ -82,9 +77,20 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
     openssl x509 -req -in {{ cert_dir }}/cert.csr -CA {{ cert_dir }}/localCA.pem -CAkey {{ cert_dir }}/localCA.key -CAcreateserial -out {{ cert_dir }}/cert.crt -days 500 -sha256
   fi
 
+# Run migrations
+migrate:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    src/db/main.ts
+
 # Seed data
 seed:
-  npm run ilos seed
+  just api seed
 
 # Create a new bucket
 [private]
@@ -98,41 +104,64 @@ wait domain port:
   sleep 10
 
 # CI integration test
-ci_test_integration: rebuild generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
+ci_test_integration: generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
 
 # CI unit test
-ci_test_unit: rebuild (test "unit") 
+ci_test_unit: (test-unit) 
 
-# Rebuild for production
-rebuild: (install "production") build
+# compatibility with previous justfile using npm
+# TODO remove when fully migrated to Deno
+alias ilos := api
 
-# Refresh local install for development
-refresh: clean install build
-
-# Run the API for local development (:8080)
-dev:
-  npm run dev
-
-# Watch changes and recompile TypeScript
-watch:
-  npm run watch
-
-# Run ilos commands
-ilos *command:
-  npm run ilos -- {{ command }}
-
-# Run any npm script from the API
+# Run api command
 api *command:
-  npm run {{ command }}
+  deno run \
+  --allow-net \
+  --allow-env \
+  --allow-read \
+  --allow-write \
+  --allow-ffi \
+  --allow-sys \
+  --allow-run \
+  --unstable-fs \
+  src/main.ts {{ command }}
 
 # Start the HTTP API server on port 8080
-serve:
-  if command -v pm2-runtime >/dev/null 2>&1; then \
-    pm2-runtime start pm2-api.json; \
-  else \
-    npm run -- ilos http 8080; \
-  fi
+@serve:
+  if [[ "${IS_WORKER:-}" != "true" ]]; then just api http \$PORT; else just api queue \$APP_REDIS_URL; fi
 
 # List all the APP_ environment variables
 env:
   env | grep APP_ | sort | column -t -s=
+
+# cache
+cache:
+  deno cache --lock=deno.lock src/deps.ts src/dev_deps.ts
+
+# refresh the deno.lock file
+lock:
+  deno cache --lock=deno.lock --lock-write src/deps.ts src/dev_deps.ts
+
+# Eval and run a file
+eval *filepath:
+  deno eval \
+    --allow-net \
+    --allow-env \
+    # --allow-read \
+    # --allow-write \
+    # --allow-ffi \
+    # --allow-sys \
+    # --allow-run \
+    # --unstable-fs \
+    {{ filepath }}
+
+# drop remaining test databases
+drop_test_databases:
+  pgcli -l; \
+  echo "Are you sure you want to drop all databases starting with 'test_'? (y/n)"; \
+  read -r response; \
+  if [[ $response =~ ^([yY][eE][sS]|[yY])+$ ]]; then \
+    pgcli -l | rg test_ | awk '{ print $2 }' | while read db; do psql -c "DROP DATABASE ${db};"; done; \
+  else \
+    echo "No database dropped"; \
+  fi

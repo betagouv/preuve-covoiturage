@@ -1,21 +1,29 @@
-import { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
+import type {
+  BoundedSlices,
+  SliceInterface,
+  UnboundedSlices,
+} from "@/shared/policy/common/interfaces/Slices.ts";
 import {
   TerritoryCodeEnum,
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import type {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export {
-  CommonIncentiveInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
+} from "./IncentiveInterface.ts";
+export type {
+  CommonIncentiveInterface,
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-} from './IncentiveInterface';
-export {
+} from "./IncentiveInterface.ts";
+export { MetadataLifetime } from "./MetadataInterface.ts";
+export type {
   MetadataAccessorInterface,
-  MetadataLifetime,
   MetadataRegistryInterface,
   MetadataStoreInterface,
   MetadataVariableDefinitionInterface,
@@ -23,9 +31,9 @@ export {
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
   StoredMetadataVariableInterface,
-} from './MetadataInterface';
-export { OperatorsEnum } from './OperatorsEnum';
-export {
+} from "./MetadataInterface.ts";
+export { OperatorsEnum } from "./OperatorsEnum.ts";
+export type {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -34,14 +42,22 @@ export {
   StatefulContextInterface,
   StatelessContextInterface,
   StatelessRuleHelper,
-} from './PolicyInterface';
-export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface };
-export { SliceInterface, BoundedSlices, UnboundedSlices };
+} from "./PolicyInterface.ts";
+export { TerritoryCodeEnum };
+export { TerritoryCodeInterface, TerritorySelectorsInterface };
+export type { BoundedSlices, SliceInterface, UnboundedSlices };
 
 export interface CarpoolMetaInterface {
   calc_distance?: number;
   calc_duration?: number;
-  payments?: Array<{ index?: number; amount?: number; siret?: string; type?: 'incentive' | 'payment' }>;
+  payments?: Array<
+    {
+      index?: number;
+      amount?: number;
+      siret?: string;
+      type?: "incentive" | "payment";
+    }
+  >;
 }
 
 export interface CarpoolInterface {

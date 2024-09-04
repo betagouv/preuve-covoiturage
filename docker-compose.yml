@@ -1,11 +1,10 @@
-version: '3.5'
 services:
   postgres:
     build:
       context: ./docker/postgres
     shm_size: 2g
     ports:
-      - 5432:5432
+      - "${DC_POSTGRES_PORT:-5432}:5432"
     networks:
       - back
     environment:
@@ -20,7 +19,7 @@ services:
   redis:
     build: './docker/redis'
     ports:
-      - 6379:6379
+      - "${DC_REDIS_PORT:-6379}:6379"
     networks:
       - back
 
@@ -57,7 +56,6 @@ services:
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ./docker/api/certs:/app/certs:ro
-    command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -85,7 +83,6 @@ services:
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ./docker/api/certs:/app/certs:ro
-    command: 'sh -c "pm2-runtime start pm2-worker.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -134,13 +131,6 @@ services:
       - 4200:4200
     depends_on:
       - api
-
-  lint:
-    build: './docker/lint'
-    tty: true
-    volumes:
-      - ./api:/code/api:ro
-      - ./dashboard:/code/dashboard:ro
 
   k6:
     image: 'grafana/k6:latest'

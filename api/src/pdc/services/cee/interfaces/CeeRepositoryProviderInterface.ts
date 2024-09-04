@@ -1,4 +1,11 @@
-import { CeeJourneyTypeEnum } from '@shared/cee/common/CeeApplicationInterface';
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/index.ts";
+import {
+  CeeJourneyTypeEnum,
+  JourneyId,
+} from "@/shared/cee/common/CeeApplicationInterface.ts";
 export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {
@@ -11,16 +18,18 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ExistingCeeApplication extends RegisteredCeeApplication {
-  acquisition_id?: number;
-  acquisition_status?: string;
+  journey_id?: JourneyId;
+  operator_journey_id?: string;
+  acquisition_status?: CarpoolAcquisitionStatusEnum;
+  fraud_status?: CarpoolFraudStatusEnum;
 }
 
 export interface ValidJourney {
-  acquisition_id: number;
-  carpool_id: number;
+  journey_id: JourneyId;
   phone_trunc: string;
   datetime: Date;
-  status: string;
+  acquisition_status: CarpoolAcquisitionStatusEnum;
+  fraud_status: CarpoolFraudStatusEnum;
   already_registered: boolean;
   identity_key?: string;
 }
@@ -40,7 +49,7 @@ export interface LongCeeApplication<T = Date> extends CeeApplication<T> {
 
 export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
-  carpool_id: number;
+  operator_journey_id: string;
 }
 
 export interface SearchCeeApplication {
@@ -57,7 +66,7 @@ export interface SearchJourney {
 }
 
 export interface ValidJourneyConstraint {
-  operator_class: 'A' | 'B' | 'C';
+  operator_class: "A" | "B" | "C";
   start_date: Date;
   end_date: Date;
   max_distance: number;
@@ -87,13 +96,13 @@ export interface TimeRangeConstraint {
 
 export enum CeeApplicationErrorEnum {
   /** Payload validation error */
-  Validation = 'validation',
+  Validation = "validation",
   /** Date validation error (application too early) */
-  Date = 'date',
+  Date = "date",
   /** Short distance journey not eligible (or not found) */
-  NonEligible = 'non-eligible',
+  NonEligible = "non-eligible",
   /** Another application is already registered */
-  Conflict = 'conflict',
+  Conflict = "conflict",
 }
 
 export interface CeeApplicationError {
@@ -110,7 +119,7 @@ export interface CeeApplicationError {
 }
 
 export abstract class CeeRepositoryProviderInterfaceResolver {
-  abstract readonly table: string;
+  abstract readonly ceeApplicationsTable: string;
   abstract searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
@@ -119,7 +128,10 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<ExistingCeeApplication | void>;
-  abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
+  abstract searchForValidJourney(
+    search: SearchJourney,
+    constraint: ValidJourneyConstraint,
+  ): Promise<ValidJourney>;
   abstract registerShortApplication(
     data: ShortCeeApplication,
     constraint: ApplicationCooldownConstraint,
@@ -128,7 +140,9 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     data: LongCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication>;
-  abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
+  abstract importApplication(
+    data: CeeApplication & { journey_type: CeeJourneyTypeEnum },
+  ): Promise<void>;
   abstract registerApplicationError(data: CeeApplicationError): Promise<void>;
   abstract importSpecificApplicationIdentity(
     data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum },

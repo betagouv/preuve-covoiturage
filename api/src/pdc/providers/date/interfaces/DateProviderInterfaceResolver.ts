@@ -1,17 +1,21 @@
-import { Locale } from 'date-fns';
-import { ProviderInterface } from '@ilos/common';
-
-export interface FormatOptionsInterface {
-  locale: Locale;
-  timeZone: string;
-}
+import { FormatOptionsWithTZ } from "@/deps.ts";
+import { ProviderInterface } from "@/ilos/common/index.ts";
 
 export interface DateProviderInterface extends ProviderInterface {
-  format(date: Date, formatStr: string, options: Partial<FormatOptionsInterface>): string;
+  format(
+    date: Date,
+    formatStr: string,
+    options: Partial<FormatOptionsWithTZ>,
+  ): string;
 }
 
-export abstract class DateProviderInterfaceResolver implements DateProviderInterface {
-  format(date: Date, formatStr = 'PP', options: Partial<FormatOptionsInterface> = {}): string {
-    throw new Error('Method not implemented.');
+export abstract class DateProviderInterfaceResolver
+  implements DateProviderInterface {
+  format(
+    date: Date,
+    formatStr = "PP",
+    options: Partial<FormatOptionsWithTZ> = {},
+  ): string {
+    throw new Error("Method not implemented.");
   }
 }

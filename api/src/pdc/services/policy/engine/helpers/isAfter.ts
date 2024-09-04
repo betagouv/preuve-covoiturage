@@ -1,5 +1,8 @@
-import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
+import { toZonedTime } from "./toZonedTime.ts";
 
 interface IsAfterParams {
   date: Date;
@@ -10,8 +13,8 @@ export const isAfter: StatelessRuleHelper<IsAfterParams> = (
   ctx: StatelessContextInterface,
   params: IsAfterParams,
 ): boolean => {
-  const ctxDate = utcToZonedTime(ctx.carpool.datetime, params.tz);
-  const paramsDate = utcToZonedTime(params.date, params.tz);
+  const ctxDate = toZonedTime(ctx.carpool.datetime, params.tz);
+  const paramsDate = toZonedTime(params.date, params.tz);
   if (ctxDate >= paramsDate) {
     return true;
   }

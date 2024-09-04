@@ -2,12 +2,12 @@
 # coding: utf-8
 
 # # Création et Stockage des Tables d'Insights et Triangulaires pour Analyse de Fraude
-# 
+#
 
 # ## 1. Setup
 # # Parameters
-# 
-# 
+#
+#
 #    Parameter name          Example Value                                            Description
 # - `connection_string` : 'postgresql://postgres:postgres@localhost:5432/local'   -> Postgresql URL connection string
 # - `aom_insee` :          '217500016'                                            -> Aom insee code representing geo perimeter to apply the algorithm
@@ -38,8 +38,8 @@ load_dotenv()
 
 
 connection_string = os.environ['PG_CONNECTION_STRING']
-delay = os.environ['DELAY'] 
-frame = os.environ['FRAME'] 
+delay = os.environ['DELAY']
+frame = os.environ['FRAME']
 
 # Hardcoded for now
 aom_insee = '217500016'
@@ -50,7 +50,7 @@ aom_insee = '217500016'
 # In[3]:
 
 
-# Convert to french timezone 
+# Convert to french timezone
 
 def convert_to_france_time(dt_obj):
     original_format = '%Y-%m-%d %H:%M:%S.%f %z'
@@ -66,7 +66,7 @@ def is_night_time(time, start, end):
         return start <= time <= end
     else:
         return start <= time or time <= end
-  
+
 # Calculate percentage of boolean column
 def calculate_percentages(df,column):
     counts = df[column].value_counts(normalize=True) * 100
@@ -131,9 +131,9 @@ def is_changed(current, previous):
 
 
 def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
-  
+
   query = f"""SELECT cc._id, cc.is_driver, ci.phone_trunc, cc.datetime, cc.duration, cc.operator_id, cc.seats,
-  ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt, 
+  ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt,
   cc.operator_journey_id,
   cc.distance,
   ci.operator_user_id,
@@ -157,7 +157,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   with engine.connect() as conn:
       df_carpool = pd.read_sql_query(text(query), conn)
 
-  
+
   # convert to french datetime
   df_carpool['datetime_france'] = df_carpool['datetime'].apply(convert_to_france_time)
 
@@ -196,7 +196,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
     'seats' : ['mean'],
     'night_21_to_6' : ['sum', lambda x: any(x), lambda x: x.mean()] ,
     'night_21_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()],
-    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]}) 
+    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]})
   phone_trunc_insights_df.reset_index(inplace=True)
   phone_trunc_insights_df.columns = ['operator_user_id',
                                     'phone_trunc',
@@ -273,7 +273,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
 
   potential_fraud_carpool_with_insights_df_level_1 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.total_change_count / potential_fraud_carpool_with_insights_df.carpool_days >= 2].copy()
   potential_fraud_carpool_with_insights_df_level_2 = potential_fraud_carpool_with_insights_df[potential_fraud_carpool_with_insights_df.total_change_count / potential_fraud_carpool_with_insights_df.carpool_days >= 1].copy()
-  # For level 1 
+  # For level 1
   filtered_df_grouped_level_1 = potential_fraud_carpool_with_insights_df_level_1.groupby(['operator_journey_id']).agg({'phone_trunc' : list,
                                                                                                       'intraday_change_percentage': list,
                                                                                                       'intraday_change_count' : list,
@@ -296,7 +296,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
 
   journey_to_phones = potential_fraud_carpool_with_insights_df_level_2.groupby('operator_journey_id')['phone_trunc'].apply(list).to_dict()
 
-  # algorithme de création de groupe frauduleux 
+  # algorithme de création de groupe frauduleux
   G = nx.Graph()
   journey_to_phones = potential_fraud_carpool_with_insights_df_level_1.groupby('operator_journey_id')['phone_trunc'].apply(list).to_dict()
 
@@ -330,7 +330,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
       group_operator_id = group_journeys['operator_journey_id'].copy()
       group_journeys['date'] = group_journeys['datetime'].dt.date.copy()
       total_change_percentage = np.unique(group_journeys['total_change_percentage'].to_list())
-    
+
       group_data.append({
           'groupe': idx+1,
           'phone_trunc': list(group_phones),
@@ -389,7 +389,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
       group_operator_id = group_journeys['operator_journey_id'].copy()
       group_journeys['date'] = group_journeys['datetime'].dt.date.copy()
       total_change_percentage = np.unique(group_journeys['total_change_percentage'].to_list())
-      
+
       group_data.append({
           'groupe': idx+1,
           'phone_trunc': list(group_phones),
@@ -443,7 +443,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
         'operator_list', 'num_operators', 'average_duration', 'departure_date',
         'end_date', 'average_daily_trips', 'total_change_percentage',
         'total_incentives','journey_id_list', 'level','phone_trunc_set']].copy()
-  
+
 
   G = nx.Graph()
   for (idx1, row1), (idx2, row2) in itertools.combinations(groups_df_combined.iterrows(), 2):
@@ -461,12 +461,12 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
           'total_incentives' : rows['total_incentives'].sum(),
           'num_trips': rows['num_trips'].sum(),
           'operator_list': list(set(itertools.chain.from_iterable(rows['operator_list']))),
-          'num_operators': None,  
+          'num_operators': None,
           'average_duration': rows['average_duration'].mean(),
           'departure_date': rows['departure_date'].min(),
           'end_date': rows['end_date'].max(),
           'average_daily_trips': rows['average_daily_trips'].mean(),
-          'level': 1 if any(rows['level'] == 1) else 2 
+          'level': 1 if any(rows['level'] == 1) else 2
       }
 
       merged_row['num_participants'] = len(merged_row['phone_trunc'])
@@ -487,15 +487,15 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   operator_user_ids = df_carpool.operator_user_id.unique().tolist()
   formatted_ids = ', '.join(f"'{id}'" for id in operator_user_ids)
   query = f"""
-  SELECT 
-      operator_user_id, 
+  SELECT
+      operator_user_id,
       phone_trunc,
-      identity_key, 
-      created_at, 
+      identity_key,
+      created_at,
       updated_at
-  FROM 
+  FROM
       carpool.identities
-  WHERE 
+  WHERE
       operator_user_id IN ({formatted_ids}) AND updated_at < NOW() - '{delay} days'::interval;
   """
 
@@ -515,7 +515,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
 
   # Add to phone_trunc_insights_df the number of changes per operator_user_id
   phone_trunc_insights_df = phone_trunc_insights_df.merge(df_identities.groupby('operator_user_id')['phone_trunc_changed'].sum().reset_index(),how='left').copy()
-  
+
   return df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df
 
 
@@ -538,7 +538,7 @@ def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     insert_stmt = insert(table.table).values(list(data_iter))
     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['phone_trunc', 'departure_date', 'end_date'])
     conn.execute(on_duplicate_key_stmt)
-    
+
 phone_trunc_insights_df.to_sql(
     name="phone_insights_detailed",
     schema="fraudcheck",
@@ -562,9 +562,9 @@ def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     insert_stmt = insert(table.table).values(list(data_iter))
     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['phone_trunc', 'departure_date', 'end_date'])
     conn.execute(on_duplicate_key_stmt)
-    
+
 final_triangular_df.to_sql(
-    name="triangular_patterns", 
+    name="triangular_patterns",
     schema="fraudcheck",
     con=engine,
     if_exists="append",
@@ -582,14 +582,14 @@ user_phone_change_history_df['year_month'] = user_phone_change_history_df['year_
 # In[45]:
 
 
-# Store user_phone_change_history_df to the db 
+# Store user_phone_change_history_df to the db
 def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     insert_stmt = insert(table.table).values(list(data_iter))
     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['year_month'])
     conn.execute(on_duplicate_key_stmt)
-    
+
 user_phone_change_history_df.to_sql(
-    name="user_phone_change_history", 
+    name="user_phone_change_history",
     schema="fraudcheck",
     con=engine,
     if_exists="append",

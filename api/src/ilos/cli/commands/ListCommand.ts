@@ -1,6 +1,9 @@
-import { command, KernelInterfaceResolver, CommandOptionType } from '@ilos/common';
-
-import { Command } from '../parents/Command';
+import {
+  command,
+  CommandOptionType,
+  KernelInterfaceResolver,
+} from "@/ilos/common/index.ts";
+import { Command } from "../parents/Command.ts";
 
 /**
  * Command that list RPC methods
@@ -10,8 +13,8 @@ import { Command } from '../parents/Command';
  */
 @command()
 export class ListCommand extends Command {
-  static readonly signature: string = 'list';
-  static readonly description: string = 'List RPC methods';
+  static readonly signature: string = "list";
+  static readonly description: string = "List RPC methods";
   static readonly options: CommandOptionType[] = [];
 
   constructor(private kernel: KernelInterfaceResolver) {
@@ -19,35 +22,41 @@ export class ListCommand extends Command {
   }
 
   public async call(): Promise<string> {
-    let result = '';
+    let result = "";
     const handlers = this.kernel.getContainer().getHandlers();
 
     const handlersByTransport = handlers.reduce((acc, h) => {
-      const key = h.local ? 'local' : h.queue ? 'queue' : 'remote';
+      const key = h.local ? "local" : h.queue ? "queue" : "remote";
       if (!(key in acc)) {
         acc[key] = [];
       }
       acc[key].push(h);
       return acc;
-    }, {});
+    }, {} as any);
 
-    Reflect.ownKeys(handlersByTransport).forEach((key: string) => {
-      result += `${key.toUpperCase()} : \n`;
-      const handlersByService = handlersByTransport[key].reduce((acc, h) => {
-        const keyVersion = `${h.service}@${h.version}`;
-        if (!(keyVersion in acc)) {
-          acc[keyVersion] = [];
-        }
-        acc[keyVersion].push(h);
-        return acc;
-      }, {});
+    Reflect.ownKeys(handlersByTransport).forEach((key: string | symbol) => {
+      const k = String(key);
+      result += `${k.toUpperCase()} : \n`;
+      const handlersByService = handlersByTransport[k].reduce(
+        (acc: any, h: any) => {
+          const keyVersion = `${h.service}@${h.version}`;
+          if (!(keyVersion in acc)) {
+            acc[keyVersion] = [];
+          }
+          acc[keyVersion].push(h);
+          return acc;
+        },
+        {},
+      );
 
-      Reflect.ownKeys(handlersByService).forEach((serviceKey: string) => {
-        result += `  - ${serviceKey}\n`;
-        handlersByService[serviceKey].forEach((handler) => {
-          result += `    * ${handler.method}\n`;
-        });
-      });
+      Reflect.ownKeys(handlersByService).forEach(
+        (serviceKey: string | symbol) => {
+          result += `  - ${String(serviceKey)}\n`;
+          handlersByService[serviceKey].forEach((handler: any) => {
+            result += `    * ${handler.method}\n`;
+          });
+        },
+      );
     });
 
     return result;

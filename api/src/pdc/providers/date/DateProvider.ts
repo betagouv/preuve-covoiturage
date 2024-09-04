@@ -1,12 +1,9 @@
-import { utcToZonedTime, format } from 'date-fns-tz';
-import fr from 'date-fns/locale/fr';
-import { provider } from '@ilos/common';
-
+import { datefr, format, FormatOptionsWithTZ, toZonedTime } from "@/deps.ts";
+import { provider } from "@/ilos/common/index.ts";
 import {
-  FormatOptionsInterface,
   DateProviderInterface,
   DateProviderInterfaceResolver,
-} from './interfaces/DateProviderInterfaceResolver';
+} from "./interfaces/DateProviderInterfaceResolver.ts";
 
 /**
  * date-fns wrappers to handle i18n
@@ -17,13 +14,21 @@ import {
   identifier: DateProviderInterfaceResolver,
 })
 export class DateProvider implements DateProviderInterface {
-  format(date: Date, formatStr = 'PP', options: Partial<FormatOptionsInterface> = {}): string {
+  format(
+    date: Date,
+    formatStr = "PP",
+    options: Partial<FormatOptionsWithTZ> = {},
+  ): string {
     const opt = {
-      locale: fr,
-      timeZone: 'UTC',
+      locale: datefr,
+      timeZone: "UTC",
       ...options,
     };
 
-    return format(utcToZonedTime(date, opt.timeZone), formatStr, opt);
+    return format(
+      toZonedTime(date, opt.timeZone),
+      formatStr,
+      opt,
+    );
   }
 }

@@ -1,5 +1,7 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { classWidth, getLegendClasses, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -8,9 +10,7 @@ import { ArcLayer } from '@deck.gl/layers/typed';
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo, useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { useContext, useMemo } from 'react';
 
 export default function FluxMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
@@ -43,7 +43,8 @@ export default function FluxMap({ title }: { title: string }) {
     getSourceColor: [0, 0, 145],
     getTargetColor: [0, 0, 145],
   });
-  const fitBounds = useMemo(() => {
+
+  const fitBounds = () => {
     const coords = filteredData.map((d) => {
       return [
         [d.lng_1, d.lat_1],
@@ -52,8 +53,9 @@ export default function FluxMap({ title }: { title: string }) {
     })
     .reduce((acc, val) => acc.concat(val), []);
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPoint(coords));
-    return bounds as unknown as LngLatBoundsLike;
-  }, [dashboard.params.code,filteredData]);
+    return  bounds as LngLatBoundsLike;
+  };
+
   const tooltip = ({ object }: any) =>
     object && {
       html: `<div class="tooltip-title"><b>${object.ter_1} - ${object.ter_2}</b></div>
@@ -87,13 +89,19 @@ export default function FluxMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <DeckMap 
           title={title} 
           tooltip={tooltip} 
           mapStyle={mapStyle} 
           layers={[layer]} 
-          bounds={fitBounds}
+          bounds={fitBounds()}
           scrollZoom={false}
           legend={[
             {

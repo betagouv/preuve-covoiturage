@@ -1,6 +1,9 @@
-import { MisconfigurationException } from '../exceptions/MisconfigurationException';
-import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
+import { MisconfigurationException } from "../exceptions/MisconfigurationException.ts";
+import { toZonedTime } from "./toZonedTime.ts";
 
 interface AtDateParams {
   dates: string[];
@@ -11,8 +14,8 @@ export const atDate: StatelessRuleHelper<AtDateParams> = (
   ctx: StatelessContextInterface,
   params: AtDateParams,
 ): boolean => {
-  const dateStr = utcToZonedTime(ctx.carpool.datetime, params.tz).toISOString();
-  const ctxDate = dateStr.split('T')[0];
+  const dateStr = toZonedTime(ctx.carpool.datetime, params.tz).toISOString();
+  const ctxDate = dateStr.split("T")[0];
   if (!Array.isArray(params.dates)) {
     throw new MisconfigurationException();
   }

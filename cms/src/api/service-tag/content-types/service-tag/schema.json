@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "service_tags",
+  "info": {
+    "singularName": "service-tag",
+    "pluralName": "service-tags",
+    "displayName": "Service-tag",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "label": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "uid"
+    }
+  }
+}

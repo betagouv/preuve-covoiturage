@@ -1,3 +1,6 @@
-import { env } from '@ilos/core';
+import { env_or_fail } from "@/lib/env/index.ts";
 
-export const to = env.or_fail('APP_CONTACTFORM_TO', 'contact@covoiturage.beta.gouv.fr');
+export const to = env_or_fail(
+  "APP_CONTACTFORM_TO",
+  "contact@covoiturage.beta.gouv.fr",
+);

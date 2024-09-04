@@ -1,31 +1,46 @@
 /* eslint-disable max-len */
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { set } from 'lodash';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { set } from "@/lib/object/index.ts";
+import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
+import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
-} from '../interfaces/APDFRepositoryProviderInterface';
-import { APDFTripInterface } from '../interfaces/APDFTripInterface';
-import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
-import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
-import { UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
+} from "../interfaces/APDFRepositoryProviderInterface.ts";
+import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
+  /**
+   * @deprecated [carpool_v2_migration]
+   */
+  protected readonly carpoolV1Table = "carpool.carpools";
+  protected readonly carpoolV2Table = "carpool_v2.carpools";
+  protected readonly carpoolV2StatusTable = "carpool_v2.status";
+  protected readonly carpoolV2GeoTable = "carpool_v2.geo";
+  protected readonly policyIncentivesTable = "policy.incentives";
+  protected readonly geoPerimetersTable = "geo.perimeters";
+  protected readonly operatorsTable = "operator.operators";
+
   constructor(public connection: PostgresConnection) {}
 
   /**
    * List active operators having trips and incentives > 0
    * in the campaign for the given date range
    */
-  public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+  public async getPolicyActiveOperators(
+    campaign_id: number,
+    start_date: Date,
+    end_date: Date,
+  ): Promise<number[]> {
     const result = await this.connection.getClient().query<any>({
       text: `
         select cc.operator_id
         from policy.incentives pi
-        join carpool.carpools cc on cc._id = pi.carpool_id
+        join ${this.carpoolV1Table} cc on cc._id = pi.carpool_id
         where
               pi.policy_id = $3
           and pi.amount    >  0
@@ -53,16 +68,20 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i: number) => {
-        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+        const f = `filter (where distance >= ${start}${
+          end ? ` and distance < ${end}` : ""
+        })`;
         return `
-          (count(acquisition_id) ${f})::int as slice_${i}_count,
-          (count(acquisition_id) ${f.replace('where', 'where amount > 0 and')})::int as slice_${i}_subsidized,
+          (count(uuid) ${f})::int as slice_${i}_count,
+          (count(uuid) ${
+          f.replace("where", "where amount > 0 and")
+        })::int as slice_${i}_subsidized,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
           ${end ? end : "'Infinity'"} as slice_${i}_end
         `;
       })
-      .join(',');
+      .join(",");
 
     // select all trips with a positive incentive calculated by us for a given campaign
     // calculate a global count and incentive sum as well as details for each slice
@@ -70,25 +89,29 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       text: `
         with trips as (
           select
-              distinct cc.acquisition_id,
+              cc.uuid,
               cc.distance,
               coalesce(pi.amount, 0) as amount
-          from policy.incentives pi
-          join carpool.carpools cc on cc._id = pi.carpool_id
-          where
-                pi.datetime >= $1
-            and pi.datetime <  $2
+          from ${this.policyIncentivesTable} pi
+          join ${this.carpoolV2Table} cc
+            on  cc.operator_id = pi.operator_id
+            and cc.operator_journey_id = pi.operator_journey_id
+          join ${this.carpoolV2StatusTable} cs on cs.carpool_id = cc._id
+        where
+                cc.start_datetime >= $1
+            and cc.start_datetime  < $2
+            and cs.acquisition_status in ('processed', 'canceled', 'updated')
+            and cs.fraud_status       in ('passed', 'failed')
+            and cc.operator_id = $3
             and pi.policy_id = $4
             and pi.status = 'validated'
             and pi.amount >= 0
-            and cc.operator_id = $3
-            and cc.status in ('ok', 'canceled')
           )
         select
-          count(acquisition_id)::int as total_count,
+          count(uuid)::int as total_count,
           sum(amount)::int as total_sum,
-          (count(acquisition_id) filter (where amount > 0))::int as subsidized_count
-          ${sliceFilters.length ? `, ${sliceFilters}` : ''}
+          (count(uuid) filter (where amount > 0))::int as subsidized_count
+          ${sliceFilters.length ? `, ${sliceFilters}` : ""}
         from trips
         `,
       values: [start_date, end_date, operator_id, campaign_id],
@@ -110,13 +133,17 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     const row = result.rows[0];
     return Object.keys(row).reduce(
       (p, k) => {
-        if (!k.includes('slice_')) return p;
-        const [, i, prop] = k.split('_');
-        if (prop === 'start') {
+        if (!k.includes("slice_")) return p;
+        const [, i, prop] = k.split("_");
+        if (prop === "start") {
           set(p, `slices.${i}.slice.start`, row[k]);
-        } else if (prop === 'end') {
+        } else if (prop === "end") {
           // Highest slice can return Infinity as boundary
-          set(p, `slices.${i}.slice.end`, row[k] === 'Infinity' ? undefined : row[k]);
+          set(
+            p,
+            `slices.${i}.slice.end`,
+            row[k] === "Infinity" ? undefined : row[k],
+          );
         } else {
           set(p, `slices.${i}.${prop}`, row[k]);
         }
@@ -134,46 +161,25 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
   /**
    * List all carpools for CSV APDF export using a cursor
    */
-  public async getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>> {
+  public async getPolicyCursor(
+    params: CampaignSearchParamsInterface,
+  ): Promise<PgCursorHandler<APDFTripInterface>> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     const queryText = `
-      with ccd as (
-        select
-          _id,
-          identity_id,
-          datetime,
-          trip_id,
-          acquisition_id,
-          operator_trip_id,
-          operator_journey_id,
-          distance,
-          duration,
-          operator_class,
-          operator_id
-        from carpool.carpools
-        where
-          datetime >= $1
-          and datetime < $2
-          and status in ('ok', 'canceled')
-          and operator_id = $3
-          and is_driver = true
-      )
-      -- list in api/services/trip/src/actions/excel/BuildExcel.ts
+      -- list in api/services/trip/src/providers/excel/TripsWorksheetWriter.ts
       select
-        ccd.operator_journey_id,
-        ccd.trip_id,
-        ccd.operator_trip_id,
+        cc.uuid as rpc_journey_id,
+        cc.operator_journey_id,
+        cc.operator_trip_id,
 
-        -- driver
-        cid.operator_user_id as operator_driver_id,
-        pid.amount as rpc_incentive,
+        cc.driver_operator_user_id,
+        cc.passenger_operator_user_id,
 
-        -- passenger
-        cip.operator_user_id as operator_passenger_id,
+        pi.amount as rpc_incentive,
 
-        ccd.datetime as start_datetime,
-        ccd.datetime + (ccd.duration || ' seconds')::interval as end_datetime,
+        cc.start_datetime,
+        cc.end_datetime,
 
         gps.l_arr as start_location,
         gps.arr as start_insee,
@@ -182,27 +188,38 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         gpe.arr as end_insee,
         gpe.l_epci as end_epci,
 
-        ccd.duration,
-        ccd.distance,
+        to_char(cc.end_datetime - cc.start_datetime, 'HH24:MI:SS') as duration,
+        cc.distance,
 
         oo.name as operator,
-        ccd.operator_class
+        cc.operator_class
 
-      from ccd
-      left join carpool.carpools ccp on ccd.acquisition_id = ccp.acquisition_id and ccp.is_driver = false
-      left join carpool.identities cid on cid._id = ccd.identity_id
-      left join carpool.identities cip on cip._id = ccp.identity_id
-      left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
-      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from ccp.datetime)::smallint)
-      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))::smallint)
-      left join operator.operators oo on oo._id = ccd.operator_id
+      from ${this.policyIncentivesTable} pi
+      join ${this.carpoolV2Table} cc on cc.operator_id = pi.operator_id and cc.operator_journey_id = pi.operator_journey_id
+      join ${this.carpoolV2StatusTable} cs on cc._id = cs.carpool_id
+      join ${this.carpoolV2GeoTable} cg on cc._id = cg.carpool_id
+      left join ${this.geoPerimetersTable} gps on cg.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from cc.start_datetime)::smallint)
+      left join ${this.geoPerimetersTable} gpe on cg.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from cc.end_datetime)::smallint)
+      left join ${this.operatorsTable} oo on oo._id = cc.operator_id
 
-      where pid.policy_id is not null
-        and pid.amount >= 0
+      where
+            cc.start_datetime >= $1
+        and cc.start_datetime  < $2
+        and cs.acquisition_status in ('processed', 'canceled', 'updated')
+        and cs.fraud_status in ('passed', 'failed')
+        and cc.operator_id = $3
+        and pi.policy_id = $4
+        and pi.status = 'validated'
+        and pi.amount >= 0
 
-      order by ccd.datetime
+      order by cc.start_datetime
     `;
 
-    return this.connection.getCursor(queryText, [start_date, end_date, operator_id, campaign_id]);
+    return this.connection.getCursor(queryText, [
+      start_date,
+      end_date,
+      operator_id,
+      campaign_id,
+    ]);
   }
 }

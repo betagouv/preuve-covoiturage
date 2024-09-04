@@ -1,5 +1,7 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { classColor, getPeriod, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -9,9 +11,7 @@ import bbox from '@turf/bbox';
 import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo, useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { useContext, useMemo } from 'react';
 
 export default function DensiteMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
@@ -47,7 +47,7 @@ export default function DensiteMap({ title }: { title: string }) {
     const hexagons = data?.map((d) => d.hex);
     const polygon = cellsToMultiPolygon(hexagons!, true);
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(multiPolygon(polygon));
-    return bounds as unknown as LngLatBoundsLike;
+    return bounds as LngLatBoundsLike;
   };
   const tooltip = ({ object }: any) =>
     object && {
@@ -78,7 +78,13 @@ export default function DensiteMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <DeckMap 
           title={mapTitle} 
           tooltip={tooltip} 

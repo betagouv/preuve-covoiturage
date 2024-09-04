@@ -12,17 +12,29 @@
           };
         in
         {
-          devShell = pkgs.mkShell {
+          devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
-              nodejs_20
+              # system packages
               p7zip
               just
               openssl
+              pm2
+              jq
+              minio-client
+
+              # rpc infra
+              nodejs_20
+              postgresql_14
+              deno
+
+              # data stack
               dbt
+              pre-commit
               python311Packages.dbt-postgres
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"
+              export PRE_COMMIT_ALLOW_NO_CONFIG=1
             '';
           };
         });
