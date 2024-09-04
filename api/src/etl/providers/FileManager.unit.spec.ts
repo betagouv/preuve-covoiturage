@@ -1,15 +1,17 @@
-import { axios, AxiosError, mkdir, Readable, readFile, rm } from "@/deps.ts";
+import { mkdir, readFile, rm } from "@/deps.ts";
 import {
   afterAll,
-  assert,
   assertEquals,
+  assertSpyCall,
+  assertSpyCalls,
   beforeEach,
   describe,
   it,
-  sinon,
+  stub,
 } from "@/dev_deps.ts";
 import { createHash } from "@/lib/crypto/index.ts";
 import { join } from "@/lib/path/index.ts";
+import fetcher from "../../lib/fetcher/index.ts";
 import { writeFile } from "../helpers/index.ts";
 import { FileManager } from "./FileManager.ts";
 
@@ -17,14 +19,12 @@ describe("File Manager", () => {
   const GEO_PERIMETER_TMP_DIR = "/tmp/perimeter-geo-test";
   const RESSOURCE_URL =
     "http://www.get.domaine.fr/system/files/documents/2022/09/file";
-  const axiosStub = sinon.stub(axios, "get");
   const FILE_CONTENT_STRING = "{}";
-  let READABLE_STREAM: Readable;
+  let READABLE_STREAM: ReadableStream;
   let fileManager: FileManager;
 
   afterAll(async () => {
     await rm(GEO_PERIMETER_TMP_DIR, { recursive: true, force: true });
-    axiosStub.restore();
   });
 
   beforeEach(async () => {
@@ -36,82 +36,90 @@ describe("File Manager", () => {
       mirrorUrl: "https://s3.domain.fr/bucket",
     });
 
-    axiosStub.reset();
-
-    READABLE_STREAM = new Readable();
-    READABLE_STREAM.push(FILE_CONTENT_STRING);
-    READABLE_STREAM.push(null);
+    READABLE_STREAM = new ReadableStream({
+      start(controller) {
+        // Convert the text to a Uint8Array (or other suitable format) and enqueue it
+        controller.enqueue(new TextEncoder().encode(FILE_CONTENT_STRING));
+        // Close the stream after the text has been enqueued
+        controller.close();
+      },
+    });
   });
 
   it("should return ressource file if available", async () => {
-    // Arrange
-    const existingFilepath = join(
-      fileManager.downloadPath,
-      await createHash(RESSOURCE_URL),
-    );
-    await mkdir(fileManager.downloadPath, { recursive: true });
-    await writeFile(READABLE_STREAM, existingFilepath);
+    const getStub = stub(fetcher, "get");
+    try {
+      // Arrange
+      const existingFilepath = join(
+        fileManager.downloadPath,
+        await createHash(RESSOURCE_URL),
+      );
+      await mkdir(fileManager.downloadPath, { recursive: true });
+      await writeFile(READABLE_STREAM, existingFilepath);
 
-    // Act
-    const filepath = await fileManager.download(
-      RESSOURCE_URL,
-    );
-
+      // Act
+      const filepath = await fileManager.download(
+        RESSOURCE_URL,
+      );
+      assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    } finally {
+      getStub.restore();
+    }
     // Assert
-    sinon.assert.notCalled(axiosStub);
-    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertSpyCalls(getStub, 0);
   });
 
   it("should download ressource url if not on fs", async () => {
     // Arrange
-    axiosStub.resolves({ data: READABLE_STREAM });
-
-    // Act
-    const filepath = await fileManager.download(
-      RESSOURCE_URL,
+    const getStub = stub(
+      fetcher,
+      "get",
+      async () => new Response(READABLE_STREAM),
     );
-
+    try {
+      // Act
+      const filepath = await fileManager.download(
+        RESSOURCE_URL,
+      );
+      assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    } finally {
+      getStub.restore();
+    }
     // Assert
-    sinon.assert.calledOnceWithExactly(
-      axiosStub,
-      RESSOURCE_URL,
-      { responseType: "stream" },
-    );
-    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertSpyCall(getStub, 0, { args: [RESSOURCE_URL] });
   });
 
   it("should fallback to miror if any error code with download ressource", async () => {
     // Arrange
-    axiosStub.onCall(0).callsFake(() => {
-      throw new AxiosError("Invalid URL", "403");
-    });
-    axiosStub.onCall(1).resolves({ data: READABLE_STREAM });
-
-    // Act
-    const filepath = await fileManager.download(
-      RESSOURCE_URL,
+    let nb = 0;
+    const getStub = stub(
+      fetcher,
+      "get",
+      async () => {
+        if (nb === 0) {
+          nb += 1;
+          throw new Error("Invalid URL");
+        } else {
+          return new Response(READABLE_STREAM);
+        }
+      },
     );
+
+    try {
+      // Act
+      const filepath = await fileManager.download(
+        RESSOURCE_URL,
+      );
+      assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    } finally {
+      getStub.restore();
+    }
 
     // Assert
-    sinon.assert.calledTwice(axiosStub);
-    assert(
-      axiosStub.getCall(0).calledWithExactly(
-        RESSOURCE_URL,
-        {
-          responseType: "stream",
-        },
-      ),
-    );
-    assert(
-      axiosStub
-        .getCall(1)
-        .calledWithExactly(
-          `${fileManager.mirrorUrl}/${await createHash(RESSOURCE_URL)}`,
-          {
-            responseType: "stream",
-          },
-        ),
-    );
-    assertEquals(await readFile(filepath, "utf8"), FILE_CONTENT_STRING);
+    assertSpyCalls(getStub, 2);
+    assertSpyCall(getStub, 0, { args: [RESSOURCE_URL] });
+    assertSpyCall(getStub, 1, {
+      args: [`${fileManager.mirrorUrl}/${await createHash(RESSOURCE_URL)}`],
+    });
   });
 });

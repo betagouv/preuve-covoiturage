@@ -1,4 +1,4 @@
-import { pg, Stream } from "@/deps.ts";
+import { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { createStateManager } from "./helpers/index.ts";
 import {
@@ -13,7 +13,7 @@ import {
   StaticMigrable,
 } from "./interfaces/index.ts";
 
-export class Migrator extends Stream.EventEmitter {
+export class Migrator {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> =
     new Map();
 
@@ -25,9 +25,7 @@ export class Migrator extends Stream.EventEmitter {
       pool,
       config,
     ),
-  ) {
-    super();
-  }
+  ) {}
 
   async prepare(): Promise<void> {
     logger.info(`[db] Connecting to database`);
@@ -83,7 +81,9 @@ export class Migrator extends Stream.EventEmitter {
     stateManager: StateManagerInterface,
   ): Promise<void> {
     const migrableCtor = migrable.constructor as StaticMigrable;
-    this.emit("start", { state: migrableState, uuid: migrableCtor.uuid });
+    logger.debug(
+      `start: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`,
+    );
     try {
       switch (migrableState) {
         case State.Planned:
@@ -134,9 +134,13 @@ export class Migrator extends Stream.EventEmitter {
         default:
           throw new Error();
       }
-      this.emit("end", { state: migrableState, uuid: migrableCtor.uuid });
+      logger.debug(
+        `end: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`,
+      );
     } catch (e) {
-      this.emit("error", { state: migrableState, uuid: migrableCtor.uuid });
+      logger.debug(
+        `error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${e.message}`,
+      );
       throw e;
     }
   }

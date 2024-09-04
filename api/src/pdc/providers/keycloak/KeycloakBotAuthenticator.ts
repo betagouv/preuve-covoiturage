@@ -1,6 +1,7 @@
 import { jose } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { IBotCredentials } from "@/pdc/providers/keycloak/IBotCredentials.ts";
 
@@ -40,14 +41,13 @@ export class KeycloakBotAuthenticator {
       d.append("grant_type", "password");
       d.append("username", `bot@${data.access_key}`);
       d.append("password", data.secret_key);
-      const response = await fetch(
+      const response = await fetcher.post(
         url,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
             "Accept": "application/json",
           },
-          method: "POST",
           body: d,
         },
       );

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -14,7 +14,7 @@ update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 osrm_url = os.environ['OSRM_URL']
 
 
-# In[2]:
+# In[ ]:
 
 
 import pandas as pd
@@ -66,7 +66,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[3]:
+# In[ ]:
 
 
 import requests
@@ -91,7 +91,7 @@ df_carpool = df_carpool.apply(get_osrm_data, axis = 1)
 # df_carpool = df_carpool.assign(distance_delta=lambda x: x.distance * 100 / x.osrm_distance)
 
 
-# In[4]:
+# In[ ]:
 
 
 operator_class_c_mask = df_carpool.operator_class == 'C'
@@ -116,7 +116,7 @@ df_only_class_c_trip = df_carpool[operator_class_c_mask]
 # - Qui ont une durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
 #     * La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 
-# In[5]:
+# In[ ]:
 
 
 less_than_300_meters_mask = (df_only_class_c_trip.distance < 300) | (df_only_class_c_trip.osrm_distance < 300)
@@ -127,7 +127,7 @@ estimate_vs_computed_percent_more_distance_mask = (df_only_class_c_trip.osrm_dis
 df_result = df_only_class_c_trip[less_than_300_meters_mask | less_than_1_minutes_mask | estimate_vs_computed_percent_more_duration_mask | estimate_vs_computed_percent_more_distance_mask]
 
 
-# In[6]:
+# In[ ]:
 
 
 df_labels = df_result[['_id', 'operator_journey_id']]
@@ -178,4 +178,20 @@ df_labels.to_sql(
     method=insert_or_do_nothing_on_conflict
 )
 
+
+# In[ ]:
+
+
+# update pending carpool to passed, no anomaly triggered on them
+if update_carpool_status is True:
+    with engine.connect() as conn:
+        update_query = """
+        UPDATE carpool_v2.status 
+        SET anomaly_status = 'passed'
+        FROM carpool_v2.status c2s JOIN carpool_v2.carpools c2c on c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '30 hours'::interval
+        AND c2s.anomaly_status = 'pending'
+        """
+        result = conn.execute(text(update_query))
+        print(f"{result.rowcount} where updated to anomaly_status 'passed'")
 

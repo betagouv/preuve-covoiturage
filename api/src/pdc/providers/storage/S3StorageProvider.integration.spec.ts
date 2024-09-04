@@ -2,6 +2,7 @@ import { writeFile } from "@/deps.ts";
 import { assertObjectMatch, it } from "@/dev_deps.ts";
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import { setEnv } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { S3StorageProvider } from "./S3StorageProvider.ts";
@@ -36,7 +37,7 @@ it("should be uploading file with bucket as sub-domain", async () => {
   const url = await s3.getPublicUrl(BucketName.Export, filename);
   console.debug(`Public URL: ${url}`);
 
-  const response = await fetch(url);
+  const response = await fetcher.get(url);
   const obj = await response.json();
   console.debug(`Response: ${JSON.stringify(obj)}`);
 
