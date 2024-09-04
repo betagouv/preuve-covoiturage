@@ -1,34 +1,42 @@
-import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
-import { TerritoryListInterface } from '../observatoire/dataInterfaces';
+import { INSEECode, PerimeterType } from "@/interfaces/observatoire/Perimeter";
+import { PeriodType } from "../observatoire/componentsInterfaces";
+import { TerritoryListInterface } from "../observatoire/dataInterfaces";
 
 export type Params = {
-  code: INSEECode,
-  type: PerimeterType,
-  observe: PerimeterType,
-  name: string
-}
+  code: INSEECode;
+  type: PerimeterType;
+  observe: PerimeterType;
+  name: string;
+};
 
 export interface DashboardParams extends Params {
-  year: number,
-  month: number,
-  map: number,
-  graph: number,
-};
+  period: PeriodType;
+  year: number;
+  month: number;
+  trimester: number;
+  semester: number;
+  map: number;
+  graph: number;
+}
 
 export type DashboardContextType = {
   dashboard: {
-    params: DashboardParams,
-    lastPeriod: number,
-    loading: boolean,
-    error: string | null,
-    getParams: (params:Params) => void,
-    onLoadTerritory:(value?: {code: INSEECode, type: PerimeterType}) => void,
-    onChangeTerritory:(value: TerritoryListInterface) => void,
-    getName:(value: { code: INSEECode; type: PerimeterType;}) => Promise<string>,
-    onChangePeriod: (value:{ year: number; month: number }) => void,
-    getLastPeriod:() => Promise<void>,
-    onChangeObserve:(value:PerimeterType) => void,
-    onChangeGraph:(value:number) => void,
-    onChangeMap:(value:number) => void,
-  },
-}
+    params: DashboardParams;
+    lastPeriod: number;
+    loading: boolean;
+    getParams: (params: Params) => void;
+    onLoadTerritory: (value?: { code: INSEECode; type: PerimeterType }) => void;
+    onChangeTerritory: (value: TerritoryListInterface) => void;
+    getName: (
+      value: { code: INSEECode; type: PerimeterType },
+    ) => Promise<string>;
+    onChangePeriod: (value: PeriodType) => void;
+    onChangeMonth: (value: number) => void;
+    onChangeTrimester: (value: number) => void;
+    onChangeSemester: (value: number) => void;
+    onChangeYear: (value: number) => void;
+    onChangeObserve: (value: PerimeterType) => void;
+    onChangeGraph: (value: number) => void;
+    onChangeMap: (value: number) => void;
+  };
+};

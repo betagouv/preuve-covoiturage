@@ -1,5 +1,4 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { Config } from '@/config';
 import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { DistributionDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -8,6 +7,7 @@ import { ArcElement, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 
 import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
 import { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import { GetApiUrl } from '../../../../helpers/api';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
@@ -22,12 +22,16 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
       },
     },
   };
-
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-distances?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `year=${dashboard.params.year}`,
+    `direction=both`
+  ];
+  const url = GetApiUrl('journeys-by-distances', params);
   const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url);
   const plugins: any = [ChartDataLabels];
-  const datasetFrom = data?.find((d) => d.direction === 'from')?.distances.map((d) => d.journeys);
+  const dataset = data?.find((d) => d.direction === 'both')?.distances.map((d) => d.journeys);
   const datasetSum = (dataset: number[]) => {
     let sum = 0;
     dataset.map((d) => {
@@ -39,8 +43,8 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
     const labels = ['< 10 km', '10-20 km', '20-30 km', '30-40 km', '40-50 km', '> 50 km'];
     const datasets = [
       {
-        label: 'Origine',
-        data: datasetFrom,
+        label: 'trajets',
+        data: dataset,
         backgroundColor: ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff','#f4f6ff'],
         datalabels: {
           labels: {
@@ -120,13 +124,13 @@ export default function RepartitionDistanceGraph({ title }: { title: string }) {
             <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} aria-hidden />
             { chartData() &&
               <figcaption className={fr.cx('fr-sr-only')}>
-                {datasetFrom &&
+                {dataset &&
                   <>
-                    <p>{'Données de répartition en prenant en compte l\'origine des trajets'}</p>
+                    <p>{'Données de répartition des trajets (tout sens confondus)'}</p>
                     <ul>
-                      { datasetFrom.map((d,i) =>{
+                      { dataset.map((d,i) =>{
                         return (
-                          <li key={i}>{chartData().labels[i]} : {((d * 100) / datasetSum(datasetFrom)).toFixed(1) + '%'}</li>
+                          <li key={i}>{chartData().labels[i]} : {((d * 100) / datasetSum(dataset)).toFixed(1) + '%'}</li>
                         )
                       })} 
                     </ul>

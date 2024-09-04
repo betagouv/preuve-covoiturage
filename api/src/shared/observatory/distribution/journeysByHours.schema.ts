@@ -1,29 +1,44 @@
-import { directionTypes, perimeterTypes } from '../../geo/shared/Perimeter.ts';
+import { directionTypes, perimeterTypes } from "../../geo/shared/Perimeter.ts";
 
-export const alias = 'observatory.journeysByHours';
+export const alias = "observatory.journeysByHours";
 export const schema = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['year', 'month', 'type', 'code'],
+  required: ["year", "type", "code"],
   properties: {
     year: {
-      type: 'integer',
+      type: "integer",
       minimum: 2020,
     },
     month: {
-      type: 'integer',
+      type: "integer",
       minimum: 1,
       maximum: 12,
     },
+    trimester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 4,
+    },
+    semester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 2,
+    },
     type: {
-      type: 'string',
+      type: "string",
       enum: perimeterTypes,
     },
     code: {
-      anyOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
+      anyOf: [
+        { macro: "insee" },
+        { macro: "department" },
+        { macro: "country" },
+        { macro: "siren" },
+      ],
     },
     direction: {
-      type: 'string',
+      type: "string",
       enum: directionTypes,
     },
   },
