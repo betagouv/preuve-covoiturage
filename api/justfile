@@ -134,6 +134,10 @@ api *command:
 env:
   env | grep APP_ | sort | column -t -s=
 
+# cache
+cache:
+  deno cache --lock=deno.lock src/deps.ts src/dev_deps.ts
+
 # refresh the deno.lock file
 lock:
   deno cache --lock=deno.lock --lock-write src/deps.ts src/dev_deps.ts
