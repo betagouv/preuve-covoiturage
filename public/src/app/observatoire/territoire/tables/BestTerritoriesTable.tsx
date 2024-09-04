@@ -1,4 +1,3 @@
-import { Config } from "@/config";
 import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from "@/hooks/useApi";
 import { BestTerritoriesDataInterface } from "@/interfaces/observatoire/dataInterfaces";
@@ -7,6 +6,7 @@ import { Table as TableStyled } from "@codegouvfr/react-dsfr/Table";
 import { css } from "@emotion/react";
 import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { GetApiUrl } from '../../../../helpers/api';
 
 const Table = styled(TableStyled)(
   css`
@@ -24,10 +24,16 @@ const Table = styled(TableStyled)(
 
 export default function BestTerritoriesTable({ title, limit }: { title: string, limit: number }) {
   const { dashboard } =useContext(DashboardContext);
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-monthly-territories?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`,
+    `limit=${limit}`
+  ];
+  const url = GetApiUrl('best-territories', params);
   const { data, error, loading } = useApi<BestTerritoriesDataInterface[]>(url);
-  const dataTable = data ? data.map(d => [d.l_territory, d.journeys]) : []
+  const dataTable = data ? data.map(d => [d.libelle, d.journeys]) : []
 
   return (
     <>

@@ -1,12 +1,12 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   AiresCovoiturageParamsInterface,
   AiresCovoiturageResultInterface,
   InfraRepositoryInterface,
   InfraRepositoryInterfaceResolver,
 } from "../interfaces/InfraRepositoryProviderInterface.ts";
-import { checkTerritoryParam } from "../helpers/checkParams.ts";
 
 @provider({
   identifier: InfraRepositoryInterfaceResolver,
@@ -47,10 +47,7 @@ export class InfraRepositoryProvider implements InfraRepositoryInterface {
           : ""
       };`,
     };
-    const response: {
-      rowCount: number;
-      rows: AiresCovoiturageResultInterface;
-    } = await this.pg.getClient().query(sql);
+    const response = await this.pg.getClient().query(sql);
     return response.rows;
   }
 }

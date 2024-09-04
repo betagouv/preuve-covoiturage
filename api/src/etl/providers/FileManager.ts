@@ -1,4 +1,4 @@
-import { access, axios, mapshaper, mkdir, Readable } from "@/deps.ts";
+import { access, mapshaper, mkdir } from "@/deps.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import {
   getAllFiles,
@@ -10,6 +10,7 @@ import {
 } from "../helpers/index.ts";
 
 import { createHash } from "@/lib/crypto/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import {
@@ -117,18 +118,20 @@ export class FileManager implements FileManagerInterface {
     } catch (e) {
       // If file not found download it !
       try {
-        const response = await axios.get<Readable>(url, {
-          responseType: "stream",
-        });
-        await writeFile(response.data, filepath);
+        const response = await fetcher.get(url);
+        if (!response.body) {
+          throw new Error(`Failed to dowload ${url}`);
+        }
+        await writeFile(response.body, filepath);
       } catch (e) {
         // If not found and have mirror, try download
         const mirrorUrl = await this.getMirrorUrl(url);
         if (mirrorUrl) {
-          const response = await axios.get<Readable>(mirrorUrl, {
-            responseType: "stream",
-          });
-          await writeFile(response.data, filepath);
+          const response = await fetcher.get(mirrorUrl);
+          if (!response.body) {
+            throw new Error(`Failed to dowload ${url}`);
+          }
+          await writeFile(response.body, filepath);
         } else {
           throw e;
         }

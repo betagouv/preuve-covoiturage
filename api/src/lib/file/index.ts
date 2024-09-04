@@ -44,3 +44,13 @@ export function open(
     create: true,
   });
 }
+
+export function stat(
+  filepath: string,
+): Promise<Deno.FileInfo> {
+  return Deno.stat(filepath);
+}
+
+export function readFile(filepath: string) {
+  return Deno.readFile(filepath);
+}

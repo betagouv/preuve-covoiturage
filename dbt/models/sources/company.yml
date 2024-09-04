@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: company
+    tables:
+      - name: companies
+        columns:
+          - name: siret
+            data_type: character varying
+          - name: siren
+            description: ''
+            data_type: character varying
+          - name: nic
+            description: ''
+            data_type: character varying
+          - name: legal_name
+            description: ''
+            data_type: character varying
+          - name: company_naf_code
+            description: ''
+            data_type: character varying
+          - name: establishment_naf_code
+            description: ''
+            data_type: character varying
+          - name: legal_nature_code
+            description: ''
+            data_type: character varying
+          - name: legal_nature_label
+            description: ''
+            data_type: character varying
+          - name: nonprofit_code
+            description: ''
+            data_type: character varying
+          - name: intra_vat
+            description: ''
+            data_type: character varying
+          - name: geo
+            description: ''
+            data_type: USER-DEFINED
+          - name: address
+            description: ''
+            data_type: character varying
+          - name: headquarter
+            description: ''
+            data_type: boolean
+          - name: updated_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: _id
+            description: ''
+            data_type: integer
+          - name: address_street
+            description: ''
+            data_type: character varying
+          - name: address_postcode
+            description: ''
+            data_type: character varying
+          - name: address_cedex
+            description: ''
+            data_type: character varying
+          - name: address_city
+            description: ''
+            data_type: character varying

@@ -1,34 +1,46 @@
-import { perimeterTypes } from '../../geo/shared/Perimeter.ts';
+import { perimeterTypes } from "../../geo/shared/Perimeter.ts";
 
-export const alias = 'observatory.getLocation';
+export const alias = "observatory.getLocation";
 export const schema = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['start_date', 'end_date', 'zoom'],
+  required: ["year", "zoom", "type", "code"],
   properties: {
-    start_date: {
-      type: 'string',
-      format: 'date',
-      minLength: 10,
-      maxLength: 10,
+    year: {
+      type: "integer",
+      minimum: 2020,
     },
-    end_date: {
-      type: 'string',
-      format: 'date',
-      minLength: 10,
-      maxLength: 10,
+    month: {
+      type: "integer",
+      minimum: 1,
+      maximum: 12,
+    },
+    trimester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 4,
+    },
+    semester: {
+      type: "integer",
+      minimum: 1,
+      maximum: 2,
     },
     zoom: {
-      type: 'integer',
+      type: "integer",
       minimum: 0,
       maximum: 8,
     },
     type: {
-      type: 'string',
+      type: "string",
       enum: perimeterTypes,
     },
     code: {
-      anyOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
+      anyOf: [
+        { macro: "insee" },
+        { macro: "department" },
+        { macro: "country" },
+        { macro: "siren" },
+      ],
     },
   },
 };

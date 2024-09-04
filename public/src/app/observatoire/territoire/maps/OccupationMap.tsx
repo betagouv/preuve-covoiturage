@@ -14,12 +14,19 @@ import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { GetApiUrl } from '../../../../helpers/api';
 
 export default function OccupationMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-occupation?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`,
+    `direction=both`
+  ];
+  const url = GetApiUrl('occupation', params);
   const { data, error, loading } = useApi<OccupationDataInterface[]>(url);
   const geojson = useMemo(() => {
     const occupationData = data ? data : [];
