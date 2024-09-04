@@ -11,11 +11,17 @@ import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useContext, useMemo } from 'react';
+import { GetApiUrl } from '../../../../helpers/api';
 
 export default function FluxMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
-  const apiUrl = Config.get('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`
+  ];
+  const url = GetApiUrl('flux', params);
   const { data, error, loading } = useApi<FluxDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const filteredData = useMemo(() => {

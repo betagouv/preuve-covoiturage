@@ -1,5 +1,4 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { Config } from '@/config';
 import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { Hour } from '@/interfaces/observatoire/Perimeter';
@@ -8,6 +7,7 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { BarElement, CategoryScale, ChartData, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { GetApiUrl } from '../../../../helpers/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
@@ -23,8 +23,12 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
     },
   };
 
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/journeys-by-hours?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `year=${dashboard.params.year}`,
+  ];
+  const url = GetApiUrl('journeys-by-hours', params);
   const { data, error, loading } = useApi<DistributionHoraireDataInterface[]>(url);
 
   const dataWithNull = (data:Hour[]) => {
@@ -39,8 +43,8 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
     const labels = ['0h','1h','2h','3h','4h','5h','6h','7h','8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h','20h','21h','22h','23h'];
     const datasets = [
       {
-        label: 'Origine',
-        data: data ? dataWithNull(data.find((d) => d.direction === 'from')?.hours || []).map((d) => d.journeys) : [],
+        label: 'Tout sens confondus',
+        data: data ? dataWithNull(data.find((d) => d.direction === 'both')?.hours || []).map((d) => d.journeys) : [],
         borderColor:'#000091',
         backgroundColor:'rgba(106, 106, 244, 0.8)',
         tension: 0.1,
@@ -51,7 +55,19 @@ export default function RepartitionHoraireGraph({ title }: { title: string }) {
         },
       }
     ];
-    dashboard.params.type !== 'country' ? datasets.push(
+    dashboard.params.type !== 'country' ? datasets.splice(0,1) && datasets.push(
+      {
+        label: 'Origine',
+        data: data ? dataWithNull(data.find((d) => d.direction === 'from')?.hours || []).map((d) => d.journeys) : [],
+        borderColor:'#000091',
+        backgroundColor:'rgba(106, 106, 244, 0.8)',
+        tension: 0.1,
+        datalabels: {
+          labels: {
+            title: null
+          },
+        },
+      },
       {
         label: 'Destination',
         data: data ? dataWithNull(data.find((d) => d.direction === 'to')?.hours || []).map((d) => d.journeys) : [],

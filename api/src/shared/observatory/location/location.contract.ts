@@ -1,4 +1,4 @@
-import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter.ts';
+import { INSEECode, PerimeterType } from "../../geo/shared/Perimeter.ts";
 
 export interface SingleSqlResultInterface {
   lon: number;
@@ -15,16 +15,19 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
-  start_date: Date;
-  end_date: Date;
+  year: number;
+  month?: number;
+  trimester?: number;
+  semester?: number;
+  type: PerimeterType; //type de territoire observé
+  code: INSEECode; //code insee du territoire observé
   zoom: number;
-  type?: PerimeterType; //type de territoire observé
-  code?: INSEECode; //code insee du territoire observé
 }
 
 export const handlerConfig = {
-  service: 'observatory',
-  method: 'getLocation',
+  service: "observatory",
+  method: "getLocation",
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature =
+  `${handlerConfig.service}:${handlerConfig.method}` as const;

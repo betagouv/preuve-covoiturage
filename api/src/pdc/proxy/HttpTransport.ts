@@ -944,21 +944,19 @@ export class HttpTransport implements TransportInterface {
 
     const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
       Object.entries({
-        monthlyKeyfigures: "monthly-keyfigures",
-        monthlyFlux: "monthly-flux",
-        evolMonthlyFlux: "evol-monthly-flux",
-        bestMonthlyFlux: "best-monthly-flux",
-        lastRecordMonthlyFlux: "monthly-flux/last",
-        monthlyOccupation: "monthly-occupation",
-        evolMonthlyOccupation: "evol-monthly-occupation",
-        bestMonthlyTerritories: "best-monthly-territories",
-        territoriesList: "territories",
-        territoryName: "territory",
+        getKeyfigures: "keyfigures",
+        getFlux: "flux",
+        getEvolFlux: "evol-flux",
+        getBestFlux: "best-flux",
+        getOccupation: "occupation",
+        getEvolOccupation: "evol-occupation",
+        getBestTerritories: "best-territories",
         journeysByHours: "journeys-by-hours",
         journeysByDistances: "journeys-by-distances",
         getLocation: "location",
         airesCovoiturage: "aires-covoiturage",
         campaigns: "campaigns",
+        getIncentive: "incentive",
       }),
     );
 

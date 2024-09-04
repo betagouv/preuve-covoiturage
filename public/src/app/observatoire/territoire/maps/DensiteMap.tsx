@@ -2,7 +2,7 @@ import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
 import { DashboardContext } from '@/context/DashboardProvider';
-import { classColor, getPeriod, jenks } from '@/helpers/analyse';
+import { classColor, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -16,9 +16,8 @@ import { useContext, useMemo } from 'react';
 export default function DensiteMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const period = getPeriod(dashboard.params.year, dashboard.params.month);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&start_date=${period.start_date}&end_date=${period.end_date}&zoom=8`;
+  const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&zoom=8`;
   const { data, error, loading } = useApi<DensiteDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
 
