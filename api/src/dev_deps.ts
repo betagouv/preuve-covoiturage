@@ -1,4 +1,4 @@
-import sinon, { SinonSandbox, SinonStub, stub } from "npm:sinon@^18";
+import sinon, { SinonSandbox, SinonStub } from "npm:sinon@^18";
 // @deno-types="npm:@types/supertest@^6"
 import supertest from "npm:supertest@^7";
 export {
@@ -12,6 +12,11 @@ export {
   assertThrows,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 export {
+  stub,
+  assertSpyCall,
+  assertSpyCalls,
+} from "https://deno.land/std@0.224.0/testing/mock.ts";
+export {
   afterAll,
   afterEach,
   beforeAll,
@@ -21,7 +26,7 @@ export {
 } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 // @deno-types="npm:@types/supertest@^6"
 export type { Agent as SuperTestAgent } from "npm:supertest@^7";
-export { nock, sinon, stub, supertest };
+export { nock, sinon, supertest };
 export type { SinonSandbox, SinonStub };
 
 import nock from "npm:nock@^13.5";

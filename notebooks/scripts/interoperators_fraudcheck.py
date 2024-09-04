@@ -24,7 +24,7 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME'] 
 
 
-# In[2]:
+# In[ ]:
 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
@@ -113,7 +113,7 @@ with engine.connect() as conn:
 # Suppression des trajets dont l'`identity_key` n'apprait pas sur plusieurs opérateur différents.
 # Permet de faire un tri simple avant d'ajouter les clées de regroupements 
 
-# In[3]:
+# In[ ]:
 
 
 grouped_idkey_tmp = df_carpool.groupby(['identity_key'])
@@ -124,7 +124,7 @@ df_multi_op = grouped_idkey_tmp.filter(lambda x: len(pd.unique(x['operator_id'])
 # 
 # Ajout d'une colonne `overlap_group` permettant d'identifier les chevauchements temporels des trajets pour une `identity_key`
 
-# In[4]:
+# In[ ]:
 
 
 df_only_grouped_with_overlap_group_filled = df_multi_op.assign(overlap_group=100, overlap_duration=0.00, overlap_duration_ratio=0.00)
@@ -140,7 +140,7 @@ df_with_overlap = grouped_tmp.apply(lambda df: add_overlap_columns(df),  include
 # 1. plusieurs trajets sur une un même période temporelle (plusieurs trajets sur un même overlap_group)
 # 2. plusieurs opérateurs différents
 
-# In[5]:
+# In[ ]:
 
 
 grouped_tmp = df_with_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -157,7 +157,7 @@ df_more_than_one_overlap = grouped_tmp.filter(lambda x:  len(pd.unique(x['operat
 # - La ligne passager pour l' `identity_key` est éffacée mais pas la ligne driver correspondante, c'est ce qui est fait ici
 # 
 
-# In[6]:
+# In[ ]:
 
 
 grouped_tmp = df_more_than_one_overlap.groupby(['identity_key', 'overlap_group'], group_keys=False)
@@ -170,7 +170,7 @@ df_more_than_one_occ_enhanced = grouped_tmp.apply(lambda x: remove_carpool_with_
 # On supprime les chevauchement sur un même opérateur pour des passagers identiques pour palier au mauvais calibrage de l'algo sur le calcul des groupes de chevauchement.
 # En effet, il se peut qu'un trajet de type aller-retour soit pris dans la fraude sur un chevauchement de quelques secondes
 
-# In[7]:
+# In[ ]:
 
 
 grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_group', 'operator_id', 'other_identity_key'])
@@ -178,7 +178,7 @@ grouped_tmp = df_more_than_one_occ_enhanced.groupby(['identity_key', 'overlap_gr
 df_without_overlap_on_same_operator = grouped_tmp.apply(lambda x: remove_carpool_with_lowest_overlap_duration(x)).reset_index(drop=True)
 
 
-# In[8]:
+# In[ ]:
 
 
 grouped_tmp = df_without_overlap_on_same_operator.groupby(['identity_key', 'overlap_group'])
@@ -189,7 +189,7 @@ df_more_than_one_occ_2 = grouped_tmp.filter(lambda x:  len(pd.unique(x['operator
 # 
 # On supprime les conducteurs qui covoiturent avec plusieurs passagers sur des applications différentes.
 
-# In[9]:
+# In[ ]:
 
 
 driver_mask = df_more_than_one_occ_2.is_driver == True 
@@ -214,7 +214,7 @@ df_no_driver_different_operators = df_more_than_one_occ_2.loc[~df_more_than_one_
 # 
 # Une assertion est faite par la suite pour s'assurer qu'aucun trajet n'est supprimé si tous les trajets ne respectent pas la condition
 
-# In[10]:
+# In[ ]:
 
 
 grouped_tmp = df_no_driver_different_operators.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -230,7 +230,7 @@ carpool_id_list_flat = [item for sublist in carpool_id_list for item in sublist]
 df_final_result = df_no_driver_different_operators.loc[~df_no_driver_different_operators._id.isin(carpool_id_list_flat)]
 
 
-# In[11]:
+# In[ ]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'other_identity_key', 'overlap_group'])
@@ -240,7 +240,7 @@ control_matrix = grouped_tmp.agg(unique_operator_count=('operator_id', 'nunique'
 assert (control_matrix['unique_operator_count'] > 1).all()
 
 
-# In[13]:
+# In[ ]:
 
 
 import sqlalchemy as sa
@@ -269,7 +269,7 @@ if update_carpool_status is True:
 # 
 # Mise à jour des carpools retenus en status `fraudcheck_error`
 
-# In[14]:
+# In[ ]:
 
 
 import sqlalchemy as sa
@@ -294,11 +294,10 @@ if update_carpool_status is True:
 
 # # Step 9
 # 
-# Ajout des labels dans une table
-# 
-# @deprecated : l'info est déjà dans carpool. Pas besoin d'avoir une table de label si pas d'autre type de fraud détectée
+# Ajout des labels dans une table.
+# C'est cette table qui est utilisée pour renvoyer l'information du type de fraude aux opérateurs
 
-# In[15]:
+# In[ ]:
 
 
 df_labels = pd.DataFrame(df_final_result['_id'])
@@ -306,7 +305,7 @@ df_labels.columns = ['carpool_id']
 df_labels = df_labels.assign(label='interoperator_fraud')
 
 
-# In[16]:
+# In[ ]:
 
 
 from sqlalchemy.dialects.postgresql import insert
@@ -324,4 +323,48 @@ df_labels.to_sql(
     index=False,
     method=insert_or_do_nothing_on_conflict
 )
+
+
+# ## Step 10
+# 
+# On passe tous les trajets encore en statut fraud 'pending' après 48 heures en OK.
+# Cela devrait conserner uniquement l'opérateur id 11 après l'application de la règle d'expiration. (Un trajet transmis au dela de 24 heure après la date de début sera refusé)
+
+# In[3]:
+
+
+engine = create_engine(connection_string, connect_args={'sslmode':'require'})
+
+query = f"""(
+ SELECT ccv2._id from carpool_v2.carpools ccv2
+  JOIN carpool_v2.status csv2 on ccv2._id = csv2.carpool_id
+  where csv2.fraud_status = 'pending'
+  and ccv2.start_datetime <=  NOW() - '48 hours'::interval - '{delay} hours'::interval
+)
+"""
+
+with engine.connect() as conn:
+    df_stil_pending_carpools = pd.read_sql_query(text(query), conn)
+
+
+# In[4]:
+
+
+import sqlalchemy as sa
+
+if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool_v2.status']
+    
+    where_clause = table.c.carpool_id.in_(df_stil_pending_carpools['_id'].to_list())
+
+    update_stmt = sa.update(table).where(where_clause).values(fraud_status='passed')
+
+    with engine.connect() as conn:
+        result = conn.execute(update_stmt)
+        print(f"{result.rowcount} carpools status updated to fraud_status=passed because they were not processable within 48 hours after start_datetime (carpool expired, or excluded from fraudcheck)")
+        conn.commit()
 

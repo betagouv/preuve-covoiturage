@@ -55,9 +55,9 @@ jobs:
         uses: actions/checkout@master
 
       - name: Security vulnerabilities scan
-        uses: aufdenpunkt/python-safety-check@master
+        uses: pyupio/safety-action@v1
         with:
-          scan_requirements_file_only: 'true'
+          api-key: ${{ secrets.SAFETY_API_KEY }}
 
   test:
     needs: [lint, code-audit]
