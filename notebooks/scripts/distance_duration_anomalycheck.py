@@ -185,7 +185,7 @@ df_labels.to_sql(
 # update pending carpool to passed, no anomaly triggered on them
 if update_carpool_status is True:
     with engine.connect() as conn:
-        update_query = """"
+        update_query = """
         UPDATE carpool_v2.status 
         SET anomaly_status = 'passed'
         FROM carpool_v2.status c2s JOIN carpool_v2.carpools c2c on c2c._id = c2s.carpool_id
