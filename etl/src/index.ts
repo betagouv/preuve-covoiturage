@@ -4,7 +4,7 @@ import { datasets, datastructures } from "./datasets";
 (async function main(): Promise<void> {
   const migrator = buildMigrator({
     app: {
-      targetSchema: "observatory",
+      targetSchema: "observatoire_stats",
       datastructures: datastructures,
       datasets: await datasets(),
     },
