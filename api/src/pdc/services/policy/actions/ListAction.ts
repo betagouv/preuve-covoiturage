@@ -86,6 +86,6 @@ export class ListAction extends AbstractAction {
     p: SingleResultInterface,
     operator: OperatorResultInterface,
   ): boolean {
-    return p.params?.operators?.includes(operator.uuid);
+    return p.params?.allTimeOperators?.includes(operator.uuid) as boolean;
   }
 }
