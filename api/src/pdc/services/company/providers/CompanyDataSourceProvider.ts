@@ -1,4 +1,3 @@
-import { axios } from "@/deps.ts";
 import {
   ConfigInterfaceResolver,
   NotFoundException,
@@ -10,6 +9,7 @@ import {
   CompanyDataSourceProviderInterfaceResolver,
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
@@ -23,14 +23,14 @@ export class CompanyDataSourceProvider
 
   async find(siret: string): Promise<CompanyInterface> {
     try {
-      const { url, token, timeout } = this.config.get("dataSource");
-      const { data } = await axios.get(`${url}/siret/${siret}`, {
-        timeout,
+      const { url, token } = this.config.get("dataSource");
+      const response = await fetcher.get(`${url}/siret/${siret}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
       });
+      const data = await response.json();
 
       if (data.message) {
         throw new NotFoundException(`${data.message} (${siret})`);
@@ -115,9 +115,6 @@ export class CompanyDataSourceProvider
       };
     } catch (e) {
       logger.error(`[CompanyDataSourceProvider] ${e.message}`);
-      if (e.isAxiosError && e.response && e.response.status === 404) {
-        throw new NotFoundException(`Company not found (${siret})`);
-      }
       throw e;
     }
   }

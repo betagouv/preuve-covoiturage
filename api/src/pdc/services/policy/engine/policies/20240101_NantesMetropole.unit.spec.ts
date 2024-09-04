@@ -1,4 +1,4 @@
-import { it, stub } from "@/dev_deps.ts";
+import { it, sinon } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
@@ -45,10 +45,12 @@ const process = makeProcessHelper(defaultCarpool);
 
 // Stub the mode method to control the booster date in tests
 const boosterDates: string[] = ["2024-04-16"];
-stub(Handler, "mode").callsFake((date: Date, regular: any, booster: any) => {
-  const ymd = date.toISOString().slice(0, 10);
-  return boosterDates.includes(ymd) ? booster : regular;
-});
+sinon.stub(Handler, "mode").callsFake(
+  (date: Date, regular: any, booster: any) => {
+    const ymd = date.toISOString().slice(0, 10);
+    return boosterDates.includes(ymd) ? booster : regular;
+  },
+);
 
 it(
   "should work with exclusion",

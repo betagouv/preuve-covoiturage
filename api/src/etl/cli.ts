@@ -8,7 +8,6 @@ import {
   defaultConfig,
   Migrator,
   PartialConfigInterface,
-  State,
 } from "./index.ts";
 
 interface Options {
@@ -78,12 +77,6 @@ function getMigrator(options: Partial<Options>): Migrator {
 
 async function importAction(opts: Partial<Options>) {
   const migrator = getMigrator(opts);
-  migrator.on("start", (event: { uuid: string; state: State }) => {
-    logger.info(`${event.uuid} - ${event.state}`);
-  });
-  migrator.on("error", (event: { uuid: string; state: State }) => {
-    logger.info(`${event.uuid} - ${event.state} - Error`);
-  });
   await migrator.prepare();
   await migrator.run();
 }

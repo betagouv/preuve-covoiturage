@@ -1,4 +1,4 @@
-import { axios, readFile } from "@/deps.ts";
+import { readFile } from "@/deps.ts";
 import {
   afterAll,
   assertEquals,
@@ -16,6 +16,7 @@ import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { env, env_or_default, setEnv } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Kernel } from "../Kernel.ts";
@@ -78,7 +79,10 @@ describe.skip("queue", () => {
     await stringCallerKernel.shutdown();
   });
 
-  function makeRPCNotify(port: number, req: { method: string; params?: any }) {
+  async function makeRPCNotify(
+    port: number,
+    req: { method: string; params?: any },
+  ) {
     try {
       const data = {
         jsonrpc: "2.0",
@@ -86,12 +90,14 @@ describe.skip("queue", () => {
         params: req.params,
       };
 
-      return axios.post(`http://127.0.0.1:${port}`, data, {
+      const response = await fetcher.post(`http://127.0.0.1:${port}`, {
+        body: JSON.stringify(data),
         headers: {
           Accept: "application/json",
           "Content-type": "application/json",
         },
       });
+      return await response.json();
     } catch (e) {
       console.error(e.message, e.response.data);
     }
