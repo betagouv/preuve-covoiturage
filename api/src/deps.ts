@@ -251,3 +251,4 @@ export {
 export * as log from "https://deno.land/std@0.224.0/log/mod.ts";
 export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import * as _bcrypt_worker from "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts"; // FIX https://github.com/JamesBroadberry/deno-bcrypt/issues/31
