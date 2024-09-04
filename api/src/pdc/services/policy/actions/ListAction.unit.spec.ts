@@ -175,6 +175,6 @@ describe("ListAction", () => {
 
     // Assert
     assertEquals(result.length, 1);
-    assertEquals(result[0]._id, 1017);
+    assertEquals(result[0]._id, 99);
   });
 });
