@@ -104,7 +104,7 @@ describe("ListAction", () => {
     );
   });
 
-  it("(policy) ListAction: should return policy for operator even if removed from current running policy", async () => {
+  it("(policy) ListAction: should return policy for operator even if removed from current running policy rules", async () => {
     // Arrange
     const params: ParamsInterface = {
       operator_id: 4,
@@ -120,6 +120,43 @@ describe("ListAction", () => {
         tz: "Europe/Paris",
         handler: "pdll_2024",
         status: PolicyStatusEnum.ACTIVE,
+        incentive_sum: 100,
+      },
+    ];
+    const operator: OperatorResultInterface = {
+      name: "Klaxit",
+      legal_name: "Klaxit",
+      siret: "",
+      uuid: OperatorsEnum.KLAXIT,
+    };
+
+    repositoryStub.resolves(policies);
+    kernelInterfaceResolverStub.resolves(operator);
+
+    // Act
+    const result: ResultInterface = await listAction.handle(params);
+
+    // Assert
+    assertEquals(result.length, 1);
+    assertEquals(result[0]._id, 1017);
+  });
+
+  it("(policy) ListAction: should work even if allTimeOperator is not defined", async () => {
+    // Arrange
+    const params: ParamsInterface = {
+      operator_id: 4,
+    };
+    const policies: SerializedPolicyInterface[] = [
+      {
+        _id: 99,
+        territory_id: 598,
+        territory_selector: {},
+        name: "Pole Métropolitain du Genevois 2024",
+        start_date: new Date(),
+        end_date: new Date(),
+        tz: "Europe/Paris",
+        handler: "pmgf_late_2023",
+        status: PolicyStatusEnum.FINISHED,
         incentive_sum: 100,
       },
     ];
