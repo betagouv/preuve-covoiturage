@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['from', 'to', 'start_date']) }}
 
 WITH com_evol AS (
   SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020

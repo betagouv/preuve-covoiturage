@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['type','year', 'trimester', 'territory_1', 'territory_2']) }}
 
 WITH flux AS (
   SELECT

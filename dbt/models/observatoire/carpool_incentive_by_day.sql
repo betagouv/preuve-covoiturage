@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['from', 'to', 'start_date']) }}
 
 SELECT
   coalesce(
