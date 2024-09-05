@@ -46,10 +46,6 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
     },
     {
       date: new Date("2023-10-16T00:00:00+0200"),
-      operators: [OperatorsEnum.KAROS, OperatorsEnum.MOBICOOP],
-    },
-    {
-      date: new Date("2023-12-22T00:00:00+0100"),
       operators: [
         OperatorsEnum.KAROS,
         OperatorsEnum.MOBICOOP,
@@ -125,6 +121,9 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
       tz: "Europe/Paris",
       slices: this.slices,
       operators: getOperatorsAt(this.operators),
+      allTimeOperators: Array.from(
+        new Set(this.operators.flatMap((entry) => entry.operators)),
+      ),
       limits: {
         glob: this.max_amount,
       },
