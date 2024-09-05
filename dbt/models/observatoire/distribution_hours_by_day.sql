@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'start_date']) }}
 with directions as (
   select
     start    as code,

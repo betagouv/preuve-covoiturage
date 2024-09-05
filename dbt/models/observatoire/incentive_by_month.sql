@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'month']) }}
 
 SELECT
   extract('year' FROM start_date)::int  AS year,
