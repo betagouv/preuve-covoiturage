@@ -1,4 +1,4 @@
-{{ config(materialized='incremental') }}
+{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'trimester']) }}
 
 with distances as (
   select
