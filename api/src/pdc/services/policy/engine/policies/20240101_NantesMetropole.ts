@@ -204,6 +204,9 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
         : this.regularSlices,
       booster_dates: this.boosterDates,
       operators: getOperatorsAt(this.operators),
+      allTimeOperators: Array.from(
+        new Set(this.operators.flatMap((entry) => entry.operators)),
+      ),
       limits: {
         glob: this.max_amount,
       },
