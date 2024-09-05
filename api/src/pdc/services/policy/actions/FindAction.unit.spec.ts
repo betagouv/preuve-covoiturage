@@ -17,17 +17,17 @@ import {
 import {
   ParamsInterface,
   ResultInterface,
-} from "@/shared/policy/list.contract.ts";
+} from "@/shared/policy/find.contract.ts";
 import { PolicyStatusEnum } from "../../../../shared/policy/common/interfaces/PolicyInterface.ts";
-import { ListAction } from "./ListAction.ts";
+import { FindAction } from "./FindAction.ts";
 
-describe("ListAction", () => {
+describe("FindAction", () => {
   // injected objects
   let fakeKernelInterfaceResolver: KernelInterfaceResolver;
   let repository: PolicyRepositoryProviderInterfaceResolver;
 
   // tested
-  let listAction: ListAction;
+  let findAction: FindAction;
 
   // sinon stubs
   let kernelInterfaceResolverStub: SinonStub<
@@ -88,7 +88,7 @@ describe("ListAction", () => {
     repository = new FakePolicyRepositoryProvider();
 
     // tested
-    listAction = new ListAction(
+    findAction = new FindAction(
       fakeKernelInterfaceResolver,
       repository,
     );
@@ -100,29 +100,27 @@ describe("ListAction", () => {
     );
     repositoryStub = sinon.stub(
       repository,
-      "findWhere",
+      "find",
     );
   });
 
-  it("(policy) ListAction: should return policy for operator even if removed from current running policy rules", async () => {
+  it("(policy) FindAction: should return policy for operator even if removed from current running policy rules", async () => {
     // Arrange
     const params: ParamsInterface = {
-      operator_id: 4,
+      _id: 1017,
     };
-    const policies: SerializedPolicyInterface[] = [
-      {
-        _id: 1017,
-        territory_id: 335,
-        territory_selector: {},
-        name: "Pays de la Loire 2024",
-        start_date: new Date(),
-        end_date: new Date(),
-        tz: "Europe/Paris",
-        handler: "pdll_2024",
-        status: PolicyStatusEnum.ACTIVE,
-        incentive_sum: 100,
-      },
-    ];
+    const policies: SerializedPolicyInterface = {
+      _id: 1017,
+      territory_id: 335,
+      territory_selector: {},
+      name: "Pays de la Loire 2024",
+      start_date: new Date(),
+      end_date: new Date(),
+      tz: "Europe/Paris",
+      handler: "pdll_2024",
+      status: PolicyStatusEnum.ACTIVE,
+      incentive_sum: 100,
+    };
     const operator: OperatorResultInterface = {
       name: "Klaxit",
       legal_name: "Klaxit",
@@ -134,32 +132,30 @@ describe("ListAction", () => {
     kernelInterfaceResolverStub.resolves(operator);
 
     // Act
-    const result: ResultInterface = await listAction.handle(params);
+    const result: ResultInterface = await findAction.handle(params);
 
     // Assert
-    assertEquals(result.length, 1);
-    assertEquals(result[0]._id, 1017);
+    assertEquals(result._id, 1017);
   });
 
-  it("(policy) ListAction: should work even if allTimeOperator is not defined", async () => {
+  it("(policy) FindAction: should work even if allTimeOperator is not defined", async () => {
     // Arrange
     const params: ParamsInterface = {
-      operator_id: 4,
+      _id: 1017,
     };
-    const policies: SerializedPolicyInterface[] = [
-      {
-        _id: 99,
-        territory_id: 598,
-        territory_selector: {},
-        name: "Pole Métropolitain du Genevois 2024",
-        start_date: new Date(),
-        end_date: new Date(),
-        tz: "Europe/Paris",
-        handler: "pmgf_late_2023",
-        status: PolicyStatusEnum.FINISHED,
-        incentive_sum: 100,
-      },
-    ];
+    const policies: SerializedPolicyInterface = {
+      _id: 99,
+      territory_id: 598,
+      territory_selector: {},
+      name: "Pole Métropolitain du Genevois 2024",
+      start_date: new Date(),
+      end_date: new Date(),
+      tz: "Europe/Paris",
+      handler: "pmgf_late_2023",
+      status: PolicyStatusEnum.FINISHED,
+      incentive_sum: 100,
+    };
+
     const operator: OperatorResultInterface = {
       name: "Klaxit",
       legal_name: "Klaxit",
@@ -171,10 +167,9 @@ describe("ListAction", () => {
     kernelInterfaceResolverStub.resolves(operator);
 
     // Act
-    const result: ResultInterface = await listAction.handle(params);
+    const result: ResultInterface = await findAction.handle(params);
 
     // Assert
-    assertEquals(result.length, 1);
-    assertEquals(result[0]._id, 99);
+    assertEquals(result._id, 99);
   });
 });
