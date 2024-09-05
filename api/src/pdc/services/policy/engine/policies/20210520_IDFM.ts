@@ -90,6 +90,15 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
         OperatorsEnum.MOBICOOP,
       ],
     },
+    {
+      date: new Date("2024-07-01T00:00:00+0100"),
+      operators: [
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KAROS,
+        OperatorsEnum.YNSTANT,
+        OperatorsEnum.MOBICOOP,
+      ],
+    },
   ];
 
   protected slices: RunnableSlices = [
