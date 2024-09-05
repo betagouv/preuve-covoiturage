@@ -152,6 +152,9 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
       tz: "Europe/Paris",
       slices: this.slices,
       operators: getOperatorsAt(this.operators),
+      allTimeOperators: Array.from(
+        new Set(this.operators.flatMap((entry) => entry.operators)),
+      ),
       limits: {
         glob: this.max_amount,
       },

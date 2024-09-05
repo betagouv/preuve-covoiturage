@@ -68,6 +68,7 @@ export interface PolicyHandlerParamsInterface {
   tz?: Timezone;
   slices?: RunnableSlices | BoundedSlices;
   operators?: Array<OperatorsEnum>;
+  allTimeOperators?: Array<OperatorsEnum>;
   limits?: {
     glob?: number;
   };
