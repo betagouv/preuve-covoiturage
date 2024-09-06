@@ -42,7 +42,7 @@ export default function Dashboard() {
     }
     dashboard.onLoadTerritory(params);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams.get('code'), searchParams.get('type')]);
 
   return(
     <>

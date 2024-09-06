@@ -7,24 +7,25 @@ import { Params } from "../interfaces/common/contextInterface";
 import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 
 export const useDashboard = () => {
-  const lastMonth = () => {
+  const lastDataDate = () => {
     const now = new Date();
-    return new Date(now.setMonth(now.getMonth()));
+    const lastWeek = new Date(now.setDate(now.getDate() - 8));
+    return new Date(lastWeek.setMonth(lastWeek.getMonth()));
   };
   const [params, setParams] = useState({
     code: "XXXXX",
     name: "France",
     type: "country" as PerimeterType,
     observe: "com" as PerimeterType,
-    year: new Date(lastMonth()).getFullYear(),
-    month: new Date(lastMonth()).getMonth(),
+    year: new Date(lastDataDate()).getFullYear(),
+    month: new Date(lastDataDate()).getMonth(),
     period: "month" as PeriodType,
-    trimester: Math.floor(new Date(lastMonth()).getMonth() / 3),
-    semester: Math.floor(new Date(lastMonth()).getMonth() / 6),
+    trimester: Math.floor(new Date(lastDataDate()).getMonth() / 3),
+    semester: Math.floor(new Date(lastDataDate()).getMonth() / 6),
     map: 1,
     graph: 1,
   });
-  const [lastPeriod] = useState(new Date(lastMonth()).getTime());
+  const [lastPeriod] = useState(new Date(lastDataDate()).getTime());
   const [loading, setLoading] = useState(true);
 
   const getParams = useCallback((params: Params) => {
