@@ -74,12 +74,9 @@ export default function IncentiveGraph({ title }: { title: string }) {
                 return params;
               },
               formatter: (value: number, ctx: Context) => {
-                let sum = 0;
-                const dataArr = ctx.chart.data.datasets[0].data as number[];
-                dataArr.map((data: number) => {
-                  sum += data;
-                });
-                const percentage = ((value * 100) / sum).toFixed(1) + '%';
+                const dataArr = ctx.chart.data.datasets[0].data;
+                const total = dataArr.reduce((acc: number, val) => acc + Number(val), 0)
+                const percentage = ((value / total) * 100).toFixed(1)  + '%';
                 return percentage;
               },
             },
