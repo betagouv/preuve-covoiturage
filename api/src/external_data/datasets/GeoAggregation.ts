@@ -1,4 +1,4 @@
-import { AbstractDatatreatment } from "../../../api/src/etl/common/AbstractDatatreatment";
+import { AbstractDatatreatment } from "@/etl/common/AbstractDatatreatment.ts";
 
 export class GeoAggregation extends AbstractDatatreatment {
   static uuid = "populate_geo_aggregation";

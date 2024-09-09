@@ -1,4 +1,4 @@
-import { AbstractDatastructure } from "../../../api/src/etl";
+import { AbstractDatastructure } from "@/etl/index.ts";
 
 export class CreateAiresCovoiturageTable extends AbstractDatastructure {
   static uuid = "create_aires_covoiturage_table";

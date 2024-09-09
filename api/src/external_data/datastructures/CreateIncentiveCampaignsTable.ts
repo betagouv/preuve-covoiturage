@@ -1,4 +1,4 @@
-import { AbstractDatastructure } from "../../../api/src/etl";
+import { AbstractDatastructure } from "@/etl/index.ts";
 
 export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
   static uuid = "create_incentive_campaigns_table";
