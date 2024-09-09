@@ -1,11 +1,11 @@
-import { StaticAbstractDataset, StaticMigrable } from "../../api/src/etl";
+import { StaticAbstractDataset, StaticMigrable } from "@/etl/index.ts";
 import { AiresCovoiturage } from "./datasets/AiresCovoiturage.ts";
 import { GeoAggregation } from "./datasets/GeoAggregation.ts";
 import { IncentiveCampaigns } from "./datasets/IncentiveCampaigns.ts";
 import { CreateAiresCovoiturageTable } from "./datastructures/CreateAiresCovoiturageTable.ts";
 import { CreateGeoAggregationTable } from "./datastructures/CreateGeoAggregationTable.ts";
 import { CreateIncentiveCampaignsTable } from "./datastructures/CreateIncentiveCampaignsTable.ts";
-import { getAiresLastUrl } from "./helpers";
+import { getAiresLastUrl } from "./helpers.ts";
 
 export const datastructures: Set<StaticMigrable> = new Set([
   CreateAiresCovoiturageTable,

@@ -1,4 +1,4 @@
-import { AbstractDatastructure } from "../../../api/src/etl";
+import { AbstractDatastructure } from "@/etl/index.ts";
 
 export class CreateGeoAggregationTable extends AbstractDatastructure {
   static uuid = "create_geo_aggregation_table";
