@@ -66,6 +66,7 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         "zone_sens_des_trajets_litteral",
         "varchar",
       ]],
+      ["lien", ["lien_page_collectivité", "varchar"]],
     ]);
     fileType = "CSV" as FileTypeEnum.Csv;
     sheetOptions = {
@@ -103,7 +104,8 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         trajet_classe_de_preuve,
         operateurs,
         autres_informations,
-        zone_sens_des_trajets_litteral
+        zone_sens_des_trajets_litteral,
+        lien
       ) SELECT
         collectivite,
         derniere_maj,
@@ -133,7 +135,8 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         trajet_classe_de_preuve,
         operateurs,
         autres_informations,
-        zone_sens_des_trajets_litteral
+        zone_sens_des_trajets_litteral,
+        lien
       FROM ${this.tableWithSchema};
     `;
   };

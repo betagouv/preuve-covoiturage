@@ -1,48 +1,49 @@
-import Rows from '@/components/observatoire/indicators/Rows';
-import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import SectionTitle from '@/components/common/SectionTitle';
 import Table from '@codegouvfr/react-dsfr/Table';
 
 export default function Details({data}:{ data:any}) {
-  const title = `Campagne d'incitation active 
-    ${data.debut ? 
-    `${data.fin 
-      ? `entre le ${data.debut} et le ${data.fin}` 
-      : `depuis le ${data.debut}`}` 
-    : `${data.fin ?
-      `jusqu'au ${data.fin}` 
-      : `de période inconnue`}`
-    }
-  `;
-  const row1 = [
-    { __component: 'row.indicator',
-      value: data.budget ? Number(data.budget).toLocaleString() : 'Budget inconnu',
-      unit: data.budget ? '€' : '',
-      text: 'Budget de la campagne',
-      icon:'ri-money-euro-circle-line',
-    },
-    { __component: 'row.indicator',
-      value: data.operateurs,
-      text: 'comme opérateur(s)',
-      icon:'ri-shake-hands-line',
-    },
-    { __component: 'row.indicator',
-      value: `${data.l_min} km`,
-      text: ' de trajet minimum',
-      icon:'ri-route-line',
-    },
-    { __component: 'row.indicator',
-      value: `${data.l_max} km`,
-      text: 'de trajet maximum',
-      icon:'ri-route-line',
-    }
-  ] as IndicatorProps[];
-
-  const criteres = [
+  const title = `Campagne d'incitation ${data.name ? `pour la collectivité : ${data.name}` : ''}`;
+  const table1 = [
+    data.debut ? [
+      'Début',
+      data.debut
+    ] : ['Debut', 'date inconnue'],
+    data.fin ? [
+      'Fin',
+      data.fin
+    ] : ['Fin', 'date inconnue'],
+    data.budget ? [
+      'Budget global',
+      `${Number(data.budget).toLocaleString()} €`
+    ] : ['Budget global', 'inconnu'],
+    [
+      'Sens des trajets éligibles à l\'incitation par rapport à l’AOM',
+      data.sens === 'ET/OU' ? 'Origine et/ou destination' : data.sens === 'ET' ? 'Origine et destination' : 'Origine ou destination'
+    ],
+    data.exclusion ? [
+      'Zone d\'exclusion de la campagne',
+      `${data.liste_exclusion} ${data.autre_exclusion && data.autre_exclusion !== 'Non' ? data.autre_exclusion : ''}` 
+    ]: ['Zone d\'exclusion de la campagne','aucune'],
+  ]
+  const table2 = [
+    data.operateurs ? [
+      'Opérateur(s)',
+      data.operateurs
+    ] : [],
     data.classe ? [
       'Classes de trajets éligibles',
       data.classe
     ] : [],
+    data.l_min ? [
+      'Distance minimale du trajet',
+      `${data.l_min} km`
+    ] : [],
+    data.l_max ? [
+      'Distance maximale du trajet',
+      `${data.l_max} km`
+    ] : [],
+  ]
+  const table3 = [
     data.p_gratuit ? [
       'Gratuité pour le passager',
       data.p_gratuit,
@@ -59,34 +60,29 @@ export default function Details({data}:{ data:any}) {
       'Montant (en €) du ticket passager',
       data.p_m_tk,
     ] : [],
-    data.p_t_max ? [
-      'Nombre de trajets maximum du passager incités chaque mois',
-      data.p_t_max,
-    ] : [],
-    data.c_t_max ? [
-      'Nombre de trajets maximum du conducteur incités chaque mois',
-      data.c_t_max,
-    ] : [],
-    data.c_m_max ? [
-      'Montant maximal d’incitation du conducteur par mois (en €)',
-      data.c_m_max,
+    data.c_m_min_p ? [
+      'Montant minimum d’incitation du conducteur par passager transporté (en €)',
+      data.c_m_min_p,
     ] : [],
     data.c_m_max_p ? [
       'Montant maximal d’incitation du conducteur par passager transporté (en €)',
       data.c_m_max_p,
     ] : [],
-    data.c_m_min_p ? [
-      'Montant minimum d’incitation du conducteur par passager transporté (en €)',
-      data.c_m_min_p,
+    
+  ]
+  const table4 = [
+    data.p_t_max ? [
+      'Plafond de trajet incités réalisés par un passager par jour',
+      Math.round(data.p_t_max/30).toLocaleString()
     ] : [],
-    [
-      'Sens des trajets éligibles à l\'incitation par rapport à l’AOM',
-      data.sens === 'ET/OU' ? 'Origine et/ou destination' : data.sens === 'ET' ? 'Origine et destination' : 'Origine ou destination'
-    ],
-    data.exclusion ==='Oui' ? [
-      'Zone d\'exclusion de la campagne',
-      `${data.liste_exclusion} ${data.autre_exclusion && data.autre_exclusion !== 'Non' ? data.autre_exclusion : ''}` 
-    ]: [],
+    data.c_t_max ? [
+      'Plafond de trajet incités réalisés par un conducteur par jour',
+      Math.round(data.c_t_max/30).toLocaleString()
+    ] : [],
+    data.c_m_max_p ? [
+      'Plafond d’incitation mensuel généré par un conducteur (en €)',
+      data.c_m_max_p,
+    ] : [],
   ]
 
   return (
@@ -94,15 +90,39 @@ export default function Details({data}:{ data:any}) {
       <SectionTitle
         title={title}
       />
-      <Rows data={row1} />
       <Table
-        caption="Critères de la campagne"
+        caption="Information principales da la campagne"
         fixed
         bordered
         colorVariant="blue-ecume"
-        data={criteres}
+        data={table1}
         headers={[]}
       />
+      <Table
+        caption="Critères d'éligibilité des trajets à l'incitation"
+        fixed
+        bordered
+        colorVariant="blue-ecume"
+        data={table2}
+        headers={[]}
+      />
+      <Table
+        caption="Objectif et dimensionnement de la campagne"
+        fixed
+        bordered
+        colorVariant="blue-ecume"
+        data={table3}
+        headers={[]}
+      />
+      <Table
+        caption="Limite(s) et seuil(s)"
+        fixed
+        bordered
+        colorVariant="blue-ecume"
+        data={table4}
+        headers={[]}
+      />
+     
     </>
   );
 }

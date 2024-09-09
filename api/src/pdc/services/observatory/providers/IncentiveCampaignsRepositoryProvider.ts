@@ -1,20 +1,20 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   CampaignsParamsInterface,
   CampaignsResultInterface,
   IncentiveCampaignsRepositoryInterface,
   IncentiveCampaignsRepositoryInterfaceResolver,
 } from "../interfaces/IncentiveCampaignsRepositoryProviderInterface.ts";
-import { checkTerritoryParam } from "../helpers/checkParams.ts";
 
 @provider({
   identifier: IncentiveCampaignsRepositoryInterfaceResolver,
 })
 export class IncentiveCampaignsRepositoryProvider
   implements IncentiveCampaignsRepositoryInterface {
-  private readonly table = "observatory.incentive_campaigns";
-  private readonly perim_table = "observatory.perimeters_aggregate";
+  private readonly table = "observatoire_stats.incentive_campaigns";
+  private readonly perim_table = "observatoire_stats.perimeters_aggregate";
 
   constructor(private pg: PostgresConnection) {}
 
