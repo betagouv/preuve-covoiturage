@@ -3,7 +3,7 @@ import {
   ArchiveFileTypeEnum,
   FileTypeEnum,
   StaticAbstractDataset,
-} from "../../../api/src/etl";
+} from "@/etl/index.ts";
 
 export function AiresCovoiturage(url: string): StaticAbstractDataset {
   return class extends AbstractDataset {

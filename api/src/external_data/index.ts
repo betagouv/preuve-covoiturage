@@ -1,5 +1,5 @@
-import { buildMigrator } from "./../../api/src/etl";
-import { datasets, datastructures } from "./datasets";
+import { buildMigrator } from "@/etl/index.ts";
+import { datasets, datastructures } from "./datasets.ts";
 
 (async function main(): Promise<void> {
   const migrator = buildMigrator({

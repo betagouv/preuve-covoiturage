@@ -88,6 +88,17 @@ migrate:
     --allow-ffi \
     src/db/main.ts
 
+# Run external data migrations
+external_data_migrate:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    src/external_data/index.ts
+
 # Seed data
 seed:
   just api seed
