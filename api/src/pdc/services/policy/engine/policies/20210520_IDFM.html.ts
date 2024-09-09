@@ -39,6 +39,9 @@ export const description = `<p id="summary">
   <p>
   La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant proposant des preuves de classe C</b>.
   <p>
+  <p>
+  Klaxit ne fait plus partie des opérateurs partenaires depuis le juillet 2024
+  </p>
   Les trajets de classe B ne sont plus éligibles depuis 01/09/2022
   </p>
   </p>
