@@ -1,4 +1,13 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'start_date']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['code', 'type', 'direction', 'start_date'],
+    post_hook=[
+      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'distribution_distances_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT distribution_distances_by_day_pkey PRIMARY KEY (code, type, direction, start_date); END IF; END $$;'
+      'CREATE INDEX IF NOT EXISTS distribution_distances_by_day_idx ON {{ this }} using btree(code, type, direction, start_date)',
+    ]
+  )
+}}
+
 with directions as (
   select
     start    as code,

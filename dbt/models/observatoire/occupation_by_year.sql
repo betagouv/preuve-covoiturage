@@ -1,4 +1,13 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['year', 'code', 'type', 'direction'],
+    post_hook=[
+      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'occupation_by_year_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT occupation_by_year_pkey PRIMARY KEY (year, code, type, direction); END IF; END $$;"
+      "CREATE INDEX IF NOT EXISTS occupation_by_year_idx ON {{ this }} using btree(year, code, type, direction)",
+    ]
+  )
+}}
+
 WITH sum_distance AS (
   SELECT
     code,
