@@ -1,4 +1,10 @@
-{{ config(materialized='incremental',unique_key=['type','year', 'semester', 'territory_1', 'territory_2']) }}
+{{ config(materialized='incremental',
+  unique_key=['year', 'semester', 'type', 'territory_1', 'territory_2'],
+  post_hook=[
+    "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'flux_by_semester_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT flux_by_semester_pkey PRIMARY KEY (type, year, semester, territory_1, territory_2); END IF; END $$;"
+    "CREATE INDEX IF NOT EXISTS flux_by_semester_idx ON {{ this }} using btree(year, semester, type, territory_1, territory_2)",
+  ]
+) }}
 
 WITH flux AS (
   SELECT
