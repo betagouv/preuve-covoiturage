@@ -1,5 +1,12 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'semester']) }}
-
+{{ config(
+    materialized='incremental',
+    unique_key=['year', 'semester', 'code', 'type', 'direction'],
+    post_hook=[
+      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'distribution_by_semester_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT distribution_by_semester_pkey PRIMARY KEY (year, semester, code, type, direction); END IF; END $$;"
+      "CREATE INDEX IF NOT EXISTS distribution_by_semester_idx ON {{ this }} using btree(year, semester, code, type, direction)",
+    ]
+  )
+}}
 with distances as (
   select
     year,
