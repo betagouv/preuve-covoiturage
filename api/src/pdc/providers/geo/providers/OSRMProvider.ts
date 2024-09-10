@@ -27,10 +27,10 @@ export class OSRMProvider implements RouteMetaProviderInterface {
         `${this.domain}/route/v1/driving/${encodeURIComponent(query)}`,
       );
       const data = await response.json();
-      const distance = get(data, "data.routes.0.distance", null) as
+      const distance = get(data, "routes.0.distance", null) as
         | number
         | null;
-      const duration = get(data, "data.routes.0.duration", null) as
+      const duration = get(data, "routes.0.duration", null) as
         | number
         | null;
 
