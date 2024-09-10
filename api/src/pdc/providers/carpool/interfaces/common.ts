@@ -83,3 +83,9 @@ export enum CarpoolFraudStatusEnum {
   Passed = "passed",
   Failed = "failed",
 }
+
+export enum CarpoolAnomalyStatusEnum {
+  Pending = "pending",
+  Passed = "passed",
+  Failed = "failed",
+}
