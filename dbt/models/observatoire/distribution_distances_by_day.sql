@@ -334,6 +334,7 @@ select
   sum(journeys)       as journeys,
   sum(intra_journeys) as intra_journeys
 from directions
+where code is not null
 group by 1, 2, 3, 4, 5
 union
 select
@@ -345,4 +346,5 @@ select
   sum(journeys) - sum(intra_journeys) as journeys,
   sum(intra_journeys)                 as intra_journeys
 from directions
+where code is not null
 group by 1, 2, 3, 4

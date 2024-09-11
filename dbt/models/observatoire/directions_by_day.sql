@@ -491,6 +491,7 @@ select
   sum(passenger_seats) as passenger_seats,
   sum(distance)        as distance
 from directions
+where code is not null
 group by 1, 2, 3, 4
 union
 select
@@ -505,4 +506,5 @@ select
   sum(passenger_seats) - sum(intra_passenger_seats) as passenger_seats,
   sum(distance) - sum(intra_distance)               as distance
 from directions
+where code is not null
 group by 1, 2, 3

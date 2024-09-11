@@ -403,6 +403,7 @@ select
   sum(operateur)         as operateur,
   sum(autres)      as autres
 from directions
+where code is not null
 group by 1, 2, 3, 4
 union
 select
@@ -415,4 +416,5 @@ select
   sum(operateur) - sum(intra_operateur)                 as operateur,
   sum(autres) - sum(intra_autres)           as autres
 from directions
+where code is not null
 group by 1, 2, 3
