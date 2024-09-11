@@ -6,7 +6,7 @@ import {
 
 export interface CarpoolLabel<P = unknown> {
   label: string;
-  meta?: P;
+  metas?: P;
 }
 
 export interface CarpoolStatus {

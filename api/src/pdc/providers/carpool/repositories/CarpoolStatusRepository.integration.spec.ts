@@ -1,4 +1,9 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolAnomalyStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/common.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import sql, { raw } from "../helpers/sql.ts";
 import { Id } from "../interfaces/index.ts";
@@ -40,5 +45,16 @@ describe("CarpoolStatusRepository", () => {
     `);
 
     assertEquals(result.rows.pop()?.acquisition_status, data.status);
+  });
+  it("Should get status", async () => {
+    const result = await repository.getStatusByOperatorJourneyId(
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    assertEquals(result, {
+      acquisition_status: CarpoolAcquisitionStatusEnum.Canceled,
+      anomaly_status: CarpoolAnomalyStatusEnum.Pending,
+      fraud_status: CarpoolFraudStatusEnum.Pending,
+    });
   });
 });

@@ -6,10 +6,9 @@ import {
 import sql, { raw } from "../helpers/sql.ts";
 import { CarpoolLabel } from "../interfaces/database/label.ts";
 
-// TODO : test
-
 @provider()
 export class CarpoolLabelRepository {
+  readonly carpoolTable = "carpool_v2.carpools";
   readonly fraudTable = "fraudcheck.labels";
   readonly anomalyTable = "anomaly.labels";
 
@@ -22,11 +21,13 @@ export class CarpoolLabelRepository {
   ): Promise<Array<CarpoolLabel>> {
     const cclient = client ?? this.connection.getClient();
     const query = sql`
-        SELECT label
-        FROM ${raw(this.fraudTable)}
+        SELECT fl.label
+        FROM ${raw(this.fraudTable)} fl
+        JOIN ${raw(this.carpoolTable)} cc
+          ON cc._id = fl.carpool_id
         WHERE 
-          operator_id = ${operator_id}
-          AND operator_journey_id = ${operator_journey_id}
+          cc.operator_id = ${operator_id}
+          AND cc.operator_journey_id = ${operator_journey_id}
     `;
     const result = await cclient.query(query);
     return result.rows;
@@ -40,15 +41,17 @@ export class CarpoolLabelRepository {
     const cclient = client ?? this.connection.getClient();
     const query = sql`
         SELECT
-          label,
-          conflicting_operator_journey_id,
-          overlap_duration_ratio
-        FROM ${raw(this.anomalyTable)}
+          al.label,
+          al.conflicting_operator_journey_id,
+          al.overlap_duration_ratio
+        FROM ${raw(this.anomalyTable)} al
+        JOIN ${raw(this.carpoolTable)} cc
+          ON cc._id = al.carpool_id
         WHERE 
-          operator_id = ${operator_id}
-          AND operator_journey_id = ${operator_journey_id}
+          cc.operator_id = ${operator_id}
+          AND cc.operator_journey_id = ${operator_journey_id}
     `;
     const result = await cclient.query(query);
-    return result.rows.map(({ label, ...meta }) => ({ label, meta }));
+    return result.rows.map(({ label, ...metas }) => ({ label, metas }));
   }
 }

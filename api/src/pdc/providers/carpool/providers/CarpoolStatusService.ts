@@ -1,4 +1,5 @@
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { CarpoolLabel, CarpoolStatus } from "../interfaces/database/label.ts";
 import { CarpoolLabelRepository } from "../repositories/CarpoolLabelRepository.ts";
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
 
@@ -13,11 +14,21 @@ export class CarpoolStatusService {
   async findByOperatorJourneyId(
     operator_id: number,
     operator_journey_id: string,
-  ) {
+  ): Promise<
+    {
+      created_at: Date;
+      status: CarpoolStatus;
+      anomaly: Array<CarpoolLabel<unknown>>;
+      fraud: Array<CarpoolLabel<unknown>>;
+    } | undefined
+  > {
     const status = await this.statusRepository.getStatusByOperatorJourneyId(
       operator_id,
       operator_journey_id,
     );
+    if (!status) {
+      return;
+    }
     const anomaly = await this.labelRepository.findAnomalyByOperatorJourneyId(
       operator_id,
       operator_journey_id,
@@ -27,6 +38,7 @@ export class CarpoolStatusService {
       operator_journey_id,
     );
     return {
+      created_at: new Date(), // TODO
       status,
       anomaly,
       fraud,

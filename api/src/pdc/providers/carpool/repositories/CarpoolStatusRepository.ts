@@ -3,11 +3,11 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
+import { OperatorJourneyId } from "@/shared/cee/common/CeeApplicationInterface.ts";
 import sql, { raw } from "../helpers/sql.ts";
 import { CarpoolStatus } from "../interfaces/database/label.ts";
 import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 
-// TODO : test
 @provider()
 export class CarpoolStatusRepository {
   readonly table = "carpool_v2.status";
@@ -47,8 +47,8 @@ export class CarpoolStatusRepository {
   }
 
   public async getStatusByOperatorJourneyId(
-    operator_id: number,
-    operator_journey_id: string,
+    operator_id: Id,
+    operator_journey_id: OperatorJourneyId,
     client?: PoolClient,
   ): Promise<CarpoolStatus | undefined> {
     const cl = client ?? this.connection.getClient();
