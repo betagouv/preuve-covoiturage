@@ -5,31 +5,31 @@ import {
   incentivesSchema,
   paymentsSchema,
   seatSchema,
-} from './createJourneyCommon.ts';
+} from "./createJourneyCommon.ts";
 
 export const timeGeoPointSchema = {
-  type: 'object',
+  type: "object",
   minProperties: 3,
   additionalProperties: false,
   properties: {
-    datetime: { macro: 'timestamp' },
-    lat: { macro: 'lat' },
-    lon: { macro: 'lon' },
+    datetime: { macro: "timestamp" },
+    lat: { macro: "lat" },
+    lon: { macro: "lon" },
   },
 };
 
 export const incentiveCounterpartSchema = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
   minProperties: 3,
   properties: {
     target: {
-      type: 'string',
-      enum: ['passenger', 'driver'],
+      type: "string",
+      enum: ["passenger", "driver"],
     },
-    siret: { macro: 'siret' },
+    siret: { macro: "siret" },
     amount: {
-      type: 'number',
+      type: "number",
       minimum: 0,
       maximum: 100000,
     },
@@ -37,23 +37,23 @@ export const incentiveCounterpartSchema = {
 };
 
 const identitySchema = {
-  type: 'object',
-  required: ['operator_user_id', 'identity_key'],
+  type: "object",
+  required: ["operator_user_id", "identity_key"],
   additionalProperties: false,
   properties: {
-    identity_key: { pattern: '^[a-f0-9]{64}$', maxLength: 64 },
+    identity_key: { pattern: "^[a-f0-9]{64}$", maxLength: 64 },
     ...identityPropsSchema,
   },
 };
 
 export const driverSchema = {
-  type: 'object',
-  required: ['identity', 'revenue'],
+  type: "object",
+  required: ["identity", "revenue"],
   additionalProperties: false,
   properties: {
     identity: identitySchema,
     revenue: {
-      type: 'integer',
+      type: "integer",
       minimum: 0,
       maximum: 1000000,
     },
@@ -61,8 +61,8 @@ export const driverSchema = {
 };
 
 export const passengerSchema = {
-  type: 'object',
-  required: ['identity', 'contribution'],
+  type: "object",
+  required: ["identity", "contribution"],
   additionalProperties: false,
   properties: {
     identity: identitySchema,
@@ -73,20 +73,30 @@ export const passengerSchema = {
 };
 
 export const createJourneySchemaV3 = {
-  type: 'object',
-  required: ['operator_journey_id', 'operator_class', 'incentives', 'start', 'end', 'distance', 'driver', 'passenger'],
+  type: "object",
+  required: [
+    "operator_journey_id",
+    "operator_trip_id",
+    "operator_class",
+    "incentives",
+    "start",
+    "end",
+    "distance",
+    "driver",
+    "passenger",
+  ],
   additionalProperties: false,
   properties: {
-    operator_id: { macro: 'serial' },
-    operator_journey_id: { macro: 'varchar' },
-    operator_trip_id: { macro: 'varchar' },
-    operator_class: { enum: ['A', 'B', 'C'] },
+    operator_id: { macro: "serial" },
+    operator_journey_id: { macro: "varchar" },
+    operator_trip_id: { macro: "varchar" },
+    operator_class: { enum: ["A", "B", "C"] },
     start: timeGeoPointSchema,
     end: timeGeoPointSchema,
     driver: driverSchema,
     passenger: passengerSchema,
     distance: distanceSchema,
-    licence_plate: { macro: 'varchar' },
+    licence_plate: { macro: "varchar" },
     incentives: incentivesSchema,
     incentive_counterparts: {},
   },
