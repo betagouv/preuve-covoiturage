@@ -1,4 +1,13 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'start_date']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['code', 'type', 'direction', 'start_date'],
+    post_hook=[
+      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'directions_newcomer_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT directions_newcomer_by_day_pkey PRIMARY KEY (code, type, direction, start_date); END IF; END $$;'
+      'CREATE INDEX IF NOT EXISTS directions_newcomer_by_day_idx ON {{ this }} using btree(code, type, direction, start_date)',
+    ]
+  )
+}}
+
 with directions as (
   select
     "from"          as code,
@@ -352,6 +361,7 @@ select
   sum(new_drivers) as new_drivers,
   sum(new_passengers) as new_passengers
 from directions
+where code is not null
 group by 1, 2, 3, 4
 union
 select
@@ -362,4 +372,5 @@ select
   sum(new_drivers) - sum(intra_new_drivers) as new_drivers,
   sum(new_passengers) - sum(intra_new_passengers) as new_passengers
 from directions
+where code is not null
 group by 1, 2, 3

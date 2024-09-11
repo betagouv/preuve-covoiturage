@@ -1,4 +1,12 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'semester']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['year', 'semester', 'code', 'type', 'direction'],
+    post_hook=[
+      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'newcomer_by_semester_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT newcomer_by_semester_pkey PRIMARY KEY (year, semester, code, type, direction); END IF; END $$;"
+      "CREATE INDEX IF NOT EXISTS newcomer_by_semester_idx ON {{ this }} using btree(year, semester, code, type, direction)",
+    ]
+  )
+}}
 
 SELECT
   extract('year' FROM start_date)::int  AS year,
