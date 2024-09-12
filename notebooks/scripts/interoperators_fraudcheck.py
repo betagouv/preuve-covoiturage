@@ -335,12 +335,32 @@ df_labels.to_sql(
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = f"""(
- SELECT ccv2._id from carpool_v2.carpools ccv2
-  JOIN carpool_v2.status csv2 on ccv2._id = csv2.carpool_id
-  where csv2.fraud_status = 'pending'
-  and ccv2.start_datetime <=  NOW() - '48 hours'::interval - '{delay} hours'::interval
-)
+query = f"""
+DO $$
+        DECLARE
+            updated_rows INTEGER := 1;  -- Initialize with 1 so the loop starts
+        BEGIN
+            WHILE updated_rows > 0 LOOP
+                WITH rows_to_update AS (
+                     SELECT ccv2._id from carpool_v2.carpools ccv2
+                      JOIN carpool_v2.status csv2 on ccv2._id = csv2.carpool_id
+                      where csv2.fraud_status = 'pending'
+                      and ccv2.start_datetime <=  NOW() - '48 hours'::interval - '{delay} hours'::interval
+                    LIMIT 10000
+                )
+                UPDATE carpool_v2.status
+                SET fraud_status = 'passed'
+                WHERE _id IN (SELECT _id FROM rows_to_update);
+                
+                GET DIAGNOSTICS updated_rows = ROW_COUNT;
+                -- Optional: To log the progress, use RAISE NOTICE
+                RAISE NOTICE 'Updated % rows.', updated_rows;
+                -- Exit the loop if no rows are updated
+                IF updated_rows = 0 THEN
+                    EXIT;
+                END IF;
+            END LOOP;
+        END $$;
 """
 
 with engine.connect() as conn:
