@@ -22,13 +22,15 @@ export class CarpoolStatusService {
       fraud: Array<CarpoolLabel<unknown>>;
     } | undefined
   > {
-    const status = await this.statusRepository.getStatusByOperatorJourneyId(
-      operator_id,
-      operator_journey_id,
-    );
-    if (!status) {
+    const statusResult = await this.statusRepository
+      .getStatusByOperatorJourneyId(
+        operator_id,
+        operator_journey_id,
+      );
+    if (!statusResult) {
       return;
     }
+    const { created_at, ...status } = statusResult;
     const anomaly = await this.labelRepository.findAnomalyByOperatorJourneyId(
       operator_id,
       operator_journey_id,
@@ -38,10 +40,21 @@ export class CarpoolStatusService {
       operator_journey_id,
     );
     return {
-      created_at: new Date(), // TODO
+      created_at,
       status,
       anomaly,
       fraud,
     };
+  }
+
+  async findBy(data: {
+    operator_id: number;
+    status: Array<Partial<CarpoolStatus>>;
+    start: Date;
+    end: Date;
+    limit: number;
+    offset: number;
+  }): Promise<Array<{ operator_journey_id: string }>> {
+    return this.statusRepository.getOperatorJourneyIdByStatus(data);
   }
 }

@@ -55,6 +55,7 @@ describe("CarpoolStatusRepository", () => {
       acquisition_status: CarpoolAcquisitionStatusEnum.Canceled,
       anomaly_status: CarpoolAnomalyStatusEnum.Pending,
       fraud_status: CarpoolFraudStatusEnum.Pending,
+      created_at: result?.created_at,
     });
   });
 });
