@@ -1,5 +1,6 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { differenceInHours } from "@/lib/date/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import {
@@ -43,11 +44,17 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
+
+      const status =
+        differenceInHours(carpool.created_at, carpoolData.start_datetime) > 24
+          ? CarpoolAcquisitionStatusEnum.Expired
+          : CarpoolAcquisitionStatusEnum.Received;
+
       await this.statusRepository.saveAcquisitionStatus(
         new CarpoolAcquisitionStatus(
           carpool._id,
           request._id,
-          CarpoolAcquisitionStatusEnum.Received,
+          status,
         ),
         conn,
       );
