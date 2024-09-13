@@ -1,5 +1,12 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'trimester']) }}
-
+{{ config(
+    materialized='incremental',
+    unique_key=['year', 'trimester', 'code', 'type', 'direction'],
+    post_hook=[
+      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'distribution_by_trimester_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT distribution_by_trimester_pkey PRIMARY KEY (year, trimester, code, type, direction); END IF; END $$;"
+      "CREATE INDEX IF NOT EXISTS distribution_by_trimester_idx ON {{ this }} using btree(year, trimester, code, type, direction)",
+    ]
+  )
+}}
 with distances as (
   select
     year,

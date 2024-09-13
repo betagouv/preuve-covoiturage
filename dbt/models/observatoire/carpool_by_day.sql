@@ -1,4 +1,12 @@
-{{ config(materialized='incremental',unique_key=['from', 'to', 'start_date']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['from', 'to', 'start_date'],
+    post_hook=[
+      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'carpool_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT carpool_by_day_pkey PRIMARY KEY ("from", "to", start_date); END IF; END $$;'
+      'CREATE INDEX IF NOT EXISTS carpool_by_day_idx ON {{ this }} using btree("from", "to", start_date)',
+    ]
+  )
+}}
 
 WITH com_evol AS (
   SELECT * FROM {{ source('geo','com_evolution') }} WHERE year >= 2020

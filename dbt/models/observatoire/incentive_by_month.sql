@@ -1,4 +1,10 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'year', 'month']) }}
+{{ config(materialized='incremental',
+  unique_key=['year', 'month', 'code', 'type', 'direction'],
+  post_hook=[
+      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'incentive_by_month_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT incentive_by_month_pkey PRIMARY KEY (year, month, type, code, direction); END IF; END $$;"
+      "CREATE INDEX IF NOT EXISTS incentive_by_month_idx ON {{ this }} using btree(year, month, type, code, direction)",
+    ]
+) }}
 
 SELECT
   extract('year' FROM start_date)::int  AS year,

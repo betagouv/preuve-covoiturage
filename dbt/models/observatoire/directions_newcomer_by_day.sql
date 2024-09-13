@@ -2,8 +2,8 @@
     materialized='incremental',
     unique_key=['code', 'type', 'direction', 'start_date'],
     post_hook=[
-      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'directions_incentive_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT directions_incentive_by_day_pkey PRIMARY KEY (code, type, direction, start_date); END IF; END $$;'
-      'CREATE INDEX IF NOT EXISTS directions_incentive_by_day_idx ON {{ this }} using btree(code, type, direction, start_date)',
+      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'directions_newcomer_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT directions_newcomer_by_day_pkey PRIMARY KEY (code, type, direction, start_date); END IF; END $$;'
+      'CREATE INDEX IF NOT EXISTS directions_newcomer_by_day_idx ON {{ this }} using btree(code, type, direction, start_date)',
     ]
   )
 }}
@@ -14,19 +14,15 @@ with directions as (
     'com'           as type,
     'from'          as direction,
     start_date,
-    sum(collectivite) as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where "from" = "to"), 0
-    )               as intra_collectivite,
-    sum(operateur)    as operateur,
+     sum(new_drivers) filter (where "from" = "to"), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where "from" = "to"), 0
-    )               as intra_operateur,
-    sum(autres) as autres,
-    coalesce(
-      sum(autres) filter (where "from" = "to"), 0
-    )               as intra_autres
-  from {{ ref('carpool_incentive_by_day') }}
+      sum(new_passengers) filter (where "from" = "to"), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }}
   {% if is_incremental() %}
     where start_date >= (select max(start_date) from {{ this }})
   {% endif %}
@@ -37,13 +33,15 @@ with directions as (
     'com'                as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)        as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }}
+   sum(new_drivers) as new_drivers,
+    coalesce(
+     sum(new_drivers) filter (where "from" = "to"), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
+    coalesce(
+      sum(new_passengers) filter (where "from" = "to"), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }}
   {% if is_incremental() %}
     where start_date >= (select max(start_date) from {{ this }})
   {% endif %}
@@ -54,21 +52,15 @@ with directions as (
     'epci'        as type,
     'from'        as direction,
     start_date,
-   sum(collectivite) as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where b.epci = c.epci), 0
-    )             as intra_collectivite,
-    sum(operateur)  as operateur,
+     sum(new_drivers) filter (where b.epci = c.epci), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where b.epci = c.epci), 0
-    )             as intra_operateur,
-    sum(
-      autres
-    )             as autres,
-    coalesce(
-      sum(autres) filter (where b.epci = c.epci), 0
-    )             as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+      sum(new_passengers) filter (where b.epci = c.epci), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -97,13 +89,11 @@ with directions as (
     'epci'               as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)     as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+    sum(new_drivers) as new_drivers,
+    0                    as intra_new_drivers,
+     sum(new_passengers) as new_passengers,
+    0                    as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -123,19 +113,15 @@ with directions as (
     'aom'           as type,
     'from'          as direction,
     start_date,
-    sum(collectivite) as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where b.aom = c.aom), 0
-    )               as intra_collectivite,
-    sum(operateur)    as operateur,
+     sum(new_drivers) filter (where b.aom = c.aom), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where b.aom = c.aom), 0
-    )               as intra_operateur,
-    sum(autres) as autres,
-    coalesce(
-      sum(autres) filter (where b.aom = c.aom), 0
-    )               as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+      sum(new_passengers) filter (where b.aom = c.aom), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -164,13 +150,11 @@ with directions as (
     'aom'                as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)        as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+    sum(new_drivers) as new_drivers,
+    0                    as intra_new_drivers,
+     sum(new_passengers) as new_passengers,
+    0                    as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -190,19 +174,15 @@ with directions as (
     'dep'           as type,
     'from'          as direction,
     start_date,
-    sum(collectivite) as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where b.dep = c.dep), 0
-    )               as intra_collectivite,
-    sum(operateur)    as operateur,
+     sum(new_drivers) filter (where b.dep = c.dep), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where b.dep = c.dep), 0
-    )               as intra_operateur,
-    sum(autres) as autres,
-    coalesce(
-      sum(autres) filter (where b.dep = c.dep), 0
-    )               as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+      sum(new_passengers) filter (where b.dep = c.dep), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -231,13 +211,11 @@ with directions as (
     'dep'                as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)        as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+    sum(new_drivers) as new_drivers,
+    0                    as intra_new_drivers,
+    sum(new_passengers) as new_passengers,
+    0                    as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -257,19 +235,15 @@ with directions as (
     'reg'           as type,
     'from'          as direction,
     start_date,
-    sum(collectivite) as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where b.reg = c.reg), 0
-    )               as intra_collectivite,
-    sum(operateur)    as operateur,
+     sum(new_drivers) filter (where b.reg = c.reg), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where b.reg = c.reg), 0
-    )               as intra_operateur,
-    sum(autres) as autres,
-    coalesce(
-      sum(autres) filter (where b.reg = c.reg), 0
-    )               as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+      sum(new_passengers) filter (where b.reg = c.reg), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -298,13 +272,11 @@ with directions as (
     'reg'                as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)        as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+    sum(new_drivers) as new_drivers,
+    0                    as intra_new_drivers,
+    sum(new_passengers) as new_passengers,
+    0                    as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -324,25 +296,15 @@ with directions as (
     'country' as type,
     'from'    as direction,
     start_date,
-    sum(
-      collectivite
-    )         as collectivite,
+    sum(new_drivers) as new_drivers,
     coalesce(
-     sum(collectivite) filter (where b.country = c.country), 0
-    )         as intra_collectivite,
-    sum(
-      operateur
-    )         as operateur,
+     sum(new_drivers) filter (where b.country = c.country), 0
+    )               as intra_new_drivers,
+    sum(new_passengers)    as new_passengers,
     coalesce(
-      sum(operateur) filter (where b.country = c.country), 0
-    )         as intra_operateur,
-    sum(
-      autres
-    )         as autres,
-    coalesce(
-      sum(autres) filter (where b.country = c.country), 0
-    )         as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+      sum(new_passengers) filter (where b.country = c.country), 0
+    )               as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -371,13 +333,11 @@ with directions as (
     'country'            as type,
     'to'                 as direction,
     start_date,
-   sum(collectivite)        as collectivite,
-    0                    as intra_collectivite,
-    sum(operateur)         as operateur,
-    0                    as intra_operateur,
-    sum(autres)      as autres,
-    0                    as intra_autres
-  from {{ ref('carpool_incentive_by_day') }} as a
+    sum(new_drivers) as new_drivers,
+    0                    as intra_new_drivers,
+    sum(new_passengers) as new_passengers,
+    0                    as intra_new_passengers
+  from {{ ref('carpool_newcomer_by_day') }} as a
   left join
     (
       select
@@ -398,10 +358,8 @@ select
   type,
   start_date,
   direction,
- sum(collectivite)        as collectivite,
-  sum(intra_collectivite)  as intra_collectivite,
-  sum(operateur)         as operateur,
-  sum(autres)      as autres
+  sum(new_drivers) as new_drivers,
+  sum(new_passengers) as new_passengers
 from directions
 where code is not null
 group by 1, 2, 3, 4
@@ -411,10 +369,8 @@ select
   type,
   start_date,
   'both'                                            as direction,
- sum(collectivite) - sum(intra_collectivite)               as collectivite,
-  sum(intra_collectivite)                               as intra_collectivite,
-  sum(operateur) - sum(intra_operateur)                 as operateur,
-  sum(autres) - sum(intra_autres)           as autres
+  sum(new_drivers) - sum(intra_new_drivers) as new_drivers,
+  sum(new_passengers) - sum(intra_new_passengers) as new_passengers
 from directions
 where code is not null
 group by 1, 2, 3
