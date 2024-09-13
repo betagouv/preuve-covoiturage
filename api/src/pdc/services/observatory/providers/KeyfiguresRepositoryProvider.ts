@@ -16,7 +16,7 @@ export class KeyfiguresRepositoryProvider
   implements KeyfiguresRepositoryInterface {
   private readonly table = (
     params: KeyfiguresParamsInterface,
-    table: "flux" | "occupation",
+    table: "flux" | "occupation" | "newcomer",
   ) => {
     return getTableName(params, "observatoire_stats", table);
   };
@@ -29,15 +29,21 @@ export class KeyfiguresRepositoryProvider
     params: KeyfiguresParamsInterface,
   ): Promise<KeyfiguresResultInterface> {
     const typeParam = checkTerritoryParam(params.type);
-    const joinOn = [
+    const joinOnB = [
       "(a.territory_1 = b.code OR a.territory_2 = b.code)",
       "a.type = b.type",
       "a.year = b.year",
+    ];
+    const joinOnC = [
+      "(a.territory_1 = c.code OR a.territory_2 = c.code)",
+      "a.type = c.type",
+      "a.year = c.year",
     ];
     const conditions = [
       `a.year = $1`,
       `a.type = $2`,
       "b.code = $3",
+      "c.code = $3",
     ];
     const intraJourneysConditions = [
       "territory_1 = territory_2",
@@ -53,10 +59,12 @@ export class KeyfiguresRepositoryProvider
     if (params.direction) {
       queryValues.push(params.direction);
       conditions.push(`b.direction = $4`);
+      conditions.push(`c.direction = $4`);
     }
     if (params.month) {
       queryValues.push(params.month);
-      joinOn.push("a.month = b.month");
+      joinOnB.push("a.month = b.month");
+      joinOnC.push("a.month = c.month");
       params.direction
         ? intraJourneysConditions.push(`month = $5`)
         : intraJourneysConditions.push(`month = $4`);
@@ -66,7 +74,8 @@ export class KeyfiguresRepositoryProvider
     }
     if (params.trimester) {
       queryValues.push(params.trimester);
-      joinOn.push("a.trimester = b.trimester");
+      joinOnB.push("a.trimester = b.trimester");
+      joinOnC.push("a.trimester = c.trimester");
       params.direction
         ? intraJourneysConditions.push(`trimester = $5`)
         : intraJourneysConditions.push(`trimester = $4`);
@@ -76,7 +85,8 @@ export class KeyfiguresRepositoryProvider
     }
     if (params.semester) {
       queryValues.push(params.semester);
-      joinOn.push("a.semester = b.semester");
+      joinOnB.push("a.semester = b.semester");
+      joinOnC.push("a.semester = c.semester");
       params.direction
         ? intraJourneysConditions.push(`semester = $5`)
         : intraJourneysConditions.push(`semester = $4`);
@@ -99,13 +109,16 @@ export class KeyfiguresRepositoryProvider
         sum(a.duration)::int AS duration,
         b.journeys::int,
         (${intraJourneysQuery})::int as intra_journeys,
-        b.occupation_rate::float
+        b.occupation_rate::float,
+        c.new_drivers::int,
+        c.new_passengers::int
       FROM ${this.table(params, "flux")} a
       LEFT JOIN ${this.table(params, "occupation")} b ON ${
-      joinOn.join(" AND ")
+      joinOnB.join(" AND ")
     } 
+      LEFT JOIN ${this.table(params, "newcomer")} c ON ${joinOnC.join(" AND ")}
       WHERE ${conditions.join(" AND ")}
-      GROUP BY b.code,b.libelle,b.direction,b.journeys,b.occupation_rate;
+      GROUP BY b.code,b.libelle,b.direction,b.journeys,b.occupation_rate,c.new_drivers,c.new_passengers;
     `;
     const response = await this.pg.getClient().query({
       text: queryText,

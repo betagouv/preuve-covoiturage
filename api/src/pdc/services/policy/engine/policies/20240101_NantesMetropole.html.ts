@@ -3,7 +3,7 @@ export const description =
 
   <p>Campagne d'incitation au covoiturage du <b> 01 janvier 2024 au 31 Décembre 2025</b></p>
   
-  <p>Cette campagne est limitée à <b>500 000 euros</b>.</p>
+  <p>Cette campagne est limitée à <b>500 000,00 €</b>.</p>
 
   <p>
     Les <b> conducteurs </b> effectuant un trajet entre 5 et 60 km (inclus)
@@ -12,9 +12,9 @@ export const description =
   </p>
 
   <ul>
-    <li><b>De 5 à 17 km : 0.75 euro par trajet par passager.</b></li>
-    <li><b>De 17 à 29,5 km : 0.10 euro par trajet par km par passager avec un maximum de 2 euros</b></li>
-    <li><b>De 29,5 à 60 km : 2 euros par passager transporté</b></li>
+    <li><b>De 5 à 17 km : 0,75 € par trajet par passager.</b></li>
+    <li><b>De 17 à 29,5 km : 0,10 € par trajet par km par passager avec un maximum de 2,00 €</b></li>
+    <li><b>De 29,5 à 60 km : 2,00 € par passager transporté</b></li>
   </ul>
 
   <p>
@@ -22,9 +22,9 @@ export const description =
   </p>
 
   <ul>
-    <li><b>De 5 à 17 km : 1.65 euro par trajet par passager.</b></li>
-    <li><b>De 17 à 29,5 km : 0.10 euro par trajet par km par passager avec un maximum de 2.90 euros</b></li>
-    <li><b>De 29,5 à 60 km : 2.90 euros par passager transporté</b></li>
+    <li><b>De 5 à 17 km : 1.65 € par trajet par passager.</b></li>
+    <li><b>De 17 à 29,5 km : 0.10 € par trajet par km par passager avec un maximum de 2,90 €</b></li>
+    <li><b>De 29,5 à 60 km : 2,90 € par passager transporté</b></li>
   </ul>
   
   <p>Les restrictions suivantes seront appliquées :</p>

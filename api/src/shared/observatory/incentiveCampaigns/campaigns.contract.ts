@@ -1,5 +1,5 @@
-import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter.ts';
-import type { Feature } from '../../geo/GeoJson.ts';
+import type { Feature } from "../../geo/GeoJson.ts";
+import { INSEECode, PerimeterType } from "../../geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   type: PerimeterType;
@@ -27,6 +27,7 @@ export interface SingleResultInterface {
   trajet_classe_de_preuve: string;
   operateurs: string;
   autres_informations: string;
+  lien: string;
   geom: Feature;
 }
 
@@ -39,8 +40,9 @@ export interface ParamsInterface {
 }
 
 export const handlerConfig = {
-  service: 'observatory',
-  method: 'campaigns',
+  service: "observatory",
+  method: "campaigns",
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature =
+  `${handlerConfig.service}:${handlerConfig.method}` as const;
