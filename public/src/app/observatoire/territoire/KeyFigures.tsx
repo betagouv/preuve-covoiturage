@@ -38,19 +38,26 @@ export default function KeyFigures() {
           text: 'Covoiturages réalisés',
           icon:'ri-car-line',
         },
-        /*{
-          value: `${((data[0].has_incentive / data[0].journeys) * 100).toLocaleString('fr-FR', {
-            maximumFractionDigits: 1,
-          })}`,
-          unit:'%',
-          text: 'Trajets incités',
-          icon:'euro',
-        },*/
         { __component: 'row.indicator',
           value: `${data[0].occupation_rate.toLocaleString()}`,
           text: "personnes par véhicule",
           icon:'ri-group-2-line',
         },
+        { __component: 'row.indicator',
+          value: `${data[0].new_drivers.toLocaleString()}`, 
+          text: 'Primo conducteurs',
+          icon: 'ri-steering-2-line'
+        },
+        { __component: 'row.indicator',
+          value: `${data[0].new_passengers.toLocaleString()}`, 
+          text: 'Primo passagers',
+          icon: 'ri-user-add-line'
+        },
+      ] as IndicatorProps[]
+    : [];
+
+  const row2 = (data && data.length > 0)
+    ? [
         { __component: 'row.indicator',
           value: `${Math.round(data[0].distance / data[0].passengers).toLocaleString()}`,
           unit:'km',
@@ -63,11 +70,6 @@ export default function KeyFigures() {
           text: 'Temps moyen des trajets',
           icon:'ri-time-line'
         },
-      ] as IndicatorProps[]
-    : [];
-
-  const row2 = (data && data.length > 0)
-    ? [
         { __component: 'row.indicator',
           value: `${((data[0].intra_journeys / data[0].journeys) * 100).toLocaleString('fr-FR', {
             maximumFractionDigits: 1,
@@ -81,6 +83,7 @@ export default function KeyFigures() {
           text: 'Tonnes de CO₂ économisés',
           icon: 'ri-haze-line'
         },
+        
       ] as IndicatorProps[]
     : [];
 
