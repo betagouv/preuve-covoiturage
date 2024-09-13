@@ -15,6 +15,8 @@ export interface SingleResultInterface {
   intra_journeys: number;
   has_incentive: number;
   occupation_rate: number;
+  new_drivers: number;
+  new_passengers: number;
   direction: Direction;
 }
 
