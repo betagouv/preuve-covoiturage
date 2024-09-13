@@ -17,6 +17,8 @@ export interface KeyFiguresDataInterface {
   journeys: number;
   intra_journeys: number;
   occupation_rate: number;
+  new_drivers: number;
+  new_passengers: number;
   direction: Direction;
 }
 

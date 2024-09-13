@@ -1,4 +1,13 @@
-{{ config(materialized='incremental',unique_key=['code', 'type', 'direction', 'start_date']) }}
+{{ config(
+    materialized='incremental',
+    unique_key=['code', 'type', 'direction', 'start_date'],
+    post_hook=[
+      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'directions_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT directions_by_day_pkey PRIMARY KEY (code, type, direction, start_date); END IF; END $$;'
+      'CREATE INDEX IF NOT EXISTS directions_by_day_idx ON {{ this }} using btree(code, type, direction, start_date)',
+    ]
+  )
+}}
+
 with directions as (
   select
     "from"          as code,
@@ -482,6 +491,7 @@ select
   sum(passenger_seats) as passenger_seats,
   sum(distance)        as distance
 from directions
+where code is not null
 group by 1, 2, 3, 4
 union
 select
@@ -496,4 +506,5 @@ select
   sum(passenger_seats) - sum(intra_passenger_seats) as passenger_seats,
   sum(distance) - sum(intra_distance)               as distance
 from directions
+where code is not null
 group by 1, 2, 3

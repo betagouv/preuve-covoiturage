@@ -154,11 +154,35 @@ df_labels.to_sql(
 if update_carpool_status is True:
     with engine.connect() as conn:
         update_query = """
-        UPDATE carpool_v2.status 
-        SET anomaly_status = 'passed'
-        FROM carpool_v2.status c2s JOIN carpool_v2.carpools c2c on c2c._id = c2s.carpool_id
-        WHERE c2c.start_datetime < NOW() - '30 hours'::interval
-        AND c2s.anomaly_status = 'pending'
+        DO $$
+        DECLARE
+            updated_rows INTEGER := 1;  -- Initialize with 1 so the loop starts
+        BEGIN
+            WHILE updated_rows > 0 LOOP
+                WITH rows_to_update AS (
+                    SELECT c2s._id
+                    FROM carpool_v2.status c2s
+                    JOIN carpool_v2.carpools c2c
+                    ON c2c._id = c2s.carpool_id
+                    WHERE c2c.start_datetime < NOW() - INTERVAL '30 hours'
+                    AND c2s.anomaly_status = 'pending'
+                    LIMIT 100000  -- Batch size
+                )
+                UPDATE carpool_v2.status
+                SET anomaly_status = 'passed'
+                WHERE _id IN (SELECT _id FROM rows_to_update);
+                
+                GET DIAGNOSTICS updated_rows = ROW_COUNT;
+
+                -- Optional: To log the progress, use RAISE NOTICE
+                RAISE NOTICE 'Updated % rows.', updated_rows;
+
+                -- Exit the loop if no rows are updated
+                IF updated_rows = 0 THEN
+                    EXIT;
+                END IF;
+            END LOOP;
+        END $$;
         """
         result = conn.execute(text(update_query))
         print(f"{result.rowcount} where updated to anomaly_status 'passed'")
