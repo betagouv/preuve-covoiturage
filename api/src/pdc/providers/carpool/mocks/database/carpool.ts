@@ -9,12 +9,12 @@ export const insertableCarpool: InsertableCarpool = {
   operator_journey_id: "journey_id_1",
   operator_trip_id: "operator_trip_id_1",
   operator_class: OperatorClass.C,
-  start_datetime: new Date("2023-01-01T01:01:01.000Z"),
+  start_datetime: new Date(new Date().valueOf() - 100_000),
   start_position: {
     lat: 48.729958,
     lon: 2.2592852,
   },
-  end_datetime: new Date("2023-01-01T01:21:01.000Z"),
+  end_datetime: new Date(new Date().valueOf() - 50_000),
   end_position: {
     lat: 48.700901,
     lon: 2.2389599,
