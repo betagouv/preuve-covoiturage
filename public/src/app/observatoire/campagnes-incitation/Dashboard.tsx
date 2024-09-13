@@ -56,6 +56,7 @@ export default function Dashboard() {
           l_min: d.trajet_longueur_min,
           l_max: d.trajet_longueur_max,
           classe: d.trajet_classe_de_preuve,
+          lien: d.lien,
         }),
       ),
     ) as FeatureCollection;
