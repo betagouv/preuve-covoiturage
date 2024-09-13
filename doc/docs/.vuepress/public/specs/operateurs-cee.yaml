@@ -488,7 +488,7 @@ paths:
         - token: []
       operationId: policy:cee:delete
       responses:
-        '200':
+        '204':
           description: La demande a été trouvée et a bien été supprimée.
         '404':
           description: La demande n'a pas été trouvée.
