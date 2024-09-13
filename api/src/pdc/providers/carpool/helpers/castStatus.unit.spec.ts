@@ -1,18 +1,12 @@
 import { assertEquals, it } from "@/dev_deps.ts";
 import { CarpoolAnomalyStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
-import { CarpoolStatus } from "../interfaces/database/label.ts";
 import {
   CarpoolAcquisitionStatusEnum,
   CarpoolFraudStatusEnum,
   CarpoolStatusEnum,
 } from "../interfaces/index.ts";
-import { castToStatusEnum } from "./castStatus.ts";
+import { castFromStatusEnum, castToStatusEnum } from "./castStatus.ts";
 
-type Config = Array<{
-  title: string;
-  args: Partial<CarpoolStatus>;
-  expected: CarpoolStatusEnum;
-}>;
 for (
   const { title, args, expected } of [
     {
@@ -123,5 +117,44 @@ for (
 ) {
   it(title, () => {
     assertEquals(castToStatusEnum(args), expected);
+  });
+}
+
+for (
+  const { title, args, expected } of [
+    {
+      title: "Pending",
+      expected: [
+        { acquisition_status: CarpoolAcquisitionStatusEnum.Received },
+        { acquisition_status: CarpoolAcquisitionStatusEnum.Updated },
+        { fraud_status: CarpoolFraudStatusEnum.Pending },
+        { anomaly_status: CarpoolAnomalyStatusEnum.Pending },
+      ],
+      args: CarpoolStatusEnum.Pending,
+    },
+    {
+      title: "Ok",
+      expected: [
+        {
+          acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+          fraud_status: CarpoolFraudStatusEnum.Passed,
+          anomaly_status: CarpoolAnomalyStatusEnum.Passed,
+        },
+      ],
+      args: CarpoolStatusEnum.Ok,
+    },
+    {
+      title: "Fraud",
+      expected: [
+        {
+          fraud_status: CarpoolFraudStatusEnum.Failed,
+        },
+      ],
+      args: CarpoolStatusEnum.FraudError,
+    },
+  ]
+) {
+  it(title, () => {
+    assertEquals(castFromStatusEnum(args), expected);
   });
 }

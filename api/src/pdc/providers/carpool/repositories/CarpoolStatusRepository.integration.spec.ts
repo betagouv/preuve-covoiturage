@@ -58,4 +58,24 @@ describe("CarpoolStatusRepository", () => {
       created_at: result?.created_at,
     });
   });
+
+  it("Should list operator journey_id", async () => {
+    const start = new Date(insertableCarpool.start_datetime.valueOf() - 1000);
+    const end = new Date(insertableCarpool.start_datetime.valueOf() + 1000);
+    const result = await repository.getOperatorJourneyIdByStatus({
+      operator_id: insertableCarpool.operator_id,
+      start,
+      end,
+      limit: 1,
+      offset: 0,
+      status: [
+        {
+          acquisition_status: CarpoolAcquisitionStatusEnum.Canceled,
+        },
+      ],
+    });
+    assertEquals(result, [{
+      operator_journey_id: insertableCarpool.operator_journey_id,
+    }]);
+  });
 });
