@@ -2,6 +2,7 @@ import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { readFile } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { basename } from "https://deno.land/std@0.214.0/path/mod.ts";
 import {
   DataGouvProviderInterface,
   Dataset,
@@ -53,7 +54,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     slug: string,
     filepath: string,
   ): Promise<UploadedResource> {
-    const file = new File([await readFile(filepath)], "data.json");
+    const file = new File([await readFile(filepath)], basename(filepath));
     const form = new FormData();
     form.append("file", file);
     const response = await this.call(
@@ -70,7 +71,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     resourceId: string,
   ): Promise<UploadedResource> {
     const form = new FormData();
-    const file = new File([await readFile(filepath)], "data.json");
+    const file = new File([await readFile(filepath)], basename(filepath));
     form.append("file", file);
     const response = await this.call(
       `/datasets/${slug}/resources/${resourceId}/upload/`,
