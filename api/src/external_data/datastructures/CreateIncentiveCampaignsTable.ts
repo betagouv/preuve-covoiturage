@@ -38,7 +38,8 @@ export class CreateIncentiveCampaignsTable extends AbstractDatastructure {
         operateurs varchar,
         autres_informations varchar,
         zone_sens_des_trajets_litteral varchar,
-        lien varchar
+        lien varchar,
+        nom_plateforme varchar
       );
       CREATE INDEX IF NOT EXISTS ${this.indexWithSchema}_id_index ON ${this.tableWithSchema} USING btree (id);
     `;

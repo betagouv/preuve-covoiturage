@@ -67,6 +67,7 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         "varchar",
       ]],
       ["lien", ["lien_page_collectivité", "varchar"]],
+      ["nom_plateforme", ["nom_plateforme", "varchar"]],
     ]);
     fileType = "CSV" as FileTypeEnum.Csv;
     sheetOptions = {
@@ -105,7 +106,8 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         operateurs,
         autres_informations,
         zone_sens_des_trajets_litteral,
-        lien
+        lien,
+        nom_plateforme
       ) SELECT
         collectivite,
         derniere_maj,
@@ -136,7 +138,8 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
         operateurs,
         autres_informations,
         zone_sens_des_trajets_litteral,
-        lien
+        lien,
+        nom_plateforme
       FROM ${this.tableWithSchema};
     `;
   };
