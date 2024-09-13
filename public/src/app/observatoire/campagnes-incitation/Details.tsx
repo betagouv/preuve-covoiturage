@@ -1,4 +1,5 @@
 import SectionTitle from '@/components/common/SectionTitle';
+import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 import Table from '@codegouvfr/react-dsfr/Table';
 
 export default function Details({data}:{ data:any}) {
@@ -122,6 +123,22 @@ export default function Details({data}:{ data:any}) {
         data={table4}
         headers={[]}
       />
+      {data.lien &&
+      <ButtonsGroup
+      alignment='right'
+      buttonsEquisized
+      buttons={[
+        {
+          children: 'Détails de la campagne',
+          iconId: "fr-icon-arrow-right-s-line",
+          iconPosition: "right",
+          linkProps: {
+            href: data.lien,
+          },
+        },
+      ]}
+    />
+      }
      
     </>
   );
