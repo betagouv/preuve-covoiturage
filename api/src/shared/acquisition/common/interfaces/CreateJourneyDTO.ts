@@ -52,5 +52,5 @@ export interface CreateJourneyDTO {
   driver: Driver;
   passenger: Passenger;
   licence_plate?: string;
-  operator_trip_id?: string;
+  operator_trip_id: string;
 }
