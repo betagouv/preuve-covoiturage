@@ -1,14 +1,15 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler, NotFoundException } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
-import { alias } from "@/shared/acquisition/status.schema.ts";
+import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
+import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/acquisition/status.contract.ts";
+import { alias } from "@/shared/acquisition/status.schema.ts";
 
 @handler({
   ...handlerConfig,
@@ -20,27 +21,29 @@ import {
   ],
 })
 export class StatusJourneyAction extends AbstractAction {
-  constructor(private acquisitionRepository: AcquisitionRepositoryProvider) {
+  constructor(
+    private statusService: CarpoolStatusService,
+  ) {
     super();
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { operator_journey_id, operator_id } = params;
-
-    const acquisition = await this.acquisitionRepository.getStatus(
+    const result = await this.statusService.findByOperatorJourneyId(
       operator_id,
       operator_journey_id,
     );
-    if (!acquisition) {
+    if (!result) {
       throw new NotFoundException();
     }
 
+    const status = castToStatusEnum(result.status) as any;
     return {
       operator_journey_id,
-      status: acquisition.status,
-      created_at: acquisition.created_at,
-      fraud_error_labels: acquisition.fraud_error_labels,
-      anomaly_error_details: acquisition.anomaly_error_details,
+      status,
+      created_at: result.created_at,
+      fraud_error_labels: result.fraud.map((f) => f.label),
+      anomaly_error_details: result.anomaly as any,
     };
   }
 }

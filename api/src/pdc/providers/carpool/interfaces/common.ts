@@ -53,20 +53,17 @@ export type ApiVersion = number;
 export type CancelCode = string;
 export type CancelMessage = string;
 
-/**
- * @deprecated [carpool_v2_migration]
- *
- * Carpool_v2 uses multiple statuses (acquisition_status, fraud_status)
- * to determine the status of a carpool.
- *
- * Use the statusConverter() function to convert these statuses to a single status.
- */
-export enum CarpoolV1StatusEnum {
+export enum CarpoolStatusEnum {
+  AcquisitionError = "acquisition_error",
+  ValidationError = "validation_error",
+  NormalizationError = "normalization_error",
+  FraudError = "fraud_error",
+  AnomalyError = "anomaly_error",
   Ok = "ok",
   Expired = "expired",
   Canceled = "canceled",
-  FraudcheckError = "fraudcheck_error",
-  AnomalyError = "anomaly_error",
+  Pending = "pending",
+  Unknown = "unknown",
 }
 
 export enum CarpoolAcquisitionStatusEnum {
@@ -79,6 +76,12 @@ export enum CarpoolAcquisitionStatusEnum {
 }
 
 export enum CarpoolFraudStatusEnum {
+  Pending = "pending",
+  Passed = "passed",
+  Failed = "failed",
+}
+
+export enum CarpoolAnomalyStatusEnum {
   Pending = "pending",
   Passed = "passed",
   Failed = "failed",
