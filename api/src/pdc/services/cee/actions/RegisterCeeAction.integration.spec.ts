@@ -269,33 +269,6 @@ describe("RegisterCeeAction", () => {
     );
   });
 
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  it("Ensure deprecated carpool_id are properly inserted", async () => {
-    const result = await db.connection.getClient().query(`
-      SELECT carpool_id, operator_id, operator_journey_id
-      FROM cee.cee_applications
-      ORDER BY operator_journey_id
-    `);
-    assertEquals(result.rowCount, 3);
-    assertObjectMatch(result.rows[0], {
-      carpool_id: 1,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-1",
-    });
-    assertObjectMatch(result.rows[1], {
-      carpool_id: 3,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-2",
-    });
-    assertObjectMatch(result.rows[2], {
-      carpool_id: 5,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-3",
-    });
-  });
-
   it("Conflict", async () => {
     await assertErrorHandler(
       kernel,

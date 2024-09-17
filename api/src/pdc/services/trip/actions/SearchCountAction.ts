@@ -1,7 +1,7 @@
 import {
   ContextType,
   handler,
-  KernelInterfaceResolver,
+  UnimplementedException,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import {
@@ -9,25 +9,18 @@ import {
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/index.ts";
 
-import * as middlewareConfig from "../config/middlewares.ts";
-import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionMiddlewaresHelper.ts";
-import { TripRepositoryProvider } from "../providers/TripRepositoryProvider.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/trip/searchcount.contract.ts";
 import { alias } from "@/shared/trip/searchcount.schema.ts";
+import * as middlewareConfig from "../config/middlewares.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
-    ...groupPermissionMiddlewaresHelper({
-      territory: "territory.trip.stats",
-      operator: "operator.trip.stats",
-      registry: "registry.trip.stats",
-    }),
     ["validate", alias],
     validateDateMiddleware({
       startPath: "date.start",
@@ -40,10 +33,7 @@ import { alias } from "@/shared/trip/searchcount.schema.ts";
   ],
 })
 export class SearchCountAction extends Action {
-  constructor(
-    private pg: TripRepositoryProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor() {
     super();
   }
 
@@ -51,6 +41,6 @@ export class SearchCountAction extends Action {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    return this.pg.searchCount(params);
+    throw new UnimplementedException();
   }
 }

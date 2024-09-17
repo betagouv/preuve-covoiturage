@@ -29,10 +29,6 @@ export class CeeRepositoryProvider
   extends CeeRepositoryProviderInterfaceResolver {
   public readonly ceeApplicationsTable = "cee.cee_applications";
   public readonly errorTable = "cee.cee_application_errors";
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  public readonly carpoolV1Table = "carpool.carpools";
   public readonly carpoolV2Table = "carpool_v2.carpools";
   public readonly carpoolV2StatusTable = "carpool_v2.status";
   public readonly carpoolV2GeoTable = "carpool_v2.geo";
@@ -363,24 +359,6 @@ export class CeeRepositoryProvider
     if (res.rowCount !== 1) {
       throw new InvalidRequestException("Operator not found");
     }
-
-    /**
-     * @deprecated [carpool_v2_migration]
-     * Fetch and add the carpool_id from carpool.carpools to the CEE application
-     */
-    await this.connection.getClient().query<any>({
-      text: `
-        UPDATE ${this.ceeApplicationsTable} ce
-        SET carpool_id = c1._id
-        FROM ${this.carpoolV1Table} c1
-        WHERE c1.operator_id = ce.operator_id
-          AND c1.operator_journey_id = ce.operator_journey_id
-          AND c1.is_driver = true
-          AND c1.datetime >= '2024-01-01T00:00:00+00' -- hit the index!
-          AND ce._id = $1
-      `,
-      values: [res.rows[0]._id],
-    });
 
     // build the return object
     const result: RegisteredCeeApplication = {

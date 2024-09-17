@@ -1,14 +1,10 @@
-import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { Action } from "@/ilos/core/index.ts";
 import {
   ContextType,
   handler,
-  KernelInterfaceResolver,
+  UnimplementedException,
 } from "@/ilos/common/index.ts";
-import {
-  BucketName,
-  S3StorageProvider,
-} from "@/pdc/providers/storage/index.ts";
+import { Action } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import {
   handlerConfig,
@@ -16,14 +12,6 @@ import {
   ResultInterface,
 } from "@/shared/trip/sendExport.contract.ts";
 import { alias } from "@/shared/trip/sendExport.schema.ts";
-import {
-  ParamsInterface as NotifyParamsInterface,
-  signature as notifySignature,
-} from "@/shared/user/notify.contract.ts";
-import {
-  ParamsInterface as BuildExportParamsInterface,
-  signature as buildExportSignature,
-} from "@/shared/trip/buildExport.contract.ts";
 
 @handler({
   ...handlerConfig,
@@ -42,10 +30,7 @@ export class SendExportAction extends Action {
     },
   };
 
-  constructor(
-    private file: S3StorageProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor() {
     super();
   }
 
@@ -53,55 +38,6 @@ export class SendExportAction extends Action {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    try {
-      const { from, ...exportParams } = params;
-      const fileKey = await this.kernel.call<BuildExportParamsInterface>(
-        buildExportSignature,
-        JSON.parse(JSON.stringify(exportParams)),
-        this.defaultContext,
-      );
-      const url = await this.file.getSignedUrl(BucketName.Export, fileKey);
-
-      const email = from.email;
-      const fullname = from.fullname;
-
-      const emailParams = {
-        template: "ExportCSVNotification",
-        to: `${fullname} <${email}>`,
-        data: {
-          fullname,
-          action_href: url,
-        },
-      };
-
-      await this.kernel.notify<NotifyParamsInterface>(
-        notifySignature,
-        emailParams,
-        {
-          channel: {
-            service: "trip",
-          },
-          call: {
-            user: {},
-          },
-        },
-      );
-
-      return;
-    } catch (e) {
-      await this.kernel.notify<NotifyParamsInterface>(
-        notifySignature,
-        {
-          template: "ExportCSVErrorNotification",
-          to: `${params.from.fullname} <${params.from.email}>`,
-          data: {
-            fullname: params.from.fullname,
-          },
-        },
-        this.defaultContext,
-      );
-
-      throw e;
-    }
+    throw new UnimplementedException();
   }
 }

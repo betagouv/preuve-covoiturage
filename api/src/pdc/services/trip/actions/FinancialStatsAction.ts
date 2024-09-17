@@ -1,30 +1,26 @@
-import { ContextType, handler } from "@/ilos/common/index.ts";
+import {
+  ContextType,
+  handler,
+  UnimplementedException,
+} from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import {
   copyFromContextMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/index.ts";
 
-import * as middlewareConfig from "../config/middlewares.ts";
-import { StatCacheRepositoryProviderInterfaceResolver } from "../interfaces/StatCacheRepositoryProviderInterface.ts";
-import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionMiddlewaresHelper.ts";
-import { TripRepositoryProvider } from "../providers/TripRepositoryProvider.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/trip/financialStats.contract.ts";
 import { alias } from "@/shared/trip/stats.schema.ts";
+import * as middlewareConfig from "../config/middlewares.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
-    ...groupPermissionMiddlewaresHelper({
-      territory: "territory.trip.stats",
-      operator: "operator.trip.stats",
-      registry: "registry.trip.stats",
-    }),
     ["validate", alias],
     validateDateMiddleware({
       startPath: "date.start",
@@ -37,10 +33,7 @@ import { alias } from "@/shared/trip/stats.schema.ts";
   ],
 })
 export class FinancialStatsAction extends Action {
-  constructor(
-    private pg: TripRepositoryProvider,
-    private cache: StatCacheRepositoryProviderInterfaceResolver,
-  ) {
+  constructor() {
     super();
   }
 
@@ -48,6 +41,6 @@ export class FinancialStatsAction extends Action {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    return (await this.pg.financialStats(params)) || [];
+    throw new UnimplementedException();
   }
 }

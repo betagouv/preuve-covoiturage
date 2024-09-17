@@ -9,7 +9,7 @@ import {
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
-import { Carpool, carpools, carpoolsV2 } from "./carpools.ts";
+import { Carpool, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
 import { Operator, operators } from "./operators.ts";
 import {
@@ -127,11 +127,6 @@ export class Migrator {
       await this.seedTerritoryGroup(territory_group);
     }
 
-    for (const carpool of carpools) {
-      this.verbose &&
-        logger.debug(`Seeding carpool ${carpool.acquisition_id}`);
-      await this.seedCarpool(carpool);
-    }
     for (const carpool of carpoolsV2) {
       this.verbose &&
         logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
@@ -153,9 +148,6 @@ export class Migrator {
             - policy.policies
 
           - Trajets
-            - acquisition.acquisitions
-            - carpool.carpools
-            - carpool.identities
 
           - Liste des tables
             - certificates.**
@@ -368,115 +360,6 @@ export class Migrator {
       `,
       values: [carpoolResult.rows[0]._id, "processed"],
     });
-  }
-
-  async seedCarpool(carpool: Carpool) {
-    const result = await this.testConn.getClient().query<any>({
-      text: `
-        INSERT INTO carpool.identities 
-          (uuid, travel_pass_user_id, over_18, phone_trunc)
-        VALUES (
-          $1::uuid,
-          $2::varchar,
-          $3::boolean,
-          $4::varchar
-        )
-        ON CONFLICT DO NOTHING
-        RETURNING _id
-      `,
-      values: [
-        carpool.identity_uuid,
-        carpool.identity_travel_pass,
-        carpool.identity_over_18,
-        carpool.identity_phone_trunc,
-      ],
-    });
-
-    await this.testConn.getClient().query<any>({
-      text: `
-        INSERT INTO carpool.carpools 
-          (
-            identity_id,
-            acquisition_id,
-            operator_id,
-            trip_id,
-            status,
-            is_driver,
-            operator_class,
-            datetime,
-            duration,
-            start_position,
-            start_geo_code,
-            end_position,
-            end_geo_code,
-            distance,
-            seats,
-            operator_trip_id,
-            cost,
-            operator_journey_id,
-            meta
-          )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-        ON CONFLICT DO NOTHING
-      `,
-      values: [
-        result.rows[0]?._id,
-        carpool.acquisition_id,
-        carpool.operator_id,
-        carpool.trip_id,
-        carpool.status,
-        carpool.is_driver,
-        carpool.operator_class,
-        carpool.datetime,
-        carpool.duration,
-        `POINT(${carpool.start_position.lon} ${carpool.start_position.lat})`,
-        carpool.start_geo_code,
-        `POINT(${carpool.end_position.lon} ${carpool.end_position.lat})`,
-        carpool.end_geo_code,
-        carpool.distance,
-        carpool.seats,
-        carpool.operator_trip_id,
-        carpool.cost,
-        carpool.operator_journey_id,
-        JSON.stringify({
-          calc_distance: carpool.calc_distance,
-          calc_duration: carpool.calc_duration,
-        }),
-      ],
-    });
-
-    await this.testConn.getClient().query<any>({
-      text: `
-        INSERT INTO acquisition.acquisitions
-          (
-            _id,
-            application_id,
-            operator_id,
-            journey_id,
-            payload,
-            status
-          )
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT DO NOTHING
-      `,
-      values: [
-        carpool.acquisition_id,
-        1,
-        carpool.operator_id,
-        carpool.operator_journey_id,
-        JSON.stringify({}),
-        "ok",
-      ],
-    });
-
-    await this.testConn.getClient().query<any>(`
-        SELECT
-          setval(
-            'acquisition.acquisitions__id_seq',
-            (SELECT max(_id) FROM acquisition.acquisitions),
-            true
-          )
-        `);
   }
 
   async seedCompany(company: Company) {
