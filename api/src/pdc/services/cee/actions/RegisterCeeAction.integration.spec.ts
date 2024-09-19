@@ -9,7 +9,7 @@ import {
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
-import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
+import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import {
   assertErrorHandler,
   assertHandler,
@@ -196,7 +196,7 @@ describe("RegisterCeeAction", () => {
           token,
           journey_id: 1,
           datetime: "2024-03-15T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
         });
       },
     );
@@ -229,7 +229,7 @@ describe("RegisterCeeAction", () => {
         assertEquals(resp, {
           journey_id: 2,
           datetime: "2024-03-16T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
           token,
         });
       },
@@ -262,7 +262,7 @@ describe("RegisterCeeAction", () => {
         assertEquals(resp, {
           journey_id: 3,
           datetime: "2024-03-16T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
           token,
         });
       },

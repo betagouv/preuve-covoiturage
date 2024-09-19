@@ -500,6 +500,7 @@ paths:
               type: object
               required:
                 - operator_journey_id
+                - operator_trip_id
                 - incentives
                 - operator_class
                 - start

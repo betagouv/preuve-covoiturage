@@ -3,6 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import { isAfter, isBefore } from "@/deps.ts";
+import { castFromStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
+import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
 import {
   handlerConfig,
   ParamsInterface,
@@ -10,8 +12,6 @@ import {
 } from "@/shared/acquisition/list.contract.ts";
 import { alias } from "@/shared/acquisition/list.schema.ts";
 import { castUserStringToUTC, subDaysTz, today } from "../helpers/index.ts";
-import { StatusSearchInterface } from "../interfaces/AcquisitionRepositoryProviderInterface.ts";
-import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
@@ -23,27 +23,27 @@ import { AcquisitionRepositoryProvider } from "../providers/AcquisitionRepositor
   ],
 })
 export class ListJourneyAction extends AbstractAction {
-  constructor(private acquisitionRepository: AcquisitionRepositoryProvider) {
+  constructor(private status: CarpoolStatusService) {
     super();
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const acquisitions = await this.acquisitionRepository.list(
+    const acquisitions = await this.status.findBy(
       this.applyDefault(params),
     );
     return acquisitions;
   }
 
-  protected applyDefault(params: ParamsInterface): StatusSearchInterface {
+  protected applyDefault(params: ParamsInterface) {
     const { operator_id, start, end, status, offset, limit } = params;
     const todayDate = today();
-    const endDate = castUserStringToUTC(end || todayDate);
-    const startDate = castUserStringToUTC(start || subDaysTz(todayDate, 7));
+    const endDate = castUserStringToUTC(end) || todayDate;
+    const startDate = castUserStringToUTC(start) || subDaysTz(todayDate, 7);
     this.validateStartEnd(startDate, endDate, todayDate);
 
     return {
       operator_id,
-      status,
+      status: castFromStatusEnum(status as any),
       start: startDate,
       end: endDate,
       offset: offset || 0,
