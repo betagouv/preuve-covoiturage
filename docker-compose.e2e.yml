@@ -148,7 +148,6 @@ services:
       NODE_ENV: local
       APP_ENV: local
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
     networks:
       - back
@@ -233,7 +232,6 @@ services:
       APP_DATAGOUV_URL: http://data-gouv-url
       APP_DATAGOUV_KEY: thisIsASecret
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
       PORT: 8080
       NODE_ENV: local
