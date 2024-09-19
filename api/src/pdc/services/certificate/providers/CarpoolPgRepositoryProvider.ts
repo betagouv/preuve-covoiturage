@@ -1,7 +1,9 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { identitySelectorHelper } from "@/pdc/services/certificate/helpers/identitySelectorHelper.ts";
 import {
   CarpoolInterface,
+  CarpoolTypeEnum,
   DBCarpoolInterface,
 } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
@@ -16,8 +18,6 @@ import {
 })
 export class CarpoolPgRepositoryProvider
   implements CarpoolRepositoryProviderInterface {
-  private table = "carpool.carpools" as const;
-
   constructor(protected connection: PostgresConnection) {}
 
   /**
@@ -34,7 +34,7 @@ export class CarpoolPgRepositoryProvider
       radius = 1000,
     } = params;
 
-    const values: any[] = [identities, operator_id, start_at, end_at];
+    const values: any[] = [operator_id, start_at, end_at];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -64,53 +64,41 @@ export class CarpoolPgRepositoryProvider
     const text = `
       WITH trips AS (
         SELECT
-          cc.trip_id,
           'driver' as type,
-          SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-          cc.datetime AT TIME ZONE $${values.length} AS datetime,
+          SUBSTR((cc.start_datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          cc.start_datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(
-            COALESCE(meta_payments.sum, 0)::int,
-            payment
-          ) AS payment
-        FROM ${this.table} AS cc
-        LEFT JOIN LATERAL (
-          SELECT SUM(COALESCE(amount, 0)) AS sum
-          FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
-        ) meta_payments ON true
+          cc.driver_revenue AS payment
+        FROM carpool_v2.carpools AS cc
+        JOIN carpool_v2.status AS cs ON cc._id = cs.carpool_id
         WHERE
-          cc.operator_id = $2::int
-          AND cc.is_driver = true
-          AND cc.status in ('ok', 'expired')
-          AND cc.datetime >= $3
-          AND cc.datetime <  $4
-          AND cc.identity_id = ANY($1::int[])
+          cc.operator_id = $1::int
+          AND cs.acquisition_status = 'processed'
+          AND cs.fraud_status = 'passed'
+          -- AND cs.anomaly_status = 'passed'
+          AND cc.start_datetime >= $2
+          AND cc.start_datetime <  $3
+          ${identitySelectorHelper(CarpoolTypeEnum.DRIVER, identities)}
           ${where_positions.length ? `AND (${where_positions})` : ""}
 
         UNION ALL
 
         SELECT
-          cc.trip_id,
           'passenger' as type,
-          SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-          cc.datetime AT TIME ZONE $${values.length} AS datetime,
+          SUBSTR((cc.start_datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          cc.start_datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(
-            COALESCE(meta_payments.sum, 0)::int,
-            payment
-          ) AS payment
-        FROM ${this.table} AS cc
-        LEFT JOIN LATERAL (
-          SELECT SUM(COALESCE(amount, 0)) AS sum
-          FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
-        ) meta_payments ON true
+          passenger_contribution AS payment
+        FROM carpool_v2.carpools AS cc
+        JOIN carpool_v2.status AS cs ON cc._id = cs.carpool_id
         WHERE
-          cc.operator_id = $2::int
-          AND cc.is_driver = false
-          AND cc.status in ('ok', 'expired')
-          AND cc.datetime >= $3
-          AND cc.datetime <  $4
-          AND cc.identity_id = ANY($1::int[])
+          cc.operator_id = $1::int
+          AND cs.acquisition_status = 'processed'
+          AND cs.fraud_status = 'passed'
+          -- AND cs.anomaly_status = 'passed'
+          AND cc.start_datetime >= $2
+          AND cc.start_datetime <  $3
+          ${identitySelectorHelper(CarpoolTypeEnum.PASSENGER, identities)}
           ${where_positions.length ? `AND (${where_positions})` : ""}
       )
       SELECT
