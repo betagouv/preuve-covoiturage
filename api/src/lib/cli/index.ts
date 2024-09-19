@@ -1,3 +1,3 @@
-export function args(): string[] {
+export const args = (): string[] => {
   return Deno.args;
-}
+};

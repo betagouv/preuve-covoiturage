@@ -5,14 +5,14 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { UploadedResource } from "../interfaces/index.ts";
-import { DataGouvProvider } from "../providers/DataGouvProvider.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
 } from "@/shared/trip/publishOpenData.contract.ts";
 import { alias } from "@/shared/trip/publishOpenData.schema.ts";
+import { UploadedResource } from "../interfaces/index.ts";
+import { DataGouvProvider } from "../providers/DataGouvProvider.ts";
 import { BuildResourceDescription } from "./opendata/BuildResourceDescription.ts";
 import { GetRessourceIdIfExists } from "./opendata/GetRessourceIdIfExists.ts";
 
