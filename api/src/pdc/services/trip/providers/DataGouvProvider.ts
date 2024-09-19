@@ -18,18 +18,23 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     url: string,
     method: "GET" | "POST" | "PUT" = "GET",
     body?: BodyInit,
+    isJsonContent: boolean = false,
   ): Promise<Response> {
     try {
       const baseURL = this.config.get("datagouv.baseURL");
+      let headers: HeadersInit = {
+        [this.config.get("datagouv.apiKeyHeader")]: this.config.get(
+          "datagouv.apiKey",
+        ),
+      };
+      if (isJsonContent) {
+        headers = { ...headers, "Content-Type": "application/json" };
+      }
       const response = await fetcher.raw(
         `${baseURL}/${url}`,
         {
           method,
-          headers: {
-            [this.config.get("datagouv.apiKeyHeader")]: this.config.get(
-              "datagouv.apiKey",
-            ),
-          },
+          headers,
           body,
         },
       );
@@ -89,6 +94,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
       `/datasets/${datasetSlug}/resources/${resource.id}`,
       "PUT",
       JSON.stringify(resource),
+      true,
     );
     return await response.json();
   }
