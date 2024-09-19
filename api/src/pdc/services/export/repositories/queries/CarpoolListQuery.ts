@@ -138,7 +138,7 @@ export class CarpoolListQuery extends AbstractQuery {
         oo.name as operator,
         cc.operator_trip_id,
         cc.operator_journey_id,
-        cc.driver_operator_user_id as operator_passenger_id,
+        cc.passenger_operator_user_id as operator_passenger_id,
         cc.passenger_identity_key,
         cc.driver_operator_user_id as operator_driver_id,
         cc.driver_identity_key,
