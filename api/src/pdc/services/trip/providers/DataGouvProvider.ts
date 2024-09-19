@@ -2,6 +2,7 @@ import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { readFile } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { basename } from "https://deno.land/std@0.214.0/path/mod.ts";
 import {
   DataGouvProviderInterface,
   Dataset,
@@ -17,18 +18,23 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     url: string,
     method: "GET" | "POST" | "PUT" = "GET",
     body?: BodyInit,
+    isJsonContent: boolean = false,
   ): Promise<Response> {
     try {
       const baseURL = this.config.get("datagouv.baseURL");
+      let headers: HeadersInit = {
+        [this.config.get("datagouv.apiKeyHeader")]: this.config.get(
+          "datagouv.apiKey",
+        ),
+      };
+      if (isJsonContent) {
+        headers = { ...headers, "Content-Type": "application/json" };
+      }
       const response = await fetcher.raw(
         `${baseURL}/${url}`,
         {
           method,
-          headers: {
-            [this.config.get("datagouv.apiKeyHeader")]: this.config.get(
-              "datagouv.apiKey",
-            ),
-          },
+          headers,
           body,
         },
       );
@@ -53,7 +59,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     slug: string,
     filepath: string,
   ): Promise<UploadedResource> {
-    const file = new File([await readFile(filepath)], "data.json");
+    const file = new File([await readFile(filepath)], basename(filepath));
     const form = new FormData();
     form.append("file", file);
     const response = await this.call(
@@ -70,7 +76,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     resourceId: string,
   ): Promise<UploadedResource> {
     const form = new FormData();
-    const file = new File([await readFile(filepath)], "data.json");
+    const file = new File([await readFile(filepath)], basename(filepath));
     form.append("file", file);
     const response = await this.call(
       `/datasets/${slug}/resources/${resourceId}/upload/`,
@@ -88,6 +94,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
       `/datasets/${datasetSlug}/resources/${resource.id}`,
       "PUT",
       JSON.stringify(resource),
+      true,
     );
     return await response.json();
   }

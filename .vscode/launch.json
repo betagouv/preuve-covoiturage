@@ -56,5 +56,20 @@
         "FRAME": "7"
       }
     },
-  ]
+    "name": "Deno: Attach",
+    "type": "node",
+    "request": "attach",
+    "port": 9229,
+    "restart": true,
+    "skipFiles": [
+      "<node_internals>/**"
+    ],
+    "resolveSourceMapLocations": [
+      "**",
+      "!**/node_modules/**"
+    ],
+    "localRoot": "${workspaceFolder}",
+    "remoteRoot": "/",
+  }
+]
 }
