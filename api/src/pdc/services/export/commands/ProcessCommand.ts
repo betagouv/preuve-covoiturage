@@ -6,8 +6,8 @@ import {
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
+import { CSVWriter } from "../models/CSVWriter.ts";
 import { Export, ExportStatus } from "../models/Export.ts";
-import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { FileCreatorServiceInterfaceResolver } from "../services/FileCreatorService.ts";
@@ -60,7 +60,7 @@ export class ProcessCommand implements CommandInterface {
       // generate the file
       const filepath = await this.fileCreatorService.write(
         params,
-        new XLSXWriter(filename, { fields }),
+        new CSVWriter(filename, { fields }),
         await this.exportRepository.progress(_id),
       );
 
