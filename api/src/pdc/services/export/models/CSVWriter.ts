@@ -1,5 +1,5 @@
-import { AdmZip } from "@/deps.ts";
-import { getTmpDir } from "@/lib/file/index.ts";
+import { AdmZip, stringify } from "@/deps.ts";
+import { getTmpDir, open, OpenFileDescriptor } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
@@ -35,13 +35,13 @@ export type Options = {
 };
 
 export class CSVWriter {
-  protected file: any; // FIXME
+  protected fileStream: OpenFileDescriptor | null = null;
   protected fileExt = "csv";
   protected archiveExt = "zip";
   protected folder: string;
   protected basename: string;
   protected options: Options = {
-    compress: false,
+    compress: true,
     fields: [],
     computed: [
       {
@@ -69,6 +69,12 @@ export class CSVWriter {
     ],
     datasources: new Map(),
   };
+  protected stringifierOptions = {
+    header: true,
+    delimiter: ";", // Excel uses semicolon as default delimiter
+    quoted_string: true,
+  };
+  protected stringifier = stringify(this.stringifierOptions);
 
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.options, ...config } as Options;
@@ -76,16 +82,27 @@ export class CSVWriter {
     this.basename = sanitize(filename, 128);
   }
 
-  // TODO create the CSV file
   public async create(): Promise<CSVWriter> {
-    // create the CSV file
-    // this.file =
+    this.fileStream = await open(this.path, { write: true });
+    this.stringifier.on("readable", () => {
+      let row;
+      // deno-lint-ignore no-cond-assign
+      while (row = this.stringifier.read()) {
+        this.fileStream?.write(row);
+      }
+    });
+    this.stringifier.on("error", (err) => {
+      console.error(err.message);
+    });
+    this.stringifier.on("finish", () => {
+      this.fileStream?.close();
+    });
 
     return this;
   }
 
   public async close(): Promise<CSVWriter> {
-    await this.file.commit();
+    this.stringifier.end();
     return this;
   }
 
@@ -99,29 +116,25 @@ export class CSVWriter {
       );
     });
 
-    // TODO use the XLSX library to write the line to the file
-    // TODO get the list of fields from the config
-    const row = carpoolRow.get(this.options.fields);
-    this.dataSheet.addRow(row).commit();
+    this.stringifier.write(carpoolRow.get());
 
     return this;
   }
 
-  // TODO print help in a separate sheet
   public async printHelp(): Promise<CSVWriter> {
-    logger.info("TODO print help");
+    // No help in CSV
     return this;
   }
 
   // TODO compress the file with ZIP (for now)
   public async compress(): Promise<CSVWriter> {
     if (!this.options.compress) {
-      logger.info(`Skipped compression of ${this.workbookPath}`);
+      logger.info(`Skipped compression of ${this.csvPath}`);
       return this;
     }
 
     const zip = new AdmZip();
-    zip.addLocalFile(this.workbookPath);
+    zip.addLocalFile(this.csvPath);
     zip.writeZip(this.archivePath);
 
     return this;
@@ -133,12 +146,20 @@ export class CSVWriter {
     return this;
   }
 
-  public get workbookFilename(): string {
+  public get filename(): string {
+    return this.options.compress ? this.archiveFilename : this.csvFilename;
+  }
+
+  public get path(): string {
+    return this.options.compress ? this.archivePath : this.csvPath;
+  }
+
+  public get csvFilename(): string {
     return `${this.basename}.${this.fileExt}`;
   }
 
-  public get workbookPath(): string {
-    return join(this.folder, this.workbookFilename);
+  public get csvPath(): string {
+    return join(this.folder, this.filename);
   }
 
   public get archiveFilename(): string {

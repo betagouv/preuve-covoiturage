@@ -97,9 +97,9 @@ export class FileCreatorService {
       await this.fileWriter.close();
       await this.fileWriter.compress();
 
-      logger.info(`File written to ${this.fileWriter.workbookPath}`);
+      logger.info(`File written to ${this.fileWriter.path}`);
 
-      return this.fileWriter.workbookPath;
+      return this.fileWriter.path;
     } catch (e) {
       logger.error("FileCreatorService", e.message);
       await this.fileWriter.close();

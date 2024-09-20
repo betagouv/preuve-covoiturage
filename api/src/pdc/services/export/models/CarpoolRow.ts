@@ -22,10 +22,12 @@ export type IncentiveRPC = {
 export class CarpoolRow {
   constructor(protected data: CarpoolRowData) {}
 
-  public get(fields: string[] | undefined): Partial<CarpoolRowData> {
-    // TODO transform if needed (dates, etc...)
-
-    // pick fields or return the whole data
+  /**
+   * pick fields or return the whole data
+   *
+   * @param fields
+   */
+  public get(fields?: string[]): Partial<CarpoolRowData> {
     return fields && fields.length ? pick(this.data, fields) : this.data;
   }
 
