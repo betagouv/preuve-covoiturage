@@ -5,6 +5,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { NormalizationProvider } from "@/pdc/providers/normalization/index.ts";
@@ -32,16 +33,17 @@ import { AcquisitionRepositoryProvider } from "./providers/AcquisitionRepository
 @serviceProvider({
   config,
   commands: [
-    AcquisitionProcessCommand,
     AcquisitionMigrateCommand,
+    AcquisitionProcessCommand,
     ProcessGeoCommand,
   ],
   queues: ["acquisition"],
   providers: [
     AcquisitionRepositoryProvider,
-    NormalizationProvider,
-    GeoProvider,
     CarpoolAcquisitionService,
+    CarpoolStatusService,
+    GeoProvider,
+    NormalizationProvider,
   ],
   validator: [
     v3binding,
@@ -55,12 +57,12 @@ import { AcquisitionRepositoryProvider } from "./providers/AcquisitionRepository
     ValidatorMiddleware,
   ]],
   handlers: [
-    CreateJourneyAction,
     CancelJourneyAction,
-    StatusJourneyAction,
-    ProcessJourneyAction,
+    CreateJourneyAction,
     ListJourneyAction,
     PatchJourneyAction,
+    ProcessJourneyAction,
+    StatusJourneyAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
