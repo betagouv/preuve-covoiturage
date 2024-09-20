@@ -1,6 +1,7 @@
 openapi: '3.0.2'
 info:
-  title: API Trajets V3.0
+  title: API Trajets
+  version: "3.0"
   description: |
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
@@ -118,8 +119,8 @@ components:
         - validation_error
         - acquisition_error
         - normalization_error
+        - terms_violation_error
         - ok
-        - expired
         - canceled
         - pending
         - unknown
@@ -133,7 +134,6 @@ components:
           - ok : le trajet a correctement été traité
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
-          - expired : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
           - unknown : une erreur inconnue a affecté le trajet
     duration:
       type: number
@@ -415,6 +415,19 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
+    terms_violation_label:
+      type: string
+      enum:
+        - distance_too_short
+        - too_many_trips_by_day
+        - too_close_trips
+        - expired
+      description: |
+        Etiquette possible pour un cas de non respect des CGU détectée :
+          - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+          - `too_many_trips_by_day` : le participant a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour)
+          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets conducteur (operator_trip_id) impliquant un même usager [identity_key(operator_trip_id#2_start_datetime - operator_trip_id#1_end_datetime) <= 30mn)
+          - `expired`` : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
     fraudcheck_label:
       type: string
       enum:
@@ -448,6 +461,40 @@ components:
          - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
          La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 paths:
+  /auth/token:
+    post:
+      tags:
+      - auth
+      - wip
+      summary: Créer un token applicatif à partir de clés d'accès.
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                access_key:
+                  type: string
+                secret_key:
+                  type: string
+              required:
+                - access_key
+                - secret_key
+      responses:
+        '201':
+          description: Le token est créé
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: un token JWT à durée de vie limitée
+                  expires_in:
+                    type: number
+                    description: durée de vie du token en secondes
   /journeys:
     post:
       tags:
@@ -680,6 +727,13 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
+                  terms_violation_details:
+                    type: array
+                    description: | 
+                      Liste des raisons ayant abouti au rejet du trajet. Vide si pas de fraude détectée.
+                      Actuellement non implementé #wip.
+                    items:
+                      '$ref': "#/components/schemas/terms_violation_label"
                   fraud_error_labels:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
@@ -698,7 +752,7 @@ paths:
                             type: string
                             description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
                           temporal_overlap_duration_ratio:
-                            type: float
+                            type: number
                             description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
