@@ -183,13 +183,9 @@ describe("Create Certification Action", () => {
     );
     kernelCallStub = sinon.stub(fakeKernelInterfaceResolver, "call");
 
-    // kernel is called inside repository methods
-    // carpool:findidentities
-    kernelCallStub.onCall(0).resolves(RPC_IDENTITIES);
-
     // operator:quickfind
     kernelCallStub
-      .onCall(1)
+      .onCall(0)
       .resolves({
         uuid: OPERATOR_UUID,
         name: OPERATOR_NAME,
@@ -226,15 +222,15 @@ describe("Create Certification Action", () => {
       carpools: carpoolData,
     };
 
-    const expectCreateCertificateParams = getExpectedCertificateParams(
-      expected,
-    );
-    sinon.assert.calledOnceWithExactly(
+    const { meta, identity_uuid, ...expectCreateCertificateParams } =
+      getExpectedCertificateParams(expected);
+
+    sinon.assert.calledOnceWithMatch(
       certificateRepositoryCreateStub,
       expectCreateCertificateParams,
     );
     sinon.assert.calledOnce(carpoolRepositoryFindStub);
-    sinon.assert.calledTwice(kernelCallStub);
+    sinon.assert.calledOnce(kernelCallStub);
     assertEquals(result.meta.httpStatus, 201);
     assertEquals(result.data.uuid, CERTIFICATE_UUID as string);
   });
@@ -261,16 +257,15 @@ describe("Create Certification Action", () => {
       carpools: [],
     };
 
-    const expectCreateCertificateParams = getExpectedCertificateParams(
-      expected,
-    );
+    const { meta, identity_uuid, ...expectCreateCertificateParams } =
+      getExpectedCertificateParams(expected);
 
-    sinon.assert.calledOnceWithExactly(
+    sinon.assert.calledOnceWithMatch(
       certificateRepositoryCreateStub,
       expectCreateCertificateParams,
     );
     sinon.assert.calledOnce(carpoolRepositoryFindStub);
-    sinon.assert.calledTwice(kernelCallStub);
+    sinon.assert.calledOnce(kernelCallStub);
     assertEquals(result.meta.httpStatus, 201);
     assertEquals(result.data.uuid, CERTIFICATE_UUID);
   });

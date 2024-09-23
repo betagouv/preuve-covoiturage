@@ -10,6 +10,7 @@ import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from "@/pdc/providers/middleware/index.ts";
+import { uuid } from "@/pdc/providers/test/helpers.ts";
 import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
 import {
@@ -27,10 +28,6 @@ import {
   findOperator,
   FindOperatorInterface,
 } from "../helpers/findOperatorHelper.ts";
-import {
-  findPerson,
-  FindPersonInterface,
-} from "../helpers/findPersonHelper.ts";
 import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";
 import {
   CarpoolRepositoryProviderInterfaceResolver,
@@ -51,7 +48,6 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
 })
 export class CreateCertificateAction extends AbstractAction {
   private findOperator: FindOperatorInterface;
-  private findPerson: FindPersonInterface;
   private castParams: CreateCastParamsInterface<ParamsInterface>;
 
   constructor(
@@ -62,7 +58,6 @@ export class CreateCertificateAction extends AbstractAction {
   ) {
     super();
     this.findOperator = findOperator(this.kernel);
-    this.findPerson = findPerson(this.kernel);
     this.castParams = createCastParamsHelper(this.config);
   }
 
@@ -74,14 +69,11 @@ export class CreateCertificateAction extends AbstractAction {
       .castParams(params);
 
     // fetch the data for this identity and operator and map to template object
-    const identities = await this.findPerson({ identity, operator_id });
-    const id_list = identities.flatMap((i) => i._id);
-    const uuid = identities[0].uuid;
     const operator = await this.findOperator({ operator_id, context });
 
     // fetch the data for this identity and operator and store the compiled data
     const findParams: FindParamsInterface = {
-      identities: id_list,
+      identities: [identity],
       operator_id,
       tz,
       start_at,
@@ -93,7 +85,7 @@ export class CreateCertificateAction extends AbstractAction {
     );
     const certificate: CertificateInterface = await this.certRepository.create(
       mapFromCarpools({
-        person: { uuid },
+        person: { uuid: uuid() }, // TODO remove the UUID completely
         operator,
         carpools,
         params: { tz, start_at, end_at, positions },
