@@ -688,18 +688,19 @@ paths:
                   anomaly_error_details:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
-                    properties:
-                      label:
-                       '$ref': "#/components/schemas/anomaly_label"
-                      metas:
-                        type: object
-                        properties:
-                          conflicting_journey_id:
-                            type: string
-                            description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
-                          temporal_overlap_duration_ratio:
-                            type: float
-                            description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+                    items:
+                      properties:
+                        label:
+                        '$ref': "#/components/schemas/anomaly_label"
+                        metas:
+                          type: object
+                          properties:
+                            conflicting_journey_id:
+                              type: string
+                              description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
+                            temporal_overlap_duration_ratio:
+                              type: number
+                              description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
@@ -1027,6 +1028,7 @@ paths:
                   example: 2021-07-01T00:00:00+0200
                 positions:
                   type: array
+                  minItems: 2
                   description: |
                     Pour sélectionner des trajets en fonction de leur point de départ et d'arrivée, il est possible de les préciser avec la clé `positions`.
                     Tous les trajets ayant un départ **et** une arrivée dans un rayon de `1km` autour des points donnés seront inclus à l'attestation.
