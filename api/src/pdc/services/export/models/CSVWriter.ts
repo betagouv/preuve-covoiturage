@@ -54,17 +54,25 @@ export class CSVWriter {
       {
         name: "incentive_type",
         compute(row, datasources) {
+          if (!row) return "normal";
+
           // for each campaign, get the mode at the start date or the end date
           // and return the higher one (booster)
-          return row.value("campaigns", []).reduce((acc, id) => {
-            const campaign = datasources.get("campaigns").get(id);
-            if (!campaign) return acc;
-            const mode = campaign.getModeAt([
-              row.value("start_datetime"),
-              row.value("end_datetime"),
-            ]);
-            return acc === "booster" ? acc : mode;
-          }, "normal");
+          // @ts-ignore
+          return (row.value("campaigns", []) as any[])
+            .reduce((acc: string, id: number) => {
+              const campaigns = datasources.get("campaigns");
+              if (campaigns instanceof Map) {
+                const campaign = campaigns.get(id);
+                if (!campaign) return acc;
+                const mode = campaign.getModeAt([
+                  row.value("start_datetime"),
+                  row.value("end_datetime"),
+                ]);
+                return acc === "booster" ? acc : mode;
+              }
+              return acc;
+            }, "normal");
         },
       },
       {
@@ -92,10 +100,10 @@ export class CSVWriter {
   public async create(): Promise<CSVWriter> {
     this.fileStream = await open(this.csvPath, { write: true });
     this.stringifier.on("readable", () => {
-      let row;
-      // deno-lint-ignore no-cond-assign
-      while (row = this.stringifier.read()) {
+      let row = this.stringifier.read();
+      while (row !== null) {
         this.fileStream?.write(row);
+        row = this.stringifier.read();
       }
     });
     this.stringifier.on("error", (err) => {
@@ -147,12 +155,6 @@ export class CSVWriter {
     if (this.options.cleanup) {
       remove(this.csvPath);
     }
-
-    return this;
-  }
-
-  public async cleanup(): Promise<CSVWriter> {
-    // TODO
 
     return this;
   }

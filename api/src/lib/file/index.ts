@@ -55,6 +55,13 @@ export function readFile(filepath: string) {
   return Deno.readFile(filepath);
 }
 
-export function remove(filepath: string) {
-  return Deno.remove(filepath);
+export function remove(filepath: string): void {
+  try {
+    Deno.remove(filepath);
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) {
+      throw new Error(`Failed to remove file ${filepath}: ${error.message}`);
+    }
+    // File doesn't exist, which is fine for a remove operation
+  }
 }

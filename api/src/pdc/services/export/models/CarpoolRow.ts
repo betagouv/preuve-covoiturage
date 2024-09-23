@@ -49,23 +49,20 @@ export class CarpoolRow {
 
   public hasIncentive(): boolean {
     return this.incentiveFields()
-      .filter((key) => key.includes("_siret"))
-      .map((key) => this.value(key))
-      .filter((val) => val !== null)
-      .length > 0;
+      .some((key) => key.includes("_siret") && this.value(key) !== null);
   }
 
-  public incentiveFields<K extends keyof CarpoolRowData>(): Partial<K>[] {
+  public incentiveFields<K extends keyof CarpoolRowData>(): K[] {
     return Object
       .keys(this.data)
-      .filter((key) => new RegExp("incentive_[0-9]_.*").test(key)) as K[];
+      .filter((key) => /incentive_[0-9]_.*/.test(key)) as K[];
   }
 
   public incentiveSum(): number {
     return this.incentiveFields()
       .filter((key) => key.includes("_amount"))
       .map((key) => Number(this.value(key)))
-      .filter((val) => !isNaN(val))
+      .filter((val) => !Number.isNaN(val))
       .reduce((acc, val) => acc + val, 0);
   }
 }
