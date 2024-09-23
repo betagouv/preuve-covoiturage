@@ -3,9 +3,9 @@ import {
   CommandInterface,
   CommandOptionType,
 } from "@/ilos/common/index.ts";
+import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
-import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { FileCreatorServiceInterfaceResolver } from "../services/FileCreatorService.ts";
 import { NameServiceInterfaceResolver } from "../services/NameService.ts";
@@ -36,7 +36,7 @@ export class DebugCommand implements CommandInterface {
     // create the Workbook and write data
     await this.fc.write(
       new ExportParams({ start_at, end_at }),
-      new XLSXWriter(filename, { fields }),
+      new CSVWriter(filename, { fields }),
     );
 
     // TODO upload

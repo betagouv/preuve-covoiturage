@@ -1,7 +1,7 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
-import { FieldFilter, Fields } from "../models/XLSXWriter.ts";
 
 export type FieldServiceInterface = {
   byTarget(type: ExportTarget): Partial<Fields>;
