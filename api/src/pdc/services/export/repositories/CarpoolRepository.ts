@@ -2,8 +2,8 @@ import { provider } from "@/ilos/common/Decorators.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
+import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
-import { XLSXWriter } from "@/pdc/services/export/models/XLSXWriter.ts";
 import { ExportProgress } from "@/pdc/services/export/repositories/ExportRepository.ts";
 import { QueryTemplates } from "@/pdc/services/export/repositories/queries/AbstractQuery.ts";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export interface CarpoolRepositoryInterface {
-  list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
+  list(params: ExportParams, fileWriter: CSVWriter): Promise<void>;
   count(params: ExportParams): Promise<number>;
 }
 
@@ -21,7 +21,7 @@ export abstract class CarpoolRepositoryInterfaceResolver
   implements CarpoolRepositoryInterface {
   public async list(
     params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter,
   ): Promise<void> {
     throw new Error("Not implemented");
   }
@@ -41,7 +41,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
   public async list(
     params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter,
     progress?: ExportProgress,
   ): Promise<void> {
     const [values, templates] = this.getListValuesAndTemplates(params);
