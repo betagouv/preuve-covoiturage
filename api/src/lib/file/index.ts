@@ -54,3 +54,7 @@ export function stat(
 export function readFile(filepath: string) {
   return Deno.readFile(filepath);
 }
+
+export function remove(filepath: string) {
+  return Deno.remove(filepath);
+}

@@ -1,5 +1,10 @@
 import { AdmZip, stringify } from "@/deps.ts";
-import { getTmpDir, open, OpenFileDescriptor } from "@/lib/file/index.ts";
+import {
+  getTmpDir,
+  open,
+  OpenFileDescriptor,
+  remove,
+} from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
@@ -29,6 +34,7 @@ export type ComputedProcessor = {
 
 export type Options = {
   compress: boolean;
+  cleanup: boolean;
   fields: Partial<Fields>;
   computed: ComputedProcessors;
   datasources: Datasources;
@@ -42,6 +48,7 @@ export class CSVWriter {
   protected basename: string;
   protected options: Options = {
     compress: true,
+    cleanup: true,
     fields: [],
     computed: [
       {
@@ -83,7 +90,7 @@ export class CSVWriter {
   }
 
   public async create(): Promise<CSVWriter> {
-    this.fileStream = await open(this.path, { write: true });
+    this.fileStream = await open(this.csvPath, { write: true });
     this.stringifier.on("readable", () => {
       let row;
       // deno-lint-ignore no-cond-assign
@@ -137,6 +144,10 @@ export class CSVWriter {
     zip.addLocalFile(this.csvPath);
     zip.writeZip(this.archivePath);
 
+    if (this.options.cleanup) {
+      remove(this.csvPath);
+    }
+
     return this;
   }
 
@@ -159,7 +170,7 @@ export class CSVWriter {
   }
 
   public get csvPath(): string {
-    return join(this.folder, this.filename);
+    return join(this.folder, this.csvFilename);
   }
 
   public get archiveFilename(): string {

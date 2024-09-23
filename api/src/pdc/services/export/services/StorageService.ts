@@ -1,4 +1,5 @@
 import { provider } from "@/ilos/common/Decorators.ts";
+import { remove } from "@/lib/file/index.ts";
 import {
   BucketName,
   S3ObjectList,
@@ -53,5 +54,9 @@ export class StorageService {
 
   public async getPublicUrl(filename: string): Promise<string> {
     return await this.s3StorageProvider.getPublicUrl(this.bucket, filename);
+  }
+
+  public cleanup(filepath: string): void {
+    remove(filepath);
   }
 }
