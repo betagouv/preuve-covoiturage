@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import os
@@ -13,7 +13,7 @@ frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 
-# In[ ]:
+# In[3]:
 
 
 import pandas as pd
@@ -51,7 +51,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[ ]:
+# In[4]:
 
 
 from helpers.apply_metods import add_overlap_columns
@@ -65,7 +65,7 @@ grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
 
 
-# In[ ]:
+# In[5]:
 
 
 overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_duration_ratio'] > 0.7
@@ -73,14 +73,14 @@ overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_
 df_high_overlap = df_only_grouped_with_overlap_group_filled[overlap_duration_high_mask]
 
 
-# In[ ]:
+# In[6]:
 
 
 grouped_tmp = df_high_overlap.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
 df_final_result = grouped_tmp.filter(lambda x:  x['overlap_group'].count() > 1)
 
 
-# In[ ]:
+# In[7]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
@@ -103,7 +103,7 @@ df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 
-# In[ ]:
+# In[8]:
 
 
 import sqlalchemy as sa
@@ -127,7 +127,7 @@ if update_carpool_status is True:
        conn.commit()
 
 
-# In[ ]:
+# In[9]:
 
 
 from sqlalchemy.dialects.postgresql import insert
@@ -147,45 +147,42 @@ df_labels.to_sql(
 )
 
 
+# In[10]:
+
+
+# update pending carpool to passed, no anomaly triggered on them
+engine = create_engine(connection_string, connect_args={'sslmode':'require'})
+
+query = text("""
+        SELECT c2s._id
+        FROM carpool_v2.status c2s
+        JOIN carpool_v2.carpools c2c
+        ON c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - :delay_hours
+        AND c2s.anomaly_status = 'pending'
+""")
+
+with engine.connect() as conn:
+    df_still_pending_carpools = pd.read_sql_query(query, conn, params={'delay_hours': f'{delay} hours'})
+
 # In[ ]:
 
 
-# update pending carpool to passed, no anomaly triggered
+import sqlalchemy as sa
+
 if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool_v2.status']
+    
+    where_clause = table.c.carpool_id.in_(df_still_pending_carpools['_id'].to_list())
+
+    update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
+
     with engine.connect() as conn:
-        update_query = """
-        DO $$
-        DECLARE
-            updated_rows INTEGER := 1;  -- Initialize with 1 so the loop starts
-        BEGIN
-            WHILE updated_rows > 0 LOOP
-                WITH rows_to_update AS (
-                    SELECT c2s._id
-                    FROM carpool_v2.status c2s
-                    JOIN carpool_v2.carpools c2c
-                    ON c2c._id = c2s.carpool_id
-                    WHERE c2c.start_datetime < NOW() - INTERVAL '30 hours'
-                    AND c2s.anomaly_status = 'pending'
-                    LIMIT 100000  -- Batch size
-                )
-                UPDATE carpool_v2.status
-                SET anomaly_status = 'passed'
-                WHERE _id IN (SELECT _id FROM rows_to_update);
-                
-                GET DIAGNOSTICS updated_rows = ROW_COUNT;
-
-                -- Optional: To log the progress, use RAISE NOTICE
-                RAISE NOTICE 'Updated % rows.', updated_rows;
-
-                -- Exit the loop if no rows are updated
-                IF updated_rows = 0 THEN
-                    EXIT;
-                END IF;
-            END LOOP;
-        END $$;
-        """
-        result = conn.execute(text(update_query))
-        print(f"{result.rowcount} where updated to anomaly_status 'passed'")
-
-
+        result = conn.execute(update_stmt)
+        print(f"{result.rowcount} carpools status updated to anomaly_status=passed because they were not processable within 48 hours after start_datetime (carpool expired)")
+        conn.commit()
 
