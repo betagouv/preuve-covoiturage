@@ -183,39 +183,61 @@ df_labels.to_sql(
 
 
 # update pending carpool to passed, no anomaly triggered on them
+engine = create_engine(connection_string, connect_args={'sslmode':'require'})
+
+query = f"""
+        SELECT c2s._id
+        FROM carpool_v2.status c2s
+        JOIN carpool_v2.carpools c2c
+        ON c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - '{delay} hours'::interval
+        AND c2s.anomaly_status = 'pending'
+"""
+
+with engine.connect() as conn:
+    df_stil_pending_carpools = pd.read_sql_query(text(query), conn)
+
+
+# In[ ]:
+
+
+import sqlalchemy as sa
+
 if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool_v2')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool_v2.status']
+    
+    where_clause = table.c.carpool_id.in_(df_stil_pending_carpools['_id'].to_list())
+
+    update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
+
     with engine.connect() as conn:
-        update_query = """
-        DO $$
-        DECLARE
-            updated_rows INTEGER := 1;  -- Initialize with 1 so the loop starts
-        BEGIN
-            WHILE updated_rows > 0 LOOP
-                WITH rows_to_update AS (
-                    SELECT c2s._id
-                    FROM carpool_v2.status c2s
-                    JOIN carpool_v2.carpools c2c
-                    ON c2c._id = c2s.carpool_id
-                    WHERE c2c.start_datetime < NOW() - INTERVAL '30 hours'
-                    AND c2s.anomaly_status = 'pending'
-                    LIMIT 100000  -- Batch size
-                )
-                UPDATE carpool_v2.status
-                SET anomaly_status = 'passed'
-                WHERE _id IN (SELECT _id FROM rows_to_update);
-                
-                GET DIAGNOSTICS updated_rows = ROW_COUNT;
+        result = conn.execute(update_stmt)
+        print(f"{result.rowcount} carpools status updated to anomaly_status=passed because they were not processable within 48 hours after start_datetime (carpool expired)")
+        conn.commit()
 
-                -- Optional: To log the progress, use RAISE NOTICE
-                RAISE NOTICE 'Updated % rows.', updated_rows;
 
-                -- Exit the loop if no rows are updated
-                IF updated_rows = 0 THEN
-                    EXIT;
-                END IF;
-            END LOOP;
-        END $$;
-        """
-        result = conn.execute(text(update_query))
-        print(f"{result.rowcount} where updated to anomaly_status 'passed'")
+# In[ ]:
+
+
+# df_result_light = df_result[['_id','operator_id','gmap_url', 'distance', 'duration', 'osrm_distance', 'osrm_duration', 'distance_delta', 'duration_delta']]
+# df_result_light['duration'] = df_result_light['duration']/60
+# df_result_light['osrm_duration'] = df_result_light['osrm_duration']/60 
+# df_result_light['duration_delta'] = df_result_light['duration_delta']/60 
+
+
+# Regarder le restes des trajets pour voir si il n'y a pas d'autre anomalie possible
+
+# In[ ]:
+
+
+# df_row_check = df_only_class_c_trip[~df_only_class_c_trip._id.isin(df_result['_id'])]
+
+# df_row_check = df_row_check[['_id','operator_id','gmap_url', 'distance', 'duration', 'osrm_distance', 'osrm_duration', 'distance_delta', 'duration_delta']]
+# df_row_check['duration'] = df_row_check['duration']/60
+# df_row_check['osrm_duration'] = df_row_check['osrm_duration']/60 
+# df_row_check['duration_delta'] = df_row_check['duration_delta']/60 
 
