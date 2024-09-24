@@ -15,23 +15,22 @@ export class CeremaAom2024 extends AbstractDataset {
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
     ["id_reseau", ["id réseau", "integer"]],
-    ["nom_reseau", ["Nom du réseau", "varchar"]],
     ["siren_aom", ["N° SIREN AOM", "varchar"]],
     ["nom_aom", ["Nom de l’AOM", "varchar"]],
-    ["forme_juridique_aom", ["Forme juridique de l’AOM", "varchar"]],
+    ["forme_juridique_aom", ["Forme juridique De l’AOM", "varchar"]],
     ["region", ["Région siège", "varchar"]],
     ["departement", ["Département siège", "varchar"]],
-    ["siren_group", ["N° SIREN groupement", "varchar"]],
+    ["siren_group", ["N° SIREN Groupement", "varchar"]],
     ["lien_banatic", ["Lien Banatic", "varchar"]],
     ["nom_group", ["Nom du groupement", "varchar"]],
-    ["forme_juridique_group", ["Nature juridique du groupement", "varchar"]],
-    ["nb_membres", ["Nombre de membres", "varchar"]],
-    ["pop_aom_2019", ["Population  totale 2019", "varchar"]],
+    ["forme_juridique_group", ["Nature juridique Du groupement", "varchar"]],
+    ["nb_membres", ["Nombre De membres", "varchar"]],
+    ["pop_aom_2021", ["Population totale 2021(INSEE)", "varchar"]],
     ["nom_membre", ["Nom membre", "varchar"]],
-    ["pop_banatic_2019", ["Population  totale 2019 (Banatic)", "varchar"]],
+    ["pop_banatic_2019", ["Population totale 2019 (Banatic)", "varchar"]],
     ["siren_membre", ["Siren membre", "varchar"]],
     ["com", ["N° INSEE", "varchar"]],
-    ["wikipedia", ["Lien Page wikipedia", "varchar"]],
+    ["wikipedia", ["Lien Page Wikipedia", "varchar"]],
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;

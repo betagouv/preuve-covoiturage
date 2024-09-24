@@ -10,7 +10,7 @@ import {
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
-import { CeremaAom2023 as Dataset } from "./CeremaAom2024.ts";
+import { CeremaAom2024 as Dataset } from "./CeremaAom2024.ts";
 
 describe.skip("CeremaAom2024", () => {
   const connection = createPool();
