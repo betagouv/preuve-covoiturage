@@ -185,17 +185,17 @@ df_labels.to_sql(
 # update pending carpool to passed, no anomaly triggered on them
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = text("""
-  SELECT c2s._id
-  FROM carpool_v2.status c2s
-  JOIN carpool_v2.carpools c2c
-  ON c2c._id = c2s.carpool_id
-  WHERE c2c.start_datetime < NOW() - INTERVAL '48 hours' - INTERVAL :delay_hours
-  AND c2s.anomaly_status = 'pending'
-""")
+query = f"""
+        SELECT c2s._id
+        FROM carpool_v2.status c2s
+        JOIN carpool_v2.carpools c2c
+        ON c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - '{delay} hours'::interval
+        AND c2s.anomaly_status = 'pending'
+"""
 
 with engine.connect() as conn:
-    df_still_pending_carpools = pd.read_sql_query(query, conn, params={"delay_hours": f"{delay} hours"})
+    df_still_pending_carpools = pd.read_sql_query(text(query), conn)
 
 
 # In[ ]:
@@ -209,7 +209,7 @@ if update_carpool_status is True:
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool_v2.status']
-
+    
     where_clause = table.c.carpool_id.in_(df_still_pending_carpools['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')

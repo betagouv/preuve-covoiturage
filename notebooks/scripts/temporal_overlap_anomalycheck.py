@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -13,7 +13,7 @@ frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 
-# In[3]:
+# In[ ]:
 
 
 import pandas as pd
@@ -51,7 +51,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[4]:
+# In[ ]:
 
 
 from helpers.apply_metods import add_overlap_columns
@@ -65,7 +65,7 @@ grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
 
 
-# In[5]:
+# In[ ]:
 
 
 overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_duration_ratio'] > 0.7
@@ -73,14 +73,14 @@ overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_
 df_high_overlap = df_only_grouped_with_overlap_group_filled[overlap_duration_high_mask]
 
 
-# In[6]:
+# In[ ]:
 
 
 grouped_tmp = df_high_overlap.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
 df_final_result = grouped_tmp.filter(lambda x:  x['overlap_group'].count() > 1)
 
 
-# In[7]:
+# In[ ]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
@@ -103,7 +103,7 @@ df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 
-# In[8]:
+# In[ ]:
 
 
 import sqlalchemy as sa
@@ -127,7 +127,7 @@ if update_carpool_status is True:
        conn.commit()
 
 
-# In[9]:
+# In[ ]:
 
 
 from sqlalchemy.dialects.postgresql import insert
@@ -147,23 +147,24 @@ df_labels.to_sql(
 )
 
 
-# In[10]:
+# In[ ]:
 
 
 # update pending carpool to passed, no anomaly triggered on them
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = text("""
+query = f"""
         SELECT c2s._id
         FROM carpool_v2.status c2s
         JOIN carpool_v2.carpools c2c
         ON c2c._id = c2s.carpool_id
-        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - :delay_hours
+        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - '{delay} hours'::interval
         AND c2s.anomaly_status = 'pending'
-""")
+"""
 
 with engine.connect() as conn:
-    df_still_pending_carpools = pd.read_sql_query(query, conn, params={'delay_hours': f'{delay} hours'})
+    df_still_pending_carpools = pd.read_sql_query(text(query), conn)
+
 
 # In[ ]:
 
