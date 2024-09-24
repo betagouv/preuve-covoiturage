@@ -15,14 +15,14 @@ Votre export des trajets est disponible.
 Vous pouvez le télécharger en cliquant sur le bouton ci-dessous.
 </p>      
 <p>
-Les données sont au format XLSX.
+Les données sont au format CSV compressé dans un fichier ZIP.
 </p>      
     `,
   message_text: `
 Votre export des trajets est disponible.
 Vous pouvez le télécharger en cliquant sur le bouton ci-dessous.
 
-Les données sont au format XLSX.
+Les données sont au format CSV compressé dans un fichier ZIP.
     `,
 };
 
