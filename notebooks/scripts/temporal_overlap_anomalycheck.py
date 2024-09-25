@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import os
@@ -13,7 +13,7 @@ frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 
-# In[ ]:
+# In[2]:
 
 
 import pandas as pd
@@ -51,7 +51,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[ ]:
+# In[3]:
 
 
 from helpers.apply_metods import add_overlap_columns
@@ -65,7 +65,7 @@ grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
 
 
-# In[ ]:
+# In[4]:
 
 
 overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_duration_ratio'] > 0.7
@@ -73,14 +73,14 @@ overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_
 df_high_overlap = df_only_grouped_with_overlap_group_filled[overlap_duration_high_mask]
 
 
-# In[ ]:
+# In[5]:
 
 
 grouped_tmp = df_high_overlap.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
 df_final_result = grouped_tmp.filter(lambda x:  x['overlap_group'].count() > 1)
 
 
-# In[ ]:
+# In[6]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
@@ -103,7 +103,7 @@ df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 
-# In[ ]:
+# In[7]:
 
 
 import sqlalchemy as sa
@@ -127,7 +127,7 @@ if update_carpool_status is True:
        conn.commit()
 
 
-# In[ ]:
+# In[8]:
 
 
 from sqlalchemy.dialects.postgresql import insert
@@ -147,7 +147,7 @@ df_labels.to_sql(
 )
 
 
-# In[ ]:
+# In[12]:
 
 
 # update pending carpool to passed, no anomaly triggered on them
@@ -166,7 +166,7 @@ with engine.connect() as conn:
     df_still_pending_carpools = pd.read_sql_query(text(query), conn)
 
 
-# In[ ]:
+# In[14]:
 
 
 import sqlalchemy as sa
@@ -178,7 +178,7 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool_v2.status']
     
-    where_clause = table.c.carpool_id.in_(df_still_pending_carpools['_id'].to_list())
+    where_clause = table.c._id.in_(df_still_pending_carpools[3:]['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
 
