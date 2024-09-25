@@ -4,13 +4,13 @@ import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
-import { ReactNode, useCallback, useState} from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { FillLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 
 import DownloadButton from '@/components/observatoire/DownloadButton';
+import { getUrl } from '@/helpers/search';
 import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { useRouter } from 'next/navigation';
-import { getUrl } from '@/helpers/search';
 
 
 export default function IncentiveMap({ params, data, loading, error, sidebar }: { 
