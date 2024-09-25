@@ -178,7 +178,7 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool_v2.status']
     
-    where_clause = table.c._id.in_(df_still_pending_carpools[3:]['_id'].to_list())
+    where_clause = table.c._id.in_(df_still_pending_carpools['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
 
