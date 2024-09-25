@@ -1,5 +1,4 @@
 'use client'
-import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
@@ -9,6 +8,7 @@ import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
+import SelectIncentiveTerritory from '../../../components/observatoire/SelectIncentiveTerritory';
 import SelectIncentiveYear from '../../../components/observatoire/SelectIncentiveYear';
 import Details from './Details';
 import IncentiveMap from './maps/IncentiveMap';
@@ -78,8 +78,9 @@ export default function Dashboard() {
                 loading={loading} 
                 error={error} 
                 sidebar={<>
+                  {geojson.features.length > 1 ? <div className={fr.cx('fr-h4')}>{geojson.features.length} campagnes</div> : ''}
                   <SelectIncentiveYear params={params} url={'campagnes-incitation'}/>
-                  <SelectTerritory url={'campagnes-incitation'}/>
+                  <SelectIncentiveTerritory url={'campagnes-incitation'} data={data!}/>
                 </>}
               />
             </div>
