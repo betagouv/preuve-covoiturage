@@ -47,6 +47,7 @@ Please use untracked playground folder as much as possible for local analysis
 
 ## Industrialise notebook script
 In order to execute your notebook as a python script
+this will convert ipynb file into python file 
 ```
 jupyter nbconvert --to script scripts/overlap-anomalie-research.ipynb
 ```
