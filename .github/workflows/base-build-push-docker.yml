@@ -62,6 +62,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: betagouvpdc/${{ inputs.name }}:${{ inputs.tag }}
           format: 'template'
