@@ -46,7 +46,7 @@ export default function Dashboard() {
 
   return(
     <>
-      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters','fr-mt-5v')}>
         <div className={fr.cx('fr-col-12','fr-col-md-6')}>
           <SelectTerritory url={'territoire'} />
         </div>
