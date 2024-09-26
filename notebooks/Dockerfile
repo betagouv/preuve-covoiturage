@@ -2,7 +2,7 @@ FROM python:3.11.6-slim-bullseye AS build
 
 WORKDIR /usr/src/
 
-COPY ./notebooks/src/*.ipynb /usr/src/
+COPY ./src/*.ipynb /usr/src/
 
 RUN pip install jupyter nbconvert
 
@@ -16,8 +16,8 @@ WORKDIR /usr/src/
 
 COPY --from=build /usr/src /usr/src
 
-COPY ./notebooks/requirements.txt /usr/src/
-COPY ./notebooks/src/helpers/ /usr/src/helpers/
+COPY ./requirements.txt /usr/src/
+COPY ./src/helpers/ /usr/src/helpers/
 
 RUN pip install --no-cache-dir -r requirements.txt
 
