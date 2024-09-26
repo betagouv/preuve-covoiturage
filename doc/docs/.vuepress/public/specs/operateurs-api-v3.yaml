@@ -549,6 +549,7 @@ paths:
                 - operator_journey_id
                 - incentives
                 - operator_class
+                - operator_trip_id
                 - start
                 - end
                 - distance
