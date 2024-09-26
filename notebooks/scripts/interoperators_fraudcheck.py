@@ -11,6 +11,8 @@
 
 
 import os
+from datetime import timedelta
+from datetime import datetime
 
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -22,6 +24,10 @@ update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 connection_string = os.environ['PG_CONNECTION_STRING']
 delay = os.environ['DELAY']
 frame = os.environ['FRAME'] 
+
+start_date_frame = datetime.now() - timedelta(hours=int(delay)) - timedelta(hours=int(frame))
+end_date_frame = datetime.now() - timedelta(hours=int(frame))
+print(f"processing carpools between {start_date_frame} and {end_date_frame} ")
 
 
 # In[ ]:
@@ -339,7 +345,7 @@ query = f"""
  SELECT ccv2._id from carpool_v2.carpools ccv2
   JOIN carpool_v2.status csv2 on ccv2._id = csv2.carpool_id
   where csv2.fraud_status = 'pending'
-  and ccv2.start_datetime <=  NOW() - '48 hours'::interval - '{delay} hours'::interval
+  and ccv2.start_datetime <=  NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
 """
 
 with engine.connect() as conn:
@@ -364,6 +370,6 @@ if update_carpool_status is True:
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(f"{result.rowcount} carpools status updated to fraud_status=passed because they were not processable within 48 hours after start_datetime (carpool expired, or excluded from fraudcheck)")
+        print(f"{result.rowcount} carpools status updated to fraud_status=passed because they were not processable within {int(delay) + int(frame)} hours after start_datetime (carpool expired, or excluded from fraudcheck)")
         conn.commit()
 
