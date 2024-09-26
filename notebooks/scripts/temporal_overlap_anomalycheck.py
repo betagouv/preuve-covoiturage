@@ -158,7 +158,7 @@ query = f"""
         FROM carpool_v2.status c2s
         JOIN carpool_v2.carpools c2c
         ON c2c._id = c2s.carpool_id
-        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - '{delay} hours'::interval
+        WHERE c2c.start_datetime < NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
         AND c2s.anomaly_status = 'pending'
 """
 

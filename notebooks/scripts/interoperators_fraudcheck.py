@@ -339,7 +339,7 @@ query = f"""
  SELECT ccv2._id from carpool_v2.carpools ccv2
   JOIN carpool_v2.status csv2 on ccv2._id = csv2.carpool_id
   where csv2.fraud_status = 'pending'
-  and ccv2.start_datetime <=  NOW() - '48 hours'::interval - '{delay} hours'::interval
+  and ccv2.start_datetime <=  NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
 """
 
 with engine.connect() as conn:
