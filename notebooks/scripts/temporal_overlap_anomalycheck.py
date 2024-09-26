@@ -5,6 +5,8 @@
 
 
 import os
+from datetime import timedelta
+from datetime import datetime
 
 # Input params checks
 connection_string = os.environ['PG_CONNECTION_STRING']
@@ -12,8 +14,11 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
+start_date_frame = datetime.now() - timedelta(hours=int(delay)) - timedelta(hours=int(frame))
+end_date_frame = datetime.now() - timedelta(hours=int(frame))
+print(f"processing carpools between {start_date_frame} and {end_date_frame} ")
 
-# In[3]:
+# In[2]:
 
 
 import pandas as pd
@@ -51,7 +56,7 @@ with engine.connect() as conn:
     df_carpool = pd.read_sql_query(text(query), conn)
 
 
-# In[4]:
+# In[3]:
 
 
 from helpers.apply_metods import add_overlap_columns
@@ -65,7 +70,7 @@ grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df)).reset_index(drop=True)
 
 
-# In[5]:
+# In[4]:
 
 
 overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_duration_ratio'] > 0.7
@@ -73,14 +78,14 @@ overlap_duration_high_mask = df_only_grouped_with_overlap_group_filled['overlap_
 df_high_overlap = df_only_grouped_with_overlap_group_filled[overlap_duration_high_mask]
 
 
-# In[6]:
+# In[5]:
 
 
 grouped_tmp = df_high_overlap.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
 df_final_result = grouped_tmp.filter(lambda x:  x['overlap_group'].count() > 1)
 
 
-# In[7]:
+# In[6]:
 
 
 grouped_tmp = df_final_result.groupby(['identity_key', 'overlap_group', 'operator_id'], group_keys=False)
@@ -103,7 +108,7 @@ df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 
-# In[8]:
+# In[7]:
 
 
 import sqlalchemy as sa
@@ -127,7 +132,7 @@ if update_carpool_status is True:
        conn.commit()
 
 
-# In[9]:
+# In[8]:
 
 
 from sqlalchemy.dialects.postgresql import insert
@@ -147,25 +152,26 @@ df_labels.to_sql(
 )
 
 
-# In[10]:
+# In[12]:
 
 
 # update pending carpool to passed, no anomaly triggered on them
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = text("""
+query = f"""
         SELECT c2s._id
         FROM carpool_v2.status c2s
         JOIN carpool_v2.carpools c2c
         ON c2c._id = c2s.carpool_id
-        WHERE c2c.start_datetime < NOW() - '48 hours'::interval - :delay_hours
+        WHERE c2c.start_datetime < NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
         AND c2s.anomaly_status = 'pending'
-""")
+"""
 
 with engine.connect() as conn:
-    df_still_pending_carpools = pd.read_sql_query(query, conn, params={'delay_hours': f'{delay} hours'})
+    df_still_pending_carpools = pd.read_sql_query(text(query), conn)
 
-# In[ ]:
+
+# In[14]:
 
 
 import sqlalchemy as sa
@@ -177,12 +183,12 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool_v2.status']
     
-    where_clause = table.c.carpool_id.in_(df_still_pending_carpools['_id'].to_list())
+    where_clause = table.c._id.in_(df_still_pending_carpools['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(f"{result.rowcount} carpools status updated to anomaly_status=passed because they were not processable within 48 hours after start_datetime (carpool expired)")
+        print(f"{result.rowcount} carpools status updated to anomaly_status=passed after {int(delay) + int(frame)} hours because no anomaly were found")
         conn.commit()
 

@@ -39,9 +39,9 @@ export default function Navigation() {
             {
               linkProps: {
                 href: '/observatoire/campagnes-incitation',
-                title: 'Impact des campagnes d\'incitation',
+                title: 'Recensement des campagnes d\'incitation',
               },
-              text: 'Impact des campagnes d\'incitation',
+              text: 'Recensement des campagnes d\'incitation',
               isActive: pathname === '/observatoire/campagnes-incitation',
             },
             {

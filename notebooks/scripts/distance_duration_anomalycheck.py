@@ -5,6 +5,8 @@
 
 
 import os
+from datetime import timedelta
+from datetime import datetime
 
 # Input params
 connection_string = os.environ['PG_CONNECTION_STRING']
@@ -12,6 +14,10 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 osrm_url = os.environ['OSRM_URL']
+
+start_date_frame = datetime.now() - timedelta(hours=int(delay)) - timedelta(hours=int(frame))
+end_date_frame = datetime.now() - timedelta(hours=int(frame))
+print(f"processing carpools between {start_date_frame} and {end_date_frame} ")
 
 
 # In[ ]:
@@ -185,17 +191,17 @@ df_labels.to_sql(
 # update pending carpool to passed, no anomaly triggered on them
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
-query = text("""
-  SELECT c2s._id
-  FROM carpool_v2.status c2s
-  JOIN carpool_v2.carpools c2c
-  ON c2c._id = c2s.carpool_id
-  WHERE c2c.start_datetime < NOW() - INTERVAL '48 hours' - INTERVAL :delay_hours
-  AND c2s.anomaly_status = 'pending'
-""")
+query = f"""
+        SELECT c2s._id
+        FROM carpool_v2.status c2s
+        JOIN carpool_v2.carpools c2c
+        ON c2c._id = c2s.carpool_id
+        WHERE c2c.start_datetime < NOW() - '{delay} hours'::INTERVAL - '{frame} hours'::INTERVAL
+        AND c2s.anomaly_status = 'pending'
+"""
 
 with engine.connect() as conn:
-    df_still_pending_carpools = pd.read_sql_query(query, conn, params={"delay_hours": f"{delay} hours"})
+    df_still_pending_carpools = pd.read_sql_query(text(query), conn)
 
 
 # In[ ]:
@@ -209,14 +215,14 @@ if update_carpool_status is True:
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool_v2.status']
-
-    where_clause = table.c.carpool_id.in_(df_still_pending_carpools['_id'].to_list())
+    
+    where_clause = table.c._id.in_(df_still_pending_carpools['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(anomaly_status='passed')
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(f"{result.rowcount} carpools status updated to anomaly_status=passed because they were not processable within 48 hours after start_datetime (carpool expired)")
+        print(f"{result.rowcount} carpools status updated to anomaly_status=passed after {int(delay) + int(frame)} hours because no anomaly were found")
         conn.commit()
 
 

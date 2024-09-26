@@ -41,18 +41,22 @@
     position: relative;
     padding: 0 .5em;
     margin-bottom: 1em;
+
     .info-small {
       position: absolute;
       color: #65c8cf;
       font-size: 16px;
       margin-left: .2em;
     }
+
     .format-radio-group {
       display: block;
       margin-top: 1.5em;
-      > label {
+
+      >label {
         display: block;
         margin-bottom: .2em;
+
         &:hover {
           cursor: pointer;
         }
@@ -60,10 +64,14 @@
     }
   }
 
-  .support-notice p {
-    margin-top: -1em;
-    padding: 0 .5em;
-    font-weight: normal;
-    color: #999;
+  .support-notice {
+    z-index: 1;
+
+    p {
+      margin-top: -1em;
+      padding: 0 .5em;
+      font-weight: normal;
+      color: #999;
+    }
   }
 }
