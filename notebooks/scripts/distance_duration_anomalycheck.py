@@ -5,6 +5,8 @@
 
 
 import os
+from datetime import timedelta
+from datetime import datetime
 
 # Input params
 connection_string = os.environ['PG_CONNECTION_STRING']
@@ -12,6 +14,10 @@ delay = os.environ['DELAY']
 frame = os.environ['FRAME']
 update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 osrm_url = os.environ['OSRM_URL']
+
+start_date_frame = datetime.now() - timedelta(hours=int(delay)) - timedelta(hours=int(frame))
+end_date_frame = datetime.now() - timedelta(hours=int(frame))
+print(f"processing carpools between {start_date_frame} and {end_date_frame} ")
 
 
 # In[ ]:
@@ -216,7 +222,7 @@ if update_carpool_status is True:
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(f"{result.rowcount} carpools status updated to anomaly_status=passed because they were not processable within 48 hours after start_datetime (carpool expired)")
+        print(f"{result.rowcount} carpools status updated to anomaly_status=passed after {int(delay) + int(frame)} hours because no anomaly were found")
         conn.commit()
 
 
