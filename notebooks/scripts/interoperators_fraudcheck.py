@@ -370,6 +370,6 @@ if update_carpool_status is True:
 
     with engine.connect() as conn:
         result = conn.execute(update_stmt)
-        print(f"{result.rowcount} carpools status updated to fraud_status=passed because they were not processable within {int(delay) + int(frame)} hours after start_datetime (carpool expired, or excluded from fraudcheck)")
+        print(f"{result.rowcount} carpools status updated to fraud_status=passed because they were not processable within {int(delay) + int(frame)} hours after start_datetime (carpool expired or excluded from fraudcheck)")
         conn.commit()
 
