@@ -4,7 +4,6 @@ numpy==2.0.0
 pandas==2.2.2
 python-dotenv==1.0.1
 SQLAlchemy==2.0.31
-ipykernel==6.29.4
 psycopg2-binary==2.9.9
 requests==2.32.3
 pytz==2024.1
