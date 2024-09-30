@@ -40,12 +40,12 @@ export function GetPeriod() {
       period.start_date = new Date(
         dashboard.params.year,
         0,
-        1,
-      ).toISOString().slice(0, 10); // Premier jour du mois du trimestre
+        2,
+      ).toISOString().slice(0, 10); // Premier jour de l'année
       period.end_date = new Date(
         dashboard.params.year,
-        11,
-        0,
+        12,
+        1,
       ).toISOString().slice(0, 10); // Dernier jour du mois du trimestre
       break;
   }

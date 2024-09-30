@@ -39,11 +39,11 @@ const AppMap = (props: MapInterface) => {
       </h3>
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         {props.sidebar && props.sidebarPosition == 'left' &&
-          <div className={fr.cx('fr-col', sidebarClass)}>
+          <div className={fr.cx('fr-col-12', sidebarClass)}>
             {props.sidebar}
           </div>
         }
-        <div className={fr.cx('fr-col', mapClass)} tabIndex={0}>
+        <div className={fr.cx('fr-col-12', mapClass)} tabIndex={0}>
           <Map
             ref={mapRef}
             initialViewState={props.initialView ? props.initialView : defaultView}
@@ -72,7 +72,7 @@ const AppMap = (props: MapInterface) => {
           </Map>
         </div>
         {props.sidebar && props.sidebarPosition == 'right' &&
-          <div className={fr.cx('fr-col', sidebarClass)}>
+          <div className={fr.cx('fr-col-12', sidebarClass)}>
             {props.sidebar}
           </div>
         }

@@ -31,7 +31,7 @@ jobs:
         - name: api
           dockerfile: './docker/api/Dockerfile'
         - name: data
-          dockerfile: './docker/python/Dockerfile'
+          dockerfile: './docker/data/Dockerfile'
   deploy:
     name: Deploy
     needs: [build]

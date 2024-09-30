@@ -428,7 +428,6 @@ components:
         - temporal_overlap_anomaly
         - distance_duration_anomaly
       description: |
-        #
         # Etiquette possible pour une anomalie détectée
           - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
           - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
@@ -603,7 +602,7 @@ paths:
         - name: start
           in: query
           required: false
-          description: Date de début de recherche, par défaut dans la semaine qui précède.
+          description: Date de début de recherche, par défaut dans la semaine qui précède. Elle ne peut pas être inférieure à 90 jours à la date du jour.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: end
@@ -691,7 +690,7 @@ paths:
                     items:
                       properties:
                         label:
-                        '$ref': "#/components/schemas/anomaly_label"
+                          '$ref': "#/components/schemas/anomaly_label"
                         metas:
                           type: object
                           properties:
