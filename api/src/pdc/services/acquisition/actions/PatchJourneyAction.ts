@@ -33,11 +33,14 @@ export class PatchJourneyAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     const operator_id = get(context, "call.user.operator_id");
+    const operator_class: OperatorClass | undefined =
+      params.operator_class && OperatorClass[params.operator_class]
+        ? OperatorClass[params.operator_class]
+        : undefined;
+
     const toUpdate = {
       ...params,
-      ...(params.operator_class
-        ? { operator_class: OperatorClass[params.operator_class] }
-        : {}),
+      ...(operator_class ? { operator_class } : {}),
     };
 
     await this.acquisitionService.updateRequest({
