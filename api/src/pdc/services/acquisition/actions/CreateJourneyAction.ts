@@ -55,7 +55,7 @@ export class CreateJourneyAction extends AbstractAction {
     try {
       await this.validate(apiVersionString, payload);
 
-      await this.acquisitionService.registerRequest({
+      const result = await this.acquisitionService.registerRequest({
         api_version,
         operator_id,
         operator_journey_id,
@@ -96,8 +96,8 @@ export class CreateJourneyAction extends AbstractAction {
         incentives: payload.incentives,
       });
       return {
-        operator_journey_id: acquisitions[0].operator_journey_id,
-        created_at: acquisitions[0].created_at,
+        operator_journey_id: payload.operator_journey_id,
+        created_at: result.created_at,
       };
     } catch (e) {
       logger.error(e.message, { operator_journey_id, operator_id });
