@@ -39,8 +39,6 @@ import { config } from "./config/index.ts";
     GeoProvider,
     CarpoolAcquisitionService,
     CarpoolStatusService,
-    GeoProvider,
-    NormalizationProvider,
   ],
   validator: [
     v3binding,
@@ -59,7 +57,6 @@ import { config } from "./config/index.ts";
     StatusJourneyAction,
     ListJourneyAction,
     PatchJourneyAction,
-    StatusJourneyAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
