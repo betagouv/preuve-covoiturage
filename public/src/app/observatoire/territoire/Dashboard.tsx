@@ -95,7 +95,7 @@ export default function Dashboard() {
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <IncentiveGraph title="Trajets par types d'incitateurs" />
+              <IncentiveGraph title="Répartition des incitations par types d'incitateurs" />
             </div>
           </div>
           <SectionTitle title='Evolution' />
