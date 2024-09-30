@@ -4,11 +4,11 @@ import {
   TransformationParamsInterface,
 } from "../../common/IgnDataset.ts";
 
-export class IgnAe2022 extends IgnDataset {
+export class IgnAe2024 extends IgnDataset {
   static producer = "ign";
   static dataset = "ae";
-  static year = 2022;
-  static table = "ign_ae_2022";
+  static year = 2024;
+  static table = "ign_ae_2024";
 
   readonly rows: Map<string, [string, string]> = new Map([
     ["arr", ["INSEE_ARM", "varchar"]],
@@ -26,15 +26,14 @@ export class IgnAe2022 extends IgnDataset {
       centroid GEOMETRY(POINT, 4326),
       geom_simple GEOMETRY(MULTIPOLYGON, 4326)
     );
-    CREATE INDEX IF NOT EXISTS ign_ae_2022_id_index ON ${this.tableWithSchema} USING btree (id);
-    CREATE INDEX IF NOT EXISTS ign_ae_2022_geom_index ON ${this.tableWithSchema} USING gist (geom);
-    CREATE INDEX IF NOT EXISTS ign_ae_2022_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
-    CREATE INDEX IF NOT EXISTS ign_ae_2022_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
+    CREATE INDEX IF NOT EXISTS ign_ae_2024_id_index ON ${this.tableWithSchema} USING btree (id);
+    CREATE INDEX IF NOT EXISTS ign_ae_2024_geom_index ON ${this.tableWithSchema} USING gist (geom);
+    CREATE INDEX IF NOT EXISTS ign_ae_2024_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
+    CREATE INDEX IF NOT EXISTS ign_ae_2024_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
   static url =
     // eslint-disable-next-line max-len
-    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG-CARTO_3-1__SHP__FRA_WM_2022-04-15.7z";
-
+    "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_LAMB93_FXX_2024-02-22/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_LAMB93_FXX_2024-02-22.7z";
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]
   > = [

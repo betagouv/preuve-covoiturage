@@ -102,7 +102,7 @@ export abstract class IgnDataset extends AbstractDataset {
             done = !!results.done;
             if (results.value) {
               const values = [
-                JSON.stringify(results.value.map((r) => r.value)),
+                JSON.stringify(results.value.map((r: any) => r.value)),
               ];
               logger.debug(`Batch ${i}`);
               switch (key) {
