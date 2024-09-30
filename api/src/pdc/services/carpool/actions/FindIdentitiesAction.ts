@@ -24,10 +24,6 @@ import { alias } from "@/shared/carpool/findidentities.schema.ts";
   ],
 })
 export class FindIdentitiesAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     throw new UnimplementedException();
   }

@@ -33,10 +33,6 @@ import * as middlewareConfig from "../config/middlewares.ts";
   ],
 })
 export class FinancialStatsAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,

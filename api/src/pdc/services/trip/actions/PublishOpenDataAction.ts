@@ -20,10 +20,6 @@ import { alias } from "@/shared/trip/publishOpenData.schema.ts";
   ]],
 })
 export class PublishOpenDataAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,

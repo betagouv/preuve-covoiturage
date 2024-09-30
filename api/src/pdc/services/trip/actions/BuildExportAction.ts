@@ -20,10 +20,6 @@ import { alias } from "@/shared/trip/buildExport.schema.ts";
   ]],
 })
 export class BuildExportAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,

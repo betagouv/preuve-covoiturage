@@ -32,10 +32,6 @@ import * as middlewareConfig from "../config/middlewares.ts";
   ],
 })
 export class ListTripsAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,

@@ -20,10 +20,6 @@ import { alias } from "@/shared/carpool/crosscheck.schema.ts";
   ],
 })
 export class CrosscheckAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     throw new UnimplementedException();
   }

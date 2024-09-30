@@ -20,10 +20,6 @@ import {
   middlewares: [...internalOnlyMiddlewares("acquisition", "fraudcheck")],
 })
 export class UpdateStatusAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(
     { acquisition_id, status }: ParamsInterface,
     context: ContextType,

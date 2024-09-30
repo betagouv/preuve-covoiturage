@@ -29,10 +29,6 @@ import * as middlewareConfig from "../config/middlewares.ts";
   ],
 })
 export class StatsAction extends Action {
-  constructor() {
-    super();
-  }
-
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     throw new UnimplementedException();
   }

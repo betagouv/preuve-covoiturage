@@ -30,10 +30,6 @@ export class SendExportAction extends Action {
     },
   };
 
-  constructor() {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,
