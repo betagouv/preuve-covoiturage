@@ -19,29 +19,9 @@ export class IncentiveRepositoryProvider
   public readonly carpoolTable = "carpool_v2.carpools";
   public readonly carpoolStatusTable = "carpool_v2.status";
 
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  public readonly oldCarpoolTable = "carpool.carpools";
-
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
-    const oldQuery = {
-      text: `
-        UPDATE ${this.incentivesTable} AS pi
-        SET
-          state = 'disabled'::policy.incentive_state_enum,
-          status = 'error'::policy.incentive_status_enum
-        FROM ${this.oldCarpoolTable} AS oc
-        WHERE oc.datetime >= $1::timestamp
-          AND oc.datetime <  $2::timestamp
-          AND oc._id = pi.carpool_id
-          AND oc.status <> 'ok'::carpool.carpool_status_enum
-      `,
-      values: [from, to],
-    };
-
     const query = {
       text: `
         UPDATE ${this.incentivesTable} AS pi
@@ -60,7 +40,6 @@ export class IncentiveRepositoryProvider
       values: [from, to],
     };
 
-    await this.connection.getClient().query<any>(oldQuery);
     await this.connection.getClient().query<any>(query);
   }
 
@@ -293,8 +272,6 @@ export class IncentiveRepositoryProvider
 
     const query = {
       text: `
-        -- FIXME: temp hack to set a lower boundary when
-        --        joining the deprecated carpool.carpools table
         WITH lowest_incentive AS (
           SELECT min(dtz) AS datetime
           FROM UNNEST($2::timestamp with time zone[]) AS x(dtz)
@@ -315,7 +292,7 @@ export class IncentiveRepositoryProvider
         )
         SELECT
           unnest_data.policy_id,
-          cc._id as carpool_id,
+          null as carpool_id,
           unnest_data.datetime,
           unnest_data.result,
           unnest_data.amount,
@@ -335,15 +312,6 @@ export class IncentiveRepositoryProvider
           $8::varchar[],
           $9::json[]
         ) AS unnest_data(policy_id, datetime, result, amount, status, state, operator_id, operator_journey_id, meta)
-
-        -- FIXME : REMOVE WHEN DONE WITH carpool.carpools
-        JOIN ${this.oldCarpoolTable} cc
-          ON cc.operator_id = unnest_data.operator_id
-          AND cc.operator_journey_id = unnest_data.operator_journey_id
-          AND cc.datetime >= (SELECT datetime FROM lowest_incentive)
-          AND cc.is_driver IS TRUE
-        --
-
         ON CONFLICT (policy_id, operator_id, operator_journey_id)
         DO UPDATE SET
           result = excluded.result,

@@ -1,11 +1,9 @@
 import {
   ContextType,
   handler,
-  InvalidParamsException,
-  KernelInterfaceResolver,
+  UnimplementedException,
 } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
-import { get } from "@/lib/object/index.ts";
 import {
   copyFromContextMiddleware,
   validateDateMiddleware,
@@ -16,23 +14,12 @@ import {
   ResultInterface,
 } from "@/shared/trip/export.contract.ts";
 import { alias } from "@/shared/trip/export.schema.ts";
-import {
-  ParamsInterface as SendExportParamsInterface,
-  signature as sendExportSignature,
-} from "@/shared/trip/sendExport.contract.ts";
 import * as middlewareConfig from "../config/middlewares.ts";
-import { TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
-import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionMiddlewaresHelper.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
-    ...groupPermissionMiddlewaresHelper({
-      territory: "territory.trip.stats",
-      operator: "operator.trip.stats",
-      registry: "registry.trip.stats",
-    }),
     ["validate", alias],
     validateDateMiddleware({
       startPath: "date.start",
@@ -44,67 +31,10 @@ import { groupPermissionMiddlewaresHelper } from "../middleware/groupPermissionM
   ],
 })
 export class ExportAction extends Action {
-  constructor(
-    private kernel: KernelInterfaceResolver,
-    private tripRepository: TripRepositoryProviderInterfaceResolver,
-  ) {
-    super();
-  }
-
   public async handle(
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const email = get(context, "call.user.email");
-    const fullname = `${get(context, "call.user.firstname", "")} ${
-      get(context, "call.user.lastname", "")
-    }`;
-
-    if (!email) {
-      throw new InvalidParamsException("Missing user email");
-    }
-
-    const tz = await this.tripRepository.validateTz(params.tz);
-
-    // use || syntax here in case we get null value from date.{start|end},
-    // which will not use the default value of get()
-    const start = get(params, "date.start") ||
-      new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-    const end = get(params, "date.end") || new Date();
-
-    const buildParams: SendExportParamsInterface = {
-      type: context.call.user.territory_id
-        ? "territory"
-        : context.call.user.operator_id
-        ? "operator"
-        : "registry",
-      from: { fullname, email },
-      query: {
-        date: { start, end },
-        geo_selector: params.geo_selector,
-      },
-      format: {
-        tz: tz.name,
-      },
-    };
-
-    if (params.operator_id) {
-      buildParams.query.operator_id = Array.isArray(params.operator_id)
-        ? params.operator_id
-        : [params.operator_id];
-    }
-
-    await this.kernel.notify<SendExportParamsInterface>(
-      sendExportSignature,
-      buildParams,
-      {
-        channel: {
-          service: "trip",
-        },
-        call: {
-          user: {},
-        },
-      },
-    );
+    throw new UnimplementedException();
   }
 }

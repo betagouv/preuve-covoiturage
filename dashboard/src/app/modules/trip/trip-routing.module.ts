@@ -1,18 +1,17 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { Roles } from '~/core/enums/user/roles';
-import { TripExportComponent } from '~/modules/trip/pages/trip-export/trip-export.component';
-import { TripListComponent } from './pages/trip-list/trip-list.component';
-import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
-import { TripLayoutComponent } from './trip-layout/trip-layout.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { Roles } from "~/core/enums/user/roles";
+import { TripExportComponent } from "~/modules/trip/pages/trip-export/trip-export.component";
+import { TripStatsComponent } from "./pages/trip-stats/trip-stats.component";
+import { TripLayoutComponent } from "./trip-layout/trip-layout.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: TripLayoutComponent,
     children: [
       {
-        path: 'stats',
+        path: "stats",
         component: TripStatsComponent,
         data: {
           roles: [
@@ -26,21 +25,7 @@ const routes: Routes = [
         },
       },
       {
-        path: 'list',
-        component: TripListComponent,
-        data: {
-          roles: [
-            Roles.TerritoryAdmin,
-            Roles.TerritoryUser,
-            Roles.OperatorAdmin,
-            Roles.OperatorUser,
-            Roles.RegistryAdmin,
-            Roles.RegistryUser,
-          ],
-        },
-      },
-      {
-        path: 'export',
+        path: "export",
         component: TripExportComponent,
         data: {
           roles: [
@@ -54,9 +39,9 @@ const routes: Routes = [
         },
       },
       {
-        path: '',
-        redirectTo: 'stats',
-        pathMatch: 'full',
+        path: "",
+        redirectTo: "stats",
+        pathMatch: "full",
       },
     ],
   },
