@@ -28,7 +28,9 @@ export class CarpoolAcquisitionService {
     protected geoService: GeoProvider,
   ) {}
 
-  public async registerRequest(data: RegisterRequest): Promise<void> {
+  public async registerRequest(
+    data: RegisterRequest,
+  ): Promise<{ created_at: Date }> {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
@@ -59,6 +61,7 @@ export class CarpoolAcquisitionService {
         conn,
       );
       await conn.query("COMMIT");
+      return { created_at: carpool.created_at };
     } catch (e) {
       await conn.query("ROLLBACK");
       throw e;
