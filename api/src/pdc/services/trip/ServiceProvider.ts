@@ -29,22 +29,13 @@ import { PublishOpenDataAction } from "./actions/PublishOpenDataAction.ts";
 import { SearchCountAction } from "./actions/SearchCountAction.ts";
 import { SendExportAction } from "./actions/SendExportAction.ts";
 import { StatsAction } from "./actions/StatsAction.ts";
-import { PublishOpendataCommand } from "./commands/PublishOpendataCommand.ts";
-import { ReplayOpendataExportCommand } from "./commands/ReplayOpendataExportCommand.ts";
 import { config } from "./config/index.ts";
-import { scopeToGroupBinding } from "./middleware/ScopeToGroupMiddleware.ts";
-import { DataGouvProvider } from "./providers/DataGouvProvider.ts";
-import { StatCacheRepositoryProvider } from "./providers/StatCacheRepositoryProvider.ts";
-import { TripRepositoryProvider } from "./providers/TripRepositoryProvider.ts";
 
 @serviceProvider({
   config,
   providers: [
     APDFNameProvider,
-    DataGouvProvider,
     S3StorageProvider,
-    StatCacheRepositoryProvider,
-    TripRepositoryProvider,
   ],
   validator: [
     listBinding,
@@ -58,9 +49,8 @@ import { TripRepositoryProvider } from "./providers/TripRepositoryProvider.ts";
   middlewares: [
     ...defaultMiddlewareBindings,
     ["validate", ValidatorMiddleware],
-    scopeToGroupBinding,
   ],
-  commands: [ReplayOpendataExportCommand, PublishOpendataCommand],
+  commands: [],
   handlers: [
     ListTripsAction,
     SearchCountAction,

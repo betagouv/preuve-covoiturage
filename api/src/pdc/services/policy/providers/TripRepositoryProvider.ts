@@ -16,7 +16,6 @@ export class TripRepositoryProvider
   public readonly geoTable = "carpool_v2.geo";
   public readonly statusTable = "carpool_v2.status";
   public readonly operatorTable = "operator.operators";
-  public readonly oldCarpoolTable = "carpool.carpools";
   public readonly incentiveTable = "policy.incentives";
   public readonly getComFunction = "territory.get_com_by_territory_id";
   public readonly getMillesimeFunction = "geo.get_latest_millesime";

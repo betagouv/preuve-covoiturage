@@ -22,28 +22,23 @@ import { CancelJourneyAction } from "./actions/CancelJourneyAction.ts";
 import { CreateJourneyAction } from "./actions/CreateJourneyAction.ts";
 import { ListJourneyAction } from "./actions/ListJourneyAction.ts";
 import { PatchJourneyAction } from "./actions/PatchJourneyAction.ts";
-import { ProcessJourneyAction } from "./actions/ProcessJourneyAction.ts";
 import { StatusJourneyAction } from "./actions/StatusJourneyAction.ts";
-import { AcquisitionProcessCommand } from "./commands/AcquisitionProcessCommand.ts";
 import { AcquisitionMigrateCommand } from "./commands/MigrateAcquisitionCommand.ts";
 import { ProcessGeoCommand } from "./commands/ProcessGeoCommand.ts";
 import { config } from "./config/index.ts";
-import { AcquisitionRepositoryProvider } from "./providers/AcquisitionRepositoryProvider.ts";
 
 @serviceProvider({
   config,
   commands: [
     AcquisitionMigrateCommand,
-    AcquisitionProcessCommand,
     ProcessGeoCommand,
   ],
   queues: ["acquisition"],
   providers: [
-    AcquisitionRepositoryProvider,
+    NormalizationProvider,
+    GeoProvider,
     CarpoolAcquisitionService,
     CarpoolStatusService,
-    GeoProvider,
-    NormalizationProvider,
   ],
   validator: [
     v3binding,
@@ -59,10 +54,9 @@ import { AcquisitionRepositoryProvider } from "./providers/AcquisitionRepository
   handlers: [
     CancelJourneyAction,
     CreateJourneyAction,
+    StatusJourneyAction,
     ListJourneyAction,
     PatchJourneyAction,
-    ProcessJourneyAction,
-    StatusJourneyAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

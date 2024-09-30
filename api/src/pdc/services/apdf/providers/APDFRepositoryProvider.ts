@@ -14,10 +14,6 @@ import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  protected readonly carpoolV1Table = "carpool.carpools";
   protected readonly carpoolV2Table = "carpool_v2.carpools";
   protected readonly carpoolV2StatusTable = "carpool_v2.status";
   protected readonly carpoolV2GeoTable = "carpool_v2.geo";
@@ -40,7 +36,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       text: `
         select cc.operator_id
         from policy.incentives pi
-        join ${this.carpoolV1Table} cc on cc._id = pi.carpool_id
+        join ${this.carpoolV2Table} cc on cc.operator_id = pi.operator_id and cc.operator_journey_id = pi.operator_journey_id
         where
               pi.policy_id = $3
           and pi.amount    >  0
