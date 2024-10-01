@@ -24,17 +24,28 @@ export class IncentiveCampaignsRepositoryProvider
     const typeParam = params.type !== undefined
       ? checkTerritoryParam(params.type)
       : null;
-    const queryValues: (string | number)[] = [
-      params.year !== undefined ? params.year : new Date().getFullYear(),
-    ];
+    const queryValues: (string | number)[] = [];
     const conditions = [
-      `right(a.date_debut,4) = $1::varchar`,
-      `right(a.date_fin,4) = $1::varchar`,
       `b.geom IS NOT NULL`,
     ];
     if (params.code) {
       queryValues.push(params.code);
-      conditions.push(`left(a.code,9) = $2`);
+      params.year
+        ? conditions.push(`left(a.code,9) = $2`)
+        : conditions.push(`left(a.code,9) = $1`);
+    }
+    if (params.year && !params.code) {
+      queryValues.push(params.year);
+      //conditions.push(`right(a.date_debut,4) = $1::varchar`);
+      conditions.push(`right(a.date_fin,4) = $1::varchar`);
+      conditions.push(`to_date(a.date_fin,'DD/MM/YYYY') < now()`);
+    }
+    if (params.year && params.code) {
+      queryValues.push(params.year);
+      //conditions.push(`right(a.date_debut,4) = $2::varchar`);
+      conditions.push(`right(a.date_fin,4) = $2::varchar`);
+    }
+    if (!params.year && !params.code) {
       conditions.push(`to_date(a.date_fin,'DD/MM/YYYY') > now()`);
     }
     if (typeParam) {
@@ -44,7 +55,7 @@ export class IncentiveCampaignsRepositoryProvider
       SELECT a.*, ST_AsGeoJSON(b.geom,6)::json as geom
       FROM ${this.table} a 
       LEFT JOIN ${this.perim_table} b on a.type = b.type AND left(a.code,9) = b.code 
-      AND b.year = geo.get_latest_millesime_or($1)
+      AND b.year = geo.get_latest_millesime()
       WHERE ${conditions.join(" AND ")}
     `;
     const response = await this.pg.getClient().query({
