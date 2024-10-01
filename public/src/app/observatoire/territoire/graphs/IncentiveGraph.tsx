@@ -43,7 +43,7 @@ export default function IncentiveGraph({ title }: { title: string }) {
     const labels = ['Collectivité(s)', 'Opérateur(s)', 'Autres',];
     const datasets = [
       {
-        label: 'trajets',
+        label: 'incitations',
         data: dataset,
         backgroundColor: ['#3182bd', '#6baed6', '#9ecae1'],
         datalabels: {
