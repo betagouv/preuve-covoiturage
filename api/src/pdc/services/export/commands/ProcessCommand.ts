@@ -4,6 +4,7 @@ import {
   CommandOptionType,
 } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { staleDelay } from "@/pdc/services/export/config/export.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
@@ -31,13 +32,17 @@ export class ProcessCommand implements CommandInterface {
   ) {}
 
   public async call(): Promise<void> {
+    // init the storage service
     await this.storage.init();
 
-    let counter = 50;
+    // fail stale exports running for too long
+    await this.exportRepository.failStaleExports();
+    logger.info(`Patched stale exports running for more than ${staleDelay}`);
 
     // process pending exports until there are no more
     // picking one at a time to avoid concurrency issues
     // and let multiple workers process the queue in parallel
+    let counter = 50;
     let exp = await this.exportRepository.pickPending();
     while (exp && counter > 0) {
       await this.process(exp);
