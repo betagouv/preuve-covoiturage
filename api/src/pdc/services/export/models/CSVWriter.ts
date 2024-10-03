@@ -8,6 +8,7 @@ import {
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
+import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import {
   AllowedComputedFields,
   CarpoolRow,
@@ -51,6 +52,18 @@ export class CSVWriter {
     cleanup: true,
     fields: [],
     computed: [
+      {
+        name: "status",
+        compute(row) {
+          return castToStatusEnum(
+            row.get([
+              "acquisition_status",
+              "anomaly_status",
+              "fraud_status",
+            ]),
+          );
+        },
+      },
       {
         name: "incentive_type",
         compute(row, datasources) {

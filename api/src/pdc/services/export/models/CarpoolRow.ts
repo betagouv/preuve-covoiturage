@@ -1,7 +1,9 @@
 import { pick } from "@/lib/object/index.ts";
+import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
+  status: CarpoolStatusEnum;
   incentive_type: string;
   has_incentive: boolean;
 };
