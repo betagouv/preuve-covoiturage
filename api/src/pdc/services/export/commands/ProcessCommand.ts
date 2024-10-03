@@ -82,8 +82,8 @@ export class ProcessCommand implements CommandInterface {
       logger.info(`Export ${uuid} done in ${timer.stop()} ms`);
     } catch (e) {
       await this.exportRepository.error(_id, e.message);
-      await this.notify.error(exp);
-      await this.notify.support(exp);
+      await this.notify.error({ ...exp, error: e.message });
+      await this.notify.support({ ...exp, error: e.message });
     }
   }
 }
