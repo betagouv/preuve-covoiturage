@@ -131,7 +131,7 @@ export class CSVWriter {
       );
     });
 
-    this.stringifier.write(carpoolRow.get());
+    this.stringifier.write(carpoolRow.get(this.options.fields as string[]));
 
     return this;
   }
