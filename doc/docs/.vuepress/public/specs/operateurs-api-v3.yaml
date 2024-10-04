@@ -717,7 +717,7 @@ paths:
                   terms_violation_details:
                     type: array
                     description: | 
-                      Liste des raisons ayant abouti au rejet du trajet. Vide si pas de fraude détectée.
+                      Liste des raisons ayant abouti au rejet du trajet.
                     items:
                       '$ref': "#/components/schemas/terms_violation_label"
         '401':
