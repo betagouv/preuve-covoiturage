@@ -31,10 +31,14 @@
               dbt
               pre-commit
               python311Packages.dbt-postgres
+
+              # misc
+              gh
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"
               export PRE_COMMIT_ALLOW_NO_CONFIG=1
+              export GH_REPO=betagouv/preuve-covoiturage
             '';
           };
         });
