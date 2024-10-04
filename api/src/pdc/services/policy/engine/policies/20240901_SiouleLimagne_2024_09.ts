@@ -76,17 +76,13 @@ export const SiouleLimagne: PolicyHandlerStaticInterface = class
   protected processExclusion(
     ctx: StatelessContextInterface,
   ) {
-    try {
-      isOperatorOrThrow(
-        ctx,
-        getOperatorsAt(this.operators, ctx.carpool.datetime),
-      );
-      onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_000 });
-      isOperatorClassOrThrow(ctx, ["B", "C"]);
-      isAdultOrThrow(ctx);
-    } catch (e) {
-      throw e;
-    }
+    isOperatorOrThrow(
+      ctx,
+      getOperatorsAt(this.operators, ctx.carpool.datetime),
+    );
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_000 });
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
+    isAdultOrThrow(ctx);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
