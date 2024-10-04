@@ -35,12 +35,12 @@ import { description } from "./20240805_CCVMM_2024_05.html.ts";
 export const SiouleLimagne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
-  static readonly id = "SiouleLimagne_2024_05";
+  static readonly id = "SiouleLimagne_2024_09";
   static readonly tz: Timezone = "Europe/Paris";
 
   protected operators: TimestampedOperators = [
     {
-      date: new Date("2024-05-13T00:00:00+0100"),
+      date: new Date("2024-09-13T00:00:00+0100"),
       operators: [OperatorsEnum.BLABLACAR_DAILY],
     },
   ];
