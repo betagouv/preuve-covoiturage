@@ -13,7 +13,7 @@ export const description =
 
   <ul>
     <li>Du 15/09/2024 au 15/10/2024 : <b>De 2 à 80 km : 2 € par passager par trajet&nbsp;;</b></li>
-    <li>Du 15/10/2024 au 31/08/2025 : <b>De 15 à 30 km : 0.1 par km par passager + 1,50 € par passager par trajet</b></li>
+    <li>Du 15/10/2024 au 31/08/2025 : <b>De 2 à 80 km : 1.50 € par passager par trajet</b></li>
   </ul>
 
   <p>Les restrictions suivantes seront appliquées :</p>
