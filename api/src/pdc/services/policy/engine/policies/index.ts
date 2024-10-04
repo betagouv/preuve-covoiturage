@@ -29,6 +29,7 @@ import { GrandChatellerault2024 } from "@/pdc/services/policy/engine/policies/20
 import { TerresTouloises2024 } from "@/pdc/services/policy/engine/policies/20240201_TerresTouloises.ts";
 import { LannionTregor2024 } from "@/pdc/services/policy/engine/policies/20240401_LannionTregor.ts";
 import { PMGFxATMB2024 } from "@/pdc/services/policy/engine/policies/20240401_PMGFxATMB.ts";
+import { SiouleLimagne } from "@/pdc/services/policy/engine/policies/20240901_SiouleLimagne_2024_09.ts";
 import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
 import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
@@ -75,6 +76,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     TerresTouloises2024,
     Vitre2023,
     CCVMM202405,
+    SiouleLimagne,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );
