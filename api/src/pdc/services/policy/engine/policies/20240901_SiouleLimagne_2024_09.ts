@@ -53,8 +53,8 @@ export const SiouleLimagne: PolicyHandlerStaticInterface = class
     },
   ];
 
-  protected first_periode: IsAfterParams = { date: new Date("2024-09-15") };
-  protected second_periode: IsAfterParams = { date: new Date("2024-10-15") };
+  protected first_period: IsAfterParams = { date: new Date("2024-09-15") };
+  protected second_period: IsAfterParams = { date: new Date("2024-10-15") };
 
   constructor(public policy_max_amount: number) {
     super();
@@ -95,12 +95,12 @@ export const SiouleLimagne: PolicyHandlerStaticInterface = class
 
     for (const { start, end } of this.regularSlices) {
       if (
-        isAfter(ctx, this.second_periode) &&
+        isAfter(ctx, this.second_period) &&
         onDistanceRange(ctx, { min: start, max: end })
       ) {
         ctx.incentive.set(perSeat(ctx, 150));
       } else if (
-        isAfter(ctx, this.first_periode) &&
+        isAfter(ctx, this.first_period) &&
         onDistanceRange(ctx, { min: start, max: end })
       ) {
         ctx.incentive.set(perSeat(ctx, 200));
