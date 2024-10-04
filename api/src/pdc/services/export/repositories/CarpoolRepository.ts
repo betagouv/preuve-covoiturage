@@ -70,10 +70,10 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
         if (progress) await progress(((done / total) * 100) | 0);
       } while (count !== 0);
 
-      await cursor.release();
+      cursor && await cursor.release();
     } catch (e) {
       logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
-      await cursor.release();
+      cursor && await cursor.release();
       throw e;
     }
   }

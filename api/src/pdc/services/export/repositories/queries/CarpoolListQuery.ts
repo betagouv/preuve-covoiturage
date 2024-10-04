@@ -1,4 +1,9 @@
 /* eslint-disable max-len */
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolAnomalyStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/common.ts";
 import { AbstractQuery } from "./AbstractQuery.ts";
 
 // List the {{template}} used in the query for string replacement
@@ -9,7 +14,9 @@ export type CarpoolListType = {
   operator_trip_id: string;
   operator_journey_id: string;
   operator_class: string;
-  status: string;
+  acquisition_status: CarpoolAcquisitionStatusEnum;
+  fraud_status: CarpoolFraudStatusEnum;
+  anomaly_status: CarpoolAnomalyStatusEnum;
 
   start_datetime: Date;
   start_date: string;
@@ -115,7 +122,9 @@ export class CarpoolListQuery extends AbstractQuery {
       SELECT
         cc._id,
         cc.legacy_id,
-        cs.fraud_status as status,
+        cs.acquisition_status,
+        cs.fraud_status,
+        cs.anomaly_status,
 
         -- time
         cc.start_datetime as start_at,
@@ -241,7 +250,9 @@ export class CarpoolListQuery extends AbstractQuery {
       trips.operator_trip_id,
       trips.operator_journey_id,
       trips.operator_class,
-      trips.status,
+      trips.acquisition_status,
+      trips.fraud_status,
+      trips.anomaly_status,
 
       -- dates and times are in UTC
       -- ceil times to 10 minutes and format for user's convenience
