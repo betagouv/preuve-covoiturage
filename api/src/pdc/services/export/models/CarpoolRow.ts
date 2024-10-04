@@ -1,7 +1,9 @@
 import { pick } from "@/lib/object/index.ts";
+import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
+  status: CarpoolStatusEnum;
   incentive_type: string;
   has_incentive: boolean;
 };
@@ -28,7 +30,7 @@ export class CarpoolRow {
    * @param fields
    */
   public get(fields?: string[]): Partial<CarpoolRowData> {
-    return fields && fields.length ? pick(this.data, fields) : this.data;
+    return fields && fields.length ? pick(this.data, fields as any) : this.data;
   }
 
   // type makes sure the field exists in the root dataset to avoid having

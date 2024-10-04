@@ -22,9 +22,8 @@ export class FieldService {
 
   public byTarget(target: ExportTarget): Partial<Fields> {
     const fields = this.config.get("workbook.fields", []) as Fields;
-    const filter = this.config.get("workbook.filters", []).find((
-      filter: FieldFilter,
-    ) => filter.target === target);
+    const filter = this.config.get<FieldFilter[]>("workbook.filters", [])
+      .find((filter: FieldFilter) => filter.target === target);
 
     if (!filter) {
       logger.warn(`No filter found for target ${target}`);
