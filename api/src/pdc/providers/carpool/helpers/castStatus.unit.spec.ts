@@ -49,7 +49,7 @@ for (
       expected: CarpoolStatusEnum.Canceled,
     },
     {
-      title: "Pending fraud status + expired -> expired",
+      title: "Pending fraud status + expired -> term_violation_error",
       args: {
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         fraud_status: CarpoolFraudStatusEnum.Pending,
@@ -90,7 +90,7 @@ for (
       expected: CarpoolStatusEnum.Canceled,
     },
     {
-      title: "Passed fraud status + expired -> expired",
+      title: "Passed fraud status + expired -> term_violation_error",
       args: {
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         fraud_status: CarpoolFraudStatusEnum.Passed,
@@ -106,7 +106,7 @@ for (
       expected: CarpoolStatusEnum.FraudError,
     },
     {
-      title: "Failed anomaly status + processed -> anomaly_error",
+      title: "Failed anomaly status + Expired -> term_violation_error",
       args: {
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         anomaly_status: CarpoolAnomalyStatusEnum.Failed,

@@ -53,13 +53,13 @@ describe("CarpoolStatusRepository", () => {
       "test2",
     ]);
     const result = await db.connection.getClient().query(sql`
-      SELECT * FROM ${raw(repository.termsVioldationErrorLabelTable)}
+      SELECT * FROM ${raw(repository.termsViolationErrorLabelTable)}
       WHERE carpool_id = ${carpool_id}
     `);
     assertEquals(result.rows.pop()?.labels, ["test", "test2"]);
     await repository.setTermsViolationErrorLabels(carpool_id, []);
     const result2 = await db.connection.getClient().query(sql`
-      SELECT * FROM ${raw(repository.termsVioldationErrorLabelTable)}
+      SELECT * FROM ${raw(repository.termsViolationErrorLabelTable)}
       WHERE carpool_id = ${carpool_id}
     `);
     assertEquals(result2.rows.pop()?.labels, []);

@@ -216,8 +216,10 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           case "ok":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Processed;
             break;
+          case "terms_violation_error":
           case "expired":
-            acquisitionStatus = CarpoolAcquisitionStatusEnum.Expired;
+            acquisitionStatus =
+              CarpoolAcquisitionStatusEnum.TermsViolationError;
             break;
           case "canceled":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Canceled;

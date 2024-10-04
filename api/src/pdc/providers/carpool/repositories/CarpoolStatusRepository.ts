@@ -13,7 +13,7 @@ import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 export class CarpoolStatusRepository {
   readonly table = "carpool_v2.status";
   readonly carpoolTable = "carpool_v2.carpools";
-  readonly termsVioldationErrorLabelTable =
+  readonly termsViolationErrorLabelTable =
     "carpool_v2.terms_violation_error_labels";
 
   constructor(protected connection: PostgresConnection) {}
@@ -32,7 +32,7 @@ export class CarpoolStatusRepository {
   ): Promise<void> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
-      INSERT INTO ${raw(this.termsVioldationErrorLabelTable)} (
+      INSERT INTO ${raw(this.termsViolationErrorLabelTable)} (
         carpool_id,
         labels
       ) VALUES (
