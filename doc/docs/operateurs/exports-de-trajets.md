@@ -136,7 +136,7 @@ trajets.
 |                                  | passenger_identity_id         | Identifiant personnel inter-opérateurs                                         |
 | operator_driver_id               | operator_driver_id            |                                                                                |
 |                                  | driver_identity_key           | Identifiant personnel inter-opérateurs                                         |
-| status                           | status                        | Détection des anomalies                                                        |
+| status                           | status                        | Statut du trajet : `acquisition_error`, `validation_error`, `normalization_error`, `fraud_error`, `anomaly_error`, `ok`, `expired`, `canceled`, `pending`, `unknown`                                                        |
 | passenger_id                     |                               |                                                                                |
 | passenger_contribution           | passenger_contribution        |                                                                                |
 | passenger_incentive_N_siret      |                               |                                                                                |

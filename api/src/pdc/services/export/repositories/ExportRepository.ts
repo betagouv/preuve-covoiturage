@@ -1,5 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/pdc/providers/carpool/helpers/sql.ts";
+import { staleDelay } from "@/pdc/services/export/config/export.ts";
 import { Export, ExportStatus } from "../models/Export.ts";
 import { ExportRecipient } from "../models/ExportRecipient.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
@@ -12,23 +14,7 @@ export type ExportUpdateData = Partial<
 >;
 export type ExportProgress = (progress: number) => Promise<void>;
 
-export interface ExportRepositoryInterface {
-  create(data: ExportCreateData): Promise<Export>;
-  get(id: number): Promise<Export>;
-  get(id: string): Promise<Export>;
-  update(id: number, data: ExportUpdateData): Promise<void>;
-  delete(id: number): Promise<void>;
-  list(): Promise<Export[]>;
-  status(id: number, status: ExportStatus): Promise<void>;
-  error(id: number, error: string): Promise<void>;
-  progress(id: number): Promise<ExportProgress>;
-  pickPending(): Promise<Export | null>;
-  recipients(id: number): Promise<ExportRecipient[]>;
-  addRecipient(export_id: number, recipient: ExportRecipient): Promise<void>;
-}
-
-export abstract class ExportRepositoryInterfaceResolver
-  implements ExportRepositoryInterface {
+export abstract class ExportRepositoryInterfaceResolver {
   /**
    * Create an new export in the database
    *
@@ -167,6 +153,16 @@ export abstract class ExportRepositoryInterfaceResolver
     export_id: number,
     recipient: ExportRecipient,
   ): Promise<void> {
+    throw new Error("Not implemented");
+  }
+
+  /**
+   * Fail stale exports
+   *
+   * This method is called by the process command to fail exports that are
+   * stuck in the `running` status for too long.
+   */
+  public async failStaleExports(): Promise<void> {
     throw new Error("Not implemented");
   }
 }
@@ -329,5 +325,16 @@ export class ExportRepository implements ExportRepositoryInterface {
         recipient.message,
       ],
     });
+  }
+
+  public async failStaleExports(): Promise<void> {
+    const query = sql`
+      UPDATE ${raw(this.exportsTable)}
+      SET status = ${ExportStatus.FAILURE}
+      WHERE status = ${ExportStatus.RUNNING}
+        AND created_at < NOW() - ${staleDelay}::interval
+    `;
+
+    await this.connection.getClient().query(query);
   }
 }
