@@ -110,7 +110,7 @@ services:
     volumes:
       - ./api:/app/api:ro
     working_dir: /app/api
-    command: 'npm run migrate'
+    command: 'just migrate'
     tty: true
     env_file: ./api/.env
     environment:
