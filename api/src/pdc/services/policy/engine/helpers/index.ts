@@ -1,5 +1,4 @@
 export { atDate } from "./atDate.ts";
-export { atTime } from "./atTime.ts";
 export { ensureFreeRide } from "./ensureFreeRide.ts";
 export { getOperatorsAt, type TimestampedOperators } from "./getOperatorsAt.ts";
 export { isAdultOrThrow } from "./isAdultOrThrow.ts";
