@@ -54,7 +54,7 @@ for (
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         fraud_status: CarpoolFraudStatusEnum.Pending,
       },
-      expected: CarpoolStatusEnum.Expired,
+      expected: CarpoolStatusEnum.TermsViolationError,
     },
     {
       title: "Passed fraud status + received -> ok",
@@ -95,7 +95,7 @@ for (
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         fraud_status: CarpoolFraudStatusEnum.Passed,
       },
-      expected: CarpoolStatusEnum.Expired,
+      expected: CarpoolStatusEnum.TermsViolationError,
     },
     {
       title: "Failed fraud status + processed -> fraudcheck_error",
@@ -111,7 +111,7 @@ for (
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
         anomaly_status: CarpoolAnomalyStatusEnum.Failed,
       },
-      expected: CarpoolStatusEnum.Expired,
+      expected: CarpoolStatusEnum.TermsViolationError,
     },
   ]
 ) {

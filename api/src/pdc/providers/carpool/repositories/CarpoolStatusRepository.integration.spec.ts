@@ -46,6 +46,25 @@ describe("CarpoolStatusRepository", () => {
 
     assertEquals(result.rows.pop()?.acquisition_status, data.status);
   });
+
+  it("Should create acquisition term violation error", async () => {
+    await repository.setTermsViolationErrorLabels(carpool_id, [
+      "test",
+      "test2",
+    ]);
+    const result = await db.connection.getClient().query(sql`
+      SELECT * FROM ${raw(repository.termsVioldationErrorLabelTable)}
+      WHERE carpool_id = ${carpool_id}
+    `);
+    assertEquals(result.rows.pop()?.labels, ["test", "test2"]);
+    await repository.setTermsViolationErrorLabels(carpool_id, []);
+    const result2 = await db.connection.getClient().query(sql`
+      SELECT * FROM ${raw(repository.termsVioldationErrorLabelTable)}
+      WHERE carpool_id = ${carpool_id}
+    `);
+    assertEquals(result2.rows.pop()?.labels, []);
+  });
+
   it("Should get status", async () => {
     const result = await repository.getStatusByOperatorJourneyId(
       insertableCarpool.operator_id,

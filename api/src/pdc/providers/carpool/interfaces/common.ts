@@ -57,10 +57,10 @@ export enum CarpoolStatusEnum {
   AcquisitionError = "acquisition_error",
   ValidationError = "validation_error",
   NormalizationError = "normalization_error",
+  TermsViolationError = "terms_violation_error",
   FraudError = "fraud_error",
   AnomalyError = "anomaly_error",
   Ok = "ok",
-  Expired = "expired",
   Canceled = "canceled",
   Pending = "pending",
   Unknown = "unknown",
@@ -72,7 +72,9 @@ export enum CarpoolAcquisitionStatusEnum {
   Processed = "processed",
   Failed = "failed",
   Canceled = "canceled",
+  /** @deprecated */
   Expired = "expired",
+  TermsViolationError = "terms_violation_error",
 }
 
 export enum CarpoolFraudStatusEnum {

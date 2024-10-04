@@ -1,7 +1,8 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { differenceInHours } from "@/lib/date/index.ts";
+import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import {
   CancelRequest,
@@ -28,9 +29,57 @@ export class CarpoolAcquisitionService {
     protected geoService: GeoProvider,
   ) {}
 
+  public async verifyTermsViolation(data: {
+    created_at: Date;
+    distance: number;
+    driver_identity_key: string;
+    passenger_identity_key: string;
+    start_datetime: Date;
+    end_datetime: Date;
+    operator_trip_id: string;
+  }): Promise<Array<string>> {
+    const result = [];
+    // The journey has been sent too late
+    if (differenceInHours(data.created_at, data.start_datetime) > 24) {
+      result.push("expired");
+    }
+
+    if (data.distance < 2_000) {
+      result.push("distance_too_short");
+    }
+    // This select all distinct operator_trip_id that started in the same day
+    // with the same identity key as any role
+    const journeyCount = await this.lookupRepository.countJourneyBy(
+      [data.driver_identity_key, data.passenger_identity_key],
+      {
+        min: startOfDay(data.start_datetime),
+        max: endOfDay(data.start_datetime),
+      },
+    );
+    if (journeyCount >= 4) {
+      result.push("too_many_trips_by_day");
+    }
+    // This select all distinct operator_trip_id that started before
+    // 30 minutes after the end of the current trip OR ended after
+    // 30 minutes before the start of the current trip
+    const journeyCloseCount = await this.lookupRepository.countJourneyBy(
+      [data.driver_identity_key, data.passenger_identity_key],
+      { max: addMinutes(data.end_datetime, 30) },
+      { min: addMinutes(data.start_datetime, -30) },
+      data.operator_trip_id,
+    );
+    if (journeyCloseCount >= 1) {
+      result.push("too_close_trips");
+    }
+
+    return result;
+  }
+
   public async registerRequest(
     data: RegisterRequest,
-  ): Promise<{ created_at: Date }> {
+  ): Promise<
+    { created_at: Date; terms_violation_error_labels: Array<string> }
+  > {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
@@ -47,21 +96,36 @@ export class CarpoolAcquisitionService {
         conn,
       );
 
-      const status =
-        differenceInHours(carpool.created_at, carpoolData.start_datetime) > 24
-          ? CarpoolAcquisitionStatusEnum.Expired
-          : CarpoolAcquisitionStatusEnum.Received;
+      const terms_violation_error_labels = await this.verifyTermsViolation({
+        created_at: carpool.created_at,
+        distance: data.distance,
+        driver_identity_key: data.driver_identity_key,
+        passenger_identity_key: data.passenger_identity_key,
+        operator_trip_id: data.operator_trip_id,
+        start_datetime: data.start_datetime,
+        end_datetime: data.end_datetime,
+      });
 
       await this.statusRepository.saveAcquisitionStatus(
         new CarpoolAcquisitionStatus(
           carpool._id,
           request._id,
-          status,
+          terms_violation_error_labels.length
+            ? CarpoolAcquisitionStatusEnum.TermsViolationError
+            : CarpoolAcquisitionStatusEnum.Received,
         ),
         conn,
       );
+
+      if (terms_violation_error_labels.length) {
+        await this.statusRepository.setTermViolationErrorLabels(
+          carpool._id,
+          terms_violation_error_labels,
+        );
+      }
+
       await conn.query("COMMIT");
-      return { created_at: carpool.created_at };
+      return { terms_violation_error_labels, created_at: carpool.created_at };
     } catch (e) {
       await conn.query("ROLLBACK");
       throw e;
@@ -92,6 +156,7 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
+
       await this.statusRepository.saveAcquisitionStatus(
         new CarpoolAcquisitionStatus(
           carpool._id,

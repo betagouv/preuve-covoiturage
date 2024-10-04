@@ -15,8 +15,11 @@ export function castToStatusEnum(
   if (data.acquisition_status === CarpoolAcquisitionStatusEnum.Canceled) {
     return CarpoolStatusEnum.Canceled;
   }
-  if (data.acquisition_status === CarpoolAcquisitionStatusEnum.Expired) {
-    return CarpoolStatusEnum.Expired;
+  if (
+    data.acquisition_status === CarpoolAcquisitionStatusEnum.Expired ||
+    data.acquisition_status === CarpoolAcquisitionStatusEnum.TermsViolationError
+  ) {
+    return CarpoolStatusEnum.TermsViolationError;
   }
   if (data.acquisition_status === CarpoolAcquisitionStatusEnum.Failed) {
     return CarpoolStatusEnum.AcquisitionError;
@@ -63,9 +66,11 @@ export function castFromStatusEnum(
         anomaly_status: CarpoolAnomalyStatusEnum.Passed,
         fraud_status: CarpoolFraudStatusEnum.Passed,
       }];
-    case CarpoolStatusEnum.Expired:
+    case CarpoolStatusEnum.TermsViolationError:
       return [{
         acquisition_status: CarpoolAcquisitionStatusEnum.Expired,
+      }, {
+        acquisition_status: CarpoolAcquisitionStatusEnum.TermsViolationError,
       }];
     case CarpoolStatusEnum.Canceled:
       return [{

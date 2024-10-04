@@ -21,6 +21,7 @@ export class CarpoolStatusService {
       status: CarpoolStatus;
       anomaly: Array<CarpoolLabel<unknown>>;
       fraud: Array<CarpoolLabel<unknown>>;
+      terms: Array<CarpoolLabel<unknown>>;
     } | undefined
   > {
     const statusResult = await this.statusRepository
@@ -40,11 +41,19 @@ export class CarpoolStatusService {
       operator_id,
       operator_journey_id,
     );
+
+    const terms = await this.labelRepository
+      .findTermsByOperatorJourneyId(
+        operator_id,
+        operator_journey_id,
+      );
+
     return {
       created_at,
       status,
       anomaly,
       fraud,
+      terms,
     };
   }
 

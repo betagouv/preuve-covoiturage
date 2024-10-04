@@ -1,6 +1,7 @@
 openapi: '3.0.2'
 info:
-  title: API Trajets V3.0
+  title: API Trajets
+  version: "3.0"
   description: |
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
@@ -119,10 +120,10 @@ components:
         - acquisition_error
         - normalization_error
         - ok
-        - expired
         - canceled
         - pending
         - unknown
+        - terms_violation_error
       description: |
         Statut du trajet tel que :
           - validation_error : les données envoyées ne sont pas valides
@@ -133,8 +134,8 @@ components:
           - ok : le trajet a correctement été traité
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
-          - expired : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
           - unknown : une erreur inconnue a affecté le trajet
+          - terms_violation_error : le trajet ne respecte pas les conditions générales d'utilisation
     duration:
       type: number
       minimum: 0
@@ -415,6 +416,19 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
+    terms_violation_label:
+      type: string
+      enum:
+        - distance_too_short
+        - too_many_trips_by_day
+        - too_close_trips
+        - expired
+      description: |
+        Etiquette possible pour un cas de non respect des CGU détectée :
+          - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+          - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
+          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
+          - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
     fraudcheck_label:
       type: string
       enum:
@@ -700,6 +714,12 @@ paths:
                             temporal_overlap_duration_ratio:
                               type: number
                               description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+                  terms_violation_details:
+                    type: array
+                    description: | 
+                      Liste des raisons ayant abouti au rejet du trajet. Vide si pas de fraude détectée.
+                    items:
+                      '$ref': "#/components/schemas/terms_violation_label"
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
