@@ -118,7 +118,7 @@ export class CarpoolAcquisitionService {
       );
 
       if (terms_violation_error_labels.length) {
-        await this.statusRepository.setTermViolationErrorLabels(
+        await this.statusRepository.setTermsViolationErrorLabels(
           carpool._id,
           terms_violation_error_labels,
         );
