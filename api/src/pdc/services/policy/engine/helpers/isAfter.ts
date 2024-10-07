@@ -4,7 +4,7 @@ import {
 } from "../../interfaces/index.ts";
 import { toZonedTime } from "./toZonedTime.ts";
 
-interface IsAfterParams {
+export interface IsAfterParams {
   date: Date;
   tz?: string;
 }
