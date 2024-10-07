@@ -4,7 +4,7 @@ export const description =
   `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 1 avril 2023 au 31 décembre 2024</b>, toute la semaine</p>
-  <p>Cette campagne est limitée à <b>185 000 euros</b>.</p>
+  <p>Cette campagne est limitée à <b>265 000 euros</b>.</p>
   <p>Les trajets de + de 80km sont exclus à partir du 1er janvier 2024</p>
   <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 5 km sont incités selon les règles suivantes :</p>
 
