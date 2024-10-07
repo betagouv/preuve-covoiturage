@@ -50,7 +50,7 @@ export class EurostatCountries2020 extends AbstractDataset {
                 FROM tmp
                 ON CONFLICT DO NOTHING
               `,
-              values: [JSON.stringify(results.value.map((r) => r.value))],
+              values: [JSON.stringify(results.value.map((r: any) => r.value))],
             };
             await connection.query(query);
           }
