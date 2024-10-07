@@ -30,6 +30,7 @@ export interface ResultInterface {
   created_at: Date;
   fraud_error_labels?: string[];
   anomaly_error_details?: AnomalyErrorDetails[];
+  terms_violation_details?: string[];
 }
 
 export const handlerConfig = {

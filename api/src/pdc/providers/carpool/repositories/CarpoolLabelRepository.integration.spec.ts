@@ -30,6 +30,11 @@ describe("Carpool Label Repository", () => {
         raw(labelRepository.fraudTable)
       } (carpool_id, label) VALUES (${carpool_id}, ${label})`,
     );
+    await db.connection.getClient().query(
+      sql`INSERT INTO ${
+        raw(labelRepository.termsTable)
+      } (carpool_id, labels) VALUES (${carpool_id}, ${[label]})`,
+    );
   });
 
   afterAll(async () => {
@@ -52,6 +57,16 @@ describe("Carpool Label Repository", () => {
 
   it("Should read carpool fraud label", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    assertEquals(result, [{
+      label,
+    }]);
+  });
+
+  it("Should read carpool terms label", async () => {
+    const result = await labelRepository.findTermsByOperatorJourneyId(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );

@@ -44,6 +44,7 @@ export class StatusJourneyAction extends AbstractAction {
       created_at: result.created_at,
       fraud_error_labels: result.fraud.map((f) => f.label),
       anomaly_error_details: result.anomaly as any,
+      terms_violation_details: result.terms.map((f) => f.label),
     };
   }
 }
