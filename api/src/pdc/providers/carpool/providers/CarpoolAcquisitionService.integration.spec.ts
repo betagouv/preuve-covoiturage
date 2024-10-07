@@ -247,6 +247,9 @@ describe("CarpoolAcquistionService", () => {
             max: new Date("2024-01-01T22:59:59.999Z"),
             min: new Date("2023-12-31T23:00:00.000Z"),
           },
+          undefined,
+          undefined,
+          undefined,
         ],
         [
           ["key_driver", "key_passenger"],
@@ -257,6 +260,7 @@ describe("CarpoolAcquistionService", () => {
             min: new Date("2024-01-01T01:30:00.000Z"),
           },
           "operator_trip_id",
+          undefined,
         ],
       ],
     );

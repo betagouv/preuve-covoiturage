@@ -1,5 +1,8 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import {
+  PoolClient,
+  PostgresConnection,
+} from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
@@ -37,7 +40,7 @@ export class CarpoolAcquisitionService {
     start_datetime: Date;
     end_datetime: Date;
     operator_trip_id: string;
-  }): Promise<Array<string>> {
+  }, client?: PoolClient): Promise<Array<string>> {
     const result = [];
     // The journey has been sent too late
     if (differenceInHours(data.created_at, data.start_datetime) > 24) {
@@ -55,6 +58,9 @@ export class CarpoolAcquisitionService {
         min: startOfDay(data.start_datetime),
         max: endOfDay(data.start_datetime),
       },
+      undefined,
+      undefined,
+      client,
     );
     if (journeyCount >= 4) {
       result.push("too_many_trips_by_day");
@@ -67,6 +73,7 @@ export class CarpoolAcquisitionService {
       { max: addMinutes(data.end_datetime, 30) },
       { min: addMinutes(data.start_datetime, -30) },
       data.operator_trip_id,
+      client,
     );
     if (journeyCloseCount >= 1) {
       result.push("too_close_trips");
@@ -104,7 +111,7 @@ export class CarpoolAcquisitionService {
         operator_trip_id: data.operator_trip_id,
         start_datetime: data.start_datetime,
         end_datetime: data.end_datetime,
-      });
+      }, conn);
 
       await this.statusRepository.saveAcquisitionStatus(
         new CarpoolAcquisitionStatus(
@@ -121,6 +128,7 @@ export class CarpoolAcquisitionService {
         await this.statusRepository.setTermsViolationErrorLabels(
           carpool._id,
           terms_violation_error_labels,
+          conn,
         );
       }
 
