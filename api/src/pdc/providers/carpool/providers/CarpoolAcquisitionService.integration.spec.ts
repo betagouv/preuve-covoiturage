@@ -216,4 +216,49 @@ describe("CarpoolAcquistionService", () => {
       );
     assertEquals(result.rows, []);
   });
+
+  it("Should raise error if terms is violated", async () => {
+    const carpoolL = sinon.spy(lookupRepository);
+    const service = getService({
+      CarpoolLookupRepository: carpoolL,
+    });
+
+    const data = {
+      created_at: new Date("2024-01-01T05:00:00.000Z"),
+      distance: 4_000,
+      driver_identity_key: "key_driver",
+      passenger_identity_key: "key_passenger",
+      start_datetime: new Date("2024-01-01T02:00:00.000Z"),
+      end_datetime: new Date("2024-01-01T04:00:00.000Z"),
+      operator_trip_id: "operator_trip_id",
+    };
+
+    const errors = await service.verifyTermsViolation({
+      ...data,
+      distance: 100,
+    });
+    assertEquals(errors, ["distance_too_short"]);
+    assertEquals(
+      carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
+      [
+        [
+          ["key_driver", "key_passenger"],
+          {
+            max: new Date("2024-01-01T22:59:59.999Z"),
+            min: new Date("2023-12-31T23:00:00.000Z"),
+          },
+        ],
+        [
+          ["key_driver", "key_passenger"],
+          {
+            max: new Date("2024-01-01T04:30:00.000Z"),
+          },
+          {
+            min: new Date("2024-01-01T01:30:00.000Z"),
+          },
+          "operator_trip_id",
+        ],
+      ],
+    );
+  });
 });

@@ -1,5 +1,6 @@
 import {
   afterAll,
+  assertEquals,
   assertObjectMatch,
   beforeAll,
   describe,
@@ -67,5 +68,21 @@ describe("CarpoolGeoRepository", () => {
       fraud_status: "pending",
       acquisition_status: "canceled",
     });
+  });
+
+  it("should count the carpool by start/end date", async () => {
+    const data = { ...insertableCarpool };
+    const count = await repository.countJourneyBy([data.driver_identity_key], {
+      min: new Date(data.start_datetime.valueOf() - 1000),
+      max: new Date(data.start_datetime.valueOf() + 1000),
+    }, {});
+    assertEquals(count, 1);
+
+    const count2 = await repository.countJourneyBy([data.driver_identity_key], {
+      min: new Date(data.start_datetime.valueOf() - 1000),
+    }, {
+      max: new Date(data.end_datetime.valueOf() + 1000),
+    }, `${data.operator_trip_id}-diff`);
+    assertEquals(count2, 1);
   });
 });

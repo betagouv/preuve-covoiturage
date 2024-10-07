@@ -13,6 +13,8 @@ import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 export class CarpoolStatusRepository {
   readonly table = "carpool_v2.status";
   readonly carpoolTable = "carpool_v2.carpools";
+  readonly termsViolationErrorLabelTable =
+    "carpool_v2.terms_violation_error_labels";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -21,6 +23,29 @@ export class CarpoolStatusRepository {
     client?: PoolClient,
   ): Promise<void> {
     await this.setStatus(data.carpool_id, "acquisition", data.status, client);
+  }
+
+  public async setTermsViolationErrorLabels(
+    carpool_id: Id,
+    labels: string[],
+    client?: PoolClient,
+  ): Promise<void> {
+    const cl = client ?? this.connection.getClient();
+    const sqlQuery = sql`
+      INSERT INTO ${raw(this.termsViolationErrorLabelTable)} (
+        carpool_id,
+        labels
+      ) VALUES (
+        ${carpool_id},
+        ${labels}
+      )
+      ON CONFLICT (carpool_id)
+      DO UPDATE 
+      SET 
+          labels = excluded.labels
+      WHERE terms_violation_error_labels.carpool_id = ${carpool_id}
+    `;
+    await cl.query(sqlQuery);
   }
 
   public async setStatus(
