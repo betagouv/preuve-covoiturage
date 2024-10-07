@@ -25,7 +25,7 @@ const defaultBootstrapObject: BootstrapType = {
 };
 
 export class Bootstrap {
-  private readonly kernel: () => NewableType<KernelInterface>;
+  public readonly kernel: () => NewableType<KernelInterface>;
   public serviceProviders: NewableType<ServiceContainerInterface>[];
   private transports: {
     [key: string]: (kernel: KernelInterface) => TransportInterface;

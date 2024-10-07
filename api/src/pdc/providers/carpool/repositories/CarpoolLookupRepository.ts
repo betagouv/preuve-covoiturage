@@ -33,10 +33,12 @@ export class CarpoolLookupRepository {
   ): Promise<number> {
     const cl = client ?? this.connection.getClient();
     const filters = [
-      join([
-        sql`cc.driver_identity_key = ANY(${identity_key})`,
-        sql`cc.passenger_identity_key = ANY(${identity_key})`,
-      ], " OR "),
+      sql`(${
+        join([
+          sql`cc.driver_identity_key = ANY(${identity_key})`,
+          sql`cc.passenger_identity_key = ANY(${identity_key})`,
+        ], " OR ")
+      })`,
       sql`cs.acquisition_status <> ANY('{canceled,expired,terms_violation_error}'::carpool_v2.carpool_acquisition_status_enum[]) `,
     ];
 
