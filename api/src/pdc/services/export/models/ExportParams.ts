@@ -10,7 +10,7 @@ export type Params = {
   start_at: Date;
   end_at: Date;
   operator_id: number[];
-  geo_selector: TerritorySelectorsInterface;
+  geo_selector: TerritorySelectorsInterface | null;
   tz: Timezone;
 };
 
@@ -30,7 +30,7 @@ export class ExportParams {
     start_at: subMonthsTz(today(this.tz), 1),
     end_at: today(),
     operator_id: [],
-    geo_selector: { country: ["XXXXX"] }, // FRANCE
+    geo_selector: null,
     tz: this.tz,
   };
 
@@ -79,6 +79,7 @@ export class ExportParams {
    */
   public geoToSQL(mode: "AND" | "OR" = "OR"): string {
     const { geo_selector } = this.params;
+    if (!geo_selector) return "";
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
         // join all codes per type
