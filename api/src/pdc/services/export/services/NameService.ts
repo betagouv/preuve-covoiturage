@@ -9,12 +9,7 @@ export type Options = {
   territory: string | null;
 };
 
-export type NameServiceInterface = {
-  get(config: Partial<Options>): string;
-};
-
-export abstract class NameServiceInterfaceResolver
-  implements NameServiceInterface {
+export abstract class NameServiceInterfaceResolver {
   public get(config: Partial<Options>): string {
     throw new Error("Not implemented");
   }

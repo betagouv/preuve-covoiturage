@@ -6,16 +6,7 @@ import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { ExportProgress } from "../repositories/ExportRepository.ts";
 
-export type FileCreatorServiceInterface = {
-  write(
-    params: ExportParams,
-    fileWriter: CSVWriter,
-    progress?: ExportProgress,
-  ): Promise<string>;
-};
-
-export abstract class FileCreatorServiceInterfaceResolver
-  implements FileCreatorServiceInterface {
+export abstract class FileCreatorServiceInterfaceResolver {
   protected async configure(
     params: ExportParams,
     fileWriter: CSVWriter,

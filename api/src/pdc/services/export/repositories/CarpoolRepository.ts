@@ -12,13 +12,7 @@ import {
   TemplateKeys,
 } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
-export interface CarpoolRepositoryInterface {
-  list(params: ExportParams, fileWriter: CSVWriter): Promise<void>;
-  count(params: ExportParams): Promise<number>;
-}
-
-export abstract class CarpoolRepositoryInterfaceResolver
-  implements CarpoolRepositoryInterface {
+export abstract class CarpoolRepositoryInterfaceResolver {
   public async list(
     params: ExportParams,
     fileWriter: CSVWriter,
@@ -33,7 +27,7 @@ export abstract class CarpoolRepositoryInterfaceResolver
 @provider({
   identifier: CarpoolRepositoryInterfaceResolver,
 })
-export class CarpoolRepository implements CarpoolRepositoryInterface {
+export class CarpoolRepository {
   public readonly table = "carpool_v2.carpools";
   private readonly batchSize = 1000;
 

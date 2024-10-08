@@ -3,12 +3,7 @@ import { logger } from "@/lib/logger/index.ts";
 import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 
-export type FieldServiceInterface = {
-  byTarget(type: ExportTarget): Partial<Fields>;
-};
-
-export abstract class FieldServiceInterfaceResolver
-  implements FieldServiceInterface {
+export abstract class FieldServiceInterfaceResolver {
   public byTarget(type: ExportTarget): Partial<Fields> {
     throw new Error("Not implemented");
   }
