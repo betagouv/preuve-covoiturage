@@ -61,7 +61,6 @@ export class CreateActionV3 extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
-
     // make sure we have at least one recipient
     const emails = await this.recipientService.maybeAddCreator(
       (params.recipients || []).map(ExportRecipient.fromEmail),

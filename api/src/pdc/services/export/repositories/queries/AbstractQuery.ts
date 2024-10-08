@@ -19,9 +19,10 @@ export abstract class AbstractQuery {
     query: string,
     templates: QueryTemplates<TKey>,
   ): string {
-    templates.forEach((value, key) => {
-      query = query.replace(new RegExp(`{{${key}}}`, "g"), value);
-    });
+    templates
+      .forEach((value, key) => {
+        query = query.replace(new RegExp(`{{${key}}}`, "g"), value);
+      });
 
     return query;
   }

@@ -2,15 +2,7 @@ import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { ExportRecipient } from "../models/ExportRecipient.ts";
 
-export type RecipientServiceInterface = {
-  maybeAddCreator(
-    recipients: ExportRecipient[],
-    created_by: number,
-  ): Promise<ExportRecipient[]>;
-};
-
-export abstract class RecipientServiceInterfaceResolver
-  implements RecipientServiceInterface {
+export abstract class RecipientServiceInterfaceResolver {
   /**
    * Add the creator as recipient if no recipient is provided
    *
