@@ -10,13 +10,13 @@ export class IgnAe2024 extends IgnDataset {
   static year = 2024;
   static table = "ign_ae_2024";
 
-  readonly rows: Map<string, [string, string]> = new Map([
+  override readonly rows: Map<string, [string, string]> = new Map([
     ["arr", ["INSEE_ARM", "varchar"]],
     ["com", ["INSEE_COM", "varchar"]],
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  readonly beforeSql: string = `
+  override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
       arr varchar(5),
@@ -33,14 +33,16 @@ export class IgnAe2024 extends IgnDataset {
   `;
   static url =
     // eslint-disable-next-line max-len
-    "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_LAMB93_FXX_2024-02-22/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_LAMB93_FXX_2024-02-22.7z";
-  readonly transformations: Array<
+    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2024-02-22.7z";
+  override readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]
   > = [
-    ["SHP_WGS84G_FRA/COMMUNE", { key: "geom" }],
-    ["SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL", { key: "geom" }],
+    ["SHP_WGS84G_FRA-ED2024-02-22/COMMUNE.shp", { key: "geom" }],
+    ["SHP_WGS84G_FRA-ED2024-02-22/ARRONDISSEMENT_MUNICIPAL.shp", {
+      key: "geom",
+    }],
     [
-      "SHP_WGS84G_FRA/COMMUNE",
+      "SHP_WGS84G_FRA-ED2024-02-22/COMMUNE.shp",
       {
         key: "geom_simple",
         simplify: [
@@ -51,7 +53,7 @@ export class IgnAe2024 extends IgnDataset {
       },
     ],
     [
-      "SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL",
+      "SHP_WGS84G_FRA-ED2024-02-22/ARRONDISSEMENT_MUNICIPAL.shp",
       {
         key: "geom_simple",
         simplify: [
@@ -61,11 +63,12 @@ export class IgnAe2024 extends IgnDataset {
         ],
       },
     ],
-    ["SHP_WGS84G_FRA/CHEF_LIEU_CARTO", { key: "centroid" }],
-    ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
+    ["SHP_WGS84G_FRA-ED2024-02-22/CHFLIEU_ARRONDISSEMENT_MUNICIPAL.shp", {
+      key: "centroid",
+    }],
   ];
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,

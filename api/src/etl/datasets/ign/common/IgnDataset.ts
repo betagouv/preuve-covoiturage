@@ -34,7 +34,7 @@ export abstract class IgnDataset extends AbstractDataset {
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  sheetOptions = {
+  override sheetOptions = {
     filter: "features",
   };
 
@@ -44,7 +44,7 @@ export abstract class IgnDataset extends AbstractDataset {
     { file: string; key: string } & { [k: string]: any }
   > = [];
 
-  async transform(): Promise<void> {
+  override async transform(): Promise<void> {
     try {
       const filepaths: string[] = [];
       for await (const [file, customConfig] of this.transformations) {
@@ -86,7 +86,7 @@ export abstract class IgnDataset extends AbstractDataset {
     }
   }
 
-  async load(): Promise<void> {
+  override async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
     let i = 1;

@@ -54,8 +54,6 @@ export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/fi
 import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
 // @deno-types="npm:@types/stream-json@^1.7"
-import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
-import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
 // @deno-types="npm:@types/node-7z@^2"
 export { extractFull } from "npm:node-7z@^3.0";
 // @deno-types="npm:@types/node-7z@^2"
@@ -237,8 +235,6 @@ export {
   rateLimit,
   RateLimitRedisStore,
   RedisStore,
-  StreamJsonFilter,
-  StreamJsonStreamArray,
   xlsx,
   xss,
 };

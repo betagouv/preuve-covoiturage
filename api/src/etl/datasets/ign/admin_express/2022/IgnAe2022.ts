@@ -10,13 +10,13 @@ export class IgnAe2022 extends IgnDataset {
   static year = 2022;
   static table = "ign_ae_2022";
 
-  readonly rows: Map<string, [string, string]> = new Map([
+  override readonly rows: Map<string, [string, string]> = new Map([
     ["arr", ["INSEE_ARM", "varchar"]],
     ["com", ["INSEE_COM", "varchar"]],
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  readonly beforeSql: string = `
+  override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
       arr varchar(5),
@@ -66,7 +66,7 @@ export class IgnAe2022 extends IgnDataset {
     ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
   ];
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,

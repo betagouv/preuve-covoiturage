@@ -9,7 +9,7 @@ export function getFileExtensions(filetype: FileTypeEnum): string[] {
     case FileTypeEnum.Xls:
       return [".xls", ".xlsx"];
     case FileTypeEnum.Geojson:
-      return [".tson", ".geojson"];
+      return [".json", ".geojson"];
     case FileTypeEnum.Shp:
       return [".shp"];
     default:
