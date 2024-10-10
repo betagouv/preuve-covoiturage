@@ -11,17 +11,17 @@ describe("TerritoryService: geoStringToObject", () => {
 
   it("should return the correct result when no params are provided", () => {
     const result = service.geoStringToObject([]);
-    assertEquals(result, { [TerritoryCodeEnum.Country]: ["XXXXX"] });
+    assertEquals(result, null);
   });
 
   it("should return the correct result when geo param is empty", () => {
     const result = service.geoStringToObject([]);
-    assertEquals(result, { [TerritoryCodeEnum.Country]: ["XXXXX"] });
+    assertEquals(result, null);
   });
 
   it("should return the correct result when code is not in the TerritoryCodeEnum list", () => {
     const result = service.geoStringToObject(["invalid_code"]);
-    assertEquals(result, { [TerritoryCodeEnum.Country]: ["XXXXX"] });
+    assertEquals(result, null);
   });
 
   it("should return the correct result when geo param is an AOM", () => {
