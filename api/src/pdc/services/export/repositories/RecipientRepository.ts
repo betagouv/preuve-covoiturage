@@ -15,13 +15,7 @@ export type CreateRecipientData = Pick<
   "export_id" | "email" | "fullname" | "message"
 >;
 
-export interface RecipientRepositoryInterface {
-  create(data: CreateRecipientData): Promise<number>;
-  anonymize(export_id: number): Promise<void>;
-}
-
-export abstract class RecipientRepositoryInterfaceResolver
-  implements RecipientRepositoryInterface {
+export abstract class RecipientRepositoryInterfaceResolver {
   public async create(data: CreateRecipientData): Promise<number> {
     throw new Error("Not implemented");
   }
@@ -33,7 +27,7 @@ export abstract class RecipientRepositoryInterfaceResolver
 @provider({
   identifier: RecipientRepositoryInterfaceResolver,
 })
-export class RecipientRepository implements RecipientRepositoryInterface {
+export class RecipientRepository {
   protected readonly table = "export.recipients";
 
   constructor(protected connection: PostgresConnection) {}

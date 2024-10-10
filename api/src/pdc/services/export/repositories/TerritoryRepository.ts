@@ -11,14 +11,7 @@ interface PivotTerritorySelector {
   selector_value: string;
 }
 
-export interface TerritoryRepositoryInterface {
-  getTerritorySelectors(
-    territoryId: number,
-  ): Promise<TerritorySelectorsInterface>;
-}
-
-export abstract class TerritoryRepositoryInterfaceResolver
-  implements TerritoryRepositoryInterface {
+export abstract class TerritoryRepositoryInterfaceResolver {
   public async getTerritorySelectors(
     territoryId: number,
   ): Promise<TerritorySelectorsInterface> {
@@ -29,7 +22,7 @@ export abstract class TerritoryRepositoryInterfaceResolver
 @provider({
   identifier: TerritoryRepositoryInterfaceResolver,
 })
-export class TerritoryRepository implements TerritoryRepositoryInterface {
+export class TerritoryRepository {
   public readonly territoryTable = "territory.territory_group";
   public readonly pivotTable = "territory.territory_group_selector";
   public readonly geoTable = "geo.perimeters";
