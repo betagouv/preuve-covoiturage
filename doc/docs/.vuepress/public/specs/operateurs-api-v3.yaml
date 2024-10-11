@@ -591,6 +591,9 @@ paths:
         '409':
           description: |
             Un trajet similaire a déjà enregistré.
+        '422':
+          description: |
+            Le trajet ne respecte pas les CGU.
     get:
       tags:
       - Trajets

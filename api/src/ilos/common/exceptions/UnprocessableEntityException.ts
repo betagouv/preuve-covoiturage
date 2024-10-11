@@ -1,12 +1,12 @@
 import { RPCException } from "./RPCException.ts";
 
-export class InvalidParamsException extends RPCException {
+export class UnprocessableEntityException extends RPCException {
   constructor(data?: any) {
-    super("Invalid params");
+    super("Unprocessable Entity");
     this.nolog = true;
     this.rpcError = {
       data,
-      code: -32600,
+      code: -32602,
       message: this.message,
     };
   }

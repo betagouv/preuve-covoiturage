@@ -1,8 +1,8 @@
 import {
   ContextType,
   handler,
-  InvalidRequestException,
   ParseErrorException,
+  UnprocessableEntityException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
@@ -97,7 +97,9 @@ export class CreateJourneyAction extends AbstractAction {
         incentives: payload.incentives,
       });
       if (result.terms_violation_error_labels.length) {
-        throw new InvalidRequestException(result.terms_violation_error_labels);
+        throw new UnprocessableEntityException(
+          result.terms_violation_error_labels,
+        );
       }
       return {
         operator_journey_id: payload.operator_journey_id,
