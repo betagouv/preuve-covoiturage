@@ -6,7 +6,7 @@ export class UnprocessableEntityException extends RPCException {
     this.nolog = true;
     this.rpcError = {
       data,
-      code: -32602,
+      code: -32622,
       message: this.message,
     };
   }

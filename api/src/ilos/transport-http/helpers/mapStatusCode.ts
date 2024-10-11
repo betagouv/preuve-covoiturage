@@ -29,6 +29,7 @@ export function mapStatusCode(results: RPCResponseType): number {
     switch (error.code) {
       // Bad Request
       case -32600:
+      case -32602:
         return 400;
 
       // Unauthorized
@@ -48,7 +49,7 @@ export function mapStatusCode(results: RPCResponseType): number {
         return 405;
 
       // Unprocessable Entity
-      case -32602:
+      case -32622:
         return 422;
 
       // Conflict

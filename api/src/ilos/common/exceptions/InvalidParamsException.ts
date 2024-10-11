@@ -6,7 +6,7 @@ export class InvalidParamsException extends RPCException {
     this.nolog = true;
     this.rpcError = {
       data,
-      code: -32600,
+      code: -32602,
       message: this.message,
     };
   }
