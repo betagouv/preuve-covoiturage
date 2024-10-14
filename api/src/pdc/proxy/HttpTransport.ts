@@ -29,6 +29,8 @@ import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
+import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
+import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
 import { signature as importCeeSignature } from "@/shared/cee/importApplication.contract.ts";
 import { signature as importIdentityCeeSignature } from "@/shared/cee/importApplicationIdentity.contract.ts";
 import { signature as registerCeeSignature } from "@/shared/cee/registerApplication.contract.ts";
@@ -388,6 +390,81 @@ export class HttpTransport implements TransportInterface {
           );
         } else {
           res.status(201).json(response.result);
+        }
+      }),
+    );
+
+    this.app.get(
+      "/v3/policies/cee/:uuid",
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
+        Sentry.setUser(
+          pick(user, [
+            "_id",
+            "application_id",
+            "operator_id",
+            "territory_id",
+            "permissions",
+            "role",
+            "status",
+          ]),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(
+            findCeeSignature,
+            {
+              uuid: req.params.uuid,
+            },
+            user,
+            { req },
+          ),
+        )) as RPCResponseType;
+        if (!response || "error" in response || !("result" in response)) {
+          res.status(mapStatusCode(response)).json(
+            response.error?.data || { message: response.error?.message },
+          );
+        } else {
+          res.status(200).json(response.result);
+        }
+      }),
+    );
+    this.app.delete(
+      "/v3/policies/cee/:uuid",
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
+        Sentry.setUser(
+          pick(user, [
+            "_id",
+            "application_id",
+            "operator_id",
+            "territory_id",
+            "permissions",
+            "role",
+            "status",
+          ]),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(
+            deleteCeeSignature,
+            {
+              uuid: req.params.uuid,
+            },
+            user,
+            { req },
+          ),
+        )) as RPCResponseType;
+        if (!response || "error" in response || !("result" in response)) {
+          res.status(mapStatusCode(response)).json(
+            response.error?.data || { message: response.error?.message },
+          );
+        } else {
+          res.status(204).json(response.result);
         }
       }),
     );
