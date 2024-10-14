@@ -30,6 +30,7 @@ import { CeeRepositoryProvider } from "./CeeRepositoryProvider.ts";
 describe("CeeRepositoryProvider", () => {
   let db: DbContext;
   let repository: CeeRepositoryProvider;
+  let applicationUuid: string;
 
   const { before, after } = makeDbBeforeAfter();
 
@@ -172,10 +173,12 @@ describe("CeeRepositoryProvider", () => {
       identity_key: "test",
     };
 
-    await repository.registerLongApplication(
+    const r = await repository.registerLongApplication(
       application,
       config.rules.applicationCooldownConstraint,
     );
+
+    applicationUuid = r.uuid;
 
     const applicationResults = await db.connection.getClient().query<any>({
       text: `
@@ -558,5 +561,37 @@ describe("CeeRepositoryProvider", () => {
     await assertRejects(async () =>
       repository.importStandardizedApplicationIdentity(app2)
     );
+  });
+
+  it("Should find existing application", async () => {
+    const result = await repository.findCeeByUuid(applicationUuid);
+    assertEquals(result.uuid, applicationUuid);
+  });
+
+  it("Shoud delete existing application", async () => {
+    await repository.deleteCeeByUuid(1, applicationUuid);
+    const uuidResult = await db.connection.getClient().query<any>({
+      text: `
+      SELECT _id as uuid
+      FROM ${repository.ceeApplicationsTable}
+      WHERE _id = $1
+      LIMIT 1
+    `,
+      values: [applicationUuid],
+    });
+    assertEquals(uuidResult.rowCount, 0);
+  });
+
+  it("Should raise exception if not found", async () => {
+    try {
+      await repository.findCeeByUuid(applicationUuid);
+    } catch {
+      assert(true);
+    }
+    try {
+      await repository.deleteCeeByUuid(1, applicationUuid);
+    } catch {
+      assert(true);
+    }
   });
 });
