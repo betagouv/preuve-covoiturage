@@ -2,7 +2,6 @@ import {
   ContextType,
   handler,
   ParseErrorException,
-  UnprocessableEntityException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
@@ -96,14 +95,11 @@ export class CreateJourneyAction extends AbstractAction {
         passenger_payments: payload.passenger.payments,
         incentives: payload.incentives,
       });
-      if (result.terms_violation_error_labels.length) {
-        throw new UnprocessableEntityException(
-          result.terms_violation_error_labels,
-        );
-      }
+
       return {
         operator_journey_id: payload.operator_journey_id,
         created_at: result.created_at,
+        terms_violation_errors: result.terms_violation_error_labels || [],
       };
     } catch (e) {
       logger.error(e.message, { operator_journey_id, operator_id });

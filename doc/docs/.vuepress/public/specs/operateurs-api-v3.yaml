@@ -560,6 +560,12 @@ paths:
                      type: string
                      format: date-time
                      description: La date de création dans le registre
+                   terms_violation_errors:
+                     type: array
+                     description: | 
+                       Liste des raisons ayant abouti au rejet du trajet. Vide si aucune erreur
+                     items:
+                       '$ref': "#/components/schemas/terms_violation_label"
         '400':
           description: Mauvaise requête
           content:
@@ -591,9 +597,6 @@ paths:
         '409':
           description: |
             Un trajet similaire a déjà enregistré.
-        '422':
-          description: |
-            Le trajet ne respecte pas les CGU.
     get:
       tags:
       - Trajets
