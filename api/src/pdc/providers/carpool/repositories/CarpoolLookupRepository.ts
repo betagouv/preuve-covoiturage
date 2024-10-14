@@ -3,7 +3,7 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
-import sql, { join, raw } from "../helpers/sql.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   SelectableCarpool,
   SelectableCarpoolStatus,

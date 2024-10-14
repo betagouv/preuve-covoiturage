@@ -2,7 +2,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
-import sql, { raw } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";

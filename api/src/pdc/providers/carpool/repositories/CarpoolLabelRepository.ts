@@ -3,7 +3,7 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
-import sql, { raw } from "../helpers/sql.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { CarpoolLabel } from "../interfaces/database/label.ts";
 
 @provider()

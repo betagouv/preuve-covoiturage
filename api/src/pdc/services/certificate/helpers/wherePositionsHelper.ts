@@ -1,4 +1,4 @@
-import sql, { join, Sql } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { join, Sql } from "@/lib/pg/sql.ts";
 import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
 
 // deno-fmt-ignore

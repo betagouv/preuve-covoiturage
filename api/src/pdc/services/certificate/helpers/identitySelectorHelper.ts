@@ -1,4 +1,4 @@
-import sql, { join, raw, Sql } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { join, raw, Sql } from "@/lib/pg/sql.ts";
 import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { IdentityIdentifiersInterface } from "@/shared/certificate/common/interfaces/IdentityIdentifiersInterface.ts";
 

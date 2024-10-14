@@ -3,8 +3,8 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
-import sql, { raw } from "../helpers/sql.ts";
 
 @provider()
 export class CarpoolGeoRepository {
