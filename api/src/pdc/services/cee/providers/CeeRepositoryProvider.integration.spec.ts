@@ -583,15 +583,9 @@ describe("CeeRepositoryProvider", () => {
   });
 
   it("Should raise exception if not found", async () => {
-    try {
-      await repository.findCeeByUuid(applicationUuid);
-    } catch {
-      assert(true);
-    }
-    try {
-      await repository.deleteCeeByUuid(1, applicationUuid);
-    } catch {
-      assert(true);
-    }
+    await assertRejects(async () => repository.findCeeByUuid(applicationUuid));
+    await assertRejects(async () =>
+      repository.deleteCeeByUuid(1, applicationUuid)
+    );
   });
 });
