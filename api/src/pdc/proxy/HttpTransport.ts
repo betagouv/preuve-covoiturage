@@ -24,10 +24,11 @@ import {
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { get, pick } from "@/lib/object/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
 import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
@@ -296,208 +297,40 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCeeRoutes(): void {
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(registerCeeSignature, { ...req.body }, user, {
-            req,
-          }),
-        )) as RPCResponseType;
-
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(201).json(response.result);
-        }
-      }),
+      registerCeeSignature,
+      "post",
+      201,
     );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/simulate",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(simulateCeeSignature, { ...req.body }, user, {
-            req,
-          }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(200).end();
-        }
-      }),
+      simulateCeeSignature,
+      "post",
     );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/import",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(importCeeSignature, req.body, user, { req }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(201).json(response.result);
-        }
-      }),
+      importCeeSignature,
+      "post",
+      201,
     );
-
-    this.app.get(
-      "/v3/policies/cee/:uuid",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            findCeeSignature,
-            {
-              uuid: req.params.uuid,
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(200).json(response.result);
-        }
-      }),
-    );
-    this.app.delete(
-      "/v3/policies/cee/:uuid",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            deleteCeeSignature,
-            {
-              uuid: req.params.uuid,
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(204).json(response.result);
-        }
-      }),
-    );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/import/identity",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(importIdentityCeeSignature, req.body, user, { req }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(200).json(response.result);
-        }
-      }),
+      importIdentityCeeSignature,
+      "post",
+      200,
+    );
+    this.registerCeeRoute(
+      "/v3/policies/cee/:uuid",
+      findCeeSignature,
+      "get",
+      200,
+    );
+    this.registerCeeRoute(
+      "/v3/policies/cee/:uuid",
+      deleteCeeSignature,
+      "delete",
+      204,
     );
   }
 
@@ -664,19 +497,7 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const user = get(req, "session.user", {});
-
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
+        setSentryUser(req);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:create",
@@ -1289,5 +1110,36 @@ export class HttpTransport implements TransportInterface {
     }
 
     return {};
+  }
+
+  private registerCeeRoute(
+    path: string,
+    signature: string,
+    method: "post" | "get" | "delete",
+    successStatus = 200,
+  ) {
+    this.app[method](
+      path,
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
+        setSentryUser(req);
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(signature, { ...req.body, ...req.params }, user, {
+            req,
+          }),
+        )) as RPCResponseType;
+
+        if (!response || "error" in response || !("result" in response)) {
+          res.status(mapStatusCode(response)).json(
+            response.error?.data || { message: response.error?.message },
+          );
+        } else {
+          res.status(successStatus).json(response.result);
+        }
+      }),
+    );
   }
 }

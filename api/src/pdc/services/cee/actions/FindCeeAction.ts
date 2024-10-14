@@ -59,7 +59,7 @@ export class FindCeeAction extends AbstractAction {
     };
   }
 
-  public async sign(application: RegisteredCeeApplication): Promise<string> {
+  private async sign(application: RegisteredCeeApplication): Promise<string> {
     if (!this.signatory) {
       const private_key = this.config.get("signature.private_key");
       this.signatory = await createSignatory(private_key);

@@ -522,12 +522,12 @@ export class CeeRepositoryProvider
         LIMIT 1
     `;
     const result = await this.connection.getClient().query<
-      ExistingCeeApplication
+      ExistingCeeApplication & { journey_id: string }
     >(query);
     if (!result.rows.length) {
       throw new NotFoundException();
     }
-    return result.rows[0];
+    return this.castOutput<ExistingCeeApplication>(result.rows[0]);
   }
 
   async deleteCeeByUuid(operator_id: number, uuid: string): Promise<void> {
