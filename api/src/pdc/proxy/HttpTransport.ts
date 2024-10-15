@@ -1137,7 +1137,11 @@ export class HttpTransport implements TransportInterface {
             response.error?.data || { message: response.error?.message },
           );
         } else {
-          res.status(successStatus).json(response.result);
+          if (successStatus === 204) {
+            res.status(204).end();
+          } else {
+            res.status(successStatus).json(response.result);
+          }
         }
       }),
     );
