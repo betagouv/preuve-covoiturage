@@ -152,4 +152,9 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     identity_key: string;
     operator_id: number;
   }): Promise<void>;
+
+  abstract findCeeByUuid(
+    uuid: string,
+  ): Promise<ExistingCeeApplication>;
+  abstract deleteCeeByUuid(operator_id: number, uuid: string): Promise<void>;
 }

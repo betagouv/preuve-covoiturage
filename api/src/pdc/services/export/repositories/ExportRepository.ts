@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql, { raw } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
 import { Export, ExportStatus } from "../models/Export.ts";
 import { ExportRecipient } from "../models/ExportRecipient.ts";

@@ -1,5 +1,5 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import sql, { raw } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
 import { CarpoolLabelRepository } from "./CarpoolLabelRepository.ts";
