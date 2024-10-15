@@ -3,7 +3,8 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
-import sql, { bulk, join, raw } from "../helpers/sql.ts";
+import sql, { bulk, join, raw } from "@/lib/pg/sql.ts";
+import { DatabaseException } from "../exceptions/DatabaseException.ts";
 import {
   CarpoolIncentive,
   Id,
@@ -12,7 +13,6 @@ import {
   Uuid,
   WrittenCarpool,
 } from "../interfaces/index.ts";
-import { DatabaseException } from "../exceptions/DatabaseException.ts";
 
 @provider()
 export class CarpoolRepository {

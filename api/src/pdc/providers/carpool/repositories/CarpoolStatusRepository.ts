@@ -3,9 +3,8 @@ import {
   PoolClient,
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
-import { join } from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { OperatorJourneyId } from "@/shared/cee/common/CeeApplicationInterface.ts";
-import sql, { raw } from "../helpers/sql.ts";
 import { CarpoolStatus } from "../interfaces/database/label.ts";
 import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 

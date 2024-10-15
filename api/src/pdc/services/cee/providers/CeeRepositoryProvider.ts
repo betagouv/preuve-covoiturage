@@ -5,6 +5,7 @@ import {
   provider,
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { Uuid } from "@/pdc/providers/carpool/interfaces/index.ts";
 import {
   ApplicationCooldownConstraint,
@@ -494,5 +495,51 @@ export class CeeRepositoryProvider
     r: T & { journey_id: string },
   ): T {
     return { ...r, journey_id: Number.parseInt(r.journey_id, 10) };
+  }
+
+  async findCeeByUuid(uuid: string): Promise<ExistingCeeApplication> {
+    const query = sql`
+        SELECT
+          ce._id as uuid,
+          ce.operator_id,
+          ce.operator_journey_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret,
+          cc.legacy_id as journey_id,
+          cs.acquisition_status,
+          cs.fraud_status
+        FROM ${raw(this.ceeApplicationsTable)} AS ce
+        JOIN ${raw(this.operatorTable)} AS op
+          ON op._id = ce.operator_id
+        LEFT JOIN ${raw(this.carpoolV2Table)} AS cc
+          ON ce.operator_id = cc.operator_id AND ce.operator_journey_id = cc.operator_journey_id
+        LEFT JOIN ${
+      raw(this.carpoolV2StatusTable)
+    } AS cs ON cc._id = cs.carpool_id
+        WHERE ce._id = ${uuid}
+        LIMIT 1
+    `;
+    const result = await this.connection.getClient().query<
+      ExistingCeeApplication & { journey_id: string }
+    >(query);
+    if (!result.rows.length) {
+      throw new NotFoundException();
+    }
+    return this.castOutput<ExistingCeeApplication>(result.rows[0]);
+  }
+
+  async deleteCeeByUuid(operator_id: number, uuid: string): Promise<void> {
+    const query = sql`
+      DELETE FROM ${raw(this.ceeApplicationsTable)}
+      WHERE _id = ${uuid} AND operator_id = ${operator_id}
+      RETURNING _id AS uuid
+    `;
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount === 0) {
+      throw new NotFoundException();
+    }
   }
 }

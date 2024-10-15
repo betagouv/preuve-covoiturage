@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql from "@/pdc/providers/carpool/helpers/sql.ts";
+import sql from "@/lib/pg/sql.ts";
 import { identitySelectorHelper } from "@/pdc/services/certificate/helpers/identitySelectorHelper.ts";
 import { wherePositionsHelper } from "@/pdc/services/certificate/helpers/wherePositionsHelper.ts";
 import {
