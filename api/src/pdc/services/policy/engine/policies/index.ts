@@ -30,6 +30,7 @@ import { TerresTouloises2024 } from "@/pdc/services/policy/engine/policies/20240
 import { LannionTregor2024 } from "@/pdc/services/policy/engine/policies/20240401_LannionTregor.ts";
 import { PMGFxATMB2024 } from "@/pdc/services/policy/engine/policies/20240401_PMGFxATMB.ts";
 import { SiouleLimagne } from "@/pdc/services/policy/engine/policies/20240901_SiouleLimagne_2024_09.ts";
+import { PetrLunevillois092024032025 } from "@/pdc/services/policy/engine/policies/20240902_PetrLunevillois.ts";
 import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
 import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
@@ -37,9 +38,6 @@ import { PolicyHandlerStaticInterface } from "@/pdc/services/policy/interfaces/i
 import { CCVMM202405 } from "./20240805_CCVMM_2024_05.ts";
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
-  // disable prettier to avoid having it reformat to a single line
-  // this helps with git conflicts when modifying the list.
-  /* eslint-disable prettier/prettier */
   [
     ATMB202305,
     Cannes2024,
@@ -62,6 +60,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PaysDeLaLoire2023,
     PaysDeLaLoire2024,
     PetrLunevilloisS12023,
+    PetrLunevillois092024032025,
     PMGF2022,
     PMGF2023,
     PMGFOctobre2023,
@@ -78,5 +77,4 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     CCVMM202405,
     SiouleLimagne,
   ].map((h) => [h.id, h]),
-  /* eslint-enable prettier/prettier */
 );
