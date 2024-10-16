@@ -1,6 +1,8 @@
-import { Timezone } from '@pdc/providers/validator';
-import { subMonthsTz, today } from '../helpers';
-import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
+import { subMonthsTz, today } from "@/pdc/helpers/dates.helper.ts";
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import {
+  TerritorySelectorsInterface,
+} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export type Config = Partial<Params>;
 
@@ -12,16 +14,23 @@ export type Params = {
   tz: Timezone;
 };
 
+/**
+ * Configure for the export
+ *
+ * @todo add validation
+ * @todo add support for territory_id (territory_group._id)
+ * @todo add support for SIREN
+ */
 export class ExportParams {
   protected params: Params;
 
-  protected readonly tz = 'Europe/Paris' as Timezone;
+  protected readonly tz = "Europe/Paris" as Timezone;
   protected readonly schema = {};
   protected readonly defaultConfig: Params = {
     start_at: subMonthsTz(today(this.tz), 1),
     end_at: today(),
     operator_id: [],
-    geo_selector: { country: ['XXXXX'] }, // FRANCE
+    geo_selector: { country: ["XXXXX"] }, // FRANCE
     tz: this.tz,
   };
 
@@ -30,12 +39,27 @@ export class ExportParams {
     this.params = this.normalize(config);
   }
 
+  /**
+   * Normalize params
+   *
+   * @todo normalize params
+   * @todo apply limits to dates, etc...
+   *
+   * @param {Config} config
+   * @returns {Params}
+   */
   protected normalize(config: Config): Params {
-    // TODO normalize params
-    // apply limits to dates, etc...
-    return { ...this.defaultConfig, ...config };
+    const n = { ...this.defaultConfig, ...config };
+    n.start_at = new Date(n.start_at);
+    n.end_at = new Date(n.end_at);
+    return n;
   }
 
+  /**
+   * Getter for params
+   *
+   * @returns {Params}
+   */
   public get(): Params {
     if (!this.params) {
       throw new Error(`${__filename} not initialized`);
@@ -44,41 +68,79 @@ export class ExportParams {
     return this.params;
   }
 
-  // convert geo_selector to SQL WHERE clause
-  // using AND or OR to join start and end positions
-  public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
+  /**
+   * Convert geo_selector to SQL WHERE clause
+   *
+   * Using AND or OR to join start and end positions.
+   * Default is OR.
+   *
+   * @param {string} mode
+   * @returns {string}
+   */
+  public geoToSQL(mode: "AND" | "OR" = "OR"): string {
     const { geo_selector } = this.params;
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
         // join all codes per type
-        const local = [];
+        const local: string[] = [];
         geo_selector[type].forEach((code: string) => {
           local.push(`gps.${type} = '${code}'`);
         });
 
-        p.push(local.join(' OR '));
-        return p;
-      }, [])
-      .join(' OR ');
+        if (local.length) {
+          p.push(local.join(" OR "));
+        }
 
-    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, 'gpe.')}))`;
+        return p;
+      }, [] as string[]).join(" OR ");
+
+    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
   }
 
-  // convert operator_id to SQL WHERE clause
+  /**
+   * convert operator_id to SQL WHERE clause
+   *
+   * @returns {string}
+   */
   public operatorToSQL(): string {
     const { operator_id } = this.params;
-    return operator_id.length ? `AND cc.operator_id IN (${operator_id.join(',')})` : '';
+    return operator_id.length
+      ? `AND cc.operator_id IN (${operator_id.join(",")})`
+      : "";
   }
 
-  // TODO to AbstractParams class
-  protected validate<T>(config: T): void {
-    // TODO validate params against schema or throw InvalidParamsException
-  }
+  /**
+   * Validate params
+   *
+   * @todo to AbstractParams class
+   * @todo validate params against schema or throw InvalidParamsException
+   *
+   * @param {Config} config
+   */
+  protected validate<T>(config: T): void {}
 
+  /**
+   * Create ExportParams from JSON
+   *
+   * This is needed when gettin configuration from the database.
+   * Specific convert rules can be applied here.
+   *
+   * @param {Config} json
+   * @returns {ExportParams}
+   */
   public static fromJSON(json: Config): ExportParams {
     return new ExportParams(json);
   }
 
+  /**
+   * Convert ExportParams to JSON
+   *
+   * This is needed to store the configuration in the database.
+   * Specific convert rules can be applied here.
+   *
+   * @param {ExportParams} params
+   * @returns {Config}
+   */
   public static toJSON(params: ExportParams): Config {
     return params.get();
   }

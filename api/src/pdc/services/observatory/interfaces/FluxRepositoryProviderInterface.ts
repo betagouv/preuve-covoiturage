@@ -1,73 +1,58 @@
-import {
-  ParamsInterface as MonthlyFluxParamsInterface,
-  ResultInterface as MonthlyFluxResultInterface,
-} from '@shared/observatory/flux/monthlyFlux.contract';
-
 // eslint-disable-next-line max-len
-import { ResultInterface as lastRecordMonthlyFluxResultInterface } from '@shared/observatory/flux/lastRecordMonthlyFlux.contract';
 
-import {
-  ParamsInterface as EvolMonthlyFluxParamsInterface,
-  ResultInterface as EvolMonthlyFluxResultInterface,
-} from '@shared/observatory/flux/evolMonthlyFlux.contract';
+import type {
+  ParamsInterface as GetFluxParamsInterface,
+  ResultInterface as GetFluxResultInterface,
+} from "@/shared/observatory/flux/getFlux.contract.ts";
 
-import {
-  ParamsInterface as BestMonthlyFluxParamsInterface,
-  ResultInterface as BestMonthlyFluxResultInterface,
-} from '@shared/observatory/flux/bestMonthlyFlux.contract';
+import type {
+  ParamsInterface as GetEvolFluxParamsInterface,
+  ResultInterface as GetEvolFluxResultInterface,
+} from "@/shared/observatory/flux/getEvolFlux.contract.ts";
 
-import {
-  ParamsInterface as InsertMonthlyFluxParamsInterface,
-  ParamsInterface as DeleteMonthlyFluxParamsInterface,
-} from '@shared/observatory/flux/insertMonthlyFlux.contract';
+import type {
+  ParamsInterface as GetBestFluxParamsInterface,
+  ResultInterface as GetBestFluxResultInterface,
+} from "@/shared/observatory/flux/getBestFlux.contract.ts";
 
-export {
-  MonthlyFluxParamsInterface,
-  MonthlyFluxResultInterface,
-  lastRecordMonthlyFluxResultInterface,
-  EvolMonthlyFluxParamsInterface,
-  EvolMonthlyFluxResultInterface,
-  BestMonthlyFluxParamsInterface,
-  BestMonthlyFluxResultInterface,
-  InsertMonthlyFluxParamsInterface,
-  DeleteMonthlyFluxParamsInterface,
+export type {
+  GetBestFluxParamsInterface,
+  GetBestFluxResultInterface,
+  GetEvolFluxParamsInterface,
+  GetEvolFluxResultInterface,
+  GetFluxParamsInterface,
+  GetFluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
-  insertOneMonthFlux(params: InsertMonthlyFluxParamsInterface): Promise<void>;
-  deleteOneMonthFlux(params: DeleteMonthlyFluxParamsInterface): Promise<void>;
-  getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface>;
-  lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface>;
-  getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface>;
-  getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface>;
+  getFlux(
+    params: GetFluxParamsInterface,
+  ): Promise<GetFluxResultInterface>;
+  getEvolFlux(
+    params: GetEvolFluxParamsInterface,
+  ): Promise<GetEvolFluxResultInterface>;
+  getBestFlux(
+    params: GetBestFluxParamsInterface,
+  ): Promise<GetBestFluxResultInterface>;
 }
 
-export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
-  async insertOneMonthFlux(params: InsertMonthlyFluxParamsInterface): Promise<void> {
+export abstract class FluxRepositoryInterfaceResolver
+  implements FluxRepositoryInterface {
+  async getFlux(
+    params: GetFluxParamsInterface,
+  ): Promise<GetFluxResultInterface> {
     throw new Error();
   }
 
-  async deleteOneMonthFlux(params: DeleteMonthlyFluxParamsInterface): Promise<void> {
+  async getEvolFlux(
+    params: GetEvolFluxParamsInterface,
+  ): Promise<GetEvolFluxResultInterface> {
     throw new Error();
   }
 
-  async refreshAllFlux(): Promise<void> {
-    throw new Error();
-  }
-
-  async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
-    throw new Error();
-  }
-
-  async lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface> {
-    throw new Error();
-  }
-
-  async getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface> {
-    throw new Error();
-  }
-
-  async getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface> {
+  async getBestFlux(
+    params: GetBestFluxParamsInterface,
+  ): Promise<GetBestFluxResultInterface> {
     throw new Error();
   }
 }

@@ -39,9 +39,9 @@ export default function Navigation() {
             {
               linkProps: {
                 href: '/observatoire/campagnes-incitation',
-                title: 'Impact des campagnes d\'incitation',
+                title: 'Recensement des campagnes d\'incitation',
               },
-              text: 'Impact des campagnes d\'incitation',
+              text: 'Recensement des campagnes d\'incitation',
               isActive: pathname === '/observatoire/campagnes-incitation',
             },
             {
@@ -62,14 +62,13 @@ export default function Navigation() {
               text: 'L\'observatoire en quelques mots',
               isActive: pathname === '/observatoire/presentation',
             },
-            /*{
+            {
               linkProps: {
-                href: '/observatoire/impact-actions',
+                href: '/observatoire/glossaire-des-indicateurs',
               },
-              text: 'Impact des actions pour développer le covoiturage',
-              isActive: pathname === '/observatoire/impact-actions',
+              text: 'Glossaire des indicateurs de l\'observatoire',
+              isActive: pathname === '/observatoire/glossaire-des-indicateurs',
             },
-            */
           ],
           text: 'Observatoire',
           isActive: pathname.startsWith('/observatoire'),

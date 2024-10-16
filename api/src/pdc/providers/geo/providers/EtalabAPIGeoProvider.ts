@@ -1,28 +1,26 @@
-import { NotFoundException, provider } from '@ilos/common';
-import axios from 'axios';
-import { Agent } from 'https';
-import { get } from 'lodash';
-import { URLSearchParams } from 'url';
-import { InseeCoderInterface, PointInterface } from '../interfaces';
+import { URLSearchParams } from "@/deps.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
+import { get } from "@/lib/object/index.ts";
+import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
 @provider()
 export class EtalabAPIGeoProvider implements InseeCoderInterface {
-  protected domain = 'https://geo.api.gouv.fr';
-  private static agent = new Agent({ keepAlive: false });
+  protected domain = "https://geo.api.gouv.fr";
 
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lon, lat } = geo;
     const params = new URLSearchParams({
       lon: lon.toString(),
       lat: lat.toString(),
-      fields: 'code',
-      format: 'json',
+      fields: "code",
+      format: "json",
     });
 
-    let { data } = await axios.get(`${this.domain}/communes`, {
-      params,
-      httpsAgent: EtalabAPIGeoProvider.agent,
-    });
+    const response = await fetcher.get(
+      `${this.domain}/communes?${params.toString()}`,
+    );
+    let data = await response.json();
 
     if (!data.length) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
@@ -32,7 +30,7 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       data = data.shift();
     }
 
-    const inseeCode = get(data, 'code', null);
+    const inseeCode = get(data, "code", null);
     if (!inseeCode) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
     }
@@ -43,26 +41,29 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
   async inseeToPosition(insee: string): Promise<PointInterface> {
     const params = new URLSearchParams({
       code: insee,
-      fields: 'centre',
-      format: 'json',
+      fields: "centre",
+      format: "json",
     });
-    let { data } = await axios.get(`${this.domain}/communes`, {
-      params,
-      httpsAgent: EtalabAPIGeoProvider.agent,
-    });
+    const response = await fetcher.get(
+      `${this.domain}/communes?${params.toString()}`,
+    );
+    let data = await response.json();
 
     if (!data.length) {
-      throw new NotFoundException(`Not found on insee code (${insee})`);
+      throw new NotFoundException(`Not found on INSEE Code (${insee})`);
     }
 
     if (Array.isArray(data)) {
       data = data.shift();
     }
 
-    const [lon, lat] = get(data, 'centre.coordinates', [null, null]);
+    const [lon, lat] = get(data, "centre.coordinates", [null, null]) as [
+      number | null,
+      number | null,
+    ];
 
     if (!lon || !lat) {
-      throw new NotFoundException(`Not found on insee code (${insee})`);
+      throw new NotFoundException(`Not found on INSEE Code (${insee})`);
     }
 
     return {

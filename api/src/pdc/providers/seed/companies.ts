@@ -19,7 +19,12 @@ export interface Company {
   address_city?: string;
 }
 
-function makeCompany(_id: number, siret: string, legal_name: string, company: Partial<Company> = {}): Company {
+function makeCompany(
+  _id: number,
+  siret: string,
+  legal_name: string,
+  company: Partial<Company> = {},
+): Company {
   const [siren, nic] = [siret.slice(0, 9), siret.slice(9)];
   return {
     _id,
@@ -27,13 +32,13 @@ function makeCompany(_id: number, siret: string, legal_name: string, company: Pa
     siren,
     nic,
     legal_name,
-    company_naf_code: '6201Z',
-    establishment_naf_code: '6201Z',
+    company_naf_code: "6201Z",
+    establishment_naf_code: "6201Z",
     headquarter: true,
     ...company,
   };
 }
 
-export const dinum = makeCompany(1, '13002526500013', 'dinum');
+export const dinum = makeCompany(1, "13002526500013", "dinum");
 
 export const companies: Company[] = [dinum];

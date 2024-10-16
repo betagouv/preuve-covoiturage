@@ -1,0 +1,60 @@
+import { assertEquals, it } from "@/dev_deps.ts";
+
+import { phoneCustomFormat } from "./phoneCustomFormat.ts";
+
+const test = (input: string, result: boolean) => {
+  return () => assertEquals((phoneCustomFormat as any)(input), result);
+};
+
+it("01", test("01 23 45 67 89", true));
+it("02", test("02 23 45 67 89", true));
+it("03", test("03 23 45 67 89", true));
+it("04", test("04 23 45 67 89", true));
+it("05", test("05 23 45 67 89", true));
+it("06", test("06 23 45 67 89", true));
+it("07", test("07 33 45 67 89", true));
+it("08", test("08 23 45 67 89", true));
+it("09", test("09 23 45 67 89", true));
+it("0800", test("0800 45 67 89", true));
+it("spaces", test("01 23 45 67 89", true));
+it("dots", test("01.23.45.67.89", true));
+it("dash", test("01-23-45-67-89", true));
+it("altogether", test("0123456789", true));
+it("prefix 1", test("+33123456789", true));
+it("prefix 3", test("+331.23.45.67.89", true));
+it("prefix 4", test("+33(0)123456789", true));
+it("prefix 5", test("+33 (0) 1 23 45 67 89", true));
+it("belgian", test("+3225138940", true));
+it("Guadeloupe", test("+590 590 82 09 30", true));
+it("La Reunion", test("+262 2 62 41 83 00", true));
+it("mobile Metropole", test("+33739021870", true));
+it("mobile Metropole", test("+33749021870", true));
+it("mobile Metropole", test("+33759021870", true));
+it("mobile Metropole", test("+33769021870", true));
+it("mobile Metropole", test("+33779021870", true));
+it("mobile Metropole", test("+33789021870", true));
+it("mobile Metropole", test("+33619021870", true));
+it("mobile Metropole", test("+33629021870", true));
+it("mobile Metropole", test("+33649021870", true));
+it("mobile Metropole", test("+33669021870", true));
+it("mobile Metropole", test("+33679021870", true));
+it("mobile Metropole", test("+33689021870", true));
+it("mobile Guadeloupe, SM, SB", test("+590690021870", true));
+it("mobile Guadeloupe, SM, SB", test("+590691221870", true));
+it("mobile Guyane", test("+594694021870", true));
+it("mobile Martinique", test("+596696739021", true));
+it("mobile La Reunion, Mayotte, Ocean Indien", test("+262692456789", true));
+it("mobile La Reunion, Mayotte, Ocean Indien", test("+262693456789", true));
+it("mobile La Reunion, Mayotte, Ocean Indien", test("+262693653300", true));
+it("mobile La Reunion, Mayotte, Ocean Indien", test("+262693054400", true));
+it("00 international prefix", test("0033123456789", true));
+it("slash", test("01/23/45/67/89", true));
+it("comma", test("01,23,45,67,89", false));
+it("00000", test("0000000000", false));
+it("wrong length", test("45 24 7000", false));
+// next test is disabled because libphonenumber-js is not compliant
+//.test('French mobile out of range 070', test('0701021870', false));
+it("valid phone string intl", test("+33612345678", true));
+it("valid phone string leading 0", test("0612345678", true));
+it("too short", test("012345", false));
+it("too long", test("00331234567890", false));

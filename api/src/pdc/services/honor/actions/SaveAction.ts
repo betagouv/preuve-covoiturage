@@ -1,14 +1,21 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/providers/middleware';
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { handler } from "@/ilos/common/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from '@shared/honor/save.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/honor/save.contract';
-import { HonorRepositoryInterfaceResolver } from '../providers/HonorRepositoryProvider';
+import { alias } from "@/shared/honor/save.schema.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/honor/save.contract.ts";
+import { HonorRepositoryInterfaceResolver } from "../providers/HonorRepositoryProvider.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('common.honor.save')],
+  middlewares: [
+    ["validate", alias],
+    hasPermissionMiddleware("common.honor.save"),
+  ],
 })
 export class SaveAction extends AbstractAction {
   constructor(private pg: HonorRepositoryInterfaceResolver) {

@@ -99,7 +99,7 @@ export function AppFooter() {
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
       operatorLogo={{
         alt: 'Registre de Preuve de Covoiturage',
-        imgUrl: 'https://cms.covoiturage.beta.gouv.fr/assets/9733ec41-031e-4a93-b253-d4f20a109151.png',
+        imgUrl: 'https://static.covoiturage.beta.gouv.fr/logo_rpc_d82e4b3a4a.png',
         orientation: 'horizontal',
       }}
       partnersLogos={{

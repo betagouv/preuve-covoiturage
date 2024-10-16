@@ -1,3 +1,3 @@
-import * as Sentry from '@sentry/node';
+import { Sentry } from "@/deps.ts";
 
 export { Sentry };

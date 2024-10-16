@@ -1,12 +1,13 @@
-import { Kernel as BaseKernel, Extensions } from '@ilos/core';
-import { Commands, CommandExtension } from '@ilos/cli';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
-import { QueueExtension } from '@ilos/queue';
-import { ValidatorExtension } from '@ilos/validator';
-import { kernel } from '@ilos/common';
+import { CommandExtension, Commands } from "@/ilos/cli/index.ts";
+import { kernel } from "@/ilos/common/index.ts";
+import { ConnectionManagerExtension } from "@/ilos/connection-manager/index.ts";
+import { Extensions, Kernel as BaseKernel } from "@/ilos/core/index.ts";
+import { QueueExtension } from "@/ilos/queue/index.ts";
+import { ValidatorExtension } from "@/ilos/validator/index.ts";
+import { cwd } from "@/lib/process/index.ts";
 
 @kernel({
-  config: process.cwd(),
+  config: cwd(),
   commands: [Commands.CallCommand, Commands.ListCommand],
 })
 export class Kernel extends BaseKernel {

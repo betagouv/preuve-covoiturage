@@ -1,17 +1,20 @@
-import { MetadataRegistryInterface, SerializedMetadataVariableDefinitionInterface } from '.';
+import {
+  MetadataRegistryInterface,
+  SerializedMetadataVariableDefinitionInterface,
+} from "../index.ts";
 
 export enum IncentiveStateEnum {
-  Regular = 'regular',
-  Null = 'null',
-  Disabled = 'disabled',
+  Regular = "regular",
+  Null = "null",
+  Disabled = "disabled",
 }
 
 export enum IncentiveStatusEnum {
-  Draft = 'draft',
-  Pending = 'pending',
-  Validated = 'validated',
-  Warning = 'warning',
-  Error = 'error',
+  Draft = "draft",
+  Pending = "pending",
+  Validated = "validated",
+  Warning = "warning",
+  Error = "error",
 }
 
 export interface SerializedIncentiveInterface<T = number> {
@@ -33,7 +36,7 @@ export interface CommonIncentiveInterface {
 }
 
 export interface StatelessIncentiveInterface extends CommonIncentiveInterface {
-  export(): SerializedIncentiveInterface<undefined>;
+  export<T = unknown>(): SerializedIncentiveInterface<T>;
   setMeta(registry: MetadataRegistryInterface): void;
 }
 

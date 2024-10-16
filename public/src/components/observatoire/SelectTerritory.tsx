@@ -1,12 +1,12 @@
 'use client'
+import { DashboardContext } from '@/context/DashboardProvider';
+import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
+import { fr } from '@codegouvfr/react-dsfr';
+import Tag from '@codegouvfr/react-dsfr/Tag';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import Tag from '@codegouvfr/react-dsfr/Tag';
-import { fr } from '@codegouvfr/react-dsfr';
 
 export default function SelectTerritory(props: { url:string }) {
   const { dashboard } =useContext(DashboardContext)
@@ -26,9 +26,6 @@ export default function SelectTerritory(props: { url:string }) {
     const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
     setOptions(response.hits);
   };
-
-  
-  
 
   return ( 
     <>
@@ -51,6 +48,7 @@ export default function SelectTerritory(props: { url:string }) {
       }}
       noOptionsText={'Pas de résultats'}
       renderInput={(params) => <TextField {...params} label='Chercher mon territoire' />}
+      filterOptions={(options) => options}
       onInputChange={async(e, v) => {
         await search(v);
       }}

@@ -1,4 +1,7 @@
-import { CarpoolAcquisitionStatusEnum, InsertableCarpoolAcquisitionStatus } from '../../interfaces';
+import {
+  CarpoolAcquisitionStatusEnum,
+  InsertableCarpoolAcquisitionStatus,
+} from "../../interfaces/index.ts";
 
 export const insertableAcquisitionStatus: InsertableCarpoolAcquisitionStatus = {
   carpool_id: 1,

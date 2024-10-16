@@ -1,9 +1,9 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
 import CategoryTags from "@/components/common/CategoryTags";
+import PageTitle from "@/components/common/PageTitle";
 import Pagination from "@/components/common/Pagination";
+import { cmsActusByPage, fetchAPI, shorten } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

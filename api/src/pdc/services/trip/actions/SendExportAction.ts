@@ -1,83 +1,39 @@
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/sendExport.contract';
-import { alias } from '@shared/trip/sendExport.schema';
-import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '@shared/user/notify.contract';
 import {
-  signature as buildExportSignature,
-  ParamsInterface as BuildExportParamsInterface,
-} from '@shared/trip/buildExport.contract';
+  ContextType,
+  handler,
+  UnimplementedException,
+} from "@/ilos/common/index.ts";
+import { Action } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/trip/sendExport.contract.ts";
+import { alias } from "@/shared/trip/sendExport.schema.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), [
+    "validate",
+    alias,
+  ]],
 })
 export class SendExportAction extends Action {
   protected defaultContext: ContextType = {
     channel: {
-      service: 'trip',
+      service: "trip",
     },
     call: {
       user: {},
     },
   };
 
-  constructor(
-    private file: S3StorageProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
-    super();
-  }
-
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    try {
-      const { from, ...exportParams } = params;
-      const fileKey = await this.kernel.call<BuildExportParamsInterface>(
-        buildExportSignature,
-        JSON.parse(JSON.stringify(exportParams)),
-        this.defaultContext,
-      );
-      const url = await this.file.getSignedUrl(BucketName.Export, fileKey);
-
-      const email = from.email;
-      const fullname = from.fullname;
-
-      const emailParams = {
-        template: 'ExportCSVNotification',
-        to: `${fullname} <${email}>`,
-        data: {
-          fullname,
-          action_href: url,
-        },
-      };
-
-      await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
-        channel: {
-          service: 'trip',
-        },
-        call: {
-          user: {},
-        },
-      });
-
-      return;
-    } catch (e) {
-      await this.kernel.notify<NotifyParamsInterface>(
-        notifySignature,
-        {
-          template: 'ExportCSVErrorNotification',
-          to: `${params.from.fullname} <${params.from.email}>`,
-          data: {
-            fullname: params.from.fullname,
-          },
-        },
-        this.defaultContext,
-      );
-
-      throw e;
-    }
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    throw new UnimplementedException();
   }
 }

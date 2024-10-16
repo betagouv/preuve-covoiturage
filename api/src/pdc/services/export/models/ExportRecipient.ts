@@ -6,8 +6,10 @@ export class ExportRecipient {
   public message: string;
   public scrambled_at: Date | null;
 
-  public static parseEmail(data: string): { fullname: string | null; email: string } {
-    if (data.includes('<') && data.includes('>')) {
+  public static parseEmail(
+    data: string,
+  ): { fullname: string | null; email: string } {
+    if (data.includes("<") && data.includes(">")) {
       const matches = data.match(/(.*)<(.*)>/);
       if (matches) {
         return { fullname: matches[1].trim(), email: matches[2] };
@@ -21,11 +23,11 @@ export class ExportRecipient {
     const { fullname, email } = ExportRecipient.parseEmail(data);
     const recipient = new ExportRecipient();
     recipient.email = email;
-    recipient.fullname = fullname || '';
+    recipient.fullname = fullname || "";
     return recipient;
   }
 
-  public static fromJSON(data: any): ExportRecipient {
+  public static fromJSON(data: ExportRecipient): ExportRecipient {
     const recipient = new ExportRecipient();
     recipient._id = data._id;
     recipient.export_id = data.export_id;
@@ -36,7 +38,7 @@ export class ExportRecipient {
     return recipient;
   }
 
-  public static toJSON(recipient: ExportRecipient): any {
+  public static toJSON(recipient: ExportRecipient): unknown {
     return {
       _id: recipient._id,
       export_id: recipient.export_id,

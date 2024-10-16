@@ -4,13 +4,13 @@ import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike, MapLayerMouseEvent } from 'maplibre-gl';
-import { ReactNode, useCallback, useState} from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { FillLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 
 import DownloadButton from '@/components/observatoire/DownloadButton';
+import { getUrl } from '@/helpers/search';
 import { INSEECode, PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { useRouter } from 'next/navigation';
-import { getUrl } from '@/helpers/search';
 
 
 export default function IncentiveMap({ params, data, loading, error, sidebar }: { 
@@ -85,10 +85,10 @@ export default function IncentiveMap({ params, data, loading, error, sidebar }: 
 
   const mapStyle = Config.get<string>('observatoire.mapStyle');  
 
-  const bounds = () => {
+  const bounds = useMemo(() => {
     const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(data);
     return bounds as LngLatBoundsLike;
-  };
+  },[params.code, data]);
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -145,7 +145,7 @@ export default function IncentiveMap({ params, data, loading, error, sidebar }: 
       {!loading && !error && data.features.length > 0 && (
         <AppMap 
         mapStyle={mapStyle} 
-        bounds={bounds()} 
+        bounds={bounds} 
         scrollZoom={false} 
         interactiveLayerIds={['country','reg','dep','aom','epci']}
         cursor={cursor}

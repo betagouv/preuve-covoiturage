@@ -1,23 +1,29 @@
-import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import {
+  ContextType,
+  handler,
+  UnimplementedException,
+} from "@/ilos/common/index.ts";
+import { Action } from "@/ilos/core/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/updateStatus.contract';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/carpool/updateStatus.contract.ts";
 
 /*
  * Import journey in carpool database
  */
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('acquisition', 'fraudcheck')],
+  middlewares: [...internalOnlyMiddlewares("acquisition", "fraudcheck")],
 })
 export class UpdateStatusAction extends Action {
-  constructor(private carpool: CarpoolRepositoryProviderInterfaceResolver) {
-    super();
-  }
-
-  public async handle({ acquisition_id, status }: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    await this.carpool.updateStatus(acquisition_id, status);
+  public async handle(
+    { acquisition_id, status }: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    throw new UnimplementedException();
   }
 }

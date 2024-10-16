@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import { Redis } from 'ioredis';
+import { NextFunction, Request, Response } from "@/deps.ts";
+import { Redis } from "@/deps.ts";
 
 export type CacheEnabled = boolean;
 export type CompressionEnabled = boolean;
@@ -42,14 +42,25 @@ export enum CacheTTL {
   YEAR = 60 * 60 * 24 * 365,
 }
 
-export const HttpVerbs = ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+export const HttpVerbs = [
+  "HEAD",
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+] as const;
 export type HttpVerb = (typeof HttpVerbs)[number];
 
 export type CacheMiddleware = {
   set: (
     userRouteConfig?: Partial<RouteCacheConfig>,
   ) => (req: Request, res: Response, next: NextFunction) => Promise<void>;
-  auth: () => (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  auth: () => (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void>;
   flush: (prefix: CachePrefix) => Promise<CacheFlushResponse>;
 };
 

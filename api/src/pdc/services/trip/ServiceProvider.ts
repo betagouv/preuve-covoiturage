@@ -1,42 +1,41 @@
-import { CommandExtension } from '@ilos/cli';
-import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { CryptoProvider } from '@pdc/providers/crypto';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
-import { APDFNameProvider, S3StorageProvider } from '@pdc/providers/storage';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';
-import { BuildExportAction } from './actions/BuildExportAction';
-import { ExportAction } from './actions/ExportAction';
-import { FinancialStatsAction } from './actions/FinancialStatsAction';
-import { ListTripsAction } from './actions/ListTripsAction';
-import { PublishOpenDataAction } from './actions/PublishOpenDataAction';
-import { SearchCountAction } from './actions/SearchCountAction';
-import { SendExportAction } from './actions/SendExportAction';
-import { StatsAction } from './actions/StatsAction';
-import { PublishOpendataCommand } from './commands/PublishOpendataCommand';
-import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
-import { config } from './config';
-import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
-import { DataGouvProvider } from './providers/DataGouvProvider';
-import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
-import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { binding as buildExportBinding } from '@shared/trip/buildExport.schema';
-import { binding as exportBinding } from '@shared/trip/export.schema';
-import { binding as listBinding } from '@shared/trip/listTrips.schema';
-import { binding as publishOpenDataBinding } from '@shared/trip/publishOpenData.schema';
-import { binding as searchCountBinding } from '@shared/trip/searchcount.schema';
-import { binding as sendExportBinding } from '@shared/trip/sendExport.schema';
-import { binding as statsBinding } from '@shared/trip/stats.schema';
+import { CommandExtension } from "@/ilos/cli/index.ts";
+import {
+  ExtensionInterface,
+  NewableType,
+  serviceProvider,
+} from "@/ilos/common/index.ts";
+import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
+import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
+import {
+  APDFNameProvider,
+  S3StorageProvider,
+} from "@/pdc/providers/storage/index.ts";
+import {
+  ValidatorExtension,
+  ValidatorMiddleware,
+} from "@/pdc/providers/validator/index.ts";
+import { binding as buildExportBinding } from "@/shared/trip/buildExport.schema.ts";
+import { binding as exportBinding } from "@/shared/trip/export.schema.ts";
+import { binding as listBinding } from "@/shared/trip/listTrips.schema.ts";
+import { binding as publishOpenDataBinding } from "@/shared/trip/publishOpenData.schema.ts";
+import { binding as searchCountBinding } from "@/shared/trip/searchcount.schema.ts";
+import { binding as sendExportBinding } from "@/shared/trip/sendExport.schema.ts";
+import { binding as statsBinding } from "@/shared/trip/stats.schema.ts";
+import { BuildExportAction } from "./actions/BuildExportAction.ts";
+import { ExportAction } from "./actions/ExportAction.ts";
+import { FinancialStatsAction } from "./actions/FinancialStatsAction.ts";
+import { ListTripsAction } from "./actions/ListTripsAction.ts";
+import { PublishOpenDataAction } from "./actions/PublishOpenDataAction.ts";
+import { SearchCountAction } from "./actions/SearchCountAction.ts";
+import { SendExportAction } from "./actions/SendExportAction.ts";
+import { StatsAction } from "./actions/StatsAction.ts";
+import { config } from "./config/index.ts";
 
 @serviceProvider({
   config,
   providers: [
     APDFNameProvider,
-    CryptoProvider,
-    DataGouvProvider,
     S3StorageProvider,
-    StatCacheRepositoryProvider,
-    TripRepositoryProvider,
   ],
   validator: [
     listBinding,
@@ -47,8 +46,11 @@ import { binding as statsBinding } from '@shared/trip/stats.schema';
     sendExportBinding,
     publishOpenDataBinding,
   ],
-  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
-  commands: [ReplayOpendataExportCommand, PublishOpendataCommand],
+  middlewares: [
+    ...defaultMiddlewareBindings,
+    ["validate", ValidatorMiddleware],
+  ],
+  commands: [],
   handlers: [
     ListTripsAction,
     SearchCountAction,
@@ -59,8 +61,11 @@ import { binding as statsBinding } from '@shared/trip/stats.schema';
     SendExportAction,
     PublishOpenDataAction,
   ],
-  queues: ['trip'],
+  queues: ["trip"],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension, ValidatorExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [
+    CommandExtension,
+    ValidatorExtension,
+  ];
 }

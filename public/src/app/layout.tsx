@@ -1,19 +1,13 @@
-import { AppFooter } from '@/components/layout/AppFooter';
-import { Follow } from '@/components/layout/Follow';
-import { ScrollToTop } from '@/components/layout/ScrollToTop';
+import Analytics from '@/components/layout/Analytics';
 import { Skiplinks } from '@/components/layout/Skiplinks';
-import { AppHeader } from '@/components/layout/AppHeader';
-import { fr } from '@codegouvfr/react-dsfr';
+import { StartDsfr } from '@/components/layout/StartDsfr';
+import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
 import MuiDsfrThemeProvider from '@codegouvfr/react-dsfr/mui';
 import { DsfrHead } from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
 import { DsfrProvider } from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
 import { getHtmlAttributes } from '@codegouvfr/react-dsfr/next-appdir/getHtmlAttributes';
-import Link from 'next/link';
-import { StartDsfr } from '@/components/layout/StartDsfr';
-import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
-import Analytics from '@/components/layout/Analytics';
 import { Metadata } from 'next';
-import { ContextProvider } from '@/context/ContextProvider';
+import Link from 'next/link';
 import '../styles/global.scss';
 
 export const metadata: Metadata = {
@@ -22,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 
-export default function RootLayout({ children }: { children: JSX.Element }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   //NOTE: The lang parameter is optional and defaults to "fr"
   const lang = 'fr';
   return (
@@ -50,17 +44,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
         <DsfrProvider>
           <MuiDsfrThemeProvider>
             <Skiplinks />
-            <ContextProvider>
-              <AppHeader />
-              <main tabIndex={-1}>
-                <div className={fr.cx('fr-container')}>
-                  {children}
-                  <ScrollToTop />
-                </div>
-                <Follow />
-              </main>
-              <AppFooter />
-            </ContextProvider>
+            {children}
           </MuiDsfrThemeProvider>
         </DsfrProvider>
       </body>

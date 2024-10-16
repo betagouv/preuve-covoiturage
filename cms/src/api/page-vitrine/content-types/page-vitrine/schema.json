@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page_vitrines",
+  "info": {
+    "singularName": "page-vitrine",
+    "pluralName": "page-vitrines",
+    "displayName": "Page vitrine",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "Rows": {
+      "type": "dynamiczone",
+      "components": [
+        "row.card",
+        "row.title"
+      ]
+    }
+  }
+}

@@ -1,45 +1,27 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from "@/ilos/common/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
+import { logger } from "@/lib/logger/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
   SerializedMetadataVariableDefinitionInterface,
-} from '../interfaces';
+} from "../interfaces/index.ts";
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,
 })
-export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
-  public readonly incentivesTable = 'policy.incentives';
-  public readonly carpoolTable = 'carpool_v2.carpools';
-  public readonly carpoolStatusTable = 'carpool_v2.status';
-
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  public readonly oldCarpoolTable = 'carpool.carpools';
+export class IncentiveRepositoryProvider
+  implements IncentiveRepositoryProviderInterfaceResolver {
+  public readonly incentivesTable = "policy.incentives";
+  public readonly carpoolTable = "carpool_v2.carpools";
+  public readonly carpoolStatusTable = "carpool_v2.status";
 
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
-    const oldQuery = {
-      text: `
-        UPDATE ${this.incentivesTable} AS pi
-        SET
-          state = 'disabled'::policy.incentive_state_enum,
-          status = 'error'::policy.incentive_status_enum
-        FROM ${this.oldCarpoolTable} AS oc
-        WHERE oc.datetime >= $1::timestamp
-          AND oc.datetime <  $2::timestamp
-          AND oc._id = pi.carpool_id
-          AND oc.status <> 'ok'::carpool.carpool_status_enum
-      `,
-      values: [from, to],
-    };
-
     const query = {
       text: `
         UPDATE ${this.incentivesTable} AS pi
@@ -58,7 +40,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [from, to],
     };
 
-    await this.connection.getClient().query<any>(oldQuery);
     await this.connection.getClient().query<any>(query);
   }
 
@@ -102,15 +83,16 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     });
 
     // pick values for the given keys. Override status if defined
-    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] = filteredData.reduce(
-      ([ids, amounts, statuses], i) => {
-        ids.push(i._id);
-        amounts.push(i.statefulAmount);
-        statuses.push(status ?? i.status);
-        return [ids, amounts, statuses];
-      },
-      [[], [], []],
-    );
+    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] =
+      filteredData.reduce(
+        ([ids, amounts, statuses], i) => {
+          ids.push(i._id);
+          amounts.push(i.statefulAmount);
+          statuses.push(status ?? i.status);
+          return [ids, amounts, statuses];
+        },
+        [[], [], []],
+      );
 
     const query = {
       text: `
@@ -157,13 +139,13 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
-        ${from ? 'AND datetime >= $3::timestamp' : ''}
+        ${from ? "AND datetime >= $3::timestamp" : ""}
         AND datetime < $2::timestamp
       `,
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     });
 
-    console.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
+    logger.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
 
     const query = {
       text: `
@@ -181,7 +163,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       FROM ${this.incentivesTable}
       WHERE
         status = $1::policy.incentive_status_enum
-        ${from ? 'AND datetime >= $3::timestamp' : ''}
+        ${from ? "AND datetime >= $3::timestamp" : ""}
         AND datetime <= $2::timestamp
       ORDER BY datetime ASC;
       `,
@@ -209,12 +191,16 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         await cursor.release();
         throw e;
       }
+      logger.log({ count });
     } while (count > 0);
-
+    logger.log("Start release");
     await cursor.release();
+    logger.log("release done");
   }
 
-  async createOrUpdateMany(data: SerializedIncentiveInterface<undefined>[]): Promise<void> {
+  async createOrUpdateMany(
+    data: SerializedIncentiveInterface<undefined>[],
+  ): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data
       .reverse()
@@ -229,7 +215,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       .map((i) => ({
         ...i,
         status: i.status || IncentiveStatusEnum.Draft,
-        state: i.statefulAmount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
+        state: i.statefulAmount === 0
+          ? IncentiveStateEnum.Null
+          : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
 
@@ -284,8 +272,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     const query = {
       text: `
-        -- FIXME: temp hack to set a lower boundary when
-        --        joining the deprecated carpool.carpools table
         WITH lowest_incentive AS (
           SELECT min(dtz) AS datetime
           FROM UNNEST($2::timestamp with time zone[]) AS x(dtz)
@@ -306,7 +292,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         )
         SELECT
           unnest_data.policy_id,
-          cc._id as carpool_id,
+          null as carpool_id,
           unnest_data.datetime,
           unnest_data.result,
           unnest_data.amount,
@@ -326,15 +312,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           $8::varchar[],
           $9::json[]
         ) AS unnest_data(policy_id, datetime, result, amount, status, state, operator_id, operator_journey_id, meta)
-
-        -- FIXME : REMOVE WHEN DONE WITH carpool.carpools
-        JOIN ${this.oldCarpoolTable} cc
-          ON cc.operator_id = unnest_data.operator_id
-          AND cc.operator_journey_id = unnest_data.operator_journey_id
-          AND cc.datetime >= (SELECT datetime FROM lowest_incentive)
-          AND cc.is_driver IS TRUE
-        --
-
         ON CONFLICT (policy_id, operator_id, operator_journey_id)
         DO UPDATE SET
           result = excluded.result,

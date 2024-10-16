@@ -1,203 +1,268 @@
-import anyTest, { TestFn } from 'ava';
-import sinon from 'sinon';
-import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
-import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
-import Sinon, { SinonSandbox } from 'sinon';
-import { CarpoolStatusRepository } from '../repositories/CarpoolStatusRepository';
-import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
-import { CarpoolLookupRepository } from '../repositories/CarpoolLookupRepository';
-import { CarpoolRepository } from '../repositories/CarpoolRepository';
-import sql, { raw } from '../helpers/sql';
-import { CarpoolGeoRepository } from '../repositories/CarpoolGeoRepository';
-import { GeoProvider } from '@pdc/providers/geo';
+import {
+  afterAll,
+  afterEach,
+  assert,
+  assertEquals,
+  assertObjectMatch,
+  assertRejects,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+  sinon as Sinon,
+  SinonSandbox,
+} from "@/dev_deps.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
+import { GeoProvider } from "@/pdc/providers/geo/index.ts";
+import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import {
+  insertableCarpool,
+  updatableCarpool,
+} from "../mocks/database/carpool.ts";
+import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
+import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
+import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
+import { CarpoolRequestRepository } from "../repositories/CarpoolRequestRepository.ts";
+import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
+import { CarpoolAcquisitionService } from "./CarpoolAcquisitionService.ts";
 
-interface TestContext {
-  carpoolRepository: CarpoolRepository;
-  statusRepository: CarpoolStatusRepository;
-  requestRepository: CarpoolRequestRepository;
-  lookupRepository: CarpoolLookupRepository;
-  geoRepository: CarpoolGeoRepository;
-  geoService: GeoProvider;
-  db: DbContext;
-  sinon: SinonSandbox;
-}
+describe("CarpoolAcquistionService", () => {
+  let carpoolRepository: CarpoolRepository;
+  let statusRepository: CarpoolStatusRepository;
+  let requestRepository: CarpoolRequestRepository;
+  let lookupRepository: CarpoolLookupRepository;
+  let geoRepository: CarpoolGeoRepository;
+  let geoService: GeoProvider;
+  let db: DbContext;
+  let sinon: SinonSandbox;
 
-const test = anyTest as TestFn<TestContext>;
-const { before, after } = makeDbBeforeAfter();
-
-test.before(async (t) => {
-  const db = await before();
-  const geoStub = sinon.createStubInstance(GeoProvider);
-
-  t.context.db = db;
-  t.context.carpoolRepository = new CarpoolRepository(db.connection);
-  t.context.statusRepository = new CarpoolStatusRepository(db.connection);
-  t.context.requestRepository = new CarpoolRequestRepository(db.connection);
-  t.context.lookupRepository = new CarpoolLookupRepository(db.connection);
-  t.context.geoRepository = new CarpoolGeoRepository(db.connection);
-  t.context.geoService = geoStub;
-});
-
-function getService(context: TestContext, overrides: any): CarpoolAcquisitionService {
-  return new CarpoolAcquisitionService(
-    context.db.connection,
-    overrides.statusRepository ?? context.statusRepository,
-    overrides.requestRepository ?? context.requestRepository,
-    overrides.lookupRepository ?? context.lookupRepository,
-    overrides.carpoolRepository ?? context.carpoolRepository,
-    overrides.geoRepository ?? context.geoRepository,
-    context.geoService,
-  );
-}
-
-test.after.always(async (t) => {
-  await after(t.context.db);
-});
-
-test.beforeEach((t) => {
-  t.context.sinon = Sinon.createSandbox();
-});
-
-test.afterEach.always((t) => {
-  t.context.sinon.restore();
-});
-
-test.serial('Should create carpool', async (t) => {
-  const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
-  const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
-
-  const service = getService(t.context, {
-    carpoolRepository,
-    requestRepository,
-    statusRepository,
+  const { before, after } = makeDbBeforeAfter();
+  beforeAll(async () => {
+    db = await before();
+    geoService = Sinon.createStubInstance(GeoProvider);
+    carpoolRepository = new CarpoolRepository(db.connection);
+    statusRepository = new CarpoolStatusRepository(db.connection);
+    requestRepository = new CarpoolRequestRepository(db.connection);
+    lookupRepository = new CarpoolLookupRepository(db.connection);
+    geoRepository = new CarpoolGeoRepository(db.connection);
   });
 
-  const data = { ...insertableCarpool };
-  await service.registerRequest({ ...data, api_version: 3 });
-
-  // t.log(carpoolRepository.register.getCalls());
-  t.true(carpoolRepository.register.calledOnce);
-  // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
-  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
-
-  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
-    data.operator_id,
-    data.operator_journey_id,
-  );
-  t.like(carpool, {
-    ...data,
-    fraud_status: 'pending',
-    acquisition_status: 'received',
-  });
-});
-
-test.serial('Should update carpool', async (t) => {
-  const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
-  const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
-
-  const service = getService(t.context, {
-    carpoolRepository,
-    requestRepository,
-    statusRepository,
+  afterAll(async () => {
+    await after(db);
   });
 
-  const data = { ...updatableCarpool };
-  await service.updateRequest({
-    ...data,
-    api_version: 3,
-    operator_id: insertableCarpool.operator_id,
-    operator_journey_id: insertableCarpool.operator_journey_id,
+  beforeEach(() => {
+    sinon = Sinon.createSandbox();
   });
-
-  // t.log(carpoolRepository.update.getCalls());
-  t.true(carpoolRepository.update.calledOnce);
-  // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
-  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
-
-  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
-    insertableCarpool.operator_id,
-    insertableCarpool.operator_journey_id,
-  );
-  t.like(carpool, {
-    ...insertableCarpool,
-    ...updatableCarpool,
-    fraud_status: 'pending',
-    acquisition_status: 'updated',
+  afterEach(() => {
+    sinon.restore();
   });
-});
-
-test.serial('Should cancel carpool', async (t) => {
-  const lookupRepository = t.context.sinon.spy(t.context.lookupRepository);
-  const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  const statusRepository = t.context.sinon.spy(t.context.statusRepository);
-
-  const service = getService(t.context, {
-    lookupRepository,
-    requestRepository,
-    statusRepository,
-  });
-
-  const data = {
-    cancel_code: 'FRAUD',
-    cancel_message: 'Got u',
-    api_version: 3,
-    operator_id: insertableCarpool.operator_id,
-    operator_journey_id: insertableCarpool.operator_journey_id,
-  };
-  await service.cancelRequest(data);
-
-  // t.log(lookupRepository.findOneStatus.getCalls());
-  t.true(lookupRepository.findOneStatus.calledOnce);
-  // t.log(requestRepository.save.getCalls());
-  t.true(requestRepository.save.calledOnce);
-  // t.log(statusRepository.saveAcquisitionStatus.getCalls());
-  t.true(statusRepository.saveAcquisitionStatus.calledOnce);
-
-  const { _id, uuid, created_at, updated_at, ...carpool } = await t.context.lookupRepository.findOne(
-    insertableCarpool.operator_id,
-    insertableCarpool.operator_journey_id,
-  );
-  t.like(carpool, {
-    ...insertableCarpool,
-    ...updatableCarpool,
-    fraud_status: 'pending',
-    acquisition_status: 'canceled',
-  });
-});
-
-test.serial('Should rollback if something fail', async (t) => {
-  const carpoolRepository = t.context.sinon.spy(t.context.carpoolRepository);
-  const requestRepository = t.context.sinon.spy(t.context.requestRepository);
-  t.context.sinon.replace(
-    t.context.statusRepository,
-    'saveAcquisitionStatus',
-    t.context.sinon.fake.throws(new Error('DB')),
-  );
-
-  const service = getService(t.context, {
-    carpoolRepository,
-    requestRepository,
-  });
-
-  const data = { ...insertableCarpool, operator_journey_id: 'operator_journey_id_2' };
-  await t.throwsAsync(async () => await service.registerRequest({ ...data, api_version: 3 }));
-
-  t.true(carpoolRepository.register.calledOnce);
-  t.true(requestRepository.save.calledOnce);
-
-  const result = await t.context.db.connection
-    .getClient()
-    .query(
-      sql`SELECT * FROM ${raw(t.context.carpoolRepository.table)} WHERE operator_id = ${
-        data.operator_id
-      } AND operator_journey_id = ${data.operator_journey_id}`,
+  function getService(
+    overrides: any,
+  ): CarpoolAcquisitionService {
+    return new CarpoolAcquisitionService(
+      db.connection,
+      overrides.statusRepository ?? statusRepository,
+      overrides.requestRepository ?? requestRepository,
+      overrides.lookupRepository ?? lookupRepository,
+      overrides.carpoolRepository ?? carpoolRepository,
+      overrides.geoRepository ?? geoRepository,
+      geoService,
     );
-  t.deepEqual(result.rows, []);
+  }
+  it("Should create carpool", async () => {
+    const carpoolRepositoryL = sinon.spy(carpoolRepository);
+    const requestRepositoryL = sinon.spy(requestRepository);
+    const statusRepositoryL = sinon.spy(statusRepository);
+
+    const service = getService({
+      carpoolRepository: carpoolRepositoryL,
+      requestRepository: requestRepositoryL,
+      statusRepository: statusRepositoryL,
+    });
+
+    const data = { ...insertableCarpool };
+    await service.registerRequest({ ...data, api_version: 3 });
+
+    // console.log(carpoolRepository.register.getCalls());
+    assert(carpoolRepositoryL.register.calledOnce);
+    // console.log(requestRepository.save.getCalls());
+    assert(requestRepositoryL.save.calledOnce);
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
+    assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
+
+    const r = await lookupRepository.findOne(
+      data.operator_id,
+      data.operator_journey_id,
+    );
+    const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+    assertObjectMatch(carpool, {
+      ...data,
+      fraud_status: "pending",
+      acquisition_status: "received",
+    });
+  });
+
+  it("Should update carpool", async () => {
+    const carpoolRepositoryL = sinon.spy(carpoolRepository);
+    const requestRepositoryL = sinon.spy(requestRepository);
+    const statusRepositoryL = sinon.spy(statusRepository);
+
+    const service = getService({
+      carpoolRepository: carpoolRepositoryL,
+      requestRepository: requestRepositoryL,
+      statusRepository: statusRepositoryL,
+    });
+
+    const data = { ...updatableCarpool };
+    await service.updateRequest({
+      ...data,
+      api_version: 3,
+      operator_id: insertableCarpool.operator_id,
+      operator_journey_id: insertableCarpool.operator_journey_id,
+    });
+
+    // console.log(carpoolRepository.update.getCalls());
+    assert(carpoolRepositoryL.update.calledOnce);
+    // console.log(requestRepository.save.getCalls());
+    assert(requestRepositoryL.save.calledOnce);
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
+    assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
+
+    const r = await lookupRepository.findOne(
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+    assertObjectMatch(carpool, {
+      ...insertableCarpool,
+      ...updatableCarpool,
+      fraud_status: "pending",
+      acquisition_status: "updated",
+    });
+  });
+
+  it("Should cancel carpool", async () => {
+    const lookupRepositoryL = sinon.spy(lookupRepository);
+    const requestRepositoryL = sinon.spy(requestRepository);
+    const statusRepositoryL = sinon.spy(statusRepository);
+
+    const service = getService({
+      lookupRepository: lookupRepositoryL,
+      requestRepository: requestRepositoryL,
+      statusRepository: statusRepositoryL,
+    });
+
+    const data = {
+      cancel_code: "FRAUD",
+      cancel_message: "Got u",
+      api_version: 3,
+      operator_id: insertableCarpool.operator_id,
+      operator_journey_id: insertableCarpool.operator_journey_id,
+    };
+    await service.cancelRequest(data);
+
+    // console.log(lookupRepository.findOneStatus.getCalls());
+    assert(lookupRepositoryL.findOneStatus.calledOnce);
+    // console.log(requestRepository.save.getCalls());
+    assert(requestRepositoryL.save.calledOnce);
+    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
+    assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
+
+    const r = lookupRepository.findOne(
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    const { _id, uuid, created_at, updated_at, ...carpool } = await r || {};
+    assertObjectMatch(carpool, {
+      ...insertableCarpool,
+      ...updatableCarpool,
+      fraud_status: "pending",
+      acquisition_status: "canceled",
+    });
+  });
+
+  it("Should rollback if something fail", async () => {
+    const carpoolRepositoryL = sinon.spy(carpoolRepository);
+    const requestRepositoryL = sinon.spy(requestRepository);
+    sinon.replace(
+      statusRepository,
+      "saveAcquisitionStatus",
+      sinon.fake.throws(new Error("DB")),
+    );
+
+    const service = getService({
+      carpoolRepository: carpoolRepositoryL,
+      requestRepository: requestRepositoryL,
+    });
+
+    const data = {
+      ...insertableCarpool,
+      operator_journey_id: "operator_journey_id_2",
+    };
+    await assertRejects(async () =>
+      await service.registerRequest({ ...data, api_version: 3 })
+    );
+
+    assert(carpoolRepositoryL.register.calledOnce);
+    assert(requestRepositoryL.save.calledOnce);
+
+    const result = await db.connection
+      .getClient()
+      .query(
+        sql`SELECT * FROM ${
+          raw(carpoolRepository.table)
+        } WHERE operator_id = ${data.operator_id} AND operator_journey_id = ${data.operator_journey_id}`,
+      );
+    assertEquals(result.rows, []);
+  });
+
+  it("Should raise error if terms is violated", async () => {
+    const carpoolL = sinon.spy(lookupRepository);
+    const service = getService({
+      CarpoolLookupRepository: carpoolL,
+    });
+
+    const data = {
+      created_at: new Date("2024-01-01T05:00:00.000Z"),
+      distance: 4_000,
+      driver_identity_key: "key_driver",
+      passenger_identity_key: "key_passenger",
+      start_datetime: new Date("2024-01-01T02:00:00.000Z"),
+      end_datetime: new Date("2024-01-01T04:00:00.000Z"),
+      operator_trip_id: "operator_trip_id",
+    };
+
+    const errors = await service.verifyTermsViolation({
+      ...data,
+      distance: 100,
+    });
+    assertEquals(errors, ["distance_too_short"]);
+    assertEquals(
+      carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
+      [
+        [
+          ["key_driver", "key_passenger"],
+          {
+            max: new Date("2024-01-01T22:59:59.999Z"),
+            min: new Date("2023-12-31T23:00:00.000Z"),
+          },
+          undefined,
+          undefined,
+          undefined,
+        ],
+        [
+          ["key_driver", "key_passenger"],
+          {
+            max: new Date("2024-01-01T04:30:00.000Z"),
+          },
+          {
+            min: new Date("2024-01-01T01:30:00.000Z"),
+          },
+          "operator_trip_id",
+          undefined,
+        ],
+      ],
+    );
+  });
 });

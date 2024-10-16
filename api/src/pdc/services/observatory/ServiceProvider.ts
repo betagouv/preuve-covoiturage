@@ -1,57 +1,55 @@
 /* eslint-disable max-len */
-import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';
-import { InsertLastMonthDistributionAction } from './actions/distribution/InsertLastMonthDistributionAction';
-import { JourneysByDistancesAction } from './actions/distribution/JourneysByDistancesAction';
-import { JourneysByHoursAction } from './actions/distribution/JourneysByHoursAction';
-import { RefreshAllDistributionAction } from './actions/distribution/RefreshAllDistributionAction';
-import { BestMonthlyFluxAction } from './actions/flux/BestMonthlyFluxAction';
-import { EvolMonthlyFluxAction } from './actions/flux/EvolMonthlyFluxAction';
-import { InsertLastMonthFluxAction } from './actions/flux/InsertLastMonthFluxAction';
-import { LastRecordMonthlyFluxAction } from './actions/flux/LastRecordMonthlyFluxAction';
-import { MonthlyFluxAction } from './actions/flux/MonthlyFluxAction';
-import { RefreshAllFluxAction } from './actions/flux/RefreshAllFluxAction';
-import { AiresCovoiturageAction } from './actions/infra/AiresCovoiturageAction';
-import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresAction';
-import { LocationAction } from './actions/location/LocationAction';
-import { BestMonthlyTerritoriesAction } from './actions/occupation/BestMonthlyTerritoriesAction';
-import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOccupationAction';
-import { InsertLastMonthOccupationAction } from './actions/occupation/InsertLastMonthOccupationAction';
-import { MonthlyOccupationAction } from './actions/occupation/MonthlyOccupationAction';
-import { RefreshAllOccupationAction } from './actions/occupation/RefreshAllOccupationAction';
-import { TerritoriesListAction } from './actions/territories/TerritoriesListAction';
-import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
-import { CampaignsAction } from './actions/incentiveCampaigns/CampaignsAction';
-import { InsertCommand } from './commands/InsertCommand';
-import { config } from './config';
-import { DistributionRepositoryProvider } from './providers/DistributionRepositoryProvider';
-import { FluxRepositoryProvider } from './providers/FluxRepositoryProvider';
-import { InfraRepositoryProvider } from './providers/InfraRepositoryProvider';
-import { KeyfiguresRepositoryProvider } from './providers/KeyfiguresRepositoryProvider';
-import { LocationRepositoryProvider } from './providers/LocationRepositoryProvider';
-import { OccupationRepositoryProvider } from './providers/OccupationRepositoryProvider';
-import { TerritoriesRepositoryProvider } from './providers/TerritoriesRepositoryProvider';
-import { IncentiveCampaignsRepositoryProvider } from './providers/IncentiveCampaignsRepositoryProvider';
-import { binding as JourneysByDistancesBinding } from '@shared/observatory/distribution/journeysByDistances.schema';
-import { binding as JourneysByHoursBinding } from '@shared/observatory/distribution/journeysByHours.schema';
-import { binding as BestMonthlyFluxBinding } from '@shared/observatory/flux/bestMonthlyFlux.schema';
-import { binding as EvolMonthlyFluxBinding } from '@shared/observatory/flux/evolMonthlyFlux.schema';
-import { binding as MonthlyFluxBinding } from '@shared/observatory/flux/monthlyFlux.schema';
-import { binding as AiresCovoiturageBinding } from '@shared/observatory/infra/airesCovoiturage.schema';
-import { binding as MonthlyKeyfiguresBinding } from '@shared/observatory/keyfigures/monthlyKeyfigures.schema';
-import { binding as LocationBinding } from '@shared/observatory/location/location.schema';
-import { binding as BestMonthlyTerritoriesBinding } from '@shared/observatory/occupation/bestMonthlyTerritories.schema';
-import { binding as EvolMonthlyOccupationBinding } from '@shared/observatory/occupation/evolMonthlyOccupation.schema';
-import { binding as MonthlyOccupationBinding } from '@shared/observatory/occupation/monthlyOccupation.schema';
-import { binding as TerritoriesListBinding } from '@shared/observatory/territories/list.schema';
-import { binding as TerritoryNameBinding } from '@shared/observatory/territories/name.schema';
-import { binding as CampaignsBinding } from '@shared/observatory/incentiveCampaigns/campaigns.schema';
+import {
+  ExtensionInterface,
+  NewableType,
+  serviceProvider,
+} from "@/ilos/common/index.ts";
+import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
+import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
+import {
+  ValidatorExtension,
+  ValidatorMiddleware,
+} from "@/pdc/providers/validator/index.ts";
+import { JourneysByDistancesAction } from "@/pdc/services/observatory/actions/distribution/JourneysByDistancesAction.ts";
+import { JourneysByHoursAction } from "@/pdc/services/observatory/actions/distribution/JourneysByHoursAction.ts";
+import { BestFluxAction } from "@/pdc/services/observatory/actions/flux/BestFluxAction.ts";
+import { EvolFluxAction } from "@/pdc/services/observatory/actions/flux/EvolFluxAction.ts";
+import { FluxAction } from "@/pdc/services/observatory/actions/flux/FluxAction.ts";
+import { IncentiveAction } from "@/pdc/services/observatory/actions/incentive/IncentiveAction.ts";
+import { CampaignsAction } from "@/pdc/services/observatory/actions/incentiveCampaigns/CampaignsAction.ts";
+import { AiresCovoiturageAction } from "@/pdc/services/observatory/actions/infra/AiresCovoiturageAction.ts";
+import { KeyfiguresAction } from "@/pdc/services/observatory/actions/keyfigures/KeyfiguresAction.ts";
+import { LocationAction } from "@/pdc/services/observatory/actions/location/LocationAction.ts";
+import { binding as JourneysByDistancesBinding } from "@/shared/observatory/distribution/journeysByDistances.schema.ts";
+import { binding as JourneysByHoursBinding } from "@/shared/observatory/distribution/journeysByHours.schema.ts";
+import { binding as GetBestFluxBinding } from "@/shared/observatory/flux/getBestFlux.schema.ts";
+import { binding as GetEvolFluxBinding } from "@/shared/observatory/flux/getEvolFlux.schema.ts";
+import { binding as GetFluxBinding } from "@/shared/observatory/flux/getFlux.schema.ts";
+import { binding as GetIncentiveBinding } from "@/shared/observatory/incentive/getIncentive.schema.ts";
+import { binding as CampaignsBinding } from "@/shared/observatory/incentiveCampaigns/campaigns.schema.ts";
+import { binding as AiresCovoiturageBinding } from "@/shared/observatory/infra/airesCovoiturage.schema.ts";
+import { binding as GetKeyfiguresBinding } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
+import { binding as LocationBinding } from "@/shared/observatory/location/location.schema.ts";
+import { binding as GetBestTerritoriesBinding } from "../../../shared/observatory/occupation/getBestTerritories.schema.ts";
+import { binding as GetEvolOccupationBinding } from "../../../shared/observatory/occupation/getEvolOccupation.schema.ts";
+import { binding as GetOccupationBinding } from "../../../shared/observatory/occupation/getOccupation.schema.ts";
+import { BestTerritoriesAction } from "./actions/occupation/BestTerritoriesAction.ts";
+import { EvolOccupationAction } from "./actions/occupation/EvolOccupationAction.ts";
+import { OccupationAction } from "./actions/occupation/OccupationAction.ts";
+import { config } from "./config/index.ts";
+import { DistributionRepositoryProvider } from "./providers/DistributionRepositoryProvider.ts";
+import { FluxRepositoryProvider } from "./providers/FluxRepositoryProvider.ts";
+import { IncentiveCampaignsRepositoryProvider } from "./providers/IncentiveCampaignsRepositoryProvider.ts";
+import { IncentiveRepositoryProvider } from "./providers/IncentiveRepositoryProvider.ts";
+import { InfraRepositoryProvider } from "./providers/InfraRepositoryProvider.ts";
+import { KeyfiguresRepositoryProvider } from "./providers/KeyfiguresRepositoryProvider.ts";
+import { LocationRepositoryProvider } from "./providers/LocationRepositoryProvider.ts";
+import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryProvider.ts";
+
 /* eslint-enable */
 @serviceProvider({
   config,
-  commands: [InsertCommand],
+  commands: [],
   providers: [
     DistributionRepositoryProvider,
     FluxRepositoryProvider,
@@ -59,50 +57,44 @@ import { binding as CampaignsBinding } from '@shared/observatory/incentiveCampai
     KeyfiguresRepositoryProvider,
     LocationRepositoryProvider,
     OccupationRepositoryProvider,
-    TerritoriesRepositoryProvider,
+    IncentiveRepositoryProvider,
     IncentiveCampaignsRepositoryProvider,
   ],
   validator: [
     AiresCovoiturageBinding,
-    BestMonthlyFluxBinding,
-    BestMonthlyTerritoriesBinding,
-    EvolMonthlyFluxBinding,
-    EvolMonthlyOccupationBinding,
+    GetBestFluxBinding,
+    GetBestTerritoriesBinding,
+    GetEvolFluxBinding,
+    GetEvolOccupationBinding,
     JourneysByDistancesBinding,
     JourneysByHoursBinding,
     LocationBinding,
-    MonthlyFluxBinding,
-    MonthlyKeyfiguresBinding,
-    MonthlyOccupationBinding,
-    TerritoriesListBinding,
-    TerritoryNameBinding,
+    GetFluxBinding,
+    GetIncentiveBinding,
+    GetKeyfiguresBinding,
+    GetOccupationBinding,
     CampaignsBinding,
   ],
   handlers: [
     AiresCovoiturageAction,
-    BestMonthlyFluxAction,
-    BestMonthlyTerritoriesAction,
-    EvolMonthlyFluxAction,
-    EvolMonthlyOccupationAction,
-    InsertLastMonthDistributionAction,
-    InsertLastMonthFluxAction,
-    InsertLastMonthOccupationAction,
+    BestFluxAction,
+    BestTerritoriesAction,
+    EvolFluxAction,
+    EvolOccupationAction,
     JourneysByDistancesAction,
     JourneysByHoursAction,
-    LastRecordMonthlyFluxAction,
     LocationAction,
-    MonthlyFluxAction,
-    MonthlyKeyfiguresAction,
-    MonthlyOccupationAction,
-    RefreshAllDistributionAction,
-    RefreshAllFluxAction,
-    RefreshAllOccupationAction,
-    TerritoriesListAction,
-    TerritoryNameAction,
+    FluxAction,
+    IncentiveAction,
+    KeyfiguresAction,
+    OccupationAction,
     CampaignsAction,
   ],
-  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  queues: ['observatory'],
+  middlewares: [...defaultMiddlewareBindings, [
+    "validate",
+    ValidatorMiddleware,
+  ]],
+  queues: ["observatory"],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

@@ -1,10 +1,15 @@
-import type { Config } from 'meilisearch';
-import { MeiliSearch } from 'meilisearch';
+import { MeiliSearch, MeiliSearchConfig } from "@/deps.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 
-export async function indexData<T>(config: Config, indexName: string, batchSize: number, documents: T[]) {
+export async function indexData<T>(
+  config: MeiliSearchConfig,
+  indexName: string,
+  batchSize: number,
+  documents: T[],
+) {
   try {
     const msg = `Données indexées avec succès dans MeiliSearch`;
-    console.time(msg);
+    const timer = getPerformanceTimer();
 
     const client = new MeiliSearch(config);
 
@@ -17,8 +22,8 @@ export async function indexData<T>(config: Config, indexName: string, batchSize:
     // Indexation des données dans MeiliSearch
     await index.addDocumentsInBatches(documents, batchSize);
 
-    console.timeEnd(msg);
+    logger.info(`${msg} in ${timer.stop()} ms`);
   } catch (e) {
-    console.error(`Erreur lors de l\'indexation des données: ${e.message}`);
+    logger.error(`Erreur lors de l\'indexation des données: ${e.message}`);
   }
 }

@@ -1,8 +1,11 @@
-import http from 'http';
-
-import { TransportInterface, KernelInterface, RPCCallType, RPCResponseType } from '@ilos/common';
-
-import { mapStatusCode } from './helpers/mapStatusCode';
+import { http } from "@/deps.ts";
+import {
+  KernelInterface,
+  RPCCallType,
+  RPCResponseType,
+  TransportInterface,
+} from "@/ilos/common/index.ts";
+import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 
 /**
  * Http Transport
@@ -11,10 +14,9 @@ import { mapStatusCode } from './helpers/mapStatusCode';
  * @implements {TransportInterface}
  */
 export class HttpTransport implements TransportInterface<http.Server> {
-  protected server: http.Server;
-  protected kernel: KernelInterface;
+  protected server: http.Server | null = null;
 
-  constructor(kernel: KernelInterface) {
+  constructor(protected kernel: KernelInterface) {
     this.kernel = kernel;
   }
 
@@ -22,27 +24,27 @@ export class HttpTransport implements TransportInterface<http.Server> {
     return this.kernel;
   }
 
-  getInstance(): http.Server {
-    return this.server;
+  getInstance(): http.Server | void {
+    if (this.server) return this.server;
   }
 
   async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
-      res.setHeader('Content-type', 'application/json');
+      res.setHeader("Content-type", "application/json");
 
       if (
-        !('content-type' in req.headers && 'accept' in req.headers) ||
-        req.headers['content-type'] !== 'application/json' ||
-        req.headers.accept !== 'application/json'
+        !("content-type" in req.headers && "accept" in req.headers) ||
+        req.headers["content-type"] !== "application/json" ||
+        req.headers.accept !== "application/json"
       ) {
         res.statusCode = 415;
         res.end(
           JSON.stringify({
             id: 1,
-            jsonrpc: '2.0',
+            jsonrpc: "2.0",
             error: {
               code: -32000,
-              message: 'Wrong Content-type header. Requires application/json',
+              message: "Wrong Content-type header. Requires application/json",
             },
           }),
         );
@@ -50,35 +52,35 @@ export class HttpTransport implements TransportInterface<http.Server> {
       }
       // Add Host/Origin check
 
-      if (req.method !== 'POST') {
+      if (req.method !== "POST") {
         res.statusCode = 405;
         res.end(
           JSON.stringify({
             id: 1,
-            jsonrpc: '2.0',
+            jsonrpc: "2.0",
             error: {
               code: -32601,
-              message: 'Method not allowed',
+              message: "Method not allowed",
             },
           }),
         );
         return;
       }
 
-      let data = '';
-      req.on('data', (chunk) => {
+      let data = "";
+      req.on("data", (chunk) => {
         data += chunk;
       });
 
-      req.on('error', () => {
+      req.on("error", () => {
         res.statusCode = 400;
         res.end();
       });
 
-      req.on('end', () => {
+      req.on("end", () => {
         try {
           // Add Length check
-          if (Number(req.headers['content-length']) !== data.length + 1) {
+          if (Number(req.headers["content-length"]) !== data.length + 1) {
             // TODO repair, this is not working
             // throw new Error();
           }
@@ -96,7 +98,7 @@ export class HttpTransport implements TransportInterface<http.Server> {
               res.end(
                 JSON.stringify({
                   id: 1,
-                  jsonrpc: '2.0',
+                  jsonrpc: "2.0",
                   error: {
                     code: -32000,
                     message: e.message,
@@ -104,15 +106,15 @@ export class HttpTransport implements TransportInterface<http.Server> {
                 }),
               );
             });
-        } catch (err) {
+        } catch {
           res.statusCode = 415;
           res.end(
             JSON.stringify({
               id: 1,
-              jsonrpc: '2.0',
+              jsonrpc: "2.0",
               error: {
                 code: -32000,
-                message: 'Wrong content length',
+                message: "Wrong content length",
               },
             }),
           );
@@ -127,7 +129,15 @@ export class HttpTransport implements TransportInterface<http.Server> {
     this.server.listen(port);
   }
 
-  async down() {
-    this.server.close();
+  down() {
+    return new Promise<void>((resolve, reject) => {
+      const ts = setTimeout(() => {
+        reject();
+      }, 10000);
+      this.server && this.server.close(() => {
+        clearTimeout(ts);
+        resolve();
+      });
+    });
   }
 }

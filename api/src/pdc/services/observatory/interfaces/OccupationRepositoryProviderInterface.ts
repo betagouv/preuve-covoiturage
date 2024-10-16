@@ -1,68 +1,55 @@
-import {
-  ParamsInterface as MonthlyOccupationParamsInterface,
-  ResultInterface as MonthlyOccupationResultInterface,
-} from '@shared/observatory/occupation/monthlyOccupation.contract';
-import {
-  ParamsInterface as EvolMonthlyOccupationParamsInterface,
-  ResultInterface as EvolMonthlyOccupationResultInterface,
-} from '@shared/observatory/occupation/evolMonthlyOccupation.contract';
+import type {
+  ParamsInterface as OccupationParamsInterface,
+  ResultInterface as OccupationResultInterface,
+} from "@/shared/observatory/occupation/getOccupation.contract.ts";
+import type {
+  ParamsInterface as EvolOccupationParamsInterface,
+  ResultInterface as EvolOccupationResultInterface,
+} from "../../../../shared/observatory/occupation/getEvolOccupation.contract.ts";
 
-import {
-  ParamsInterface as BestMonthlyTerritoriesParamsInterface,
-  ResultInterface as BestMonthlyTerritoriesResultInterface,
-} from '@shared/observatory/occupation/bestMonthlyTerritories.contract';
-import {
-  ParamsInterface as InsertMonthlyOccupationParamsInterface,
-  ParamsInterface as DeleteMonthlyOccupationParamsInterface,
-} from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
+import type {
+  ParamsInterface as BestTerritoriesParamsInterface,
+  ResultInterface as BestTerritoriesResultInterface,
+} from "../../../../shared/observatory/occupation/getBestTerritories.contract.ts";
 
-export {
-  MonthlyOccupationParamsInterface,
-  MonthlyOccupationResultInterface,
-  EvolMonthlyOccupationParamsInterface,
-  EvolMonthlyOccupationResultInterface,
-  BestMonthlyTerritoriesParamsInterface,
-  BestMonthlyTerritoriesResultInterface,
-  InsertMonthlyOccupationParamsInterface,
-  DeleteMonthlyOccupationParamsInterface,
+export type {
+  BestTerritoriesParamsInterface,
+  BestTerritoriesResultInterface,
+  EvolOccupationParamsInterface,
+  EvolOccupationResultInterface,
+  OccupationParamsInterface,
+  OccupationResultInterface,
 };
 
 export interface OccupationRepositoryInterface {
-  insertOneMonthOccupation(params: InsertMonthlyOccupationParamsInterface): Promise<void>;
-  deleteOneMonthOccupation(params: DeleteMonthlyOccupationParamsInterface): Promise<void>;
-  getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface>;
-  getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface>;
-  getBestMonthlyTerritories(
-    params: BestMonthlyTerritoriesParamsInterface,
-  ): Promise<BestMonthlyTerritoriesResultInterface>;
+  getOccupation(
+    params: OccupationParamsInterface,
+  ): Promise<OccupationResultInterface>;
+  getEvolOccupation(
+    params: EvolOccupationParamsInterface,
+  ): Promise<EvolOccupationResultInterface>;
+  getBestTerritories(
+    params: BestTerritoriesParamsInterface,
+  ): Promise<BestTerritoriesResultInterface>;
 }
 
-export abstract class OccupationRepositoryInterfaceResolver implements OccupationRepositoryInterface {
-  async insertOneMonthOccupation(params: InsertMonthlyOccupationParamsInterface): Promise<void> {
+export abstract class OccupationRepositoryInterfaceResolver
+  implements OccupationRepositoryInterface {
+  async getOccupation(
+    params: OccupationParamsInterface,
+  ): Promise<OccupationResultInterface> {
     throw new Error();
   }
 
-  async deleteOneMonthOccupation(params: DeleteMonthlyOccupationParamsInterface): Promise<void> {
+  async getEvolOccupation(
+    params: EvolOccupationParamsInterface,
+  ): Promise<EvolOccupationResultInterface> {
     throw new Error();
   }
 
-  async refreshAllOccupation(): Promise<void> {
-    throw new Error();
-  }
-
-  async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
-    throw new Error();
-  }
-
-  async getEvolMonthlyOccupation(
-    params: EvolMonthlyOccupationParamsInterface,
-  ): Promise<EvolMonthlyOccupationResultInterface> {
-    throw new Error();
-  }
-
-  async getBestMonthlyTerritories(
-    params: BestMonthlyTerritoriesParamsInterface,
-  ): Promise<BestMonthlyTerritoriesResultInterface> {
+  async getBestTerritories(
+    params: BestTerritoriesParamsInterface,
+  ): Promise<BestTerritoriesResultInterface> {
     throw new Error();
   }
 }

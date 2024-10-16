@@ -1,5 +1,5 @@
-import { AbstractTemplate } from '@pdc/providers/template';
-import { AbstractMailNotification } from '@pdc/providers/notification';
+import { AbstractTemplate } from "@/pdc/providers/template/index.ts";
+import { AbstractMailNotification } from "@/pdc/providers/notification/index.ts";
 
 export interface ContactFormTemplateData {
   title: string;
@@ -16,7 +16,8 @@ export interface ContactFormTemplateData {
   contact_form_subject?: string;
 }
 
-export class ContactFormMJMLTemplate extends AbstractTemplate<ContactFormTemplateData> {
+export class ContactFormMJMLTemplate
+  extends AbstractTemplate<ContactFormTemplateData> {
   static readonly template = `
 <mjml version="4.6.3" lang="fr">
   <mj-head>
@@ -129,7 +130,8 @@ export class ContactFormMJMLTemplate extends AbstractTemplate<ContactFormTemplat
   `;
 }
 
-export class ContactFormTextTemplate extends AbstractTemplate<ContactFormTemplateData> {
+export class ContactFormTextTemplate
+  extends AbstractTemplate<ContactFormTemplateData> {
   static readonly template = `
 Bonjour,
 
@@ -151,17 +153,18 @@ puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
   `;
 }
 
-export class ContactFormNotification extends AbstractMailNotification<ContactFormTemplateData> {
+export class ContactFormNotification
+  extends AbstractMailNotification<ContactFormTemplateData> {
   static templateText = ContactFormTextTemplate;
   static templateMJML = ContactFormMJMLTemplate;
-  static readonly subject: string = 'Formulaire de contact';
+  static readonly subject: string = "Formulaire de contact";
 
   constructor(to: string, data: Partial<ContactFormTemplateData>) {
     super(to, {
-      app_url: 'https://covoiturage.beta.gouv.fr',
-      contact_email: 'contact@covoiturage.beta.gouv.fr',
-      header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
-      header_alt: 'Formulaire de contact',
+      app_url: "https://covoiturage.beta.gouv.fr",
+      contact_email: "contact@covoiturage.beta.gouv.fr",
+      header_image_src: "https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png",
+      header_alt: "Formulaire de contact",
       ...data,
     });
   }

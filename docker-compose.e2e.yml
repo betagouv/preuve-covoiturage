@@ -15,9 +15,9 @@ services:
       - '--entrypoints.websecure.address=:443'
       - '--entrypoints.web.address=:80'
       - '--providers.docker.network=pdce2e_back'
-      - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
-      - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
-      - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
+      # - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
+      # - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
+      # - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
     volumes:
       - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
       - ./docker/traefik/certs:/etc/certs
@@ -26,13 +26,42 @@ services:
       back:
       front:
         aliases:
+          - auth.covoiturage.test
           - api.covoiturage.test
           - app.covoiturage.test
           - mailer.covoiturage.test
           - s3.covoiturage.test
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
-
+  kc:
+    image: keycloak/keycloak:24.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_URL: "jdbc:postgresql://postgres:5432/test"
+      KC_REALM_NAME: covoiturage
+      PDC_URL: http://app.covoiturage.test
+      PDC_ADMIN_USERNAME: admin
+      PDC_ADMIN_PASSWORD: admin
+      PDC_KC_ADMIN_CLIENT_SECRET: so_secret_000
+      PDC_KC_BOT_CLIENT_SECRET: so_secret_000
+      PDC_KC_CLIENT_SECRET: so_secret_000
+    networks:
+      - back
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.kc-http.rule=Host(`auth.covoiturage.test`)'
+      - 'traefik.http.routers.kc-http.entrypoints=web'
+      - 'traefik.http.routers.kc-https.rule=Host(`auth.covoiturage.test`)'
+      - 'traefik.http.routers.kc-https.entrypoints=websecure'
+      - 'traefik.http.routers.kc-https.tls=true'
+      - 'traefik.http.services.kc.loadbalancer.server.port=8080'
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./docker/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
   mailer:
     image: mailhog/mailhog:v1.0.1
     environment:
@@ -94,7 +123,7 @@ services:
 
   api:
     build:
-      dockerfile: ./docker/api/prod/Dockerfile
+      dockerfile: ./docker/api/Dockerfile
       context: .
     environment:
       LOG_LEVEL: 'debug'
@@ -119,7 +148,6 @@ services:
       NODE_ENV: local
       APP_ENV: local
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
     networks:
       - back
@@ -204,7 +232,6 @@ services:
       APP_DATAGOUV_URL: http://data-gouv-url
       APP_DATAGOUV_KEY: thisIsASecret
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
       PORT: 8080
       NODE_ENV: local
@@ -248,28 +275,6 @@ services:
       ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
     depends_on:
       - s3
-
-  cypress:
-    build:
-      dockerfile: ../docker/cypress/Dockerfile
-      context: ./tests
-    volumes:
-      - /tmp/cypress/videos:/app/cypress/videos
-      - /tmp/cypress/screenshots:/app/cypress/screenshots
-    environment:
-      CYPRESS_baseUrl: https://app.covoiturage.test
-      CYPRESS_MAILHOG_URL: https://mailer.covoiturage.test/api
-    depends_on:
-      - api
-    networks:
-      - front
-
-  lint:
-    build: './docker/lint'
-    tty: true
-    volumes:
-      - ./api:/code/api:ro
-      - ./dashboard:/code/dashboard:ro
 
 networks:
   front:

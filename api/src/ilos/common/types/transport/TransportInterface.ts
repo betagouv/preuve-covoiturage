@@ -1,4 +1,4 @@
-import { KernelInterface } from '../core/KernelInterface';
+import { KernelInterface } from "../core/KernelInterface.ts";
 
 export interface TransportInterface<T = any> {
   /**

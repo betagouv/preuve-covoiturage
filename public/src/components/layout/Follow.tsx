@@ -21,9 +21,9 @@ export function Follow() {
                       children: 'Poser une question',
                       iconId: 'fr-icon-mail-line',
                       linkProps: {
-                        href: 'https://covoiturage.beta.gouv.fr/nous-contacter/',
-                        title: "Nous contacter - nouvelle fenêtre",
-                        "aria-label": "Nous contacter - nouvelle fenêtre",
+                        href: 'mailto:contact@covoiturage.beta.gouv.fr',
+                        title: "Nous contacter - mailto",
+                        "aria-label": "Nous contacter - mailto",
                         target: '_blank'
                       }
                     },

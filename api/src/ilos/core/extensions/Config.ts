@@ -1,5 +1,9 @@
-import { get, has } from 'lodash';
-import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterface, extension } from '@ilos/common';
+import type {
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, extension } from "@/ilos/common/index.ts";
+import { get } from "@/lib/object/index.ts";
 
 export class ConfigStore extends ConfigInterfaceResolver {
   constructor(protected config: { [k: string]: any }) {
@@ -7,7 +11,7 @@ export class ConfigStore extends ConfigInterfaceResolver {
   }
 
   get(key: string, fallback?: any): any {
-    if (fallback === undefined && !has(this.config, key)) {
+    if (fallback === undefined && get(this.config, key) === undefined) {
       throw new Error(`Unknown config key '${key}'`);
     }
 
@@ -16,13 +20,14 @@ export class ConfigStore extends ConfigInterfaceResolver {
 }
 
 @extension({
-  name: 'config',
+  name: "config",
   autoload: true,
 })
 export class Config implements RegisterHookInterface {
   constructor(protected readonly params: { [k: string]: any } = {}) {}
 
   async register(serviceContainer: ServiceContainerInterface) {
-    serviceContainer.getContainer().bind(ConfigInterfaceResolver).toConstantValue(new ConfigStore(this.params));
+    serviceContainer.getContainer().bind(ConfigInterfaceResolver)
+      .toConstantValue(new ConfigStore(this.params));
   }
 }

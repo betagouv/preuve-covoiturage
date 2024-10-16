@@ -1,16 +1,24 @@
-import {
-  ParamsInterface as MonthlyKeyfiguresParamsInterface,
-  ResultInterface as MonthlyKeyfiguresResultInterface,
-} from '@shared/observatory/keyfigures/monthlyKeyfigures.contract';
+import type {
+  ParamsInterface as KeyfiguresParamsInterface,
+  ResultInterface as KeyfiguresResultInterface,
+} from "@/shared/observatory/keyfigures/keyfigures.contract.ts";
 
-export { MonthlyKeyfiguresParamsInterface, MonthlyKeyfiguresResultInterface };
+export type {
+  KeyfiguresParamsInterface,
+  KeyfiguresResultInterface,
+};
 
 export interface KeyfiguresRepositoryInterface {
-  getMonthlyKeyfigures(params: MonthlyKeyfiguresParamsInterface): Promise<MonthlyKeyfiguresResultInterface>;
+  getKeyfigures(
+    params: KeyfiguresParamsInterface,
+  ): Promise<KeyfiguresResultInterface>;
 }
 
-export abstract class KeyfiguresRepositoryInterfaceResolver implements KeyfiguresRepositoryInterface {
-  async getMonthlyKeyfigures(params: MonthlyKeyfiguresParamsInterface): Promise<MonthlyKeyfiguresResultInterface> {
+export abstract class KeyfiguresRepositoryInterfaceResolver
+  implements KeyfiguresRepositoryInterface {
+  async getKeyfigures(
+    params: KeyfiguresParamsInterface,
+  ): Promise<KeyfiguresResultInterface> {
     throw new Error();
   }
 }

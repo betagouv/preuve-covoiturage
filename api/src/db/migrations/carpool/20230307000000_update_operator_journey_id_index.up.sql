@@ -1,2 +1,0 @@
-CREATE INDEX IF NOT EXISTS carpools_operator_journey_id_partial_idx ON carpool.carpools (operator_journey_id) WHERE datetime >= '2022-12-31';
-DROP INDEX IF EXISTS carpool.carpools_operator_journey_id_idx;

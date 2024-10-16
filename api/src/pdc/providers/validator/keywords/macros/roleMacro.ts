@@ -1,15 +1,15 @@
 export function roleMacro(): { type: string; enum: string[]; default: string } {
   return {
-    type: 'string',
+    type: "string",
     enum: [
-      'operator.admin',
-      'operator.user',
-      'registry.admin',
-      'registry.user',
-      'territory.admin',
-      'territory.user',
-      'territory.demo',
+      "operator.admin",
+      "operator.user",
+      "registry.admin",
+      "registry.user",
+      "territory.admin",
+      "territory.user",
+      "territory.demo",
     ],
-    default: 'user',
+    default: "user",
   };
 }

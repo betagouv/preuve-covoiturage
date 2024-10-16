@@ -1,21 +1,36 @@
-import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
-import { Action as AbstractAction, env } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
-import { isAfter, max, min } from 'date-fns';
-import { Policy } from '../engine/entities/Policy';
-import { defaultTz, subDaysTz, today, toTzString } from '../helpers';
+import { defaultTimezone } from "@/config/time.ts";
+import { isAfter, maxDate, minDate } from "@/deps.ts";
+import {
+  ContextType,
+  handler,
+  InvalidParamsException,
+  NotFoundException,
+} from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
+import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/policy/apply.contract.ts";
+import { alias } from "@/shared/policy/apply.schema.ts";
+import { Policy } from "../engine/entities/Policy.ts";
+import { subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/apply.contract';
-import { alias } from '@shared/policy/apply.schema';
+} from "../interfaces/index.ts";
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), [
+    "validate",
+    alias,
+  ]],
 })
 export class ApplyAction extends AbstractAction {
   private readonly context: ContextType = {
@@ -36,12 +51,14 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false('APP_DISABLE_POLICY_PROCESSING')) {
-      return console.warn('[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
+    if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
+      return logger.warn(
+        "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
+      );
     }
 
     const { from, to, override } = this.defaultParams(params);
-    console.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    logger.info(`[campaign:apply] processing policy ${params.policy_id}`);
     await this.processPolicy(params.policy_id, from, to, override);
   }
 
@@ -50,7 +67,7 @@ export class ApplyAction extends AbstractAction {
    * Finalization will be applied until the last 5 days
    */
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
-    const tz = params.tz ?? defaultTz;
+    const tz = params.tz ?? defaultTimezone;
 
     return {
       tz,
@@ -61,7 +78,12 @@ export class ApplyAction extends AbstractAction {
     };
   }
 
-  protected async processPolicy(policy_id: number, from: Date, to: Date, override = false): Promise<void> {
+  protected async processPolicy(
+    policy_id: number,
+    from: Date,
+    to: Date,
+    override = false,
+  ): Promise<void> {
     // 1. Find policy
     const pol = await this.policyRepository.find(policy_id);
     if (!pol) {
@@ -77,35 +99,45 @@ export class ApplyAction extends AbstractAction {
 
     // 2. Start a cursor to find trips
     // handle date boundaries
-    const start = max([from, policy.start_date]);
-    const end = min([to, policy.end_date]);
+    const start = maxDate([from, policy.start_date]);
+    const end = minDate([to, policy.end_date]);
     const s = toTzString(start);
     const e = toTzString(end);
     const pe = toTzString(policy.end_date);
 
     // throw if campaign start date is after policy end date
     if (isAfter(start, policy.end_date)) {
-      throw new InvalidParamsException(`[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`);
+      throw new InvalidParamsException(
+        `[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`,
+      );
     }
 
     // throw if no time span
     if (end.getTime() - start.getTime() < 1) {
-      throw new InvalidParamsException(`[policy ${policy._id}] Invalid time span (from ${s} to ${e})`);
+      throw new InvalidParamsException(
+        `[policy ${policy._id}] Invalid time span (from ${s} to ${e})`,
+      );
     }
 
-    console.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
+    logger.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
 
     const batchSize = 1000;
-    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, override);
+    const cursor = this.tripRepository.findTripByPolicy(
+      policy,
+      start,
+      end,
+      batchSize,
+      override,
+    );
     let done = false;
 
     do {
-      if (total === 0) console.info(`[policy ${policy._id}] Fetching carpools...`);
-      if (total === 0) console.time(`[policy ${policy._id}] Fetched carpools`);
+      if (total === 0) {
+        logger.info(`[policy ${policy._id}] Fetching carpools...`);
+      }
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
-      done = results.done;
-      if (total === 0) console.timeEnd(`[policy ${policy._id}] Fetched carpools`);
+      done = !!results.done;
 
       const bs = new Date(); // benchmark start
       if (results.value) {
@@ -120,20 +152,29 @@ export class ApplyAction extends AbstractAction {
       const ms = new Date().getTime() - bs.getTime();
       if (counter) {
         const rate = ((counter / ms) * 1000).toFixed(0);
-        console.info(`[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`);
+        logger.info(
+          `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`,
+        );
       }
       total += counter;
       counter = 0;
 
       // 4. Save incentives
       if (incentives.length) {
-        const saveMsg = `[policy ${policy_id}] stored ${incentives.length} incentives`;
-        console.time(saveMsg);
-        await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
-        console.timeEnd(saveMsg);
+        const timer = getPerformanceTimer();
+        await this.incentiveRepository.createOrUpdateMany(
+          incentives.map((i) => i.export()),
+        );
+        logger.info(
+          `[policy ${policy_id}] stored ${incentives.length} incentives in ${timer.stop()} ms`,
+        );
       }
     } while (!done);
 
-    console.info(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
+    logger.info(
+      `[policy ${policy_id}] finished - ${total} in ${
+        new Date().getTime() - bench.getTime()
+      }ms`,
+    );
   }
 }

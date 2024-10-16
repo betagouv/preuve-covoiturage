@@ -1,11 +1,11 @@
-import { ParamsType, ResultType, ContextType } from '../call';
+import { NextFunction } from "@/deps.ts";
+import { ContextType, ParamsType, ResultType } from "../call/index.ts";
 
-export interface MiddlewareInterface<T = any> {
-  process(params: ParamsType, context: ContextType, next?: Function, options?: T): Promise<ResultType>;
+export interface MiddlewareInterface<T = unknown> {
+  process(
+    params: ParamsType,
+    context: ContextType,
+    next?: NextFunction,
+    options?: T,
+  ): Promise<ResultType>;
 }
-
-export type FunctionMiddlewareInterface = (
-  params: ParamsType,
-  context: ContextType,
-  next?: Function,
-) => Promise<ResultType>;

@@ -1,2 +1,2 @@
-export { HttpTransport } from './HttpTransport';
-export { mapStatusCode } from './helpers/mapStatusCode';
+export { HttpTransport } from "./HttpTransport.ts";
+export { mapStatusCode } from "./helpers/mapStatusCode.ts";

@@ -19,9 +19,9 @@ export type GeoCode = string;
 export type SerializableError = Error;
 
 export enum OperatorClass {
-  A = 'A',
-  B = 'B',
-  C = 'C',
+  A = "A",
+  B = "B",
+  C = "C",
 }
 
 export type CarpoolIncentive = {
@@ -31,8 +31,8 @@ export type CarpoolIncentive = {
 };
 
 export enum IncentiveCounterpartTarget {
-  Driver = 'driver',
-  Passenger = 'passenger',
+  Driver = "driver",
+  Passenger = "passenger",
 }
 
 export type CarpoolIncentiveCounterpart = {
@@ -53,33 +53,38 @@ export type ApiVersion = number;
 export type CancelCode = string;
 export type CancelMessage = string;
 
-/**
- * @deprecated [carpool_v2_migration]
- *
- * Carpool_v2 uses multiple statuses (acquisition_status, fraud_status)
- * to determine the status of a carpool.
- *
- * Use the statusConverter() function to convert these statuses to a single status.
- */
-export enum CarpoolV1StatusEnum {
-  Ok = 'ok',
-  Expired = 'expired',
-  Canceled = 'canceled',
-  FraudcheckError = 'fraudcheck_error',
-  AnomalyError = 'anomaly_error',
+export enum CarpoolStatusEnum {
+  AcquisitionError = "acquisition_error",
+  ValidationError = "validation_error",
+  NormalizationError = "normalization_error",
+  TermsViolationError = "terms_violation_error",
+  FraudError = "fraud_error",
+  AnomalyError = "anomaly_error",
+  Ok = "ok",
+  Canceled = "canceled",
+  Pending = "pending",
+  Unknown = "unknown",
 }
 
 export enum CarpoolAcquisitionStatusEnum {
-  Received = 'received',
-  Updated = 'updated',
-  Processed = 'processed',
-  Failed = 'failed',
-  Canceled = 'canceled',
-  Expired = 'expired',
+  Received = "received",
+  Updated = "updated",
+  Processed = "processed",
+  Failed = "failed",
+  Canceled = "canceled",
+  /** @deprecated */
+  Expired = "expired",
+  TermsViolationError = "terms_violation_error",
 }
 
 export enum CarpoolFraudStatusEnum {
-  Pending = 'pending',
-  Passed = 'passed',
-  Failed = 'failed',
+  Pending = "pending",
+  Passed = "passed",
+  Failed = "failed",
+}
+
+export enum CarpoolAnomalyStatusEnum {
+  Pending = "pending",
+  Passed = "passed",
+  Failed = "failed",
 }

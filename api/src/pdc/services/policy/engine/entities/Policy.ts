@@ -1,5 +1,6 @@
-import { Timezone } from '@pdc/providers/validator';
-import { PolicyStatusEnum } from '@shared/policy/common/interfaces/PolicyInterface';
+import { logger } from "@/lib/logger/index.ts";
+import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
 import {
   CarpoolInterface,
   MetadataStoreInterface,
@@ -13,13 +14,12 @@ import {
   StatelessContextInterface,
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
-} from '../../interfaces';
-import { TestingLogFn } from '../../interfaces/engine/PolicyInterface';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
-import { isSelected } from '../helpers';
-import { policies } from '../policies';
-import { StatefulContext, StatelessContext } from './Context';
+} from "../../interfaces/index.ts";
+import { NotEligibleTargetException } from "../exceptions/NotEligibleTargetException.ts";
+import { UnknownHandlerException } from "../exceptions/UnknownHandlerException.ts";
+import { isSelected } from "../helpers/index.ts";
+import { policies } from "../policies/index.ts";
+import { StatefulContext, StatelessContext } from "./Context.ts";
 
 export class Policy implements PolicyInterface {
   constructor(
@@ -76,21 +76,26 @@ export class Policy implements PolicyInterface {
     };
   }
 
-  async processStateless(carpool: CarpoolInterface, log?: TestingLogFn): Promise<StatelessIncentiveInterface> {
-    const context: StatelessContextInterface = StatelessContext.fromCarpool(this._id, carpool);
+  async processStateless(
+    carpool: CarpoolInterface,
+  ): Promise<StatelessIncentiveInterface> {
+    const context: StatelessContextInterface = StatelessContext.fromCarpool(
+      this._id,
+      carpool,
+    );
     context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
-        this.handler.processStateless(context, log);
+        this.handler.processStateless(context);
       } catch (e) {
         if (e instanceof NotEligibleTargetException) {
           context.incentive.set(0);
           return context.incentive;
         }
-        console.error(
+        logger.error(
           `Stateless incentive calculation for carpool ${carpool.operator_id} ${carpool.operator_journey_id} failed : ${e.message}`,
         );
-        console.debug(e);
+        logger.debug(e);
         throw e;
       }
     }
@@ -100,19 +105,20 @@ export class Policy implements PolicyInterface {
   async processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
-    log?: TestingLogFn,
   ): Promise<StatefulIncentiveInterface> {
     try {
       const context = await StatefulContext.fromIncentive(store, incentive);
       if (context.meta.isEmpty() || context.incentive.get() === 0) {
         return context.incentive;
       }
-      this.handler.processStateful(context, log);
+      this.handler.processStateful(context);
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {
-      console.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
-      console.debug(e);
+      logger.error(
+        `Stateful incentive calculation failed for ${incentive._id}: ${e.message}`,
+      );
+      logger.debug(e);
       throw e;
     }
   }
@@ -126,11 +132,17 @@ export class Policy implements PolicyInterface {
       return false;
     }
 
-    if (!this.territory_selector || Object.keys(this.territory_selector).length <= 0) {
+    if (
+      !this.territory_selector ||
+      Object.keys(this.territory_selector).length <= 0
+    ) {
       return true;
     }
 
-    if (!isSelected(carpool.start, this.territory_selector) && !isSelected(carpool.end, this.territory_selector)) {
+    if (
+      !isSelected(carpool.start, this.territory_selector) &&
+      !isSelected(carpool.end, this.territory_selector)
+    ) {
       return false;
     }
 

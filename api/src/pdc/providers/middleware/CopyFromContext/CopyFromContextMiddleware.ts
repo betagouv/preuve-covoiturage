@@ -1,12 +1,19 @@
-import { get, set } from 'lodash';
-import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ConfiguredMiddleware } from '../interfaces';
+import {
+  ContextType,
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ResultType,
+} from "@/ilos/common/index.ts";
+import { get, set } from "@/lib/object/index.ts";
+import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /*
  * Extract data from context and copy to request params
  */
 @middleware()
-export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromContextMiddlewareParams> {
+export class CopyFromContextMiddleware
+  implements MiddlewareInterface<CopyFromContextMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -31,10 +38,34 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
 
 export type CopyFromContextMiddlewareParams = [string, string, boolean];
 
-const alias = 'copy.from_context';
+const alias = "copy.from_context";
 
-export const copyFromContextMiddlewareBinding = [alias, CopyFromContextMiddleware];
+export const copyFromContextMiddlewareBinding = [
+  alias,
+  CopyFromContextMiddleware,
+];
 
+/**
+ * Copy context data to request params
+
+ *
+ * @param fromPath - the path in the context to copy from
+ * @param toPath - the path in the request params to copy to
+ * @param preserve - whether to preserve the existing value
+ *                             in the request params or override it
+ *
+ * @example
+ * middlewares: [
+ *   // override the operator_id to scope the request to the owner if it is
+ *   // an operator.
+ *   copyFromContextMiddleware("call.user.operator_id", "operator_id", false),
+ *
+ *   // copy the user id to the created_by field only if it is not already set
+ *   // in the request params.
+ *   copyFromContextMiddleware("call.user._id", "created_by", true),
+ * ],
+ *
+ */
 export function copyFromContextMiddleware(
   fromPath: string,
   toPath: string,

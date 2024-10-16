@@ -1,41 +1,42 @@
-import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/providers/middleware';
+import {
+  ContextType,
+  handler,
+  UnimplementedException,
+} from "@/ilos/common/index.ts";
+import { Action } from "@/ilos/core/index.ts";
+import {
+  copyFromContextMiddleware,
+  validateDateMiddleware,
+} from "@/pdc/providers/middleware/index.ts";
 
-import * as middlewareConfig from '../config/middlewares';
-import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/searchcount.contract';
-import { alias } from '@shared/trip/searchcount.schema';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/trip/searchcount.contract.ts";
+import { alias } from "@/shared/trip/searchcount.schema.ts";
+import * as middlewareConfig from "../config/middlewares.ts";
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
-    ...groupPermissionMiddlewaresHelper({
-      territory: 'territory.trip.stats',
-      operator: 'operator.trip.stats',
-      registry: 'registry.trip.stats',
-    }),
-    ['validate', alias],
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", true),
+    ["validate", alias],
     validateDateMiddleware({
-      startPath: 'date.start',
-      endPath: 'date.end',
-      minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+      startPath: "date.start",
+      endPath: "date.end",
+      minStart: () =>
+        new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
       maxEnd: () => new Date(),
       applyDefault: true,
     }),
   ],
 })
 export class SearchCountAction extends Action {
-  constructor(
-    private pg: TripRepositoryProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
-    super();
-  }
-
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    return this.pg.searchCount(params);
+  public async handle(
+    params: ParamsInterface,
+    context: ContextType,
+  ): Promise<ResultInterface> {
+    throw new UnimplementedException();
   }
 }

@@ -1,19 +1,25 @@
 import PageTitle from '@/components/common/PageTitle';
-import { fr } from '@codegouvfr/react-dsfr';
-import Dashboard from './Dashboard';
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Suspense } from 'react';
+import Dashboard from './Dashboard';
 
 
 export default function Page() {
 
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';
-  const subtitle = 'Les données sont issues des plateformes de covoiturage partenaires du Registre de preuve de covoiturage et représentent environ 4% des trajets covoiturés chaque mois en 2023';
-  const content = "Bien que partielle, cette source de données est à ce jour la plus complète pour comprendre certaines pratiques du covoiturage quotidien à l'échelle du territoire national."
     return (
       <div id='content'>
         <PageTitle title={title} />
-        <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
-        <p className={fr.cx('fr-text--lg')}>{content}</p>
+        <Alert
+          description={
+            <ul>
+              <li>sont les données issues des plates-formes de covoiturage courte distance uniquement, à savoir 4% du covoiturage global selon l’enquête Mobilité des personnes 2022</li>
+              <li>ont été réactualisées après exclusion des trajets présentant des anomalies ou de la fraude manifeste. Un léger delta dans les données peut donc être constaté avec des analyses réalisées par le passé.</li>
+            </ul>
+          }
+          severity="info"
+          title="A noter que les données présentées sur l’observatoire:"
+        />
         <Suspense>
           <Dashboard />
         </Suspense> 

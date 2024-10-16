@@ -1,41 +1,38 @@
-import { NotFoundException, provider } from '@ilos/common';
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
-import { Agent } from 'https';
-import { get } from 'lodash';
-import { URLSearchParams } from 'url';
-import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces';
+import { URLSearchParams } from "@/deps.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
+import { get } from "@/lib/object/index.ts";
+import {
+  GeoCoderInterface,
+  InseeCoderInterface,
+  PointInterface,
+} from "../interfaces/index.ts";
 
 @provider()
-export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, InseeCoderInterface {
-  protected domain = 'https://api-adresse.data.gouv.fr';
-  private static agent = new Agent({ keepAlive: false });
-
-  constructor() {
-    axiosRetry(axios, {
-      retries: 3,
-      retryDelay: (retryCount) => retryCount * 2000,
-      retryCondition: (error) => (error.response?.status || 500) >= 400,
-    });
-  }
+export class EtalabBaseAdresseNationaleProvider
+  implements GeoCoderInterface, InseeCoderInterface {
+  protected domain = "https://api-adresse.data.gouv.fr";
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const params = new URLSearchParams({
       q: literal,
-      limit: '1',
-      autocomplete: '0',
+      limit: "1",
+      autocomplete: "0",
     });
 
-    const res = await axios.get(`${this.domain}/search`, {
-      params,
-      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
-    });
+    const response = await fetcher.get(
+      `${this.domain}/search?${params.toString()}`,
+    );
+    const data = await response.json();
 
-    if (!get(res, 'data.features', []).length) {
+    if (!get(data, "features", [])?.length) {
       throw new NotFoundException();
     }
 
-    const [lon, lat] = get(res, 'data.features.0.geometry.coordinates', [null, null]);
+    const [lon, lat] = get(data, "features.0.geometry.coordinates", [
+      null,
+      null,
+    ]) as [number | null, number | null];
 
     if (!lon || !lat) {
       throw new NotFoundException(`Literal not found on BAN (${literal})`);
@@ -54,19 +51,19 @@ export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, In
       lon: lon.toString(),
     });
 
-    const res = await axios.get(`${this.domain}/reverse`, {
-      params,
-      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
-    });
+    const response = await fetcher.get(
+      `${this.domain}/reverse?${params.toString()}`,
+    );
+    const data = await response.json();
 
-    if (!get(res, 'data.features', []).length) {
+    if (!get(data, "features", [])?.length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
-    const data = get(res, 'data.features.0.properties.citycode', null);
-    if (!data) {
+    const citycode = get(data, "features.0.properties.citycode", null);
+    if (!citycode) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
-    return data;
+    return citycode;
   }
 }

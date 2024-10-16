@@ -1,13 +1,30 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
-import { ExportRecipient } from '../models/ExportRecipient';
+import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
+import { ExportRecipient } from "../models/ExportRecipient.ts";
 
 export type RecipientServiceInterface = {
-  maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]>;
+  maybeAddCreator(
+    recipients: ExportRecipient[],
+    created_by: number,
+  ): Promise<ExportRecipient[]>;
 };
 
-export abstract class RecipientServiceInterfaceResolver implements RecipientServiceInterface {
-  public maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]> {
-    throw new Error('Not implemented');
+export abstract class RecipientServiceInterfaceResolver
+  implements RecipientServiceInterface {
+  /**
+   * Add the creator as recipient if no recipient is provided
+   *
+   * @todo check the evolution of the user's service
+   *
+   * @param {ExportRecipient[]} recipients
+   * @param {number} created_by
+   * @returns {Promise<ExportRecipient[]>}
+   */
+  public maybeAddCreator(
+    recipients: ExportRecipient[],
+    created_by: number,
+  ): Promise<ExportRecipient[]> {
+    throw new Error("Not implemented");
   }
 }
 
@@ -17,23 +34,33 @@ export abstract class RecipientServiceInterfaceResolver implements RecipientServ
 export class RecipientService {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  // add the creator as recipient if no recipient is provided
-  public async maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]> {
+  public async maybeAddCreator(
+    recipients: ExportRecipient[],
+    created_by: number,
+  ): Promise<ExportRecipient[]> {
     if (recipients.length) return recipients;
 
     try {
       const creator = await this.kernel.call(
-        'user:find',
+        "user:find",
         { _id: created_by },
         {
-          call: { user: { permissions: ['registry.user.find'] } },
-          channel: { service: 'export' },
+          call: { user: { permissions: ["registry.user.find"] } },
+          channel: { service: "export" },
         },
       );
 
-      return creator ? [ExportRecipient.fromEmail(`${creator.firstname} ${creator.lastname} <${creator.email}>`)] : [];
+      return creator
+        ? [
+          ExportRecipient.fromEmail(
+            `${creator.firstname} ${creator.lastname} <${creator.email}>`,
+          ),
+        ]
+        : [];
     } catch (e) {
-      console.error(`[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}: ${e.message}`);
+      logger.error(
+        `[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}: ${e.message}`,
+      );
       return [];
     }
   }
