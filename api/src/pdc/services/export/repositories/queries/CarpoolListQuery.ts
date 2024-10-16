@@ -256,12 +256,12 @@ export class CarpoolListQuery extends AbstractQuery {
 
       -- dates and times are in UTC
       -- ceil times to 10 minutes and format for user's convenience
-      ts_ceil(trips.start_at at time zone 'Europe/Paris', 600) as start_datetime,
-      to_char(ts_ceil(trips.start_at at time zone 'Europe/Paris', 600), 'YYYY-MM-DD') as start_date,
-      to_char(ts_ceil(trips.start_at at time zone 'Europe/Paris', 600), 'HH24:MI:SS') as start_time,
-      ts_ceil(trips.end_at at time zone 'Europe/Paris', 600) as end_datetime,
-      to_char(ts_ceil(trips.end_at at time zone 'Europe/Paris', 600), 'YYYY-MM-DD') as end_date,
-      to_char(ts_ceil(trips.end_at at time zone 'Europe/Paris', 600), 'HH24:MI:SS') as end_time,
+      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'YYYY-MM-DD HH24:MI:SS') as start_datetime,
+      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'YYYY-MM-DD') as start_date,
+      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'HH24:MI:SS') as start_time,
+      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'YYYY-MM-DD HH24:MI:SS') as end_datetime,
+      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'YYYY-MM-DD') as end_date,
+      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'HH24:MI:SS') as end_time,
       to_char(trips.duration, 'HH24:MI:SS') as duration,
 
       -- distance in km with meter precision (float)

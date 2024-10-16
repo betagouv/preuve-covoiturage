@@ -1,19 +1,11 @@
 import { AdmZip, stringify } from "@/deps.ts";
-import {
-  getTmpDir,
-  open,
-  OpenFileDescriptor,
-  remove,
-} from "@/lib/file/index.ts";
+import { getTmpDir, open, OpenFileDescriptor, remove } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
-import {
-  AllowedComputedFields,
-  CarpoolRow,
-  CarpoolRowData,
-} from "./CarpoolRow.ts";
+import { transformations } from "@/pdc/services/export/config/export.ts";
+import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from "./CarpoolRow.ts";
 import { ExportTarget } from "./Export.ts";
 
 export type Datasources = Map<string, unknown>;
@@ -91,7 +83,9 @@ export class CSVWriter {
       {
         name: "has_incentive",
         compute(row) {
-          return row.hasIncentive();
+          const yes = transformations.has_incentive_yes;
+          const no = transformations.has_incentive_no;
+          return row.hasIncentive() ? yes : no;
         },
       },
     ],
