@@ -4,6 +4,7 @@ import {
   PostgresConnection,
 } from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
+import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
@@ -102,38 +103,52 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-
-      const terms_violation_error_labels = await this.verifyTermsViolation({
-        created_at: carpool.created_at,
-        distance: data.distance,
-        driver_identity_key: data.driver_identity_key,
-        passenger_identity_key: data.passenger_identity_key,
-        operator_trip_id: data.operator_trip_id,
-        start_datetime: data.start_datetime,
-        end_datetime: data.end_datetime,
-      }, conn);
-
-      await this.statusRepository.saveAcquisitionStatus(
-        new CarpoolAcquisitionStatus(
-          carpool._id,
-          request._id,
-          terms_violation_error_labels.length
-            ? CarpoolAcquisitionStatusEnum.TermsViolationError
-            : CarpoolAcquisitionStatusEnum.Received,
-        ),
-        conn,
-      );
-
-      if (terms_violation_error_labels.length) {
-        await this.statusRepository.setTermsViolationErrorLabels(
-          carpool._id,
-          terms_violation_error_labels,
+      let terms_violation_error_labels: Array<string> = [];
+      if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {
+        await this.statusRepository.saveAcquisitionStatus(
+          new CarpoolAcquisitionStatus(
+            carpool._id,
+            request._id,
+            CarpoolAcquisitionStatusEnum.Received,
+          ),
           conn,
         );
+      } else {
+        terms_violation_error_labels = await this.verifyTermsViolation({
+          created_at: carpool.created_at,
+          distance: data.distance,
+          driver_identity_key: data.driver_identity_key,
+          passenger_identity_key: data.passenger_identity_key,
+          operator_trip_id: data.operator_trip_id,
+          start_datetime: data.start_datetime,
+          end_datetime: data.end_datetime,
+        }, conn);
+
+        await this.statusRepository.saveAcquisitionStatus(
+          new CarpoolAcquisitionStatus(
+            carpool._id,
+            request._id,
+            terms_violation_error_labels.length
+              ? CarpoolAcquisitionStatusEnum.TermsViolationError
+              : CarpoolAcquisitionStatusEnum.Received,
+          ),
+          conn,
+        );
+
+        if (terms_violation_error_labels.length) {
+          await this.statusRepository.setTermsViolationErrorLabels(
+            carpool._id,
+            terms_violation_error_labels,
+            conn,
+          );
+        }
       }
 
       await conn.query("COMMIT");
-      return { terms_violation_error_labels, created_at: carpool.created_at };
+      return {
+        terms_violation_error_labels,
+        created_at: carpool.created_at,
+      };
     } catch (e) {
       await conn.query("ROLLBACK");
       throw e;
