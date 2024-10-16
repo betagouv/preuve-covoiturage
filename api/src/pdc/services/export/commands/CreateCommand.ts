@@ -1,9 +1,5 @@
 import { coerceDate } from "@/ilos/cli/index.ts";
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, CommandOptionType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { ExportTarget } from "../models/Export.ts";
@@ -40,8 +36,7 @@ export class CreateCommand implements CommandInterface {
     },
     {
       signature: "-r, --recipient [recipient...]",
-      description:
-        '[repeatable] Recipient email ("fullname <email>" or "email" format)',
+      description: '[repeatable] Recipient email ("fullname <email>" or "email" format)',
       default: [],
     },
     {
@@ -51,17 +46,14 @@ export class CreateCommand implements CommandInterface {
     },
     {
       signature: "--target <target>",
-      description:
-        "Select which fields to export (opendata*, operator, territory)",
+      description: "Select which fields to export (opendata*, operator, territory)",
       default: ExportTarget.OPENDATA,
       coerce(value: string): ExportTarget {
         if (Object.values(ExportTarget).includes(value as ExportTarget)) {
           return value as ExportTarget;
         }
 
-        logger.warn(
-          `Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`,
-        );
+        logger.warn(`Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`);
         return ExportTarget.OPENDATA;
       },
     },
@@ -72,8 +64,7 @@ export class CreateCommand implements CommandInterface {
     },
     {
       signature: "-g --geo <geo...>",
-      description:
-        "[repeatable] Geo selector <type>:<code> (types: aom, com, epci, dep, reg)",
+      description: "[repeatable] Geo selector <type>:<code> (types: aom, com, epci, dep, reg)",
       default: [],
     },
     {
@@ -119,9 +110,7 @@ export class CreateCommand implements CommandInterface {
       created_by,
     );
     if (!emails.length) {
-      logger.error(
-        'No recipient found! You must set "--created_by" or "--recipient"',
-      );
+      logger.error('No recipient found! You must set "--created_by" or "--recipient"');
       return;
     }
 
@@ -135,13 +124,12 @@ export class CreateCommand implements CommandInterface {
         params: new ExportParams({
           start_at,
           end_at,
-          operator_id: operator_id.map((s) =>
-            parseInt(s as unknown as string, 10)
-          ),
+          operator_id: operator_id.map((s) => parseInt(s as unknown as string, 10)),
           // TODO add support for the territory_id (territory_group._id)
           // TODO add support for the SIREN to select the territory
           geo_selector: await this.territoryService.resolve({ geo_selector }),
           tz,
+          target: optionTarget,
         }),
       },
     );

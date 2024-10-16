@@ -4,6 +4,8 @@ export abstract class AbstractQuery {
   protected abstract query: string;
   protected abstract countQuery: string;
 
+  constructor() {}
+
   public getText<TKey>(templates: QueryTemplates<TKey> = new Map()): string {
     return this.replaceTemplates<TKey>(this.query, templates);
   }

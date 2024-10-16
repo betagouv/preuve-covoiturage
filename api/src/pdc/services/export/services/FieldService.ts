@@ -16,8 +16,8 @@ export class FieldService {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   public byTarget(target: ExportTarget): Partial<Fields> {
-    const fields = this.config.get("workbook.fields", []) as Fields;
-    const filter = this.config.get<FieldFilter[]>("workbook.filters", [])
+    const fields = this.config.get("export.fields", []) as Fields;
+    const filter = this.config.get<FieldFilter[]>("export.filters", [])
       .find((filter: FieldFilter) => filter.target === target);
 
     if (!filter) {

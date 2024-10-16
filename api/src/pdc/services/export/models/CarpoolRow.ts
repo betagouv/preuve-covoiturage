@@ -43,13 +43,17 @@ export class CarpoolRow {
   }
 
   public addField(name: string, value: unknown): CarpoolRow {
-    if (name in this.data) throw new Error(`Field ${name} already exists`);
     this.data[name] = value;
-
     return this;
   }
 
   public hasIncentive(): boolean {
+    // @ts-ignore has_incentive is a computed field. TODO: type the value() to accept additional fields
+    const existing = this.value("has_incentive") as boolean | undefined;
+    if (typeof existing !== "undefined") {
+      return existing;
+    }
+
     return this.incentiveFields()
       .some((key) => key.includes("_siret") && this.value(key) !== null);
   }
