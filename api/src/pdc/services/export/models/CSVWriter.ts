@@ -1,60 +1,75 @@
 import { AdmZip, stringify } from "@/deps.ts";
-import {
-  getTmpDir,
-  open,
-  OpenFileDescriptor,
-  remove,
-} from "@/lib/file/index.ts";
+import { createHash } from "@/lib/crypto/index.ts";
+import { getTmpDir, open, OpenFileDescriptor, remove } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
+import { toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
-import {
-  AllowedComputedFields,
-  CarpoolRow,
-  CarpoolRowData,
-} from "./CarpoolRow.ts";
+import { Timezone } from "@/pdc/providers/validator/types.ts";
+import { transformations } from "@/pdc/services/export/config/export.ts";
+import { AllowedComputedFields, CarpoolRow } from "./CarpoolRow.ts";
 import { ExportTarget } from "./Export.ts";
 
 export type Datasources = Map<string, unknown>;
 
-export type Fields = Array<keyof CarpoolRowData | keyof AllowedComputedFields>;
+export type Fields<T extends { [k: string]: unknown }> = Array<keyof T | keyof AllowedComputedFields>;
 
-export type FieldFilter = { target: ExportTarget; exclusions: Partial<Fields> };
+export type FieldFilter<T extends { [k: string]: unknown }> = { target: ExportTarget; exclusions: Partial<Fields<T>> };
 
-export type ComputedProcessors = Array<ComputedProcessor>;
+export type ComputedProcessors<T extends { [k: string]: unknown }> = Array<ComputedProcessor<T>>;
 
 // TODO find a way to type the compute() return type depending on the name
-export type ComputedProcessor = {
+export type ComputedProcessor<T extends { [k: string]: unknown }> = {
   name: keyof AllowedComputedFields;
   compute: (
-    row: CarpoolRow,
-    datasources: Datasources,
-  ) => AllowedComputedFields[keyof AllowedComputedFields] | null;
+    row: CarpoolRow<T>,
+    options: Options<T>,
+  ) => Promise<AllowedComputedFields[keyof AllowedComputedFields] | null>;
 };
 
-export type Options = {
+export type Options<T extends { [k: string]: unknown }> = {
+  tz: Timezone;
   compress: boolean;
   cleanup: boolean;
-  fields: Partial<Fields>;
-  computed: ComputedProcessors;
+  fields: Partial<Fields<T>>;
+  computed: ComputedProcessors<T>;
   datasources: Datasources;
 };
 
-export class CSVWriter {
+export class CSVWriter<T extends { [k: string]: unknown }> {
   protected fileStream: OpenFileDescriptor | null = null;
   protected fileExt = "csv";
   protected archiveExt = "zip";
   protected folder: string;
   protected basename: string;
-  protected options: Options = {
+  protected options: Options<T> = {
+    tz: "Europe/Paris",
     compress: true,
     cleanup: true,
     fields: [],
     computed: [
       {
+        name: "journey_start_datetime",
+        async compute(row, { tz }) {
+          return toTzString(row.value("journey_start_datetime") as Date, tz);
+        },
+      },
+      {
+        name: "journey_end_datetime",
+        async compute(row, { tz }) {
+          return toTzString(row.value("journey_start_datetime") as Date, tz);
+        },
+      },
+      {
+        name: "trip_id",
+        async compute(row) {
+          return await createHash((row.value("trip_id") || "") as string);
+        },
+      },
+      {
         name: "status",
-        compute(row) {
+        async compute(row) {
           return castToStatusEnum(
             row.get([
               "acquisition_status",
@@ -66,12 +81,12 @@ export class CSVWriter {
       },
       {
         name: "incentive_type",
-        compute(row, datasources) {
+        async compute(row, { datasources }) {
           if (!row) return "normal";
 
           // for each campaign, get the mode at the start date or the end date
           // and return the higher one (booster)
-          // @ts-ignore
+          // @ts-ignore make the [] work
           return (row.value("campaigns", []) as any[])
             .reduce((acc: string, id: number) => {
               const campaigns = datasources.get("campaigns");
@@ -90,8 +105,10 @@ export class CSVWriter {
       },
       {
         name: "has_incentive",
-        compute(row) {
-          return row.hasIncentive();
+        async compute(row) {
+          const yes = transformations.has_incentive_yes;
+          const no = transformations.has_incentive_no;
+          return row.hasIncentive() ? yes : no;
         },
       },
     ],
@@ -104,13 +121,13 @@ export class CSVWriter {
   };
   protected stringifier = stringify(this.stringifierOptions);
 
-  constructor(filename: string, config: Partial<Options>) {
-    this.options = { ...this.options, ...config } as Options;
+  constructor(filename: string, config: Partial<Options<T>>) {
+    this.options = { ...this.options, ...config } as Options<T>;
     this.folder = getTmpDir();
     this.basename = sanitize(filename, 128);
   }
 
-  public async create(): Promise<CSVWriter> {
+  public async create(): Promise<CSVWriter<T>> {
     this.fileStream = await open(this.csvPath, { write: true });
     this.stringifier.on("readable", () => {
       let row = this.stringifier.read();
@@ -129,33 +146,30 @@ export class CSVWriter {
     return this;
   }
 
-  public async close(): Promise<CSVWriter> {
+  public async close(): Promise<CSVWriter<T>> {
     this.stringifier.end();
     return this;
   }
 
   // append lines to the data sheet
-  public async append(carpoolRow: CarpoolRow): Promise<CSVWriter> {
+  public async append(carpoolRow: CarpoolRow<T>): Promise<CSVWriter<T>> {
     // add computed fields to the carpool row
-    this.options.computed.forEach((field: ComputedProcessor) => {
-      carpoolRow.addField(
-        field.name,
-        field.compute(carpoolRow, this.options.datasources),
-      );
-    });
+    for (const field of this.options.computed) {
+      carpoolRow.addField(field.name, await field.compute(carpoolRow, this.options));
+    }
 
     this.stringifier.write(carpoolRow.get(this.options.fields as string[]));
 
     return this;
   }
 
-  public async printHelp(): Promise<CSVWriter> {
+  public async printHelp(): Promise<CSVWriter<T>> {
     // No help in CSV
     return this;
   }
 
   // TODO compress the file with ZIP (for now)
-  public async compress(): Promise<CSVWriter> {
+  public async compress(): Promise<CSVWriter<T>> {
     if (!this.options.compress) {
       logger.info(`Skipped compression of ${this.csvPath}`);
       return this;
@@ -196,7 +210,7 @@ export class CSVWriter {
     return join(this.folder, this.archiveFilename);
   }
 
-  public addDatasource(key: string, value: any): CSVWriter {
+  public addDatasource(key: string, value: any): CSVWriter<T> {
     this.options.datasources.set(key, value);
     return this;
   }

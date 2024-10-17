@@ -9,13 +9,11 @@ export type Options = {
   territory: string | null;
 };
 
-export type NameServiceInterface = {
-  get(config: Partial<Options>): string;
-};
-
-export abstract class NameServiceInterfaceResolver
-  implements NameServiceInterface {
+export abstract class NameServiceInterfaceResolver {
   public get(config: Partial<Options>): string {
+    throw new Error("Not implemented");
+  }
+  public opendata(datetime: Date, tz?: string): string {
     throw new Error("Not implemented");
   }
 }
@@ -40,9 +38,8 @@ export class NameService {
       defaultTimezone,
       "yyyy-MM-dd",
     );
-    const prefix = this.config.get("workbook.prefix", "export");
+    const prefix = this.config.get("export.prefix", "export");
 
-    /* prettier-ignore */
     return [
       prefix,
       date,
@@ -53,5 +50,9 @@ export class NameService {
       .map((s) => String(s))
       .filter((s) => s.length)
       .join("-");
+  }
+
+  public opendata(datetime: Date, tz = defaultTimezone): string {
+    return toTzString(datetime, tz, "yyyy-MM");
   }
 }

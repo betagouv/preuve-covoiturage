@@ -170,7 +170,7 @@ export abstract class ExportRepositoryInterfaceResolver {
 @provider({
   identifier: ExportRepositoryInterfaceResolver,
 })
-export class ExportRepository implements ExportRepositoryInterface {
+export class ExportRepository {
   protected readonly exportsTable = "export.exports";
   protected readonly recipientsTable = "export.recipients";
 

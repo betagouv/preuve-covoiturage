@@ -10,16 +10,7 @@ export type ResolveParams = Partial<{
 }>;
 export type ResolveResults = TerritorySelectorsInterface;
 
-export type TerritoryServiceInterface = {
-  geoStringToObject(geo: string[]): TerritorySelectorsInterface;
-  resolve(params: ResolveParams): Promise<ResolveResults>;
-  mergeSelectors(
-    arr: TerritorySelectorsInterface[],
-  ): TerritorySelectorsInterface;
-};
-
-export abstract class TerritoryServiceInterfaceResolver
-  implements TerritoryServiceInterface {
+export abstract class TerritoryServiceInterfaceResolver {
   public geoStringToObject(geo: string[]): TerritorySelectorsInterface {
     throw new Error("Not implemented");
   }
@@ -37,9 +28,7 @@ export abstract class TerritoryServiceInterfaceResolver
   identifier: TerritoryServiceInterfaceResolver,
 })
 export class TerritoryService {
-  protected readonly defaultResolveResult = {
-    [TerritoryCodeEnum.Country]: ["XXXXX"],
-  }; // FRANCE
+  protected readonly defaultResolveResult = null;
 
   constructor(
     protected territoryRepository: TerritoryRepositoryInterfaceResolver,

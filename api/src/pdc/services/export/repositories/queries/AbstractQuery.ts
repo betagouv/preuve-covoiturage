@@ -4,6 +4,8 @@ export abstract class AbstractQuery {
   protected abstract query: string;
   protected abstract countQuery: string;
 
+  constructor() {}
+
   public getText<TKey>(templates: QueryTemplates<TKey> = new Map()): string {
     return this.replaceTemplates<TKey>(this.query, templates);
   }
@@ -19,9 +21,10 @@ export abstract class AbstractQuery {
     query: string,
     templates: QueryTemplates<TKey>,
   ): string {
-    templates.forEach((value, key) => {
-      query = query.replace(new RegExp(`{{${key}}}`, "g"), value);
-    });
+    templates
+      .forEach((value, key) => {
+        query = query.replace(new RegExp(`{{${key}}}`, "g"), value);
+      });
 
     return query;
   }

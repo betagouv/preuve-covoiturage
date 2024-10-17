@@ -3,12 +3,7 @@ import { logger } from "@/lib/logger/index.ts";
 import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 
-export type FieldServiceInterface = {
-  byTarget(type: ExportTarget): Partial<Fields>;
-};
-
-export abstract class FieldServiceInterfaceResolver
-  implements FieldServiceInterface {
+export abstract class FieldServiceInterfaceResolver {
   public byTarget(type: ExportTarget): Partial<Fields> {
     throw new Error("Not implemented");
   }
@@ -21,8 +16,9 @@ export class FieldService {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   public byTarget(target: ExportTarget): Partial<Fields> {
-    const fields = this.config.get("workbook.fields", []) as Fields;
-    const filter = this.config.get<FieldFilter[]>("workbook.filters", [])
+    const source = target === ExportTarget.OPENDATA ? "datagouv" : "export";
+    const fields = this.config.get(`${source}.fields`, []) as Fields;
+    const filter = this.config.get<FieldFilter[]>(`${source}.fields`, [])
       .find((filter: FieldFilter) => filter.target === target);
 
     if (!filter) {
