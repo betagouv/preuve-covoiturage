@@ -106,49 +106,55 @@ def is_changed(current, previous):
 
 def create_insights_and_triangular_df(delay, frame, aom_insee, engine):
     query = f"""
-select
-	cc._id,
-	cc.is_driver,
-	ci.phone_trunc,
-	cc.datetime,
-	cc.duration,
-	cc.operator_id,
-	cc.seats,
-	ST_AsText(cc.start_position) as start_wkt,
-	ST_AsText(cc.end_position) as end_wkt,
-	cc.operator_journey_id,
-	cc.distance,
-	ci.operator_user_id,
-	cc.end_position,
-	case
-		when pi.amount >= 0 then pi.amount
-		else 0
-	end as incentive,
-	cc.operator_trip_id,
-	cc2.is_driver as other_is_driver,
-	ci2.phone_trunc as other_phone_trunc
-from
-	CARPOOL.CARPOOLS cc
-join carpool.identities ci on
-	cc.identity_id = ci._id
-join geo.perimeters gps on
-	cc.start_geo_code = gps.arr
-	and gps.year = 2022
-join geo.perimeters gpe on
-	cc.end_geo_code = gpe.arr
-	and gpe.year = 2022
-left join policy.incentives pi on
-	pi.carpool_id = cc._id
-join CARPOOL.CARPOOLS as CC2 on
-	CC.OPERATOR_JOURNEY_ID = CC2.OPERATOR_JOURNEY_ID
-	and CC.is_driver != cc2.is_driver
-join CARPOOL.IDENTITIES as CI2 on
-	CC2.IDENTITY_ID = CI2._id
-where
-	CC.DATETIME >= NOW() - '{delay} days'::interval - '{frame} days'::interval
-	and CC.DATETIME < NOW() - '{delay} days'::interval
-  {f"and (gps.aom = '{aom_insee}' or gpe.aom = '{aom_insee}' or gps.reg = '{aom_insee}' or gpe.reg = '{aom_insee}') and gps.year = 2022 and gpe.year = 2022" if aom_insee else ""}
-"""
+    with trips as (
+    select
+      c."_id",
+      c.driver_identity_key as identity_key,
+      c.driver_operator_user_id as operator_user_id,
+      c.operator_journey_id,
+      c.operator_trip_id,
+      c.driver_phone_trunc as phone_trunc,
+      c.start_datetime as datetime,
+      c.end_datetime-c.start_datetime as duration,
+      c.operator_id,
+      0 as seats,
+      c.distance,
+      c.end_position,
+      true as is_driver
+    from
+      CARPOOL_v2.CARPOOLS c
+    union all
+    select
+      c."_id",
+      c.passenger_identity_key as identity_key,
+      c.passenger_operator_user_id as operator_user_id,
+      c.operator_journey_id,
+      c.operator_trip_id,
+      c.passenger_phone_trunc as phone_truc,
+      c.start_datetime as datetime,
+      c.end_datetime-c.start_datetime as duration,
+      c.operator_id,
+      c.passenger_seats as seats,
+      c.distance,
+      c.end_position,
+      false as is_driver
+    from
+      CARPOOL_v2.CARPOOLS c
+    )
+    select
+      *,
+      case
+        when oi.amount >= 0 then oi.amount
+        else 0
+      end as incentive
+    from
+      trips t
+    left join carpool_v2.operator_incentives oi on
+      oi.carpool_id = t."_id"
+    where
+      t.datetime >= NOW() - '{delay} days'::interval - '{frame} days'::interval
+      and t.datetime < NOW() - '{delay} days'::interval
+    """
 
     with engine.connect() as conn:
         df_carpool = pd.read_sql_query(text(query), conn)
