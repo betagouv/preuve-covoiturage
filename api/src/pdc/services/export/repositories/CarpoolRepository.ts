@@ -12,7 +12,10 @@ import {
   CarpoolListType,
   TemplateKeys,
 } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
-import { CarpoolOpenDataQuery } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
+import {
+  CarpoolOpenDataListType,
+  CarpoolOpenDataQuery,
+} from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 
 export abstract class CarpoolRepositoryInterfaceResolver {
   public async list(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
@@ -61,7 +64,7 @@ export class CarpoolRepository {
 
         // pass each line to the file writer
         for (const row of results) {
-          await fileWriter.append(new CarpoolRow(row));
+          await fileWriter.append(new CarpoolRow<CarpoolListType>(row));
         }
 
         if (progress) await progress(((done / total) * 100) | 0);
@@ -119,7 +122,7 @@ export class CarpoolRepository {
         count = results.length;
 
         for (const row of results) {
-          await fileWriter.append(new CarpoolRow(row));
+          await fileWriter.append(new CarpoolRow<CarpoolOpenDataListType>(row));
         }
       } while (count !== 0);
 

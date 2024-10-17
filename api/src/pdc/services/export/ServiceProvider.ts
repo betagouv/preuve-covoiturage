@@ -11,7 +11,6 @@ import { CreateActionV2 } from "./actions/CreateActionV2.ts";
 import { CreateActionV3 } from "./actions/CreateActionV3.ts";
 import { CreateCommand } from "./commands/CreateCommand.ts";
 import { DataGouvCommand } from "./commands/DataGouvCommand.ts";
-import { DebugCommand } from "./commands/DebugCommand.ts";
 import { ProcessCommand } from "./commands/ProcessCommand.ts";
 import { config } from "./config/index.ts";
 import { CampaignRepository } from "./repositories/CampaignRepository.ts";
@@ -56,7 +55,7 @@ const externalProviders = [S3StorageProvider];
 
 // Commands are from the ./commands folder
 // and are used to implement the CLI commands.
-const commands = [DebugCommand, CreateCommand, DataGouvCommand, ProcessCommand];
+const commands = [CreateCommand, DataGouvCommand, ProcessCommand];
 
 // Handlers are from the ./actions folder
 // and are used to implement the API endpoints (also called actions).

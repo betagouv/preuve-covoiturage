@@ -1,14 +1,14 @@
 import { pick } from "@/lib/object/index.ts";
 import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
-import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 
 export type AllowedComputedFields = {
+  trip_id: string;
+  journey_start_datetime: string;
+  journey_end_datetime: string;
   status: CarpoolStatusEnum;
   incentive_type: string;
   has_incentive: boolean;
 };
-
-export type CarpoolRowData = CarpoolListType;
 
 export type Incentive = {
   index: number;
@@ -21,28 +21,28 @@ export type IncentiveRPC = {
   amount: number;
 };
 
-export class CarpoolRow {
-  constructor(protected data: CarpoolRowData) {}
+export class CarpoolRow<T extends { [k: string]: unknown }> {
+  constructor(protected data: T) {}
 
   /**
    * pick fields or return the whole data
    *
    * @param fields
    */
-  public get(fields?: string[]): Partial<CarpoolRowData> {
-    return fields && fields.length ? pick(this.data, fields as any) : this.data;
+  public get(fields?: string[]): Partial<T> {
+    return fields && fields.length ? pick(this.data, fields) : this.data;
   }
 
   // type makes sure the field exists in the root dataset to avoid having
   // computed properties calling each other and creating race conditions.
-  public value<K extends keyof CarpoolRowData>(
+  public value<K extends keyof T>(
     name: K,
-    defaultResult: CarpoolRowData[K] | null = null,
-  ): CarpoolRowData[K] | null {
+    defaultResult: T[K] | null = null,
+  ): T[K] | null {
     return this.data[name] ?? defaultResult;
   }
 
-  public addField(name: string, value: unknown): CarpoolRow {
+  public addField(name: string, value: unknown): CarpoolRow<T> {
     this.data[name] = value;
     return this;
   }
@@ -55,10 +55,10 @@ export class CarpoolRow {
     }
 
     return this.incentiveFields()
-      .some((key) => key.includes("_siret") && this.value(key) !== null);
+      .some((key) => typeof key === "string" && key.includes("_siret") && this.value(key) !== null);
   }
 
-  public incentiveFields<K extends keyof CarpoolRowData>(): K[] {
+  public incentiveFields<K extends keyof T>(): K[] {
     return Object
       .keys(this.data)
       .filter((key) => /incentive_[0-9]_.*/.test(key)) as K[];
@@ -66,7 +66,7 @@ export class CarpoolRow {
 
   public incentiveSum(): number {
     return this.incentiveFields()
-      .filter((key) => key.includes("_amount"))
+      .filter((key) => typeof key === "string" && key.includes("_amount"))
       .map((key) => Number(this.value(key)))
       .filter((val) => !Number.isNaN(val))
       .reduce((acc, val) => acc + val, 0);
