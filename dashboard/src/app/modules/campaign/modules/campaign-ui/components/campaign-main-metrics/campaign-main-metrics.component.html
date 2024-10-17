@@ -2,8 +2,8 @@
   <div>
     <ngx-chartjs [data]="periodChartData" type="doughnut" [height]="60" [width]="60" [options]="options"></ngx-chartjs>
     <p>
-      du <b>{{ campaign.start_date | date: 'd MMMM yyyy' }}</b><br />
-      au <b>{{ campaign.end_date | date: 'd MMMM yyyy' }}</b>
+      du <b>{{ start_date_ui | date: 'd MMMM yyyy' }}</b><br />
+      au <b>{{ end_date_ui | date: 'd MMMM yyyy' }}</b>
     </p>
   </div>
   <div>
