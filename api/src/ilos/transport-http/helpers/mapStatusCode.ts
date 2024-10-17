@@ -48,6 +48,10 @@ export function mapStatusCode(results: RPCResponseType): number {
       case -32601:
         return 405;
 
+      // Unprocessable Entity
+      case -32622:
+        return 422;
+
       // Conflict
       case -32509:
         return 409;
