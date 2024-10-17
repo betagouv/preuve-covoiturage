@@ -16,8 +16,9 @@ export class FieldService {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   public byTarget(target: ExportTarget): Partial<Fields> {
-    const fields = this.config.get("export.fields", []) as Fields;
-    const filter = this.config.get<FieldFilter[]>("export.filters", [])
+    const source = target === ExportTarget.OPENDATA ? "datagouv" : "export";
+    const fields = this.config.get(`${source}.fields`, []) as Fields;
+    const filter = this.config.get<FieldFilter[]>(`${source}.fields`, [])
       .find((filter: FieldFilter) => filter.target === target);
 
     if (!filter) {

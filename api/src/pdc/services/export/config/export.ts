@@ -1,4 +1,5 @@
 import { env_or_default, env_or_int } from "@/lib/env/index.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 
@@ -46,7 +47,7 @@ export const prefix = "RPC";
  *
  * @note fields are defined in the models/CarpoolRow.ts types
  */
-export const fields: Fields = [
+export const fields: Fields<CarpoolListType> = [
   "journey_id",
   "operator_trip_id",
   "operator_journey_id",
@@ -129,7 +130,7 @@ export const fields: Fields = [
 /**
  * Fields to exclude from the above list depending on the target.
  */
-export const filters: Array<FieldFilter> = [
+export const filters: Array<FieldFilter<CarpoolListType>> = [
   {
     target: ExportTarget.OPENDATA,
     exclusions: [
@@ -196,6 +197,6 @@ export const filters: Array<FieldFilter> = [
  * TRANSFORMATIONS
  */
 export const transformations = {
-  "has_incentive_yes": "oui",
-  "has_incentive_no": "non",
+  "has_incentive_yes": "OUI",
+  "has_incentive_no": "NON",
 };

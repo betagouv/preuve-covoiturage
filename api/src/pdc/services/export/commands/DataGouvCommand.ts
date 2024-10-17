@@ -5,6 +5,7 @@ import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
+import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { ExportTarget } from "../models/Export.ts";
@@ -40,7 +41,7 @@ export class DataGouvCommand implements CommandInterface {
     {
       signature: "--tz <tz>",
       description: "Output timezone",
-      default: "UTC",
+      default: "Europe/Paris",
     },
   ];
 
@@ -79,9 +80,9 @@ export class DataGouvCommand implements CommandInterface {
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
       logger.info(`Exporting ${filename} from ${s} to ${e}`);
 
-      const filepath = await this.fileCreatorService.write(
+      await this.fileCreatorService.write(
         params,
-        new CSVWriter(filename, { compress: false, fields }),
+        new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
       );
 
       // upload to storage

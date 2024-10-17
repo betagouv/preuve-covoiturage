@@ -1,10 +1,7 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, CommandOptionType } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
@@ -65,7 +62,7 @@ export class ProcessCommand implements CommandInterface {
       // generate the file
       const filepath = await this.fileCreatorService.write(
         params,
-        new CSVWriter(filename, { fields }),
+        new CSVWriter<CarpoolListType>(filename, { fields }),
         await this.exportRepository.progress(_id),
       );
 
