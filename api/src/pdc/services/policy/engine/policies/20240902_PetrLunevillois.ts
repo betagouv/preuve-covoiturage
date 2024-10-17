@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -9,12 +6,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import { startsAndEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsAndEndsAtOrThrow.ts";
+import { startsOrEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsOrEndsAtOrThrow.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -27,14 +21,13 @@ import {
 import { description } from "./20240108_PetrLunevillois.html.ts";
 
 /* eslint-disable-next-line */
-export const PetrLunevillois092024032025: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PetrLunevillois092024032025: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "petr_lunevillois_092024_032025";
 
   protected operators: TimestampedOperators = [
     {
-      date: new Date("2024-09-02T00:00:00+0100"),
+      date: new Date("2024-09-02T00:00:00+0200"),
       operators: [OperatorsEnum.MOBICOOP],
     },
   ];
@@ -44,8 +37,7 @@ export const PetrLunevillois092024032025: PolicyHandlerStaticInterface = class
     {
       start: 2_000,
       end: 60_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 7, offset: 2_000, limit: 60_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 7, offset: 2_000, limit: 60_000 })),
     },
   ];
 
@@ -67,13 +59,10 @@ export const PetrLunevillois092024032025: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(
-      ctx,
-      getOperatorsAt(this.operators, ctx.carpool.datetime),
-    );
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 60_000 });
     isOperatorClassOrThrow(ctx, ["C"]);
-    startsAndEndsAtOrThrow(ctx, { aom: ["200051134"] });
+    startsOrEndsAtOrThrow(ctx, { aom: ["200051134"] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {

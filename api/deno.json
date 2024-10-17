@@ -8,5 +8,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": ["geojson"]
+  },
+  "fmt": {
+    "lineWidth": 120
   }
 }
