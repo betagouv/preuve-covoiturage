@@ -1138,7 +1138,7 @@ export class HttpTransport implements TransportInterface {
           );
         } else {
           if (successStatus === 204 || !response?.result) {
-            res.status(204).end();
+            res.status(successStatus).end();
           } else {
             res.status(successStatus).json(response?.result);
           }
