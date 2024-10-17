@@ -83,76 +83,101 @@ it("should work basic with start/end inside aom", async () =>
     },
   ));
 
-it("should work basic with start or end outside aom", async () =>
-  await process(
-    {
-      policy: { handler: Handler.id },
-      carpool: [
-        // start
-        {
-          distance: 5_000,
-          driver_identity_key: "one",
-          start: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 5_000,
-          seats: 2,
-          driver_identity_key: "one",
-          start: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 25_000,
-          driver_identity_key: "two",
-          start: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 25_000,
-          seats: 2,
-          driver_identity_key: "two",
-          start: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 55_000,
-          driver_identity_key: "two",
-          start: { ...defaultPosition, aom: "not_in_aom" },
-        },
+it("should work for normal trips (start)", async () =>
+  await process({
+    policy: { handler: Handler.id },
+    carpool: [
+      // OK
+      {
+        distance: 5_000,
+        driver_identity_key: "one",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 5_000,
+        seats: 2,
+        driver_identity_key: "one",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 25_000,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 25_000,
+        seats: 2,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // Too many trips per day for the driver
+      {
+        distance: 55_000,
+        driver_identity_key: "two",
+        start: { ...defaultPosition, aom: "not_in_aom" },
+      },
+    ],
+    meta: [],
+  }, {
+    incentive: [21, 42, 161, 322, 0],
+    meta: [
+      {
+        key: "max_amount_restriction.global.campaign.global",
+        value: 546,
+      },
+    ],
+  }));
 
-        // end
-        {
-          distance: 5_000,
-          driver_identity_key: "one",
-          end: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 5_000,
-          seats: 2,
-          driver_identity_key: "one",
-          end: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 25_000,
-          driver_identity_key: "two",
-          end: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 25_000,
-          seats: 2,
-          driver_identity_key: "two",
-          end: { ...defaultPosition, aom: "not_in_aom" },
-        },
-        {
-          distance: 55_000,
-          driver_identity_key: "two",
-          end: { ...defaultPosition, aom: "not_in_aom" },
-        },
-      ],
-      meta: [],
-    },
-    {
-      incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      meta: [],
-    },
-  ));
+it("should work for normal trips (end)", async () =>
+  await process({
+    policy: { handler: Handler.id },
+    carpool: [
+      // OK
+      {
+        distance: 5_000,
+        driver_identity_key: "one",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 5_000,
+        seats: 2,
+        driver_identity_key: "one",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 25_000,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // OK
+      {
+        distance: 25_000,
+        seats: 2,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+      // Too many trips per day for the driver
+      {
+        distance: 55_000,
+        driver_identity_key: "two",
+        end: { ...defaultPosition, aom: "not_in_aom" },
+      },
+    ],
+    meta: [],
+  }, {
+    incentive: [21, 42, 161, 322, 0],
+    meta: [
+      {
+        key: "max_amount_restriction.global.campaign.global",
+        value: 546,
+      },
+    ],
+  }));
 
 it("should work with global limits", async () =>
   await process(
