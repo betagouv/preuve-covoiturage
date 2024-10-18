@@ -107,6 +107,6 @@ import { UserNotificationProvider } from "./providers/UserNotificationProvider.t
   ],
   commands: [SeedUsersCommand, FindInactiveCommand],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class UserServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

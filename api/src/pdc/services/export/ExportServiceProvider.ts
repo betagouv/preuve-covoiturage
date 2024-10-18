@@ -78,7 +78,7 @@ const validators = [createBindingV2, createBindingV3];
     // scopeToGroupBinding,
   ],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class ExportServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
     CommandExtension,
     ValidatorExtension,

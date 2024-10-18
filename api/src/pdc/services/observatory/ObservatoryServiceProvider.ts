@@ -88,6 +88,6 @@ import { OccupationRepositoryProvider } from "./providers/OccupationRepositoryPr
     ValidatorMiddleware,
   ]],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class ObservatoryServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }
