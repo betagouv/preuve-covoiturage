@@ -1,5 +1,5 @@
 import { coerceDate } from "@/ilos/cli/index.ts";
-import { command, CommandInterface, CommandOptionType } from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { ExportTarget } from "../models/Export.ts";
@@ -21,11 +21,10 @@ export type Options = {
   tz: Timezone;
 };
 
-@command()
-export class CreateCommand implements CommandInterface {
-  static readonly signature: string = "export:create";
-  static readonly description: string = "Create an export request";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "export:create",
+  description: "Create an export request",
+  options: [
     {
       signature: "-c, --created_by <created_by>",
       description: "User id",
@@ -84,8 +83,9 @@ export class CreateCommand implements CommandInterface {
       description: "Output timezone",
       default: "Europe/Paris",
     },
-  ];
-
+  ],
+})
+export class CreateCommand implements CommandInterface {
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected territoryService: TerritoryServiceInterfaceResolver,

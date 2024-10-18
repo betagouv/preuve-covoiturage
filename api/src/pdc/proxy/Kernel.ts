@@ -1,4 +1,3 @@
-import { Commands } from "@/ilos/cli/index.ts";
 import { kernel } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Kernel as BaseKernel } from "@/ilos/framework/index.ts";
@@ -46,7 +45,7 @@ import { config } from "./config/index.ts";
     ObservatoryServiceProvider,
     GeoServiceProvider,
   ],
-  commands: [SeedCommand, Commands.CallCommand],
+  commands: [SeedCommand],
   providers: [
     SentryProvider,
     TokenProvider,
