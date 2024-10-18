@@ -11,6 +11,7 @@ describe("Carpool Label Repository", () => {
   let db: DbContext;
   let carpool_id: number;
   const label = "test";
+  const another_label = "another_test_label";
 
   const { before, after } = makeDbBeforeAfter();
 
@@ -25,6 +26,9 @@ describe("Carpool Label Repository", () => {
     );
     await db.connection.getClient().query(
       sql`INSERT INTO ${raw(labelRepository.fraudTable)} (carpool_id, label) VALUES (${carpool_id}, ${label})`,
+    );
+    await db.connection.getClient().query(
+      sql`INSERT INTO ${raw(labelRepository.fraudTable)} (carpool_id, label) VALUES (${carpool_id},${another_label})`,
     );
     await db.connection.getClient().query(
       sql`INSERT INTO ${raw(labelRepository.termsTable)} (carpool_id, labels) VALUES (${carpool_id}, ${[label]})`,
@@ -49,7 +53,7 @@ describe("Carpool Label Repository", () => {
     }]);
   });
 
-  it("Should read carpool fraud label", async () => {
+  it("Should read carpool fraud label and return single entry with 2 labels", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
@@ -57,6 +61,20 @@ describe("Carpool Label Repository", () => {
     assertEquals(result, [{
       label: "interoperator_fraud",
     }]);
+  });
+
+  it("Should read carpool fraud label and return empty array if none", async () => {
+    // Arrange
+    await repository.register({ ...insertableCarpool, operator_journey_id: "operator_journey_id-4" });
+
+    // Act
+    const result = await labelRepository.findFraudByOperatorJourneyId(
+      insertableCarpool.operator_id,
+      "operator_journey_id-4",
+    );
+
+    // Assert
+    assertEquals(result, []);
   });
 
   it("Should read carpool terms label", async () => {

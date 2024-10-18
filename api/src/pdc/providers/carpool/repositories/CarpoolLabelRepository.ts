@@ -47,7 +47,10 @@ export class CarpoolLabelRepository {
           AND cc.operator_journey_id = ${operator_journey_id}
     `;
     const result = await cclient.query(query);
-    return result.rows.map((_r) => ({ label: "interoperator_fraud" }));
+    if (result.rowCount == 0) {
+      return [];
+    }
+    return [{ label: "interoperator_fraud" }];
   }
 
   async findAnomalyByOperatorJourneyId(
