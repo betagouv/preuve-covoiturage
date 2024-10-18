@@ -1,17 +1,6 @@
 import { readFile } from "@/deps.ts";
-import {
-  afterAll,
-  assertEquals,
-  beforeAll,
-  delay,
-  describe,
-  getAvailablePort,
-  it,
-} from "@/dev_deps.ts";
-import {
-  kernel as kernelDecorator,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { afterAll, assertEquals, beforeAll, delay, describe, getAvailablePort, it } from "@/dev_deps.ts";
+import { kernel as kernelDecorator, serviceProvider } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
@@ -36,7 +25,7 @@ describe.skip("queue", () => {
         path: env("APP_LOG_PATH"),
       },
     },
-    connections: [[
+    providers: [[
       RedisConnection,
       new RedisConnection({ redis: env("APP_REDIS_URL") }),
     ]],
@@ -45,7 +34,7 @@ describe.skip("queue", () => {
 
   @kernelDecorator({
     children: [StringServiceProvider],
-    connections: [[
+    providers: [[
       RedisConnection,
       new RedisConnection({ redis: env("APP_REDIS_URL") }),
     ]],

@@ -1,6 +1,5 @@
 import { assert, assertEquals, it } from "@/dev_deps.ts";
 import { handler, serviceProvider } from "@/ilos/common/index.ts";
-import { ConnectionManagerExtension } from "@/ilos/connection-manager/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action, Extensions, ServiceProvider } from "@/ilos/core/index.ts";
 
@@ -22,7 +21,7 @@ it("Queue extension: should register queue name in container as worker", async (
   @serviceProvider({
     queues: ["serviceA", "serviceB"],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[
+    providers: [[
       RedisConnection,
       new RedisConnection("redis://localhost:6379"),
     ]],
@@ -32,7 +31,6 @@ it("Queue extension: should register queue name in container as worker", async (
       Extensions.Config,
       Extensions.Providers,
       Extensions.Handlers,
-      ConnectionManagerExtension,
       QueueExtension,
     ];
   }
@@ -56,7 +54,7 @@ it("should register queue name in container and handlers", async () => {
     env: null,
     queues: ["serviceA", "serviceB"],
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[
+    providers: [[
       RedisConnection,
       new RedisConnection("redis://localhost:6379"),
     ]],
@@ -66,7 +64,6 @@ it("should register queue name in container and handlers", async () => {
       Extensions.Config,
       Extensions.Handlers,
       QueueExtension,
-      ConnectionManagerExtension,
     ];
   }
 
