@@ -1,12 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  assertEquals,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
+import { afterAll, afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import {
   ContextType,
   handler,
@@ -16,14 +8,8 @@ import {
   ResultType,
   serviceProvider,
 } from "@/ilos/common/index.ts";
-import { ConnectionManagerExtension } from "@/ilos/connection-manager/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
-import {
-  Action,
-  Extensions,
-  Kernel,
-  ServiceProvider,
-} from "@/ilos/core/index.ts";
+import { Action, Extensions, Kernel, ServiceProvider } from "@/ilos/core/index.ts";
 import { QueueExtension as ParentQueueExtension } from "@/ilos/queue/index.ts";
 import { setEnv } from "@/lib/env/index.ts";
 import { QueueTransport } from "./QueueTransport.ts";
@@ -114,10 +100,10 @@ describe.skip("QueueTransport", () => {
        * RedisConnection is connects here
        * there no need to do a redis.up() in the beforeAll() hook
        */
-      connections: [[RedisConnection, redis]],
+      providers: [[RedisConnection, redis]],
     })
     class BasicKernel extends Kernel {
-      readonly extensions = [Extensions.Config, ConnectionManagerExtension];
+      readonly extensions = [Extensions.Config];
     }
 
     kernel = new BasicKernel();

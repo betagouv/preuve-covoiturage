@@ -14,10 +14,9 @@ const redisConnection = new RedisConnection(
 
 @serviceProvider({
   config: { string: { hello: "Hello world" } },
-  providers: [CustomProvider],
+  providers: [CustomProvider, [RedisConnection, redisConnection]],
   handlers: [HelloAction, ResultAction, LogAction],
   queues: ["string"],
-  connections: [[RedisConnection, redisConnection]],
 })
 export class ServiceProvider extends BaseServiceProvider {
   public connection = redisConnection;
