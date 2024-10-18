@@ -30,6 +30,6 @@ import { ExportCommand } from "./commands/ExportCommand.ts";
     ValidatorMiddleware,
   ]],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class APDFServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

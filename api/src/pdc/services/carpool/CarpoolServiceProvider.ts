@@ -27,6 +27,6 @@ import { config } from "./config/index.ts";
     UpdateStatusAction,
   ],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class CarpoolServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

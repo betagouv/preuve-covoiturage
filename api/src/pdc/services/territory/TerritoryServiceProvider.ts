@@ -1,14 +1,7 @@
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { create } from "@/shared/territory/create.schema.ts";
 import { deleteTerritory } from "@/shared/territory/delete.schema.ts";
 import { binding as findBinding } from "@/shared/territory/find.schema.ts";
@@ -63,6 +56,6 @@ import { TerritoryRepositoryProvider } from "./providers/TerritoryRepositoryProv
   ],
   commands: [IndexCommand],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class TerritoryServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

@@ -1,22 +1,12 @@
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import {
-  HttpContext,
-  makeHttpBeforeAfter,
-} from "@/pdc/providers/test/index.ts";
-import { ServiceProvider } from "./ServiceProvider.ts";
+import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { HttpContext, makeHttpBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { ApplicationServiceProvider } from "./ApplicationServiceProvider.ts";
 
 describe.skip("application service", () => {
   let ctx: HttpContext;
   let application_test_context: any;
   const operator_id: number = Math.round(Math.random() * 1000);
-  const { before, after } = makeHttpBeforeAfter(ServiceProvider);
+  const { before, after } = makeHttpBeforeAfter(ApplicationServiceProvider);
   beforeAll(async () => {
     ctx = await before();
   });

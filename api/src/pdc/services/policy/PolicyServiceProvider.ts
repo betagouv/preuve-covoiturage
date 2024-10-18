@@ -72,6 +72,6 @@ import { TripRepositoryProvider } from "./providers/TripRepositoryProvider.ts";
     ValidatorMiddleware,
   ]],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class PolicyServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

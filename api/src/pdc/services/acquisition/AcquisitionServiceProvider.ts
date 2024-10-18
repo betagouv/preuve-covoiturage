@@ -51,6 +51,6 @@ import { config } from "./config/index.ts";
     PatchJourneyAction,
   ],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class AcquisitionServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

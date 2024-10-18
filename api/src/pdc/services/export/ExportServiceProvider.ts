@@ -1,22 +1,12 @@
 import { CommandExtension } from "@/ilos/cli/index.ts";
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { S3StorageProvider } from "@/pdc/providers/storage/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
-import {
-  bindingV2 as createBindingV2,
-  bindingV3 as createBindingV3,
-} from "@/shared/export/create.schema.ts";
+import { bindingV2 as createBindingV2, bindingV3 as createBindingV3 } from "@/shared/export/create.schema.ts";
 import { CreateActionV2 } from "./actions/CreateActionV2.ts";
 import { CreateActionV3 } from "./actions/CreateActionV3.ts";
 import { CreateCommand } from "./commands/CreateCommand.ts";
@@ -86,7 +76,7 @@ const validators = [createBindingV2, createBindingV3];
     // scopeToGroupBinding,
   ],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class ExportServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
     CommandExtension,
     ValidatorExtension,

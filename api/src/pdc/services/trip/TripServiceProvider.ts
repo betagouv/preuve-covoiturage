@@ -52,7 +52,7 @@ import { config } from "./config/index.ts";
     PublishOpenDataAction,
   ],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class TripServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
     CommandExtension,
     ValidatorExtension,

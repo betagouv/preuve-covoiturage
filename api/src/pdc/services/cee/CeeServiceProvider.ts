@@ -1,14 +1,7 @@
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
 import { binding as deleteCeeBinding } from "@/shared/cee/deleteApplication.schema.ts";
 import { binding as findCeeBinding } from "@/shared/cee/findApplication.schema.ts";
@@ -51,6 +44,6 @@ import { CeeRepositoryProvider } from "./providers/CeeRepositoryProvider.ts";
     ValidatorMiddleware,
   ]],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class CeeServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

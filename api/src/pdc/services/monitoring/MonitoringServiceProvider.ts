@@ -19,6 +19,6 @@ import { config } from "./config/index.ts";
   ]],
   handlers: [StatsRefreshAction],
 })
-export class ServiceProvider extends AbstractServiceProvider {
+export class MonitoringServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }
