@@ -1,14 +1,9 @@
 import { afterAll, beforeAll, describe } from "@/dev_deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import {
-  DbContext,
-  KernelContext,
-  makeDbBeforeAfter,
-  makeKernelBeforeAfter,
-} from "@/pdc/providers/test/index.ts";
+import { DbContext, KernelContext, makeDbBeforeAfter, makeKernelBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportServiceProvider.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
-import { ServiceProvider as ExportSP } from "@/pdc/services/export/ServiceProvider.ts";
-import { ServiceProvider as UserSP } from "@/pdc/services/user/ServiceProvider.ts";
+import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServiceProvider.ts";
 import { TerritoryService } from "./TerritoryService.ts";
 
 const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(

@@ -71,38 +71,6 @@ services:
       - mailer
       - s3
 
-  worker:
-    build:
-      dockerfile: ./docker/api/Dockerfile
-      context: .
-    # deploy:
-    #   mode: replicated
-    #   replicas: 3
-    volumes:
-      - ./api:/app/api
-      - ./shared:/app/shared:ro
-      - ./tmp:/tmp
-      - ./docker/api/certs:/app/certs:ro
-    tty: true
-    env_file: ./api/.env
-    environment:
-      APP_WORKER: 'true'
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
-      APP_REQUEST_TIMEOUT: '0'
-      APP_POSTGRES_TIMEOUT: '0'
-      # TODO
-      # AWS_ACCESS_KEY_ID: minioadmin
-      # AWS_SECRET_ACCESS_KEY: minioadmin
-      # AWS_ENDPOINT: http://s3:9000/minio
-      # AWS_REGION:
-    networks:
-      - back
-    depends_on:
-      - redis
-      - postgres
-      - mailer
-      # - s3
-
   migrator:
     build:
       dockerfile: ./docker/api/Dockerfile

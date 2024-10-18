@@ -41,7 +41,7 @@ export function makeKernelCtor(
 ): NewableType<KernelInterface> {
   @kernelDecorator({
     children: [...serviceProviderCtor],
-    connections: [
+    providers: [
       [RedisConnection, new RedisConnection(connections.redis)],
       [PostgresConnection, new PostgresConnection(connections.postgres)],
     ],

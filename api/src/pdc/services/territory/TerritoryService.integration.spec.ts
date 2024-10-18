@@ -1,19 +1,8 @@
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import {
-  HttpContext,
-  makeHttpBeforeAfter,
-} from "@/pdc/providers/test/index.ts";
+import { afterAll, assert, assertEquals, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
+import { HttpContext, makeHttpBeforeAfter } from "@/pdc/providers/test/index.ts";
 
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { ServiceProvider } from "./ServiceProvider.ts";
+import { TerritoryServiceProvider } from "./TerritoryServiceProvider.ts";
 
 describe.skip("TerritoryService", () => {
   let ctx: HttpContext;
@@ -23,11 +12,11 @@ describe.skip("TerritoryService", () => {
   const territorySelectorTable = "territory.territory_group_selector";
 
   function getDb(): PostgresConnection {
-    return ctx.transport.getKernel().getContainer().get(ServiceProvider)
+    return ctx.transport.getKernel().getContainer().get(TerritoryServiceProvider)
       .getContainer().get(PostgresConnection);
   }
 
-  const { before, after } = makeHttpBeforeAfter(ServiceProvider);
+  const { before, after } = makeHttpBeforeAfter(TerritoryServiceProvider);
 
   beforeAll(async () => {
     ctx = await before();

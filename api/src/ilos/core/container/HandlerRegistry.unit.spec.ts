@@ -24,17 +24,6 @@ describe("HandlerRegistry", () => {
 
     @handler({
       service: "hello",
-      method: "world",
-      queue: true,
-    })
-    class HelloLocalQueue extends Action {
-      async call() {
-        return "HelloLocalQueue";
-      }
-    }
-
-    @handler({
-      service: "hello",
       method: "*",
     })
     class HelloLocalStar extends Action {
@@ -56,18 +45,6 @@ describe("HandlerRegistry", () => {
 
     @handler({
       service: "hello",
-      method: "world",
-      queue: true,
-      local: false,
-    })
-    class HelloRemoteQueue extends Action {
-      async call() {
-        return "HelloRemoteQueue";
-      }
-    }
-
-    @handler({
-      service: "hello",
       method: "*",
       local: false,
     })
@@ -81,10 +58,8 @@ describe("HandlerRegistry", () => {
     const handlerRegistry = new HandlerRegistry(container);
 
     handlerRegistry.set(HelloLocal);
-    handlerRegistry.set(HelloLocalQueue);
     handlerRegistry.set(HelloLocalStar);
     handlerRegistry.set(HelloRemote);
-    handlerRegistry.set(HelloRemoteQueue);
     handlerRegistry.set(HelloRemoteStar);
 
     const hr1 = handlerRegistry.get<null, null>({
@@ -94,15 +69,6 @@ describe("HandlerRegistry", () => {
     });
     assert(hr1);
     assert(await hr1(defaultCallOptions) === "HelloLocal");
-
-    const hr2 = handlerRegistry.get<null, null>({
-      service: "hello",
-      method: "world",
-      local: true,
-      queue: true,
-    });
-    assert(hr2);
-    assert(await hr2(defaultCallOptions) === "HelloLocalQueue");
 
     const hr3 = handlerRegistry.get<null, null>({
       service: "hello",
@@ -132,7 +98,6 @@ describe("HandlerRegistry", () => {
       service: "hello",
       method: "world",
       local: false,
-      queue: true,
     });
     assert(hr6);
     assert(await hr6(defaultCallOptions) === "HelloRemote");
@@ -195,7 +160,6 @@ describe("HandlerRegistry", () => {
       service: "hello",
       method: "truc",
       local: true,
-      queue: true,
     });
     assert(hr2);
     assert(await hr2(defaultCallOptions) === "HelloRemoteStar");
@@ -232,7 +196,6 @@ describe("HandlerRegistry", () => {
     const hr1 = handlerRegistry.get<null, null>({
       service: "hello",
       method: "world",
-      queue: true,
       local: true,
     });
     assert(hr1);
@@ -241,7 +204,6 @@ describe("HandlerRegistry", () => {
     const hr2 = handlerRegistry.get<null, null>({
       service: "hello",
       method: "truc",
-      queue: true,
       local: true,
     });
     assert(hr2);
@@ -251,7 +213,6 @@ describe("HandlerRegistry", () => {
       service: "hello",
       method: "world",
       local: false,
-      queue: true,
     });
     assert(hr3);
     assert(await hr3(defaultCallOptions) === "HelloRemoteStar");

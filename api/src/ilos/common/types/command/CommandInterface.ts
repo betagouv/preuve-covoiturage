@@ -1,7 +1,7 @@
-import { CommandOptionType } from "./CommandOptionType.ts";
 import { ResultType } from "../call/index.ts";
+import { CommandOptionType } from "./CommandOptionType.ts";
 
-export interface CommandStaticInterface {
+export interface CommandOptions {
   /**
    * Signature is an unique identifier for command
    * @type {string}
@@ -14,16 +14,14 @@ export interface CommandStaticInterface {
    * @type {string}
    * @memberof CommandStaticInterface
    */
-  readonly description: string;
+  readonly description?: string;
 
   /**
    * Options of the command
    * @type {CommandOptionType[]}
    * @memberof CommandStaticInterface
    */
-  readonly options: CommandOptionType[];
-
-  new (...args: any): CommandInterface;
+  readonly options?: CommandOptionType[];
 }
 
 export interface CommandInterface {
@@ -33,5 +31,5 @@ export interface CommandInterface {
    * @returns {Promise<ResultType>}
    * @memberof CommandInterface
    */
-  call(...args: any[]): Promise<ResultType>;
+  call(...args: unknown[]): Promise<ResultType>;
 }

@@ -21,7 +21,6 @@ import {
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
@@ -45,16 +44,10 @@ import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
+import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
-import {
-  CacheMiddleware,
-  cacheMiddleware,
-  CacheTTL,
-} from "./middlewares/cacheMiddleware.ts";
-import {
-  dataWrapMiddleware,
-  errorHandlerMiddleware,
-} from "./middlewares/index.ts";
+import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheMiddleware.ts";
+import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
   acquisitionRateLimiter,
@@ -92,9 +85,7 @@ export class HttpTransport implements TransportInterface {
     this.getProviders();
 
     const optsPort = parseInt(opts[0], 10);
-    const port = optsPort || optsPort === 0
-      ? optsPort
-      : this.config.get("proxy.port", 8080);
+    const port = optsPort || optsPort === 0 ? optsPort : this.config.get("proxy.port", 8080);
 
     this.app = express();
     this.setup();
@@ -171,9 +162,7 @@ export class HttpTransport implements TransportInterface {
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
         secure: env_or_fail("APP_ENV", "local") !== "local",
-        sameSite: env_or_fail("APP_ENV", "local") !== "local"
-          ? "none"
-          : "strict",
+        sameSite: env_or_fail("APP_ENV", "local") !== "local" ? "none" : "strict",
       },
 
       name: sessionName,
@@ -266,9 +255,7 @@ export class HttpTransport implements TransportInterface {
     const enabled = this.config.get("cache.enabled");
     const gzipped = this.config.get("cache.gzipped");
     const authToken = this.config.get("cache.authToken");
-    const driver = enabled
-      ? new Redis(this.config.get("connections.redis"))
-      : null;
+    const driver = enabled ? new Redis(this.config.get("connections.redis")) : null;
     this.cache = cacheMiddleware({ enabled, driver, gzipped, authToken });
 
     this.app.delete(
@@ -358,7 +345,8 @@ export class HttpTransport implements TransportInterface {
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        this.kernel.notify("user:sendSimulationEmail", req.body, {
+        // TODO : Should be queued
+        await this.kernel.call("user:sendSimulationEmail", req.body, {
           call: { user: { permissions: ["common.user.policySimulate"] } },
           channel: {
             service: "proxy",
@@ -543,9 +531,7 @@ export class HttpTransport implements TransportInterface {
             this.parseErrorData(response),
           );
         } else {
-          const user = Array.isArray(response)
-            ? response[0].result
-            : response.result;
+          const user = Array.isArray(response) ? response[0].result : response.result;
           req.session.user = {
             ...user,
             ...(await this.getTerritoryInfos(user)),
@@ -976,8 +962,7 @@ export class HttpTransport implements TransportInterface {
             : injectContext(req.body, user);
 
           // pass the request to the kernel
-          const response =
-            (await this.kernel.handle(req.body)) as RPCResponseType;
+          const response = (await this.kernel.handle(req.body)) as RPCResponseType;
 
           // send the response
           this.send(res, response);
@@ -991,9 +976,7 @@ export class HttpTransport implements TransportInterface {
       port,
       () =>
         logger.info(
-          `Listening on port ${port}. Version ${
-            this.config.get("sentry.version")
-          }`,
+          `Listening on port ${port}. Version ${this.config.get("sentry.version")}`,
         ),
     );
     // FIXME
