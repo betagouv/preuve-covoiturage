@@ -1,11 +1,9 @@
 import { injectable, METADATA_KEY } from "@/deps.ts";
 import type { ExtensionConfigurationType } from "./types/core/ExtensionInterface.ts";
 import { extensionConfigurationMetadataKey } from "./types/core/ExtensionInterface.ts";
-import type {
-  HandlerConfigType,
-  MiddlewareConfigType,
-} from "./types/handler/index.ts";
+import type { HandlerConfigType, MiddlewareConfigType } from "./types/handler/index.ts";
 import { HandlerMeta } from "./types/handler/index.ts";
+export { command } from "@/ilos/cli/index.ts";
 
 type AnyConfig = { [k: string]: any };
 
@@ -40,9 +38,7 @@ class Metadata {
     if (this.key === METADATA_KEY.NAMED_TAG) {
       return `named: ${String(this.value).toString()} `;
     } else {
-      return `tagged: { key:${this.key.toString()}, value: ${
-        String(this.value)
-      } }`;
+      return `tagged: { key:${this.key.toString()}, value: ${String(this.value)} }`;
     }
   }
 }
@@ -101,9 +97,6 @@ export function kernel(config: AnyConfig) {
   };
 }
 
-export function command() {
-  return injectable();
-}
 export function middleware() {
   return injectable();
 }

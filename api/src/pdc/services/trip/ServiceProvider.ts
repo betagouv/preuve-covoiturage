@@ -1,19 +1,9 @@
 import { CommandExtension } from "@/ilos/cli/index.ts";
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
-import {
-  APDFNameProvider,
-  S3StorageProvider,
-} from "@/pdc/providers/storage/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { APDFNameProvider, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { binding as buildExportBinding } from "@/shared/trip/buildExport.schema.ts";
 import { binding as exportBinding } from "@/shared/trip/export.schema.ts";
 import { binding as listBinding } from "@/shared/trip/listTrips.schema.ts";

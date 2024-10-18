@@ -1,9 +1,5 @@
 import { command } from "@/ilos/common/Decorators.ts";
-import {
-  CommandInterface,
-  CommandOptionType,
-  ValidatorInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { CommandInterface, ValidatorInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CompanyDataSourceProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyDataSourceProviderInterface.ts";
 import { CompanyRepositoryProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyRepositoryProviderInterface.ts";
@@ -13,18 +9,18 @@ export type Options = {
   save: boolean;
 };
 
-@command()
-export class FetchCommand implements CommandInterface {
-  static readonly signature: string = "company:fetch <siret>";
-  static readonly description: string = "Fetch company data";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "company:fetch <siret>",
+  description: "Fetch company data",
+  options: [
     {
       signature: "-s, --save",
       description: "Save the fetched data to the database",
       default: false,
     },
-  ];
-
+  ],
+})
+export class FetchCommand implements CommandInterface {
   constructor(
     private datasource: CompanyDataSourceProviderInterfaceResolver,
     private repository: CompanyRepositoryProviderInterfaceResolver,

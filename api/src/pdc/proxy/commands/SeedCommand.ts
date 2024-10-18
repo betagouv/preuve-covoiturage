@@ -1,16 +1,11 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { env } from "@/lib/env/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
-@command()
-export class SeedCommand implements CommandInterface {
-  static readonly signature: string = "seed";
-  static readonly description: string = "Seed database";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "seed",
+  description: "Seed database",
+  options: [
     {
       signature: "--skip-migration",
       description: "skip migration before seeding",
@@ -21,8 +16,9 @@ export class SeedCommand implements CommandInterface {
       description: "Postgres connection string",
       default: env("APP_POSTGRES_URL"),
     },
-  ];
-
+  ],
+})
+export class SeedCommand implements CommandInterface {
   public async call(options): Promise<void> {
     const db = new Migrator(options.databaseUri, false);
     await db.up();
