@@ -21,19 +21,13 @@ describe("Carpool Label Repository", () => {
     const data = await repository.register(insertableCarpool);
     carpool_id = data._id;
     await db.connection.getClient().query(
-      sql`INSERT INTO ${
-        raw(labelRepository.anomalyTable)
-      } (carpool_id, label) VALUES (${carpool_id}, ${label})`,
+      sql`INSERT INTO ${raw(labelRepository.anomalyTable)} (carpool_id, label) VALUES (${carpool_id}, ${label})`,
     );
     await db.connection.getClient().query(
-      sql`INSERT INTO ${
-        raw(labelRepository.fraudTable)
-      } (carpool_id, label) VALUES (${carpool_id}, ${label})`,
+      sql`INSERT INTO ${raw(labelRepository.fraudTable)} (carpool_id, label) VALUES (${carpool_id}, ${label})`,
     );
     await db.connection.getClient().query(
-      sql`INSERT INTO ${
-        raw(labelRepository.termsTable)
-      } (carpool_id, labels) VALUES (${carpool_id}, ${[label]})`,
+      sql`INSERT INTO ${raw(labelRepository.termsTable)} (carpool_id, labels) VALUES (${carpool_id}, ${[label]})`,
     );
   });
 
@@ -61,7 +55,7 @@ describe("Carpool Label Repository", () => {
       insertableCarpool.operator_journey_id,
     );
     assertEquals(result, [{
-      label,
+      label: "interoperator_fraud",
     }]);
   });
 
