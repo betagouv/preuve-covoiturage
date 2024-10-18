@@ -72,7 +72,6 @@ export async function migrate(config: string) {
       },
       app: {
         targetSchema: "geo",
-        noCleanup: true,
       },
     });
     console.debug("[etl] prepare migrator");
