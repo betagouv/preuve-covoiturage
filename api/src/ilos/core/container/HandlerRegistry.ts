@@ -13,11 +13,12 @@ import {
   ResultType,
   SingleMiddlewareConfigType,
 } from "@/ilos/common/index.ts";
+import { handlerListIdentifier } from "@/ilos/core/constants.ts";
 import { compose } from "../helpers/index.ts";
 import { normalizeHandlerConfig } from "../helpers/normalizeHandlerConfig.ts";
 
 export class HandlerRegistry {
-  static readonly key: symbol = Symbol.for("handlers");
+  static readonly key: symbol = handlerListIdentifier;
 
   constructor(protected container: ContainerInterface) {}
 
