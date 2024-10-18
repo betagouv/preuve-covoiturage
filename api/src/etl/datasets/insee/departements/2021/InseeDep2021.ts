@@ -24,14 +24,14 @@ export class InseeDep2021 extends AbstractDataset {
     ["libelle", ["6", "varchar"]],
   ]);
 
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN dep SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly tableIndex = "dep";
-  readonly importSql = `
+  override readonly tableIndex = "dep";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
       SET l_dep = t.libelle
     FROM ${this.tableWithSchema} t

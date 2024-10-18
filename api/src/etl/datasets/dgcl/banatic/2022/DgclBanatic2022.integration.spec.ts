@@ -1,17 +1,10 @@
 import { access } from "@/deps.ts";
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, beforeAll, it } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { DgclBanatic2022 as Dataset } from "./DgclBanatic2022.ts";
 
-describe.skip("DgclBanatic2022", () => {
+Deno.test("DgclBanatic2022", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 

@@ -8,13 +8,13 @@ export abstract class DgclBanaticDataset extends AbstractDataset {
     ["siren", ["N° SIREN", "varchar"]],
     ["nom", ["Nom du groupement", "varchar"]],
     ["nature", ["Nature juridique", "varchar"]],
-    ["date_creation", ["Date de création", "date"]],
-    ["date_effet", ["Date d'effet", "date"]],
+    ["date_creation", ["Date de création", "varchar"]],
+    ["date_effet", ["Date d'effet", "varchar"]],
     ["competence", ["C4530", "boolean"]],
   ]);
   readonly extraImportSql: string = "";
 
-  async import(): Promise<void> {
+  override async import(): Promise<void> {
     try {
       await this.connection.query(this.importSql);
       await this.connection.query(this.extraImportSql);

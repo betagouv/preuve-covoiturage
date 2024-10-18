@@ -35,13 +35,13 @@ export class CeremaAom2023 extends AbstractDataset {
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "RT_2023 - Composition_Communale",
     startRow: 0,
   };
 
-  readonly tableIndex = "com";
-  readonly importSql = `
+  override readonly tableIndex = "com";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a SET
       aom = CASE WHEN t.siren_aom ~ '^[0-9]*$' THEN t.siren_aom::integer ELSE NULL END,
       l_aom = t.nom_aom,

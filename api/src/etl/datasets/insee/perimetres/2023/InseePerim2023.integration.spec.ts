@@ -5,14 +5,13 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
-  describe,
   it,
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseePerim2023 as Dataset } from "./InseePerim2023.ts";
 
-describe.skip("InseePerim2023", () => {
+Deno.test("InseePerim2023", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 

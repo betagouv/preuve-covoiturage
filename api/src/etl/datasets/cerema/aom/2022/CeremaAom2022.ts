@@ -35,13 +35,13 @@ export class CeremaAom2022 extends AbstractDataset {
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "RT_2022_-_Composition_communale",
     startRow: 0,
   };
 
-  readonly tableIndex = "com";
-  readonly importSql = `
+  override readonly tableIndex = "com";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a SET
       aom = t.siren_aom::integer,
       l_aom = t.nom_aom,
