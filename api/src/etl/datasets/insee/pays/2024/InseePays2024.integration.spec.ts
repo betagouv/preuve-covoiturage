@@ -5,7 +5,6 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
-  describe,
   it,
 } from "@/dev_deps.ts";
 import { Migrator } from "../../../../Migrator.ts";
@@ -15,7 +14,7 @@ import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseePays2024 as Dataset } from "./InseePays2024.ts";
 
-describe.skip("InseePays2024", () => {
+Deno.test("InseePays2024", () => {
   const connection = createPool();
   const migrator = new Migrator(connection, createFileManager(), {
     targetSchema: "public",

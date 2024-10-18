@@ -19,11 +19,11 @@ export class EurostatSimplifiedCountries2024 extends AbstractDataset {
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Geojson;
-  sheetOptions = {
+  override sheetOptions = {
     filter: "features",
   };
 
-  async load(): Promise<void> {
+  override async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
     try {
@@ -65,5 +65,5 @@ export class EurostatSimplifiedCountries2024 extends AbstractDataset {
     }
   }
 
-  async import(): Promise<void> {}
+  override async import(): Promise<void> {}
 }

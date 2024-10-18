@@ -1,9 +1,9 @@
-import { assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { assertEquals, beforeAll, it } from "@/dev_deps.ts";
 import { buildMigrator } from "./buildMigrator.ts";
 import { config } from "./config.ts";
 import { createPool } from "./helpers/index.ts";
 
-describe.skip("datastructure", () => {
+Deno.test("datastructure", () => {
   let connection = createPool();
   const migrator = buildMigrator(config);
 

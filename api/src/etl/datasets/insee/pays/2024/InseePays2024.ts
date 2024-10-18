@@ -27,13 +27,13 @@ export class InseePays2024 extends AbstractDataset {
     ["codeiso3", ["7", "varchar"]],
     ["codenum3", ["8", "varchar"]],
   ]);
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,
@@ -62,7 +62,7 @@ export class InseePays2024 extends AbstractDataset {
     ON CONFLICT DO NOTHING;
   `;
 
-  async validate(state: StateManagerInterface) {
+  override async validate(state: StateManagerInterface) {
     state.plan([EurostatCountries2024]);
     state.plan([EurostatSimplifiedCountries2024]);
   }

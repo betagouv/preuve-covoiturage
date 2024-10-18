@@ -5,14 +5,13 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
-  describe,
   it,
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { CeremaAom2019 as Dataset } from "./CeremaAom2019.ts";
 
-describe.skip("CeremaAom2019", () => {
+Deno.test("CeremaAom2019", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 

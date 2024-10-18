@@ -19,7 +19,6 @@ export class InseeMvtcom2024 extends AbstractDataset {
     ["date_eff", ["1", "varchar"]],
     ["typecom_av", ["2", "varchar"]],
     ["com_av", ["3", "varchar"]],
-    ["typecom_ap", ["8", "varchar"]],
     ["com_ap", ["9", "varchar"]],
   ]);
 
