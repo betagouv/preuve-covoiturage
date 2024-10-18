@@ -1,8 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { CarpoolLabel } from "../interfaces/database/label.ts";
 
@@ -50,7 +47,10 @@ export class CarpoolLabelRepository {
           AND cc.operator_journey_id = ${operator_journey_id}
     `;
     const result = await cclient.query(query);
-    return result.rows;
+    if (result.rowCount == 0) {
+      return [];
+    }
+    return [{ label: "interoperator_fraud" }];
   }
 
   async findAnomalyByOperatorJourneyId(
