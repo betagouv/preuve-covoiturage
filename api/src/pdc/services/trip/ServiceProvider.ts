@@ -51,7 +51,6 @@ import { config } from "./config/index.ts";
     SendExportAction,
     PublishOpenDataAction,
   ],
-  queues: ["trip"],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

@@ -1,14 +1,7 @@
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
 import { binding as crosscheckBinding } from "@/shared/carpool/crosscheck.schema.ts";
 import { binding as findIdentitiesBinding } from "@/shared/carpool/findidentities.schema.ts";
@@ -33,7 +26,6 @@ import { config } from "./config/index.ts";
     FindIdentitiesAction,
     UpdateStatusAction,
   ],
-  queues: ["carpool"],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
