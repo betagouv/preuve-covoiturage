@@ -31,7 +31,9 @@ function registerCommand(
   command.action(async (...args: unknown[]) => {
     try {
       const result = await processCommand(...args);
-      logger.info(result);
+      if (result) {
+        logger.info(result);
+      }
     } catch (e) {
       logger.error(e);
       throw e;
@@ -52,7 +54,7 @@ export async function runCommand(serviceContainer: ServiceContainerInterface, ar
     if (!cmdOptions) {
       continue;
     }
-    registerCommand(runner, cmdOptions, cmd.call);
+    registerCommand(runner, cmdOptions, (...args: unknown[]) => cmd.call(...args));
   }
   return runner.parseAsync(argv);
 }
