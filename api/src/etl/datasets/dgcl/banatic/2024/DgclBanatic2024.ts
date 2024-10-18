@@ -12,19 +12,19 @@ export class DgclBanatic2024 extends DgclBanaticDataset {
   static table = "dgcl_banatic_2024";
   static url =
     // eslint-disable-next-line max-len
-    "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2024&format=C";
+    "https://www.banatic.interieur.gouv.fr/api/export/pregenere/telecharger/France";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "Sheet1",
     startRow: 0,
   };
 
-  async validate(state: StateManagerInterface) {
+  override async validate(state: StateManagerInterface) {
     state.plan([CeremaAom2024]);
   }
 
-  readonly importSql = `
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
       SET l_aom = t.nom, aom = t.siren
     FROM (
@@ -41,7 +41,7 @@ export class DgclBanatic2024 extends DgclBanaticDataset {
   CeremaAom2024: les codes régions ont été attribués en tant que code aom mais parfois les codes ne
   coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles
   ou <= à 2 caractères via la requête ci-dessous */
-  readonly extraImportSql = `
+  override readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 
       aom = CASE WHEN reg = '84' THEN '200053767'
         WHEN reg = '27' THEN '200053726'

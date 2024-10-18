@@ -1,9 +1,7 @@
-import { createReadStream } from "@/deps.ts";
+import { createReadStream, jsonPickUrl, jsonStreamArrayUrl } from "@/deps.ts";
 import type { JsonOptions } from "../../interfaces/index.ts";
-const { default: Pick } = await import("npm:stream-json@^1.8/filters/Pick.js");
-const { default: StreamArray } = await import(
-  "npm:stream-json@^1.8/streamers/StreamArray.js"
-);
+const { default: Pick } = await import(jsonPickUrl);
+const { default: StreamArray } = await import(jsonStreamArrayUrl);
 
 export async function* streamJson<T>(
   filepath: string,

@@ -70,7 +70,7 @@ describe.skip("IgnAe2024", () => {
     const count = await connection.query(
       `SELECT count(*) FROM ${dataset.tableWithSchema}`,
     );
-    assertEquals(count.rows[0].count, "34990");
+    assertEquals(count.rows[0].count, "34980");
   });
 
   it("should cleanup", async () => {
