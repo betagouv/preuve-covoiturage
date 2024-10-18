@@ -10,7 +10,7 @@ import {
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
 import { handlerConfig } from "@/shared/cee/importApplication.contract.ts";
-import { ServiceProvider } from "../ServiceProvider.ts";
+import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 
 describe("ImportCeeAction", () => {
   let db: DbContext;
@@ -39,7 +39,7 @@ describe("ImportCeeAction", () => {
   // Hooks
   // ---------------------------------------------------------------------------
 
-  const { before, after } = makeKernelBeforeAfter(ServiceProvider);
+  const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
   const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 
   beforeAll(async () => {

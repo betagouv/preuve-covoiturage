@@ -1,11 +1,4 @@
-import {
-  afterAll,
-  assertEquals,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assertEquals, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
@@ -23,12 +16,8 @@ import {
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
 } from "@/shared/cee/common/CeeApplicationInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/registerApplication.contract.ts";
-import { ServiceProvider } from "../ServiceProvider.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/registerApplication.contract.ts";
+import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
 
 describe("RegisterCeeAction", () => {
@@ -68,7 +57,7 @@ describe("RegisterCeeAction", () => {
   // Hooks
   // ---------------------------------------------------------------------------
 
-  const { before, after } = makeKernelBeforeAfter(ServiceProvider);
+  const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
   const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 
   beforeAll(async () => {
