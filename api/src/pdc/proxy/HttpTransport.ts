@@ -21,7 +21,6 @@ import {
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
@@ -45,6 +44,7 @@ import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
+import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
 import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheMiddleware.ts";
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
