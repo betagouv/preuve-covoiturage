@@ -73,18 +73,6 @@ services:
       NODE_ENV: dev
       DATABASE_NAME: local
 
-  worker:
-    build:
-      dockerfile: ./docker/api/Dockerfile
-      context: .
-    volumes:
-      - ./api:/app/api
-      - ./shared:/app/shared:ro
-    tty: true 
-    environment:
-      DEBUG: 'worker'
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
-
   s3:
     ports:
       - 9000:9000

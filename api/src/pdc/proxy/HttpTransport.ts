@@ -345,7 +345,8 @@ export class HttpTransport implements TransportInterface {
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        this.kernel.notify("user:sendSimulationEmail", req.body, {
+        // TODO : Should be queued
+        await this.kernel.call("user:sendSimulationEmail", req.body, {
           call: { user: { permissions: ["common.user.policySimulate"] } },
           channel: {
             service: "proxy",

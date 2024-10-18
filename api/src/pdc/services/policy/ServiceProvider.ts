@@ -1,15 +1,8 @@
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { binding as applySchemaBinding } from "@/shared/policy/apply.schema.ts";
 import { binding as finalizeSchemaBinding } from "@/shared/policy/finalize.schema.ts";
 import { binding as findSchemaBinding } from "@/shared/policy/find.schema.ts";
@@ -74,7 +67,6 @@ import { TripRepositoryProvider } from "./providers/TripRepositoryProvider.ts";
     syncIncentiveSumAction,
   ],
   commands: [ApplyCommand, FinalizeCommand, StatsCommand, SyncCommand],
-  queues: ["campaign", "policy"],
   middlewares: [...defaultMiddlewareBindings, [
     "validate",
     ValidatorMiddleware,

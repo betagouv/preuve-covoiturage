@@ -1,15 +1,8 @@
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { defaultNotificationBindings } from "@/pdc/providers/notification/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
 import { changePassword } from "@/shared/user/changePassword.schema.ts";
 import { changePasswordWithToken } from "@/shared/user/changePasswordWithToken.schema.ts";
@@ -113,7 +106,6 @@ import { UserNotificationProvider } from "./providers/UserNotificationProvider.t
     SimulatePolicyformAction,
   ],
   commands: [SeedUsersCommand, FindInactiveCommand],
-  queues: ["user"],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
