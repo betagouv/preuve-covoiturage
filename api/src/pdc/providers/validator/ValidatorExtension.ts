@@ -1,5 +1,6 @@
 import {
   extension,
+  InitHookInterface,
   RegisterHookInterface,
   ServiceContainerInterface,
   ValidatorInterfaceResolver,
@@ -32,7 +33,7 @@ import { sanitizeKeyword } from "./keywords/sanitizeKeyword.ts";
   autoload: true,
   override: true,
 })
-export class ValidatorExtension implements RegisterHookInterface {
+export class ValidatorExtension implements RegisterHookInterface, InitHookInterface {
   protected validators: [string, any][] = [];
   protected keywords: any[] = [];
 
@@ -63,16 +64,6 @@ export class ValidatorExtension implements RegisterHookInterface {
     const validator = serviceContainer.getContainer().get(
       ValidatorInterfaceResolver,
     );
-
-    // Init keywords from parent
-    this.keywords.forEach((keyword) => {
-      validator.registerCustomKeyword(keyword);
-    });
-
-    // Init validators from parent
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
 
     // register string formats
     validator.registerCustomKeyword({
@@ -169,6 +160,14 @@ export class ValidatorExtension implements RegisterHookInterface {
     validator.registerCustomKeyword({
       type: "keyword",
       definition: sanitizeKeyword,
+    });
+
+    this.keywords.forEach((keyword) => {
+      validator.registerCustomKeyword(keyword);
+    });
+
+    this.validators.forEach(([name, schema]) => {
+      validator.registerValidator(schema, name);
     });
   }
 }
