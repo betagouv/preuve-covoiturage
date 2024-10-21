@@ -41,7 +41,7 @@ import { CreateComEvolutionTable } from "./datastructure/001_CreateComEvolutionT
 import { createPool } from "./helpers/index.ts";
 import { MemoryStateManager } from "./providers/MemoryStateManager.ts";
 
-describe.skip("Build Migrator", () => {
+describe("Build Migrator", () => {
   const connection = createPool();
   const migrator = buildMigrator(config);
 

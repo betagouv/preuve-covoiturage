@@ -1,9 +1,9 @@
-import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
+import { CeremaAom2022 } from "../../../../datasets.ts";
 import {
   FileTypeEnum,
   StateManagerInterface,
 } from "../../../../interfaces/index.ts";
-import { CeremaAom2022 } from "../../../../datasets.ts";
+import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
 
 export class DgclBanatic2022 extends DgclBanaticDataset {
   static producer = "dgcl";
@@ -15,16 +15,16 @@ export class DgclBanatic2022 extends DgclBanaticDataset {
     "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/01/2022&format=C";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "Sheet1",
     startRow: 0,
   };
 
-  async validate(state: StateManagerInterface) {
+  override async validate(state: StateManagerInterface) {
     state.plan([CeremaAom2022]);
   }
 
-  readonly importSql = `
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
       SET l_aom = t.nom, aom = t.siren
     FROM (
@@ -41,7 +41,7 @@ export class DgclBanatic2022 extends DgclBanaticDataset {
   CeremaAom2022: les codes régions ont été attribués en tant que code aom mais parfois les codes ne
   coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles
   ou <= à 2 caractères via la requête ci-dessous */
-  readonly extraImportSql = `
+  override readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 
       aom = CASE WHEN reg = '84' THEN '200053767'
         WHEN reg = '27' THEN '200053726'

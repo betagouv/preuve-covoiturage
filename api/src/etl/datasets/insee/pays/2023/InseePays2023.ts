@@ -1,11 +1,11 @@
-import { EurostatCountries2020 } from "../../../eurostat/countries/2020/EurostatCountries2020.ts";
-import { EurostatSimplifiedCountries2020 } from "../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts";
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
 import {
   ArchiveFileTypeEnum,
   FileTypeEnum,
   StateManagerInterface,
 } from "../../../../interfaces/index.ts";
+import { EurostatCountries2020 } from "../../../eurostat/countries/2020/EurostatCountries2020.ts";
+import { EurostatSimplifiedCountries2020 } from "../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts";
 
 export class InseePays2023 extends AbstractDataset {
   static producer = "insee";
@@ -29,13 +29,13 @@ export class InseePays2023 extends AbstractDataset {
     ["codeiso3", ["9", "varchar"]],
     ["codenum3", ["10", "varchar"]],
   ]);
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,
@@ -64,7 +64,7 @@ export class InseePays2023 extends AbstractDataset {
     ON CONFLICT DO NOTHING;
   `;
 
-  async validate(state: StateManagerInterface) {
+  override async validate(state: StateManagerInterface) {
     state.plan([EurostatCountries2020]);
     state.plan([EurostatSimplifiedCountries2020]);
   }

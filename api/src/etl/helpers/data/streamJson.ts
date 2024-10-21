@@ -1,9 +1,7 @@
-import {
-  createReadStream,
-  StreamJsonFilter as Filter,
-  StreamJsonStreamArray as StreamArray,
-} from "@/deps.ts";
+import { createReadStream, jsonPickUrl, jsonStreamArrayUrl } from "@/deps.ts";
 import type { JsonOptions } from "../../interfaces/index.ts";
+const { default: Pick } = await import(jsonPickUrl);
+const { default: StreamArray } = await import(jsonStreamArrayUrl);
 
 export async function* streamJson<T>(
   filepath: string,
@@ -11,8 +9,8 @@ export async function* streamJson<T>(
   chunkSize = 100,
 ): AsyncIterable<T[]> {
   const pipe = createReadStream(filepath, { encoding: "utf-8" }).pipe(
-    Filter.withParser(sheetOptions),
-  ).pipe(StreamArray.streamArray());
+    Pick.withParser(sheetOptions),
+  ).pipe(new StreamArray());
 
   let chunk: T[] = [];
   for await (const line of pipe) {

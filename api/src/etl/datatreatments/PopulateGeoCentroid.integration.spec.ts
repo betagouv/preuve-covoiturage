@@ -1,4 +1,11 @@
-import { assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import {
+  afterAll,
+  assert,
+  assertEquals,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import { Migrator } from "../Migrator.ts";
 import { CreateGeoTable } from "../datastructure/000_CreateGeoTable.ts";
 import { CreateGeoCentroidTable } from "../datastructure/002_CreateGeoCentroidTable.ts";
@@ -24,6 +31,9 @@ describe.skip("PopulateGeoCentroid", () => {
       DROP TABLE IF EXISTS public.dataset_migration
     `);
     await migrator.prepare();
+  });
+  afterAll(async () => {
+    await connection.end();
   });
 
   it("should validate", async () => {
