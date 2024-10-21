@@ -84,7 +84,6 @@ export class CarpoolLookupRepository {
       WHERE
       ${join(filters, " AND ")}
     `;
-    console.log(sqlQuery);
 
     const result = await cl.query<{ count: string }>(sqlQuery);
     return parseInt(result.rows.pop()?.count || "0", 10);
