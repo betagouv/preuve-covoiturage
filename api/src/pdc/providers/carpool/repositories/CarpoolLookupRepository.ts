@@ -1,13 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
-import {
-  SelectableCarpool,
-  SelectableCarpoolStatus,
-} from "../interfaces/database/lookup.ts";
+import { SelectableCarpool, SelectableCarpoolStatus } from "../interfaces/database/lookup.ts";
 import { Id, Uuid } from "../interfaces/index.ts";
 
 @provider()
@@ -18,55 +12,69 @@ export class CarpoolLookupRepository {
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async countJourneyBy(
-    identity_key: string[],
+  public async countJourneyBy(selectors: {
+    identity_key: string[];
     start_date?: {
       min?: Date;
       max?: Date;
-    },
+    };
     end_date?: {
       min?: Date;
       max?: Date;
-    },
-    operator_trip_id?: string,
-    client?: PoolClient,
-  ): Promise<number> {
+    };
+    operator_trip_id?: string;
+    operator_id?: number;
+  }, client?: PoolClient): Promise<number> {
     const cl = client ?? this.connection.getClient();
     const filters = [
       sql`(${
         join([
-          sql`cc.driver_identity_key = ANY(${identity_key})`,
-          sql`cc.passenger_identity_key = ANY(${identity_key})`,
+          sql`cc.driver_identity_key = ANY(${selectors.identity_key})`,
+          sql`cc.passenger_identity_key = ANY(${selectors.identity_key})`,
         ], " OR ")
       })`,
       sql`cs.acquisition_status <> ANY('{canceled,expired,terms_violation_error}'::carpool_v2.carpool_acquisition_status_enum[]) `,
     ];
+    if (selectors.operator_id) {
+      filters.push(sql`cc.operator_id = ${selectors.operator_id}`);
+    }
 
-    if (start_date) {
-      if (start_date.max) {
-        filters.push(sql`cc.start_datetime < ${start_date.max}`);
+    const start_date_filters = [];
+    const end_date_filters = [];
+
+    if (selectors.start_date) {
+      if (selectors.start_date.max) {
+        start_date_filters.push(sql`cc.start_datetime < ${selectors.start_date.max}`);
       }
-      if (start_date.min) {
-        filters.push(sql`cc.start_datetime >= ${start_date.min}`);
+      if (selectors.start_date.min) {
+        start_date_filters.push(sql`cc.start_datetime >= ${selectors.start_date.min}`);
       }
     }
 
-    if (end_date) {
-      if (end_date.max) {
-        filters.push(sql`cc.end_datetime < ${end_date.max}`);
+    if (selectors.end_date) {
+      if (selectors.end_date.max) {
+        end_date_filters.push(sql`cc.end_datetime < ${selectors.end_date.max}`);
       }
-      if (end_date.min) {
-        filters.push(sql`cc.end_datetime >= ${end_date.min}`);
+      if (selectors.end_date.min) {
+        end_date_filters.push(sql`cc.end_datetime >= ${selectors.end_date.min}`);
       }
     }
 
-    if (operator_trip_id) {
-      filters.push(sql`cc.operator_trip_id <> ${operator_trip_id}`);
+    if (start_date_filters.length && end_date_filters.length) {
+      filters.push(sql`(${
+        join([
+          sql`(${join(start_date_filters, " AND ")})`,
+          sql`(${join(end_date_filters, " AND ")})`,
+        ], " OR ")
+      })`);
+    } else if (start_date_filters.length) {
+      filters.push(...start_date_filters);
     }
 
-    // operator_trip_id should be unique
-    // it may occurs some conflict between operators
-    // maybe use a composite count distinct
+    if (selectors.operator_trip_id) {
+      filters.push(sql`cc.operator_trip_id <> ${selectors.operator_trip_id}`);
+    }
+
     const sqlQuery = sql`
       SELECT
         count(distinct cc.operator_trip_id)
