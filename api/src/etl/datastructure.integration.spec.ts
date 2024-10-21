@@ -1,15 +1,19 @@
-import { assertEquals, beforeAll, it } from "@/dev_deps.ts";
+import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { buildMigrator } from "./buildMigrator.ts";
 import { config } from "./config.ts";
 import { createPool } from "./helpers/index.ts";
 
-Deno.test("datastructure", () => {
+describe("datastructure", () => {
   let connection = createPool();
   const migrator = buildMigrator(config);
 
   beforeAll(async () => {
     await migrator.prepare();
     connection = migrator.pool;
+  });
+
+  afterAll(async () => {
+    await connection.end();
   });
 
   it("should verify no null data in perimeters table after migrations", async () => {

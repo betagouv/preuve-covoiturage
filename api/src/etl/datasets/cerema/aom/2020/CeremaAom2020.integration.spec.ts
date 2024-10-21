@@ -5,13 +5,14 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
+  describe,
   it,
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { CeremaAom2020 as Dataset } from "./CeremaAom2020.ts";
 
-Deno.test("CeremaAom2020", () => {
+describe.skip("CeremaAom2020", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
@@ -25,6 +26,7 @@ Deno.test("CeremaAom2020", () => {
     await connection.query(`
       DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {

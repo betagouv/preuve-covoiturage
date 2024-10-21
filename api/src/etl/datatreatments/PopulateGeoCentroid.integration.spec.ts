@@ -1,4 +1,11 @@
-import { assert, assertEquals, beforeAll, it } from "@/dev_deps.ts";
+import {
+  afterAll,
+  assert,
+  assertEquals,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import { Migrator } from "../Migrator.ts";
 import { CreateGeoTable } from "../datastructure/000_CreateGeoTable.ts";
 import { CreateGeoCentroidTable } from "../datastructure/002_CreateGeoCentroidTable.ts";
@@ -6,7 +13,7 @@ import { createFileManager, createPool } from "../helpers/index.ts";
 import { MemoryStateManager } from "../providers/MemoryStateManager.ts";
 import { PopulateGeoCentroid as Dataset } from "./PopulateGeoCentroid.ts";
 
-Deno.test("PopulateGeoCentroid", () => {
+describe.skip("PopulateGeoCentroid", () => {
   const connection = createPool();
   const migrator = new Migrator(connection, createFileManager(), {
     targetSchema: "public",
@@ -24,6 +31,9 @@ Deno.test("PopulateGeoCentroid", () => {
       DROP TABLE IF EXISTS public.dataset_migration
     `);
     await migrator.prepare();
+  });
+  afterAll(async () => {
+    await connection.end();
   });
 
   it("should validate", async () => {

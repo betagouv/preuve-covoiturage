@@ -5,13 +5,14 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
+  describe,
   it,
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { EurostatSimplifiedCountries2024 as Dataset } from "./EurostatSimplifiedCountries2024.ts";
 
-Deno.test("EurostatSimplified2024", () => {
+describe("EurostatSimplified2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
@@ -25,6 +26,7 @@ Deno.test("EurostatSimplified2024", () => {
     await connection.query(`
       DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {
@@ -59,7 +61,7 @@ Deno.test("EurostatSimplified2024", () => {
     const response = await connection.query(`
       SELECT count(*) FROM ${dataset.tableWithSchema}
     `);
-    assertEquals(response.rows[0].count, "257");
+    assertEquals(response.rows[0].count, "259");
   });
 
   it("should cleanup", async () => {

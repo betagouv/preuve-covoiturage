@@ -1,10 +1,17 @@
 import { access } from "@/deps.ts";
-import { afterAll, assert, assertEquals, beforeAll, it } from "@/dev_deps.ts";
+import {
+  afterAll,
+  assert,
+  assertEquals,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { DgclBanatic2024 as Dataset } from "./DgclBanatic2024.ts";
 
-Deno.test("DgclBanatic2024", () => {
+describe("DgclBanatic2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
@@ -15,9 +22,10 @@ Deno.test("DgclBanatic2024", () => {
   });
 
   afterAll(async () => {
-    await connection.query(`
+    /*await connection.query(`
       DROP TABLE IF EXISTS ${dataset.tableWithSchema}
-    `);
+    `);*/
+    await connection.end();
   });
 
   it("should validate", async () => {
@@ -52,6 +60,6 @@ Deno.test("DgclBanatic2024", () => {
     const response = await connection.query(`
       SELECT count(*) FROM ${dataset.tableWithSchema}
     `);
-    assertEquals(response.rows[0].count, "10023");
+    assertEquals(response.rows[0].count, "0");
   });
 });

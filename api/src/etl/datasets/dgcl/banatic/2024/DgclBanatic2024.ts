@@ -1,11 +1,12 @@
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
 import { CeremaAom2024 } from "../../../../datasets.ts";
 import {
+  ArchiveFileTypeEnum,
   FileTypeEnum,
   StateManagerInterface,
 } from "../../../../interfaces/index.ts";
-import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
 
-export class DgclBanatic2024 extends DgclBanaticDataset {
+export class DgclBanatic2024 extends AbstractDataset {
   static producer = "dgcl";
   static dataset = "banatic";
   static year = 2024;
@@ -14,9 +15,18 @@ export class DgclBanatic2024 extends DgclBanaticDataset {
     // eslint-disable-next-line max-len
     "https://www.banatic.interieur.gouv.fr/api/export/pregenere/telecharger/France";
 
+  readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
+  readonly rows: Map<string, [string, string]> = new Map([
+    ["siren", ["3", "varchar"]],
+    ["nom", ["4", "varchar"]],
+    ["nature", ["5", "varchar"]],
+    ["date_creation", ["9", "varchar"]],
+    ["date_effet", ["10", "varchar"]],
+    ["competence", ["129", "boolean"]],
+  ]);
+
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {
-    name: "Sheet1",
     startRow: 0,
   };
 
@@ -41,7 +51,7 @@ export class DgclBanatic2024 extends DgclBanaticDataset {
   CeremaAom2024: les codes régions ont été attribués en tant que code aom mais parfois les codes ne
   coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles
   ou <= à 2 caractères via la requête ci-dessous */
-  override readonly extraImportSql = `
+  readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 
       aom = CASE WHEN reg = '84' THEN '200053767'
         WHEN reg = '27' THEN '200053726'

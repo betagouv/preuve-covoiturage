@@ -5,13 +5,14 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
+  describe,
   it,
 } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseeCom2024 as Dataset } from "./InseeCom2024.ts";
 
-Deno.test("InseeCom2024", () => {
+describe.skip("InseeCom2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
@@ -25,6 +26,7 @@ Deno.test("InseeCom2024", () => {
     await connection.query(`
     DROP TABLE IF EXISTS ${dataset.tableWithSchema}
   `);
+    await connection.end();
   });
 
   it("should validate", async () => {

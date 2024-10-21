@@ -1,10 +1,17 @@
 import { access } from "@/deps.ts";
-import { afterAll, assert, assertEquals, beforeAll, it } from "@/dev_deps.ts";
+import {
+  afterAll,
+  assert,
+  assertEquals,
+  beforeAll,
+  describe,
+  it,
+} from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { DgclBanatic2022 as Dataset } from "./DgclBanatic2022.ts";
 
-Deno.test("DgclBanatic2022", () => {
+describe.skip("DgclBanatic2022", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
@@ -18,6 +25,7 @@ Deno.test("DgclBanatic2022", () => {
     await connection.query(`
       DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {

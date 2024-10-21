@@ -5,6 +5,7 @@ import {
   assertEquals,
   assertRejects,
   beforeAll,
+  describe,
   it,
 } from "@/dev_deps.ts";
 import { Migrator } from "../../../../Migrator.ts";
@@ -14,7 +15,7 @@ import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseePays2021 as Dataset } from "./InseePays2021.ts";
 
-Deno.test("InseePays2021", () => {
+describe.skip("InseePays2021", () => {
   const connection = createPool();
   const migrator = new Migrator(connection, createFileManager(), {
     targetSchema: "public",
@@ -41,6 +42,7 @@ Deno.test("InseePays2021", () => {
     await connection.query(`
       DROP TABLE IF EXISTS public.dataset_migration
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {

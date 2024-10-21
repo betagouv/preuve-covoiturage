@@ -88,6 +88,7 @@ migrate:
     --allow-ffi \
     --allow-import \
     --allow-run \
+    --v8-flags=--max-old-space-size=4096 \
     src/db/main.ts
 
 # Run external data migrations
