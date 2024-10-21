@@ -12,8 +12,7 @@ import {
 })
 export class Providers implements RegisterHookInterface {
   constructor(
-    protected readonly alias:
-      (NewableType<any> | [IdentifierType, NewableType<any>])[],
+    protected readonly alias: (NewableType<any> | [IdentifierType, NewableType<any>])[],
   ) {
     //
   }
@@ -24,15 +23,14 @@ export class Providers implements RegisterHookInterface {
     const container = serviceContainer.getContainer();
     const alias = this.alias;
     for (const def of alias) {
-      let target: NewableType<any>;
+      let target, identifier;
       if (Array.isArray(def)) {
         if (def.length !== 2) {
           throw new Error("Invalid bindings");
         }
-        const identifier = def[0];
-        target = def[1];
-        container.bind(target).toSelf();
-        container.bind(identifier).toService(target);
+        [identifier, target] = def;
+        container.bind(identifier).toConstantValue(target);
+        serviceContainer.registerHooks(target, identifier);
       } else {
         const customIdentifier = Reflect.getMetadata(
           Symbol.for("extension:identifier"),
@@ -51,8 +49,8 @@ export class Providers implements RegisterHookInterface {
             }
           }
         }
+        serviceContainer.registerHooks(target.prototype, target);
       }
-      serviceContainer.registerHooks(target.prototype, target);
     }
   }
 }

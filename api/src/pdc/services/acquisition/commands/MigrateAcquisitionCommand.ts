@@ -1,10 +1,6 @@
 import { addSeconds } from "@/deps.ts";
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
@@ -13,16 +9,12 @@ import {
   CarpoolRequestRepository,
   CarpoolStatusRepository,
 } from "@/pdc/providers/carpool/index.ts";
-import {
-  CarpoolAcquisitionStatusEnum,
-  CarpoolFraudStatusEnum,
-} from "@/pdc/providers/carpool/interfaces/index.ts";
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
 
-@command()
-export class AcquisitionMigrateCommand implements CommandInterface {
-  static readonly signature: string = "acquisition:migrate";
-  static readonly description: string = "Migrate acquisition to v2";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "acquisition:migrate",
+  description: "Migrate acquisition to v2",
+  options: [
     {
       signature: "-l, --loop",
       description: "Process acquisition while remaining",
@@ -44,8 +36,9 @@ export class AcquisitionMigrateCommand implements CommandInterface {
       description: "end date",
       coerce: coerceDate,
     },
-  ];
-
+  ],
+})
+export class AcquisitionMigrateCommand implements CommandInterface {
   constructor(
     protected status: CarpoolStatusRepository,
     protected geo: CarpoolGeoRepository,
@@ -84,9 +77,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
           LEFT JOIN carpool_v2.carpools cv2
             ON (aa.journey_id = cv2.operator_journey_id AND aa.operator_id = cv2.operator_id)
           WHERE
-            ${
-          after && until ? "aa.created_at >= $2 AND aa.created_at < $3 AND" : ""
-        }
+            ${after && until ? "aa.created_at >= $2 AND aa.created_at < $3 AND" : ""}
             cv2._id IS NULL AND aa.status = 'ok'
           ORDER BY aa.created_at ASC
           LIMIT $1
@@ -173,8 +164,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
             passenger_phone: passenger_identity.phone,
             passenger_phone_trunc: passenger_identity.phone_trunc,
             passenger_travelpass_name: passenger_identity.travel_pass_name,
-            passenger_travelpass_user_id:
-              passenger_identity.travel_pass_user_id,
+            passenger_travelpass_user_id: passenger_identity.travel_pass_user_id,
             passenger_over_18: passenger_identity.over_18,
             passenger_seats: carpool.seats || 1,
             passenger_contribution: carpool.payment || 0,
@@ -218,8 +208,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
             break;
           case "terms_violation_error":
           case "expired":
-            acquisitionStatus =
-              CarpoolAcquisitionStatusEnum.TermsViolationError;
+            acquisitionStatus = CarpoolAcquisitionStatusEnum.TermsViolationError;
             break;
           case "canceled":
             acquisitionStatus = CarpoolAcquisitionStatusEnum.Canceled;

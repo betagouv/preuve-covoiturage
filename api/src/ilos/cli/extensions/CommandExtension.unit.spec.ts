@@ -1,28 +1,24 @@
 import { assertEquals, describe, it, sinon } from "@/dev_deps.ts";
-import {
-  command,
-  ResultType,
-  serviceProvider as serviceProviderDecorator,
-} from "@/ilos/common/index.ts";
+import { serviceProvider as serviceProviderDecorator } from "@/ilos/common/Decorators.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
-import { Command } from "../parents/Command.ts";
-import { CommandRegistry } from "../providers/CommandRegistry.ts";
+import { command } from "../command.ts";
+import { runCommand } from "../commander.ts";
 import { CommandExtension } from "./CommandExtension.ts";
 
 function setup() {
   const fake = sinon.fake();
-  @command()
-  class BasicCommand extends Command {
-    static readonly signature: string = "hello <name>";
-    static readonly description: string = "toto";
-    static readonly options = [
+  @command({
+    signature: "hello <name>",
+    description: "toto",
+    options: [
       {
         signature: "-h, --hi",
         description: "Say hi",
       },
-    ];
-
-    public async call(name: string, options?: any): Promise<ResultType> {
+    ],
+  })
+  class BasicCommand {
+    public async call(name: string, options?: any): Promise<string> {
       fake(name, options);
       return `Hello ${name}`;
     }
@@ -41,24 +37,11 @@ function setup() {
 }
 
 describe("CommandExtension", () => {
-  it("should register", async () => {
-    const { serviceProvider } = setup();
-    await serviceProvider.register();
-    await serviceProvider.init();
-
-    const basicCommand =
-      serviceProvider.getContainer().get(CommandRegistry).commands[0];
-    assertEquals(basicCommand.name(), "hello");
-    assertEquals(basicCommand.description(), "toto");
-  });
-
   it("should work", async () => {
     const { serviceProvider, fake } = setup();
-    const container = serviceProvider.getContainer();
     await serviceProvider.register();
     await serviceProvider.init();
-    const commander = container.get<CommandRegistry>(CommandRegistry);
-    commander.parse(["", "", "hello", "john"]);
+    await runCommand(serviceProvider, ["", "", "hello", "john"]);
     assertEquals(fake.getCalls().pop().args, ["john", {}]);
   });
 });

@@ -1,8 +1,4 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
@@ -10,14 +6,11 @@ import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { FileCreatorServiceInterfaceResolver } from "../services/FileCreatorService.ts";
 import { NameServiceInterfaceResolver } from "../services/NameService.ts";
 
-@command()
+@command({
+  signature: "export:debug",
+  description: "Test and debug the export service",
+})
 export class DebugCommand implements CommandInterface {
-  static readonly signature: string = "export:debug";
-  static readonly description: string = "Test and debug the export service";
-  static readonly options: CommandOptionType[] = [
-    // TODO add options to define the user email, the target of the export, the date range, etc.
-  ];
-
   constructor(
     private fc: FileCreatorServiceInterfaceResolver,
     private field: FieldServiceInterfaceResolver,

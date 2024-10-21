@@ -1,9 +1,11 @@
 import {
   extension,
+  InitHookInterface,
+  RegisterHookInterface,
   ServiceContainerInterface,
   ValidatorInterfaceResolver,
-} from "@/ilos/common/index.ts";
-import { ValidatorExtension as ValidatorParentExtension } from "@/ilos/validator/index.ts";
+} from "../../../ilos/common/index.ts";
+import { AjvValidator } from "./AjvValidator.ts";
 
 import { bicCustomFormat } from "./formats/bicCustomFormat.ts";
 import { countryCustomFormat } from "./formats/countryCustomFormat.ts";
@@ -31,7 +33,33 @@ import { sanitizeKeyword } from "./keywords/sanitizeKeyword.ts";
   autoload: true,
   override: true,
 })
-export class ValidatorExtension extends ValidatorParentExtension {
+export class ValidatorExtension implements RegisterHookInterface, InitHookInterface {
+  protected validators: [string, any][] = [];
+  protected keywords: any[] = [];
+
+  constructor(
+    config:
+      | [string, any][]
+      | {
+        validators?: [string, any][];
+        keywords?: any[];
+      },
+  ) {
+    if (Array.isArray(config)) {
+      this.validators = config;
+    } else {
+      this.validators = config?.validators || [];
+      this.keywords = config?.keywords || [];
+    }
+  }
+
+  async register(serviceContainer: ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
+    if (!container.isBound(ValidatorInterfaceResolver)) {
+      container.bind(ValidatorInterfaceResolver).to(AjvValidator);
+    }
+  }
+
   async init(serviceContainer: ServiceContainerInterface): Promise<void> {
     const validator = serviceContainer.getContainer().get(
       ValidatorInterfaceResolver,
@@ -133,6 +161,13 @@ export class ValidatorExtension extends ValidatorParentExtension {
       type: "keyword",
       definition: sanitizeKeyword,
     });
-    await super.init(serviceContainer);
+
+    this.keywords.forEach((keyword) => {
+      validator.registerCustomKeyword(keyword);
+    });
+
+    this.validators.forEach(([name, schema]) => {
+      validator.registerValidator(schema, name);
+    });
   }
 }

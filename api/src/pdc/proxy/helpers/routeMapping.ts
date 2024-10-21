@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "@/deps.ts";
 import { KernelInterface } from "@/ilos/common/index.ts";
-import { mapStatusCode } from "@/ilos/transport-http/index.ts";
+import { mapStatusCode } from "./mapStatusCode.ts";
 
 import { createRPCPayload } from "./createRPCPayload.ts";
 

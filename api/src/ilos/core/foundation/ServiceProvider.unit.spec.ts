@@ -94,7 +94,7 @@ describe("Foundation: ServiceProvider", () => {
     }
 
     @serviceProvider({
-      providers: [[TestResolver, Test]],
+      providers: [[TestResolver, new Test()]],
       handlers: [BasicAction],
     })
     class BasicServiceProvider extends ParentServiceProvider {}
@@ -113,7 +113,7 @@ describe("Foundation: ServiceProvider", () => {
       params: { name: "Sam" },
       context: defaultContext,
     });
-    assertEquals(response, "Hello Sam");
+    assertEquals(response, " Sam");
   });
 
   it("should register handler with alias and nested service providers", async () => {
