@@ -46,15 +46,8 @@ import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
-import {
-  CacheMiddleware,
-  cacheMiddleware,
-  CacheTTL,
-} from "./middlewares/cacheMiddleware.ts";
-import {
-  dataWrapMiddleware,
-  errorHandlerMiddleware,
-} from "./middlewares/index.ts";
+import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheMiddleware.ts";
+import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
   acquisitionRateLimiter,
@@ -92,9 +85,7 @@ export class HttpTransport implements TransportInterface {
     this.getProviders();
 
     const optsPort = parseInt(opts[0], 10);
-    const port = optsPort || optsPort === 0
-      ? optsPort
-      : this.config.get("proxy.port", 8080);
+    const port = optsPort || optsPort === 0 ? optsPort : this.config.get("proxy.port", 8080);
 
     this.app = express();
     this.setup();
@@ -171,9 +162,7 @@ export class HttpTransport implements TransportInterface {
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
         secure: env_or_fail("APP_ENV", "local") !== "local",
-        sameSite: env_or_fail("APP_ENV", "local") !== "local"
-          ? "none"
-          : "strict",
+        sameSite: env_or_fail("APP_ENV", "local") !== "local" ? "none" : "strict",
       },
 
       name: sessionName,
@@ -266,9 +255,7 @@ export class HttpTransport implements TransportInterface {
     const enabled = this.config.get("cache.enabled");
     const gzipped = this.config.get("cache.gzipped");
     const authToken = this.config.get("cache.authToken");
-    const driver = enabled
-      ? new Redis(this.config.get("connections.redis"))
-      : null;
+    const driver = enabled ? new Redis(this.config.get("connections.redis")) : null;
     this.cache = cacheMiddleware({ enabled, driver, gzipped, authToken });
 
     this.app.delete(
@@ -517,9 +504,18 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { query } = req;
+        const q = {
+          ...query,
+        };
+        if ("offset" in q) {
+          q.offset = parseInt(q.offset, 10);
+        }
+        if ("limit" in q) {
+          q.limit = parseInt(q.limit, 10);
+        }
         const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
-          createRPCPayload("acquisition:list", query, user, { req }),
+          createRPCPayload("acquisition:list", q, user, { req }),
         )) as RPCResponseType;
         this.send(res, response, {}, true);
       }),
@@ -543,9 +539,7 @@ export class HttpTransport implements TransportInterface {
             this.parseErrorData(response),
           );
         } else {
-          const user = Array.isArray(response)
-            ? response[0].result
-            : response.result;
+          const user = Array.isArray(response) ? response[0].result : response.result;
           req.session.user = {
             ...user,
             ...(await this.getTerritoryInfos(user)),
@@ -976,8 +970,7 @@ export class HttpTransport implements TransportInterface {
             : injectContext(req.body, user);
 
           // pass the request to the kernel
-          const response =
-            (await this.kernel.handle(req.body)) as RPCResponseType;
+          const response = (await this.kernel.handle(req.body)) as RPCResponseType;
 
           // send the response
           this.send(res, response);
@@ -991,9 +984,7 @@ export class HttpTransport implements TransportInterface {
       port,
       () =>
         logger.info(
-          `Listening on port ${port}. Version ${
-            this.config.get("sentry.version")
-          }`,
+          `Listening on port ${port}. Version ${this.config.get("sentry.version")}`,
         ),
     );
     // FIXME
