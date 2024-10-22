@@ -1,11 +1,4 @@
-import {
-  afterAll,
-  assertEquals,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assertEquals, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
@@ -72,17 +65,29 @@ describe("CarpoolGeoRepository", () => {
 
   it("should count the carpool by start/end date", async () => {
     const data = { ...insertableCarpool };
-    const count = await repository.countJourneyBy([data.driver_identity_key], {
-      min: new Date(data.start_datetime.valueOf() - 1000),
-      max: new Date(data.start_datetime.valueOf() + 1000),
-    }, {});
+    const count = await repository.countJourneyBy({
+      operator_id: data.operator_id,
+      identity_key: [data.driver_identity_key],
+      start_date: {
+        min: new Date(data.start_datetime.valueOf() - 1000),
+        max: new Date(data.start_datetime.valueOf() + 1000),
+      },
+    });
     assertEquals(count, 1);
 
-    const count2 = await repository.countJourneyBy([data.driver_identity_key], {
-      min: new Date(data.start_datetime.valueOf() - 1000),
-    }, {
-      max: new Date(data.end_datetime.valueOf() + 1000),
-    }, `${data.operator_trip_id}-diff`);
+    const count2 = await repository.countJourneyBy({
+      operator_id: data.operator_id,
+      identity_key: [data.driver_identity_key],
+      start_date: {
+        min: new Date(data.start_datetime.valueOf() - 1000),
+        max: new Date(data.start_datetime.valueOf()),
+      },
+      end_date: {
+        min: new Date(data.end_datetime.valueOf()),
+        max: new Date(data.end_datetime.valueOf() + 1000),
+      },
+      operator_trip_id: `${data.operator_trip_id}-diff`,
+    });
     assertEquals(count2, 1);
   });
 });

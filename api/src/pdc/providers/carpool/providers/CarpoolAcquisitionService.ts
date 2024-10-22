@@ -1,19 +1,11 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
-import {
-  CancelRequest,
-  CarpoolAcquisitionStatusEnum,
-  RegisterRequest,
-  UpdateRequest,
-} from "../interfaces/index.ts";
+import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from "../interfaces/index.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
 import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
@@ -34,6 +26,7 @@ export class CarpoolAcquisitionService {
   ) {}
 
   public async verifyTermsViolation(data: {
+    operator_id: number;
     created_at: Date;
     distance: number;
     driver_identity_key: string;
@@ -51,31 +44,31 @@ export class CarpoolAcquisitionService {
     if (data.distance < 2_000) {
       result.push("distance_too_short");
     }
+
     // This select all distinct operator_trip_id that started in the same day
     // with the same identity key as any role
-    const journeyCount = await this.lookupRepository.countJourneyBy(
-      [data.driver_identity_key, data.passenger_identity_key],
-      {
+    const journeyCount = await this.lookupRepository.countJourneyBy({
+      operator_id: data.operator_id,
+      identity_key: [data.driver_identity_key, data.passenger_identity_key],
+      start_date: {
         min: startOfDay(data.start_datetime),
         max: endOfDay(data.start_datetime),
       },
-      undefined,
-      undefined,
-      client,
-    );
+    }, client);
     if (journeyCount >= 4) {
       result.push("too_many_trips_by_day");
     }
+
     // This select all distinct operator_trip_id that started before
     // 30 minutes after the end of the current trip OR ended after
     // 30 minutes before the start of the current trip
-    const journeyCloseCount = await this.lookupRepository.countJourneyBy(
-      [data.driver_identity_key, data.passenger_identity_key],
-      { max: addMinutes(data.end_datetime, 30) },
-      { min: addMinutes(data.start_datetime, -30) },
-      data.operator_trip_id,
-      client,
-    );
+    const journeyCloseCount = await this.lookupRepository.countJourneyBy({
+      operator_id: data.operator_id,
+      identity_key: [data.driver_identity_key, data.passenger_identity_key],
+      start_date: { min: data.start_datetime, max: addMinutes(data.end_datetime, 30) },
+      end_date: { min: addMinutes(data.start_datetime, -30), max: data.end_datetime },
+      operator_trip_id: data.operator_trip_id,
+    }, client);
     if (journeyCloseCount >= 1) {
       result.push("too_close_trips");
     }
@@ -115,6 +108,7 @@ export class CarpoolAcquisitionService {
         );
       } else {
         terms_violation_error_labels = await this.verifyTermsViolation({
+          operator_id: data.operator_id,
           created_at: carpool.created_at,
           distance: data.distance,
           driver_identity_key: data.driver_identity_key,
@@ -161,8 +155,7 @@ export class CarpoolAcquisitionService {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
-      const { api_version, operator_id, operator_journey_id, ...carpoolData } =
-        data;
+      const { api_version, operator_id, operator_journey_id, ...carpoolData } = data;
       const carpool = await this.carpoolRepository.update(
         operator_id,
         operator_journey_id,
