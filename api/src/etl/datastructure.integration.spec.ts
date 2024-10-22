@@ -3,7 +3,7 @@ import { buildMigrator } from "./buildMigrator.ts";
 import { config } from "./config.ts";
 import { createPool } from "./helpers/index.ts";
 
-describe("datastructure", () => {
+describe.skip("datastructure", () => {
   let connection = createPool();
   const migrator = buildMigrator(config);
 

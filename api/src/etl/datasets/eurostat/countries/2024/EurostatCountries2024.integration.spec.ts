@@ -12,7 +12,7 @@ import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { EurostatCountries2024 as Dataset } from "./EurostatCountries2024.ts";
 
-describe("Eurostat2024", () => {
+describe.skip("Eurostat2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 

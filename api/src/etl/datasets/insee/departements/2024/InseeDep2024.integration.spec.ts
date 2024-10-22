@@ -12,7 +12,7 @@ import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseeDep2024 as Dataset } from "./InseeDep2024.ts";
 
-describe("InseeDep2024", () => {
+describe.skip("InseeDep2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 

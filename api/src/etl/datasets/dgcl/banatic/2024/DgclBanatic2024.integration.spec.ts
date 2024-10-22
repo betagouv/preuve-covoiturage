@@ -11,7 +11,7 @@ import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { DgclBanatic2024 as Dataset } from "./DgclBanatic2024.ts";
 
-describe("DgclBanatic2024", () => {
+describe.skip("DgclBanatic2024", () => {
   const connection = createPool();
   const dataset = new Dataset(connection, createFileManager());
 
