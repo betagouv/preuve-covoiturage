@@ -17,7 +17,6 @@ export async function* streamXlsx<T>(
   });
   while (data.length > 0) {
     const chunk = data.splice(0, chunkSize) as T[];
-    console.debug(chunk);
     yield chunk;
   }
   return;
