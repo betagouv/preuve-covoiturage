@@ -71,5 +71,39 @@
     "localRoot": "${workspaceFolder}",
     "remoteRoot": "/",
   }
+      "name": "Deno: Attach",
+  "type": "node",
+  "request": "attach",
+  "port": 9229,
+  "restart": true,
+  "skipFiles": [
+    "<node_internals>/**"
+  ],
+  "resolveSourceMapLocations": [
+    "**",
+    "!**/node_modules/**"
+  ],
+  "localRoot": "${workspaceFolder}",
+  "remoteRoot": "/",
+}
+      "name": "Launch triangular pattern",
+"type": "debugpy",
+"request": "launch",
+"module": "notebooks.scripts.users_insights_triangular_patterns_v2",
+"env": {
+  "DELAY": "0",
+  "FRAME": "7"
+}
+},
+{
+"name": "Launch old triangular pattern",
+"type": "debugpy",
+"request": "launch",
+"program": "${workspaceFolder}/notebooks/scripts/users_insights_triangular_patterns.py",
+"env": {
+  "DELAY": "0",
+  "FRAME": "7"
+}
+},
 ]
 }
