@@ -35,6 +35,26 @@
         "--no-check"
       ],
       "attachSimplePort": 9229
-    }
+    },
+    {
+      "name": "Launch triangular pattern",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "notebooks.scripts.users_insights_triangular_patterns_v2",
+      "env": {
+        "DELAY": "0",
+        "FRAME": "7"
+      }
+    },
+    {
+      "name": "Launch old triangular pattern",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/notebooks/scripts/users_insights_triangular_patterns.py",
+      "env": {
+        "DELAY": "0",
+        "FRAME": "7"
+      }
+    },
   ]
 }
