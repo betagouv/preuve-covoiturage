@@ -18,13 +18,13 @@ import {
 } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 
 export abstract class CarpoolRepositoryInterfaceResolver {
-  public async list(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
+  public async list(params: ExportParams, fileWriter: CSVWriter<CarpoolListType>): Promise<void> {
     throw new Error("Not implemented");
   }
   public async listCount(params: ExportParams): Promise<number> {
     throw new Error("Not implemented");
   }
-  public async openDataList(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
+  public async openDataList(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     throw new Error("Not implemented");
   }
 }
@@ -41,7 +41,11 @@ export class CarpoolRepository {
   /**
    * List carpools for the general exports
    */
-  public async list(params: ExportParams, fileWriter: CSVWriter, progress?: ExportProgress): Promise<void> {
+  public async list(
+    params: ExportParams,
+    fileWriter: CSVWriter<CarpoolListType>,
+    progress?: ExportProgress,
+  ): Promise<void> {
     const [values, templates] = this.getListValuesAndTemplates(params);
 
     // use a cursor to loop over the entire set of results
@@ -109,7 +113,7 @@ export class CarpoolRepository {
   /**
    * List carpools with specific filtering for the open data requirements
    */
-  public async openDataList(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
+  public async openDataList(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     let cursor: any; // FIXME type PostgresConnection['getCursor'] fails
     const query = CarpoolOpenDataQuery(params);
 

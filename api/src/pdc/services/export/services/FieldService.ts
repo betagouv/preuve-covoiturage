@@ -4,7 +4,7 @@ import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 
 export abstract class FieldServiceInterfaceResolver {
-  public byTarget(type: ExportTarget): Partial<Fields> {
+  public byTarget<T extends { [k: string]: unknown }>(type: ExportTarget): Partial<Fields<T>> {
     throw new Error("Not implemented");
   }
 }
@@ -15,11 +15,11 @@ export abstract class FieldServiceInterfaceResolver {
 export class FieldService {
   constructor(protected config: ConfigInterfaceResolver) {}
 
-  public byTarget(target: ExportTarget): Partial<Fields> {
+  public byTarget<T extends { [k: string]: unknown }>(target: ExportTarget): Partial<Fields<T>> {
     const source = target === ExportTarget.OPENDATA ? "datagouv" : "export";
-    const fields = this.config.get(`${source}.fields`, []) as Fields;
-    const filter = this.config.get<FieldFilter[]>(`${source}.fields`, [])
-      .find((filter: FieldFilter) => filter.target === target);
+    const fields = this.config.get(`${source}.fields`, []) as Fields<T>;
+    const filter = this.config.get<Array<FieldFilter<T>>>(`${source}.filters`, [])
+      .find((filter: FieldFilter<T>) => filter.target === target);
 
     if (!filter) {
       logger.warn(`No filter found for target ${target}`);

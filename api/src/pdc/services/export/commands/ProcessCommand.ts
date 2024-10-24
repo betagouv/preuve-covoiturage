@@ -52,7 +52,7 @@ export class ProcessCommand implements CommandInterface {
 
   protected async process(exp: Export): Promise<void> {
     const { _id, uuid, target, params } = exp;
-    const fields = this.fieldService.byTarget(target);
+    const fields = this.fieldService.byTarget<CarpoolListType>(target);
     const filename = this.nameService.get({ target, uuid }); // TODO add support for territory name
 
     try {
@@ -60,7 +60,7 @@ export class ProcessCommand implements CommandInterface {
       await this.exportRepository.status(_id, ExportStatus.RUNNING);
 
       // generate the file
-      const filepath = await this.fileCreatorService.write(
+      const filepath = await this.fileCreatorService.write<CarpoolListType>(
         params,
         new CSVWriter<CarpoolListType>(filename, { fields }),
         await this.exportRepository.progress(_id),

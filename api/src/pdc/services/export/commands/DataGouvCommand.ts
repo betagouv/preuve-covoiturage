@@ -71,7 +71,7 @@ export class DataGouvCommand implements CommandInterface {
 
     const chunks = this.splitByMonth(options.start, options.end, options.tz);
     const target = ExportTarget.OPENDATA;
-    const fields = this.fieldService.byTarget(target);
+    const fields = this.fieldService.byTarget<CarpoolOpenDataListType>(target);
 
     for (const params of chunks) {
       const filename = this.nameService.opendata(params.get().start_at);

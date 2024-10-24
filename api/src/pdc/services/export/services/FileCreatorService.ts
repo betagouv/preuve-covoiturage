@@ -7,9 +7,9 @@ import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { ExportProgress } from "../repositories/ExportRepository.ts";
 
 export abstract class FileCreatorServiceInterfaceResolver {
-  protected async configure(
+  protected async configure<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: CSVWriter,
+    fileWriter: CSVWriter<T>,
   ): Promise<void> {
     throw new Error("Not implemented");
   }
@@ -22,9 +22,9 @@ export abstract class FileCreatorServiceInterfaceResolver {
   protected async help(): Promise<void> {
     throw new Error("Not implemented");
   }
-  public async write(
+  public async write<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: CSVWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<string> {
     throw new Error("Not implemented");
@@ -35,7 +35,7 @@ export abstract class FileCreatorServiceInterfaceResolver {
   identifier: FileCreatorServiceInterfaceResolver,
 })
 export class FileCreatorService {
-  protected fileWriter: CSVWriter;
+  protected fileWriter: any;
   protected params: ExportParams;
   protected progress: ExportProgress;
 
@@ -44,9 +44,9 @@ export class FileCreatorService {
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(
+  protected async configure<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: CSVWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<void> {
     this.params = params;
@@ -75,9 +75,9 @@ export class FileCreatorService {
     await this.fileWriter.printHelp();
   }
 
-  public async write(
+  public async write<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: CSVWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<string> {
     try {

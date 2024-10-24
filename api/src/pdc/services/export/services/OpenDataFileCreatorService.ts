@@ -1,12 +1,13 @@
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 
 export abstract class OpenDataFileCreatorServiceInterfaceResolver {
-  protected async configure(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     throw new Error("Not implemented");
   }
   protected async initialize(): Promise<void> {
@@ -15,7 +16,7 @@ export abstract class OpenDataFileCreatorServiceInterfaceResolver {
   protected async data(): Promise<void> {
     throw new Error("Not implemented");
   }
-  public async write(params: ExportParams, fileWriter: CSVWriter): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<string> {
     throw new Error("Not implemented");
   }
 }
@@ -24,7 +25,7 @@ export abstract class OpenDataFileCreatorServiceInterfaceResolver {
   identifier: OpenDataFileCreatorServiceInterfaceResolver,
 })
 export class OpenDataFileCreatorService {
-  protected fileWriter: CSVWriter;
+  protected fileWriter: CSVWriter<CarpoolOpenDataListType>;
   protected params: ExportParams;
 
   constructor(
@@ -32,7 +33,7 @@ export class OpenDataFileCreatorService {
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(params: ExportParams, fileWriter: CSVWriter): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
   }
@@ -50,7 +51,7 @@ export class OpenDataFileCreatorService {
     await this.carpoolRepository.openDataList(this.params, this.fileWriter);
   }
 
-  public async write(params: ExportParams, fileWriter: CSVWriter): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<string> {
     try {
       await this.configure(params, fileWriter);
       await this.initialize();
