@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
 import { Export, ExportStatus } from "../models/Export.ts";
@@ -170,7 +171,7 @@ export abstract class ExportRepositoryInterfaceResolver {
 @provider({
   identifier: ExportRepositoryInterfaceResolver,
 })
-export class ExportRepository implements ExportRepositoryInterface {
+export class ExportRepository {
   protected readonly exportsTable = "export.exports";
   protected readonly recipientsTable = "export.recipients";
 
@@ -260,26 +261,24 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async error(id: number, error: string | Error): Promise<void> {
     // cast the Error
-    const { message, stack } = error instanceof Error && "message" in error
-      ? error
-      : new Error(error);
+    const { message, stack } = error instanceof Error && "message" in error ? error : new Error(error);
 
     // log error event
     await this.logger.failure(id, message);
 
     // update the export status
     await this.connection.getClient().query({
-      text:
-        `UPDATE ${this.exportsTable} SET status = $1, error = $2::json WHERE _id = $3`,
+      text: `UPDATE ${this.exportsTable} SET status = $1, error = $2::json WHERE _id = $3`,
       values: [ExportStatus.FAILURE, { message, stack }, id],
     });
   }
 
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
+      logger.info(`Export #${id} progress: ${progress}%`);
+
       await this.connection.getClient().query({
-        text:
-          `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
+        text: `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],
       });
     };
