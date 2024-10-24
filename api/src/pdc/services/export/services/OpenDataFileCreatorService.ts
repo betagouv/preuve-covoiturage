@@ -1,16 +1,13 @@
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
-import { ExportProgress } from "../repositories/ExportRepository.ts";
 
-export abstract class FileCreatorServiceInterfaceResolver {
-  protected async configure<T extends { [k: string]: unknown }>(
-    params: ExportParams,
-    fileWriter: CSVWriter<T>,
-  ): Promise<void> {
+export abstract class OpenDataFileCreatorServiceInterfaceResolver {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     throw new Error("Not implemented");
   }
   protected async initialize(): Promise<void> {
@@ -19,39 +16,26 @@ export abstract class FileCreatorServiceInterfaceResolver {
   protected async data(): Promise<void> {
     throw new Error("Not implemented");
   }
-  protected async help(): Promise<void> {
-    throw new Error("Not implemented");
-  }
-  public async write<T extends { [k: string]: unknown }>(
-    params: ExportParams,
-    fileWriter: CSVWriter<T>,
-    progress?: ExportProgress,
-  ): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<string> {
     throw new Error("Not implemented");
   }
 }
 
 @provider({
-  identifier: FileCreatorServiceInterfaceResolver,
+  identifier: OpenDataFileCreatorServiceInterfaceResolver,
 })
-export class FileCreatorService {
-  protected fileWriter: any;
+export class OpenDataFileCreatorService {
+  protected fileWriter: CSVWriter<CarpoolOpenDataListType>;
   protected params: ExportParams;
-  protected progress: ExportProgress;
 
   constructor(
     protected carpoolRepository: CarpoolRepository,
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure<T extends { [k: string]: unknown }>(
-    params: ExportParams,
-    fileWriter: CSVWriter<T>,
-    progress?: ExportProgress,
-  ): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
-    this.progress = progress || (async () => {});
   }
 
   protected async initialize(): Promise<void> {
@@ -64,27 +48,14 @@ export class FileCreatorService {
     this.fileWriter.addDatasource("campaigns", campaigns);
 
     // loop through the carpool data and append rows to the file
-    await this.carpoolRepository.list(
-      this.params,
-      this.fileWriter,
-      this.progress,
-    );
+    await this.carpoolRepository.openDataList(this.params, this.fileWriter);
   }
 
-  protected async help(): Promise<void> {
-    await this.fileWriter.printHelp();
-  }
-
-  public async write<T extends { [k: string]: unknown }>(
-    params: ExportParams,
-    fileWriter: CSVWriter<T>,
-    progress?: ExportProgress,
-  ): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<string> {
     try {
-      await this.configure(params, fileWriter, progress);
+      await this.configure(params, fileWriter);
       await this.initialize();
       await this.data();
-      await this.help();
       await this.fileWriter.close();
       await this.fileWriter.compress();
 
@@ -92,7 +63,7 @@ export class FileCreatorService {
 
       return this.fileWriter.path;
     } catch (e) {
-      logger.error("FileCreatorService", e.message);
+      logger.error("OpenDataFileCreatorService", e.message);
       await this.fileWriter.close();
       throw e;
     }

@@ -2,13 +2,7 @@ import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { ExportLog, ExportLogEvent } from "../models/ExportLog.ts";
 
-export interface LogRepositoryInterface {
-  add(export_id: number, type: ExportLogEvent, message: string): Promise<void>;
-  list(export_id: number): Promise<ExportLog[]>;
-}
-
-export abstract class LogRepositoryInterfaceResolver
-  implements LogRepositoryInterface {
+export abstract class LogRepositoryInterfaceResolver {
   public async add(
     export_id: number,
     type: ExportLogEvent,
@@ -24,7 +18,7 @@ export abstract class LogRepositoryInterfaceResolver
 @provider({
   identifier: LogRepositoryInterfaceResolver,
 })
-export class LogRepository implements LogRepositoryInterface {
+export class LogRepository {
   protected readonly table = "export.logs";
 
   constructor(protected connection: PostgresConnection) {}

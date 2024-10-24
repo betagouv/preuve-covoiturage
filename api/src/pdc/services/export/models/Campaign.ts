@@ -22,14 +22,13 @@ export class Campaign {
   ) {
     this.start_at = new Date(raw.start_date).getTime();
     this.end_at = new Date(raw.end_date).getTime();
-    this.tz = get(raw, "params.tz", "Europe/Paris");
+    this.tz = get(raw, "params.tz", "Europe/Paris") as Timezone;
 
     // boosters are configured in the campaign timezone
     // convert them to UTC but keep the date only.
     this.boosters_utc = new Set(
-      get(raw, "params.booster_dates", []).map((s: string) =>
-        toTzString(s, this.tz, "yyyy-MM-dd")
-      ),
+      get(raw, "params.booster_dates", [])!
+        .map((s: string) => toTzString(s, this.tz, "yyyy-MM-dd")),
     );
   }
 

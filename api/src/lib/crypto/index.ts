@@ -50,6 +50,16 @@ export async function createSignatory(
   };
 }
 
+/**
+ * Create a hash from a string
+ *
+ * ```ts
+ * const hash = await createHash("Hello World");
+ * ```
+ *
+ * @param message
+ * @returns
+ */
 export async function createHash(message: string): Promise<string> {
   const msgUint8 = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);

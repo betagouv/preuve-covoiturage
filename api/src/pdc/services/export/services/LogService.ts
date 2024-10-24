@@ -10,18 +10,7 @@ export enum LogLevels {
   DEBUG = "debug",
 }
 
-export type LogServiceInterface = {
-  created(export_id: number, message?: string): Promise<void>;
-  cancelled(export_id: number, message?: string): Promise<void>;
-  running(export_id: number, message?: string): Promise<void>;
-  success(export_id: number, message?: string): Promise<void>;
-  failure(export_id: number, message?: string): Promise<void>;
-  send(export_id: number, message?: string): Promise<void>;
-  upload(export_id: number, message?: string): Promise<void>;
-};
-
-export abstract class LogServiceInterfaceResolver
-  implements LogServiceInterface {
+export abstract class LogServiceInterfaceResolver {
   public async created(
     export_id: number,
     message = "Export created",
