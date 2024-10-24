@@ -42,6 +42,7 @@ describe.skip("InseePays2022", () => {
     await connection.query(`
       DROP TABLE IF EXISTS public.dataset_migration
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {

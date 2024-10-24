@@ -12,12 +12,11 @@ export async function* streamXlsx<T>(
     startRow: 0,
     ...sheetOptions,
   };
-
-  const data = xlsx.utils.sheet_to_json<T>(file.Sheets[options.name], {
+  const data = xlsx.utils.sheet_to_json(file.Sheets[options.name], {
     range: options.startRow,
   });
   while (data.length > 0) {
-    const chunk = data.splice(0, chunkSize);
+    const chunk = data.splice(0, chunkSize) as T[];
     yield chunk;
   }
   return;

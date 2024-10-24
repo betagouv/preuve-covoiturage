@@ -22,14 +22,14 @@ export class InseeReg2021 extends AbstractDataset {
     ["nccenr", ["4", "varchar"]],
     ["libelle", ["5", "varchar"]],
   ]);
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN reg SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly tableIndex = "reg";
-  readonly importSql = `
+  override readonly tableIndex = "reg";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
     SET l_reg = t.libelle
     FROM ${this.tableWithSchema} t

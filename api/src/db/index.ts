@@ -64,26 +64,23 @@ async function runMigrations(config: string) {
   await pool.end();
 }
 
-export async function migrate(config: string, skipDatasets = true) {
+export async function migrate(config: string) {
   if (!(env_or_false("SKIP_GEO_MIGRATIONS"))) {
     const geoInstance = buildMigrator({
       pool: {
         connectionString: config,
       },
-      ...(
-        skipDatasets
-          ? {
-            app: {
-              targetSchema: "geo",
-              datasets: new Set(),
-            },
-          }
-          : {}
-      ),
+      app: {
+        targetSchema: "geo",
+        datasets: new Set(),
+      },
     });
+    console.debug("[etl] prepare migrator");
     await geoInstance.prepare();
+    console.debug("[etl] run migrator");
     await geoInstance.run();
     await geoInstance.pool.end();
+    console.debug("[etl] done!");
   }
   if (!(env_or_false("SKIP_SQL_MIGRATIONS"))) {
     await runMigrations(config);

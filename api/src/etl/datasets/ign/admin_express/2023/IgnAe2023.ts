@@ -1,8 +1,8 @@
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 import {
   IgnDataset,
   TransformationParamsInterface,
 } from "../../common/IgnDataset.ts";
-import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2023 extends IgnDataset {
   static producer = "ign";
@@ -10,13 +10,13 @@ export class IgnAe2023 extends IgnDataset {
   static year = 2023;
   static table = "ign_ae_2023";
 
-  readonly rows: Map<string, [string, string]> = new Map([
+  override readonly rows: Map<string, [string, string]> = new Map([
     ["arr", ["INSEE_ARM", "varchar"]],
     ["com", ["INSEE_COM", "varchar"]],
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  readonly beforeSql: string = `
+  override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
       arr varchar(5),
@@ -26,15 +26,14 @@ export class IgnAe2023 extends IgnDataset {
       centroid GEOMETRY(POINT, 4326),
       geom_simple GEOMETRY(MULTIPOLYGON, 4326)
     );
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_id_index ON ${this.tableWithSchema} USING btree (id);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_geom_index ON ${this.tableWithSchema} USING gist (geom);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
+    CREATE INDEX IF NOT EXISTS ign_ae_2023_id_index ON ${this.tableWithSchema} USING btree (id);
+    CREATE INDEX IF NOT EXISTS ign_ae_2023_geom_index ON ${this.tableWithSchema} USING gist (geom);
+    CREATE INDEX IF NOT EXISTS ign_ae_2023_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
+    CREATE INDEX IF NOT EXISTS ign_ae_2023_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
   static url =
     // eslint-disable-next-line max-len
-    "https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_WGS84G_PACK_2023-05-04$ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/file/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z";
-
+    "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z";
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]
   > = [
@@ -66,7 +65,7 @@ export class IgnAe2023 extends IgnDataset {
     ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
   ];
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,
