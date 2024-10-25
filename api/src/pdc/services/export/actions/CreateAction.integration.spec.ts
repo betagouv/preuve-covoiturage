@@ -31,6 +31,7 @@ import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportS
 import { Export, ExportStatus, ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServiceProvider.ts";
+import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
 import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "@/shared/export/create.contract.ts";
 
 const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(
@@ -137,7 +138,7 @@ describe("CreateAction V3", () => {
       defaultContext,
       handlerConfigV3,
       params,
-      async (response: ResultInterfaceV3) => {
+      async ({ data: response }: WithHttpStatus<ResultInterfaceV3>) => {
         // assert the response
         const { uuid: _uuid, ...actual } = response;
         assertEquals(actual, expected);
@@ -231,7 +232,7 @@ describe("CreateAction V3", () => {
       defaultContext,
       handlerConfigV3,
       params,
-      (response: ResultInterfaceV3) => {
+      ({ data: response }: WithHttpStatus<ResultInterfaceV3>) => {
         assertEquals(response.target, ExportTarget.TERRITORY);
       },
     );
@@ -254,7 +255,7 @@ describe("CreateAction V3", () => {
       set(defaultContext, "call.user.territory_id", 1),
       handlerConfigV3,
       params,
-      async (response: ResultInterfaceV3) => {
+      async ({ data: response }: WithHttpStatus<ResultInterfaceV3>) => {
         // assert response
         assertEquals(response.target, ExportTarget.TERRITORY);
 
@@ -289,7 +290,7 @@ describe("CreateAction V3", () => {
       set(defaultContext, "call.user.operator_id", 2),
       handlerConfigV3,
       params,
-      async (response: ResultInterfaceV3) => {
+      async ({ data: response }: WithHttpStatus<ResultInterfaceV3>) => {
         // assert response
         assertEquals(response.target, ExportTarget.OPERATOR);
 
