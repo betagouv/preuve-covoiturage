@@ -437,11 +437,10 @@ components:
       description: |
         Etiquette possible pour un cas de fraude détectée de manière asynchrone à l'envoi du trajet, au sein de plusieurs opérateurs :
           - `interoperator_fraud`
-
-        Raisons possibles qui ont conduit à la detection
-          - le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent.
-          - le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
-          - le participant a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+        Etiquette possible pour un cas de fraude détectée :
+          - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`) 
+          - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+          - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
     anomaly_label:
       type: string
       enum:
