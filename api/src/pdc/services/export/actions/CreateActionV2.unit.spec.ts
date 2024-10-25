@@ -1,9 +1,6 @@
 import { assertEquals, describe, it, sinon } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import {
-  ParamsInterfaceV2,
-  ParamsInterfaceV3,
-} from "@/shared/export/create.contract.ts";
+import { ParamsInterfaceV2, ParamsInterfaceV3 } from "@/shared/export/create.contract.ts";
 import { CreateActionV2 } from "./CreateActionV2.ts";
 
 // ----------------------------------------------------------------------------------------
@@ -16,7 +13,12 @@ describe("CreateActionV2", () => {
   const kernel = new (class extends KernelInterfaceResolver {})();
   sinon.stub(kernel, "call").callsFake(
     (_signature: string, params: unknown) =>
-      new Promise((resolve) => resolve(params)),
+      new Promise((resolve) =>
+        resolve({
+          meta: { httpStatus: 201 },
+          data: params,
+        })
+      ),
   );
 
   // ----------------------------------------------------------------------------------------
@@ -122,7 +124,10 @@ describe("CreateActionV2", () => {
     counter++;
     it(`CreateActionV2 should convert params to V3 - #${counter}`, async () => {
       const action = new CreateActionV2(kernel);
-      assertEquals(await action["handle"](v2, context), expected);
+      assertEquals(await action["handle"](v2, context), {
+        meta: { httpStatus: 201 },
+        data: expected,
+      });
     });
   }
 });
