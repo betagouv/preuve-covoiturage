@@ -7,7 +7,7 @@ export function VitrineFooter() {
       id='footer'
       linkList={[
         {
-          categoryName: 'Startup d\'Etat Covoiturage.gouv',
+          categoryName: 'Startup d\'Etat Covoiturage.beta.gouv',
           links: [
             {
               linkProps: {
@@ -20,21 +20,21 @@ export function VitrineFooter() {
             },
             {
               linkProps: {
-                href: 'https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage',
+                href: 'https://doc.covoiturage.beta.gouv.fr',
                 target:'_blank',
-                title:'Nos services | nouvelle fenêtre',
-                "aria-label":'Nos services | nouvelle fenêtre'
+                title:'Documentation | nouvelle fenêtre',
+                "aria-label":'Documentation | nouvelle fenêtre'
               },
-              text: 'Nos services'
+              text: 'Documentation'
             },
             {
               linkProps: {
-                href: 'https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions',
+                href: 'https://app.covoiturage.beta.gouv.fr/stats',
                 target:'_blank',
-                title:'Foire aux questions | nouvelle fenêtre',
-                "aria-label":'Foire aux questions | nouvelle fenêtre'
+                title:'Notre impact | nouvelle fenêtre',
+                "aria-label":'Notre impact | nouvelle fenêtre'
               },
-              text: 'FAQ'
+              text: 'Notre impact'
             },
           ]
         },
@@ -82,12 +82,12 @@ export function VitrineFooter() {
       ]}
       accessibility='partially compliant'
       termsLinkProps={{
-        href: '/mentions-legales',
+        href: 'https://observatoire.covoiturage.gouv.fr/mentions-legales',
         title: 'mentions légales | Observatoire.covoiturage.gouv.fr',
         "aria-label": 'mentions légales'
       }}
       accessibilityLinkProps={{
-        href: '/accessibilite',
+        href: 'https://observatoire.covoiturage.gouv.fr/accessibilite',
         title: 'Accessibilité | Observatoire.covoiturage.gouv.fr',
         "aria-label": 'Accessibilité'
       }}
@@ -95,20 +95,25 @@ export function VitrineFooter() {
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
       operatorLogo={{
         alt: 'Registre de Preuve de Covoiturage',
-        imgUrl: 'https://cms.covoiturage.beta.gouv.fr/assets/9733ec41-031e-4a93-b253-d4f20a109151.png',
+        imgUrl: 'https://static.covoiturage.beta.gouv.fr/logo_rpc_d82e4b3a4a.png',
         orientation: 'horizontal',
       }}
       partnersLogos={{
         sub: [
           {
-            alt: 'CEREMA',
-            href: 'https://www.cerema.fr/fr/actualites/covoiturage-dossier-du-cerema',
-            imgUrl: 'https://www.cerema.fr/themes/custom/uas_base/images/LogoCerema_horizontal.svg',
-          },
-          {
             alt: 'ADEME',
             href: 'https://www.ademe.fr',
             imgUrl: 'https://www.ademe.fr/wp-content/uploads/2022/11/ademe-logo-2022-1.svg',
+          },
+          {
+            alt: 'beta.gouv.fr',
+            href: 'https://beta.gouv.fr/',
+            imgUrl: 'https://static.covoiturage.beta.gouv.fr/Capture_d_ecran_2024_07_11_a_18_30_59_ccd74c153f.png',
+          },
+          {
+            alt: 'Ile de france mobilité',
+            href: 'https://www.iledefrance-mobilites.fr/',
+            imgUrl: 'https://static.covoiturage.beta.gouv.fr/Logo_Ile_de_france_Mobilite_1668794ffa.png',
           },
         ],
       }}

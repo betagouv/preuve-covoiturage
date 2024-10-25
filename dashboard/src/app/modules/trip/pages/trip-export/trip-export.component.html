@@ -55,13 +55,25 @@
         </div>
       </div>
     
-      <div>
+      <div *ngIf="showTerritorySelector()">
         <p>Zone géographique</p>
         <app-territories-autocomplete   
         [parentForm]="form"></app-territories-autocomplete>
       </div>
 
-      <div *ngIf="!authenticationService.isOperatorOrAdmin()" style="width: 100%;">
+      <div class="support-notice">
+        <p>
+          Retrouvez les spécifications sur <a href="https://tech.covoiturage.beta.gouv.fr/operateurs/exports-de-trajets.html" target="_blank">notre documentation technique</a>.
+        </p>
+        <p>
+          Pour toute demande particulière, vous pouvez nous contacter directement :
+          <a href="mailto:technique@covoiturage.beta.gouv.fr">
+            technique@covoiturage.beta.gouv.fr
+          </a>
+        </p>
+      </div>
+
+      <div *ngIf="showOperatorSelector()" style="width: 100%;">
         <p>Opérateurs</p>
         <app-operators-checkboxes></app-operators-checkboxes>
       </div>

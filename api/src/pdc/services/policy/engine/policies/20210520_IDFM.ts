@@ -90,6 +90,15 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
         OperatorsEnum.MOBICOOP,
       ],
     },
+    {
+      date: new Date("2024-07-01T00:00:00+0100"),
+      operators: [
+        OperatorsEnum.BLABLACAR_DAILY,
+        OperatorsEnum.KAROS,
+        OperatorsEnum.YNSTANT,
+        OperatorsEnum.MOBICOOP,
+      ],
+    },
   ];
 
   protected slices: RunnableSlices = [
@@ -130,6 +139,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     "2023-08-12",
     "2023-08-13",
     "2023-08-14",
+    "2024-10-25",
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -189,6 +199,9 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
       tz: "Europe/Paris",
       slices: this.slices,
       operators: getOperatorsAt(this.operators),
+      allTimeOperators: Array.from(
+        new Set(this.operators.flatMap((entry) => entry.operators)),
+      ),
       limits: {
         glob: this.max_amount,
       },

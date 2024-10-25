@@ -9,7 +9,7 @@ import {
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
-import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
+import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import {
   assertErrorHandler,
   assertHandler,
@@ -196,7 +196,7 @@ describe("RegisterCeeAction", () => {
           token,
           journey_id: 1,
           datetime: "2024-03-15T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
         });
       },
     );
@@ -229,7 +229,7 @@ describe("RegisterCeeAction", () => {
         assertEquals(resp, {
           journey_id: 2,
           datetime: "2024-03-16T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
           token,
         });
       },
@@ -262,38 +262,11 @@ describe("RegisterCeeAction", () => {
         assertEquals(resp, {
           journey_id: 3,
           datetime: "2024-03-16T00:15:00.000Z",
-          status: CarpoolV1StatusEnum.Ok,
+          status: CarpoolStatusEnum.Pending,
           token,
         });
       },
     );
-  });
-
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  it("Ensure deprecated carpool_id are properly inserted", async () => {
-    const result = await db.connection.getClient().query(`
-      SELECT carpool_id, operator_id, operator_journey_id
-      FROM cee.cee_applications
-      ORDER BY operator_journey_id
-    `);
-    assertEquals(result.rowCount, 3);
-    assertObjectMatch(result.rows[0], {
-      carpool_id: 1,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-1",
-    });
-    assertObjectMatch(result.rows[1], {
-      carpool_id: 3,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-2",
-    });
-    assertObjectMatch(result.rows[2], {
-      carpool_id: 5,
-      operator_id: 1,
-      operator_journey_id: "operator_journey_id-3",
-    });
   });
 
   it("Conflict", async () => {

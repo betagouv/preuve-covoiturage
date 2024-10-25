@@ -1,24 +1,15 @@
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportParams } from "../models/ExportParams.ts";
-import { XLSXWriter } from "../models/XLSXWriter.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { ExportProgress } from "../repositories/ExportRepository.ts";
 
-export type FileCreatorServiceInterface = {
-  write(
+export abstract class FileCreatorServiceInterfaceResolver {
+  protected async configure<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: XLSXWriter,
-    progress?: ExportProgress,
-  ): Promise<string>;
-};
-
-export abstract class FileCreatorServiceInterfaceResolver
-  implements FileCreatorServiceInterface {
-  protected async configure(
-    params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter<T>,
   ): Promise<void> {
     throw new Error("Not implemented");
   }
@@ -31,9 +22,9 @@ export abstract class FileCreatorServiceInterfaceResolver
   protected async help(): Promise<void> {
     throw new Error("Not implemented");
   }
-  public async write(
+  public async write<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<string> {
     throw new Error("Not implemented");
@@ -44,7 +35,7 @@ export abstract class FileCreatorServiceInterfaceResolver
   identifier: FileCreatorServiceInterfaceResolver,
 })
 export class FileCreatorService {
-  protected fileWriter: XLSXWriter;
+  protected fileWriter: any;
   protected params: ExportParams;
   protected progress: ExportProgress;
 
@@ -53,9 +44,9 @@ export class FileCreatorService {
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(
+  protected async configure<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<void> {
     this.params = params;
@@ -68,14 +59,11 @@ export class FileCreatorService {
   }
 
   protected async data(): Promise<void> {
-    // TODO load campaigns to access their configurations
-    // TODO list carpools
-    // TODO enrich rows with computed fields based on campaigns and carpools
+    // pass campaign data to the file writer to enrich fields
     const campaigns = await this.campaignRepository.list();
-
-    // add boosters as data source to file writer
     this.fileWriter.addDatasource("campaigns", campaigns);
 
+    // loop through the carpool data and append rows to the file
     await this.carpoolRepository.list(
       this.params,
       this.fileWriter,
@@ -87,9 +75,9 @@ export class FileCreatorService {
     await this.fileWriter.printHelp();
   }
 
-  public async write(
+  public async write<T extends { [k: string]: unknown }>(
     params: ExportParams,
-    fileWriter: XLSXWriter,
+    fileWriter: CSVWriter<T>,
     progress?: ExportProgress,
   ): Promise<string> {
     try {
@@ -100,9 +88,9 @@ export class FileCreatorService {
       await this.fileWriter.close();
       await this.fileWriter.compress();
 
-      logger.info(`File written to ${this.fileWriter.workbookPath}`);
+      logger.info(`File written to ${this.fileWriter.path}`);
 
-      return this.fileWriter.workbookPath;
+      return this.fileWriter.path;
     } catch (e) {
       logger.error("FileCreatorService", e.message);
       await this.fileWriter.close();

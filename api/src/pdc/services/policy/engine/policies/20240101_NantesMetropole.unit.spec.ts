@@ -1,4 +1,4 @@
-import { it, stub } from "@/dev_deps.ts";
+import { it, sinon } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
@@ -45,13 +45,15 @@ const process = makeProcessHelper(defaultCarpool);
 
 // Stub the mode method to control the booster date in tests
 const boosterDates: string[] = ["2024-04-16"];
-stub(Handler, "mode").callsFake((date: Date, regular: any, booster: any) => {
-  const ymd = date.toISOString().slice(0, 10);
-  return boosterDates.includes(ymd) ? booster : regular;
-});
+sinon.stub(Handler, "mode").callsFake(
+  (date: Date, regular: any, booster: any) => {
+    const ymd = date.toISOString().slice(0, 10);
+    return boosterDates.includes(ymd) ? booster : regular;
+  },
+);
 
 it(
-  "should work with exclusion",
+  "should work with exclusions",
   async () =>
     await process(
       {
@@ -102,17 +104,19 @@ it(
           { distance: 5_000, seats: 2, driver_identity_key: "one" },
           { distance: 20_000, driver_identity_key: "two" },
           { distance: 25_000, driver_identity_key: "two" },
+          { distance: 29_500, driver_identity_key: "two" },
+          { distance: 30_000, driver_identity_key: "two" },
           { distance: 55_000, driver_identity_key: "two" },
           { distance: 61_000, driver_identity_key: "two" },
         ],
         meta: [],
       },
       {
-        incentive: [0, 75, 150, 105, 155, 200, 0],
+        incentive: [0, 75, 150, 105, 155, 200, 200, 200, 0],
         meta: [
           {
             key: "max_amount_restriction.global.campaign.global",
-            value: 685,
+            value: 1085,
           },
           {
             key: "max_amount_restriction.0-one.month.3-2024",
@@ -124,11 +128,11 @@ it(
           },
           {
             key: "max_amount_restriction.0-two.month.3-2024",
-            value: 460,
+            value: 860,
           },
           {
             key: "max_amount_restriction.0-two.year.2024",
-            value: 460,
+            value: 860,
           },
         ],
       },

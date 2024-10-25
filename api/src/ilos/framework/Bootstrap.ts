@@ -9,6 +9,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { HttpTransport } from "@/ilos/transport-http/index.ts";
 import { QueueTransport } from "@/ilos/transport-redis/index.ts";
+import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
 import { Kernel } from "./Kernel.ts";
@@ -24,7 +25,7 @@ const defaultBootstrapObject: BootstrapType = {
 };
 
 export class Bootstrap {
-  private readonly kernel: () => NewableType<KernelInterface>;
+  public readonly kernel: () => NewableType<KernelInterface>;
   public serviceProviders: NewableType<ServiceContainerInterface>[];
   private transports: {
     [key: string]: (kernel: KernelInterface) => TransportInterface;
@@ -137,6 +138,9 @@ export class Bootstrap {
     ...opts: any[]
   ): Promise<TransportInterface> {
     logger.info("Bootstraping app...");
+
+    const tmpdir = getTmpDir();
+    logger.info(`Using temporary directory: ${tmpdir}`);
 
     return await this.start(command, ...opts);
   }

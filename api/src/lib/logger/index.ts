@@ -13,14 +13,14 @@ log.setup({
   },
 });
 
-export function getPerformanceTimer() {
+export const getPerformanceTimer = () => {
   const start = performance.now();
   return {
     stop: () => {
       return performance.now() - start;
     },
   };
-}
+};
 
 const { info, warn, debug, error } = log;
 

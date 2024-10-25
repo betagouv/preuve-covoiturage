@@ -1,25 +1,16 @@
 import { CommandExtension } from "@/ilos/cli/index.ts";
-import {
-  ExtensionInterface,
-  NewableType,
-  serviceProvider,
-} from "@/ilos/common/index.ts";
+import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { S3StorageProvider } from "@/pdc/providers/storage/index.ts";
-import {
-  ValidatorExtension,
-  ValidatorMiddleware,
-} from "@/pdc/providers/validator/index.ts";
-import {
-  bindingV2 as createBindingV2,
-  bindingV3 as createBindingV3,
-} from "@/shared/export/create.schema.ts";
+import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
+import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
+import { bindingV2 as createBindingV2, bindingV3 as createBindingV3 } from "@/shared/export/create.schema.ts";
 import { CreateActionV2 } from "./actions/CreateActionV2.ts";
 import { CreateActionV3 } from "./actions/CreateActionV3.ts";
 import { CreateCommand } from "./commands/CreateCommand.ts";
-import { DebugCommand } from "./commands/DebugCommand.ts";
+import { DataGouvCommand } from "./commands/DataGouvCommand.ts";
 import { ProcessCommand } from "./commands/ProcessCommand.ts";
 import { config } from "./config/index.ts";
 import { CampaignRepository } from "./repositories/CampaignRepository.ts";
@@ -31,6 +22,7 @@ import { FieldService } from "./services/FieldService.ts";
 import { FileCreatorService } from "./services/FileCreatorService.ts";
 import { LogService } from "./services/LogService.ts";
 import { NameService } from "./services/NameService.ts";
+import { OpenDataFileCreatorService } from "./services/OpenDataFileCreatorService.ts";
 import { RecipientService } from "./services/RecipientService.ts";
 import { TerritoryService } from "./services/TerritoryService.ts";
 
@@ -38,22 +30,24 @@ import { TerritoryService } from "./services/TerritoryService.ts";
 // and are used to implement the business logic of the application.
 // They are injected in commands and handlers.
 const services = [
-  FileCreatorService,
   FieldService,
-  NameService,
-  TerritoryService,
+  FileCreatorService,
+  OpenDataFileCreatorService,
   LogService,
+  NameService,
   RecipientService,
+  TerritoryService,
 ];
 
 // Repositories are from the ./repositories folder
 // and are used to access the database or other data sources.
 const repositories = [
-  ExportRepository,
-  RecipientRepository,
   CampaignRepository,
   CarpoolRepository,
+  ExportRepository,
   LogRepository,
+  RecipientRepository,
+  TerritoryRepository,
 ];
 
 // External providers are from the @pdc namespace
@@ -61,7 +55,7 @@ const externalProviders = [S3StorageProvider];
 
 // Commands are from the ./commands folder
 // and are used to implement the CLI commands.
-const commands = [DebugCommand, CreateCommand, ProcessCommand];
+const commands = [CreateCommand, DataGouvCommand, ProcessCommand];
 
 // Handlers are from the ./actions folder
 // and are used to implement the API endpoints (also called actions).

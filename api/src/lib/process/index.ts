@@ -1,8 +1,8 @@
 import { logger } from "@/lib/logger/index.ts";
 
-export function exit(code: number | undefined) {
+export const exit = (code: number | undefined) => {
   Deno.exit(code);
-}
+};
 
 export function cwd(): string {
   return Deno.cwd();

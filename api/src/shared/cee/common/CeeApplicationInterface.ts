@@ -1,8 +1,8 @@
-import { CarpoolV1StatusEnum } from '@/pdc/providers/carpool/interfaces/index.ts';
+import { CarpoolV1StatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
 
 export enum CeeJourneyTypeEnum {
-  Short = 'short',
-  Long = 'long',
+  Short = "short",
+  Long = "long",
 }
 export type PhoneTrunc = string;
 export type LastNameTrunc = string;
@@ -40,7 +40,9 @@ export interface CeeLongApplicationInterface {
   identity_key?: string;
 }
 
-export type CeeApplicationInterface = CeeShortApplicationInterface | CeeLongApplicationInterface;
+export type CeeApplicationInterface =
+  | CeeShortApplicationInterface
+  | CeeLongApplicationInterface;
 
 export interface CeeSimulateInterface {
   journey_type: CeeJourneyTypeEnum;
@@ -63,13 +65,14 @@ export interface CeeImportInterface<T> {
 }
 
 export interface CeeImportStandardizedApplicationIdentityInterface {
-  cee_application_type: 'standardized';
+  cee_application_type: "standardized";
   cee_application_uuid: string;
   identity_key: string;
 }
 
-export interface CeeImportSpecificApplicationIdentityInterface extends CeeImportInterface<Date> {
-  cee_application_type: 'specific';
+export interface CeeImportSpecificApplicationIdentityInterface
+  extends CeeImportInterface<Date> {
+  cee_application_type: "specific";
   identity_key: string;
 }
 

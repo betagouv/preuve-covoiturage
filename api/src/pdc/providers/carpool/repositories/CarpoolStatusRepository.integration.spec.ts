@@ -1,6 +1,11 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolAnomalyStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/common.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
-import sql, { raw } from "../helpers/sql.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
 import { insertableAcquisitionStatus } from "../mocks/database/status.ts";
@@ -40,5 +45,56 @@ describe("CarpoolStatusRepository", () => {
     `);
 
     assertEquals(result.rows.pop()?.acquisition_status, data.status);
+  });
+
+  it("Should create acquisition term violation error", async () => {
+    await repository.setTermsViolationErrorLabels(carpool_id, [
+      "test",
+      "test2",
+    ]);
+    const result = await db.connection.getClient().query(sql`
+      SELECT * FROM ${raw(repository.termsViolationErrorLabelTable)}
+      WHERE carpool_id = ${carpool_id}
+    `);
+    assertEquals(result.rows.pop()?.labels, ["test", "test2"]);
+    await repository.setTermsViolationErrorLabels(carpool_id, []);
+    const result2 = await db.connection.getClient().query(sql`
+      SELECT * FROM ${raw(repository.termsViolationErrorLabelTable)}
+      WHERE carpool_id = ${carpool_id}
+    `);
+    assertEquals(result2.rows.pop()?.labels, []);
+  });
+
+  it("Should get status", async () => {
+    const result = await repository.getStatusByOperatorJourneyId(
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    assertEquals(result, {
+      acquisition_status: CarpoolAcquisitionStatusEnum.Canceled,
+      anomaly_status: CarpoolAnomalyStatusEnum.Pending,
+      fraud_status: CarpoolFraudStatusEnum.Pending,
+      created_at: result?.created_at,
+    });
+  });
+
+  it("Should list operator journey_id", async () => {
+    const start = new Date(insertableCarpool.start_datetime.valueOf() - 1000);
+    const end = new Date(insertableCarpool.start_datetime.valueOf() + 1000);
+    const result = await repository.getOperatorJourneyIdByStatus({
+      operator_id: insertableCarpool.operator_id,
+      start,
+      end,
+      limit: 1,
+      offset: 0,
+      status: [
+        {
+          acquisition_status: CarpoolAcquisitionStatusEnum.Canceled,
+        },
+      ],
+    });
+    assertEquals(result, [{
+      operator_journey_id: insertableCarpool.operator_journey_id,
+    }]);
   });
 });

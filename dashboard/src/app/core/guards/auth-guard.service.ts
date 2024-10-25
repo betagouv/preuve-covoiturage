@@ -1,7 +1,7 @@
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -10,25 +10,25 @@ import {
   Router,
   RouterStateSnapshot,
   UrlTree,
-} from '@angular/router';
+} from "@angular/router";
 
-import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
-import { Groups } from '../enums/user/groups';
-import { User } from '../entities/authentication/user';
+import { AuthenticationService as Auth } from "~/core/services/authentication/authentication.service";
+import { User } from "../entities/authentication/user";
+import { Groups } from "../enums/user/groups";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  private readonly DEFAULT_HOME = '/trip/stats';
-  private readonly TERRITORY_HOME = '/campaign';
-  private readonly TERRITORY_DEMO_HOME = '/demo';
+  private readonly DEFAULT_HOME = "/campaign";
+  private readonly TERRITORY_HOME = "/campaign";
+  private readonly TERRITORY_DEMO_HOME = "/demo";
 
   // map enums to their method counterpart
   private readonly groupsMap = {
-    [Groups.Registry]: 'isRegistry',
-    [Groups.Territory]: 'isTerritory',
-    [Groups.Operator]: 'isOperator',
+    [Groups.Registry]: "isRegistry",
+    [Groups.Territory]: "isTerritory",
+    [Groups.Operator]: "isOperator",
   };
 
   constructor(
@@ -36,20 +36,31 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     private auth: Auth,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> {
     return this.canActivateFn(route, state);
   }
 
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+  canActivateChild(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> {
     return this.canActivateFn(route, state);
   }
 
   // Connected users can load all modules
   canLoad(): Observable<boolean | UrlTree> {
-    return this.auth.check().pipe(map((user) => !!user || this.router.parseUrl('/login')));
+    return this.auth.check().pipe(
+      map((user) => !!user || this.router.parseUrl("/login")),
+    );
   }
 
-  private canActivateFn(baseRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+  private canActivateFn(
+    baseRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> {
     let route = baseRoute;
     while (route.firstChild) route = route.firstChild;
 
@@ -59,7 +70,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         if (!user) return false;
 
         // baseUrl is always redirected
-        if (state.url === '/') return false;
+        if (state.url === "/") return false;
 
         // 1. check role
         const { roles } = route?.data;
@@ -80,10 +91,14 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       map((pass) => {
         if (pass) return true;
 
-        if (this.auth.isTerritoryDemo()) return this.router.parseUrl(this.TERRITORY_DEMO_HOME);
+        if (this.auth.isTerritoryDemo()) {
+          return this.router.parseUrl(this.TERRITORY_DEMO_HOME);
+        }
 
         // redirect to home page
-        return this.router.parseUrl(this.auth.isTerritory() ? this.TERRITORY_HOME : this.DEFAULT_HOME);
+        return this.router.parseUrl(
+          this.auth.isTerritory() ? this.TERRITORY_HOME : this.DEFAULT_HOME,
+        );
       }),
     );
   }

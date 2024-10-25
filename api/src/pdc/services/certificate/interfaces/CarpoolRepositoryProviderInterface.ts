@@ -1,7 +1,8 @@
-import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
 import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { IdentityIdentifiersInterface } from "@/shared/certificate/common/interfaces/IdentityIdentifiersInterface.ts";
+import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
 export interface FindParamsInterface {
-  identities: number[];
+  identities: IdentityIdentifiersInterface[];
   operator_id: number;
   tz: string;
   start_at: Date;

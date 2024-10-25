@@ -1,5 +1,7 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { classWidth, getLegendClasses, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -8,14 +10,18 @@ import { ArcLayer } from '@deck.gl/layers/typed';
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo, useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { useContext, useMemo } from 'react';
+import { GetApiUrl } from '../../../../helpers/api';
 
 export default function FluxMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
-  const apiUrl = Config.get('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`
+  ];
+  const url = GetApiUrl('flux', params);
   const { data, error, loading } = useApi<FluxDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const filteredData = useMemo(() => {
@@ -89,7 +95,13 @@ export default function FluxMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <DeckMap 
           title={title} 
           tooltip={tooltip} 

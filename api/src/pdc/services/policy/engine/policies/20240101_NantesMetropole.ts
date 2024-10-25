@@ -51,7 +51,9 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
 
   // Liste de dates au format YYYY-MM-DD dans la zone Europe/Paris
   // pour lesquelles les règles de booster s'appliquent
-  protected boosterDates: string[] = [];
+  protected boosterDates: string[] = [
+    // Configure the booster dates here!
+  ];
 
   protected operators: TimestampedOperators = [
     {
@@ -81,17 +83,22 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
     },
     {
       start: 17_000,
-      end: 60_000,
+      end: 29_500,
       fn: (ctx: StatelessContextInterface) => {
         // 0,10 euro par trajet par km par passager avec un maximum de 2,00 euros
         return perSeat(
           ctx,
           Math.min(
-            perKm(ctx, { amount: 10, offset: 17_000, limit: 60_000 }),
+            perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 }),
             200 - 75,
           ),
         );
       },
+    },
+    {
+      start: 29_500,
+      end: 60_000,
+      fn: () => 0,
     },
   ];
 
@@ -103,17 +110,22 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
     },
     {
       start: 17_000,
-      end: 60_000,
+      end: 29_500,
       fn: (ctx: StatelessContextInterface) => {
         // 0,10 euro par trajet par km par passager avec un maximum de 2,90 euros
         return perSeat(
           ctx,
           Math.min(
-            perKm(ctx, { amount: 10, offset: 17_000, limit: 60_000 }),
+            perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 }),
             290 - 165,
           ),
         );
       },
+    },
+    {
+      start: 29_500,
+      end: 60_000,
+      fn: () => 0,
     },
   ];
 
@@ -204,6 +216,9 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class
         : this.regularSlices,
       booster_dates: this.boosterDates,
       operators: getOperatorsAt(this.operators),
+      allTimeOperators: Array.from(
+        new Set(this.operators.flatMap((entry) => entry.operators)),
+      ),
       limits: {
         glob: this.max_amount,
       },

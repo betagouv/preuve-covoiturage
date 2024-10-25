@@ -1,5 +1,5 @@
 set dotenv-load
-
+set shell := ["bash", "-uc"] 
 cert_dir:=join(parent_directory(justfile_directory()),"docker","traefik","certs")
 key_dir:=join(parent_directory(justfile_directory()),"docker","api","certs")
 docker_compose_dev_file:=join(parent_directory(justfile_directory()),"docker-compose.dev.yml")
@@ -26,7 +26,7 @@ start *services="s3 postgres redis mailer":
 
 # Start docker services for e2e
 [private]
-start_e2e *services="s3 postgres redis mailer":
+start_e2e *services="s3 postgres redis mailer kc":
  just dc_e2e up -d {{ services }}
 
 # Stop docker services
@@ -88,6 +88,17 @@ migrate:
     --allow-ffi \
     src/db/main.ts
 
+# Run external data migrations
+external_data_migrate:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    src/external_data/index.ts
+
 # Seed data
 seed:
   just api seed
@@ -133,6 +144,10 @@ api *command:
 # List all the APP_ environment variables
 env:
   env | grep APP_ | sort | column -t -s=
+
+# cache
+cache:
+  deno cache --lock=deno.lock src/deps.ts src/dev_deps.ts
 
 # refresh the deno.lock file
 lock:

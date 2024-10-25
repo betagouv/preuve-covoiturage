@@ -34,10 +34,14 @@ export const description = `<p id="summary">
     <li><b>Le 06/04/2023</b></li>
     <li><b>Le 13/04/2023</b></li>
     <li><b>Du 12/08/2023 au 14/08/2023 inclus</b></li>
+    <li><b>Le 25/10/2024</b></li>
   </ul>
   <p>
-  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe C</b>.
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant proposant des preuves de classe C</b>.
   <p>
+  <p>
+  Klaxit ne fait plus partie des opérateurs partenaires depuis le juillet 2024
+  </p>
   Les trajets de classe B ne sont plus éligibles depuis 01/09/2022
   </p>
   </p>

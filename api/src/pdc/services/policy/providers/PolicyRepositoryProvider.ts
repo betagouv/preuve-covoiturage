@@ -245,13 +245,13 @@ export class PolicyRepositoryProvider
   async activeOperators(policy_id: number): Promise<number[]> {
     const query = {
       text: `
-        SELECT cc.operator_id
+        SELECT pi.operator_id
         FROM policy.incentives pi
-        JOIN carpool.carpools cc ON cc._id = pi.carpool_id
+        JOIN carpool_v2.carpools cc ON cc.operator_id = pi.operator_id AND cc.operator_journey_id = pi.operator_journey_id
         JOIN policy.policies pp ON pp._id = $1
         WHERE
-              cc.datetime >= pp.start_date
-          AND cc.datetime <  pp.end_date
+              cc.start_datetime >= pp.start_date
+          AND cc.start_datetime <  pp.end_date
           AND pi.policy_id = $1
           AND pi.state = 'regular'
         GROUP BY cc.operator_id

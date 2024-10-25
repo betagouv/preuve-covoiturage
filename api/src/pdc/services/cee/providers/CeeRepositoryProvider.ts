@@ -5,6 +5,7 @@ import {
   provider,
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { Uuid } from "@/pdc/providers/carpool/interfaces/index.ts";
 import {
   ApplicationCooldownConstraint,
@@ -29,10 +30,6 @@ export class CeeRepositoryProvider
   extends CeeRepositoryProviderInterfaceResolver {
   public readonly ceeApplicationsTable = "cee.cee_applications";
   public readonly errorTable = "cee.cee_application_errors";
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  public readonly carpoolV1Table = "carpool.carpools";
   public readonly carpoolV2Table = "carpool_v2.carpools";
   public readonly carpoolV2StatusTable = "carpool_v2.status";
   public readonly carpoolV2GeoTable = "carpool_v2.geo";
@@ -364,24 +361,6 @@ export class CeeRepositoryProvider
       throw new InvalidRequestException("Operator not found");
     }
 
-    /**
-     * @deprecated [carpool_v2_migration]
-     * Fetch and add the carpool_id from carpool.carpools to the CEE application
-     */
-    await this.connection.getClient().query<any>({
-      text: `
-        UPDATE ${this.ceeApplicationsTable} ce
-        SET carpool_id = c1._id
-        FROM ${this.carpoolV1Table} c1
-        WHERE c1.operator_id = ce.operator_id
-          AND c1.operator_journey_id = ce.operator_journey_id
-          AND c1.is_driver = true
-          AND c1.datetime >= '2024-01-01T00:00:00+00' -- hit the index!
-          AND ce._id = $1
-      `,
-      values: [res.rows[0]._id],
-    });
-
     // build the return object
     const result: RegisteredCeeApplication = {
       uuid: res.rows[0]?._id,
@@ -516,5 +495,51 @@ export class CeeRepositoryProvider
     r: T & { journey_id: string },
   ): T {
     return { ...r, journey_id: Number.parseInt(r.journey_id, 10) };
+  }
+
+  async findCeeByUuid(uuid: string): Promise<ExistingCeeApplication> {
+    const query = sql`
+        SELECT
+          ce._id as uuid,
+          ce.operator_id,
+          ce.operator_journey_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret,
+          cc.legacy_id as journey_id,
+          cs.acquisition_status,
+          cs.fraud_status
+        FROM ${raw(this.ceeApplicationsTable)} AS ce
+        JOIN ${raw(this.operatorTable)} AS op
+          ON op._id = ce.operator_id
+        LEFT JOIN ${raw(this.carpoolV2Table)} AS cc
+          ON ce.operator_id = cc.operator_id AND ce.operator_journey_id = cc.operator_journey_id
+        LEFT JOIN ${
+      raw(this.carpoolV2StatusTable)
+    } AS cs ON cc._id = cs.carpool_id
+        WHERE ce._id = ${uuid}
+        LIMIT 1
+    `;
+    const result = await this.connection.getClient().query<
+      ExistingCeeApplication & { journey_id: string }
+    >(query);
+    if (!result.rows.length) {
+      throw new NotFoundException();
+    }
+    return this.castOutput<ExistingCeeApplication>(result.rows[0]);
+  }
+
+  async deleteCeeByUuid(operator_id: number, uuid: string): Promise<void> {
+    const query = sql`
+      DELETE FROM ${raw(this.ceeApplicationsTable)}
+      WHERE _id = ${uuid} AND operator_id = ${operator_id}
+      RETURNING _id AS uuid
+    `;
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount === 0) {
+      throw new NotFoundException();
+    }
   }
 }

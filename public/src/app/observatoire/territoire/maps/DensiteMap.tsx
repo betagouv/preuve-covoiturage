@@ -1,6 +1,8 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
-import { classColor, getPeriod, jenks } from '@/helpers/analyse';
+import { DashboardContext } from '@/context/DashboardProvider';
+import { classColor, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -9,16 +11,13 @@ import bbox from '@turf/bbox';
 import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useMemo, useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { useContext, useMemo } from 'react';
 
 export default function DensiteMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const period = getPeriod(dashboard.params.year, dashboard.params.month);
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&start_date=${period.start_date}&end_date=${period.end_date}&zoom=8`;
+  const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&zoom=8`;
   const { data, error, loading } = useApi<DensiteDataInterface[]>(url);
   const mapStyle = Config.get<string>('observatoire.mapStyle');
 
@@ -78,7 +77,13 @@ export default function DensiteMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <DeckMap 
           title={mapTitle} 
           tooltip={tooltip} 

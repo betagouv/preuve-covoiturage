@@ -2,6 +2,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";
@@ -14,10 +15,6 @@ import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
-  /**
-   * @deprecated [carpool_v2_migration]
-   */
-  protected readonly carpoolV1Table = "carpool.carpools";
   protected readonly carpoolV2Table = "carpool_v2.carpools";
   protected readonly carpoolV2StatusTable = "carpool_v2.status";
   protected readonly carpoolV2GeoTable = "carpool_v2.geo";
@@ -36,22 +33,26 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     start_date: Date,
     end_date: Date,
   ): Promise<number[]> {
-    const result = await this.connection.getClient().query<any>({
-      text: `
-        select cc.operator_id
-        from policy.incentives pi
-        join ${this.carpoolV1Table} cc on cc._id = pi.carpool_id
-        where
-              pi.policy_id = $3
-          and pi.amount    >  0
-          and cc.datetime >= $1
-          and cc.datetime <  $2
-          and cc.status   = 'ok'
-        group by cc.operator_id
-        order by cc.operator_id
-      `,
-      values: [start_date, end_date, campaign_id],
-    });
+    const query = sql`
+      SELECT cc.operator_id
+      FROM ${raw(this.policyIncentivesTable)} pi
+      JOIN ${raw(this.carpoolV2Table)} cc
+        ON cc.operator_id = pi.operator_id
+        AND cc.operator_journey_id = pi.operator_journey_id
+      JOIN ${raw(this.carpoolV2StatusTable)} cs
+        ON cc._id = cs.carpool_id
+      WHERE pi.policy_id = ${campaign_id}
+        AND pi.amount    > 0
+        AND cc.start_datetime >= ${start_date}
+        AND cc.start_datetime  < ${end_date}
+        AND cs.acquisition_status = 'processed'
+        AND cs.fraud_status = 'passed'
+        AND cs.anomaly_status = 'passed'
+      GROUP BY cc.operator_id
+      ORDER BY cc.operator_id
+    `;
+
+    const result = await this.connection.getClient().query(query);
 
     return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }

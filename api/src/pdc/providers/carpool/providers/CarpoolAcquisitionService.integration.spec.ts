@@ -12,13 +12,10 @@ import {
   sinon as Sinon,
   SinonSandbox,
 } from "@/dev_deps.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
-import sql, { raw } from "../helpers/sql.ts";
-import {
-  insertableCarpool,
-  updatableCarpool,
-} from "../mocks/database/carpool.ts";
+import { insertableCarpool, updatableCarpool } from "../mocks/database/carpool.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
 import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
@@ -200,9 +197,7 @@ describe("CarpoolAcquistionService", () => {
       ...insertableCarpool,
       operator_journey_id: "operator_journey_id_2",
     };
-    await assertRejects(async () =>
-      await service.registerRequest({ ...data, api_version: 3 })
-    );
+    await assertRejects(async () => await service.registerRequest({ ...data, api_version: 3 }));
 
     assert(carpoolRepositoryL.register.calledOnce);
     assert(requestRepositoryL.save.calledOnce);
@@ -215,5 +210,61 @@ describe("CarpoolAcquistionService", () => {
         } WHERE operator_id = ${data.operator_id} AND operator_journey_id = ${data.operator_journey_id}`,
       );
     assertEquals(result.rows, []);
+  });
+
+  it("Should raise error if terms is violated", async () => {
+    const carpoolL = sinon.spy(lookupRepository);
+    const service = getService({
+      CarpoolLookupRepository: carpoolL,
+    });
+
+    const data = {
+      operator_id: 1,
+      created_at: new Date("2024-01-01T05:00:00.000Z"),
+      distance: 4_000,
+      driver_identity_key: "key_driver",
+      passenger_identity_key: "key_passenger",
+      start_datetime: new Date("2024-01-01T02:00:00.000Z"),
+      end_datetime: new Date("2024-01-01T04:00:00.000Z"),
+      operator_trip_id: "operator_trip_id",
+    };
+
+    const errors = await service.verifyTermsViolation({
+      ...data,
+      distance: 100,
+    });
+    assertEquals(errors, ["distance_too_short"]);
+    assertEquals(
+      carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
+      [
+        [
+          {
+            identity_key: ["key_driver", "key_passenger"],
+            start_date: {
+              max: new Date("2024-01-01T22:59:59.999Z"),
+              min: new Date("2023-12-31T23:00:00.000Z"),
+            },
+            operator_id: 1,
+          },
+          undefined,
+        ],
+        [
+          {
+            identity_key: ["key_driver", "key_passenger"],
+            start_date: {
+              min: new Date("2024-01-01T02:00:00.000Z"),
+              max: new Date("2024-01-01T04:30:00.000Z"),
+            },
+            end_date: {
+              min: new Date("2024-01-01T01:30:00.000Z"),
+              max: new Date("2024-01-01T04:00:00.000Z"),
+            },
+            operator_trip_id: "operator_trip_id",
+            operator_id: 1,
+          },
+          undefined,
+        ],
+      ],
+    );
   });
 });

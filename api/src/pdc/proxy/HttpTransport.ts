@@ -24,11 +24,14 @@ import {
 import { mapStatusCode } from "@/ilos/transport-http/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { get, pick } from "@/lib/object/index.ts";
+import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
+import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
+import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
 import { signature as importCeeSignature } from "@/shared/cee/importApplication.contract.ts";
 import { signature as importIdentityCeeSignature } from "@/shared/cee/importApplicationIdentity.contract.ts";
 import { signature as registerCeeSignature } from "@/shared/cee/registerApplication.contract.ts";
@@ -43,15 +46,8 @@ import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
-import {
-  CacheMiddleware,
-  cacheMiddleware,
-  CacheTTL,
-} from "./middlewares/cacheMiddleware.ts";
-import {
-  dataWrapMiddleware,
-  errorHandlerMiddleware,
-} from "./middlewares/index.ts";
+import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheMiddleware.ts";
+import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
   acquisitionRateLimiter,
@@ -89,9 +85,7 @@ export class HttpTransport implements TransportInterface {
     this.getProviders();
 
     const optsPort = parseInt(opts[0], 10);
-    const port = optsPort || optsPort === 0
-      ? optsPort
-      : this.config.get("proxy.port", 8080);
+    const port = optsPort || optsPort === 0 ? optsPort : this.config.get("proxy.port", 8080);
 
     this.app = express();
     this.setup();
@@ -168,9 +162,7 @@ export class HttpTransport implements TransportInterface {
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
         secure: env_or_fail("APP_ENV", "local") !== "local",
-        sameSite: env_or_fail("APP_ENV", "local") !== "local"
-          ? "none"
-          : "strict",
+        sameSite: env_or_fail("APP_ENV", "local") !== "local" ? "none" : "strict",
       },
 
       name: sessionName,
@@ -263,9 +255,7 @@ export class HttpTransport implements TransportInterface {
     const enabled = this.config.get("cache.enabled");
     const gzipped = this.config.get("cache.gzipped");
     const authToken = this.config.get("cache.authToken");
-    const driver = enabled
-      ? new Redis(this.config.get("connections.redis"))
-      : null;
+    const driver = enabled ? new Redis(this.config.get("connections.redis")) : null;
     this.cache = cacheMiddleware({ enabled, driver, gzipped, authToken });
 
     this.app.delete(
@@ -294,133 +284,40 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCeeRoutes(): void {
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(registerCeeSignature, { ...req.body }, user, {
-            req,
-          }),
-        )) as RPCResponseType;
-
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(201).json(response.result);
-        }
-      }),
+      registerCeeSignature,
+      "post",
+      201,
     );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/simulate",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(simulateCeeSignature, { ...req.body }, user, {
-            req,
-          }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(200).end();
-        }
-      }),
+      simulateCeeSignature,
+      "post",
     );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/import",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(importCeeSignature, req.body, user, { req }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(201).json(response.result);
-        }
-      }),
+      importCeeSignature,
+      "post",
+      201,
     );
-
-    this.app.post(
+    this.registerCeeRoute(
       "/v3/policies/cee/import/identity",
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(importIdentityCeeSignature, req.body, user, { req }),
-        )) as RPCResponseType;
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          res.status(200).json(response.result);
-        }
-      }),
+      importIdentityCeeSignature,
+      "post",
+      200,
+    );
+    this.registerCeeRoute(
+      "/v3/policies/cee/:uuid",
+      findCeeSignature,
+      "get",
+      200,
+    );
+    this.registerCeeRoute(
+      "/v3/policies/cee/:uuid",
+      deleteCeeSignature,
+      "delete",
+      204,
     );
   }
 
@@ -587,19 +484,7 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const user = get(req, "session.user", {});
-
-        Sentry.setUser(
-          pick(user, [
-            "_id",
-            "application_id",
-            "operator_id",
-            "territory_id",
-            "permissions",
-            "role",
-            "status",
-          ]),
-        );
-
+        setSentryUser(req);
         const response = (await this.kernel.handle(
           createRPCPayload(
             "acquisition:create",
@@ -619,9 +504,18 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { query } = req;
+        const q = {
+          ...query,
+        };
+        if ("offset" in q) {
+          q.offset = parseInt(q.offset, 10);
+        }
+        if ("limit" in q) {
+          q.limit = parseInt(q.limit, 10);
+        }
         const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
-          createRPCPayload("acquisition:list", query, user, { req }),
+          createRPCPayload("acquisition:list", q, user, { req }),
         )) as RPCResponseType;
         this.send(res, response, {}, true);
       }),
@@ -645,9 +539,7 @@ export class HttpTransport implements TransportInterface {
             this.parseErrorData(response),
           );
         } else {
-          const user = Array.isArray(response)
-            ? response[0].result
-            : response.result;
+          const user = Array.isArray(response) ? response[0].result : response.result;
           req.session.user = {
             ...user,
             ...(await this.getTerritoryInfos(user)),
@@ -944,21 +836,19 @@ export class HttpTransport implements TransportInterface {
 
     const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
       Object.entries({
-        monthlyKeyfigures: "monthly-keyfigures",
-        monthlyFlux: "monthly-flux",
-        evolMonthlyFlux: "evol-monthly-flux",
-        bestMonthlyFlux: "best-monthly-flux",
-        lastRecordMonthlyFlux: "monthly-flux/last",
-        monthlyOccupation: "monthly-occupation",
-        evolMonthlyOccupation: "evol-monthly-occupation",
-        bestMonthlyTerritories: "best-monthly-territories",
-        territoriesList: "territories",
-        territoryName: "territory",
+        getKeyfigures: "keyfigures",
+        getFlux: "flux",
+        getEvolFlux: "evol-flux",
+        getBestFlux: "best-flux",
+        getOccupation: "occupation",
+        getEvolOccupation: "evol-occupation",
+        getBestTerritories: "best-territories",
         journeysByHours: "journeys-by-hours",
         journeysByDistances: "journeys-by-distances",
         getLocation: "location",
         airesCovoiturage: "aires-covoiturage",
         campaigns: "campaigns",
+        getIncentive: "incentive",
       }),
     );
 
@@ -1080,8 +970,7 @@ export class HttpTransport implements TransportInterface {
             : injectContext(req.body, user);
 
           // pass the request to the kernel
-          const response =
-            (await this.kernel.handle(req.body)) as RPCResponseType;
+          const response = (await this.kernel.handle(req.body)) as RPCResponseType;
 
           // send the response
           this.send(res, response);
@@ -1095,9 +984,7 @@ export class HttpTransport implements TransportInterface {
       port,
       () =>
         logger.info(
-          `Listening on port ${port}. Version ${
-            this.config.get("sentry.version")
-          }`,
+          `Listening on port ${port}. Version ${this.config.get("sentry.version")}`,
         ),
     );
     // FIXME
@@ -1214,5 +1101,40 @@ export class HttpTransport implements TransportInterface {
     }
 
     return {};
+  }
+
+  private registerCeeRoute(
+    path: string,
+    signature: string,
+    method: "post" | "get" | "delete",
+    successStatus = 200,
+  ) {
+    this.app[method](
+      path,
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const user = get(req, "session.user", {});
+        setSentryUser(req);
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(signature, { ...req.body, ...req.params }, user, {
+            req,
+          }),
+        )) as RPCResponseType;
+
+        if (!response || "error" in response || !("result" in response)) {
+          res.status(mapStatusCode(response)).json(
+            response.error?.data || { message: response.error?.message },
+          );
+        } else {
+          if (successStatus === 204 || !response?.result) {
+            res.status(successStatus).end();
+          } else {
+            res.status(successStatus).json(response?.result);
+          }
+        }
+      }),
+    );
   }
 }

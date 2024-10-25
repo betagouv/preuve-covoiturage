@@ -124,6 +124,7 @@ components:
         - canceled
         - pending
         - unknown
+        - terms_violation_error
       description: |
         Statut du trajet tel que :
           - validation_error : les données envoyées ne sont pas valides
@@ -135,6 +136,7 @@ components:
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
           - unknown : une erreur inconnue a affecté le trajet
+          - terms_violation_error : le trajet ne respecte pas les conditions générales d'utilisation
     duration:
       type: number
       minimum: 0
@@ -423,10 +425,10 @@ components:
         - too_close_trips
         - expired
       description: |
-        Etiquette possible pour un cas de non respect des CGU détectée au sein d'un même opérateur :
-          - `distance_too_short` : le trajet a une distance trop faible, inférieur à 2 km
-          - `too_many_trips_by_day` : le participant a fait plus de 4 trajets dans la même journée. 4 operator_trip_id maximum par usager et par jour
-          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec le même couple de personnes. Délai minimum de 30 min entre 2 trajets impliquant un même couple passager / conducteur 
+        Etiquette possible pour un cas de non respect des CGU :
+          - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+          - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
+          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
           - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
     fraudcheck_label:
       type: string
@@ -446,7 +448,6 @@ components:
         - temporal_overlap_anomaly
         - distance_duration_anomaly
       description: |
-        #
         # Etiquette possible pour une anomalie détectée
           - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
           - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
@@ -552,6 +553,7 @@ paths:
               type: object
               required:
                 - operator_journey_id
+                - operator_trip_id
                 - incentives
                 - operator_class
                 - operator_trip_id
@@ -627,6 +629,9 @@ paths:
               example:
                 code: 403
                 error: Forbidden
+        '409':
+          description: |
+            Un trajet similaire a déjà enregistré.
     get:
       tags:
       - Trajets
@@ -652,7 +657,7 @@ paths:
         - name: start
           in: query
           required: false
-          description: Date de début de recherche, par défaut dans la semaine qui précède.
+          description: Date de début de recherche, par défaut dans la semaine qui précède. Elle ne peut pas être inférieure à 90 jours à la date du jour.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: end
@@ -744,6 +749,7 @@ paths:
                   anomaly_error_details:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
+<<<<<<< HEAD
                     properties:
                       label:
                        '$ref': "#/components/schemas/anomaly_label"
@@ -756,6 +762,27 @@ paths:
                           temporal_overlap_duration_ratio:
                             type: number
                             description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+=======
+                    items:
+                      properties:
+                        label:
+                          '$ref': "#/components/schemas/anomaly_label"
+                        metas:
+                          type: object
+                          properties:
+                            conflicting_journey_id:
+                              type: string
+                              description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
+                            temporal_overlap_duration_ratio:
+                              type: number
+                              description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+                  terms_violation_details:
+                    type: array
+                    description: | 
+                      Liste des raisons ayant abouti au rejet du trajet.
+                    items:
+                      '$ref': "#/components/schemas/terms_violation_label"
+>>>>>>> origin/main
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
@@ -1083,6 +1110,7 @@ paths:
                   example: 2021-07-01T00:00:00+0200
                 positions:
                   type: array
+                  minItems: 2
                   description: |
                     Pour sélectionner des trajets en fonction de leur point de départ et d'arrivée, il est possible de les préciser avec la clé `positions`.
                     Tous les trajets ayant un départ **et** une arrivée dans un rayon de `1km` autour des points donnés seront inclus à l'attestation.

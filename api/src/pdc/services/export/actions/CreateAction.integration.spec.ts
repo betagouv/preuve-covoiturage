@@ -136,7 +136,7 @@ describe("CreateAction V3", () => {
     // UUID is omitted as we have no way to predict it
     const expected: Omit<ResultInterfaceV3, "uuid"> = {
       // uuid: "uuid",
-      target: ExportTarget.OPENDATA,
+      target: ExportTarget.TERRITORY,
       status: ExportStatus.PENDING,
       start_at: new Date(start_at),
       end_at: new Date(end_at),
@@ -154,7 +154,7 @@ describe("CreateAction V3", () => {
 
         // assert the database record
         const last = (await fetchExports()).pop();
-        assertEquals(last?.target, ExportTarget.OPENDATA);
+        assertEquals(last?.target, ExportTarget.TERRITORY);
         assertEquals(last?.status, ExportStatus.PENDING);
         assertEquals(last?.progress, 0);
         assertEquals(last?.params.get().start_at, new Date(params.start_at));
@@ -224,7 +224,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should create a default export (opendata)", async () => {
+  it("should create a super-admin export (territory)", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -242,7 +242,7 @@ describe("CreateAction V3", () => {
       handlerConfigV3,
       params,
       (response: ResultInterfaceV3) => {
-        assertEquals(response.target, ExportTarget.OPENDATA);
+        assertEquals(response.target, ExportTarget.TERRITORY);
       },
     );
   });

@@ -1,13 +1,15 @@
-import { BoundedSlices, UnboundedSlices } from './Slices.ts';
+import { BoundedSlices, UnboundedSlices } from "./Slices.ts";
 
 export enum PolicyStatusEnum {
-  ACTIVE = 'active',
-  DRAFT = 'draft',
-  TEMPLATE = 'template',
-  FINISHED = 'finished',
+  ACTIVE = "active",
+  DRAFT = "draft",
+  TEMPLATE = "template",
+  FINISHED = "finished",
 }
 
-export const policyStatusValues: PolicyStatusEnum[] = Object.values(PolicyStatusEnum);
+export const policyStatusValues: PolicyStatusEnum[] = Object.values(
+  PolicyStatusEnum,
+);
 
 export interface PolicyInterface {
   _id: number;
@@ -22,6 +24,7 @@ export interface PolicyInterface {
   params: {
     slices?: BoundedSlices | UnboundedSlices;
     operators?: Array<string>;
+    allTimeOperators?: Array<string>;
     limits?: {
       glob?: number;
     };

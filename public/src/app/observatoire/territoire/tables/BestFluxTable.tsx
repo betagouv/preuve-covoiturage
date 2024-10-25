@@ -1,12 +1,12 @@
-import { Config } from "@/config";
+import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from "@/hooks/useApi";
 import { BestFluxDataInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Table as TableStyled} from "@codegouvfr/react-dsfr/Table";
-import styled from '@emotion/styled';
+import { Table as TableStyled } from "@codegouvfr/react-dsfr/Table";
 import { css } from "@emotion/react";
+import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
+import { GetApiUrl } from '../../../../helpers/api';
 
 const Table = styled(TableStyled)(
   css`
@@ -24,8 +24,13 @@ const Table = styled(TableStyled)(
 
 export default function BestFluxTable({ title, limit}: { title: string, limit: number }) {
   const { dashboard } =useContext(DashboardContext);
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/best-monthly-flux?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&limit=${limit}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `year=${dashboard.params.year}`,
+    `limit=${limit}`
+  ];
+  const url = GetApiUrl('best-flux', params);
   const { data, error, loading } = useApi<BestFluxDataInterface[]>(url);
   const dataTable = data ? data.map(d => [`${d.l_territory_1} - ${d.l_territory_2}`, d.journeys]) : []
 
@@ -45,7 +50,13 @@ export default function BestFluxTable({ title, limit}: { title: string, limit: n
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour ce tableau...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <style jsx>{`

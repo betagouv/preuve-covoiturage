@@ -9,12 +9,7 @@ import {
 } from "@/shared/policy/list.contract.ts";
 import { Campaign } from "../models/Campaign.ts";
 
-export interface CampaignRepositoryInterface {
-  list(): Promise<Map<number, Campaign>>;
-}
-
-export abstract class CampaignRepositoryInterfaceResolver
-  implements CampaignRepositoryInterface {
+export abstract class CampaignRepositoryInterfaceResolver {
   public async list(): Promise<Map<number, Campaign>> {
     throw new Error("Not implemented");
   }
@@ -23,7 +18,7 @@ export abstract class CampaignRepositoryInterfaceResolver
 @provider({
   identifier: CampaignRepositoryInterfaceResolver,
 })
-export class CampaignRepository implements CampaignRepositoryInterface {
+export class CampaignRepository {
   constructor(
     protected kernel: KernelInterfaceResolver,
     protected config: ConfigInterfaceResolver,

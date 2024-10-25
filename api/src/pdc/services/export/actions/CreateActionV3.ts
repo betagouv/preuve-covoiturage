@@ -4,6 +4,7 @@ import {
   InvalidParamsException,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import {
   castToArrayMiddleware,
   copyFromContextMiddleware,
@@ -16,7 +17,6 @@ import {
   ResultInterfaceV3,
 } from "@/shared/export/create.contract.ts";
 import { aliasV3 } from "@/shared/export/create.schema.ts";
-import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { Export } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
@@ -32,7 +32,11 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
     ["timezone", DefaultTimezoneMiddleware],
     copyFromContextMiddleware(`call.user._id`, "created_by", true),
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
-    copyFromContextMiddleware(`call.user.territory_id`, "territory_id", false),
+    copyFromContextMiddleware(
+      `call.user.territory_id`,
+      "territory_id",
+      undefined,
+    ),
     castToArrayMiddleware(["operator_id", "territory_id", "recipients"]),
     validateDateMiddleware({
       startPath: "start_at",
@@ -57,7 +61,6 @@ export class CreateActionV3 extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
-
     // make sure we have at least one recipient
     const emails = await this.recipientService.maybeAddCreator(
       (params.recipients || []).map(ExportRecipient.fromEmail),
@@ -85,7 +88,10 @@ export class CreateActionV3 extends AbstractAction {
         start_at: params.start_at,
         end_at: params.end_at,
         operator_id: params.operator_id,
-        geo_selector: params.geo_selector,
+        geo_selector: await this.territoryService.resolve({
+          territory_id: params.territory_id,
+          geo_selector: params.geo_selector,
+        }),
       }),
     });
 

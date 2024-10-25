@@ -1,5 +1,6 @@
 import { subMonthsTz, today } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 export type Config = Partial<Params>;
@@ -8,8 +9,9 @@ export type Params = {
   start_at: Date;
   end_at: Date;
   operator_id: number[];
-  geo_selector: TerritorySelectorsInterface;
+  geo_selector: TerritorySelectorsInterface | null;
   tz: Timezone;
+  target: ExportTarget;
 };
 
 /**
@@ -28,8 +30,9 @@ export class ExportParams {
     start_at: subMonthsTz(today(this.tz), 1),
     end_at: today(),
     operator_id: [],
-    geo_selector: { country: ["XXXXX"] }, // FRANCE
+    geo_selector: null,
     tz: this.tz,
+    target: ExportTarget.OPENDATA,
   };
 
   constructor(protected config: Config) {
@@ -77,6 +80,7 @@ export class ExportParams {
    */
   public geoToSQL(mode: "AND" | "OR" = "OR"): string {
     const { geo_selector } = this.params;
+    if (!geo_selector) return "";
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
         // join all codes per type
@@ -85,10 +89,12 @@ export class ExportParams {
           local.push(`gps.${type} = '${code}'`);
         });
 
-        p.push(local.join(" OR "));
+        if (local.length) {
+          p.push(local.join(" OR "));
+        }
+
         return p;
-      }, [])
-      .join(" OR ");
+      }, [] as string[]).join(" OR ");
 
     return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
   }
@@ -100,9 +106,7 @@ export class ExportParams {
    */
   public operatorToSQL(): string {
     const { operator_id } = this.params;
-    return operator_id.length
-      ? `AND cc.operator_id IN (${operator_id.join(",")})`
-      : "";
+    return operator_id.length ? `AND cc.operator_id IN (${operator_id.join(",")})` : "";
   }
 
   /**

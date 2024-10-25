@@ -1,19 +1,12 @@
 import { provider } from "@/ilos/common/Decorators.ts";
+import { remove } from "@/lib/file/index.ts";
 import {
   BucketName,
   S3ObjectList,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
 
-export type StorageServiceInterface = {
-  init(): Promise<void>;
-  list(): Promise<S3ObjectList>;
-  upload(filepath: string): Promise<string>;
-  getPublicUrl(filename: string): Promise<string>;
-};
-
-export abstract class StorageServiceInterfaceResolver
-  implements StorageServiceInterface {
+export abstract class StorageServiceInterfaceResolver {
   public async init(): Promise<void> {
     throw new Error("Not implemented");
   }
@@ -24,6 +17,9 @@ export abstract class StorageServiceInterfaceResolver
     throw new Error("Not implemented");
   }
   public async getPublicUrl(filename: string): Promise<string> {
+    throw new Error("Not implemented");
+  }
+  public async cleanup(filepath: string): Promise<void> {
     throw new Error("Not implemented");
   }
 }
@@ -53,5 +49,9 @@ export class StorageService {
 
   public async getPublicUrl(filename: string): Promise<string> {
     return await this.s3StorageProvider.getPublicUrl(this.bucket, filename);
+  }
+
+  public async cleanup(filepath: string): Promise<void> {
+    remove(filepath);
   }
 }

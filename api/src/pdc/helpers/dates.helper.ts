@@ -2,13 +2,15 @@ import { defaultTimezone } from "@/config/time.ts";
 import {
   addDays,
   addMonths,
+  endOfDay as eod,
   formatInTimeZone,
   fromZonedTime,
+  startOfDay as sod,
+  startOfMonth,
   subDays,
   subMonths,
+  toZonedTime,
 } from "@/deps.ts";
-import { toZonedTime } from "@/pdc/services/policy/engine/helpers/toZonedTime.ts";
-import { startOfMonth } from "@/pdc/services/trip/helpers/getDefaultDates.ts";
 
 /**
  * Regular UTC toISOString.
@@ -135,5 +137,19 @@ export function startOfMonthTz(d: Date, tz = defaultTimezone): Date {
   return fromZonedTime(
     startOfMonth(toZonedTime(d, tz || defaultTimezone)),
     tz || defaultTimezone,
+  );
+}
+
+export function startOfDay(d: Date, tz = defaultTimezone): Date {
+  return fromZonedTime(
+    sod(toZonedTime(d, tz)),
+    tz,
+  );
+}
+
+export function endOfDay(d: Date, tz = defaultTimezone): Date {
+  return fromZonedTime(
+    eod(toZonedTime(d, tz)),
+    tz,
   );
 }

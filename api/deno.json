@@ -8,5 +8,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": ["geojson"]
+  },
+  "fmt": {
+    "lineWidth": 120
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["require-await"]
+    }
   }
 }

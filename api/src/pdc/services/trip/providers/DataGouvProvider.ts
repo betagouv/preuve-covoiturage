@@ -1,12 +1,8 @@
-import {
-  axios,
-  AxiosInstance,
-  createReadStream,
-  FormData,
-  stat,
-} from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
+import { readFile } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { basename } from "https://deno.land/std@0.214.0/path/mod.ts";
 import {
   DataGouvProviderInterface,
   Dataset,
@@ -16,58 +12,62 @@ import {
 
 @provider()
 export class DataGouvProvider implements DataGouvProviderInterface {
-  protected client: AxiosInstance;
-
   constructor(private config: ConfigInterfaceResolver) {}
 
-  async init() {
-    this.client = axios.create({
-      baseURL: this.config.get("datagouv.baseURL"),
-      headers: {
+  protected async call(
+    url: string,
+    method: "GET" | "POST" | "PUT" = "GET",
+    body?: BodyInit,
+    isJsonContent: boolean = false,
+  ): Promise<Response> {
+    try {
+      const baseURL = this.config.get("datagouv.baseURL");
+      let headers: HeadersInit = {
         [this.config.get("datagouv.apiKeyHeader")]: this.config.get(
           "datagouv.apiKey",
         ),
-      },
-    });
-    this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        logger.error(
-          `Error while calling data gouv API; ${error.response?.status} : ${
-            JSON.stringify(error.response?.data)
-          }`,
-        );
-        throw error;
-      },
-    );
+      };
+      if (isJsonContent) {
+        headers = { ...headers, "Content-Type": "application/json" };
+      }
+      const response = await fetcher.raw(
+        `${baseURL}/${url}`,
+        {
+          method,
+          headers,
+          body,
+        },
+      );
+      return response;
+    } catch (error) {
+      logger.error(
+        `Error while calling data gouv API; ${error.response?.status} : ${
+          JSON.stringify(error.response?.data)
+        }`,
+      );
+      throw error;
+    }
   }
 
   async getDataset(slug: string): Promise<Dataset> {
-    const response = await this.client.get<Dataset>(`/datasets/${slug}`);
-    return response.data;
+    const response = await this.call(`/datasets/${slug}`);
+    const data: Dataset = await response.json();
+    return data;
   }
 
   async uploadDatasetResource(
     slug: string,
     filepath: string,
   ): Promise<UploadedResource> {
+    const file = new File([await readFile(filepath)], basename(filepath));
     const form = new FormData();
-    form.append("file", createReadStream(filepath), {
-      knownLength: (await stat(filepath)).size,
-    });
-    const response = await this.client.post<UploadedResource>(
+    form.append("file", file);
+    const response = await this.call(
       `/datasets/${slug}/upload/`,
+      "POST",
       form,
-      {
-        headers: {
-          ...form.getHeaders(),
-          "Content-Length": form.getLengthSync().toString(),
-        },
-        maxContentLength: 100000000,
-        maxBodyLength: 1000000000,
-      },
     );
-    return response.data;
+    return await response.json();
   }
 
   async updateDatasetResource(
@@ -76,32 +76,26 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     resourceId: string,
   ): Promise<UploadedResource> {
     const form = new FormData();
-    form.append("file", createReadStream(filepath), {
-      knownLength: (await stat(filepath)).size,
-    });
-    const response = await this.client.post<UploadedResource>(
+    const file = new File([await readFile(filepath)], basename(filepath));
+    form.append("file", file);
+    const response = await this.call(
       `/datasets/${slug}/resources/${resourceId}/upload/`,
+      "POST",
       form,
-      {
-        headers: {
-          ...form.getHeaders(),
-          "Content-Length": form.getLengthSync().toString(),
-        },
-        maxContentLength: 100000000,
-        maxBodyLength: 1000000000,
-      },
     );
-    return response.data;
+    return await response.json();
   }
 
   async updateResource(
     datasetSlug: string,
     resource: Resource,
   ): Promise<Resource> {
-    const response = await this.client.put<Resource>(
+    const response = await this.call(
       `/datasets/${datasetSlug}/resources/${resource.id}`,
-      resource,
+      "PUT",
+      JSON.stringify(resource),
+      true,
     );
-    return response.data;
+    return await response.json();
   }
 }

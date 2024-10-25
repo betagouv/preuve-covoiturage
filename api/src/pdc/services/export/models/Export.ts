@@ -71,8 +71,20 @@ export class Export {
     if (target) return target;
 
     const { operator_id, territory_id } = context.call?.user || {};
+
+    // operator
     if (parseInt(operator_id) > 0) return ExportTarget.OPERATOR;
+
+    // territory
     if (parseInt(territory_id) > 0) return ExportTarget.TERRITORY;
+
+    // registry
+    if (
+      Number.isNaN(parseInt(operator_id)) &&
+      Number.isNaN(parseInt(territory_id))
+    ) {
+      return ExportTarget.TERRITORY;
+    }
 
     return ExportTarget.OPENDATA;
   }

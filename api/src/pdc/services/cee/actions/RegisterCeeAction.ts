@@ -23,7 +23,7 @@ import {
   CeeShortApplicationInterface,
 } from "@/shared/cee/common/CeeApplicationInterface.ts";
 import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
-import { carpoolV2ToV1StatusConverter } from "../../../providers/carpool/helpers/carpoolV2ToV1StatusConverter.ts";
+import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
 import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
@@ -144,10 +144,10 @@ export class RegisterCeeAction extends AbstractAction {
         datetime: carpoolData.datetime.toISOString(),
         token: await this.sign(application),
         journey_id: carpoolData.journey_id,
-        status: carpoolV2ToV1StatusConverter(
-          carpoolData.acquisition_status,
-          carpoolData.fraud_status,
-        ),
+        status: castToStatusEnum({
+          acquisition_status: carpoolData.acquisition_status,
+          fraud_status: carpoolData.fraud_status,
+        }),
       };
     } catch (e) {
       if (e instanceof ConflictException) {

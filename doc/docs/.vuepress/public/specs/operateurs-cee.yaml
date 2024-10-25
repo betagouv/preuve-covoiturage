@@ -459,7 +459,6 @@ paths:
     get:
       tags:
       - cee
-      - wip
       summary: Chercher une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
@@ -480,7 +479,6 @@ paths:
     delete:
       tags:
       - cee
-      - wip
       summary: Supprimer une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.

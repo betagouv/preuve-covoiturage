@@ -1,6 +1,6 @@
-import { axios, HttpAgent } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import {
@@ -15,7 +15,6 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     "OSRM_URL",
     "http://osrm.covoiturage.beta.gouv.fr:5000",
   );
-  private static agent = new HttpAgent({ keepAlive: false });
 
   async getRouteMeta(
     start: PointInterface,
@@ -24,14 +23,16 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     try {
       const query = `${start.lon},${start.lat};${end.lon},${end.lat}`;
 
-      const res = await axios.get(
+      const response = await fetcher.get(
         `${this.domain}/route/v1/driving/${encodeURIComponent(query)}`,
-        {
-          httpAgent: OSRMProvider.agent,
-        },
       );
-      const distance = get(res, "data.routes.0.distance", null);
-      const duration = get(res, "data.routes.0.duration", null);
+      const data = await response.json();
+      const distance = get(data, "routes.0.distance", null) as
+        | number
+        | null;
+      const duration = get(data, "routes.0.duration", null) as
+        | number
+        | null;
 
       if (distance === null || duration === null) {
         throw new Error(

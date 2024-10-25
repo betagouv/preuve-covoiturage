@@ -1,5 +1,7 @@
+import DownloadButton from '@/components/observatoire/DownloadButton';
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
+import { DashboardContext } from '@/context/DashboardProvider';
 import { getLegendClasses } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
@@ -10,16 +12,21 @@ import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useMemo, useState, useContext } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { DashboardContext } from '@/context/DashboardProvider';
-import DownloadButton from '@/components/observatoire/DownloadButton';
+import { GetApiUrl } from '../../../../helpers/api';
 
 export default function OccupationMap({ title }: { title: string }) {
   const { dashboard } =useContext(DashboardContext);
   const mapTitle = title;
-  const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/monthly-occupation?code=${dashboard.params.code}&type=${dashboard.params.type}&observe=${dashboard.params.observe}&year=${dashboard.params.year}&month=${dashboard.params.month}`;
+  const params = [
+    `code=${dashboard.params.code}`,
+    `type=${dashboard.params.type}`,
+    `observe=${dashboard.params.observe}`,
+    `year=${dashboard.params.year}`,
+    `direction=both`
+  ];
+  const url = GetApiUrl('occupation', params);
   const { data, error, loading } = useApi<OccupationDataInterface[]>(url);
   const geojson = useMemo(() => {
     const occupationData = data ? data : [];
@@ -126,7 +133,13 @@ export default function OccupationMap({ title }: { title: string }) {
           <div>{`Un problème est survenu au chargement des données: ${error}`}</div>
         </div>
       )}
-      {!loading && !error && (
+      {!data || data.length == 0 && (
+        <div className={fr.cx('fr-callout')}>
+          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <div>Pas de données disponibles pour cette carte...</div>
+        </div>
+      )}
+      {!loading && !error && data && data.length > 0 && (
         <AppMap 
         title={mapTitle} 
         mapStyle={mapStyle} 

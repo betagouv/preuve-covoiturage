@@ -1,7 +1,9 @@
-import { NewableType } from "../shared/index.ts";
+import { ErrorObject } from "@/deps.ts";
 import { ProviderInterface } from "../core/index.ts";
+import { NewableType } from "../shared/index.ts";
 
 export interface ValidatorInterface extends ProviderInterface {
+  errors: ErrorObject[];
   registerValidator(
     definition: any,
     target?: NewableType<any> | string,
@@ -11,6 +13,7 @@ export interface ValidatorInterface extends ProviderInterface {
 }
 
 export abstract class ValidatorInterfaceResolver implements ValidatorInterface {
+  errors: ErrorObject[] = [];
   boot(): void {
     return;
   }

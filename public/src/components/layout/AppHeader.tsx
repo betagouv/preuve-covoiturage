@@ -1,6 +1,6 @@
 import { Header } from '@codegouvfr/react-dsfr/Header';
 import Navigation from './Navigation';
-import SearchBar from './SearchBar'
+import SearchBar from './SearchBar';
 
 export function AppHeader() {
   return (
@@ -12,6 +12,10 @@ export function AppHeader() {
           de la transition
           <br />
           écologique
+          <br />
+          et de la cohésion
+          <br />
+          des territoires
         </>
       }
       homeLinkProps={{

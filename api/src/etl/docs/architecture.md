@@ -77,7 +77,6 @@
 
 Le paquet utilise comme dépendances :
 
-- [axios](https://github.com/axios/axios) : pour faire les requête http
 - [commander](https://github.com/tj/commander.ts/) : pour la ligne de commande
   (parser les arguments, fournir l'aide)
 - [pg](https://github.com/brianc/node-postgres) : pour requêter la base de
