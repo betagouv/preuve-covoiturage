@@ -57,16 +57,19 @@ export const schemaV3 = {
     operator_id: {
       type: "array",
       minItems: 0,
+      maxItems: 128,
       items: { macro: "serial" },
     },
     territory_id: {
       type: "array",
       minItems: 0,
+      maxItems: 1024,
       items: { macro: "serial" },
     },
     recipients: {
       type: "array",
       minItems: 0,
+      maxItems: 24,
       items: { macro: "varchar" },
     },
     geo_selector: territoryCodeSchema,
