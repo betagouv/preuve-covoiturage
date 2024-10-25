@@ -1,8 +1,4 @@
-import {
-  ContextType,
-  handler,
-  InvalidParamsException,
-} from "@/ilos/common/index.ts";
+import { ContextType, handler, InvalidParamsException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import {
@@ -11,11 +7,8 @@ import {
   hasPermissionMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
-import {
-  handlerConfigV3,
-  ParamsInterfaceV3,
-  ResultInterfaceV3,
-} from "@/shared/export/create.contract.ts";
+import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
+import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "@/shared/export/create.contract.ts";
 import { aliasV3 } from "@/shared/export/create.schema.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { Export } from "../models/Export.ts";
@@ -59,7 +52,7 @@ export class CreateActionV3 extends AbstractAction {
   protected async handle(
     params: ParamsInterfaceV3,
     context: ContextType,
-  ): Promise<ResultInterfaceV3> {
+  ): Promise<WithHttpStatus<ResultInterfaceV3>> {
     const paramTarget = Export.target(context);
     // make sure we have at least one recipient
     const emails = await this.recipientService.maybeAddCreator(
@@ -96,11 +89,14 @@ export class CreateActionV3 extends AbstractAction {
     });
 
     return {
-      uuid,
-      target,
-      status,
-      start_at: new Date(createParams.get().start_at),
-      end_at: new Date(createParams.get().end_at),
+      meta: { httpStatus: 201 },
+      data: {
+        uuid,
+        target,
+        status,
+        start_at: new Date(createParams.get().start_at),
+        end_at: new Date(createParams.get().end_at),
+      },
     };
   }
 }

@@ -6,6 +6,7 @@ import { get } from "@/lib/object/index.ts";
 import { toISOString } from "@/pdc/helpers/dates.helper.ts";
 import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
+import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
 import {
   handlerConfigV2,
   ParamsInterfaceV2,
@@ -36,7 +37,7 @@ export class CreateActionV2 extends AbstractAction {
   protected async handle(
     paramsV2: ParamsInterfaceV2,
     context: ContextType,
-  ): Promise<ResultInterfaceV2> {
+  ): Promise<WithHttpStatus<ResultInterfaceV2>> {
     // dates are sent to the API as strings
     // override date params as string to please AJV.
     type AJVParams = Omit<ParamsInterfaceV3, "start_at" | "end_at"> & {
@@ -56,13 +57,16 @@ export class CreateActionV2 extends AbstractAction {
       paramsV3.geo_selector = paramsV2.geo_selector;
     }
 
-    const resultV3 = await this.kernel.call<AJVParams, ResultInterfaceV3>(
+    const resultV3 = await this.kernel.call<AJVParams, WithHttpStatus<ResultInterfaceV3>>(
       signatureV3,
       paramsV3,
       context,
     );
-    const resultV2 = resultV3; // TODO convert V3 -> V2
+    const resultV2 = resultV3.data; // TODO convert V3 -> V2
 
-    return resultV2;
+    return {
+      meta: { httpStatus: 201 },
+      data: resultV2,
+    };
   }
 }

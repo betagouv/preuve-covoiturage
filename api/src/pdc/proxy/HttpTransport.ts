@@ -714,11 +714,7 @@ export class HttpTransport implements TransportInterface {
           get(req, "session.user", undefined),
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
-        res
-          .status(
-            get(response, "result.meta.httpStatus", mapStatusCode(response)),
-          )
-          .send(get(response, "result.data", this.parseErrorData(response)));
+        this.send(res, response);
       }),
     );
 
@@ -1008,14 +1004,9 @@ export class HttpTransport implements TransportInterface {
       this.setHeaders(res, headers);
     }
 
-    // get the HTTP status code from response meta or convert RPC code
-    const status = get(
-      response,
-      "result.meta.httpStatus",
-      mapStatusCode(response),
-    );
-
-    res.status(status).json(this.parseErrorData(response, unnestResult));
+    res
+      .status(get(response, "result.meta.httpStatus", mapStatusCode(response)))
+      .send(get(response, "result.data", this.parseErrorData(response, unnestResult)));
   }
 
   /**
