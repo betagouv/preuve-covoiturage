@@ -3,9 +3,9 @@ import { command, CommandInterface, CommandOptionType } from "@/ilos/common/inde
 import { logger } from "@/lib/logger/index.ts";
 import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
+import { DataGouvServiceInterfaceResolver } from "@/pdc/services/export/services/DataGouvService.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { ExportTarget } from "../models/Export.ts";
@@ -52,6 +52,7 @@ export class DataGouvCommand implements CommandInterface {
 
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
+    protected dataGouvService: DataGouvServiceInterfaceResolver,
     protected fileCreatorService: OpenDataFileCreatorServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
     protected nameService: NameServiceInterfaceResolver,
@@ -80,12 +81,23 @@ export class DataGouvCommand implements CommandInterface {
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
       logger.info(`Exporting ${filename} from ${s} to ${e}`);
 
-      await this.fileCreatorService.write(
-        params,
-        new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
-      );
+      // export the file
+      const filepath = "/tmp/2024-13.csv";
+      // const filepath = await this.fileCreatorService.write(
+      //   params,
+      //   new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
+      // );
+
+      // prepare description
+      const description = `Description 870.7830642521992`; // TODO
 
       // upload to storage
+      try {
+        const resource = await this.dataGouvService.uploadResource(filepath, description);
+        logger.info(`Resource ${resource.id} uploaded to data.gouv.fr`);
+      } catch (e) {
+        logger.warn(e.message);
+      }
     }
   }
 

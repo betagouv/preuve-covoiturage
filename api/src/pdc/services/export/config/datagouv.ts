@@ -1,4 +1,4 @@
-import { env } from "@/lib/env/index.ts";
+import { env, env_or_fail } from "@/lib/env/index.ts";
 import { FieldFilter, Fields } from "@/pdc/services/export/models/CSVWriter.ts";
 import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 
@@ -7,7 +7,8 @@ export const datagouv = {
   notify: env("APP_DATAGOUV_NOTIFY") === "true",
   contact: env("APP_DATAGOUV_CONTACT") || null,
   key: env("APP_DATAGOUV_KEY") || null,
-  url: env("APP_DATAGOUV_URL") || "https://api.gouv.fr/api/1/datasets/",
+  url: env("APP_DATAGOUV_URL") || "https://www.data.gouv.fr/api/1",
+  dataset_id: env_or_fail("APP_DATAGOUV_DATASET_ID", "5e8ee97c16601da4ee24ffb7"),
 };
 
 /**

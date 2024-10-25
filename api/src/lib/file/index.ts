@@ -1,4 +1,5 @@
 import { env_or_default } from "@/lib/env/index.ts";
+import { encodeHex } from "https://deno.land/std@0.214.0/encoding/hex.ts";
 
 /**
  * Create a new temporary directory if it doesn't exist yet.
@@ -35,23 +36,31 @@ export type OpenFileDescriptor = Deno.FsFile;
  * @param options
  * @returns
  */
-export function open(
-  filepath: string,
-  options: OpenFileOptions = { read: true },
-): Promise<OpenFileDescriptor> {
+export function open(filepath: string, options: OpenFileOptions = { read: true }): Promise<OpenFileDescriptor> {
   return Deno.open(filepath, {
     ...options,
     create: true,
   });
 }
 
-export function stat(
-  filepath: string,
-): Promise<Deno.FileInfo> {
+export function stat(filepath: string): Promise<Deno.FileInfo> {
   return Deno.stat(filepath);
 }
 
+export function exists(filepath: string): boolean {
+  try {
+    Deno.stat(filepath);
+    return true;
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      return false;
+    }
+    throw error;
+  }
+}
+
 export function readFile(filepath: string) {
+  exists(filepath);
   return Deno.readFile(filepath);
 }
 
@@ -64,4 +73,8 @@ export function remove(filepath: string): void {
     }
     // File doesn't exist, which is fine for a remove operation
   }
+}
+
+export async function checksum(filepath: string, algorithm: string): Promise<string> {
+  return encodeHex(await crypto.subtle.digest(algorithm, await Deno.readFile(filepath)));
 }

@@ -6,6 +6,7 @@ import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
+import { DataGouvService } from "@/pdc/services/export/services/DataGouvService.ts";
 import { bindingV2 as createBindingV2, bindingV3 as createBindingV3 } from "@/shared/export/create.schema.ts";
 import { CreateActionV2 } from "./actions/CreateActionV2.ts";
 import { CreateActionV3 } from "./actions/CreateActionV3.ts";
@@ -15,6 +16,7 @@ import { ProcessCommand } from "./commands/ProcessCommand.ts";
 import { config } from "./config/index.ts";
 import { CampaignRepository } from "./repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "./repositories/CarpoolRepository.ts";
+import { DataGouvRepository } from "./repositories/DataGouvRepository.ts";
 import { ExportRepository } from "./repositories/ExportRepository.ts";
 import { LogRepository } from "./repositories/LogRepository.ts";
 import { RecipientRepository } from "./repositories/RecipientRepository.ts";
@@ -30,11 +32,12 @@ import { TerritoryService } from "./services/TerritoryService.ts";
 // and are used to implement the business logic of the application.
 // They are injected in commands and handlers.
 const services = [
+  DataGouvService,
   FieldService,
   FileCreatorService,
-  OpenDataFileCreatorService,
   LogService,
   NameService,
+  OpenDataFileCreatorService,
   RecipientService,
   TerritoryService,
 ];
@@ -44,6 +47,7 @@ const services = [
 const repositories = [
   CampaignRepository,
   CarpoolRepository,
+  DataGouvRepository,
   ExportRepository,
   LogRepository,
   RecipientRepository,
