@@ -734,13 +734,6 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
-                  terms_violation_details:
-                    type: array
-                    description: | 
-                      Liste des raisons ayant abouti au rejet du trajet. Vide si pas de fraude détectée.
-                      Actuellement non implementé #wip.
-                    items:
-                      '$ref': "#/components/schemas/terms_violation_label"
                   fraud_error_labels:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
@@ -749,20 +742,6 @@ paths:
                   anomaly_error_details:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
-<<<<<<< HEAD
-                    properties:
-                      label:
-                       '$ref': "#/components/schemas/anomaly_label"
-                      metas:
-                        type: object
-                        properties:
-                          conflicting_journey_id:
-                            type: string
-                            description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
-                          temporal_overlap_duration_ratio:
-                            type: number
-                            description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
-=======
                     items:
                       properties:
                         label:
@@ -782,7 +761,6 @@ paths:
                       Liste des raisons ayant abouti au rejet du trajet.
                     items:
                       '$ref': "#/components/schemas/terms_violation_label"
->>>>>>> origin/main
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
