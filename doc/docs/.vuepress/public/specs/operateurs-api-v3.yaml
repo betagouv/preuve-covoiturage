@@ -629,6 +629,12 @@ paths:
         '409':
           description: |
             Un trajet similaire a déjà enregistré.
+        '422':
+          description: La requête ne respecte pas les conditions générales d'utilisation
+          content:
+            'application/json':
+              example:
+                terms_violation_labels: ["expired"]
     get:
       tags:
       - Trajets
