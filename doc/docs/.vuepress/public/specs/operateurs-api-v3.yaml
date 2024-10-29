@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: API Trajets
-  version: "3.0"
+  version: "3.1"
   description: |
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
