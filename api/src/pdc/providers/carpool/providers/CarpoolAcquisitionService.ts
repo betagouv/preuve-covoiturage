@@ -50,6 +50,7 @@ export class CarpoolAcquisitionService {
     const journeyCount = await this.lookupRepository.countJourneyBy({
       operator_id: data.operator_id,
       identity_key: [data.driver_identity_key, data.passenger_identity_key],
+      identity_key_or: true,
       start_date: {
         min: startOfDay(data.start_datetime),
         max: endOfDay(data.start_datetime),
@@ -65,6 +66,7 @@ export class CarpoolAcquisitionService {
     const journeyCloseCount = await this.lookupRepository.countJourneyBy({
       operator_id: data.operator_id,
       identity_key: [data.driver_identity_key, data.passenger_identity_key],
+      identity_key_or: false,
       start_date: { min: data.start_datetime, max: addMinutes(data.end_datetime, 30) },
       end_date: { min: addMinutes(data.start_datetime, -30), max: data.end_datetime },
       operator_trip_id: data.operator_trip_id,
