@@ -78,7 +78,7 @@ describe("CarpoolGeoRepository", () => {
 
     const count2 = await repository.countJourneyBy({
       operator_id: data.operator_id,
-      identity_key: [data.driver_identity_key],
+      identity_key: [data.driver_identity_key, data.passenger_identity_key],
       identity_key_or: false,
       start_date: {
         min: new Date(data.start_datetime.valueOf() - 1000),
