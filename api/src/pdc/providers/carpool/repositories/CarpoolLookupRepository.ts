@@ -14,6 +14,7 @@ export class CarpoolLookupRepository {
 
   public async countJourneyBy(selectors: {
     identity_key: string[];
+    identity_key_or: boolean;
     start_date?: {
       min?: Date;
       max?: Date;
@@ -31,7 +32,7 @@ export class CarpoolLookupRepository {
         join([
           sql`cc.driver_identity_key = ANY(${selectors.identity_key})`,
           sql`cc.passenger_identity_key = ANY(${selectors.identity_key})`,
-        ], " OR ")
+        ], selectors.identity_key_or ? " OR " : " AND ")
       })`,
       sql`cs.acquisition_status <> ANY('{canceled,expired,terms_violation_error}'::carpool_v2.carpool_acquisition_status_enum[]) `,
     ];
