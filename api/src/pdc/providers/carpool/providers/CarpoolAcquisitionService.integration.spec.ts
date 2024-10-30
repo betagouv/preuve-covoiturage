@@ -240,6 +240,7 @@ describe("CarpoolAcquistionService", () => {
         [
           {
             identity_key: ["key_driver", "key_passenger"],
+            identity_key_or: true,
             start_date: {
               max: new Date("2024-01-01T22:59:59.999Z"),
               min: new Date("2023-12-31T23:00:00.000Z"),
@@ -251,6 +252,7 @@ describe("CarpoolAcquistionService", () => {
         [
           {
             identity_key: ["key_driver", "key_passenger"],
+            identity_key_or: false,
             start_date: {
               min: new Date("2024-01-01T02:00:00.000Z"),
               max: new Date("2024-01-01T04:30:00.000Z"),
