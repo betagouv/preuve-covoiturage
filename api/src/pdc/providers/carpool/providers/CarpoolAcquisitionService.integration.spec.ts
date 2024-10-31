@@ -212,7 +212,7 @@ describe("CarpoolAcquistionService", () => {
     assertEquals(result.rows, []);
   });
 
-  it("Should raise error if terms is violated", async () => {
+  it("Should raise error if distance too short terms is violated", async () => {
     const carpoolL = sinon.spy(lookupRepository);
     const service = getService({
       CarpoolLookupRepository: carpoolL,
@@ -263,6 +263,69 @@ describe("CarpoolAcquistionService", () => {
             },
             operator_trip_id: "operator_trip_id",
             operator_id: 1,
+          },
+          undefined,
+        ],
+      ],
+    );
+  });
+
+  it("Should raise error if expired terms is violated", async () => {
+    const carpoolL = sinon.spy(lookupRepository);
+    const service = getService({
+      CarpoolLookupRepository: carpoolL,
+    });
+
+    const data = {
+      operator_id: 1,
+      created_at: new Date("2024-10-24 06:37:58.000Z"),
+      start_datetime: new Date("2024-10-23 05:00:00.000Z"),
+      distance: 4_000,
+      driver_identity_key: "key_driver",
+      passenger_identity_key: "key_passenger",
+      end_datetime: new Date("2024-10-23 07:20:00.000Z"),
+      operator_trip_id: "operator_trip_id",
+    };
+
+    const errors = await service.verifyTermsViolation(
+      data,
+    );
+    assertEquals(errors, ["expired"]);
+    assertEquals(
+      carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
+      [
+        [
+          {
+            identity_key: [
+              "key_driver",
+              "key_passenger",
+            ],
+            identity_key_or: true,
+            operator_id: 1,
+            start_date: {
+              max: new Date("2024-10-23T21:59:59.999Z"),
+              min: new Date("2024-10-22T22:00:00.000Z"),
+            },
+          },
+          undefined,
+        ],
+        [
+          {
+            end_date: {
+              max: new Date("2024-10-23T07:20:00.000Z"),
+              min: new Date("2024-10-23T04:30:00.000Z"),
+            },
+            identity_key: [
+              "key_driver",
+              "key_passenger",
+            ],
+            identity_key_or: false,
+            operator_id: 1,
+            operator_trip_id: "operator_trip_id",
+            start_date: {
+              max: new Date("2024-10-23T07:50:00.000Z"),
+              min: new Date("2024-10-23T05:00:00.000Z"),
+            },
           },
           undefined,
         ],
