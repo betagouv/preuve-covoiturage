@@ -1,9 +1,9 @@
-import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
+import { CeremaAom2021 } from "../../../../datasets.ts";
 import {
   FileTypeEnum,
   StateManagerInterface,
 } from "../../../../interfaces/index.ts";
-import { CeremaAom2021 } from "../../../../datasets.ts";
+import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
 
 // This file is no longer available
 // For archive only
@@ -20,16 +20,16 @@ export class DgclBanatic2021 extends DgclBanaticDataset {
     "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/01/2022&format=C";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "Sheet1",
     startRow: 0,
   };
 
-  async validate(state: StateManagerInterface) {
+  override async validate(state: StateManagerInterface) {
     state.plan([CeremaAom2021]);
   }
 
-  readonly importSql = `
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
       SET l_aom = t.nom, aom = t.siren
     FROM (
@@ -43,7 +43,7 @@ export class DgclBanatic2021 extends DgclBanaticDataset {
   `;
   /* Attribution des code aom région (identique au code siren de la région) pour les communes
   n'ayant pas pris la compétence */
-  readonly extraImportSql = `
+  override readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 
       aom = CASE WHEN reg = '84' THEN '200053767'
         WHEN reg = '27' THEN '200053726'

@@ -10,12 +10,12 @@ export class InseePerim2023 extends InseePerimDataset {
     "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
-  sheetOptions = {
+  override sheetOptions = {
     name: "Composition_communale",
     startRow: 5,
   };
 
-  readonly importSql = `
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} SET
       l_arr = t.libgeo,
       com = t.codgeo,
@@ -28,7 +28,7 @@ export class InseePerim2023 extends InseePerimDataset {
     WHERE year = 2023 AND arr = t.codgeo;
   `;
 
-  readonly extraImportSql = `
+  override readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET
       l_com = t.libgeo,
       epci = t.epci,

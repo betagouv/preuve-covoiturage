@@ -54,14 +54,14 @@ export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/fi
 import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
 // @deno-types="npm:@types/stream-json@^1.7"
-import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
-import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
 // @deno-types="npm:@types/node-7z@^2"
 export { extractFull } from "npm:node-7z@^3.0";
 // @deno-types="npm:@types/node-7z@^2"
 export type { SevenZipOptions } from "npm:node-7z@^3";
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.2/package/types/index.d.ts"
-import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs";
+export const jsonStreamArrayUrl = "npm:stream-json@^1.8/streamers/StreamArray.js";
+export const jsonPickUrl = "npm:stream-json@^1.8/filters/Pick.js";
+import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
 import excel from "npm:exceljs@^4.4";
 
 import ajvErrors from "npm:ajv-errors@^3";
@@ -228,8 +228,6 @@ export {
   rateLimit,
   RateLimitRedisStore,
   RedisStore,
-  StreamJsonFilter,
-  StreamJsonStreamArray,
   xlsx,
   xss,
 };

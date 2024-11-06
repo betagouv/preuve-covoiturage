@@ -1,4 +1,4 @@
-import { Pool } from "@/deps.ts";
+import type { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
 import {
@@ -57,7 +57,7 @@ export abstract class AbstractDataset implements DatasetInterface {
   }
 
   constructor(
-    protected connection: Pool,
+    protected connection: pg.Pool,
     protected file: FileManagerInterface,
     protected targetSchema: string = "public",
   ) {}

@@ -26,6 +26,7 @@ describe.skip("InseeMvtCom2021", () => {
     await connection.query(`
       DROP TABLE IF EXISTS ${dataset.tableWithSchema}
     `);
+    await connection.end();
   });
 
   it("should validate", async () => {
