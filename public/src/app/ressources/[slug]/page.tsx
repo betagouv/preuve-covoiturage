@@ -1,12 +1,13 @@
+import MDContent from "@/components/common/MDContent";
 import PageTitle from "@/components/common/PageTitle";
 import Share from "@/components/common/Share";
 import { Config } from "@/config";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
+import { ButtonProps } from "@codegouvfr/react-dsfr/Button";
+import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
-import { fetchAPI, shorten } from "@/helpers/cms";
-import MDContent from "@/components/common/MDContent";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -120,20 +121,28 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
           <div>
             <MDContent source={data.attributes.content} />
           </div>
-          {data.attributes.link &&
-            <Button
-              linkProps={data.attributes.link.startsWith('http') ? {
-                  href: data.attributes.link,
-                  title:`En savoir plus - nouvelle fenêtre` ,
-                  "aria-label":`En savoir plus - nouvelle fenêtre`,
-                  target:'_blank'
-                }: {
-                  href: data.attributes.link,
-                }
-              }
-            >
-              En savoir plus
-            </Button>
+          {
+            data.attributes.buttons && 
+            <ButtonsGroup
+              alignment={'right'}
+              inlineLayoutWhen={'always'}
+              buttons={data.attributes.buttons.map((b:any) => {
+                return {
+                  children:b.title,
+                  linkProps: b.url.startsWith('http') ? {
+                    href: b.url,
+                    title:`${b.title} - nouvelle fenêtre` ,
+                    "aria-label":`${b.title} - nouvelle fenêtre`,
+                    target:'_blank'
+                  } : {
+                    href: b.url,
+                  },
+                  iconId: b.icon ? b.icon : '',
+                  priority: b.color ? b.color : 'primary',
+                } 
+              }) as [ButtonProps, ...ButtonProps[]]}
+              buttonsIconPosition={'right'}
+            />
           }
           {data.attributes.file.data &&
             <div className={fr.cx('fr-card','fr-enlarge-link', 'fr-card--download')} style={{height:'8em'}}>
@@ -141,7 +150,7 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
                 <div className={fr.cx('fr-card__content')}>
                   <div className={fr.cx('fr-card__title')}>
                       <a download href={data.attributes.file.data.attributes.url}>
-                        {`Télécharger la ressource${data.attributes.file.data.attributes.name}`}
+                        {`Télécharger la ressource: ${data.attributes.file.data.attributes.name}`}
                       </a>
                   </div>
                   <div className={fr.cx('fr-card__end')}>

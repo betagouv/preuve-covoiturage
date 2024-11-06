@@ -35,28 +35,34 @@
       "mappedBy": "resources"
     },
     "img": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": true
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "link": {
       "type": "string"
     },
     "file": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "files"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "pages": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::page.page",
       "mappedBy": "resources"
+    },
+    "buttons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.button"
     }
   }
 }

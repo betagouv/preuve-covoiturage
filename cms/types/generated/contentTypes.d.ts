@@ -757,6 +757,7 @@ export interface ApiArticleArticle extends Schema.CollectionType {
       'api::categorie.categorie'
     >;
     slug: Attribute.UID<'api::article.article', 'title'>;
+    buttons: Attribute.Component<'shared.button', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -915,6 +916,7 @@ export interface ApiResourceResource extends Schema.CollectionType {
       'manyToMany',
       'api::page.page'
     >;
+    buttons: Attribute.Component<'shared.button', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

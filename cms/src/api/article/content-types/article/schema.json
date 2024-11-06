@@ -43,6 +43,11 @@
     "slug": {
       "type": "uid",
       "targetField": "title"
+    },
+    "buttons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.button"
     }
   }
 }
