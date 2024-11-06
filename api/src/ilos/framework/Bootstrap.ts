@@ -7,8 +7,6 @@ import {
   ServiceContainerInterface,
   TransportInterface,
 } from "@/ilos/common/index.ts";
-import { HttpTransport } from "@/ilos/transport-http/index.ts";
-import { QueueTransport } from "@/ilos/transport-redis/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
@@ -18,8 +16,6 @@ const defaultBootstrapObject: BootstrapType = {
   kernel: () => Kernel,
   transport: {
     cli: (k) => new CliTransport(k),
-    http: (k) => new HttpTransport(k),
-    queue: (k) => new QueueTransport(k),
   },
   serviceProviders: [],
 };

@@ -126,7 +126,7 @@ services:
       dockerfile: ./docker/api/Dockerfile
       context: .
     environment:
-      LOG_LEVEL: 'debug'
+      LOG_LEVEL: DEBUG
       APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
       APP_SESSION_SECRET: thisIsAlsoASecret0000
@@ -157,7 +157,6 @@ services:
       - postgres
       - mailer
       - s3
-      - worker
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`api.covoiturage.test`)'
@@ -207,44 +206,6 @@ services:
       - postgres
       - mailer
       - s3
-
-  worker:
-    build:
-      dockerfile: ./docker/api/prod/Dockerfile
-      context: .
-    environment:
-      DEBUG: '*'
-      APP_WORKER: 'true'
-      APP_APP_URL: https://app.covoiturage.test
-      APP_JWT_SECRET: thisIsASecret0000
-      APP_SESSION_SECRET: thisIsAlsoASecret0000
-      AWS_S3_PATH_STYLE: 'true'
-      AWS_BUCKET_PREFIX: local-pdc
-      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
-      AWS_REGION: fr-par
-      AWS_ACCESS_KEY_ID: minioadmin 
-      AWS_SECRET_ACCESS_KEY: minioadmin
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
-      APP_REDIS_URL: redis://redis:6379/1
-      APP_MAIL_SMTP_URL: smtp://mailer:1025
-      APP_MAIL_VERIFY_SMTP: 'true'
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
-      APP_DATAGOUV_URL: http://data-gouv-url
-      APP_DATAGOUV_KEY: thisIsASecret
-      APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      APP_USER_REGISTRATION_ENABLED: 'true'
-      PORT: 8080
-      NODE_ENV: local
-      APP_ENV: local
-    networks:
-      - back
-      - front
-    depends_on:
-      - redis
-      - postgres
-      - mailer
-      - s3
-    command: ['npm', 'run', 'start:queue']
 
   s3:
     image: minio/minio:edge

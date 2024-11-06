@@ -1,78 +1,25 @@
 import {
   CommandInterface,
-  CommandStaticInterface,
   extension,
-  InitHookInterface,
+  NewableType,
   RegisterHookInterface,
-  ResultType,
   ServiceContainerInterface,
 } from "@/ilos/common/index.ts";
-import process from "node:process";
-import { CommandRegistry } from "../providers/CommandRegistry.ts";
+import { identifierList } from "../constants.ts";
 
 @extension({
   name: "commands",
   autoload: true,
 })
-export class CommandExtension
-  implements RegisterHookInterface, InitHookInterface {
-  constructor(readonly commands: CommandStaticInterface[] = []) {
-    //
-  }
+export class CommandExtension implements RegisterHookInterface {
+  constructor(readonly commands: NewableType<NewableType<CommandInterface>>[] = []) {}
 
-  async register(serviceContainer: ServiceContainerInterface) {
-    serviceContainer.ensureIsBound(CommandRegistry, CommandRegistry);
-
+  register(serviceContainer: ServiceContainerInterface) {
     for (const command of this.commands) {
-      serviceContainer.bind(command);
+      serviceContainer.getContainer().bind(command).toSelf();
+      serviceContainer.getContainer().root.bind(identifierList).toConstantValue(() =>
+        serviceContainer.getContainer().get(command)
+      );
     }
-  }
-
-  async init(serviceContainer: ServiceContainerInterface) {
-    const commandRegistry = serviceContainer.get<CommandRegistry>(
-      CommandRegistry,
-    );
-
-    for (const command of this.commands) {
-      const processCommand = async (...args: any[]): Promise<ResultType> =>
-        serviceContainer.get<CommandInterface>(command).call(...args);
-
-      this.registerCommand(commandRegistry, command, processCommand);
-    }
-  }
-
-  protected registerCommand(
-    registry: CommandRegistry,
-    cmd: CommandStaticInterface,
-    processCommand: (...args: any[]) => Promise<ResultType>,
-  ): any {
-    const command = registry.command(cmd.signature);
-
-    command.description(cmd.description);
-
-    for (const option of cmd.options) {
-      const { signature, description, coerce, default: def } = option;
-      const args = [];
-      if (typeof coerce === "function") {
-        args.push(coerce);
-      }
-      if (def !== undefined) {
-        args.push(def);
-      }
-      command.option(signature, description, ...args);
-    }
-
-    command.action(async (...args: any[]) => {
-      const logger = registry.output;
-      try {
-        const result = await processCommand(...args);
-        result && logger(result);
-      } catch (e) {
-        logger(e.message);
-        throw e;
-      }
-    });
-
-    return command;
   }
 }

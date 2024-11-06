@@ -1,18 +1,13 @@
 import { subDays } from "@/deps.ts";
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 
-@command()
-export class ProcessGeoCommand implements CommandInterface {
-  static readonly signature: string = "acquisition:geo";
-  static readonly description: string = "Process acquisition geo";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "acquisition:geo",
+  description: "Process acquisition geo",
+  options: [
     {
       signature: "-l, --loop",
       description: "Process acquisition while remaining",
@@ -45,8 +40,9 @@ export class ProcessGeoCommand implements CommandInterface {
       description: "Process failed geo only",
       default: false,
     },
-  ];
-
+  ],
+})
+export class ProcessGeoCommand implements CommandInterface {
   constructor(protected carpool: CarpoolAcquisitionService) {}
 
   public async call(options): Promise<string> {

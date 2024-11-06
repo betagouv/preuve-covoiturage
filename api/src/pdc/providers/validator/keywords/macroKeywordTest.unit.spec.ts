@@ -1,6 +1,6 @@
 import { assert, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { Extensions } from "@/ilos/core/index.ts";
-import { AjvValidator } from "@/ilos/validator/index.ts";
+import { AjvValidator } from "@/pdc/providers/validator/index.ts";
 
 import { macroKeyword } from "./macroKeyword.ts";
 

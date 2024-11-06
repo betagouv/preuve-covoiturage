@@ -1,10 +1,5 @@
 import { RedisKey } from "@/deps.ts";
-import {
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
+import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -58,7 +53,8 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
       return JSON.parse(cachedResult);
     }
 
-    this.kernel.notify<SimulateOnPastParams>(simulatePastSignature, params, {
+    // TODO : Should be queued
+    await this.kernel.call<SimulateOnPastParams>(simulatePastSignature, params, {
       channel: { service: simulatePastHandler.service },
       call: context.call,
     });

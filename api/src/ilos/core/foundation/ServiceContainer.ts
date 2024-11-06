@@ -21,11 +21,7 @@ import { Container, HookRegistry } from "../container/index.ts";
  * @implements {ServiceContainerInterface}
  */
 export abstract class ServiceContainer
-  implements
-    ServiceContainerInterface,
-    InitHookInterface,
-    DestroyHookInterface,
-    RegisterHookInterface {
+  implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
   readonly extensions: NewableType<ExtensionInterface>[] = [];
 
   protected registerHookRegistry = new HookRegistry<RegisterHookInterface>(

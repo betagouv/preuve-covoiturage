@@ -28,8 +28,7 @@ import { ServiceProvider } from "./ServiceProvider.ts";
  * @extends {ServiceProvider}
  * @implements {KernelInterface}
  */
-export abstract class Kernel extends ServiceProvider
-  implements KernelInterface {
+export abstract class Kernel extends ServiceProvider implements KernelInterface {
   protected callTimeout = 0;
   protected notifyTimeout = 0;
 
@@ -172,7 +171,7 @@ export abstract class Kernel extends ServiceProvider
     context: ContextType,
   ): Promise<void> {
     return this.getHandlerAndCall(
-      { signature: method, queue: true },
+      { signature: method },
       { method, params, context },
       this.getTimeout(context, this.notifyTimeout),
     );

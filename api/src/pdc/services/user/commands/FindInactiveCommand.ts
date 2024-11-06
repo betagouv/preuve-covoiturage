@@ -1,26 +1,22 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
-@command()
-export class FindInactiveCommand implements CommandInterface {
-  static readonly signature: string = "users:inactive";
-  static readonly description: string = "Find inactive users";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "users:inactive",
+  description: "Find inactive users",
+  options: [
     {
       signature: "-m, --months <months>",
       description: "Interval in months",
       default: 6,
     },
-  ];
-
+  ],
+})
+export class FindInactiveCommand implements CommandInterface {
   constructor(private repo: UserRepositoryProviderInterfaceResolver) {}
 
-  public async call(options): Promise<string> {
+  public async call(options: { months: number }): Promise<string> {
     const users = await this.repo.findInactive(options.months);
 
     logger.info(`

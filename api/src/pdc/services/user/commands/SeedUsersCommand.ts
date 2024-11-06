@@ -1,8 +1,4 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { bcrypt_hash } from "@/lib/crypto/index.ts";
@@ -18,7 +14,17 @@ interface Options {
   databaseUri: string;
 }
 
-@command()
+@command({
+  signature: "seed:users",
+  description: "Seed local users",
+  options: [
+    {
+      signature: "-u, --database-uri <uri>",
+      description: "Postgres connection string",
+      default: env("APP_POSTGRES_URL"),
+    },
+  ],
+})
 export class SeedUsersCommand implements CommandInterface {
   private readonly users: CreateUserInterface[] = [
     {
@@ -43,16 +49,6 @@ export class SeedUsersCommand implements CommandInterface {
       password: "admin1234",
       role: "territory.admin",
       territory_id: 1,
-    },
-  ];
-
-  static readonly signature: string = "seed:users";
-  static readonly description: string = "Seed local users";
-  static readonly options: CommandOptionType[] = [
-    {
-      signature: "-u, --database-uri <uri>",
-      description: "Postgres connection string",
-      default: env("APP_POSTGRES_URL"),
     },
   ];
 
