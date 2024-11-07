@@ -95,7 +95,7 @@ describe("Carpool Label Repository", () => {
   });
 
   // fraud V3
-  it("Should read carpool fraud label and return empty array if none for api v3", async () => {
+  it("Should read carpool fraud label and returns empty array if none for api v3", async () => {
     // Arrange
     await repository.register({ ...insertableCarpool, operator_journey_id: "operator_journey_id-4" });
 
@@ -110,7 +110,7 @@ describe("Carpool Label Repository", () => {
     assertEquals(result, []);
   });
 
-  it("Should read carpool fraud label and return single entry with 2 labels for api v3", async () => {
+  it("Should read carpool fraud label and returns single entry with 2 labels for api v3", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
       "v3",
       insertableCarpool.operator_id,
@@ -122,7 +122,7 @@ describe("Carpool Label Repository", () => {
   });
 
   // fraud V3.1
-  it("Should read carpool fraud label and return single entry with 2 labels for api v3.1", async () => {
+  it("Should read carpool fraud label and returns 2 labels for api v3.1", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
       "v3.1",
       insertableCarpool.operator_id,
@@ -134,7 +134,7 @@ describe("Carpool Label Repository", () => {
     ]);
   });
 
-  it("Should read carpool fraud label and return empty array if none for api v3", async () => {
+  it("Should read carpool fraud label and returns empty array if none for api v3", async () => {
     // Arrange
     await repository.register({ ...insertableCarpool, operator_journey_id: "operator_journey_id-4" });
 
