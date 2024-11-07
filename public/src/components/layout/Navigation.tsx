@@ -86,6 +86,15 @@ export default function Navigation() {
             },
             {
               linkProps: {
+                href: '/collectivites/simulateur',
+                title: 'Simuler une campagne de covoiturage',
+                'aria-label': 'Simuler une campagne de covoiturage',
+              },
+              text: 'Simuler une campagne de covoiturage',
+              isActive: pathname === '/collectivites/simulateur',
+            },
+            {
+              linkProps: {
                 href: '/collectivites/aires-covoiturage',
                 title: 'Construire des aires de covoiturage',
                 'aria-label': 'Construire des aires de covoiturage',
