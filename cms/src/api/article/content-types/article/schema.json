@@ -48,6 +48,9 @@
       "type": "component",
       "repeatable": true,
       "component": "shared.button"
+    },
+    "video": {
+      "type": "blocks"
     }
   }
 }
