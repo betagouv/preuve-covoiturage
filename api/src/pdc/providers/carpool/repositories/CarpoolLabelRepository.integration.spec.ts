@@ -18,10 +18,10 @@ describe("Carpool Label Repository", () => {
   const terms_label_1 = "distance_too_short";
 
   // frauds
-  const fraud_label_1_V1 = "interoperator_fraud";
+  const fraud_label_1_V3 = "interoperator_fraud";
 
-  const fraud_label_1_V2 = "interoperator_overlap_trip";
-  const fraud_label_2_V2 = "interoperator_too_many_trips_by_day";
+  const fraud_label_1_V3_1 = "interoperator_overlap_trip";
+  const fraud_label_2_V3_1 = "interoperator_too_many_trips_by_day";
 
   const { before, after } = makeDbBeforeAfter();
 
@@ -37,12 +37,12 @@ describe("Carpool Label Repository", () => {
     await db.connection.getClient().query(
       sql`INSERT INTO ${
         raw(labelRepository.fraudTable)
-      } (carpool_id, label) VALUES (${carpool_id}, ${fraud_label_1_V2})`,
+      } (carpool_id, label) VALUES (${carpool_id}, ${fraud_label_1_V3_1})`,
     );
     await db.connection.getClient().query(
       sql`INSERT INTO ${
         raw(labelRepository.fraudTable)
-      } (carpool_id, label) VALUES (${carpool_id},${fraud_label_2_V2})`,
+      } (carpool_id, label) VALUES (${carpool_id},${fraud_label_2_V3_1})`,
     );
   };
 
@@ -117,34 +117,35 @@ describe("Carpool Label Repository", () => {
       insertableCarpool.operator_journey_id,
     );
     assertEquals(result, [{
-      label: fraud_label_1_V1,
+      label: fraud_label_1_V3,
     }]);
   });
 
-  // // fraud V3.1
-  // it("Should read carpool fraud label and return single entry with 2 labels for api v3.1", async () => {
-  //   const result = await labelRepository.findFraudByOperatorJourneyId(
-  //     "v3",
-  //     insertableCarpool.operator_id,
-  //     insertableCarpool.operator_journey_id,
-  //   );
-  //   assertEquals(result, [{
-  //     label: fraud_label_1_V1,
-  //   }]);
-  // });
+  // fraud V3.1
+  it("Should read carpool fraud label and return single entry with 2 labels for api v3.1", async () => {
+    const result = await labelRepository.findFraudByOperatorJourneyId(
+      "v3.1",
+      insertableCarpool.operator_id,
+      insertableCarpool.operator_journey_id,
+    );
+    assertEquals(result, [
+      { label: fraud_label_1_V3_1 },
+      { label: fraud_label_2_V3_1 },
+    ]);
+  });
 
-  // it("Should read carpool fraud label and return empty array if none for api v3", async () => {
-  //   // Arrange
-  //   await repository.register({ ...insertableCarpool, operator_journey_id: "operator_journey_id-4" });
+  it("Should read carpool fraud label and return empty array if none for api v3", async () => {
+    // Arrange
+    await repository.register({ ...insertableCarpool, operator_journey_id: "operator_journey_id-4" });
 
-  //   // Act
-  //   const result = await labelRepository.findFraudByOperatorJourneyId(
-  //     "v3",
-  //     insertableCarpool.operator_id,
-  //     "operator_journey_id-4",
-  //   );
+    // Act
+    const result = await labelRepository.findFraudByOperatorJourneyId(
+      "v3.1",
+      insertableCarpool.operator_id,
+      "operator_journey_id-4",
+    );
 
-  //   // Assert
-  //   assertEquals(result, []);
-  // });
+    // Assert
+    assertEquals(result, []);
+  });
 });

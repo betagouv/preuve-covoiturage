@@ -51,7 +51,10 @@ export class CarpoolLabelRepository {
     if (result.rowCount == 0) {
       return [];
     }
-    return [{ label: "interoperator_fraud" }];
+    if (api_version === "v3") {
+      return [{ label: "interoperator_fraud" }];
+    }
+    return result.rows.map(({ label }) => ({ label: label }));
   }
 
   async findAnomalyByOperatorJourneyId(
