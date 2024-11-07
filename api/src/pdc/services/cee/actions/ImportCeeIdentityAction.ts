@@ -1,21 +1,17 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/importApplicationIdentity.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/importApplicationIdentity.contract.ts";
 
 import { alias } from "@/shared/cee/importApplicationIdentity.schema.ts";
 
+import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import {
   CeeImportSpecificApplicationIdentityInterface,
   CeeImportStandardizedApplicationIdentityInterface,
 } from "@/shared/cee/common/CeeApplicationInterface.ts";
 import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
-import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
@@ -34,7 +30,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_CEE_IMPORT_IDENTITY")) {
-      throw new ServiceDisabledError();
+      throw new ServiceDisabledException();
     }
 
     const operator_id = getOperatorIdOrFail(context);

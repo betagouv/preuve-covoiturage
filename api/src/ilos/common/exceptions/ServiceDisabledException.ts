@@ -1,6 +1,6 @@
-import { RPCException } from "@/ilos/common/index.ts";
+import { Exception } from "@/ilos/common/index.ts";
 
-export class ServiceDisabledError extends RPCException {
+export class ServiceDisabledException extends Exception {
   constructor() {
     super("This service is disabled");
     this.rpcError = {
@@ -8,5 +8,6 @@ export class ServiceDisabledError extends RPCException {
       code: -32601,
       message: this.message,
     };
+    this.httpCode = 405;
   }
 }

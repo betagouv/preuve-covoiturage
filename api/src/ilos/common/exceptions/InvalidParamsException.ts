@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class InvalidParamsException extends RPCException {
+export class InvalidParamsException extends Exception {
   constructor(data?: any) {
     super("Invalid params");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class InvalidParamsException extends RPCException {
       code: -32602,
       message: this.message,
     };
+    this.httpCode = 400;
   }
 }
