@@ -4,11 +4,7 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/m
 
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/acquisition/status.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/status.contract.ts";
 import { alias } from "@/shared/acquisition/status.schema.ts";
 
 @handler({
@@ -28,10 +24,11 @@ export class StatusJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const { operator_journey_id, operator_id } = params;
+    const { operator_journey_id, operator_id, api_version } = params;
     const result = await this.statusService.findByOperatorJourneyId(
       operator_id,
       operator_journey_id,
+      api_version,
     );
     if (!result) {
       throw new NotFoundException();

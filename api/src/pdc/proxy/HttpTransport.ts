@@ -428,7 +428,21 @@ export class HttpTransport implements TransportInterface {
         const { params } = req;
         const user = get(req, "session.user", null);
         const response = (await this.kernel.handle(
-          createRPCPayload("acquisition:status", params, user, { req }),
+          createRPCPayload("acquisition:status", params, user, { ...req, api_version: "v3" }),
+        )) as RPCResponseType;
+        this.send(res, response, {}, true);
+      }),
+    );
+
+    this.app.get(
+      "/v3.1/journeys/:operator_journey_id",
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const { params } = req;
+        const user = get(req, "session.user", null);
+        const response = (await this.kernel.handle(
+          createRPCPayload("acquisition:status", params, user, { ...req, api_version: "v3.1" }),
         )) as RPCResponseType;
         this.send(res, response, {}, true);
       }),

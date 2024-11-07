@@ -32,6 +32,7 @@ export class CarpoolLabelRepository {
   }
 
   async findFraudByOperatorJourneyId(
+    api_version: "v3" | "v3.1",
     operator_id: number,
     operator_journey_id: string,
     client?: PoolClient,
