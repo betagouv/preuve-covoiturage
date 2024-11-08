@@ -36,7 +36,6 @@ interface PassengerInterfaceV3 {
 }
 
 export interface ParamsInterfaceV3 {
-  api_version: 'v3';
   operator_id: number;
   operator_class: string;
   start: PositionInterface;
@@ -59,8 +58,8 @@ export interface ResultInterface {
 }
 
 export const handlerConfig = {
-  service: 'campaign',
-  method: 'simulateOnFuture',
+  service: "campaign",
+  method: "simulateOnFuture",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
