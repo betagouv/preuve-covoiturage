@@ -363,12 +363,6 @@ export class HttpTransport implements TransportInterface {
         limit: 2_000,
         windowMinute: 5,
       },
-      async actionParamsFn(req) {
-        return {
-          api_version: "v3",
-          ...req.body,
-        };
-      },
     });
     this.app.post(
       "/policy/simulate",
@@ -501,13 +495,6 @@ export class HttpTransport implements TransportInterface {
       },
       rpcAnswerOnSuccess: true,
       rpcAnswerOnFailure: true,
-      actionParamsFn: async (req) => {
-        return {
-          ...req.body,
-          operator_journey_id: req.params.operator_journey_id,
-          api_version: "v3",
-        };
-      },
     });
 
     registerExpressRoute(this.app, this.kernel, {
@@ -522,12 +509,6 @@ export class HttpTransport implements TransportInterface {
       },
       rpcAnswerOnSuccess: false,
       rpcAnswerOnFailure: true,
-      async actionParamsFn(req) {
-        return {
-          api_version: "v3",
-          ...req.body,
-        };
-      },
     });
 
     registerExpressRoute(this.app, this.kernel, {

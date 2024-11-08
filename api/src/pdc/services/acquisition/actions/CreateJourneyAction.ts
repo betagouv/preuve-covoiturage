@@ -9,15 +9,10 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/acquisition/create.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/create.contract.ts";
 
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
-import { PayloadV3 } from "@/shared/acquisition/create.contract.ts";
 import { v3alias } from "@/shared/acquisition/create.schema.ts";
 
 @handler({
@@ -41,66 +36,56 @@ export class CreateJourneyAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     const operator_id = get(context, "call.user.operator_id");
-    const { api_version: apiVersionString, ...payload } = params;
-    const api_version = parseInt((apiVersionString || "").substring(1), 10);
-    if (Number.isNaN(api_version)) {
-      throw new ParseErrorException(
-        `Api version should be a number ${apiVersionString}`,
-      );
-    }
-    const operator_journey_id = api_version === 2
-      ? get(params, "journey_id")
-      : get(params, "operator_journey_id");
 
-    // validate the payload manually to log rejected journeys
+    // validate the params manually to log rejected journeys
     try {
-      await this.validate(apiVersionString, payload);
+      await this.validate(params);
 
       const result = await this.acquisitionService.registerRequest({
-        api_version,
+        api_version: context.channel.api_version || 0,
         operator_id,
         operator_journey_id,
-        operator_trip_id: payload.operator_trip_id,
-        operator_class: payload.operator_class as any,
-        start_datetime: payload.start.datetime,
+        operator_trip_id: params.operator_trip_id,
+        operator_class: params.operator_class as any,
+        start_datetime: params.start.datetime,
         start_position: {
-          lat: payload.start.lat,
-          lon: payload.start.lon,
+          lat: params.start.lat,
+          lon: params.start.lon,
         },
-        end_datetime: payload.end.datetime,
+        end_datetime: params.end.datetime,
         end_position: {
-          lat: payload.end.lat,
-          lon: payload.end.lon,
+          lat: params.end.lat,
+          lon: params.end.lon,
         },
-        distance: payload.distance,
-        licence_plate: payload.licence_plate,
-        driver_identity_key: payload.driver.identity.identity_key,
-        driver_operator_user_id: payload.driver.identity.operator_user_id,
-        driver_phone: payload.driver.identity.phone,
-        driver_phone_trunc: payload.driver.identity.phone_trunc,
-        driver_travelpass_name: payload.driver.identity.travel_pass?.name,
-        driver_travelpass_user_id: payload.driver.identity.travel_pass
+        distance: params.distance,
+        licence_plate: params.licence_plate,
+        driver_identity_key: params.driver.identity.identity_key,
+        driver_operator_user_id: params.driver.identity.operator_user_id,
+        driver_phone: params.driver.identity.phone,
+        driver_phone_trunc: params.driver.identity.phone_trunc,
+        driver_travelpass_name: params.driver.identity.travel_pass?.name,
+        driver_travelpass_user_id: params.driver.identity.travel_pass
           ?.user_id,
-        driver_revenue: payload.driver.revenue,
-        passenger_identity_key: payload.passenger.identity.identity_key,
-        passenger_operator_user_id: payload.passenger.identity.operator_user_id,
-        passenger_phone: payload.passenger.identity.phone,
-        passenger_phone_trunc: payload.passenger.identity.phone_trunc,
-        passenger_travelpass_name: payload.passenger.identity.travel_pass
+        driver_revenue: params.driver.revenue,
+        passenger_identity_key: params.passenger.identity.identity_key,
+        passenger_operator_user_id: params.passenger.identity.operator_user_id,
+        passenger_phone: params.passenger.identity.phone,
+        passenger_phone_trunc: params.passenger.identity.phone_trunc,
+        passenger_travelpass_name: params.passenger.identity.travel_pass
           ?.name,
-        passenger_travelpass_user_id: payload.passenger.identity.travel_pass
+        passenger_travelpass_user_id: params.passenger.identity.travel_pass
           ?.user_id,
-        passenger_over_18: payload.passenger.identity.over_18,
-        passenger_seats: payload.passenger.seats,
-        passenger_contribution: payload.passenger.contribution,
-        passenger_payments: payload.passenger.payments,
-        incentives: payload.incentives,
+        passenger_over_18: params.passenger.identity.over_18,
+        passenger_seats: params.passenger.seats,
+        passenger_contribution: params.passenger.contribution,
+        passenger_payments: params.passenger.payments,
+        incentives: params.incentives,
       });
       if (result.terms_violation_error_labels.length) {
         throw new InvalidRequestException(result.terms_violation_error_labels);
       }
       return {
-        operator_journey_id: payload.operator_journey_id,
+        operator_journey_id: params.operator_journey_id,
         created_at: result.created_at,
       };
     } catch (e) {
@@ -110,23 +95,15 @@ export class CreateJourneyAction extends AbstractAction {
   }
 
   protected async validate(
-    apiVersionString: string,
-    journey: PayloadV3,
+    journey: ParamsInterface,
   ): Promise<void> {
-    switch (apiVersionString) {
-      case "v3": {
-        const v3Journey = journey as PayloadV3;
-        await this.validator.validate(v3Journey, v3alias);
-        const now = new Date();
-        const start = get(v3Journey, "start.datetime");
-        const end = get(v3Journey, "end.datetime");
-        if (end > now || start > end) {
-          throw new ParseErrorException("Journeys cannot happen in the future");
-        }
-        return;
-      }
-      default:
-        throw new Error(`Unknown api version ${apiVersionString}`);
+    await this.validator.validate(journey, v3alias);
+    const now = new Date();
+    const start = get(journey, "start.datetime");
+    const end = get(journey, "end.datetime");
+    if (end > now || start > end) {
+      throw new ParseErrorException("Journeys cannot happen in the future");
     }
+    return;
   }
 }

@@ -41,12 +41,12 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       const user = req.session?.user || {};
       setSentryUser(req);
       const { api_version, ...query } = req.query;
-      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { query, ...req.body, ...req.params };
+      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...query, ...req.body, ...req.params };
       const ctxt: ContextType = params.actionContextFn ? await params.actionContextFn(req) : {
         channel: {
           service: "proxy",
           transport: "http",
-          api_version,
+          api_version: parseFloat(api_version.replace("v", "")),
         },
         call: {
           user,

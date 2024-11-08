@@ -1,13 +1,9 @@
-import { handler } from "@/ilos/common/index.ts";
+import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/acquisition/cancel.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/cancel.contract.ts";
 import { alias } from "@/shared/acquisition/cancel.schema.ts";
 
 @handler({
@@ -26,10 +22,10 @@ export class CancelJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
+  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { operator_id, operator_journey_id } = params;
     await this.acquisitionService.cancelRequest({
-      api_version: 3,
+      api_version: context.channel.api_version || 0,
       operator_id,
       operator_journey_id,
       cancel_code: params.code,
