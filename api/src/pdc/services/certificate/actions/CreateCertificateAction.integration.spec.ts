@@ -1,30 +1,12 @@
 /* eslint-disable max-len */
 import { faker } from "@/deps.ts";
-import {
-  afterEach,
-  assertEquals,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
-import {
-  CarpoolInterface,
-  CarpoolTypeEnum,
-} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+import { afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { CarpoolInterface, CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { CertificateBaseInterface } from "@/shared/certificate/common/interfaces/CertificateBaseInterface.ts";
 import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
 import { CertificateMetaInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
-import {
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/certificate/create.contract.ts";
-import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
+import { ParamsInterface, ResultInterface } from "@/shared/certificate/create.contract.ts";
 import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";
 import { CarpoolRepositoryProviderInterfaceResolver } from "../interfaces/CarpoolRepositoryProviderInterface.ts";
 import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/CertificateRepositoryProviderInterface.ts";
@@ -46,10 +28,8 @@ describe("Create Certification Action", () => {
   let RPC_IDENTITIES: { _id: number; uuid: string }[];
   let CERTIFICATE_UUID: string;
 
-  const fakeKernelInterfaceResolver =
-    new (class extends KernelInterfaceResolver {})();
-  const configInterfaceResolver =
-    new (class extends ConfigInterfaceResolver {})();
+  const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
+  const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
   const certificateRepositoryProviderInterface =
     new (class extends CertificateRepositoryProviderInterfaceResolver {})();
   const carpoolRepositoryProviderInterfaceResolver =
@@ -206,8 +186,7 @@ describe("Create Certification Action", () => {
     carpoolRepositoryFindStub.resolves(carpoolData);
 
     // Act
-    const result: WithHttpStatus<ResultInterface> =
-      await createCertificateAction.handle(params, null as any);
+    const result: ResultInterface = await createCertificateAction.handle(params, null as any);
 
     // Assert
     const expected: CertMetaType = {
@@ -222,8 +201,7 @@ describe("Create Certification Action", () => {
       carpools: carpoolData,
     };
 
-    const { meta, identity_uuid, ...expectCreateCertificateParams } =
-      getExpectedCertificateParams(expected);
+    const { meta, identity_uuid, ...expectCreateCertificateParams } = getExpectedCertificateParams(expected);
 
     sinon.assert.calledOnceWithMatch(
       certificateRepositoryCreateStub,
@@ -231,8 +209,7 @@ describe("Create Certification Action", () => {
     );
     sinon.assert.calledOnce(carpoolRepositoryFindStub);
     sinon.assert.calledOnce(kernelCallStub);
-    assertEquals(result.meta.httpStatus, 201);
-    assertEquals(result.data.uuid, CERTIFICATE_UUID as string);
+    assertEquals(result.uuid, CERTIFICATE_UUID as string);
   });
 
   it("CreateCertificateAction: should return empty cert if no trips", async () => {
@@ -241,8 +218,7 @@ describe("Create Certification Action", () => {
     carpoolRepositoryFindStub.resolves([]);
 
     // Act
-    const result: WithHttpStatus<ResultInterface> =
-      await createCertificateAction.handle(params, null as any);
+    const result: ResultInterface = await createCertificateAction.handle(params, null as any);
 
     // Assert
     const expected: CertMetaType = {
@@ -257,8 +233,7 @@ describe("Create Certification Action", () => {
       carpools: [],
     };
 
-    const { meta, identity_uuid, ...expectCreateCertificateParams } =
-      getExpectedCertificateParams(expected);
+    const { meta, identity_uuid, ...expectCreateCertificateParams } = getExpectedCertificateParams(expected);
 
     sinon.assert.calledOnceWithMatch(
       certificateRepositoryCreateStub,
@@ -266,7 +241,6 @@ describe("Create Certification Action", () => {
     );
     sinon.assert.calledOnce(carpoolRepositoryFindStub);
     sinon.assert.calledOnce(kernelCallStub);
-    assertEquals(result.meta.httpStatus, 201);
-    assertEquals(result.data.uuid, CERTIFICATE_UUID);
+    assertEquals(result.uuid, CERTIFICATE_UUID);
   });
 });
