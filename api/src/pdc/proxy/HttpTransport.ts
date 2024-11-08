@@ -283,7 +283,7 @@ export class HttpTransport implements TransportInterface {
   private registerCeeRoutes(): void {
     const routes: Array<RouteParams> = [
       {
-        path: "/v3/policies/cee",
+        path: "/policies/cee",
         action: registerCeeSignature,
         method: "POST",
         successHttpCode: 201,
@@ -294,7 +294,7 @@ export class HttpTransport implements TransportInterface {
         },
       },
       {
-        path: "/v3/policies/cee/simulate",
+        path: "/policies/cee/simulate",
         action: simulateCeeSignature,
         method: "POST",
         successHttpCode: 200,
@@ -305,7 +305,7 @@ export class HttpTransport implements TransportInterface {
         },
       },
       {
-        path: "/v3/policies/cee/import",
+        path: "/policies/cee/import",
         action: importCeeSignature,
         method: "POST",
         successHttpCode: 201,
@@ -316,7 +316,7 @@ export class HttpTransport implements TransportInterface {
         },
       },
       {
-        path: "/v3/policies/cee/import/identity",
+        path: "/policies/cee/import/identity",
         action: importIdentityCeeSignature,
         method: "POST",
         successHttpCode: 200,
@@ -327,7 +327,7 @@ export class HttpTransport implements TransportInterface {
         },
       },
       {
-        path: "/v3/policies/cee/:uuid",
+        path: "/policies/cee/:uuid",
         action: findCeeSignature,
         method: "GET",
         successHttpCode: 200,
@@ -338,7 +338,7 @@ export class HttpTransport implements TransportInterface {
         },
       },
       {
-        path: "/v3/policies/cee/:uuid",
+        path: "/policies/cee/:uuid",
         action: deleteCeeSignature,
         method: "DELETE",
         successHttpCode: 204,
@@ -354,7 +354,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/policies/simulate",
+      path: "/policies/simulate",
       action: "campaign:simulateOnFuture",
       method: "POST",
       successHttpCode: 200,
@@ -403,7 +403,7 @@ export class HttpTransport implements TransportInterface {
     );
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/geo/route",
+      path: "/geo/route",
       action: "geo:getRouteMeta",
       method: "GET",
       successHttpCode: 200,
@@ -428,7 +428,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/geo/point/by_address",
+      path: "/geo/point/by_address",
       action: "geo:getPointByAddress",
       method: "GET",
       successHttpCode: 200,
@@ -441,7 +441,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/geo/point/by_insee",
+      path: "/geo/point/by_insee",
       action: "geo:getPointByCode",
       method: "GET",
       successHttpCode: 200,
@@ -462,7 +462,7 @@ export class HttpTransport implements TransportInterface {
    */
   private registerAcquisitionRoutes(): void {
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/journeys/:operator_journey_id",
+      path: "/journeys/:operator_journey_id",
       action: "acquisition:status",
       method: "GET",
       successHttpCode: 200,
@@ -476,7 +476,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/journeys/:operator_journey_id",
+      path: "/journeys/:operator_journey_id",
       action: "acquisition:patch",
       method: "PATCH",
       successHttpCode: 200,
@@ -490,7 +490,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/journeys/:operator_journey_id/cancel",
+      path: "/journeys/:operator_journey_id/cancel",
       action: "acquisition:cancel",
       method: "POST",
       successHttpCode: 200,
@@ -511,7 +511,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/journeys",
+      path: "/journeys",
       action: "acquisition:create",
       method: "POST",
       successHttpCode: 201,
@@ -531,7 +531,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/journeys",
+      path: "/journeys",
       action: "acquisition:list",
       method: "GET",
       successHttpCode: 200,
@@ -736,10 +736,10 @@ export class HttpTransport implements TransportInterface {
      * v3 Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
-     * - generate a certificate to be printed when calling /v3/certificates/{uuid}/attachment
+     * - generate a certificate to be printed when calling /certificates/{uuid}/attachment
      */
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/certificates",
+      path: "/certificates",
       action: "certificate:create",
       method: "POST",
       successHttpCode: 201,
@@ -756,7 +756,7 @@ export class HttpTransport implements TransportInterface {
      * - print a PDF returned back to the caller
      */
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/certificates/:uuid/attachment",
+      path: "/certificates/:uuid/attachment",
       action: "certificate:download",
       method: "POST",
       successHttpCode: 200,
@@ -778,7 +778,7 @@ export class HttpTransport implements TransportInterface {
      * v3 Public route to retrieve a certificate
      */
     registerExpressRoute(this.app, this.kernel, {
-      path: "/v3/certificates/:uuid",
+      path: "/certificates/:uuid",
       action: "certificate:find",
       method: "GET",
       successHttpCode: 200,

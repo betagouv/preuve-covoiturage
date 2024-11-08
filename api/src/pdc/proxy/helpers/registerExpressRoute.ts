@@ -34,16 +34,19 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       max: params.rateLimiter.limit,
     }, params.rateLimiter.key));
   }
-  app[params.method.toLocaleLowerCase()](params.path, [
+  const path = `/:api_version/${params.path}`.replaceAll("//", "/");
+  app[params.method.toLocaleLowerCase()](path, [
     ...middlewares,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
       const user = req.session?.user || {};
       setSentryUser(req);
-      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...req.params };
+      const { api_version, ...query } = req.query;
+      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { query, ...req.body, ...req.params };
       const ctxt: ContextType = params.actionContextFn ? await params.actionContextFn(req) : {
         channel: {
           service: "proxy",
           transport: "http",
+          api_version,
         },
         call: {
           user,
