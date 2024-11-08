@@ -3,6 +3,7 @@ import {
   handler,
   InvalidRequestException,
   ParseErrorException,
+  UnprocessableRequestException,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
@@ -82,7 +83,10 @@ export class CreateJourneyAction extends AbstractAction {
         incentives: params.incentives,
       });
       if (result.terms_violation_error_labels.length) {
-        throw new InvalidRequestException(result.terms_violation_error_labels);
+        if (context.channel.api_version === 3) {
+          throw new InvalidRequestException(result.terms_violation_error_labels);
+        }
+        throw new UnprocessableRequestException({ terms_violation_labels: result.terms_violation_error_labels });
       }
       return {
         operator_journey_id: params.operator_journey_id,

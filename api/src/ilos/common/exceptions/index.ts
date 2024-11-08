@@ -11,3 +11,4 @@ export { TimeoutException } from "./TimeoutException.ts";
 export { TooManyRequestsException } from "./TooManyRequestsException.ts";
 export { UnauthorizedException } from "./UnauthorizedException.ts";
 export { UnimplementedException } from "./UnimplementedException.ts";
+export { UnprocessableRequestException } from "./UnprocessableRequestException.ts";

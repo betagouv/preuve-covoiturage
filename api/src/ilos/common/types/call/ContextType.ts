@@ -3,7 +3,7 @@ export type ContextType = {
     service: string;
     transport?: string;
     metadata?: any;
-    api_version?: string;
+    api_version?: number;
   };
   call?: {
     user: any;
