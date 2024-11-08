@@ -84,7 +84,7 @@ export default function Navigation() {
               text: 'Comprendre et planifier le covoiturage',
               isActive: pathname === '/collectivites/comprendre-et-planifier-le-covoiturage',
             },
-            {
+            /*{
               linkProps: {
                 href: '/collectivites/simulateur',
                 title: 'Simuler une campagne de covoiturage',
@@ -92,7 +92,7 @@ export default function Navigation() {
               },
               text: 'Simuler une campagne de covoiturage',
               isActive: pathname === '/collectivites/simulateur',
-            },
+            },*/
             {
               linkProps: {
                 href: '/collectivites/aires-covoiturage',
