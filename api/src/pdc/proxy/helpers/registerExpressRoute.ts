@@ -25,7 +25,7 @@ export interface RouteParams {
 
 export function registerExpressRoute(app: express.Express, kernel: KernelInterface, params: RouteParams) {
   const tokenProvider = kernel.get<TokenProvider>(TokenProvider);
-  const middlewares: Array<NextFunction> = [
+  const middlewares: Array<express.RequestHandler> = [
     serverTokenMiddleware(kernel, tokenProvider),
   ];
   if (params.rateLimiter) {
@@ -40,8 +40,8 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
       const user = req.session?.user || {};
       setSentryUser(req);
-      const { api_version, ...query } = req.query;
-      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...query, ...req.body, ...req.params };
+      const { api_version, ...rparams } = req.params;
+      const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...rparams };
       const ctxt: ContextType = params.actionContextFn ? await params.actionContextFn(req) : {
         channel: {
           service: "proxy",
@@ -78,7 +78,7 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
             error: e.rpcError || { message: e.message },
           });
         }
-        return res.json(e.rpcError?.data || { error: e.message });
+        return res.json(e.rpcError?.data || { error: e.message || "An unexpected error occurred." });
       }
     }),
   ]);

@@ -503,12 +503,12 @@ export class HttpTransport implements TransportInterface {
       async actionParamsFn(req) {
         const q = { ...req.query };
         q.start = {
-          lat: parseInt(q.start?.lat, 10),
-          lon: parseInt(q.start?.lon, 10),
+          lat: parseFloat(q.start?.lat),
+          lon: parseFloat(q.start?.lon),
         };
         q.end = {
-          lat: parseInt(q.end?.lat, 10),
-          lon: parseInt(q.end?.lon, 10),
+          lat: parseFloat(q.end?.lat),
+          lon: parseFloat(q.end?.lon),
         };
         return q;
       },

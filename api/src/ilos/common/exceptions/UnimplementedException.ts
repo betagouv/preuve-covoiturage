@@ -9,6 +9,6 @@ export class UnimplementedException extends Exception {
       code: -32503,
       message: this.message,
     };
-    this.httpCode = 403;
+    this.httpCode = 501;
   }
 }

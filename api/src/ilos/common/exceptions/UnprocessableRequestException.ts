@@ -6,7 +6,7 @@ export class UnprocessableRequestException extends Exception {
     this.nolog = true;
     this.rpcError = {
       data,
-      code: -32600,
+      code: -32422,
       message: this.message,
     };
     this.httpCode = 422;
