@@ -28,6 +28,7 @@ import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
+import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
 import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
@@ -58,7 +59,6 @@ import {
   monHonorCertificateRateLimiter,
   rateLimiter,
 } from "./middlewares/rateLimiter.ts";
-import { register as registerExportRoutes } from "./routes/exportRoutes.ts";
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -116,7 +116,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
-    registerExportRoutes(this);
+    this.registerExportRoutes();
     this.registerStaticFolder();
   }
 
@@ -278,6 +278,100 @@ export class HttpTransport implements TransportInterface {
       metricsMiddleware("metrics"),
       prometheusMetricsFactory(),
     );
+  }
+
+  private registerExportRoutes(): void {
+    /**
+     * Export trips from a V2 payload to a V3 output file.
+     *
+     * The V2 way to handle exports is done throught the /rpc route calling
+     * the trip:export method.
+     *
+     * @deprecated This should be removed when the dashboard is updated.
+     */
+    this.app.post(
+      "/v2/exports",
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response) => {
+        const user = get(req, "session.user", {});
+        const action = `export:createVersionTwo`;
+        const response = await this.kernel.handle(
+          createRPCPayload(action, req.body, user, { req }),
+        );
+        this.send(res, response);
+      }),
+    );
+
+    const routes: Array<RouteParams> = [
+      {
+        path: "/exports",
+        action: "export:createVersionThree",
+        method: "POST",
+        successHttpCode: 201,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+      {
+        path: "/exports",
+        action: "export:list",
+        method: "GET",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+      {
+        path: "/exports/:uuid",
+        action: "export:get",
+        method: "GET",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+      {
+        path: "/exports/:uuid/status",
+        action: "export:status",
+        method: "GET",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+      {
+        path: "/exports/:uuid/attachment",
+        action: "export:download",
+        method: "GET",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+      {
+        path: "/exports/:uuid",
+        action: "export:delete",
+        method: "DELETE",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl",
+          limit: 2_000,
+          windowMinute: 5,
+        },
+      },
+    ];
+    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
   }
 
   private registerCeeRoutes(): void {
@@ -1022,24 +1116,6 @@ export class HttpTransport implements TransportInterface {
     );
 
     res.status(status).json(this.parseErrorData(response, unnestResult));
-  }
-
-  /**
-   * Send raw response data with configured headers
-   */
-  private raw(
-    res: Response,
-    data: RPCResponseType,
-    headers: { [key: string]: string } = {},
-  ): void {
-    if (typeof data === "object" && "error" in data) {
-      res.status(mapStatusCode(data));
-      res.send(data.error);
-      return;
-    }
-
-    this.setHeaders(res, headers);
-    res.send(data);
   }
 
   /**
