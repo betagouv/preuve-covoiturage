@@ -41,6 +41,16 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       const user = req.session?.user || {};
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
+
+      const versionRange = semver.tryParseRange(api_version);
+      if (!versionRange) {
+        return res.status(404).end();
+      }
+      if (
+        !semver.satisfies(semver.parse("3.0.0"), versionRange) && !semver.satisfies(semver.parse("3.1.0"), versionRange)
+      ) {
+        return res.status(404).end();
+      }
       const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...rparams };
       const ctxt: ContextType = params.actionContextFn ? await params.actionContextFn(req) : {
         channel: {
@@ -49,7 +59,7 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
         },
         call: {
           user,
-          api_version_range: semver.formatRange(semver.parseRange(api_version)),
+          api_version_range: semver.formatRange(versionRange),
         },
       };
       try {
