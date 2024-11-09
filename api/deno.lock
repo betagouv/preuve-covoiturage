@@ -2,6 +2,7 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "jsr:@std/semver@1": "jsr:@std/semver@1.0.3",
       "npm:@faker-js/faker@^8.4": "npm:@faker-js/faker@8.4.1",
       "npm:@keycloak/keycloak-admin-client@^25.0": "npm:@keycloak/keycloak-admin-client@25.0.1",
       "npm:@sentry/node@^8.2": "npm:@sentry/node@8.10.0_@opentelemetry+api@1.9.0_@opentelemetry+core@1.25.1__@opentelemetry+api@1.9.0_@opentelemetry+instrumentation@0.52.1__@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.25.1__@opentelemetry+api@1.9.0_@opentelemetry+semantic-conventions@1.25.1",
@@ -17,7 +18,6 @@
       "npm:@types/nodemailer@^6.4": "npm:@types/nodemailer@6.4.15",
       "npm:@types/pg-cursor@^2.7": "npm:@types/pg-cursor@2.7.2",
       "npm:@types/pg@^8.11": "npm:@types/pg@8.11.6",
-      "npm:@types/stream-json@^1.7": "npm:@types/stream-json@1.7.7",
       "npm:@types/supertest@^6": "npm:@types/supertest@6.0.2",
       "npm:adm-zip@^0.5": "npm:adm-zip@0.5.14",
       "npm:ajv-errors@^3": "npm:ajv-errors@3.0.0_ajv@8.16.0",
@@ -63,6 +63,11 @@
       "npm:stream-json@^1.8": "npm:stream-json@1.8.0",
       "npm:supertest@^7": "npm:supertest@7.0.0",
       "npm:xss@^1": "npm:xss@1.0.15"
+    },
+    "jsr": {
+      "@std/semver@1.0.3": {
+        "integrity": "7c139c6076a080eeaa4252c78b95ca5302818d7eafab0470d34cafd9930c13c8"
+      }
     },
     "npm": {
       "@babel/runtime@7.24.7": {
@@ -817,19 +822,6 @@
       "@types/shimmer@1.0.5": {
         "integrity": "sha512-9Hp0ObzwwO57DpLFF0InUjUm/II8GmKAvzbefxQTihCb7KI6yc9yzf0nLc4mVdby5N4DRCgQM2wCup9KTieeww==",
         "dependencies": {}
-      },
-      "@types/stream-chain@2.1.0": {
-        "integrity": "sha512-guDyAl6s/CAzXUOWpGK2bHvdiopLIwpGu8v10+lb9hnQOyo4oj/ZUQFOvqFjKGsE3wJP1fpIesCcMvbXuWsqOg==",
-        "dependencies": {
-          "@types/node": "@types/node@18.16.19"
-        }
-      },
-      "@types/stream-json@1.7.7": {
-        "integrity": "sha512-hHG7cLQ09H/m9i0jzL6UJAeLLxIWej90ECn0svO4T8J0nGcl89xZDQ2ujT4WKlvg0GWkcxJbjIDzW/v7BYUM6Q==",
-        "dependencies": {
-          "@types/node": "@types/node@18.16.19",
-          "@types/stream-chain": "@types/stream-chain@2.1.0"
-        }
       },
       "@types/superagent@8.1.7": {
         "integrity": "sha512-NmIsd0Yj4DDhftfWvvAku482PZum4DBW7U51OvS8gvOkDDY0WT1jsVyDV3hK+vplrsYw8oDwi9QxOM7U68iwww==",
@@ -4019,7 +4011,7 @@
     }
   },
   "remote": {
-    "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs": "a09fb310fce98bc4f53e75ae4854384b49d790bb3b0c15a38e9a93014020dc96",
+    "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs": "1a0fb062ee9781b13f6687371b202aaefc53b6ce55b530c027e01f9c087b77db",
     "https://deno.land/std@0.214.0/assert/assert.ts": "bec068b2fccdd434c138a555b19a2c2393b71dfaada02b7d568a01541e67cdc5",
     "https://deno.land/std@0.214.0/assert/assertion_error.ts": "9f689a101ee586c4ce92f52fa7ddd362e86434ffdf1f848e45987dc7689976b8",
     "https://deno.land/std@0.214.0/async/delay.ts": "8e1d18fe8b28ff95885e2bc54eccec1713f57f756053576d8228e6ca110793ad",

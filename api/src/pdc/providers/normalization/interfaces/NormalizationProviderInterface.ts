@@ -2,7 +2,7 @@ import { CreateJourneyDTO } from "@/shared/acquisition/common/interfaces/CreateJ
 
 export interface Acquisition<TPayload> {
   _id: number;
-  api_version: number;
+  api_version: string;
   operator_id: number;
   created_at: Date;
   payload: TPayload;

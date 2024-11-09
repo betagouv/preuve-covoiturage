@@ -1,4 +1,4 @@
-import { express, NextFunction, Request, Response } from "@/deps.ts";
+import { express, NextFunction, Request, Response, semver } from "@/deps.ts";
 import { ContextType, KernelInterface, ParamsType } from "@/ilos/common/index.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
@@ -46,10 +46,10 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
         channel: {
           service: "proxy",
           transport: "http",
-          api_version: parseFloat(api_version.replace("v", "")),
         },
         call: {
           user,
+          api_version_range: semver.formatRange(semver.parseRange(api_version)),
         },
       };
       try {

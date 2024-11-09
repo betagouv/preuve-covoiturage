@@ -25,7 +25,7 @@ export class CancelJourneyAction extends AbstractAction {
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { operator_id, operator_journey_id } = params;
     await this.acquisitionService.cancelRequest({
-      api_version: context.channel.api_version || 0,
+      api_version: context.call?.api_version_range || "3",
       operator_id,
       operator_journey_id,
       cancel_code: params.code,

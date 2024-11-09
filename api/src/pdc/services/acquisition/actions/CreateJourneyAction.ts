@@ -12,6 +12,7 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/m
 
 import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/create.contract.ts";
 
+import { semver } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { v3alias } from "@/shared/acquisition/create.schema.ts";
@@ -43,9 +44,9 @@ export class CreateJourneyAction extends AbstractAction {
       await this.validate(params);
 
       const result = await this.acquisitionService.registerRequest({
-        api_version: context.channel.api_version || 0,
+        api_version: context.call?.api_version_range || "3",
         operator_id,
-        operator_journey_id,
+        operator_journey_id: params.operator_journey_id,
         operator_trip_id: params.operator_trip_id,
         operator_class: params.operator_class as any,
         start_datetime: params.start.datetime,
@@ -83,17 +84,17 @@ export class CreateJourneyAction extends AbstractAction {
         incentives: params.incentives,
       });
       if (result.terms_violation_error_labels.length) {
-        if (context.channel.api_version === 3) {
-          throw new InvalidRequestException(result.terms_violation_error_labels);
+        if (semver.satisfies(semver.parse("3.1.0"), semver.parseRange(context.call?.api_version_range || "3.0"))) {
+          throw new UnprocessableRequestException({ terms_violation_labels: result.terms_violation_error_labels });
         }
-        throw new UnprocessableRequestException({ terms_violation_labels: result.terms_violation_error_labels });
+        throw new InvalidRequestException(result.terms_violation_error_labels);
       }
       return {
         operator_journey_id: params.operator_journey_id,
         created_at: result.created_at,
       };
     } catch (e) {
-      logger.error(e.message, { operator_journey_id, operator_id });
+      logger.error(e.message, { operator_journey_id: params.operator_journey_id, operator_id });
       throw e;
     }
   }

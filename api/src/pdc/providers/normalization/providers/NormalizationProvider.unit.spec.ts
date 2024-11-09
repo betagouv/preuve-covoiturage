@@ -4,10 +4,7 @@ import { Container } from "@/ilos/core/index.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
-import {
-  PartialGeoInterface,
-  PointInterface,
-} from "@/pdc/providers/geo/interfaces/index.ts";
+import { PartialGeoInterface, PointInterface } from "@/pdc/providers/geo/interfaces/index.ts";
 import { CostNormalizerProvider } from "./CostNormalizerProvider.ts";
 import { NormalizationProvider } from "./NormalizationProvider.ts";
 
@@ -57,7 +54,7 @@ it("Should normalize v3", async () => {
   const data = {
     _id: 1,
     operator_id: 1,
-    api_version: 3,
+    api_version: "3",
     created_at: new Date(),
     payload: {
       operator_journey_id: uuidV4(),
@@ -173,8 +170,7 @@ it("Should normalize v3", async () => {
           operator_user_id: data.payload.passenger.identity.operator_user_id,
           identity_key: data.payload.passenger.identity.identity_key,
           travel_pass_name: data.payload.passenger.identity.travel_pass.name,
-          travel_pass_user_id:
-            data.payload.passenger.identity.travel_pass.user_id,
+          travel_pass_user_id: data.payload.passenger.identity.travel_pass.user_id,
         },
         meta: {
           calc_duration: 500,
