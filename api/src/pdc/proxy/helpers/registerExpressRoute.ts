@@ -42,13 +42,13 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
 
+      const SUPPORTED_VERSIONS = ['3.0.0', '3.1.0'];
+
       const versionRange = semver.tryParseRange(api_version);
       if (!versionRange) {
         return res.status(404).end();
       }
-      if (
-        !semver.satisfies(semver.parse("3.0.0"), versionRange) && !semver.satisfies(semver.parse("3.1.0"), versionRange)
-      ) {
+      if (!SUPPORTED_VERSIONS.some(version => semver.satisfies(semver.parse(version), versionRange))) {
         return res.status(404).end();
       }
       const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...rparams };
