@@ -1,0 +1,35 @@
+@import 'remixicon/fonts/remixicon.css';
+table {
+  img {
+    max-width: 100%;
+  }
+  [href] {
+    background-image: none !important;
+  }
+}
+.fr-text--lg > ul{
+  font-size: 1rem;
+}
+.fr-card__img img, 
+.fr-card--horizontal .fr-card__img img,
+.fr-content-media__img img{
+  object-fit: contain;
+  height: auto;
+}
+.fr-grid-row .fr-card {
+  z-index: 0;
+}
+.fr-content-media__img img{
+  aspect-ratio: 1 !important;
+}
+.Mui-focusVisible{
+  background-color: #bbbbfc !important;
+}
+.fr-search-bar{
+  flex-direction: column;
+}
+// remove remixicon from dsfr
+[class^="ri-"]::before{
+  background: none;
+  mask-image: none;
+}
