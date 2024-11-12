@@ -1,8 +1,9 @@
 import { coerceDate } from "@/ilos/cli/index.ts";
-import { command, CommandInterface, CommandOptionType } from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
+import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 import { DataGouvServiceInterfaceResolver } from "@/pdc/services/export/services/DataGouvService.ts";
@@ -21,35 +22,35 @@ export type Options = {
   tz: Timezone;
 };
 
-@command()
-export class DataGouvCommand implements CommandInterface {
-  static readonly signature: string = "export:datagouv";
-  static readonly description: string = "Export opendata file and upload to data.gouv.fr";
-  static readonly options: CommandOptionType[] = [
+function defaultDate(offset = 0): Date {
+  const now = today();
+  return new Date(now.getFullYear(), now.getMonth() + offset, 1);
+}
+
+@command({
+  signature: "export:datagouv",
+  description: "Export opendata file and upload to data.gouv.fr",
+  options: [
     {
       signature: "-s, --start <start>",
       description: "Start date (YYYY-MM-DD)",
       coerce: coerceDate,
-      default: DataGouvCommand.defaultDate(-1),
+      default: defaultDate(-1),
     },
     {
       signature: "-e, --end <end>",
       description: "End date (YYYY-MM-DD)",
       coerce: coerceDate,
-      default: DataGouvCommand.defaultDate(0),
+      default: defaultDate(0),
     },
     {
       signature: "--tz <tz>",
       description: "Output timezone",
       default: "Europe/Paris",
     },
-  ];
-
-  static defaultDate(offset = 0): Date {
-    const now = today();
-    return new Date(now.getFullYear(), now.getMonth() + offset, 1);
-  }
-
+  ],
+})
+export class DataGouvCommand implements CommandInterface {
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected dataGouvService: DataGouvServiceInterfaceResolver,
@@ -82,14 +83,14 @@ export class DataGouvCommand implements CommandInterface {
       logger.info(`Exporting ${filename} from ${s} to ${e}`);
 
       // export the file
-      const filepath = "/tmp/2024-13.csv";
-      // const filepath = await this.fileCreatorService.write(
-      //   params,
-      //   new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
-      // );
+      // const filepath = "/tmp/2024-13.csv";
+      const filepath = await this.fileCreatorService.write(
+        params,
+        new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
+      );
 
       // prepare description
-      const description = `Description 870.7830642521992`; // TODO
+      const description = `Description`; // TODO
 
       // upload to storage
       try {
@@ -110,8 +111,8 @@ export class DataGouvCommand implements CommandInterface {
       logger.error("Invalid date range. Defaults applied");
 
       return [ExportParams.fromJSON({
-        start_at: DataGouvCommand.defaultDate(-1),
-        end_at: DataGouvCommand.defaultDate(0),
+        start_at: defaultDate(-1),
+        end_at: defaultDate(0),
         tz,
       })];
     }
