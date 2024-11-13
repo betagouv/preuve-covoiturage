@@ -1,6 +1,7 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
 import process from "node:process";
+export * as superstruct from "jsr:@superstruct/core@^2";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
 export {
