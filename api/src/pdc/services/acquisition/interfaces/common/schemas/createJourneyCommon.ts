@@ -1,38 +1,38 @@
-import { payment } from '../../../common/schemas/payment.ts';
+import { payment } from "../../../../../../shared/common/schemas/payment.ts";
 
 export const distanceSchema = {
-  type: 'integer',
+  type: "integer",
   exclusiveMinimum: 0,
   maximum: 1000000,
 };
 
 export const paymentsSchema = {
-  type: 'array',
+  type: "array",
   minItems: 0,
   maxItems: 20,
   items: payment,
 };
 
 export const revenueSchema = {
-  type: 'integer',
+  type: "integer",
   minimum: 0,
   maximum: 1000000,
 };
 export { revenueSchema as contributionSchema };
 
 export const incentiveSchema = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
   minProperties: 3,
   properties: {
     index: {
-      type: 'integer',
+      type: "integer",
       minimum: 0,
       maximum: 19,
     },
-    siret: { macro: 'siret' },
+    siret: { macro: "siret" },
     amount: {
-      type: 'number',
+      type: "number",
       minimum: 0,
       maximum: 100000,
     },
@@ -40,37 +40,37 @@ export const incentiveSchema = {
 };
 
 export const incentivesSchema = {
-  type: 'array',
+  type: "array",
   minItems: 0,
   maxItems: 20,
   items: incentiveSchema,
 };
 
 export const seatSchema = {
-  type: 'integer',
+  type: "integer",
   default: 1,
   minimum: 1,
   maximum: 8,
 };
 
 export const travelPassSchema = {
-  type: 'object',
+  type: "object",
   minProperties: 2,
   additionalProperties: false,
   properties: {
-    name: { macro: 'varchar', enum: ['navigo'] },
-    user_id: { macro: 'varchar' },
+    name: { macro: "varchar", enum: ["navigo"] },
+    user_id: { macro: "varchar" },
   },
 };
 
 export const identityPropsSchema = {
-  firstname: { macro: 'varchar' },
-  lastname: { macro: 'varchar' },
-  email: { macro: 'email' },
-  phone: { macro: 'phone' },
-  phone_trunc: { macro: 'phonetrunc' },
-  operator_user_id: { macro: 'varchar' },
-  company: { macro: 'varchar' },
+  firstname: { macro: "varchar" },
+  lastname: { macro: "varchar" },
+  email: { macro: "email" },
+  phone: { macro: "phone" },
+  phone_trunc: { macro: "phonetrunc" },
+  operator_user_id: { macro: "varchar" },
+  company: { macro: "varchar" },
   over_18: { enum: [true, false, null], default: null },
   travel_pass: travelPassSchema,
 };

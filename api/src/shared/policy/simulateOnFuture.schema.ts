@@ -2,7 +2,7 @@ import {
   driverSchema,
   passengerSchema,
   timeGeoPointSchema,
-} from "../acquisition/common/schemas/createJourneySchemaV3.ts";
+} from "@/pdc/services/acquisition/interfaces/common/schemas/createJourneySchemaV3.ts";
 
 export const aliasv3 = "policy.simulateOnFuture.v3";
 export const schemav3 = {

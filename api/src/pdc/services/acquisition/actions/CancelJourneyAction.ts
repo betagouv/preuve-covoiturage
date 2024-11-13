@@ -3,8 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/cancel.contract.ts";
-import { alias } from "@/shared/acquisition/cancel.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../interfaces/cancel.contract.ts";
+import { alias } from "../interfaces/cancel.schema.ts";
 
 @handler({
   ...handlerConfig,

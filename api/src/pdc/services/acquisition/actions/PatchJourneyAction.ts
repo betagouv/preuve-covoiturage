@@ -4,9 +4,8 @@ import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { OperatorClass } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/patch.contract.ts";
-
-import { alias } from "@/shared/acquisition/patch.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../interfaces/patch.contract.ts";
+import { alias } from "../interfaces/patch.schema.ts";
 
 import { get } from "@/lib/object/index.ts";
 

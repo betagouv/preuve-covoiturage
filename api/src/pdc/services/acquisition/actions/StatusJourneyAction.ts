@@ -4,8 +4,8 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/m
 
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/status.contract.ts";
-import { alias } from "@/shared/acquisition/status.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../interfaces/status.contract.ts";
+import { alias } from "../interfaces/status.schema.ts";
 
 @handler({
   ...handlerConfig,
