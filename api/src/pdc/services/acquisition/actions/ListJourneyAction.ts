@@ -6,8 +6,8 @@ import { isAfter, isBefore } from "@/deps.ts";
 import { castUserStringToUTC, subDaysTz, today } from "@/pdc/helpers/dates.helper.ts";
 import { castFromStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../interfaces/list.contract.ts";
-import { alias } from "../interfaces/list.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/list.contract.ts";
+import { alias } from "../contracts/list.schema.ts";
 
 @handler({
   ...handlerConfig,

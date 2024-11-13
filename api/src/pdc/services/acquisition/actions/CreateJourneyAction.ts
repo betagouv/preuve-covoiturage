@@ -10,12 +10,12 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../interfaces/create.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/create.contract.ts";
 
 import { semver } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
-import { v3alias } from "../interfaces/create.schema.ts";
+import { v3alias } from "../contracts/create.schema.ts";
 
 @handler({
   ...handlerConfig,

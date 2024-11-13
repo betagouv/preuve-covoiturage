@@ -13,11 +13,11 @@ import { StatusJourneyAction } from "./actions/StatusJourneyAction.ts";
 import { AcquisitionMigrateCommand } from "./commands/MigrateAcquisitionCommand.ts";
 import { ProcessGeoCommand } from "./commands/ProcessGeoCommand.ts";
 import { config } from "./config/index.ts";
-import { binding as cancelBinding } from "./interfaces/cancel.schema.ts";
-import { v3binding } from "./interfaces/create.schema.ts";
-import { binding as listBinding } from "./interfaces/list.schema.ts";
-import { binding as patchBinding } from "./interfaces/patch.schema.ts";
-import { binding as statusBinding } from "./interfaces/status.schema.ts";
+import { binding as cancelBinding } from "./contracts/cancel.schema.ts";
+import { v3binding } from "./contracts/create.schema.ts";
+import { binding as listBinding } from "./contracts/list.schema.ts";
+import { binding as patchBinding } from "./contracts/patch.schema.ts";
+import { binding as statusBinding } from "./contracts/status.schema.ts";
 
 @serviceProvider({
   config,
