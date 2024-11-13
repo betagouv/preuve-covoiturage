@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class MethodNotFoundException extends RPCException {
+export class MethodNotFoundException extends Exception {
   constructor(data?: any) {
     super("Method not found");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class MethodNotFoundException extends RPCException {
       code: -32601,
       message: this.message,
     };
+    this.httpCode = 405;
   }
 }

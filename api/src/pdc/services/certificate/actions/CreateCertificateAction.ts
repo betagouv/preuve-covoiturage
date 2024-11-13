@@ -1,9 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { omit } from "@/lib/object/index.ts";
 import {
@@ -13,21 +8,10 @@ import {
 import { uuid } from "@/pdc/providers/test/helpers.ts";
 import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/certificate/create.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/certificate/create.contract.ts";
 import { alias } from "@/shared/certificate/create.schema.ts";
-import { WithHttpStatus } from "@/shared/common/handler/WithHttpStatus.ts";
-import {
-  createCastParamsHelper,
-  CreateCastParamsInterface,
-} from "../helpers/createCastParamsHelper.ts";
-import {
-  findOperator,
-  FindOperatorInterface,
-} from "../helpers/findOperatorHelper.ts";
+import { createCastParamsHelper, CreateCastParamsInterface } from "../helpers/createCastParamsHelper.ts";
+import { findOperator, FindOperatorInterface } from "../helpers/findOperatorHelper.ts";
 import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";
 import {
   CarpoolRepositoryProviderInterfaceResolver,
@@ -64,7 +48,7 @@ export class CreateCertificateAction extends AbstractAction {
   public async handle(
     params: ParamsInterface,
     context: ContextType,
-  ): Promise<WithHttpStatus<ResultInterface>> {
+  ): Promise<ResultInterface> {
     const { identity, tz, operator_id, start_at, end_at, positions } = this
       .castParams(params);
 
@@ -93,12 +77,9 @@ export class CreateCertificateAction extends AbstractAction {
     );
 
     return {
-      meta: { httpStatus: 201 },
-      data: {
-        uuid: certificate.uuid,
-        created_at: certificate.created_at,
-        meta: omit(certificate.meta, ["identity", "operator"]),
-      },
+      uuid: certificate.uuid,
+      created_at: certificate.created_at,
+      meta: omit(certificate.meta, ["identity", "operator"]),
     };
   }
 }

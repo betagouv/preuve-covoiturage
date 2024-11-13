@@ -4,11 +4,7 @@ import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { OperatorClass } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/acquisition/patch.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/patch.contract.ts";
 
 import { alias } from "@/shared/acquisition/patch.schema.ts";
 
@@ -33,10 +29,9 @@ export class PatchJourneyAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     const operator_id = get(context, "call.user.operator_id");
-    const operator_class: OperatorClass | undefined =
-      params.operator_class && OperatorClass[params.operator_class]
-        ? OperatorClass[params.operator_class]
-        : undefined;
+    const operator_class: OperatorClass | undefined = params.operator_class && OperatorClass[params.operator_class]
+      ? OperatorClass[params.operator_class]
+      : undefined;
 
     const toUpdate = {
       ...params,
@@ -45,7 +40,7 @@ export class PatchJourneyAction extends AbstractAction {
 
     await this.acquisitionService.updateRequest({
       ...toUpdate,
-      api_version: 3,
+      api_version: context.call?.api_version_range || "3",
       operator_id,
       operator_journey_id: params.operator_journey_id,
     });

@@ -7,5 +7,6 @@ export type ContextType = {
   call?: {
     user: any;
     metadata?: any;
+    api_version_range?: string;
   };
 };

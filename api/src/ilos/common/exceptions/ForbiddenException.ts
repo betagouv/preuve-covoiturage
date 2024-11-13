@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class ForbiddenException extends RPCException {
+export class ForbiddenException extends Exception {
   constructor(data?: any) {
     super("Forbidden Error");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class ForbiddenException extends RPCException {
       code: -32503,
       message: this.message,
     };
+    this.httpCode = 403;
   }
 }

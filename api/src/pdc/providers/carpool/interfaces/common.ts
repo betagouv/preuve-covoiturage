@@ -49,7 +49,7 @@ export type Payment = {
 };
 
 export type Payload = unknown;
-export type ApiVersion = number;
+export type ApiVersion = string;
 export type CancelCode = string;
 export type CancelMessage = string;
 

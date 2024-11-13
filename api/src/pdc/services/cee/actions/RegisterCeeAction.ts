@@ -7,14 +7,11 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/registerApplication.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/registerApplication.contract.ts";
 
 import { alias } from "@/shared/cee/registerApplication.schema.ts";
 
+import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
@@ -24,7 +21,6 @@ import {
 } from "@/shared/cee/common/CeeApplicationInterface.ts";
 import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
 import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
-import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";
@@ -68,7 +64,7 @@ export class RegisterCeeAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_CEE_REGISTER")) {
-      throw new ServiceDisabledError();
+      throw new ServiceDisabledException();
     }
 
     const operator_id = getOperatorIdOrFail(context);
@@ -104,9 +100,7 @@ export class RegisterCeeAction extends AbstractAction {
         driving_license: params["driving_license"],
         phone_trunc: params["phone_trunc"],
         operator_journey_id: params["operator_journey_id"],
-        application_id: e instanceof ConflictException
-          ? e.rpcError.data?.uuid
-          : undefined,
+        application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
         identity_key: params["identity_key"],
       };
       try {

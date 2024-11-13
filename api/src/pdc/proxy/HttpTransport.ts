@@ -27,7 +27,8 @@ import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
-import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
+import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
+import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
 import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
 import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
@@ -35,6 +36,7 @@ import { signature as importCeeSignature } from "@/shared/cee/importApplication.
 import { signature as importIdentityCeeSignature } from "@/shared/cee/importApplicationIdentity.contract.ts";
 import { signature as registerCeeSignature } from "@/shared/cee/registerApplication.contract.ts";
 import { signature as simulateCeeSignature } from "@/shared/cee/simulateApplication.contract.ts";
+import { ResultInterface as DownloadCertificateResultInterface } from "@/shared/certificate/download.contract.ts";
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
@@ -50,18 +52,13 @@ import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheM
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
-  acquisitionRateLimiter,
   apiRateLimiter,
   authRateLimiter,
-  ceeRateLimiter,
-  checkRateLimiter,
   contactformRateLimiter,
   loginRateLimiter,
   monHonorCertificateRateLimiter,
   rateLimiter,
 } from "./middlewares/rateLimiter.ts";
-import { serverTokenMiddleware } from "./middlewares/serverTokenMiddleware.ts";
-import { register as registerExportRoutes } from "./routes/exportRoutes.ts";
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -119,7 +116,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
-    registerExportRoutes(this);
+    this.registerExportRoutes();
     this.registerStaticFolder();
   }
 
@@ -283,64 +280,143 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerCeeRoutes(): void {
-    this.registerCeeRoute(
-      "/v3/policies/cee",
-      registerCeeSignature,
-      "post",
-      201,
-    );
-    this.registerCeeRoute(
-      "/v3/policies/cee/simulate",
-      simulateCeeSignature,
-      "post",
-    );
-    this.registerCeeRoute(
-      "/v3/policies/cee/import",
-      importCeeSignature,
-      "post",
-      201,
-    );
-    this.registerCeeRoute(
-      "/v3/policies/cee/import/identity",
-      importIdentityCeeSignature,
-      "post",
-      200,
-    );
-    this.registerCeeRoute(
-      "/v3/policies/cee/:uuid",
-      findCeeSignature,
-      "get",
-      200,
-    );
-    this.registerCeeRoute(
-      "/v3/policies/cee/:uuid",
-      deleteCeeSignature,
-      "delete",
-      204,
-    );
-  }
-
-  private registerSimulationRoutes(): void {
+  private registerExportRoutes(): void {
+    /**
+     * Export trips from a V2 payload to a V3 output file.
+     *
+     * The V2 way to handle exports is done throught the /rpc route calling
+     * the trip:export method.
+     *
+     * @deprecated This should be removed when the dashboard is updated.
+     */
     this.app.post(
-      "/v3/policies/simulate",
+      "/v2/exports",
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            "campaign:simulateOnFuture",
-            { api_version: req.params.version, ...req.body },
-            user,
-            {
-              req,
-            },
-          ),
-        )) as RPCResponseType;
+      asyncHandler(async (req: Request, res: Response) => {
+        const user = get(req, "session.user", {});
+        const action = `export:createVersionTwo`;
+        const response = await this.kernel.handle(
+          createRPCPayload(action, req.body, user, { req }),
+        );
         this.send(res, response);
       }),
     );
+
+    const routes: Array<RouteParams> = [
+      {
+        path: "/exports",
+        action: "export:createVersionThree",
+        method: "POST",
+        successHttpCode: 201,
+      },
+      {
+        path: "/exports",
+        action: "export:list",
+        method: "GET",
+      },
+      {
+        path: "/exports/:uuid",
+        action: "export:get",
+        method: "GET",
+      },
+      {
+        path: "/exports/:uuid/status",
+        action: "export:status",
+        method: "GET",
+      },
+      {
+        path: "/exports/:uuid/attachment",
+        action: "export:download",
+        method: "GET",
+      },
+      {
+        path: "/exports/:uuid",
+        action: "export:delete",
+        method: "DELETE",
+      },
+    ];
+    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
+  }
+
+  private registerCeeRoutes(): void {
+    const routes: Array<RouteParams> = [
+      {
+        path: "/policies/cee",
+        action: registerCeeSignature,
+        method: "POST",
+        successHttpCode: 201,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+      {
+        path: "/policies/cee/simulate",
+        action: simulateCeeSignature,
+        method: "POST",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+      {
+        path: "/policies/cee/import",
+        action: importCeeSignature,
+        method: "POST",
+        successHttpCode: 201,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+      {
+        path: "/policies/cee/import/identity",
+        action: importIdentityCeeSignature,
+        method: "POST",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+      {
+        path: "/policies/cee/:uuid",
+        action: findCeeSignature,
+        method: "GET",
+        successHttpCode: 200,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+      {
+        path: "/policies/cee/:uuid",
+        action: deleteCeeSignature,
+        method: "DELETE",
+        successHttpCode: 204,
+        rateLimiter: {
+          key: "rl-cee",
+          limit: 20_000,
+          windowMinute: 1,
+        },
+      },
+    ];
+    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
+  }
+
+  private registerSimulationRoutes(): void {
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/policies/simulate",
+      action: "campaign:simulateOnFuture",
+      method: "POST",
+    });
     this.app.post(
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
@@ -373,44 +449,53 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    this.app.get(
-      "/v3/geo/route",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload("geo:getRouteMeta", req.query, user, { req }),
-        )) as RPCResponseType;
-        this.send(res, response, {}, true);
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/geo/route",
+      action: "geo:getRouteMeta",
+      method: "GET",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      async actionParamsFn(req) {
+        const q = { ...req.query };
+        q.start = {
+          lat: parseFloat(q.start?.lat),
+          lon: parseFloat(q.start?.lon),
+        };
+        q.end = {
+          lat: parseFloat(q.end?.lat),
+          lon: parseFloat(q.end?.lon),
+        };
+        return q;
+      },
+      rpcAnswerOnFailure: true,
+    });
 
-    this.app.get(
-      "/v3/geo/point/by_address",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload("geo:getPointByAddress", req.query, user, { req }),
-        )) as RPCResponseType;
-        this.send(res, response, {}, true);
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/geo/point/by_address",
+      action: "geo:getPointByAddress",
+      method: "GET",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnFailure: true,
+    });
 
-    this.app.get(
-      "/v3/geo/point/by_insee",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload("geo:getPointByCode", req.query, user, { req }),
-        )) as RPCResponseType;
-        this.send(res, response, {}, true);
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/geo/point/by_insee",
+      action: "geo:getPointByCode",
+      method: "GET",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnFailure: true,
+    });
   }
 
   /**
@@ -420,90 +505,71 @@ export class HttpTransport implements TransportInterface {
    * - save
    */
   private registerAcquisitionRoutes(): void {
-    this.app.get(
-      "/v3/journeys/:operator_journey_id",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const { params } = req;
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload("acquisition:status", params, user, { req }),
-        )) as RPCResponseType;
-        this.send(res, response, {}, true);
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/journeys/:operator_journey_id",
+      action: "acquisition:status",
+      method: "GET",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnSuccess: false,
+      rpcAnswerOnFailure: true,
+    });
 
-    this.app.patch(
-      "/v3/journeys/:operator_journey_id",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            "acquisition:patch",
-            {
-              operator_journey_id: req.params.operator_journey_id,
-              ...req.body,
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-        this.send(res, response, {});
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/journeys/:operator_journey_id",
+      action: "acquisition:patch",
+      method: "PATCH",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnSuccess: false,
+      rpcAnswerOnFailure: true,
+    });
 
-    this.app.post(
-      "/v3/journeys/:id/cancel",
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            "acquisition:cancel",
-            {
-              ...req.body,
-              operator_journey_id: req.params.id,
-              api_version: "v3",
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/journeys/:operator_journey_id/cancel",
+      action: "acquisition:cancel",
+      method: "POST",
+      rateLimiter: {
+        key: "rl-acquisition",
+        limit: 20_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnSuccess: true,
+      rpcAnswerOnFailure: true,
+    });
 
-        this.send(res, response);
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/journeys",
+      action: "acquisition:create",
+      method: "POST",
+      successHttpCode: 201,
+      rateLimiter: {
+        key: "rl-acquisition",
+        limit: 20_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnSuccess: false,
+      rpcAnswerOnFailure: true,
+    });
 
-    // send a journey
-    this.app.post(
-      "/v3/journeys",
-      acquisitionRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        setSentryUser(req);
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            "acquisition:create",
-            { api_version: "v3", ...req.body },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-
-        this.send(res, response);
-      }),
-    );
-
-    this.app.get(
-      "/v3/journeys",
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/journeys",
+      action: "acquisition:list",
+      method: "GET",
+      rateLimiter: {
+        key: "rl-acquisition-check",
+        limit: 2_000,
+        windowMinute: 1,
+      },
+      rpcAnswerOnSuccess: false,
+      rpcAnswerOnFailure: true,
+      async actionParamsFn(req) {
         const { query } = req;
         const q = {
           ...query,
@@ -514,13 +580,9 @@ export class HttpTransport implements TransportInterface {
         if ("limit" in q) {
           q.limit = parseInt(q.limit, 10);
         }
-        const user = get(req, "session.user", null);
-        const response = (await this.kernel.handle(
-          createRPCPayload("acquisition:list", q, user, { req }),
-        )) as RPCResponseType;
-        this.send(res, response, {}, true);
-      }),
-    );
+        return q;
+      },
+    });
   }
 
   private registerAuthRoutes(): void {
@@ -701,70 +763,43 @@ export class HttpTransport implements TransportInterface {
      * v3 Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
-     * - generate a certificate to be printed when calling /v3/certificates/{uuid}/attachment
+     * - generate a certificate to be printed when calling /certificates/{uuid}/attachment
      */
-    this.app.post(
-      "/v3/certificates",
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const call = createRPCPayload(
-          "certificate:create",
-          req.body,
-          get(req, "session.user", undefined),
-        );
-        const response = (await this.kernel.handle(call)) as RPCResponseType;
-        res
-          .status(
-            get(response, "result.meta.httpStatus", mapStatusCode(response)),
-          )
-          .send(get(response, "result.data", this.parseErrorData(response)));
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/certificates",
+      action: "certificate:create",
+      method: "POST",
+      successHttpCode: 201,
+    });
 
     /**
      * v3 Download PDF of the certificate
      * - accessible with an application token
      * - print a PDF returned back to the caller
      */
-    this.app.post(
-      "/v3/certificates/:uuid/attachment",
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const call = createRPCPayload(
-          "certificate:download",
-          { ...req.body, uuid: req.params.uuid },
-          get(req, "session.user", undefined),
-        );
-        const response = (await this.kernel.handle(call)) as RPCResponseType;
-
-        this.raw(
-          res,
-          get(response, "result.body", response),
-          get(response, "result.headers", {}),
-        );
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/certificates/:uuid/attachment",
+      action: "certificate:download",
+      method: "POST",
+      async responseFn(response, result) {
+        const { headers, body } = result as DownloadCertificateResultInterface;
+        for (const header of Object.keys(headers)) {
+          response.set(header, headers[header]);
+        }
+        response.send(body);
+      },
+    });
 
     /**
      * v3 Public route to retrieve a certificate
      */
-    this.app.get(
-      "/v3/certificates/:uuid",
-      rateLimiter(),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload("certificate:find", { uuid: req.params.uuid }, {
-            permissions: ["common.certificate.find"],
-          }),
-        )) as RPCResponseType;
-
-        this.raw(res, get(response, "result.data", response), {
-          "Content-type": "application/json",
-        });
-      }),
-    );
+    registerExpressRoute(this.app, this.kernel, {
+      path: "/certificates/:uuid",
+      action: "certificate:find",
+      method: "GET",
+      rpcAnswerOnFailure: true,
+      rpcAnswerOnSuccess: true,
+    });
   }
 
   private registerAfterAllHandlers(): void {
@@ -1019,24 +1054,6 @@ export class HttpTransport implements TransportInterface {
   }
 
   /**
-   * Send raw response data with configured headers
-   */
-  private raw(
-    res: Response,
-    data: RPCResponseType,
-    headers: { [key: string]: string } = {},
-  ): void {
-    if (typeof data === "object" && "error" in data) {
-      res.status(mapStatusCode(data));
-      res.send(data.error);
-      return;
-    }
-
-    this.setHeaders(res, headers);
-    res.send(data);
-  }
-
-  /**
    * add non-null headers on successful responses
    */
   private setHeaders(
@@ -1102,40 +1119,5 @@ export class HttpTransport implements TransportInterface {
     }
 
     return {};
-  }
-
-  private registerCeeRoute(
-    path: string,
-    signature: string,
-    method: "post" | "get" | "delete",
-    successStatus = 200,
-  ) {
-    this.app[method](
-      path,
-      ceeRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const user = get(req, "session.user", {});
-        setSentryUser(req);
-
-        const response = (await this.kernel.handle(
-          createRPCPayload(signature, { ...req.body, ...req.params }, user, {
-            req,
-          }),
-        )) as RPCResponseType;
-
-        if (!response || "error" in response || !("result" in response)) {
-          res.status(mapStatusCode(response)).json(
-            response.error?.data || { message: response.error?.message },
-          );
-        } else {
-          if (successStatus === 204 || !response?.result) {
-            res.status(successStatus).end();
-          } else {
-            res.status(successStatus).json(response?.result);
-          }
-        }
-      }),
-    );
   }
 }

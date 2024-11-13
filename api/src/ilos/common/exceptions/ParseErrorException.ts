@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class ParseErrorException extends RPCException {
+export class ParseErrorException extends Exception {
   constructor(data?: any) {
     super("Parse error");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class ParseErrorException extends RPCException {
       code: -32700,
       message: this.message,
     };
+    this.httpCode = 422;
   }
 }

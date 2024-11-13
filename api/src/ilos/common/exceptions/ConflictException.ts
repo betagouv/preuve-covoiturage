@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class ConflictException extends RPCException {
+export class ConflictException extends Exception {
   constructor(data?: any) {
     super("Conflict");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class ConflictException extends RPCException {
       code: -32509,
       message: this.message,
     };
+    this.httpCode = 409;
   }
 }
