@@ -3,11 +3,13 @@
  * 2. add the configuration to the object in objectToMap()
  */
 import { analytics } from "./analytics";
+import { auth } from "./auth";
 import { search } from "./search";
 
 const _configuration = objectToMap({
   analytics,
   search,
+  auth,
   next: nextEnvironmentVariables(),
 });
 
