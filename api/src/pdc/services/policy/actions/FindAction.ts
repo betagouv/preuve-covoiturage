@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  handler,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
+import { ForbiddenException, handler, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { Policy } from "../engine/entities/Policy.ts";
@@ -13,12 +8,8 @@ import {
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
 } from "@/shared/operator/find.contract.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/find.contract.ts";
-import { alias } from "@/shared/policy/find.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
+import { alias } from "../contracts/find.schema.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({

@@ -3,7 +3,7 @@ import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
-import { ResultInterface as Campaign } from "@/shared/policy/find.contract.ts";
+import { ResultInterface as Campaign } from "../../../policy/contracts/find.contract.ts";
 import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
 import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";

@@ -1,8 +1,8 @@
 import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { signature as apply } from "@/shared/policy/apply.contract.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { signature as apply } from "../contracts/apply.contract.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 

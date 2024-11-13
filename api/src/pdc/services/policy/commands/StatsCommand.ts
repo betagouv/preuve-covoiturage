@@ -1,5 +1,5 @@
 import { command, CommandInterface, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
-import { handlerConfig, signature as handlerSignature } from "@/shared/policy/stats.contract.ts";
+import { handlerConfig, signature as handlerSignature } from "../contracts/stats.contract.ts";
 
 @command({
   signature: "campaign:stats",

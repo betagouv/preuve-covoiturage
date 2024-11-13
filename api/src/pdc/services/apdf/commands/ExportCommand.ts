@@ -7,7 +7,7 @@ import { ParamsInterface as ExportParams, signature as exportSignature } from "@
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from "@/shared/policy/list.contract.ts";
+} from "../../policy/contracts/list.contract.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 
 interface Options {

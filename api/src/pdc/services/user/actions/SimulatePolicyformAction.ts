@@ -6,7 +6,7 @@ import {
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastGeoSignature,
   SimulateOnPastGeoRequiredParams,
-} from "@/shared/policy/simulateOnPastGeo.contract.ts";
+} from "../../policy/contracts/simulateOnPastGeo.contract.ts";
 import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
 
 import { handlerConfig, ParamsInterface } from "../contracts/simulatePolicyform.contract.ts";

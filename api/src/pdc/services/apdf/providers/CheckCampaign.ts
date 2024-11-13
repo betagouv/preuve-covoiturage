@@ -4,7 +4,7 @@ import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
-} from "@/shared/policy/find.contract.ts";
+} from "../../policy/contracts/find.contract.ts";
 
 @provider()
 export class CheckCampaign {

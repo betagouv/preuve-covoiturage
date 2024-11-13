@@ -1,9 +1,6 @@
 import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  copyFromContextMiddleware,
-  hasPermissionMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
+import { copyFromContextMiddleware, hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { SerializedPolicyInterface } from "../interfaces/engine/PolicyInterface.ts";
 
 import { logger } from "@/lib/logger/index.ts";
@@ -12,13 +9,8 @@ import {
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
 } from "@/shared/operator/find.contract.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  SingleResultInterface,
-} from "@/shared/policy/list.contract.ts";
-import { alias } from "@/shared/policy/list.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from "../contracts/list.contract.ts";
+import { alias } from "../contracts/list.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
@@ -73,9 +65,7 @@ export class ListAction extends AbstractAction {
       },
     );
 
-    return result.filter((p) => this.withOperator(p, operator)).filter((p) =>
-      this.withoutDraft(p)
-    );
+    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.withoutDraft(p));
   }
 
   private withoutDraft(p: SingleResultInterface): boolean {
