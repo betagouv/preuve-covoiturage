@@ -1,4 +1,4 @@
-import { SliceInterface } from "../../../pdc/services/policy/contracts/common/interfaces/Slices.ts";
+import { SliceInterface } from "../../../policy/contracts/common/interfaces/Slices.ts";
 
 export interface PolicyStatsInterface {
   total_count: number;

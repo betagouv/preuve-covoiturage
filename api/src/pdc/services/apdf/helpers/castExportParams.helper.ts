@@ -1,6 +1,6 @@
 import { addMonths, fromZonedTime, startOfMonth, subMonths } from "@/deps.ts";
 import { get } from "@/lib/object/index.ts";
-import { ParamsInterface } from "@/shared/apdf/export.contract.ts";
+import { ParamsInterface } from "../contracts/export.contract.ts";
 
 export function castExportParams(
   params: ParamsInterface,

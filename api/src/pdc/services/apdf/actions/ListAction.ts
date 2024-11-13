@@ -8,12 +8,12 @@ import {
 import { Action } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { handlerConfig, ParamsInterface, ResultsInterface } from "@/shared/apdf/list.contract.ts";
-import { alias } from "@/shared/apdf/list.schema.ts";
 import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
 } from "../../policy/contracts/find.contract.ts";
+import { handlerConfig, ParamsInterface, ResultsInterface } from "../contracts/list.contract.ts";
+import { alias } from "../contracts/list.schema.ts";
 import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
 
 @handler({
