@@ -3,17 +3,17 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   ResultInterface as AllGeoResultInterface,
   SingleResultInterface as GeoResultInterface,
-} from "@/shared/territory/allGeo.contract.ts";
-import { TerritoryCodeEnum } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+} from "@/pdc/services/territory/contracts/allGeo.contract.ts";
+import { TerritoryCodeEnum } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from "@/shared/territory/findGeoBySiren.contract.ts";
+} from "@/pdc/services/territory/contracts/findGeoBySiren.contract.ts";
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
   SingleResultInterface as ListGeoSingleResultInterface,
-} from "@/shared/territory/listGeo.contract.ts";
+} from "@/pdc/services/territory/contracts/listGeo.contract.ts";
 import { FindBySiretRawResultInterface } from "../interfaces/FindBySiretRawResultInterface.ts";
 import {
   GeoRepositoryProviderInterface,
@@ -93,11 +93,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
               OR lower(l_dep) LIKE $1
             )
             AND year = $2
-            ${
-        whereParams && whereParams.insee && whereParams.insee.length
-          ? "AND arr = ANY($3)"
-          : ""
-      }
+            ${whereParams && whereParams.insee && whereParams.insee.length ? "AND arr = ANY($3)" : ""}
           ORDER BY YEAR DESC
         )
         SELECT count(*) FROM (
@@ -138,11 +134,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
               OR lower(l_dep) LIKE $1
             )
             AND year = $2
-            ${
-        whereParams && whereParams.insee && whereParams.insee.length
-          ? "and arr = ANY($3)"
-          : ""
-      }
+            ${whereParams && whereParams.insee && whereParams.insee.length ? "and arr = ANY($3)" : ""}
           ORDER BY YEAR DESC
         )
         SELECT DISTINCT l_aom AS name, aom AS insee, '${TerritoryCodeEnum.Mobility}' AS type from search WHERE lower(l_aom) LIKE $1

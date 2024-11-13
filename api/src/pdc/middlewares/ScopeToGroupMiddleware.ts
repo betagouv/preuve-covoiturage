@@ -10,7 +10,7 @@ import {
 } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { ConfiguredMiddleware } from "@/pdc/providers/middleware/index.ts";
-import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 export type ScopeToGroupMiddlewareParams = {
   registry: string;
@@ -73,8 +73,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
 
       // if params doest have geo selectore, add it
       if (!params.geo_selector.com?.length) {
-        normalizedParams.geo_selector.com =
-          context.call.user.authorizedZoneCodes.com;
+        normalizedParams.geo_selector.com = context.call.user.authorizedZoneCodes.com;
       }
       // check if all territory_id in params are in authorized territories
       const authorizedTerritories = context.call.user.authorizedZoneCodes?.com;
@@ -82,9 +81,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
         Array.isArray(authorizedTerritories) &&
         Array.isArray(normalizedParams.geo_selector.com) &&
         authorizedTerritories.length > 0 &&
-        normalizedParams.geo_selector.com.filter((id) =>
-            authorizedTerritories.indexOf(id) < 0
-          ).length === 0
+        normalizedParams.geo_selector.com.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
       ) {
         return next(normalizedParams, context);
       }

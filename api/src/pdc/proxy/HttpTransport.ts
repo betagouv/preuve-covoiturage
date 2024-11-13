@@ -34,7 +34,7 @@ import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
-} from "@/shared/territory/getAuthorizedCodes.contract.ts";
+} from "@/pdc/services/territory/contracts/getAuthorizedCodes.contract.ts";
 import { signature as deleteCeeSignature } from "../services/cee/contracts/deleteApplication.contract.ts";
 import { signature as findCeeSignature } from "../services/cee/contracts/findApplication.contract.ts";
 import { signature as importCeeSignature } from "../services/cee/contracts/importApplication.contract.ts";

@@ -2,12 +2,8 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/pdc/services/territory/contracts/list.contract.ts";
 import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/TerritoryRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/territory/list.contract.ts";
 
 @handler({
   ...handlerConfig,

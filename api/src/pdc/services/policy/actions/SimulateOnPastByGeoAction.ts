@@ -6,7 +6,7 @@ import {
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
   signature as geoSignature,
-} from "@/shared/territory/findGeoBySiren.contract.ts";
+} from "@/pdc/services/territory/contracts/findGeoBySiren.contract.ts";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/simulateOnPastGeo.contract.ts";
 import { alias } from "../contracts/simulateOnPastGeo.schema.ts";

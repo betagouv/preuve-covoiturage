@@ -1,12 +1,6 @@
-import {
-  KernelInterfaceResolver,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -21,13 +15,11 @@ import {
   UpdateParamsInterface,
   UpdateResultInterface,
 } from "../interfaces/TerritoryRepositoryProviderInterface.ts";
-import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
-export class TerritoryRepositoryProvider
-  implements TerritoryRepositoryProviderInterface {
+export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
   public readonly table = "territory.territory_group";
   public readonly relationTable = "territory.territory_group_selector";
   public readonly GROUP_DEFAULT_SHORT_NAME = "";
@@ -115,9 +107,7 @@ export class TerritoryRepositoryProvider
     const query = {
       text: `
         SELECT _id, name FROM ${this.table}
-        WHERE deleted_at IS NULL ${
-        whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""
-      }
+        WHERE deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""}
         ORDER BY name ASC
         LIMIT $${whereClauses.length + 1}
         OFFSET $${whereClauses.length + 2}

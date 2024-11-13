@@ -1,12 +1,12 @@
-import { ResultInterface as AllGeoResultInterface } from "@/shared/territory/allGeo.contract.ts";
+import { ResultInterface as AllGeoResultInterface } from "@/pdc/services/territory/contracts/allGeo.contract.ts";
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from "@/shared/territory/findGeoBySiren.contract.ts";
+} from "@/pdc/services/territory/contracts/findGeoBySiren.contract.ts";
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
-} from "@/shared/territory/listGeo.contract.ts";
+} from "@/pdc/services/territory/contracts/listGeo.contract.ts";
 
 export interface GeoRepositoryProviderInterface {
   getAllGeo(): Promise<AllGeoResultInterface>;
@@ -16,8 +16,7 @@ export interface GeoRepositoryProviderInterface {
   ): Promise<FindBySirenResultInterface>;
 }
 
-export abstract class GeoRepositoryProviderInterfaceResolver
-  implements GeoRepositoryProviderInterface {
+export abstract class GeoRepositoryProviderInterfaceResolver implements GeoRepositoryProviderInterface {
   async getAllGeo(): Promise<AllGeoResultInterface> {
     throw new Error("Not implemented");
   }

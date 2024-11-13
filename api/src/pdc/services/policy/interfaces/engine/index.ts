@@ -1,8 +1,8 @@
 import type {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
-import { TerritoryCodeEnum } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+} from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
+import { TerritoryCodeEnum } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import type { BoundedSlices, SliceInterface, UnboundedSlices } from "../../contracts/common/interfaces/Slices.ts";
 
 export { IncentiveStateEnum, IncentiveStatusEnum } from "./IncentiveInterface.ts";

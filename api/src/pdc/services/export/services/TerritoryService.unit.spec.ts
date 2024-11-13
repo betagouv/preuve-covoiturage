@@ -2,7 +2,7 @@ import { assertEquals, describe, it } from "@/dev_deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import { TerritoryService } from "@/pdc/services/export/services/TerritoryService.ts";
-import { TerritoryCodeEnum } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { TerritoryCodeEnum } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 describe("TerritoryService: geoStringToObject", () => {
   const connection = new PostgresConnection({});

@@ -3,7 +3,7 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+} from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 interface PivotTerritorySelector {
   territory_group_id: number;

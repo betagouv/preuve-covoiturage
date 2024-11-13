@@ -1,14 +1,10 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/pdc/services/territory/contracts/delete.contract.ts";
+import { alias } from "@/pdc/services/territory/contracts/delete.schema.ts";
 import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/TerritoryRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/territory/delete.contract.ts";
-import { alias } from "@/shared/territory/delete.schema.ts";
 
 @handler({
   ...handlerConfig,
