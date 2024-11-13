@@ -1,14 +1,10 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/pdc/services/certificate/contracts/list.contract.ts";
+import { alias } from "@/pdc/services/certificate/contracts/list.schema.ts";
 import { mapCertForListHelper } from "../helpers/mapCertForListHelper.ts";
 import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/CertificateRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/certificate/list.contract.ts";
-import { alias } from "@/shared/certificate/list.schema.ts";
 
 @handler({
   ...handlerConfig,

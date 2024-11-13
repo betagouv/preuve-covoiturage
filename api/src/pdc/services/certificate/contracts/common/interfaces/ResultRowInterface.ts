@@ -1,9 +1,9 @@
-import { PointInterface } from '../../../common/interfaces/PointInterface.ts';
-import { MetaPersonInterface } from './CertificateMetaInterface.ts';
+import { PointInterface } from "../../../../../../shared/common/interfaces/PointInterface.ts";
+import { MetaPersonInterface } from "./CertificateMetaInterface.ts";
 
 export enum RowType {
-  OK = 'ok',
-  EXPIRED = 'expired',
+  OK = "ok",
+  EXPIRED = "expired",
 }
 
 export interface ResultRowInterface {

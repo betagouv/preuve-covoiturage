@@ -4,8 +4,8 @@ import { logger } from "@/lib/logger/index.ts";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
-} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { MetaPersonInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
+} from "../../services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { MetaPersonInterface } from "../../services/certificate/contracts/common/interfaces/CertificateMetaInterface.ts";
 import { MariannePaths } from "./assets/marianne.ts";
 import {
   PdfCertProviderInterface,
@@ -266,9 +266,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
     this.text(
       page,
-      `${data.total.weekend_trips} trajet${
-        data.total.weekend_trips > 1 ? "s" : ""
-      }`,
+      `${data.total.weekend_trips} trajet${data.total.weekend_trips > 1 ? "s" : ""}`,
       {
         x: x + 255,
         y: y + 60,
@@ -292,9 +290,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       },
     );
 
-    const eurosTitle = type === CarpoolTypeEnum.DRIVER
-      ? "Gain conducteur :"
-      : "Contribution passager :";
+    const eurosTitle = type === CarpoolTypeEnum.DRIVER ? "Gain conducteur :" : "Contribution passager :";
     this.text(page, eurosTitle, {
       x: x + 245,
       y: y + 22,
@@ -635,9 +631,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       { x: this.tableX + 40, y: rowY, size },
     );
 
-    const km = `${
-      String(row.distance || 0 / 1000 || row.km).replace(".", ",")
-    } km`;
+    const km = `${String(row.distance || 0 / 1000 || row.km).replace(".", ",")} km`;
     const eu = `${this.currency(row.amount)} €`;
 
     this.text(page, `${row.trips}`, {

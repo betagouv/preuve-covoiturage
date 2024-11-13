@@ -3,8 +3,8 @@ import { assertEquals, beforeEach, describe, it } from "@/dev_deps.ts";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
-} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { MetaPersonInterface } from "@/shared/certificate/common/interfaces/CertificateMetaInterface.ts";
+} from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { MetaPersonInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateMetaInterface.ts";
 import { agg } from "./mapFromCarpools.ts";
 
 describe("map from carpool", () => {
