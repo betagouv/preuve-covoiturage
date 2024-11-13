@@ -3,10 +3,10 @@ import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { defaultNotificationBindings } from "@/pdc/providers/notification/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
-import { binding as statsRefreshBinding } from "@/shared/monitoring/statsrefresh.schema.ts";
 import { StatsRefreshAction } from "./actions/StatsRefreshAction.ts";
 import { StatsRefreshCommand } from "./commands/StatsRefreshCommand.ts";
 import { config } from "./config/index.ts";
+import { binding as statsRefreshBinding } from "./contracts/statsrefresh.schema.ts";
 
 @serviceProvider({
   config,
