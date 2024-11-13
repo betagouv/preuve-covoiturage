@@ -1,21 +1,8 @@
 import { faker } from "@/deps.ts";
-import {
-  afterEach,
-  assertEquals,
-  assertRejects,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-  SinonStub,
-} from "@/dev_deps.ts";
+import { afterEach, assertEquals, assertRejects, beforeEach, describe, it, sinon, SinonStub } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import { ResultInterface } from "@/shared/policy/simulateOnPastGeo.contract.ts";
-import {
-  CarpoolInterface,
-  PolicyInterface,
-  TripRepositoryProviderInterfaceResolver,
-} from "../interfaces/index.ts";
+import { ResultInterface } from "../contracts/simulateOnPastGeo.contract.ts";
+import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import { SimulateOnPastByGeoAction } from "./SimulateOnPastByGeoAction.ts";
 
 describe("SimulateOnPastByGeoAction", () => {
@@ -28,8 +15,7 @@ describe("SimulateOnPastByGeoAction", () => {
   let simulateOnPasGeoAction: SimulateOnPastByGeoAction;
   let todayMinusSizMonthes: Date;
 
-  class FakeTripRepositoryProvider
-    extends TripRepositoryProviderInterfaceResolver {
+  class FakeTripRepositoryProvider extends TripRepositoryProviderInterfaceResolver {
     findTripByPolicy(
       policy: PolicyInterface,
       from: Date,
@@ -51,8 +37,7 @@ describe("SimulateOnPastByGeoAction", () => {
   }
 
   beforeEach(() => {
-    fakeKernelInterfaceResolver =
-      new (class extends KernelInterfaceResolver {})();
+    fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
     tripRepository = new FakeTripRepositoryProvider();
     simulateOnPasGeoAction = new SimulateOnPastByGeoAction(
       fakeKernelInterfaceResolver,

@@ -2,6 +2,7 @@ import { ConfigInterfaceResolver, ContextType, handler } from "@/ilos/common/ind
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/simulateApplication.contract.ts";
+import { alias } from "../contracts/simulateApplication.schema.ts";
 
 import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { ConflictException } from "@/ilos/common/index.ts";

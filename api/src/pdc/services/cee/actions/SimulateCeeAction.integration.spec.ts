@@ -9,10 +9,10 @@ import {
   makeDbBeforeAfter,
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
-import { signature } from "@/shared/cee/registerApplication.contract.ts";
-import { handlerConfig } from "@/shared/cee/simulateApplication.contract.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
+import { signature } from "../contracts/registerApplication.contract.ts";
+import { handlerConfig } from "../contracts/simulateApplication.contract.ts";
 
 const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();

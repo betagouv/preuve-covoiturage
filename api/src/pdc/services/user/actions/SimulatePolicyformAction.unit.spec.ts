@@ -1,24 +1,15 @@
-import {
-  afterEach,
-  assert,
-  assertRejects,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
+import { afterEach, assert, assertRejects, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
   signature as simulateOnPastGeoSignature,
   SimulateOnPastGeoRequiredParams,
-} from "@/shared/policy/simulateOnPastGeo.contract.ts";
-import { ParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
+} from "@/pdc/services/policy/contracts/simulateOnPastGeo.contract.ts";
+import { ParamsInterface } from "../contracts/simulatePolicyform.contract.ts";
 import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
 import { SimulatePolicyformAction } from "./SimulatePolicyformAction.ts";
 
 describe("simulate policy form", () => {
-  const fakeKernelInterfaceResolver =
-    new (class extends KernelInterfaceResolver {})();
+  const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const userNotificationProvider = new UserNotificationProvider(
     null as any,
     null as any,

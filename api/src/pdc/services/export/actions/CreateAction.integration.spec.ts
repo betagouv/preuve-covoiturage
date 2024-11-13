@@ -31,7 +31,7 @@ import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportS
 import { Export, ExportStatus, ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServiceProvider.ts";
-import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "@/shared/export/create.contract.ts";
+import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
 
 const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(
   UserSP,
