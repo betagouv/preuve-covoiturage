@@ -1,5 +1,5 @@
-import { OperatorInterface } from './common/interfaces/OperatorInterface.ts';
-import { ContactsInterface } from '../common/interfaces/ContactsInterface.ts';
+import { ContactsInterface } from "../../../../shared/common/interfaces/ContactsInterface.ts";
+import { OperatorInterface } from "./common/interfaces/OperatorInterface.ts";
 
 export interface ParamsInterface {
   _id: number;
@@ -9,8 +9,8 @@ export interface ParamsInterface {
 export interface ResultInterface extends OperatorInterface {}
 
 export const handlerConfig = {
-  service: 'operator',
-  method: 'patchContacts',
+  service: "operator",
+  method: "patchContacts",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

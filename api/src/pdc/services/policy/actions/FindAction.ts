@@ -7,7 +7,7 @@ import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from "@/shared/operator/find.contract.ts";
+} from "../../operator/contracts/find.contract.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
 import { alias } from "../contracts/find.schema.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";

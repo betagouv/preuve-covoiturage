@@ -4,7 +4,7 @@ import {
   ParamsInterface as FindByUuidParamsInterface,
   ResultInterface as FindByUuidResultInterface,
   signature as findByUuidSignature,
-} from "@/shared/operator/findbyuuid.contract.ts";
+} from "../../operator/contracts/findbyuuid.contract.ts";
 import {
   ParamsInterface as PolicyParamsInterface,
   ResultInterface as PolicyResultInterface,
