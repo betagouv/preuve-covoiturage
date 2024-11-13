@@ -1,4 +1,4 @@
-import { territoryCodeSchema } from "../territory/common/schema.ts";
+import { territoryCodeSchema } from "../../../../shared/territory/common/schema.ts";
 
 export const schemaV2 = {
   type: "object",
