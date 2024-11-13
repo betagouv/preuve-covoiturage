@@ -13,6 +13,7 @@
       "npm:@types/cors@^2.8": "npm:@types/cors@2.8.17",
       "npm:@types/express-session@^1.18": "npm:@types/express-session@1.18.0",
       "npm:@types/jsonwebtoken@^9": "npm:@types/jsonwebtoken@9.0.6",
+      "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@types/node-7z@^2": "npm:@types/node-7z@2.1.8",
       "npm:@types/node@^20": "npm:@types/node@20.14.7",
       "npm:@types/nodemailer@^6.4": "npm:@types/nodemailer@6.4.15",
