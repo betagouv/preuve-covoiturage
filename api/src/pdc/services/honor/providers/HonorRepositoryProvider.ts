@@ -5,7 +5,7 @@ import {
   DataSetInterface,
   ParamsInterface as StatsParamsInterface,
   ResultInterface as StatsResultInterface,
-} from "@/shared/honor/stats.contract.ts";
+} from "../contracts/stats.contract.ts";
 
 type StatsResponseRow = {
   day: string | null;
@@ -18,8 +18,7 @@ export interface HonorRepositoryInterface {
   save(type: string, employer: string): Promise<void>;
 }
 
-export abstract class HonorRepositoryInterfaceResolver
-  implements HonorRepositoryInterface {
+export abstract class HonorRepositoryInterfaceResolver implements HonorRepositoryInterface {
   async stats(params: StatsParamsInterface): Promise<StatsResultInterface> {
     throw new Error("Method not implemented.");
   }
