@@ -29,7 +29,7 @@ import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
 import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
-import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
+import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
 import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
 import { signature as importCeeSignature } from "@/shared/cee/importApplication.contract.ts";
