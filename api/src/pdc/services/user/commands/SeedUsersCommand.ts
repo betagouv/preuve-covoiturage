@@ -4,7 +4,7 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { ParamsInterface } from "@/shared/user/create.contract.ts";
+import { ParamsInterface } from "../contracts/create.contract.ts";
 
 interface CreateUserInterface extends ParamsInterface {
   password: string;

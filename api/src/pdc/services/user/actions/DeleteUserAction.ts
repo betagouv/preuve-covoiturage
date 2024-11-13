@@ -1,14 +1,10 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/delete.contract.ts";
-import { alias } from "@/shared/user/delete.schema.ts";
-import { UserContextInterface } from "@/shared/user/common/interfaces/UserContextInterfaces.ts";
+import { UserContextInterface } from "../contracts/common/interfaces/UserContextInterfaces.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/delete.contract.ts";
+import { alias } from "../contracts/delete.schema.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
 /*
@@ -34,11 +30,7 @@ export class DeleteUserAction extends AbstractAction {
     params: ParamsInterface,
     context: UserContextInterface,
   ): Promise<ResultInterface> {
-    const scope = params.territory_id
-      ? "territory_id"
-      : params.operator_id
-      ? "operator_id"
-      : "none";
+    const scope = params.territory_id ? "territory_id" : params.operator_id ? "operator_id" : "none";
     switch (scope) {
       case "territory_id":
         return this.userRepository.deleteByTerritory(params._id, params[scope]);

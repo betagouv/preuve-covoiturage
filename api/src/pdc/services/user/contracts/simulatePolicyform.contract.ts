@@ -1,4 +1,4 @@
-import { SimulateOnPastGeoRequiredParams } from '../policy/simulateOnPastGeo.contract.ts';
+import { SimulateOnPastGeoRequiredParams } from "../../../../shared/policy/simulateOnPastGeo.contract.ts";
 
 export interface ParamsInterface {
   name: string;
@@ -10,8 +10,8 @@ export interface ParamsInterface {
 }
 
 export const handlerConfig = {
-  service: 'user',
-  method: 'sendSimulationEmail',
+  service: "user",
+  method: "sendSimulationEmail",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

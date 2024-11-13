@@ -2,13 +2,9 @@ import { handler, UnauthorizedException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { contentWhitelistMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/login.contract.ts";
-import { alias } from "@/shared/user/login.schema.ts";
 import { userWhiteListFilterOutput } from "../config/filterOutput.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/login.contract.ts";
+import { alias } from "../contracts/login.schema.ts";
 
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 import { challengePasswordMiddleware } from "../middlewares/ChallengePasswordMiddleware.ts";

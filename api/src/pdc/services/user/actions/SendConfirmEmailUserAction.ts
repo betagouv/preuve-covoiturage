@@ -1,21 +1,13 @@
+import { ContextType, handler, UnauthorizedException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  ContextType,
-  handler,
-  UnauthorizedException,
-} from "@/ilos/common/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/sendConfirmEmail.contract.ts";
-import { alias } from "@/shared/user/sendConfirmEmail.schema.ts";
-import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
+import { UserFindInterface } from "../contracts/common/interfaces/UserFindInterface.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/sendConfirmEmail.contract.ts";
+import { alias } from "../contracts/sendConfirmEmail.schema.ts";
 import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
-import { UserFindInterface } from "@/shared/user/common/interfaces/UserFindInterface.ts";
 
 /*
  * send the confirmation email to a user by _id
@@ -44,11 +36,7 @@ export class SendConfirmEmailUserAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const scope = params.territory_id
-      ? "territory_id"
-      : params.operator_id
-      ? "operator_id"
-      : "none";
+    const scope = params.territory_id ? "territory_id" : params.operator_id ? "operator_id" : "none";
 
     let user: UserFindInterface;
 

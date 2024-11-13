@@ -1,20 +1,15 @@
-import {
-  ConfigInterfaceResolver,
-  ConflictException,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { get } from "@/lib/object/index.ts";
 import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
-import { UserCreateInterface } from "@/shared/user/common/interfaces/UserCreateInterface.ts";
-import { UserFindInterface } from "@/shared/user/common/interfaces/UserFindInterface.ts";
-import { UserLastLoginInterface } from "@/shared/user/common/interfaces/UserLastLoginInterface.ts";
-import { UserListFiltersInterface } from "@/shared/user/common/interfaces/UserListFiltersInterface.ts";
-import { UserListInterface } from "@/shared/user/common/interfaces/UserListInterface.ts";
-import { UserPatchInterface } from "@/shared/user/common/interfaces/UserPatchInterface.ts";
-import { ResultInterface as HasUsersResultInterface } from "@/shared/user/hasUsers.contract.ts";
+import { UserCreateInterface } from "../contracts/common/interfaces/UserCreateInterface.ts";
+import { UserFindInterface } from "../contracts/common/interfaces/UserFindInterface.ts";
+import { UserLastLoginInterface } from "../contracts/common/interfaces/UserLastLoginInterface.ts";
+import { UserListFiltersInterface } from "../contracts/common/interfaces/UserListFiltersInterface.ts";
+import { UserListInterface } from "../contracts/common/interfaces/UserListInterface.ts";
+import { UserPatchInterface } from "../contracts/common/interfaces/UserPatchInterface.ts";
+import { ResultInterface as HasUsersResultInterface } from "../contracts/hasUsers.contract.ts";
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
@@ -23,8 +18,7 @@ import {
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
 })
-export class UserPgRepositoryProvider
-  implements UserRepositoryProviderInterface {
+export class UserPgRepositoryProvider implements UserRepositoryProviderInterface {
   public readonly table = "auth.users";
   public readonly defaultLimit: number;
   public readonly maxLimit: number;
@@ -144,13 +138,7 @@ export class UserPgRepositoryProvider
       text: `
       DELETE FROM ${this.table}
         WHERE _id = $1
-        ${
-        where
-          ? (where.operator_id
-            ? "AND operator_id = $2"
-            : "AND territory_id = $2")
-          : ""
-      }
+        ${where ? (where.operator_id ? "AND operator_id = $2" : "AND territory_id = $2") : ""}
       `,
       values: [id],
     };
@@ -292,9 +280,7 @@ export class UserPgRepositoryProvider
     }
 
     // white list filters
-    const filtersToProcess = this.availableFilters.filter((key) =>
-      key in filters
-    );
+    const filtersToProcess = this.availableFilters.filter((key) => key in filters);
     if (filtersToProcess.length === 0) {
       return { text: "", values: [] };
     }

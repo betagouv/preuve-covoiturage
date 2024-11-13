@@ -1,6 +1,6 @@
-import { UserStatusInterface } from './common/interfaces/UserStatusInterface.ts';
-import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface.ts';
-import { PaginationResultInterface } from '../common/interfaces/PaginationResultInterface.ts';
+import { PaginationParamsInterface } from "../../../../shared/common/interfaces/PaginationParamsInterface.ts";
+import { PaginationResultInterface } from "../../../../shared/common/interfaces/PaginationResultInterface.ts";
+import { UserStatusInterface } from "./common/interfaces/UserStatusInterface.ts";
 
 export interface ParamsInterface extends PaginationParamsInterface {
   operator_id?: number;
@@ -13,8 +13,8 @@ export interface ResultInterface {
 }
 
 export const handlerConfig = {
-  service: 'user',
-  method: 'list',
+  service: "user",
+  method: "list",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

@@ -8,7 +8,7 @@ import { ExportCSVSupportTemplateData } from "@/pdc/services/user/notifications/
 import {
   ParamsInterface as NotifyParamsInterface,
   signature as notifySignature,
-} from "@/shared/user/notify.contract.ts";
+} from "../../user/contracts/notify.contract.ts";
 
 export type NotificationProvider = {
   success(exp: Export, url: string): Promise<void>;
@@ -16,8 +16,7 @@ export type NotificationProvider = {
   support(exp: Export): Promise<void>;
 };
 
-export abstract class NotificationProviderResolver
-  implements NotificationProvider {
+export abstract class NotificationProviderResolver implements NotificationProvider {
   public async success(exp: Export, url: string): Promise<void> {
     throw new Error("Not implemented");
   }

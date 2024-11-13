@@ -1,25 +1,16 @@
+import { ConflictException, ContextType, handler, UnauthorizedException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  ConflictException,
-  ContextType,
-  handler,
-  UnauthorizedException,
-} from "@/ilos/common/index.ts";
 import {
   contentWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/patch.contract.ts";
-import { alias } from "@/shared/user/patch.schema.ts";
-import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 import { userWhiteListFilterOutput } from "../config/filterOutput.ts";
-import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/patch.contract.ts";
+import { alias } from "../contracts/patch.schema.ts";
 import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
+import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
+import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";
 
 /*
  * Update properties of user ( firstname, lastname, phone )
@@ -52,11 +43,7 @@ export class PatchUserAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const scope = params.territory_id
-      ? "territory_id"
-      : params.operator_id
-      ? "operator_id"
-      : "none";
+    const scope = params.territory_id ? "territory_id" : params.operator_id ? "operator_id" : "none";
 
     const _id = params._id;
     const { email, ...patch } = params.patch;
