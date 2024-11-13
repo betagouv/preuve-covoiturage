@@ -20,7 +20,6 @@ import { ObservatoryServiceProvider } from "../services/observatory/ObservatoryS
 import { OperatorServiceProvider } from "../services/operator/OperatorServiceProvider.ts";
 import { PolicyServiceProvider } from "../services/policy/PolicyServiceProvider.ts";
 import { TerritoryServiceProvider } from "../services/territory/TerritoryServiceProvider.ts";
-import { TripServiceProvider } from "../services/trip/TripServiceProvider.ts";
 import { UserServiceProvider } from "../services/user/UserServiceProvider.ts";
 import { SeedCommand } from "./commands/SeedCommand.ts";
 import { config } from "./config/index.ts";
@@ -41,7 +40,6 @@ import { config } from "./config/index.ts";
     OperatorServiceProvider,
     PolicyServiceProvider,
     TerritoryServiceProvider,
-    TripServiceProvider,
     UserServiceProvider,
     ObservatoryServiceProvider,
     GeoServiceProvider,
