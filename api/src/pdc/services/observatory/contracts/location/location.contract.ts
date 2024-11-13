@@ -1,4 +1,4 @@
-import { INSEECode, PerimeterType } from "../../geo/shared/Perimeter.ts";
+import { INSEECode, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export interface SingleSqlResultInterface {
   lon: number;
@@ -29,5 +29,4 @@ export const handlerConfig = {
   method: "getLocation",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

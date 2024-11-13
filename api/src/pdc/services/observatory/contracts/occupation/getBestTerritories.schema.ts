@@ -1,4 +1,4 @@
-import { perimeterTypes } from "../../geo/shared/Perimeter.ts";
+import { perimeterTypes } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export const alias = "observatory.getBestTerritories";
 export const schema = {

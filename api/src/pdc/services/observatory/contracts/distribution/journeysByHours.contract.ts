@@ -1,9 +1,4 @@
-import {
-  Direction,
-  INSEECode,
-  PerimeterLabel,
-  PerimeterType,
-} from "../../geo/shared/Perimeter.ts";
+import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   code: INSEECode;
@@ -34,5 +29,4 @@ export const handlerConfig = {
   method: "journeysByHours",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

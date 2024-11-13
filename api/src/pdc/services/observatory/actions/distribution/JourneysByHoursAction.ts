@@ -1,15 +1,15 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from "@/shared/observatory/distribution/journeysByHours.schema.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/distribution/journeysByHours.contract.ts";
-import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
+} from "../../contracts/distribution/journeysByHours.contract.ts";
+import { alias } from "../../contracts/distribution/journeysByHours.schema.ts";
 import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,

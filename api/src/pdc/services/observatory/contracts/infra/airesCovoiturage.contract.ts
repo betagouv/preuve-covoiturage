@@ -1,5 +1,5 @@
-import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter.ts';
-import type { Feature } from '../../geo/GeoJson.ts';
+import type { Feature } from "../../../../../shared/geo/GeoJson.ts";
+import { INSEECode, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   id_lieu: string;
@@ -24,8 +24,8 @@ export interface ParamsInterface {
 }
 
 export const handlerConfig = {
-  service: 'observatory',
-  method: 'airesCovoiturage',
+  service: "observatory",
+  method: "airesCovoiturage",
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

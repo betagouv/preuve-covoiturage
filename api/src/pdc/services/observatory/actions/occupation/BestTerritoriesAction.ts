@@ -8,8 +8,8 @@ import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "../../../../../shared/observatory/occupation/getBestTerritories.contract.ts";
-import { alias } from "../../../../../shared/observatory/occupation/getBestTerritories.schema.ts";
+} from "../../contracts/occupation/getBestTerritories.contract.ts";
+import { alias } from "../../contracts/occupation/getBestTerritories.schema.ts";
 
 @handler({
   ...handlerConfig,

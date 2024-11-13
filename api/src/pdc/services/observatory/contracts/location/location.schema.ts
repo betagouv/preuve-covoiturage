@@ -1,10 +1,10 @@
-import { directionTypes, perimeterTypes } from "../../geo/shared/Perimeter.ts";
+import { perimeterTypes } from "../../../../../shared/geo/shared/Perimeter.ts";
 
-export const alias = "observatory.journeysByHours";
+export const alias = "observatory.getLocation";
 export const schema = {
   type: "object",
   additionalProperties: false,
-  required: ["year", "type", "code"],
+  required: ["year", "zoom", "type", "code"],
   properties: {
     year: {
       type: "integer",
@@ -25,6 +25,11 @@ export const schema = {
       minimum: 1,
       maximum: 2,
     },
+    zoom: {
+      type: "integer",
+      minimum: 0,
+      maximum: 8,
+    },
     type: {
       type: "string",
       enum: perimeterTypes,
@@ -36,10 +41,6 @@ export const schema = {
         { macro: "country" },
         { macro: "siren" },
       ],
-    },
-    direction: {
-      type: "string",
-      enum: directionTypes,
     },
   },
 };

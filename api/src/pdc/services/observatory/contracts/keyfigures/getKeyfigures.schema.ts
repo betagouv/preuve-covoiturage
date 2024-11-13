@@ -1,10 +1,10 @@
-import { indicTypes, perimeterTypes } from "../../geo/shared/Perimeter.ts";
+import { directionTypes, perimeterTypes } from "../../../../../shared/geo/shared/Perimeter.ts";
 
-export const alias = "observatory.getEvolOccupation";
+export const alias = "observatory.getKeyfigures";
 export const schema = {
   type: "object",
   additionalProperties: false,
-  required: ["year", "type", "code", "indic"],
+  required: ["year", "type", "code"],
   properties: {
     year: {
       type: "integer",
@@ -37,15 +37,9 @@ export const schema = {
         { macro: "siren" },
       ],
     },
-    indic: {
+    direction: {
       type: "string",
-      enum: indicTypes,
-    },
-    past: {
-      type: "string",
-      minLength: 1,
-      maxLength: 2,
-      default: "2",
+      enum: directionTypes,
     },
   },
 };

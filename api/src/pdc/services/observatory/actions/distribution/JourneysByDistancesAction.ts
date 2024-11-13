@@ -8,8 +8,8 @@ import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/observatory/distribution/journeysByDistances.contract.ts";
-import { alias } from "@/shared/observatory/distribution/journeysByDistances.schema.ts";
+} from "../../contracts/distribution/journeysByDistances.contract.ts";
+import { alias } from "../../contracts/distribution/journeysByDistances.schema.ts";
 
 @handler({
   ...handlerConfig,

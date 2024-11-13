@@ -1,9 +1,4 @@
-import {
-  IndicType,
-  INSEECode,
-  PerimeterLabel,
-  PerimeterType,
-} from "../../geo/shared/Perimeter.ts";
+import { IndicType, INSEECode, PerimeterLabel, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   territory: INSEECode;
@@ -32,5 +27,4 @@ export const handlerConfig = {
   method: "getEvolOccupation",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

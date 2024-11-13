@@ -3,17 +3,17 @@
 import type {
   ParamsInterface as GetFluxParamsInterface,
   ResultInterface as GetFluxResultInterface,
-} from "@/shared/observatory/flux/getFlux.contract.ts";
+} from "../contracts/flux/getFlux.contract.ts";
 
 import type {
   ParamsInterface as GetEvolFluxParamsInterface,
   ResultInterface as GetEvolFluxResultInterface,
-} from "@/shared/observatory/flux/getEvolFlux.contract.ts";
+} from "../contracts/flux/getEvolFlux.contract.ts";
 
 import type {
   ParamsInterface as GetBestFluxParamsInterface,
   ResultInterface as GetBestFluxResultInterface,
-} from "@/shared/observatory/flux/getBestFlux.contract.ts";
+} from "../contracts/flux/getBestFlux.contract.ts";
 
 export type {
   GetBestFluxParamsInterface,
@@ -36,8 +36,7 @@ export interface FluxRepositoryInterface {
   ): Promise<GetBestFluxResultInterface>;
 }
 
-export abstract class FluxRepositoryInterfaceResolver
-  implements FluxRepositoryInterface {
+export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
   async getFlux(
     params: GetFluxParamsInterface,
   ): Promise<GetFluxResultInterface> {

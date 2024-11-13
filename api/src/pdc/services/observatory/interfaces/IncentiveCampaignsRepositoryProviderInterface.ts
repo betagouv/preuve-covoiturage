@@ -1,7 +1,7 @@
 import type {
   ParamsInterface as CampaignsParamsInterface,
   ResultInterface as CampaignsResultInterface,
-} from "@/shared/observatory/incentiveCampaigns/campaigns.contract.ts";
+} from "../contracts/incentiveCampaigns/campaigns.contract.ts";
 
 export type { CampaignsParamsInterface, CampaignsResultInterface };
 
@@ -11,8 +11,7 @@ export interface IncentiveCampaignsRepositoryInterface {
   ): Promise<CampaignsResultInterface>;
 }
 
-export abstract class IncentiveCampaignsRepositoryInterfaceResolver
-  implements IncentiveCampaignsRepositoryInterface {
+export abstract class IncentiveCampaignsRepositoryInterfaceResolver implements IncentiveCampaignsRepositoryInterface {
   async getCampaigns(
     params: CampaignsParamsInterface,
   ): Promise<CampaignsResultInterface> {

@@ -1,10 +1,5 @@
-import {
-  Direction,
-  INSEECode,
-  PerimeterLabel,
-  PerimeterType,
-} from "@/shared/geo/shared/Perimeter.ts";
-import type { Feature } from "../../geo/GeoJson.ts";
+import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "@/shared/geo/shared/Perimeter.ts";
+import type { Feature } from "../../../../../shared/geo/GeoJson.ts";
 
 export interface SingleResultInterface {
   code: INSEECode;
@@ -33,5 +28,4 @@ export const handlerConfig = {
   method: "getOccupation",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

@@ -8,8 +8,8 @@ import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "../../../../../shared/observatory/occupation/getEvolOccupation.contract.ts";
-import { alias } from "../../../../../shared/observatory/occupation/getEvolOccupation.schema.ts";
+} from "../../contracts/occupation/getEvolOccupation.contract.ts";
+import { alias } from "../../contracts/occupation/getEvolOccupation.schema.ts";
 
 @handler({
   ...handlerConfig,

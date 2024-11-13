@@ -1,5 +1,5 @@
-import type { Feature } from "../../geo/GeoJson.ts";
-import { INSEECode, PerimeterType } from "../../geo/shared/Perimeter.ts";
+import type { Feature } from "../../../../../shared/geo/GeoJson.ts";
+import { INSEECode, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   type: PerimeterType;
@@ -44,5 +44,4 @@ export const handlerConfig = {
   method: "campaigns",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

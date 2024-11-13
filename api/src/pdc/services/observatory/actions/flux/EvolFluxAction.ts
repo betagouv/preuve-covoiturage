@@ -4,12 +4,8 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { FluxRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/FluxRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/observatory/flux/getEvolFlux.contract.ts";
-import { alias } from "@/shared/observatory/flux/getEvolFlux.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/flux/getEvolFlux.contract.ts";
+import { alias } from "../../contracts/flux/getEvolFlux.schema.ts";
 
 @handler({
   ...handlerConfig,

@@ -1,15 +1,11 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { alias } from "@/shared/observatory/keyfigures/getKeyfigures.schema.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/observatory/keyfigures/getKeyfigures.contract.ts";
-import { KeyfiguresRepositoryInterfaceResolver } from "../../interfaces/KeyfiguresRepositoryProviderInterface.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/keyfigures/getKeyfigures.contract.ts";
+import { alias } from "../../contracts/keyfigures/getKeyfigures.schema.ts";
 import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { KeyfiguresRepositoryInterfaceResolver } from "../../interfaces/KeyfiguresRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,

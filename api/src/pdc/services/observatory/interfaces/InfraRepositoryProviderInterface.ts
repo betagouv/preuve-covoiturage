@@ -1,12 +1,9 @@
 import type {
   ParamsInterface as AiresCovoiturageParamsInterface,
   ResultInterface as AiresCovoiturageResultInterface,
-} from "@/shared/observatory/infra/airesCovoiturage.contract.ts";
+} from "../contracts/infra/airesCovoiturage.contract.ts";
 
-export type {
-  AiresCovoiturageParamsInterface,
-  AiresCovoiturageResultInterface,
-};
+export type { AiresCovoiturageParamsInterface, AiresCovoiturageResultInterface };
 
 export interface InfraRepositoryInterface {
   getAiresCovoiturage(
@@ -14,8 +11,7 @@ export interface InfraRepositoryInterface {
   ): Promise<AiresCovoiturageResultInterface>;
 }
 
-export abstract class InfraRepositoryInterfaceResolver
-  implements InfraRepositoryInterface {
+export abstract class InfraRepositoryInterfaceResolver implements InfraRepositoryInterface {
   async getAiresCovoiturage(
     params: AiresCovoiturageParamsInterface,
   ): Promise<AiresCovoiturageResultInterface> {

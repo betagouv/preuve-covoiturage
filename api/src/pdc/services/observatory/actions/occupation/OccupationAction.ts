@@ -4,12 +4,8 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "../../../../../shared/observatory/occupation/getOccupation.contract.ts";
-import { alias } from "../../../../../shared/observatory/occupation/getOccupation.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/occupation/getOccupation.contract.ts";
+import { alias } from "../../contracts/occupation/getOccupation.schema.ts";
 
 @handler({
   ...handlerConfig,

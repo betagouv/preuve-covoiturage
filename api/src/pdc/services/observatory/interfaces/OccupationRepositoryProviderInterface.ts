@@ -1,16 +1,16 @@
 import type {
-  ParamsInterface as OccupationParamsInterface,
-  ResultInterface as OccupationResultInterface,
-} from "@/shared/observatory/occupation/getOccupation.contract.ts";
-import type {
   ParamsInterface as EvolOccupationParamsInterface,
   ResultInterface as EvolOccupationResultInterface,
-} from "../../../../shared/observatory/occupation/getEvolOccupation.contract.ts";
+} from "../contracts/occupation/getEvolOccupation.contract.ts";
+import type {
+  ParamsInterface as OccupationParamsInterface,
+  ResultInterface as OccupationResultInterface,
+} from "../contracts/occupation/getOccupation.contract.ts";
 
 import type {
   ParamsInterface as BestTerritoriesParamsInterface,
   ResultInterface as BestTerritoriesResultInterface,
-} from "../../../../shared/observatory/occupation/getBestTerritories.contract.ts";
+} from "../contracts/occupation/getBestTerritories.contract.ts";
 
 export type {
   BestTerritoriesParamsInterface,
@@ -33,8 +33,7 @@ export interface OccupationRepositoryInterface {
   ): Promise<BestTerritoriesResultInterface>;
 }
 
-export abstract class OccupationRepositoryInterfaceResolver
-  implements OccupationRepositoryInterface {
+export abstract class OccupationRepositoryInterfaceResolver implements OccupationRepositoryInterface {
   async getOccupation(
     params: OccupationParamsInterface,
   ): Promise<OccupationResultInterface> {
