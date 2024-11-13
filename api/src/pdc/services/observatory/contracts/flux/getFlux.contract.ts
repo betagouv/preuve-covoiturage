@@ -1,4 +1,4 @@
-import { INSEECode, PerimeterType } from "@/shared/geo/shared/Perimeter.ts";
+import { INSEECode, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   ter_1: INSEECode;
@@ -29,5 +29,4 @@ export const handlerConfig = {
   method: "getFlux",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

@@ -8,11 +8,8 @@ import {
   polygon,
   Properties,
 } from "@/deps.ts";
-import type { GeoJSON } from "@/shared/geo/GeoJson.ts";
-import {
-  StatelessContextInterface,
-  StatelessRuleHelper,
-} from "../../interfaces/index.ts";
+import type { GeoJSON } from "@/pdc/services/geo/contracts/GeoJson.ts";
+import { StatelessContextInterface, StatelessRuleHelper } from "../../interfaces/index.ts";
 
 interface IsCloseToParams {
   shape: GeoJSON;

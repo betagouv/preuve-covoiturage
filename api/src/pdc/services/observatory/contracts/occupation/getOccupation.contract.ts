@@ -1,4 +1,4 @@
-import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "@/shared/geo/shared/Perimeter.ts";
+import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 import type { Feature } from "../../../../../shared/geo/GeoJson.ts";
 
 export interface SingleResultInterface {

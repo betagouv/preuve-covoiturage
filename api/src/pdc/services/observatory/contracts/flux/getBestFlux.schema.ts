@@ -1,4 +1,4 @@
-import { perimeterTypes } from "@/shared/geo/shared/Perimeter.ts";
+import { perimeterTypes } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export const alias = "observatory.getBestFlux";
 export const schema = {

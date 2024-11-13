@@ -1,8 +1,4 @@
-import {
-  INSEECode,
-  PerimeterLabel,
-  PerimeterType,
-} from "@/shared/geo/shared/Perimeter.ts";
+import { INSEECode, PerimeterLabel, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   territory: INSEECode;
@@ -28,5 +24,4 @@ export const handlerConfig = {
   method: "getBestTerritories",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
