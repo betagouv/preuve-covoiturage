@@ -23,17 +23,27 @@ export interface RouteParams {
   rpcAnswerOnFailure?: boolean;
 }
 
+const SUPPORTED_VERSIONS = ["3.0.0", "3.1.0"].map((v) => semver.parse(v));
+const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
+  successHttpCode: 200,
+  rateLimiter: {
+    key: "rl",
+    limit: 100,
+    windowMinute: 5,
+  },
+};
+
 export function registerExpressRoute(app: express.Express, kernel: KernelInterface, params: RouteParams) {
   const tokenProvider = kernel.get<TokenProvider>(TokenProvider);
+  const rateLimiterParams = params.rateLimiter || defaultParams.rateLimiter;
   const middlewares: Array<express.RequestHandler> = [
     serverTokenMiddleware(kernel, tokenProvider),
+    rateLimiter({
+      windowMs: rateLimiterParams.windowMinute * 60_000,
+      max: rateLimiterParams.limit,
+    }, rateLimiterParams.key),
   ];
-  if (params.rateLimiter) {
-    middlewares.push(rateLimiter({
-      windowMs: params.rateLimiter.windowMinute * 60_000,
-      max: params.rateLimiter.limit,
-    }, params.rateLimiter.key));
-  }
+
   const path = `/:api_version/${params.path}`.replaceAll("//", "/");
   app[params.method.toLocaleLowerCase()](path, [
     ...middlewares,
@@ -42,13 +52,11 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
 
-      const SUPPORTED_VERSIONS = ['3.0.0', '3.1.0'];
-
       const versionRange = semver.tryParseRange(api_version);
       if (!versionRange) {
         return res.status(404).end();
       }
-      if (!SUPPORTED_VERSIONS.some(version => semver.satisfies(semver.parse(version), versionRange))) {
+      if (!SUPPORTED_VERSIONS.some((version) => semver.satisfies(version, versionRange))) {
         return res.status(404).end();
       }
       const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...rparams };
@@ -64,7 +72,7 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       };
       try {
         const response = await kernel.call(params.action, p, ctxt);
-        res.status((params.successHttpCode || 200) as any);
+        res.status((params.successHttpCode || defaultParams.successHttpCode) as any);
         if (params.responseFn) {
           return await params.responseFn(res, response);
         }

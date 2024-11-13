@@ -309,66 +309,31 @@ export class HttpTransport implements TransportInterface {
         action: "export:createVersionThree",
         method: "POST",
         successHttpCode: 201,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
       {
         path: "/exports",
         action: "export:list",
         method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
       {
         path: "/exports/:uuid",
         action: "export:get",
         method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
       {
         path: "/exports/:uuid/status",
         action: "export:status",
         method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
       {
         path: "/exports/:uuid/attachment",
         action: "export:download",
         method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
       {
         path: "/exports/:uuid",
         action: "export:delete",
         method: "DELETE",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl",
-          limit: 2_000,
-          windowMinute: 5,
-        },
       },
     ];
     routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
@@ -451,12 +416,6 @@ export class HttpTransport implements TransportInterface {
       path: "/policies/simulate",
       action: "campaign:simulateOnFuture",
       method: "POST",
-      successHttpCode: 200,
-      rateLimiter: {
-        key: "rl",
-        limit: 2_000,
-        windowMinute: 5,
-      },
     });
     this.app.post(
       "/policy/simulate",
@@ -494,11 +453,10 @@ export class HttpTransport implements TransportInterface {
       path: "/geo/route",
       action: "geo:getRouteMeta",
       method: "GET",
-      successHttpCode: 200,
       rateLimiter: {
-        key: "rl",
+        key: "rl-acquisition-check",
         limit: 2_000,
-        windowMinute: 5,
+        windowMinute: 1,
       },
       async actionParamsFn(req) {
         const q = { ...req.query };
@@ -519,11 +477,10 @@ export class HttpTransport implements TransportInterface {
       path: "/geo/point/by_address",
       action: "geo:getPointByAddress",
       method: "GET",
-      successHttpCode: 200,
       rateLimiter: {
-        key: "rl",
+        key: "rl-acquisition-check",
         limit: 2_000,
-        windowMinute: 5,
+        windowMinute: 1,
       },
       rpcAnswerOnFailure: true,
     });
@@ -532,11 +489,10 @@ export class HttpTransport implements TransportInterface {
       path: "/geo/point/by_insee",
       action: "geo:getPointByCode",
       method: "GET",
-      successHttpCode: 200,
       rateLimiter: {
-        key: "rl",
+        key: "rl-acquisition-check",
         limit: 2_000,
-        windowMinute: 5,
+        windowMinute: 1,
       },
       rpcAnswerOnFailure: true,
     });
@@ -553,7 +509,6 @@ export class HttpTransport implements TransportInterface {
       path: "/journeys/:operator_journey_id",
       action: "acquisition:status",
       method: "GET",
-      successHttpCode: 200,
       rateLimiter: {
         key: "rl-acquisition-check",
         limit: 2_000,
@@ -567,7 +522,6 @@ export class HttpTransport implements TransportInterface {
       path: "/journeys/:operator_journey_id",
       action: "acquisition:patch",
       method: "PATCH",
-      successHttpCode: 200,
       rateLimiter: {
         key: "rl-acquisition-check",
         limit: 2_000,
@@ -581,7 +535,6 @@ export class HttpTransport implements TransportInterface {
       path: "/journeys/:operator_journey_id/cancel",
       action: "acquisition:cancel",
       method: "POST",
-      successHttpCode: 200,
       rateLimiter: {
         key: "rl-acquisition",
         limit: 20_000,
@@ -609,7 +562,6 @@ export class HttpTransport implements TransportInterface {
       path: "/journeys",
       action: "acquisition:list",
       method: "GET",
-      successHttpCode: 200,
       rateLimiter: {
         key: "rl-acquisition-check",
         limit: 2_000,
@@ -818,11 +770,6 @@ export class HttpTransport implements TransportInterface {
       action: "certificate:create",
       method: "POST",
       successHttpCode: 201,
-      rateLimiter: {
-        key: "rl",
-        limit: 100,
-        windowMinute: 5,
-      },
     });
 
     /**
@@ -834,12 +781,6 @@ export class HttpTransport implements TransportInterface {
       path: "/certificates/:uuid/attachment",
       action: "certificate:download",
       method: "POST",
-      successHttpCode: 200,
-      rateLimiter: {
-        key: "rl",
-        limit: 100,
-        windowMinute: 5,
-      },
       async responseFn(response, result) {
         const { headers, body } = result as DownloadCertificateResultInterface;
         for (const header of Object.keys(headers)) {
@@ -856,12 +797,6 @@ export class HttpTransport implements TransportInterface {
       path: "/certificates/:uuid",
       action: "certificate:find",
       method: "GET",
-      successHttpCode: 200,
-      rateLimiter: {
-        key: "rl",
-        limit: 100,
-        windowMinute: 5,
-      },
       rpcAnswerOnFailure: true,
       rpcAnswerOnSuccess: true,
     });
