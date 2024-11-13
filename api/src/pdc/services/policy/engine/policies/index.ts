@@ -31,6 +31,7 @@ import { LannionTregor2024 } from "@/pdc/services/policy/engine/policies/2024040
 import { PMGFxATMB2024 } from "@/pdc/services/policy/engine/policies/20240401_PMGFxATMB.ts";
 import { SiouleLimagne } from "@/pdc/services/policy/engine/policies/20240901_SiouleLimagne_2024_09.ts";
 import { PetrLunevillois092024032025 } from "@/pdc/services/policy/engine/policies/20240902_PetrLunevillois.ts";
+import { CCPOA202410 } from "@/pdc/services/policy/engine/policies/20241015_CCPOA_orthe_et_arrigans_2024.ts";
 import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
 import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
@@ -41,6 +42,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   [
     ATMB202305,
     Cannes2024,
+    CCPOA202410,
+    CCVMM202405,
     Cotentin2023,
     GrandChatellerault2024,
     GrandPoitiers,
@@ -59,8 +62,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PaysDeLaLoire2021,
     PaysDeLaLoire2023,
     PaysDeLaLoire2024,
-    PetrLunevilloisS12023,
     PetrLunevillois092024032025,
+    PetrLunevilloisS12023,
     PMGF2022,
     PMGF2023,
     PMGFOctobre2023,
@@ -68,13 +71,12 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PolicyTemplateOne,
     PolicyTemplateThree,
     PolicyTemplateTwo,
+    SiouleLimagne,
     SMT2022,
     SMT2023,
     SMTC2024Driver,
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
-    CCVMM202405,
-    SiouleLimagne,
   ].map((h) => [h.id, h]),
 );
