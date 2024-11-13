@@ -1,21 +1,13 @@
-import {
-  handler,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
+import { handler, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import { CompanyRepositoryProviderInterfaceResolver } from "../interfaces/CompanyRepositoryProviderInterface.ts";
 
 import { logger } from "@/lib/logger/index.ts";
-import { signature as fetchSignature } from "@/shared/company/fetch.contract.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/company/find.contract.ts";
-import { alias } from "@/shared/company/find.schema.ts";
+import { signature as fetchSignature } from "../contracts/fetch.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
+import { alias } from "../contracts/find.schema.ts";
 
 @handler({
   ...handlerConfig,
