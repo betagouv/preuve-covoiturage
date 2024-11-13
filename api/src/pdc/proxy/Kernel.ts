@@ -9,7 +9,6 @@ import { PostgresConnection } from "../../ilos/connection-postgres/index.ts";
 import { AcquisitionServiceProvider } from "../services/acquisition/AcquisitionServiceProvider.ts";
 import { APDFServiceProvider } from "../services/apdf/APDFServiceProvider.ts";
 import { ApplicationServiceProvider } from "../services/application/ApplicationServiceProvider.ts";
-import { CarpoolServiceProvider } from "../services/carpool/CarpoolServiceProvider.ts";
 import { CeeServiceProvider } from "../services/cee/CeeServiceProvider.ts";
 import { CertificateServiceProvider } from "../services/certificate/CertificateServiceProvider.ts";
 import { CompanyServiceProvider } from "../services/company/CompanyServiceProvider.ts";
@@ -30,7 +29,6 @@ import { config } from "./config/index.ts";
     AcquisitionServiceProvider,
     APDFServiceProvider,
     ApplicationServiceProvider,
-    CarpoolServiceProvider,
     CeeServiceProvider,
     CertificateServiceProvider,
     CompanyServiceProvider,
