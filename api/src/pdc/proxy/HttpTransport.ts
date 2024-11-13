@@ -30,18 +30,18 @@ import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
 import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
-import { signature as deleteCeeSignature } from "@/shared/cee/deleteApplication.contract.ts";
-import { signature as findCeeSignature } from "@/shared/cee/findApplication.contract.ts";
-import { signature as importCeeSignature } from "@/shared/cee/importApplication.contract.ts";
-import { signature as importIdentityCeeSignature } from "@/shared/cee/importApplicationIdentity.contract.ts";
-import { signature as registerCeeSignature } from "@/shared/cee/registerApplication.contract.ts";
-import { signature as simulateCeeSignature } from "@/shared/cee/simulateApplication.contract.ts";
-import { ResultInterface as DownloadCertificateResultInterface } from "@/shared/certificate/download.contract.ts";
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from "@/shared/territory/getAuthorizedCodes.contract.ts";
+import { signature as deleteCeeSignature } from "../services/cee/contracts/deleteApplication.contract.ts";
+import { signature as findCeeSignature } from "../services/cee/contracts/findApplication.contract.ts";
+import { signature as importCeeSignature } from "../services/cee/contracts/importApplication.contract.ts";
+import { signature as importIdentityCeeSignature } from "../services/cee/contracts/importApplicationIdentity.contract.ts";
+import { signature as registerCeeSignature } from "../services/cee/contracts/registerApplication.contract.ts";
+import { signature as simulateCeeSignature } from "../services/cee/contracts/simulateApplication.contract.ts";
+import { ResultInterface as DownloadCertificateResultInterface } from "../services/certificate/contracts/download.contract.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";

@@ -7,20 +7,19 @@ import {
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/registerApplication.contract.ts";
-
-import { alias } from "@/shared/cee/registerApplication.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
+import { alias } from "../contracts/registerApplication.schema.ts";
 
 import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
+import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
 import {
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
-} from "@/shared/cee/common/CeeApplicationInterface.ts";
-import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
-import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
+} from "../contracts/common/CeeApplicationInterface.ts";
+import { timestampSchema } from "../contracts/common/ceeSchema.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";

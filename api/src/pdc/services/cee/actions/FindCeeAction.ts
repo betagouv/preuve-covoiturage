@@ -1,18 +1,9 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  ForbiddenException,
-  handler,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/findApplication.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/findApplication.contract.ts";
 
-import { alias } from "@/shared/cee/findApplication.schema.ts";
+import { alias } from "../contracts/findApplication.schema.ts";
 
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";

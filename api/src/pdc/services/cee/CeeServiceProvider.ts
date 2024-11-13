@@ -3,13 +3,13 @@ import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
-import { binding as deleteCeeBinding } from "@/shared/cee/deleteApplication.schema.ts";
-import { binding as findCeeBinding } from "@/shared/cee/findApplication.schema.ts";
-import { binding as importCeeBinding } from "@/shared/cee/importApplication.schema.ts";
-import { binding as importIdentityCeeBinding } from "@/shared/cee/importApplicationIdentity.schema.ts";
-import { binding as registerCeeBinding } from "@/shared/cee/registerApplication.schema.ts";
-import { binding as simulateCeeBinding } from "@/shared/cee/simulateApplication.schema.ts";
 import { config } from "./config/index.ts";
+import { binding as deleteCeeBinding } from "./contracts/deleteApplication.schema.ts";
+import { binding as findCeeBinding } from "./contracts/findApplication.schema.ts";
+import { binding as importCeeBinding } from "./contracts/importApplication.schema.ts";
+import { binding as importIdentityCeeBinding } from "./contracts/importApplicationIdentity.schema.ts";
+import { binding as registerCeeBinding } from "./contracts/registerApplication.schema.ts";
+import { binding as simulateCeeBinding } from "./contracts/simulateApplication.schema.ts";
 
 import { DeleteCeeAction } from "./actions/DeleteCeeAction.ts";
 import { FindCeeAction } from "./actions/FindCeeAction.ts";

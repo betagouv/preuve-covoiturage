@@ -1,4 +1,4 @@
-import { ceeApplicationUuidSchema } from "@/shared/cee/common/ceeSchema.ts";
+import { ceeApplicationUuidSchema } from "./common/ceeSchema.ts";
 
 export const alias = "cee.findCeeApplication";
 export const schema = {
