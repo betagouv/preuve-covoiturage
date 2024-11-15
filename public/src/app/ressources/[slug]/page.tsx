@@ -8,6 +8,7 @@ import { ButtonProps } from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
+import { Button } from '../../../interfaces/cms/collectionsInterface';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -126,19 +127,20 @@ export default async function ResourceSingle({ params }: { params: { slug: strin
             <ButtonsGroup
               alignment={'right'}
               inlineLayoutWhen={'always'}
-              buttons={data.attributes.buttons.map((b:any) => {
+              buttons={data.attributes.buttons.map((b:Button) => {
                 return {
                   children:b.title,
                   linkProps: b.url.startsWith('http') ? {
                     href: b.url,
                     title:`${b.title} - nouvelle fenêtre` ,
                     "aria-label":`${b.title} - nouvelle fenêtre`,
-                    target:'_blank'
+                    target:'_blank',
+                    rel: "noopener noreferrer"
                   } : {
                     href: b.url,
                   },
-                  iconId: b.icon ? b.icon : '',
-                  priority: b.color ? b.color : 'primary',
+                  iconId: b.icon ?? '',
+                  priority: b.color ?? 'primary',
                 } 
               }) as [ButtonProps, ...ButtonProps[]]}
               buttonsIconPosition={'right'}

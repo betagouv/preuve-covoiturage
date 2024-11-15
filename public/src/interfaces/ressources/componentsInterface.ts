@@ -8,6 +8,6 @@ export interface RessourceCardProps {
   href: string;
   link?: string;
   file?: string;
-  horizontal?: false | undefined;
+  horizontal?: false;
   buttons?: Button[];
 }
