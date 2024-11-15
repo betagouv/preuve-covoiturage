@@ -1,3 +1,4 @@
+import { semver } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
@@ -32,6 +33,7 @@ export class CarpoolLabelRepository {
   }
 
   async findFraudByOperatorJourneyId(
+    api_version: string,
     operator_id: number,
     operator_journey_id: string,
     client?: PoolClient,
@@ -50,7 +52,12 @@ export class CarpoolLabelRepository {
     if (result.rowCount == 0) {
       return [];
     }
-    return [{ label: "interoperator_fraud" }];
+    // = "3.0.0" or "3.0" or "3"
+    if (semver.satisfies(semver.parse("3.0.0"), semver.parseRange(api_version))) {
+      return [{ label: "interoperator_fraud" }];
+    }
+    // >= "3.1" or "3.1.0"
+    return result.rows.map(({ label }) => ({ label: label }));
   }
 
   async findAnomalyByOperatorJourneyId(

@@ -15,6 +15,7 @@ export class CarpoolStatusService {
   async findByOperatorJourneyId(
     operator_id: number,
     operator_journey_id: string,
+    api_version: string,
   ): Promise<
     {
       created_at: Date;
@@ -38,6 +39,7 @@ export class CarpoolStatusService {
       operator_journey_id,
     );
     const fraud = await this.labelRepository.findFraudByOperatorJourneyId(
+      api_version,
       operator_id,
       operator_journey_id,
     );

@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   operator_journey_id: string;
   operator_id: number;
+  api_version: "v3" | "v3.1";
 }
 
 export interface AnomalyErrorDetails {
@@ -38,5 +39,4 @@ export const handlerConfig = {
   method: "status",
 };
 
-export const signature =
-  `${handlerConfig.service}:${handlerConfig.method}` as const;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
