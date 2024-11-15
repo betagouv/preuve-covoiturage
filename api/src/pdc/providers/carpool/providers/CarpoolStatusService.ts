@@ -15,7 +15,7 @@ export class CarpoolStatusService {
   async findByOperatorJourneyId(
     operator_id: number,
     operator_journey_id: string,
-    api_version: "v3" | "v3.1",
+    api_version: string,
   ): Promise<
     {
       created_at: Date;

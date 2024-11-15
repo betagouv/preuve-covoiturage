@@ -112,7 +112,7 @@ describe("Carpool Label Repository", () => {
 
   it("Should read carpool fraud label and returns single entry with 2 labels for api v3", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
-      "v3",
+      "v3.0",
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );
