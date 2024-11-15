@@ -554,7 +554,7 @@ export class HttpTransport implements TransportInterface {
         limit: 20_000,
         windowMinute: 1,
       },
-      rpcAnswerOnSuccess: true,
+      rpcAnswerOnSuccess: false,
       rpcAnswerOnFailure: true,
     });
 

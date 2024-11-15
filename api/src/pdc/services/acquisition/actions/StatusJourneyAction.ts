@@ -1,10 +1,14 @@
-import { ContextType, handler, NotFoundException } from "@/ilos/common/index.ts";
+import { handler, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/acquisition/status.contract.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/shared/acquisition/status.contract.ts";
 import { alias } from "@/shared/acquisition/status.schema.ts";
 
 @handler({
@@ -23,12 +27,11 @@ export class StatusJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { operator_journey_id, operator_id } = params;
     const result = await this.statusService.findByOperatorJourneyId(
       operator_id,
       operator_journey_id,
-      context.call?.api_version_range || "3.1",
     );
     if (!result) {
       throw new NotFoundException();
