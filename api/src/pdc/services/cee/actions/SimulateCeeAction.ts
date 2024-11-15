@@ -1,21 +1,13 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/simulateApplication.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/simulateApplication.contract.ts";
 
 import { alias } from "@/shared/cee/simulateApplication.schema.ts";
 
+import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
-import { ServiceDisabledError } from "../errors/ServiceDisabledError.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import {
   ApplicationCooldownConstraint,
@@ -40,7 +32,7 @@ export class SimulateCeeAction extends AbstractAction {
     context: ContextType,
   ): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_CEE_IMPORT")) {
-      throw new ServiceDisabledError();
+      throw new ServiceDisabledException();
     }
 
     const operator_id = getOperatorIdOrFail(context);

@@ -3,12 +3,7 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ParamsInterfaceV3,
-  ResultInterface,
-} from "@/shared/policy/simulateOnFuture.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/policy/simulateOnFuture.contract.ts";
 import { alias } from "@/shared/policy/simulateOnFuture.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import {
@@ -78,10 +73,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       .filter((i) => i.statelessAmount > 0)
       .map((i) => ({
         amount: i.statelessAmount,
-        siret:
-          uuidList.find((s) =>
-            s._id === policies.find((c) => c._id === i.policy_id).territory_id
-          ).uuid,
+        siret: uuidList.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).uuid,
       }));
 
     return {
@@ -114,20 +106,16 @@ export class SimulateOnFutureAction extends AbstractAction {
       cost: input.passenger.contribution,
     };
 
-    switch (input.api_version) {
-      case "v3":
-        const inputv3 = input as ParamsInterfaceV3;
-        return {
-          ...common,
-          datetime: inputv3.start.datetime,
-          distance: inputv3.distance,
-          start: await this.territoryRepository.findByPoint(inputv3.start),
-          end: await this.territoryRepository.findByPoint(inputv3.end),
-          start_lat: inputv3.start.lat,
-          start_lon: inputv3.start.lon,
-          end_lat: inputv3.end.lat,
-          end_lon: inputv3.end.lon,
-        };
-    }
+    return {
+      ...common,
+      datetime: input.start.datetime,
+      distance: input.distance,
+      start: await this.territoryRepository.findByPoint(input.start),
+      end: await this.territoryRepository.findByPoint(input.end),
+      start_lat: input.start.lat,
+      start_lon: input.start.lon,
+      end_lat: input.end.lat,
+      end_lon: input.end.lon,
+    };
   }
 }

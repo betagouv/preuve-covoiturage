@@ -1,14 +1,14 @@
 import { Exception } from "./Exception.ts";
 
-export class UnimplementedException extends Exception {
+export class UnprocessableRequestException extends Exception {
   constructor(data?: any) {
-    super("Unimplemented Error");
+    super("Unprocessable Request");
     this.nolog = true;
     this.rpcError = {
       data,
-      code: -32503,
+      code: -32422,
       message: this.message,
     };
-    this.httpCode = 501;
+    this.httpCode = 422;
   }
 }

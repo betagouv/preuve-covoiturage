@@ -79,7 +79,7 @@ describe("CarpoolAcquistionService", () => {
     });
 
     const data = { ...insertableCarpool };
-    await service.registerRequest({ ...data, api_version: 3 });
+    await service.registerRequest({ ...data, api_version: "3" });
 
     // console.log(carpoolRepository.register.getCalls());
     assert(carpoolRepositoryL.register.calledOnce);
@@ -114,7 +114,7 @@ describe("CarpoolAcquistionService", () => {
     const data = { ...updatableCarpool };
     await service.updateRequest({
       ...data,
-      api_version: 3,
+      api_version: "3",
       operator_id: insertableCarpool.operator_id,
       operator_journey_id: insertableCarpool.operator_journey_id,
     });
@@ -153,7 +153,7 @@ describe("CarpoolAcquistionService", () => {
     const data = {
       cancel_code: "FRAUD",
       cancel_message: "Got u",
-      api_version: 3,
+      api_version: "3",
       operator_id: insertableCarpool.operator_id,
       operator_journey_id: insertableCarpool.operator_journey_id,
     };
@@ -197,7 +197,7 @@ describe("CarpoolAcquistionService", () => {
       ...insertableCarpool,
       operator_journey_id: "operator_journey_id_2",
     };
-    await assertRejects(async () => await service.registerRequest({ ...data, api_version: 3 }));
+    await assertRejects(async () => await service.registerRequest({ ...data, api_version: "3" }));
 
     assert(carpoolRepositoryL.register.calledOnce);
     assert(requestRepositoryL.save.calledOnce);

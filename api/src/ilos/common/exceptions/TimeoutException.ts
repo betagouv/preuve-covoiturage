@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class TimeoutException extends RPCException {
+export class TimeoutException extends Exception {
   constructor(data?: any) {
     super("Timeout");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class TimeoutException extends RPCException {
       code: -32408,
       message: this.message,
     };
+    this.httpCode = 408;
   }
 }
