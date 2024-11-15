@@ -7,16 +7,18 @@ import { DsfrHead } from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
 import { DsfrProvider } from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
 import { getHtmlAttributes } from '@codegouvfr/react-dsfr/next-appdir/getHtmlAttributes';
 import { Metadata } from 'next';
+import { Session } from 'next-auth';
+import { SessionProvider } from "next-auth/react";
 import Link from 'next/link';
 import '../styles/global.scss';
 
 export const metadata: Metadata = {
-  title: 'Comprendre le covoiturage quotidien sur votre territoire | Observatoire.covoiturage.gouv.fr',
-  description: 'Tableau de bord pour comprendre le covoiturage de courte distance',
+  title: 'app.covoiturage.gouv.fr',
+  description: 'Développer le covoiturage de courte distance',
 }
 
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children, session }: { children: React.ReactNode, session: Session }) {
   //NOTE: The lang parameter is optional and defaults to "fr"
   const lang = 'fr';
   return (
@@ -41,12 +43,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <DsfrProvider>
-          <MuiDsfrThemeProvider>
-            <Skiplinks />
-            {children}
-          </MuiDsfrThemeProvider>
-        </DsfrProvider>
+        <SessionProvider session={session}>
+          <DsfrProvider>
+            <MuiDsfrThemeProvider>
+              <Skiplinks />
+              {children}
+            </MuiDsfrThemeProvider>
+          </DsfrProvider>
+        </SessionProvider>
       </body>
     </html>
   );
