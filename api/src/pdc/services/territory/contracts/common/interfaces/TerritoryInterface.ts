@@ -1,5 +1,5 @@
-import { ContactsInterface } from '../../../common/interfaces/ContactsInterface.ts';
-import { TerritorySelectorsInterface } from './TerritoryCodeInterface.ts';
+import { ContactsInterface } from "../../@/shared/common/interfaces/ContactsInterface.ts";
+import { TerritorySelectorsInterface } from "./TerritoryCodeInterface.ts";
 
 export interface TerritoryGroupInterface {
   _id: number;
@@ -16,25 +16,25 @@ export interface TerritoryGroupInterface {
 
 export type CreateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  '_id' | 'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  "_id" | "created_at" | "updated_at" | "deleted_at" | "shortname"
 >;
 export type UpdateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  "created_at" | "updated_at" | "deleted_at" | "shortname"
 >;
 
 // OLD INTERFACES
 // TODO : DROP THIS
 export enum TerritoryLevelEnum {
-  Town = 'town',
-  Towngroup = 'towngroup',
-  District = 'district',
-  Megalopolis = 'megalopolis',
-  Region = 'region',
-  State = 'state',
-  Country = 'country',
-  Countrygroup = 'countrygroup',
-  Other = 'other',
+  Town = "town",
+  Towngroup = "towngroup",
+  District = "district",
+  Megalopolis = "megalopolis",
+  Region = "region",
+  State = "state",
+  Country = "country",
+  Countrygroup = "countrygroup",
+  Other = "other",
 }
 
 export interface TerritoryAddress {

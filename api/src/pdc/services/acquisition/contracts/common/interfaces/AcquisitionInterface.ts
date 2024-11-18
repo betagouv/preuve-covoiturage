@@ -1,4 +1,4 @@
-import { JourneyInterface } from '../../../common/interfaces/JourneyInterface.ts';
+import { JourneyInterface } from "@/shared/common/interfaces/JourneyInterface.ts";
 
 export interface AcquisitionInterface {
   _id: number;

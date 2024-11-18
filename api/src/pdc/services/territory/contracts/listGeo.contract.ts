@@ -1,6 +1,6 @@
-import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface.ts';
-import { ResultWithPagination } from '../common/interfaces/ResultWithPagination.ts';
-import { TerritoryCodeEnum } from './common/interfaces/TerritoryCodeInterface.ts';
+import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
+import { ResultWithPagination } from "@/shared/common/interfaces/ResultWithPagination.ts";
+import { TerritoryCodeEnum } from "./common/interfaces/TerritoryCodeInterface.ts";
 
 export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   search: string;
@@ -20,8 +20,8 @@ export interface SingleResultInterface {
 export type ResultInterface = ResultWithPagination<SingleResultInterface[]>;
 
 export const handlerConfig = {
-  service: 'territory',
-  method: 'listGeo',
+  service: "territory",
+  method: "listGeo",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

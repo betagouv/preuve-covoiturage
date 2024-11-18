@@ -1,12 +1,12 @@
-import { pagination } from '../common/schemas/pagination.ts';
-export const alias = 'territory.list';
+import { pagination } from "@/shared/common/schemas/pagination.ts";
+export const alias = "territory.list";
 export const schema = {
   $id: alias,
-  type: 'object',
+  type: "object",
   required: [],
   additionalProperties: false,
   properties: {
-    search: { macro: 'varchar' },
+    search: { macro: "varchar" },
     ...pagination,
   },
 };

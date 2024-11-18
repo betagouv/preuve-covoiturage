@@ -1,27 +1,27 @@
-import { pagination } from '../common/schemas/pagination.ts';
+import { pagination } from "@/shared/common/schemas/pagination.ts";
 
-export const alias = 'territory.listGeo';
+export const alias = "territory.listGeo";
 export const schema = {
   $id: alias,
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['search'],
+  required: ["search"],
   properties: {
     search: {
-      type: 'string',
+      type: "string",
       minLength: 2,
       maxLength: 256,
     },
     exclude_coms: {
-      type: 'boolean',
+      type: "boolean",
     },
     where: {
-      type: 'object',
+      type: "object",
       additionalProperties: false,
       properties: {
         insee: {
-          type: 'array',
-          items: { macro: 'insee' },
+          type: "array",
+          items: { macro: "insee" },
         },
       },
     },

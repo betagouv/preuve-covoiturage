@@ -1,6 +1,6 @@
-import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface.ts';
-import { PointInterface } from '../common/interfaces/PointInterface.ts';
-import { CertificateMetaInterface } from './common/interfaces/CertificateMetaInterface.ts';
+import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
+import { CertificateMetaInterface } from "./common/interfaces/CertificateMetaInterface.ts";
+import { IdentityIdentifiersInterface } from "./common/interfaces/IdentityIdentifiersInterface.ts";
 
 export interface ParamsInterface {
   tz: string;
@@ -14,14 +14,14 @@ export interface ParamsInterface {
 export interface ResultInterface {
   uuid: string;
   created_at: Date;
-  meta: Omit<CertificateMetaInterface, 'identity' | 'operator'>;
+  meta: Omit<CertificateMetaInterface, "identity" | "operator">;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;
 
 export const handlerConfig = {
-  service: 'certificate',
-  method: 'create',
+  service: "certificate",
+  method: "create",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

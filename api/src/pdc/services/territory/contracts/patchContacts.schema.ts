@@ -1,13 +1,13 @@
-import { contacts } from '../common/schemas/contacts.ts';
+import { contacts } from "@/shared/common/schemas/contacts.ts";
 
-export const alias = 'territory.patchContacts';
+export const alias = "territory.patchContacts";
 export const patchContacts = {
   $id: alias,
-  type: 'object',
-  required: ['_id', 'patch'],
+  type: "object",
+  required: ["_id", "patch"],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'serial' },
+    _id: { macro: "serial" },
     patch: contacts,
   },
 };
