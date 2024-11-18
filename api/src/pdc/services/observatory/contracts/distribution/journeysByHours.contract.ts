@@ -1,4 +1,4 @@
-import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
+import { Direction, INSEECode, PerimeterLabel, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   code: INSEECode;

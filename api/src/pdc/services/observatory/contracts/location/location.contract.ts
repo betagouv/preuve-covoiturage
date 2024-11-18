@@ -1,4 +1,4 @@
-import { INSEECode, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
+import { INSEECode, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleSqlResultInterface {
   lon: number;

@@ -1,4 +1,4 @@
-import { PerimeterCode, PerimeterLabel, PerimeterType } from '../geo/shared/Perimeter.ts';
+import { PerimeterCode, PerimeterLabel, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   id: string;
@@ -10,8 +10,8 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export const handlerConfig = {
-  service: 'territory',
-  method: 'allGeo',
+  service: "territory",
+  method: "allGeo",
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

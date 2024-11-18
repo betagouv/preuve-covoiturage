@@ -1,9 +1,6 @@
 import { Timezone } from "@/pdc/providers/validator/types.ts";
-import {
-  ExportStatus,
-  ExportTarget,
-} from "@/pdc/services/export/models/Export.ts";
-import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { ExportStatus, ExportTarget } from "@/pdc/services/export/models/Export.ts";
+import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 /**
  * Legacy API for the Angular frontend to be replaced.
@@ -59,13 +56,11 @@ export const handlerConfigV2 = {
 /**
  * @deprecated
  */
-export const signatureV2 =
-  `${handlerConfigV2.service}:${handlerConfigV2.method}` as const;
+export const signatureV2 = `${handlerConfigV2.service}:${handlerConfigV2.method}` as const;
 
 export const handlerConfigV3 = {
   service: "export",
   method: "createVersionThree",
 } as const;
 
-export const signatureV3 =
-  `${handlerConfigV3.service}:${handlerConfigV3.method}` as const;
+export const signatureV3 = `${handlerConfigV3.service}:${handlerConfigV3.method}` as const;

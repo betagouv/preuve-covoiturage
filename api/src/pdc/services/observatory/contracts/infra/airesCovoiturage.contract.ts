@@ -1,5 +1,5 @@
-import type { Feature } from "../../../../../shared/geo/GeoJson.ts";
-import { INSEECode, PerimeterType } from "../../../../../shared/geo/shared/Perimeter.ts";
+import type { Feature } from "@/pdc/services/geo/contracts/GeoJson.ts";
+import { INSEECode, PerimeterType } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export interface SingleResultInterface {
   id_lieu: string;

@@ -1,4 +1,4 @@
-import { directionTypes, perimeterTypes } from "../../../../../shared/geo/shared/Perimeter.ts";
+import { directionTypes, perimeterTypes } from "@/pdc/services/geo/contracts/shared/Perimeter.ts";
 
 export const alias = "observatory.journeysByHours";
 export const schema = {

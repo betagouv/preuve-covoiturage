@@ -1,13 +1,6 @@
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import { IDFMPeriodeNormale2021 } from "../engine/policies/20210520_IDFM.ts";
 import { TripRepositoryProvider } from "./TripRepositoryProvider.ts";
