@@ -3,7 +3,7 @@ import { CommandInterface, ValidatorInterfaceResolver } from "@/ilos/common/inde
 import { logger } from "@/lib/logger/index.ts";
 import { CompanyDataSourceProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyDataSourceProviderInterface.ts";
 import { CompanyRepositoryProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyRepositoryProviderInterface.ts";
-import { alias } from "@/shared/company/fetch.schema.ts";
+import { alias } from "../contracts/fetch.schema.ts";
 
 export type Options = {
   save: boolean;

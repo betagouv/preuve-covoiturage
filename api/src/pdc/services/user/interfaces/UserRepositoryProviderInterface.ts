@@ -1,12 +1,12 @@
 import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
-import { UserCreateInterface } from "@/shared/user/common/interfaces/UserCreateInterface.ts";
-import { UserPatchInterface } from "@/shared/user/common/interfaces/UserPatchInterface.ts";
-import { UserFindInterface } from "@/shared/user/common/interfaces/UserFindInterface.ts";
-import { UserLastLoginInterface } from "@/shared/user/common/interfaces/UserLastLoginInterface.ts";
-import { UserListInterface } from "@/shared/user/common/interfaces/UserListInterface.ts";
-import { UserListFiltersInterface } from "@/shared/user/common/interfaces/UserListFiltersInterface.ts";
-import { UserPatchInterfaceBy } from "@/shared/user/common/interfaces/UserPatchInterfaceBy.ts";
-import { ResultInterface as HasUsersResultsInterface } from "@/shared/user/hasUsers.contract.ts";
+import { UserCreateInterface } from "../contracts/common/interfaces/UserCreateInterface.ts";
+import { UserFindInterface } from "../contracts/common/interfaces/UserFindInterface.ts";
+import { UserLastLoginInterface } from "../contracts/common/interfaces/UserLastLoginInterface.ts";
+import { UserListFiltersInterface } from "../contracts/common/interfaces/UserListFiltersInterface.ts";
+import { UserListInterface } from "../contracts/common/interfaces/UserListInterface.ts";
+import { UserPatchInterface } from "../contracts/common/interfaces/UserPatchInterface.ts";
+import { UserPatchInterfaceBy } from "../contracts/common/interfaces/UserPatchInterfaceBy.ts";
+import { ResultInterface as HasUsersResultsInterface } from "../contracts/hasUsers.contract.ts";
 
 export interface UserRepositoryProviderInterface {
   create(data: UserCreateInterface): Promise<UserFindInterface>;
@@ -51,8 +51,7 @@ export interface UserRepositoryProviderInterface {
   touchLastLogin(_id: number): Promise<void>;
 }
 
-export abstract class UserRepositoryProviderInterfaceResolver
-  implements UserRepositoryProviderInterface {
+export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
   async create(data: UserCreateInterface): Promise<UserFindInterface> {
     throw new Error();
   }

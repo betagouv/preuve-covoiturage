@@ -1,12 +1,5 @@
-import {
-  assertEquals,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-  SinonStub,
-} from "@/dev_deps.ts";
-import { ResultInterface as OperatorResultInterface } from "@/shared/operator/find.contract.ts";
+import { assertEquals, beforeEach, describe, it, sinon, SinonStub } from "@/dev_deps.ts";
+import { ResultInterface as OperatorResultInterface } from "@/pdc/services/operator/contracts/find.contract.ts";
 
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
@@ -14,11 +7,8 @@ import {
   PolicyRepositoryProviderInterfaceResolver,
   SerializedPolicyInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import {
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/find.contract.ts";
-import { PolicyStatusEnum } from "../../../../shared/policy/common/interfaces/PolicyInterface.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
+import { ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
 import { FindAction } from "./FindAction.ts";
 
 describe("FindAction", () => {
@@ -37,8 +27,7 @@ describe("FindAction", () => {
     [method: string, params: any, context: ContextType]
   >;
 
-  class FakePolicyRepositoryProvider
-    extends PolicyRepositoryProviderInterfaceResolver {
+  class FakePolicyRepositoryProvider extends PolicyRepositoryProviderInterfaceResolver {
     find(
       id: number,
       territoryId?: number,
@@ -83,8 +72,7 @@ describe("FindAction", () => {
 
   beforeEach(() => {
     // object
-    fakeKernelInterfaceResolver =
-      new (class extends KernelInterfaceResolver {})();
+    fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
     repository = new FakePolicyRepositoryProvider();
 
     // tested

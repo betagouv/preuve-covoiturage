@@ -1,18 +1,11 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  copyFromContextMiddleware,
-  hasPermissionByScopeMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { OperatorRepositoryProviderInterfaceResolver } from "../interfaces/OperatorRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/operator/patchContacts.contract.ts";
-import { alias } from "@/shared/operator/patchContacts.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/patchContacts.contract.ts";
+import { alias } from "../contracts/patchContacts.schema.ts";
 import { phoneComplianceHelper } from "../helpers/phoneComplianceHelper.ts";
+import { OperatorRepositoryProviderInterfaceResolver } from "../interfaces/OperatorRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,

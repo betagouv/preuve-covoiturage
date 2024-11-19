@@ -1,7 +1,7 @@
 import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { ParamsInterface, signature as finalize } from "@/shared/policy/finalize.contract.ts";
+import { ParamsInterface, signature as finalize } from "../contracts/finalize.contract.ts";
 import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 
 interface CommandOptions {

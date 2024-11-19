@@ -1,17 +1,13 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import {
   contentWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/list.contract.ts";
-import { alias } from "@/shared/user/list.schema.ts";
-import { UserContextInterface } from "@/shared/user/common/interfaces/UserContextInterfaces.ts";
+import { UserContextInterface } from "../contracts/common/interfaces/UserContextInterfaces.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/list.contract.ts";
+import { alias } from "../contracts/list.schema.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
 const whiteList = [
@@ -56,8 +52,7 @@ export class ListUserAction extends AbstractAction {
   ): Promise<ResultInterface> {
     const { operator_id, territory_id, ...pagination } = params;
 
-    const p: { operator_id?: number; territory_id?: number; hidden?: boolean } =
-      {};
+    const p: { operator_id?: number; territory_id?: number; hidden?: boolean } = {};
     if (typeof operator_id !== "undefined") p.operator_id = operator_id;
     if (typeof territory_id !== "undefined") p.territory_id = territory_id;
     if (p.operator_id || p.territory_id) p.hidden = false;

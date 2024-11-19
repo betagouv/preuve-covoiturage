@@ -3,11 +3,11 @@ import { coerceIntList } from "@/ilos/cli/index.ts";
 import { command, CommandInterface, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { set } from "@/lib/object/index.ts";
-import { ParamsInterface as ExportParams, signature as exportSignature } from "@/shared/apdf/export.contract.ts";
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from "@/shared/policy/list.contract.ts";
+} from "../../policy/contracts/list.contract.ts";
+import { ParamsInterface as ExportParams, signature as exportSignature } from "../contracts/export.contract.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 
 interface Options {

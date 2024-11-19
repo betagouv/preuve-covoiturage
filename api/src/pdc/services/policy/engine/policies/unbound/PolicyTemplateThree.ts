@@ -1,4 +1,4 @@
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
+import { PolicyTemplateDescriptions } from "../../../contracts/common/classes/PolicyTemplateDescription.ts";
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -17,8 +17,7 @@ import {
 } from "../../helpers/index.ts";
 import { AbstractPolicyHandler } from "../AbstractPolicyHandler.ts";
 
-export const PolicyTemplateThree: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PolicyTemplateThree: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   params(): PolicyHandlerParamsInterface {
     throw new Error("Method not implemented.");

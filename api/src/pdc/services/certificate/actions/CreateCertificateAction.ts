@@ -6,10 +6,14 @@ import {
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from "@/pdc/providers/middleware/index.ts";
 import { uuid } from "@/pdc/providers/test/helpers.ts";
-import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/certificate/create.contract.ts";
-import { alias } from "@/shared/certificate/create.schema.ts";
+import { CarpoolInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+} from "@/pdc/services/certificate/contracts/create.contract.ts";
+import { alias } from "@/pdc/services/certificate/contracts/create.schema.ts";
 import { createCastParamsHelper, CreateCastParamsInterface } from "../helpers/createCastParamsHelper.ts";
 import { findOperator, FindOperatorInterface } from "../helpers/findOperatorHelper.ts";
 import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";

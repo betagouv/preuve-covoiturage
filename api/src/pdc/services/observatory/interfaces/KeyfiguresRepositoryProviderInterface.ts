@@ -1,12 +1,9 @@
 import type {
   ParamsInterface as KeyfiguresParamsInterface,
   ResultInterface as KeyfiguresResultInterface,
-} from "@/shared/observatory/keyfigures/keyfigures.contract.ts";
+} from "../contracts/keyfigures/getKeyfigures.contract.ts";
 
-export type {
-  KeyfiguresParamsInterface,
-  KeyfiguresResultInterface,
-};
+export type { KeyfiguresParamsInterface, KeyfiguresResultInterface };
 
 export interface KeyfiguresRepositoryInterface {
   getKeyfigures(
@@ -14,8 +11,7 @@ export interface KeyfiguresRepositoryInterface {
   ): Promise<KeyfiguresResultInterface>;
 }
 
-export abstract class KeyfiguresRepositoryInterfaceResolver
-  implements KeyfiguresRepositoryInterface {
+export abstract class KeyfiguresRepositoryInterfaceResolver implements KeyfiguresRepositoryInterface {
   async getKeyfigures(
     params: KeyfiguresParamsInterface,
   ): Promise<KeyfiguresResultInterface> {

@@ -6,10 +6,10 @@ import {
   NotificationTransporterInterfaceResolver,
   StaticMailTemplateNotificationInterface,
 } from "@/pdc/providers/notification/index.ts";
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
-import { ResultInterface as SimulateOnPastResult } from "@/shared/policy/simulateOnPastGeo.contract.ts";
-import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
-import { ParamsInterface as SimulationPolicyParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
+import { PolicyTemplateDescriptions } from "../../policy/contracts/common/classes/PolicyTemplateDescription.ts";
+import { ResultInterface as SimulateOnPastResult } from "../../policy/contracts/simulateOnPastGeo.contract.ts";
+import { ParamsInterface as SendMailParamsInterface } from "../contracts/notify.contract.ts";
+import { ParamsInterface as SimulationPolicyParamsInterface } from "../contracts/simulatePolicyform.contract.ts";
 import {
   ConfirmEmailNotification,
   ContactFormNotification,

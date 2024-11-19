@@ -1,6 +1,6 @@
 import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { signature } from "@/shared/monitoring/statsrefresh.contract.ts";
+import { signature } from "../contracts/statsrefresh.contract.ts";
 
 interface CommandOptions {
   schema: string;

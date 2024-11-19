@@ -3,9 +3,9 @@ import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { PolicyStatsInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
-import { UnboundedSlices } from "@/shared/policy/common/interfaces/Slices.ts";
+import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
+import { PolicyStatsInterface } from "../contracts/interfaces/PolicySliceStatInterface.ts";
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
@@ -69,14 +69,10 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i: number) => {
-        const f = `filter (where distance >= ${start}${
-          end ? ` and distance < ${end}` : ""
-        })`;
+        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ""})`;
         return `
           (count(uuid) ${f})::int as slice_${i}_count,
-          (count(uuid) ${
-          f.replace("where", "where amount > 0 and")
-        })::int as slice_${i}_subsidized,
+          (count(uuid) ${f.replace("where", "where amount > 0 and")})::int as slice_${i}_subsidized,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
           ${end ? end : "'Infinity'"} as slice_${i}_end

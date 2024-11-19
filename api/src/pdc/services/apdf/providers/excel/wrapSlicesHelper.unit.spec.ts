@@ -1,13 +1,6 @@
 import { assertEquals, assertObjectMatch, it } from "@/dev_deps.ts";
-import {
-  BoundedSlices,
-  UnboundedSlices,
-} from "@/shared/policy/common/interfaces/Slices.ts";
-import {
-  findBoundary,
-  toBoundedSlices,
-  wrapSlices as wrap,
-} from "./wrapSlicesHelper.ts";
+import { BoundedSlices, UnboundedSlices } from "@/pdc/services/policy/contracts/common/interfaces/Slices.ts";
+import { findBoundary, toBoundedSlices, wrapSlices as wrap } from "./wrapSlicesHelper.ts";
 
 it("[wrap] No valid slices returns empty array", () => {
   assertObjectMatch(wrap(undefined), []);

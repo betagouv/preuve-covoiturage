@@ -1,10 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
-import { OperatorJourneyId } from "@/shared/cee/common/CeeApplicationInterface.ts";
+import { OperatorJourneyId } from "../../../services/cee/contracts/common/CeeApplicationInterface.ts";
 import { CarpoolStatus } from "../interfaces/database/label.ts";
 import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 
@@ -12,8 +9,7 @@ import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
 export class CarpoolStatusRepository {
   readonly table = "carpool_v2.status";
   readonly carpoolTable = "carpool_v2.carpools";
-  readonly termsViolationErrorLabelTable =
-    "carpool_v2.terms_violation_error_labels";
+  readonly termsViolationErrorLabelTable = "carpool_v2.terms_violation_error_labels";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -116,9 +112,7 @@ export class CarpoolStatusRepository {
       join(
         data.status.map((s) =>
           join(
-            Object.keys(s).filter((k) =>
-              k in s && s[k as keyof typeof s] !== undefined
-            ).map((
+            Object.keys(s).filter((k) => k in s && s[k as keyof typeof s] !== undefined).map((
               k,
             ) => sql`${raw(k)} = ${s[k as keyof typeof s]}`),
             " AND ",

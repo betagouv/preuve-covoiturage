@@ -9,7 +9,6 @@ import { PostgresConnection } from "../../ilos/connection-postgres/index.ts";
 import { AcquisitionServiceProvider } from "../services/acquisition/AcquisitionServiceProvider.ts";
 import { APDFServiceProvider } from "../services/apdf/APDFServiceProvider.ts";
 import { ApplicationServiceProvider } from "../services/application/ApplicationServiceProvider.ts";
-import { CarpoolServiceProvider } from "../services/carpool/CarpoolServiceProvider.ts";
 import { CeeServiceProvider } from "../services/cee/CeeServiceProvider.ts";
 import { CertificateServiceProvider } from "../services/certificate/CertificateServiceProvider.ts";
 import { CompanyServiceProvider } from "../services/company/CompanyServiceProvider.ts";
@@ -20,7 +19,6 @@ import { ObservatoryServiceProvider } from "../services/observatory/ObservatoryS
 import { OperatorServiceProvider } from "../services/operator/OperatorServiceProvider.ts";
 import { PolicyServiceProvider } from "../services/policy/PolicyServiceProvider.ts";
 import { TerritoryServiceProvider } from "../services/territory/TerritoryServiceProvider.ts";
-import { TripServiceProvider } from "../services/trip/TripServiceProvider.ts";
 import { UserServiceProvider } from "../services/user/UserServiceProvider.ts";
 import { SeedCommand } from "./commands/SeedCommand.ts";
 import { config } from "./config/index.ts";
@@ -31,7 +29,6 @@ import { config } from "./config/index.ts";
     AcquisitionServiceProvider,
     APDFServiceProvider,
     ApplicationServiceProvider,
-    CarpoolServiceProvider,
     CeeServiceProvider,
     CertificateServiceProvider,
     CompanyServiceProvider,
@@ -41,7 +38,6 @@ import { config } from "./config/index.ts";
     OperatorServiceProvider,
     PolicyServiceProvider,
     TerritoryServiceProvider,
-    TripServiceProvider,
     UserServiceProvider,
     ObservatoryServiceProvider,
     GeoServiceProvider,

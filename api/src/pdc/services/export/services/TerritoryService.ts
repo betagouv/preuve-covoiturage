@@ -3,7 +3,7 @@ import { TerritoryRepositoryInterfaceResolver } from "@/pdc/services/export/repo
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+} from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 export type ResolveParams = Partial<{
   territory_id: number[];
   geo_selector: TerritorySelectorsInterface;
@@ -74,9 +74,7 @@ export class TerritoryService {
         }
       });
 
-    return Object.keys(selectors).length
-      ? selectors
-      : this.defaultResolveResult;
+    return Object.keys(selectors).length ? selectors : this.defaultResolveResult;
   }
 
   /**
@@ -97,9 +95,7 @@ export class TerritoryService {
     if (!params.geo_selector) {
       // get an array of selectors for each territory_id
       const territorySelectors = await Promise.all(
-        (params.territory_id || []).map((id) =>
-          this.territoryRepository.getTerritorySelectors(id)
-        ),
+        (params.territory_id || []).map((id) => this.territoryRepository.getTerritorySelectors(id)),
       );
 
       // merge all selectors into one

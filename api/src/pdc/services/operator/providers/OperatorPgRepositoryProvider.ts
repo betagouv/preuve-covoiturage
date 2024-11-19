@@ -1,22 +1,15 @@
 import { Buffer } from "@/deps.ts";
-import {
-  KernelInterfaceResolver,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
-import { signature as companyFetchSignature } from "@/shared/company/fetch.contract.ts";
+import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { signature as companyFetchSignature } from "../../company/contracts/fetch.contract.ts";
 import {
   ParamsInterface as CompanyParamsInterface,
   ResultInterface as CompanyResultInterface,
   signature as companyFindSignature,
-} from "@/shared/company/find.contract.ts";
-import { OperatorDbInterface } from "@/shared/operator/common/interfaces/OperatorDbInterface.ts";
-import { OperatorInterface } from "@/shared/operator/common/interfaces/OperatorInterface.ts";
-import { OperatorListInterface } from "@/shared/operator/common/interfaces/OperatorListInterface.ts";
+} from "../../company/contracts/find.contract.ts";
+import { OperatorDbInterface } from "../contracts/common/interfaces/OperatorDbInterface.ts";
+import { OperatorInterface } from "../contracts/common/interfaces/OperatorInterface.ts";
+import { OperatorListInterface } from "../contracts/common/interfaces/OperatorListInterface.ts";
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
@@ -25,8 +18,7 @@ import {
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
 })
-export class OperatorPgRepositoryProvider
-  implements OperatorRepositoryProviderInterface {
+export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderInterface {
   public readonly table = "operator.operators";
 
   constructor(
@@ -35,12 +27,8 @@ export class OperatorPgRepositoryProvider
   ) {}
 
   async find(id: number, withThumbnail = false): Promise<OperatorDbInterface> {
-    const selectThumbnail = withThumbnail
-      ? ", encode(ot.data, 'hex')::text AS thumbnail"
-      : "";
-    const joinThumbnail = withThumbnail
-      ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id"
-      : "";
+    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : "";
+    const joinThumbnail = withThumbnail ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id" : "";
 
     const query = {
       text: `
@@ -87,12 +75,8 @@ export class OperatorPgRepositoryProvider
   ): Promise<
     { uuid: string; name: string; support: string; thumbnail?: string }
   > {
-    const selectThumbnail = withThumbnail
-      ? ", encode(ot.data, 'hex')::text AS thumbnail"
-      : "";
-    const joinThumbnail = withThumbnail
-      ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id"
-      : "";
+    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : "";
+    const joinThumbnail = withThumbnail ? " LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id" : "";
 
     const result = await this.connection.getClient().query<any>({
       text: `
@@ -380,8 +364,7 @@ export class OperatorPgRepositoryProvider
     await this.removeThumbnail(connection, operator_id);
     // insert
     await connection.query<any>({
-      text:
-        `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
+      text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
       values: [operator_id, this.b64ToHex(base64Thumbnail)],
     });
   }

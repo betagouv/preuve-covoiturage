@@ -12,13 +12,9 @@ import {
 } from "@/pdc/providers/middleware/index.ts";
 
 import { logger } from "@/lib/logger/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/create.contract.ts";
-import { alias } from "@/shared/user/create.schema.ts";
 import { userWhiteListFilterOutput } from "../config/filterOutput.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/create.contract.ts";
+import { alias } from "../contracts/create.schema.ts";
 import { AuthRepositoryProviderInterfaceResolver } from "../interfaces/AuthRepositoryProviderInterface.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 import { UserNotificationProvider } from "../providers/UserNotificationProvider.ts";

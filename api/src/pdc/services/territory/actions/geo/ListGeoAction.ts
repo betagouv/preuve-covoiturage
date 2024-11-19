@@ -1,17 +1,14 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  copyFromContextMiddleware,
-  hasPermissionMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
+import { copyFromContextMiddleware, hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { GeoRepositoryProviderInterfaceResolver } from "../../interfaces/GeoRepositoryProviderInterface.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/territory/listGeo.contract.ts";
-import { alias } from "@/shared/territory/listGeo.schema.ts";
+} from "@/pdc/services/territory/contracts/listGeo.contract.ts";
+import { alias } from "@/pdc/services/territory/contracts/listGeo.schema.ts";
+import { GeoRepositoryProviderInterfaceResolver } from "../../interfaces/GeoRepositoryProviderInterface.ts";
 
 @handler({
   ...handlerConfig,

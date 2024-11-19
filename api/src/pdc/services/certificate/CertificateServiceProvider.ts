@@ -6,10 +6,10 @@ import { PdfCertProvider } from "@/pdc/providers/pdfcert/index.ts";
 import { QrcodeProvider } from "@/pdc/providers/qrcode/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
-import { binding as createBinding } from "@/shared/certificate/create.schema.ts";
-import { binding as downloadBinding } from "@/shared/certificate/download.schema.ts";
-import { binding as findBinding } from "@/shared/certificate/find.schema.ts";
-import { binding as listBinding } from "@/shared/certificate/list.schema.ts";
+import { binding as createBinding } from "@/pdc/services/certificate/contracts/create.schema.ts";
+import { binding as downloadBinding } from "@/pdc/services/certificate/contracts/download.schema.ts";
+import { binding as findBinding } from "@/pdc/services/certificate/contracts/find.schema.ts";
+import { binding as listBinding } from "@/pdc/services/certificate/contracts/list.schema.ts";
 import { CreateCertificateAction } from "./actions/CreateCertificateAction.ts";
 import { DownloadCertificateAction } from "./actions/DownloadCertificateAction.ts";
 import { FindCertificateAction } from "./actions/FindCertificateAction.ts";

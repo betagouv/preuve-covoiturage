@@ -1,16 +1,12 @@
 import { Request as ExpressRequest, Response } from "@/deps.ts";
-import {
-  ForbiddenException,
-  KernelInterface,
-  UnauthorizedException,
-} from "@/ilos/common/index.ts";
+import { ForbiddenException, KernelInterface, UnauthorizedException } from "@/ilos/common/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 
 import { env, env_or_true } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
-import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
-import { TokenPayloadInterface } from "@/shared/application/common/interfaces/TokenPayloadInterface.ts";
+import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
+import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 interface Request extends ExpressRequest {
@@ -41,9 +37,7 @@ async function checkApplication(
   const matchUuid = app_uuid === payload.a;
 
   // V1 tokens have a string owner_id. Check is done on UUID only
-  const matchOwn = typeof payload.o === "string"
-    ? true
-    : owner_id === payload.o;
+  const matchOwn = typeof payload.o === "string" ? true : owner_id === payload.o;
   if (!matchUuid || !matchOwn) {
     throw new UnauthorizedException("Unauthorized application");
   }
@@ -78,9 +72,7 @@ async function logRequest(
   );
 
   logger.debug(
-    `logRequest [${get(request, "headers.x-request-id", "")}] ${
-      get(request, "body.journey_id", "")
-    }`,
+    `logRequest [${get(request, "headers.x-request-id", "")}] ${get(request, "body.journey_id", "")}`,
   );
 }
 

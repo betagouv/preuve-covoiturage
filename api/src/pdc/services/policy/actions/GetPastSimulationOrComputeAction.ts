@@ -4,17 +4,13 @@ import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/getPastSimulationOrCompute.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/getPastSimulationOrCompute.contract.ts";
 import {
   handlerConfig as simulatePastHandler,
   ParamsInterface as SimulateOnPastParams,
   signature as simulatePastSignature,
-} from "@/shared/policy/simulateOnPast.contract.ts";
-import { alias } from "@/shared/policy/simulateOnPast.schema.ts";
+} from "../contracts/simulateOnPast.contract.ts";
+import { alias } from "../contracts/simulateOnPast.schema.ts";
 
 @handler({
   ...handlerConfig,

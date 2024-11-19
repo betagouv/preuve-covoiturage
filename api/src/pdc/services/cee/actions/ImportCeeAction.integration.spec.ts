@@ -9,8 +9,8 @@ import {
   makeDbBeforeAfter,
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
-import { handlerConfig } from "@/shared/cee/importApplication.contract.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
+import { handlerConfig } from "../contracts/importApplication.contract.ts";
 
 describe("ImportCeeAction", () => {
   let db: DbContext;

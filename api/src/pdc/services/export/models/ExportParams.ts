@@ -1,7 +1,7 @@
 import { subMonthsTz, today } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { ExportTarget } from "@/pdc/services/export/models/Export.ts";
-import { TerritorySelectorsInterface } from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 export type Config = Partial<Params>;
 

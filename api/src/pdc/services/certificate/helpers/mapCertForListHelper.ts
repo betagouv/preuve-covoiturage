@@ -1,8 +1,8 @@
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
+import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
 import {
   ResultRowInterface,
   RowType,
-} from "@/shared/certificate/common/interfaces/ResultRowInterface.ts";
+} from "@/pdc/services/certificate/contracts/common/interfaces/ResultRowInterface.ts";
 
 export function mapCertForListHelper(
   cert: CertificateInterface,

@@ -11,14 +11,14 @@ import {
   makeDbBeforeAfter,
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
+import { CeeServiceProvider } from "../CeeServiceProvider.ts";
+import { config } from "../config/index.ts";
 import {
   CeeJourneyTypeEnum,
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
-} from "@/shared/cee/common/CeeApplicationInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/registerApplication.contract.ts";
-import { CeeServiceProvider } from "../CeeServiceProvider.ts";
-import { config } from "../config/index.ts";
+} from "../contracts/common/CeeApplicationInterface.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
 
 describe("RegisterCeeAction", () => {
   let db: DbContext;

@@ -3,20 +3,15 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { toISOString } from "../helpers/index.ts";
 
 import { logger } from "@/lib/logger/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import {
-  PolicyRepositoryProviderInterfaceResolver,
-  SerializedPolicyInterface,
-} from "../interfaces/index.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
+import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from "../interfaces/index.ts";
 
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,
 })
-export class PolicyRepositoryProvider
-  implements PolicyRepositoryProviderInterfaceResolver {
+export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfaceResolver {
   public readonly table = "policy.policies";
-  public readonly getTerritorySelectorFn =
-    "territory.get_selector_by_territory_id";
+  public readonly getTerritorySelectorFn = "territory.get_selector_by_territory_id";
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -261,9 +256,7 @@ export class PolicyRepositoryProvider
     };
 
     const result = await this.connection.getClient().query<any>(query);
-    return result.rowCount
-      ? result.rows.map((o: { operator_id: number }) => o.operator_id)
-      : [];
+    return result.rowCount ? result.rows.map((o: { operator_id: number }) => o.operator_id) : [];
   }
 
   /**

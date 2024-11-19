@@ -1,6 +1,6 @@
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { PolicyStatusEnum } from "../../contracts/common/interfaces/PolicyInterface.ts";
 import {
   CarpoolInterface,
   MetadataStoreInterface,

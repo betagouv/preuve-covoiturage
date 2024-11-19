@@ -1,13 +1,9 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/cee/deleteApplication.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/deleteApplication.contract.ts";
 
-import { alias } from "@/shared/cee/deleteApplication.schema.ts";
+import { alias } from "../contracts/deleteApplication.schema.ts";
 
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";

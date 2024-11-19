@@ -1,6 +1,6 @@
 import { command, CommandInterface, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { signature as indexGeo } from "@/shared/territory/indexAllGeo.contract.ts";
+import { signature as indexGeo } from "@/pdc/services/territory/contracts/indexAllGeo.contract.ts";
 
 @command({
   signature: "territory:index",

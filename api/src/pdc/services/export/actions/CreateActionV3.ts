@@ -1,8 +1,4 @@
-import {
-  ContextType,
-  handler,
-  InvalidParamsException,
-} from "@/ilos/common/index.ts";
+import { ContextType, handler, InvalidParamsException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { DefaultTimezoneMiddleware } from "@/pdc/middlewares/DefaultTimezoneMiddleware.ts";
 import {
@@ -11,13 +7,9 @@ import {
   hasPermissionMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
-import {
-  handlerConfigV3,
-  ParamsInterfaceV3,
-  ResultInterfaceV3,
-} from "@/shared/export/create.contract.ts";
-import { aliasV3 } from "@/shared/export/create.schema.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
+import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
+import { aliasV3 } from "../contracts/create.schema.ts";
 import { Export } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { ExportRecipient } from "../models/ExportRecipient.ts";

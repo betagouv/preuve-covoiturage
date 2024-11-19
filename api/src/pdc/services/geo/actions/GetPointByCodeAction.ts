@@ -1,13 +1,13 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/geo/getPointByCode.contract.ts";
-import { alias } from "@/shared/geo/getPointByCode.schema.ts";
-import { GeoProviderInterfaceResolver } from "@/pdc/providers/geo/index.ts";
+} from "@/pdc/services/geo/contracts/getPointByCode.contract.ts";
+import { alias } from "@/pdc/services/geo/contracts/getPointByCode.schema.ts";
 
 @handler({
   ...handlerConfig,

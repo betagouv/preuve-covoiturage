@@ -1,10 +1,7 @@
 import { describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
-import {
-  assertErrorHandler,
-  KernelContext,
-} from "@/pdc/providers/test/index.ts";
-import { handlerConfig } from "@/shared/cee/importApplicationIdentity.contract.ts";
+import { assertErrorHandler, KernelContext } from "@/pdc/providers/test/index.ts";
+import { handlerConfig } from "../contracts/importApplicationIdentity.contract.ts";
 
 describe("ImportCeeIdentityAction", () => {
   let kernel: KernelContext;

@@ -4,9 +4,9 @@ import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { APDFNameProvider, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 
-import { binding as exportBinding } from "@/shared/apdf/export.schema.ts";
-import { binding as listBinding } from "@/shared/apdf/list.schema.ts";
 import { config } from "./config/index.ts";
+import { binding as exportBinding } from "./contracts/export.schema.ts";
+import { binding as listBinding } from "./contracts/list.schema.ts";
 import { DataRepositoryProvider } from "./providers/APDFRepositoryProvider.ts";
 import { StorageRepositoryProvider } from "./providers/StorageRepositoryProvider.ts";
 

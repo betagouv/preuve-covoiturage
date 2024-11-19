@@ -2,9 +2,9 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/policy/simulateOnFuture.contract.ts";
-import { alias } from "@/shared/policy/simulateOnFuture.schema.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/simulateOnFuture.contract.ts";
+import { alias } from "../contracts/simulateOnFuture.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import {
   CarpoolInterface,

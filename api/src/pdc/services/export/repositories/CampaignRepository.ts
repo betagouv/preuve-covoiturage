@@ -1,12 +1,5 @@
-import {
-  ConfigInterfaceResolver,
-  KernelInterfaceResolver,
-  provider,
-} from "@/ilos/common/index.ts";
-import {
-  signature as campaignListSignature,
-  SingleResultInterface,
-} from "@/shared/policy/list.contract.ts";
+import { ConfigInterfaceResolver, KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
+import { signature as campaignListSignature, SingleResultInterface } from "../../policy/contracts/list.contract.ts";
 import { Campaign } from "../models/Campaign.ts";
 
 export abstract class CampaignRepositoryInterfaceResolver {

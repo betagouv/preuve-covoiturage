@@ -1,7 +1,7 @@
 import { excel } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
-import { SliceInterface } from "@/shared/policy/common/interfaces/Slices.ts";
+import { SliceInterface } from "../../../policy/contracts/common/interfaces/Slices.ts";
+import { SliceStatInterface } from "../../contracts/interfaces/PolicySliceStatInterface.ts";
 import { AbstractWorksheetWriter } from "./AbstractWorksheetWriter.ts";
 
 @provider()
@@ -75,8 +75,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
 
     ws.getCell("A24").value = "operator_trip_id";
     ws.mergeCells("B24:D24");
-    ws.getCell("B24").value =
-      "Identifiant de regroupement par conducteur envoyé par l'opérateur";
+    ws.getCell("B24").value = "Identifiant de regroupement par conducteur envoyé par l'opérateur";
 
     ws.getCell("A25").value = "start_datetime";
     ws.mergeCells("B25:D25");
@@ -124,13 +123,11 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
 
     ws.getCell("A36").value = "operator_class";
     ws.mergeCells("B36:D36");
-    ws.getCell("B36").value =
-      "Classe du trajet envoyée par l'opérateur (A, B, C)";
+    ws.getCell("B36").value = "Classe du trajet envoyée par l'opérateur (A, B, C)";
 
     ws.getCell("A37").value = "driver_operator_user_id";
     ws.mergeCells("B37:D37");
-    ws.getCell("B37").value =
-      "Identifiant du conducteur envoyé par l'opérateur";
+    ws.getCell("B37").value = "Identifiant du conducteur envoyé par l'opérateur";
 
     ws.getCell("A38").value = "passenger_operator_user_id";
     ws.mergeCells("B38:D38");
@@ -138,8 +135,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
 
     ws.getCell("A39").value = "rpc_incentive";
     ws.mergeCells("B39:D39");
-    ws.getCell("B39").value =
-      "Montant d'incitation calculé par le RPC en euros";
+    ws.getCell("B39").value = "Montant d'incitation calculé par le RPC en euros";
 
     ws.getCell("A40").value = "incentive_type";
     ws.mergeCells("B40:D40");
@@ -221,8 +217,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.mergeCells("G35:L35");
     ws.getCell(`G35`).value = {
       text: "Conditions Générale d'Utilisation du RPC",
-      hyperlink:
-        "https://doc.covoiturage.beta.gouv.fr/nos-services/api-primo-conducteurs-cee/cgu",
+      hyperlink: "https://doc.covoiturage.beta.gouv.fr/nos-services/api-primo-conducteurs-cee/cgu",
     };
     ws.mergeCells("G36:L36");
     ws.getCell(`G36`).value = {
@@ -264,9 +259,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     for (const s of slices) {
       const { start, end } = s.slice;
       const mode_criteria = `Trajets!S:S,"${mode}"`;
-      const slice_criteria = `Trajets!M:M,">=${start}"${
-        end ? `,Trajets!M:M,"<${end}"` : ""
-      }`;
+      const slice_criteria = `Trajets!M:M,">=${start}"${end ? `,Trajets!M:M,"<${end}"` : ""}`;
 
       // const r = ws.addRow([this.formatSliceLabel(s.slice), s.sum / 100, s.count, s.subsidized]);
       const r = ws.addRow([
@@ -281,8 +274,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
         },
         {
           date1904: false,
-          formula:
-            `COUNTIFS(Trajets!R:R,">0",${mode_criteria},${slice_criteria})`,
+          formula: `COUNTIFS(Trajets!R:R,">0",${mode_criteria},${slice_criteria})`,
         },
       ]);
       r.height = 20;

@@ -1,6 +1,6 @@
 import { AbstractMailNotification } from "@/pdc/providers/notification/index.ts";
 import { AbstractTemplate } from "@/pdc/providers/template/index.ts";
-import { SimulateOnPastGeoRequiredParams } from "@/shared/policy/simulateOnPastGeo.contract.ts";
+import { SimulateOnPastGeoRequiredParams } from "../../policy/contracts/simulateOnPastGeo.contract.ts";
 
 export interface SimulatePolicyFormTemplateData {
   title: string;
@@ -25,8 +25,7 @@ export interface SimulatePolicyFormTemplateData {
   simulation_result_six_months_amount: number;
 }
 
-export class SimulatePolicyFormMJMLTemplate
-  extends AbstractTemplate<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePolicyFormTemplateData> {
   static readonly template = `
 <mjml version="4.6.3" lang="fr">
   <mj-head>
@@ -192,8 +191,7 @@ export class SimulatePolicyFormMJMLTemplate
   `;
 }
 
-export class SimulatePolicyFormTextTemplate
-  extends AbstractTemplate<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyFormTextTemplate extends AbstractTemplate<SimulatePolicyFormTemplateData> {
   static readonly template = `
   <p>
   Vous trouverez ci-dessous le résultat ainsi que le récapitulatif de la demande de simulation qui nous a été adressée.
@@ -259,8 +257,7 @@ export class SimulatePolicyFormTextTemplate
       `;
 }
 
-export class SimulatePolicyNotification
-  extends AbstractMailNotification<SimulatePolicyFormTemplateData> {
+export class SimulatePolicyNotification extends AbstractMailNotification<SimulatePolicyFormTemplateData> {
   static templateMJML = SimulatePolicyFormMJMLTemplate;
   static templateText = SimulatePolicyFormTextTemplate;
   static readonly subject = "Demande de simulation";

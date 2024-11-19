@@ -1,20 +1,11 @@
 import type {
-  BoundedSlices,
-  SliceInterface,
-  UnboundedSlices,
-} from "@/shared/policy/common/interfaces/Slices.ts";
-import {
-  TerritoryCodeEnum,
-} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
-import type {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from "@/shared/territory/common/interfaces/TerritoryCodeInterface.ts";
+} from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
+import { TerritoryCodeEnum } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
+import type { BoundedSlices, SliceInterface, UnboundedSlices } from "../../contracts/common/interfaces/Slices.ts";
 
-export {
-  IncentiveStateEnum,
-  IncentiveStatusEnum,
-} from "./IncentiveInterface.ts";
+export { IncentiveStateEnum, IncentiveStatusEnum } from "./IncentiveInterface.ts";
 export type {
   CommonIncentiveInterface,
   SerializedIncentiveInterface,
@@ -43,8 +34,7 @@ export type {
   StatelessContextInterface,
   StatelessRuleHelper,
 } from "./PolicyInterface.ts";
-export { TerritoryCodeEnum };
-export { TerritoryCodeInterface, TerritorySelectorsInterface };
+export { TerritoryCodeEnum, TerritoryCodeInterface, TerritorySelectorsInterface };
 export type { BoundedSlices, SliceInterface, UnboundedSlices };
 
 export interface CarpoolMetaInterface {

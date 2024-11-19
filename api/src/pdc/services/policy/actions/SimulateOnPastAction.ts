@@ -4,13 +4,9 @@ import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/simulateOnPast.contract.ts";
-import { alias } from "@/shared/policy/simulateOnPast.schema.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/simulateOnPast.contract.ts";
+import { alias } from "../contracts/simulateOnPast.schema.ts";
 import { MetadataStore } from "../engine/entities/MetadataStore.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import {

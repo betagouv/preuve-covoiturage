@@ -5,9 +5,9 @@ import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { config } from "./config/index.ts";
 
-import { binding as getPointByAddressBinding } from "@/shared/geo/getPointByAddress.schema.ts";
-import { binding as getPointByCodeBinding } from "@/shared/geo/getPointByCode.schema.ts";
-import { binding as getRouteMeta } from "@/shared/geo/getRouteMeta.schema.ts";
+import { binding as getPointByAddressBinding } from "@/pdc/services/geo/contracts/getPointByAddress.schema.ts";
+import { binding as getPointByCodeBinding } from "@/pdc/services/geo/contracts/getPointByCode.schema.ts";
+import { binding as getRouteMeta } from "@/pdc/services/geo/contracts/getRouteMeta.schema.ts";
 
 import { GetPointByAddressAction } from "./actions/GetPointByAddressAction.ts";
 import { GetPointByCodeAction } from "./actions/GetPointByCodeAction.ts";

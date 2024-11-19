@@ -1,27 +1,12 @@
-import {
-  afterEach,
-  assertEquals,
-  assertRejects,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
-import {
-  KernelInterfaceResolver,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
+import { afterEach, assertEquals, assertRejects, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
+import { KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import {
   ParamsInterface as FindByUuidParams,
   ResultInterface as FindByUuidResult,
-} from "@/shared/operator/findbyuuid.contract.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import { ResultInterface as PolicyFindResult } from "@/shared/policy/find.contract.ts";
-import {
-  getCampaignOperators,
-  getPolicyUuidList,
-  uuidToOperatorId,
-} from "./getCampaignOperators.helper.ts";
+} from "@/pdc/services/operator/contracts/findbyuuid.contract.ts";
+import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
+import { ResultInterface as PolicyFindResult } from "@/pdc/services/policy/contracts/find.contract.ts";
+import { getCampaignOperators, getPolicyUuidList, uuidToOperatorId } from "./getCampaignOperators.helper.ts";
 
 describe("getCampaignOperator", () => {
   const kernel = new (class extends KernelInterfaceResolver {})();

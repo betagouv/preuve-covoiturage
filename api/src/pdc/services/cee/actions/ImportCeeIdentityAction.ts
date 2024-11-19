@@ -1,17 +1,16 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "@/shared/cee/importApplicationIdentity.contract.ts";
-
-import { alias } from "@/shared/cee/importApplicationIdentity.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/importApplicationIdentity.contract.ts";
+import { alias } from "../contracts/importApplicationIdentity.schema.ts";
 
 import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import {
   CeeImportSpecificApplicationIdentityInterface,
   CeeImportStandardizedApplicationIdentityInterface,
-} from "@/shared/cee/common/CeeApplicationInterface.ts";
-import { timestampSchema } from "@/shared/cee/common/ceeSchema.ts";
+} from "../contracts/common/CeeApplicationInterface.ts";
+import { timestampSchema } from "../contracts/common/ceeSchema.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";

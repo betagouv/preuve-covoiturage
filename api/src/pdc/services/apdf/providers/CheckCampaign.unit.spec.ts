@@ -1,20 +1,8 @@
 import { faker } from "@/deps.ts";
-import {
-  afterEach,
-  assert,
-  assertRejects,
-  beforeEach,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
-import {
-  ContextType,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
-import { ResultInterface as GetCampaignResultInterface } from "@/shared/policy/find.contract.ts";
+import { afterEach, assert, assertRejects, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
+import { ContextType, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
+import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
+import { ResultInterface as GetCampaignResultInterface } from "@/pdc/services/policy/contracts/find.contract.ts";
 import { createGetCampaignResult } from "../helpers/createGetCampaignResult.helper.ts";
 import { CheckCampaign } from "./CheckCampaign.ts";
 
@@ -24,8 +12,7 @@ describe("CheckCampaign", () => {
   >;
   const RETURNED_EXCEL_PATH = faker.system.directoryPath();
   const CAMPAIGN_NAME = faker.word.noun();
-  const kernelInterfaceResolver =
-    new (class extends KernelInterfaceResolver {})();
+  const kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const checkCampaign = new CheckCampaign(
     kernelInterfaceResolver,
   );

@@ -2,12 +2,8 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/observatory/incentive/getIncentive.contract.ts";
-import { alias } from "@/shared/observatory/incentive/getIncentive.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/incentive/getIncentive.contract.ts";
+import { alias } from "../../contracts/incentive/getIncentive.schema.ts";
 import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
 import { IncentiveRepositoryInterfaceResolver } from "../../interfaces/IncentiveRepositoryProviderInterface.ts";
 

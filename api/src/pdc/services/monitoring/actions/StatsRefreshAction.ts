@@ -4,12 +4,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/monitoring/statsrefresh.contract.ts";
-import { alias } from "@/shared/monitoring/statsrefresh.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/statsrefresh.contract.ts";
+import { alias } from "../contracts/statsrefresh.schema.ts";
 import { filterTables } from "../helpers/filterTables.helper.ts";
 import { todayFrequencies } from "../helpers/todayFrequencies.helper.ts";
 import { MatviewItem } from "../interfaces/StatsRefreshInterfaces.ts";
@@ -51,9 +47,7 @@ export class StatsRefreshAction extends AbstractAction {
       const tables = filterTables(this.config, frequencies, schema, views.rows);
 
       logger.info(
-        `[monitoring:stats:refresh] Refresh materialised views: ${
-          tables.sort().join(", ")
-        }`,
+        `[monitoring:stats:refresh] Refresh materialised views: ${tables.sort().join(", ")}`,
       );
 
       for (const table of tables) {

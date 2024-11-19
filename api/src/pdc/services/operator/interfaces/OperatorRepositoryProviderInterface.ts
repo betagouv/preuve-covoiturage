@@ -1,7 +1,7 @@
-import { OperatorInterface } from "@/shared/operator/common/interfaces/OperatorInterface.ts";
-import { OperatorDbInterface } from "@/shared/operator/common/interfaces/OperatorDbInterface.ts";
-import { OperatorListInterface } from "@/shared/operator/common/interfaces/OperatorListInterface.ts";
-import { ResultInterface as FindBySiretResultInterface } from "@/shared/operator/findbyuuid.contract.ts";
+import { OperatorDbInterface } from "../contracts/common/interfaces/OperatorDbInterface.ts";
+import { OperatorInterface } from "../contracts/common/interfaces/OperatorInterface.ts";
+import { OperatorListInterface } from "../contracts/common/interfaces/OperatorListInterface.ts";
+import { ResultInterface as FindBySiretResultInterface } from "../contracts/findbyuuid.contract.ts";
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
   quickFind(
@@ -18,8 +18,7 @@ export interface OperatorRepositoryProviderInterface {
   patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void>;
 }
 
-export abstract class OperatorRepositoryProviderInterfaceResolver
-  implements OperatorRepositoryProviderInterface {
+export abstract class OperatorRepositoryProviderInterfaceResolver implements OperatorRepositoryProviderInterface {
   async find(
     id: number,
     withThumbnail?: boolean,
