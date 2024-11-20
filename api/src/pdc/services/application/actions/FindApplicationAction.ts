@@ -1,34 +1,34 @@
-import { ContextType, handler } from "@/ilos/common/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
-import { alias } from "../contracts/find.schema.ts";
-import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/ApplicationRepositoryProviderInterface.ts";
+import { FindApplication } from "@/pdc/services/application/dto/FindApplication.ts";
+import { ApplicationInterface } from "@/pdc/services/application/interfaces/ApplicationInterface.ts";
+import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
 
 @handler({
-  ...handlerConfig,
+  service: "application",
+  method: "find",
   middlewares: [
-    ["validate", alias],
     copyFromContextMiddleware("call.user.operator_id", "owner_id"),
     hasPermissionByScopeMiddleware("proxy.application.find", [
       "operator.application.find",
       "call.user.operator_id",
       "owner_id",
     ]),
+    ["validate", FindApplication],
   ],
 })
 export class FindApplicationAction extends AbstractAction {
   constructor(
-    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
+    private applicationRepository: ApplicationPgRepositoryProvider,
   ) {
     super();
   }
 
   public async handle(
-    params: ParamsInterface,
-    context: ContextType,
-  ): Promise<ResultInterface> {
+    params: FindApplication,
+  ): Promise<ApplicationInterface> {
     return this.applicationRepository.find({
       ...params,
       owner_service: "operator",

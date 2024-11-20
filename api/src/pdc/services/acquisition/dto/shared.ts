@@ -10,16 +10,15 @@ import {
   size,
   string,
 } from "@/lib/superstruct/index.ts";
-import { Timestamp } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Timestamp, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
 export { Serial } from "@/pdc/providers/superstruct/shared/index.ts";
-export { Timestamp };
+export { Timestamp, Varchar };
 
 export const Lat = size(number(), -90, 90);
 export const Lon = size(number(), -180, 180);
 export const Siret = size(string(), 14, 14);
 export const Amount = size(number(), 0, 100_000);
 export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
-export const Varchar = size(string(), 0, 256);
 export const Email = pattern(
   Varchar,
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/,

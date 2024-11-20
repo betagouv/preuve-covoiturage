@@ -5,9 +5,9 @@ import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { env, env_or_true } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
-import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
-import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
+import { ApplicationInterface } from "../../services/application/interfaces/ApplicationInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
+import { TokenPayloadInterface } from "../interfaces/TokenPayloadInterface.ts";
 
 interface Request extends ExpressRequest {
   operator: string;

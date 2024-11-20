@@ -1,34 +1,34 @@
-import { ContextType, handler } from "@/ilos/common/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/create.contract.ts";
-import { alias } from "../contracts/create.schema.ts";
-import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/ApplicationRepositoryProviderInterface.ts";
+import { CreateApplication } from "@/pdc/services/application/dto/CreateApplication.ts";
+import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
+import { ApplicationInterface } from "../interfaces/ApplicationInterface.ts";
 
 @handler({
-  ...handlerConfig,
+  service: "application",
+  method: "create",
   middlewares: [
-    ["validate", alias],
     copyFromContextMiddleware("call.user.operator_id", "owner_id"),
     hasPermissionByScopeMiddleware(undefined, [
       "operator.application.create",
       "call.user.operator_id",
       "owner_id",
     ]),
+    ["validate", CreateApplication],
   ],
 })
 export class CreateApplicationAction extends AbstractAction {
   constructor(
-    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
+    private applicationRepository: ApplicationPgRepositoryProvider,
   ) {
     super();
   }
 
   public async handle(
-    params: ParamsInterface,
-    context: ContextType,
-  ): Promise<ResultInterface> {
+    params: CreateApplication,
+  ): Promise<ApplicationInterface> {
     return this.applicationRepository.create({
       ...params,
       owner_service: "operator",

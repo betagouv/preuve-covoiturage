@@ -1,20 +1,14 @@
 import { ConfigInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
-import { ApplicationInterface } from "../contracts/common/interfaces/ApplicationInterface.ts";
-import { RepositoryInterface as CreateInterface } from "../contracts/create.contract.ts";
-import { RepositoryInterface as FindInterface } from "../contracts/find.contract.ts";
-import { RepositoryInterface as ListInterface } from "../contracts/list.contract.ts";
-import { RepositoryInterface as RevokeInterface } from "../contracts/revoke.contract.ts";
-import {
-  ApplicationRepositoryProviderInterface,
-  ApplicationRepositoryProviderInterfaceResolver,
-} from "../interfaces/ApplicationRepositoryProviderInterface.ts";
+import { CreateApplication } from "@/pdc/services/application/dto/CreateApplication.ts";
+import { FindApplication } from "@/pdc/services/application/dto/FindApplication.ts";
+import { ListApplication } from "@/pdc/services/application/dto/ListApplication.ts";
+import { RevokeApplication } from "@/pdc/services/application/dto/RevokeApplication.ts";
+import { ApplicationInterface } from "../interfaces/ApplicationInterface.ts";
 
-@provider({
-  identifier: ApplicationRepositoryProviderInterfaceResolver,
-})
-export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
+@provider()
+export class ApplicationPgRepositoryProvider {
   public readonly table = "application.applications";
 
   constructor(
@@ -23,7 +17,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   ) {}
 
   async list(
-    { owner_id, owner_service }: ListInterface,
+    { owner_id, owner_service }: ListApplication,
   ): Promise<ApplicationInterface[]> {
     const query = {
       text: `
@@ -39,11 +33,11 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
 
     if (!result.rowCount) return [];
 
-    return result.rows.map((a) => this.applyDefaultPermissions(a));
+    return result.rows.map((a: any) => this.applyDefaultPermissions(a));
   }
 
   async find(
-    { uuid, owner_id, owner_service }: FindInterface,
+    { uuid, owner_id, owner_service }: FindApplication,
   ): Promise<ApplicationInterface> {
     const ownerParams = owner_id && typeof owner_id !== "string"
       ? {
@@ -77,7 +71,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   }
 
   async create(
-    { name, owner_id, owner_service, permissions }: CreateInterface,
+    { name, owner_id, owner_service, permissions }: CreateApplication,
   ): Promise<ApplicationInterface> {
     const query = {
       text: `
@@ -100,7 +94,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   }
 
   async revoke(
-    { uuid, owner_id, owner_service }: RevokeInterface,
+    { uuid, owner_id, owner_service }: RevokeApplication,
   ): Promise<void> {
     const query = {
       text: `
