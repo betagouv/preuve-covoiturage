@@ -1,16 +1,14 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/deleteApplication.contract.ts";
-
-import { alias } from "../contracts/deleteApplication.schema.ts";
-
+import { DeleteApplication } from "@/pdc/services/cee/dto/DeleteApplication.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
-  ...handlerConfig,
-  middlewares: [["validate", alias]],
+  service: "cee",
+  method: "deleteCeeApplication",
+  middlewares: [["validate", DeleteApplication]],
 })
 export class DeleteCeeAction extends AbstractAction {
   constructor(
@@ -20,9 +18,9 @@ export class DeleteCeeAction extends AbstractAction {
   }
 
   public async handle(
-    params: ParamsInterface,
+    params: DeleteApplication,
     context: ContextType,
-  ): Promise<ResultInterface> {
+  ): Promise<void> {
     const operator_id = getOperatorIdOrFail(context);
     await this.ceeRepository.deleteCeeByUuid(operator_id, params.uuid);
   }

@@ -7,7 +7,7 @@ export enum CeeJourneyTypeEnum {
 export type PhoneTrunc = string;
 export type LastNameTrunc = string;
 export type DrivingLicense = string;
-export type Timestamp = string;
+export type Timestamp = Date;
 export type JourneyId = number;
 export type OperatorJourneyId = string;
 export type Status = CarpoolV1StatusEnum;
@@ -15,15 +15,15 @@ export type Token = string;
 
 export interface CeeApplicationResultInterface {
   uuid: string;
-  datetime: Timestamp;
+  datetime: string;
   token: Token;
   journey_id?: JourneyId;
   status?: Status;
 }
 
 export interface CeeShortApplicationInterface {
-  application_timestamp: Timestamp;
-  journey_type: CeeJourneyTypeEnum.Short;
+  application_timestamp: Date;
+  journey_type: "short";
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;
   operator_journey_id: OperatorJourneyId;
@@ -31,8 +31,8 @@ export interface CeeShortApplicationInterface {
 }
 
 export interface CeeLongApplicationInterface {
-  application_timestamp: Timestamp;
-  journey_type: CeeJourneyTypeEnum.Long;
+  application_timestamp: Date;
+  journey_type: "long";
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;
   phone_trunc: PhoneTrunc;
@@ -70,8 +70,7 @@ export interface CeeImportStandardizedApplicationIdentityInterface {
   identity_key: string;
 }
 
-export interface CeeImportSpecificApplicationIdentityInterface
-  extends CeeImportInterface<Date> {
+export interface CeeImportSpecificApplicationIdentityInterface extends CeeImportInterface<Date> {
   cee_application_type: "specific";
   identity_key: string;
 }

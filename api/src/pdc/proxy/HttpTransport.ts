@@ -34,12 +34,6 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from "@/pdc/services/territory/contracts/getAuthorizedCodes.contract.ts";
-import { signature as deleteCeeSignature } from "../services/cee/contracts/deleteApplication.contract.ts";
-import { signature as findCeeSignature } from "../services/cee/contracts/findApplication.contract.ts";
-import { signature as importCeeSignature } from "../services/cee/contracts/importApplication.contract.ts";
-import { signature as importIdentityCeeSignature } from "../services/cee/contracts/importApplicationIdentity.contract.ts";
-import { signature as registerCeeSignature } from "../services/cee/contracts/registerApplication.contract.ts";
-import { signature as simulateCeeSignature } from "../services/cee/contracts/simulateApplication.contract.ts";
 import { ResultInterface as DownloadCertificateResultInterface } from "../services/certificate/contracts/download.contract.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
@@ -343,7 +337,7 @@ export class HttpTransport implements TransportInterface {
     const routes: Array<RouteParams> = [
       {
         path: "/policies/cee",
-        action: registerCeeSignature,
+        action: "cee:registerCeeApplication",
         method: "POST",
         successHttpCode: 201,
         rateLimiter: {
@@ -354,29 +348,7 @@ export class HttpTransport implements TransportInterface {
       },
       {
         path: "/policies/cee/simulate",
-        action: simulateCeeSignature,
-        method: "POST",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import",
-        action: importCeeSignature,
-        method: "POST",
-        successHttpCode: 201,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import/identity",
-        action: importIdentityCeeSignature,
+        action: "cee:simulateCeeApplication",
         method: "POST",
         successHttpCode: 200,
         rateLimiter: {
@@ -387,7 +359,7 @@ export class HttpTransport implements TransportInterface {
       },
       {
         path: "/policies/cee/:uuid",
-        action: findCeeSignature,
+        action: "cee:findCeeApplication",
         method: "GET",
         successHttpCode: 200,
         rateLimiter: {
@@ -398,7 +370,7 @@ export class HttpTransport implements TransportInterface {
       },
       {
         path: "/policies/cee/:uuid",
-        action: deleteCeeSignature,
+        action: "cee:deleteCeeApplication",
         method: "DELETE",
         successHttpCode: 204,
         rateLimiter: {

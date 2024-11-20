@@ -4,25 +4,25 @@ import {
   handler,
   InvalidParamsException,
   NotFoundException,
+  UnexpectedException,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
-import { alias } from "../contracts/registerApplication.schema.ts";
 
 import { ServiceDisabledException } from "@/ilos/common/exceptions/index.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
+import { RegisterApplication } from "@/pdc/services/cee/dto/RegisterApplication.ts";
 import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
-import {
-  CeeLongApplicationInterface,
-  CeeShortApplicationInterface,
-} from "../contracts/common/CeeApplicationInterface.ts";
 import { timestampSchema } from "../contracts/common/ceeSchema.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";
+import {
+  CeeApplicationResultInterface,
+  CeeLongApplicationInterface,
+  CeeShortApplicationInterface,
+} from "../interfaces/CeeApplicationInterface.ts";
 import {
   ApplicationCooldownConstraint,
   CeeApplicationError,
@@ -35,8 +35,9 @@ import {
 } from "../interfaces/index.ts";
 
 @handler({
-  ...handlerConfig,
-  middlewares: [["validate", alias]],
+  service: "cee",
+  method: "registerCeeApplication",
+  middlewares: [["validate", RegisterApplication]],
 })
 export class RegisterCeeAction extends AbstractAction {
   readonly timeConstraint: TimeRangeConstraint;
@@ -59,9 +60,9 @@ export class RegisterCeeAction extends AbstractAction {
   }
 
   public async handle(
-    params: ParamsInterface,
+    params: RegisterApplication,
     context: ContextType,
-  ): Promise<ResultInterface> {
+  ): Promise<CeeApplicationResultInterface> {
     if (env_or_false("APP_DISABLE_CEE_REGISTER")) {
       throw new ServiceDisabledException();
     }
@@ -74,6 +75,8 @@ export class RegisterCeeAction extends AbstractAction {
           return await this.processForShortApplication(operator_id, params);
         case CeeJourneyTypeEnum.Long:
           return await this.processForLongApplication(operator_id, params);
+        default:
+          throw new UnexpectedException();
       }
     } catch (e) {
       let errorType;
@@ -93,13 +96,13 @@ export class RegisterCeeAction extends AbstractAction {
       const errorData: CeeApplicationError = {
         operator_id,
         error_type: errorType,
-        journey_type: params.journey_type,
+        journey_type: params.journey_type as CeeJourneyTypeEnum,
         datetime: params["datetime"],
         last_name_trunc: params["last_name_trunc"],
         driving_license: params["driving_license"],
         phone_trunc: params["phone_trunc"],
         operator_journey_id: params["operator_journey_id"],
-        application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
+        application_id: e instanceof ConflictException ? e.rpcError?.data?.uuid : undefined,
         identity_key: params["identity_key"],
       };
       try {
@@ -112,7 +115,7 @@ export class RegisterCeeAction extends AbstractAction {
   protected async processForShortApplication(
     operator_id: number,
     params: CeeShortApplicationInterface,
-  ): Promise<ResultInterface> {
+  ): Promise<CeeApplicationResultInterface> {
     const { identity_key: carpoolIdentityKey, ...carpoolData } = await this
       .ceeRepository.searchForValidJourney(
         { operator_id, operator_journey_id: params.operator_journey_id },
@@ -179,7 +182,7 @@ export class RegisterCeeAction extends AbstractAction {
   protected async processForLongApplication(
     operator_id: number,
     params: CeeLongApplicationInterface,
-  ): Promise<ResultInterface> {
+  ): Promise<CeeApplicationResultInterface> {
     const datetime = getDateOrFail(
       params.datetime,
       `data/datetime ${timestampSchema.errorMessage}`,

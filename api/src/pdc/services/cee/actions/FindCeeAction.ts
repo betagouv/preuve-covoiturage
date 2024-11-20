@@ -1,19 +1,18 @@
 import { ConfigInterfaceResolver, ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/findApplication.contract.ts";
-
-import { alias } from "../contracts/findApplication.schema.ts";
-
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
+import { FindApplication } from "@/pdc/services/cee/dto/FindApplication.ts";
 import { RegisteredCeeApplication } from "@/pdc/services/cee/interfaces/CeeRepositoryProviderInterface.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
+import { CeeApplicationResultInterface } from "../interfaces/CeeApplicationInterface.ts";
 import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @handler({
-  ...handlerConfig,
-  middlewares: [["validate", alias]],
+  service: "cee",
+  method: "findCeeApplication",
+  middlewares: [["validate", FindApplication]],
 })
 export class FindCeeAction extends AbstractAction {
   protected signatory: ((message: string) => Promise<string>) | undefined;
@@ -25,9 +24,9 @@ export class FindCeeAction extends AbstractAction {
   }
 
   public async handle(
-    params: ParamsInterface,
+    params: FindApplication,
     context: ContextType,
-  ): Promise<ResultInterface> {
+  ): Promise<CeeApplicationResultInterface> {
     const operator_id = getOperatorIdOrFail(context);
 
     const application = await this.ceeRepository.findCeeByUuid(

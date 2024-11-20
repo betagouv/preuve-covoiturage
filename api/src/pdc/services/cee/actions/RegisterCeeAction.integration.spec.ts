@@ -13,12 +13,12 @@ import {
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
 import {
   CeeJourneyTypeEnum,
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
-} from "../contracts/common/CeeApplicationInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
+} from "../interfaces/CeeApplicationInterface.ts";
 
 describe("RegisterCeeAction", () => {
   let db: DbContext;
