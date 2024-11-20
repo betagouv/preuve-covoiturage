@@ -5,7 +5,6 @@ import {
   InvalidRequestException,
   ParseErrorException,
   UnprocessableRequestException,
-  ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -13,26 +12,36 @@ import { get } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { RegisterRequest, RegisterResponse } from "@/pdc/providers/carpool/interfaces/acquisition.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { handlerConfig, ParamsInterface, PayloadV3, ResultInterface } from "../contracts/create.contract.ts";
-import { v3alias } from "../contracts/create.schema.ts";
+import { ParamsInterface, PayloadV3, ResultInterface } from "../contracts/create.contract.ts";
+
+import { CreateJourney } from "@/pdc/services/acquisition/dto/CreateJourney.ts";
+
+export interface ResultInterface {
+  operator_journey_id: string;
+  created_at: Date;
+}
 
 @handler({
-  ...handlerConfig,
+  service: "acquisition",
+  method: "create",
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: "operator.acquisition.create",
     }),
+    ["validate", CreateJourney],
   ],
 })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
-    private validator: ValidatorInterfaceResolver,
     private acquisitionService: CarpoolAcquisitionService,
   ) {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected async handle(
+    params: CreateJourney,
+    context: ContextType,
+  ): Promise<ResultInterface> {
     try {
       await this.validateParams(params);
       const request = this.convertPayloadToRequest(context, params);
@@ -54,8 +63,6 @@ export class CreateJourneyAction extends AbstractAction {
   }
 
   protected async validateParams(journey: ParamsInterface): Promise<void> {
-    await this.validator.validate(journey, v3alias);
-
     const now = new Date();
     const start = get(journey, "start.datetime") as Date;
     const end = get(journey, "end.datetime") as Date;

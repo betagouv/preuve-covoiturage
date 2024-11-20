@@ -6,16 +6,20 @@ import { isAfter, isBefore } from "@/deps.ts";
 import { castUserStringToUTC, subDaysTz, today } from "@/pdc/helpers/dates.helper.ts";
 import { castFromStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/list.contract.ts";
-import { alias } from "../contracts/list.schema.ts";
+import { ListJourney } from "@/pdc/services/acquisition/dto/ListJourney.ts";
+
+export type ResultInterface = Array<{
+  operator_journey_id: string;
+}>;
 
 @handler({
-  ...handlerConfig,
+  service: "acquisition",
+  method: "list",
   middlewares: [
-    ["validate", alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: "operator.acquisition.status",
     }),
+    ["validate", ListJourney],
   ],
 })
 export class ListJourneyAction extends AbstractAction {
@@ -23,14 +27,14 @@ export class ListJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
+  protected async handle(params: ListJourney): Promise<ResultInterface> {
     const acquisitions = await this.status.findBy(
       this.applyDefault(params),
     );
     return acquisitions;
   }
 
-  protected applyDefault(params: ParamsInterface) {
+  protected applyDefault(params: ListJourney) {
     const { operator_id, start, end, status, offset, limit } = params;
     const todayDate = today();
     const endDate = castUserStringToUTC(end) || todayDate;
