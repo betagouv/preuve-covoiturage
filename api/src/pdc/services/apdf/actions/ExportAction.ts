@@ -5,18 +5,20 @@ import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
+import { ExportApdf } from "@/pdc/services/apdf/dto/ExportApdf.ts";
 import { ResultInterface as PolicyResultInterface } from "../../policy/contracts/find.contract.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/export.contract.ts";
-import { alias } from "../contracts/export.schema.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 import { getCampaignOperators } from "../helpers/getCampaignOperators.helper.ts";
 import { DataRepositoryProviderInterfaceResolver } from "../interfaces/APDFRepositoryProviderInterface.ts";
 import { CheckCampaign } from "../providers/CheckCampaign.ts";
 import { BuildExcel } from "../providers/excel/BuildExcel.ts";
 
+export type ResultInterface = string[];
+
 @handler({
-  ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares("apdf"), ["validate", alias]],
+  service: "apdf",
+  method: "export",
+  middlewares: [...internalOnlyMiddlewares("apdf"), ["validate", ExportApdf]],
 })
 export class ExportAction extends Action {
   constructor(
@@ -31,7 +33,7 @@ export class ExportAction extends Action {
   }
 
   public async handle(
-    params: ParamsInterface,
+    params: ExportApdf,
     context: ContextType,
   ): Promise<ResultInterface> {
     const { start_date, end_date } = castExportParams(params);

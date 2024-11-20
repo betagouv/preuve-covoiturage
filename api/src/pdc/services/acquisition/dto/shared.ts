@@ -1,7 +1,5 @@
 import {
   boolean,
-  coerce,
-  date,
   enums,
   integer,
   max,
@@ -12,11 +10,10 @@ import {
   size,
   string,
 } from "@/lib/superstruct/index.ts";
-export const Timestamp = coerce(
-  date(),
-  pattern(string(), /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/),
-  (v) => new Date(v),
-);
+import { Timestamp } from "@/pdc/providers/superstruct/shared/index.ts";
+export { Serial } from "@/pdc/providers/superstruct/shared/index.ts";
+export { Timestamp };
+
 export const Lat = size(number(), -90, 90);
 export const Lon = size(number(), -180, 180);
 export const Siret = size(string(), 14, 14);
@@ -31,7 +28,6 @@ export const Phone = pattern(Varchar, /^\+[0-9]*$/);
 export const ExternalId = pattern(string(), /^[0-9A-Za-z_-]{1,256}$/);
 export const OperatorJourneyId = ExternalId;
 export const OperatorClass = enums(["A", "B", "C"]);
-export const Serial = size(integer(), 0, 2147483647);
 
 export const Distance = size(integer(), 0, 1_000_000);
 
