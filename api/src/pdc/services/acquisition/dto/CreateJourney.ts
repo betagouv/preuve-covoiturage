@@ -30,7 +30,7 @@ export const Identity = object({
   identity_key: IdentityKey,
   operator_user_id: ExternalId,
   firstname: optional(Varchar),
-  lastanme: optional(Varchar),
+  lastname: optional(Varchar),
   email: optional(Email),
   phone: optional(Phone),
   phone_trunc: optional(Phone),

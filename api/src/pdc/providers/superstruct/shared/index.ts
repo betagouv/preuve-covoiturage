@@ -14,6 +14,6 @@ export const Uuid = pattern(
   /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
 );
 
-export const Phone = pattern(Varchar, /^\+[0-9]*$/);
+export const Phone = pattern(Varchar, /^\+[0-9]{6,20}*$/);
 
 export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
