@@ -1,3 +1,4 @@
+import { AuthButton } from '@/components/auth/AuthButton';
 import { Header } from '@codegouvfr/react-dsfr/Header';
 import Navigation from './Navigation';
 
@@ -34,6 +35,7 @@ export function AppHeader() {
           },
           text: 'Documentation'
         },
+        <AuthButton key={null}/>
       ]}
     />
   );

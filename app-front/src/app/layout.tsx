@@ -2,15 +2,14 @@ import Analytics from '@/components/layout/Analytics';
 import { Skiplinks } from '@/components/layout/Skiplinks';
 import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
+import { AuthProvider } from '@/providers/AuthProvider';
+import '@/styles/global.scss';
 import MuiDsfrThemeProvider from '@codegouvfr/react-dsfr/mui';
 import { DsfrHead } from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
 import { DsfrProvider } from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
 import { getHtmlAttributes } from '@codegouvfr/react-dsfr/next-appdir/getHtmlAttributes';
 import { Metadata } from 'next';
-import { Session } from 'next-auth';
-import { SessionProvider } from "next-auth/react";
 import Link from 'next/link';
-import '../styles/global.scss';
 
 export const metadata: Metadata = {
   title: 'app.covoiturage.gouv.fr',
@@ -18,8 +17,7 @@ export const metadata: Metadata = {
 }
 
 
-export default function RootLayout({ children, session }: { children: React.ReactNode, session: Session }) {
-  //NOTE: The lang parameter is optional and defaults to "fr"
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = 'fr';
   return (
     <html {...getHtmlAttributes({ defaultColorScheme, lang })}>
@@ -43,14 +41,14 @@ export default function RootLayout({ children, session }: { children: React.Reac
         />
       </head>
       <body>
-        <SessionProvider session={session}>
+        <AuthProvider>
           <DsfrProvider>
             <MuiDsfrThemeProvider>
               <Skiplinks />
               {children}
             </MuiDsfrThemeProvider>
           </DsfrProvider>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

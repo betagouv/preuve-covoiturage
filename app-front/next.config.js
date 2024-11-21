@@ -39,7 +39,6 @@ const nextConfig = {
         }),
       );
     }
-
     return config;
   },
 };
