@@ -44,6 +44,33 @@ const defaultCarpool = {
 
 const process = makeProcessHelper(defaultCarpool);
 
+it("should work with exclusions", async () =>
+  await process(
+    {
+      policy: { handler: Handler.id },
+      carpool: [
+        { operator_uuid: OperatorsEnum.KLAXIT },
+        { distance: 100 },
+        { distance: 4_000 },
+        { operator_class: "A" },
+      ],
+      meta: [],
+    },
+    {
+      incentive: [0, 0, 0, 0],
+      meta: [
+        {
+          key: "max_amount_restriction.global.campaign.global",
+          value: 0,
+        },
+        {
+          key: "max_amount_restriction.0-driver_id_one.month.0-2024",
+          value: 0,
+        },
+      ],
+    },
+  ));
+
 it(
   "should work basic",
   async () =>
