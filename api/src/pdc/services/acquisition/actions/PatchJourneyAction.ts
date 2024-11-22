@@ -27,7 +27,7 @@ export class PatchJourneyAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const operator_id = get(context, "call.user.operator_id");
+    const operator_id = get(context, "call.user.operator_id") as number;
     const operator_class: OperatorClass | undefined = params.operator_class && OperatorClass[params.operator_class]
       ? OperatorClass[params.operator_class]
       : undefined;

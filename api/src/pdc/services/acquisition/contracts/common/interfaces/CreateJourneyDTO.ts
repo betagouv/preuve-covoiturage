@@ -1,3 +1,5 @@
+import { OperatorClass } from "@/pdc/providers/carpool/interfaces/common.ts";
+
 export interface Incentive {
   index: number;
   amount: number;
@@ -44,7 +46,7 @@ interface Passenger {
 
 export interface CreateJourneyDTO {
   operator_journey_id: string;
-  operator_class: string;
+  operator_class: OperatorClass;
   incentives: Array<Incentive>;
   start: TimeGeoPoint;
   end: TimeGeoPoint;

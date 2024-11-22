@@ -1,9 +1,10 @@
-import { Incentive, TimeGeoPoint } from './common/interfaces/CreateJourneyDTO.ts';
+import { OperatorClass } from "@/pdc/providers/carpool/interfaces/common.ts";
+import { Incentive, TimeGeoPoint } from "./common/interfaces/CreateJourneyDTO.ts";
 
 export interface ParamsInterface {
   operator_journey_id: string;
   operator_trip_id?: string;
-  operator_class: string;
+  operator_class: OperatorClass;
   incentives: Array<Incentive>;
   start: TimeGeoPoint;
   end: TimeGeoPoint;
@@ -12,8 +13,8 @@ export interface ParamsInterface {
 export type ResultInterface = void;
 
 export const handlerConfig = {
-  service: 'acquisition',
-  method: 'patch',
+  service: "acquisition",
+  method: "patch",
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

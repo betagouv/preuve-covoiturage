@@ -5,7 +5,14 @@ import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
-import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from "../interfaces/index.ts";
+import {
+  CancelRequest,
+  CarpoolAcquisitionStatusEnum,
+  RegisterRequest,
+  RegisterResponse,
+  TermsViolationErrorLabels,
+  UpdateRequest,
+} from "../interfaces/index.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
 import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
@@ -78,11 +85,7 @@ export class CarpoolAcquisitionService {
     return result;
   }
 
-  public async registerRequest(
-    data: RegisterRequest,
-  ): Promise<
-    { created_at: Date; terms_violation_error_labels: Array<string> }
-  > {
+  public async registerRequest(data: RegisterRequest): Promise<RegisterResponse> {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
@@ -98,7 +101,7 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      let terms_violation_error_labels: Array<string> = [];
+      let terms_violation_error_labels: TermsViolationErrorLabels = [];
       if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {
         await this.statusRepository.saveAcquisitionStatus(
           new CarpoolAcquisitionStatus(

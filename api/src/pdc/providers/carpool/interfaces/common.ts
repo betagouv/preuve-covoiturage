@@ -77,6 +77,8 @@ export enum CarpoolAcquisitionStatusEnum {
   TermsViolationError = "terms_violation_error",
 }
 
+export type TermsViolationErrorLabels = Array<string>;
+
 export enum CarpoolFraudStatusEnum {
   Pending = "pending",
   Passed = "passed",
