@@ -72,7 +72,7 @@ export async function migrate(config: string) {
       },
       app: {
         targetSchema: "geo",
-        //datasets: new Set(),
+        datasets: new Set(),
       },
     });
     console.debug("[etl] prepare migrator");
