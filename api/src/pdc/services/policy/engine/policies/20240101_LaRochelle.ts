@@ -18,7 +18,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import { description } from "./20230101_LaRochelle.html.ts";
+import { description } from "./20240101_LaRochelle.html.ts";
 
 export const LaRochelle2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
