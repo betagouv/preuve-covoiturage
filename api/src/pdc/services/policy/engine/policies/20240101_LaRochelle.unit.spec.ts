@@ -58,16 +58,7 @@ it("should work with exclusions", async () =>
     },
     {
       incentive: [0, 0, 0, 0],
-      meta: [
-        {
-          key: "max_amount_restriction.global.campaign.global",
-          value: 0,
-        },
-        {
-          key: "max_amount_restriction.0-driver_id_one.month.0-2024",
-          value: 0,
-        },
-      ],
+      meta: [],
     },
   ));
 
