@@ -77,7 +77,7 @@ export const LaRochelle2024: PolicyHandlerStaticInterface = class extends Abstra
       getOperatorsAt(this.operators, ctx.carpool.datetime),
     );
 
-    onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    onDistanceRangeOrThrow(ctx, { min: 5_000 });
     isOperatorClassOrThrow(ctx, ["B", "C"]);
   }
 
