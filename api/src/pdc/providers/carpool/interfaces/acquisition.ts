@@ -11,7 +11,7 @@ export type RegisterResponse = {
   terms_violation_error_labels: TermsViolationErrorLabels;
 };
 
-export interface UpdateRequest extends UpdatableCarpool, ApiVersionObject {
+export interface PatchRequest extends UpdatableCarpool, ApiVersionObject {
   operator_id: Id;
   operator_journey_id: Uuid;
 }
@@ -22,3 +22,12 @@ export interface CancelRequest extends ApiVersionObject {
   cancel_code: CancelCode;
   cancel_message: CancelMessage;
 }
+
+export type ProcessGeoParams = {
+  batchSize: number;
+  from: Date;
+  to: Date;
+  failedOnly: boolean;
+};
+
+export type ProcessGeoResults = number;

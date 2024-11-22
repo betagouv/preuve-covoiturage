@@ -23,7 +23,7 @@ import { CarpoolRequestRepository } from "../repositories/CarpoolRequestReposito
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
 import { CarpoolAcquisitionService } from "./CarpoolAcquisitionService.ts";
 
-describe("CarpoolAcquistionService", () => {
+describe("CarpoolAcquisitionService", () => {
   let carpoolRepository: CarpoolRepository;
   let statusRepository: CarpoolStatusRepository;
   let requestRepository: CarpoolRequestRepository;
@@ -51,12 +51,12 @@ describe("CarpoolAcquistionService", () => {
   beforeEach(() => {
     sinon = Sinon.createSandbox();
   });
+
   afterEach(() => {
     sinon.restore();
   });
-  function getService(
-    overrides: any,
-  ): CarpoolAcquisitionService {
+
+  function getService(overrides: any): CarpoolAcquisitionService {
     return new CarpoolAcquisitionService(
       db.connection,
       overrides.statusRepository ?? statusRepository,
@@ -67,6 +67,7 @@ describe("CarpoolAcquistionService", () => {
       geoService,
     );
   }
+
   it("Should create carpool", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
@@ -81,18 +82,17 @@ describe("CarpoolAcquistionService", () => {
     const data = { ...insertableCarpool };
     await service.registerRequest({ ...data, api_version: "3" });
 
-    // console.log(carpoolRepository.register.getCalls());
     assert(carpoolRepositoryL.register.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
       data.operator_id,
       data.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+
     assertObjectMatch(carpool, {
       ...data,
       fraud_status: "pending",
@@ -112,25 +112,24 @@ describe("CarpoolAcquistionService", () => {
     });
 
     const data = { ...updatableCarpool };
-    await service.updateRequest({
+    await service.patchCarpool({
       ...data,
       api_version: "3",
       operator_id: insertableCarpool.operator_id,
       operator_journey_id: insertableCarpool.operator_journey_id,
     });
 
-    // console.log(carpoolRepository.update.getCalls());
     assert(carpoolRepositoryL.update.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+
     assertObjectMatch(carpool, {
       ...insertableCarpool,
       ...updatableCarpool,
@@ -159,18 +158,17 @@ describe("CarpoolAcquistionService", () => {
     };
     await service.cancelRequest(data);
 
-    // console.log(lookupRepository.findOneStatus.getCalls());
     assert(lookupRepositoryL.findOneStatus.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = lookupRepository.findOne(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = await r || {};
+
     assertObjectMatch(carpool, {
       ...insertableCarpool,
       ...updatableCarpool,
@@ -179,7 +177,7 @@ describe("CarpoolAcquistionService", () => {
     });
   });
 
-  it("Should rollback if something fail", async () => {
+  it("Should rollback if something fails", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
     sinon.replace(
@@ -229,10 +227,7 @@ describe("CarpoolAcquistionService", () => {
       operator_trip_id: "operator_trip_id",
     };
 
-    const errors = await service.verifyTermsViolation({
-      ...data,
-      distance: 100,
-    });
+    const errors = await service.verifyTermsViolation({ ...data, distance: 100 });
     assertEquals(errors, ["distance_too_short"]);
     assertEquals(
       carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
@@ -287,9 +282,7 @@ describe("CarpoolAcquistionService", () => {
       operator_trip_id: "operator_trip_id",
     };
 
-    const errors = await service.verifyTermsViolation(
-      data,
-    );
+    const errors = await service.verifyTermsViolation(data);
     assertEquals(errors, ["expired"]);
     assertEquals(
       carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),

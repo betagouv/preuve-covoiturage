@@ -4,6 +4,15 @@ import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 
+type Options = {
+  loop: boolean;
+  size: number;
+  after?: Date;
+  until?: Date;
+  lastDays: number;
+  failed: boolean;
+};
+
 @command({
   signature: "acquisition:geo",
   description: "Process acquisition geo",
@@ -45,40 +54,28 @@ import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 export class ProcessGeoCommand implements CommandInterface {
   constructor(protected carpool: CarpoolAcquisitionService) {}
 
-  public async call(options): Promise<string> {
+  public async call(options: Options): Promise<void> {
     let shouldContinue = true;
-
-    const batchSize = options.size;
     const timer = getPerformanceTimer();
+
     do {
       const subtimer = getPerformanceTimer();
-      const did = await this.encode(
-        batchSize,
-        options.failed,
-        options.after ?? subDays(new Date(), options.lastDays),
-        options.until ?? new Date(),
-      );
+      const did = await this.encode(options);
       const subperformance = subtimer.stop();
       logger.info(`Processed: ${did} in ${subperformance} ms`);
-      shouldContinue = did === batchSize;
+      shouldContinue = did === options.size;
     } while (shouldContinue && options.loop);
 
     const performance = timer.stop();
     logger.info(`Geo encoding done in ${performance} ms`);
-    return "done";
   }
 
-  protected async encode(
-    batchSize = 100,
-    failedOnly: boolean,
-    after?: Date,
-    until?: Date,
-  ): Promise<number> {
+  protected async encode(options: Options): Promise<number> {
     return await this.carpool.processGeo({
-      batchSize,
-      failedOnly,
-      from: after,
-      to: until,
+      batchSize: options.size,
+      failedOnly: options.failed,
+      from: options.after ?? subDays(new Date(), options.lastDays),
+      to: options.until ?? new Date(),
     });
   }
 }
