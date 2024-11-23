@@ -1,6 +1,8 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
+import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
 import { Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
 
 @provider()
@@ -78,6 +80,13 @@ export class CarpoolGeoRepository {
         DELETE FROM ${raw(this.table)}
         WHERE carpool_id = ${carpool_id}
       `);
+    } catch (e) {
+      logger.error(`[carpool-geo] error deleting carpool geo for ${carpool_id}: ${e.message}`);
+      if (!client) {
+        cl.release();
+      }
+
+      throw new DatabaseException(e.message);
     } finally {
       if (!client) {
         cl.release();

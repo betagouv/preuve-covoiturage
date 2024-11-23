@@ -39,9 +39,15 @@ export class PatchJourneyAction extends AbstractAction {
   }
 
   protected wrapDatetime(params: ParamsInterface, type: "start" | "end"): { [key: string]: Date | Position } {
+    if (!params[type]) {
+      throw new Error(`Missing '${type}' parameter`);
+    }
+
+    const { datetime, lat, lon } = params[type];
+
     return {
-      [`${type}_datetime`]: params[type].datetime,
-      [`${type}_position`]: { lat: params[type].lat, lon: params[type].lon },
+      [`${type}_datetime`]: datetime,
+      [`${type}_position`]: { lat, lon },
     };
   }
 
@@ -50,13 +56,21 @@ export class PatchJourneyAction extends AbstractAction {
   }
 
   protected wrapOperatorId(context: ContextType): { operator_id: number } {
-    return { operator_id: get(context, "call.user.operator_id") as number };
+    const operator_id = get(context, "call.user.operator_id");
+    if (!operator_id) {
+      throw new Error("Missing 'operator_id' in context");
+    }
+
+    return { operator_id: operator_id as number };
   }
 
   protected wrapOperatorClass(params: ParamsInterface): { operator_class?: OperatorClass } {
-    return params.operator_class && OperatorClass[params.operator_class]
-      ? { operator_class: OperatorClass[params.operator_class] }
-      : {};
+    const operator_class = params.operator_class ? OperatorClass[params.operator_class] : undefined;
+    if (operator_class === undefined) {
+      throw new Error("Invalid 'operator_class' parameter");
+    }
+
+    return operator_class ? { operator_class } : {};
   }
 
   protected wrapOperatorTripId(params: ParamsInterface): { operator_trip_id?: string } {
