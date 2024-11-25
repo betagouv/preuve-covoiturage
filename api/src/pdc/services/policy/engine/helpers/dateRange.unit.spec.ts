@@ -37,4 +37,34 @@ describe("dateRange", () => {
     const result = dateRange(start, middle, end);
     assertEquals(result, ["2022-01-01", "2022-01-02", "2022-01-03"]);
   });
+
+  it("should handle invalid date format", () => {
+    const start = "2022-13-45";
+    const end = "2022-01-03";
+    try {
+      dateRange(start, end);
+    } catch (e) {
+      assertEquals(e.message, "Invalid Date");
+    }
+  });
+
+  it("should handle malformed date strings", () => {
+    const start = "not-a-date";
+    const end = "2022-01-03";
+    try {
+      dateRange(start, end);
+    } catch (e) {
+      assertEquals(e.message, "Invalid Date");
+    }
+  });
+
+  it("should handle empty string input", () => {
+    const start = "";
+    const end = "2022-01-03";
+    try {
+      dateRange(start, end);
+    } catch (e) {
+      assertEquals(e.message, "Invalid Date");
+    }
+  });
 });

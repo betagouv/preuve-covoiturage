@@ -1,10 +1,10 @@
 import { it } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
-import { OperatorsEnum } from "../../interfaces/index.ts";
+import { OperatorsEnum, TerritoryCodeInterface } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { PaysDeLaLoire2024 as Handler } from "./20240101_PaysDeLaLoire.ts";
 
-const defaultPosition = {
+const defaultPosition: TerritoryCodeInterface = {
   arr: "85047",
   com: "85047",
   aom: "200071629",
@@ -12,7 +12,7 @@ const defaultPosition = {
   dep: "85",
   reg: "52",
   country: "XXXXX",
-  reseau: "430",
+  reseau: 1,
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
