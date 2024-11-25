@@ -1,8 +1,5 @@
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -10,18 +7,12 @@ import {
   LimitTargetEnum,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
+  watchForPersonMaxAmountByYear,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import {
-  endsAt,
-  startsAndEndsAt,
-  startsAt,
-} from "@/pdc/services/policy/engine/helpers/position.ts";
+import { endsAt, startsAndEndsAt, startsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -35,8 +26,7 @@ import { description } from "./20240101_PaysDeLaLoire.html.ts";
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
-export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "pdll_2024";
 
@@ -68,13 +58,19 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     },
     {
       start: 17_000,
-      end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 })),
+      end: 29_500,
+      fn: (ctx: StatelessContextInterface) => {
+        // 0,10 euro par trajet par km par passager avec un maximum de 2,00 euros
+        return perSeat(
+          ctx,
+          Math.min(perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 }), 200 - 75),
+        );
+      },
     },
     {
-      start: 30_000,
-      fn: (_ctx: StatelessContextInterface) => 0,
+      start: 29_500,
+      end: 60_000,
+      fn: () => 0,
     },
   ];
 
@@ -82,20 +78,26 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     super();
     this.limits = [
       [
+        "5499304F-2C64-AB1A-7392-52FF88F5E78D",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
+      [
         "8C5251E8-AB82-EB29-C87A-2BF59D4F6328",
         6,
         watchForPersonMaxTripByDay,
         LimitTargetEnum.Driver,
       ],
       [
-        "5499304F-2C64-AB1A-7392-52FF88F5E78D",
-        this.max_amount,
-        watchForGlobalMaxAmount,
-      ],
-      [
         "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
         84_00,
         watchForPersonMaxAmountByMonth,
+        LimitTargetEnum.Driver,
+      ],
+      [
+        "c5ba8ecd-f1ee-4005-b2b0-fe94901d1286",
+        1008_00,
+        watchForPersonMaxAmountByYear,
         LimitTargetEnum.Driver,
       ],
     ];

@@ -1,5 +1,4 @@
-export const description =
-  `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description = `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 01 janvier 2024 au 31 Décembre 2025</b></p>
 
@@ -12,7 +11,8 @@ export const description =
 
   <ul>
     <li><b>De 5 à 17 km : 0,75 € par trajet par passager.</b></li>
-    <li><b>De 17 à 30 km : 0,10 € par trajet par km par passager avec un maximum de 2,00 €</b></li>
+    <li><b>De 17 à 29,5 km : 0,10 € par trajet par km par passager avec un maximum de 2,00 €</b></li>
+    <li><b>De 29,5 à 60 km : 2,00 € par passager transporté</b></li>
   </ul>
 
   <p>Les restrictions suivantes seront appliquées :</p>
