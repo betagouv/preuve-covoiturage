@@ -1,9 +1,9 @@
-import { provider } from "@/ilos/common/index.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
-import { Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+import { CarpoolGeo, Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
 
 @provider()
 export class CarpoolGeoRepository {
@@ -11,6 +11,30 @@ export class CarpoolGeoRepository {
   readonly carpoolTable = "carpool_v2.carpools";
 
   constructor(protected connection: PostgresConnection) {}
+
+  async findOne(carpool_id: Id, client?: PoolClient): Promise<CarpoolGeo | null> {
+    const cl = client ?? (await this.connection.getClient().connect());
+    try {
+      const result = await cl.query<CarpoolGeo>(sql`
+        SELECT _id, carpool_id, start_geo_code, end_geo_code, errors
+        FROM ${raw(this.table)}
+        WHERE carpool_id = ${carpool_id}
+      `);
+
+      return result.rows[0] ?? null;
+    } catch (e) {
+      logger.error(`[carpool-geo] error finding carpool geo for ${carpool_id}: ${e.message}`);
+      if (!client) {
+        cl.release();
+      }
+
+      throw new NotFoundException(e.message);
+    } finally {
+      if (!client) {
+        cl.release();
+      }
+    }
+  }
 
   async findProcessable(
     search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
