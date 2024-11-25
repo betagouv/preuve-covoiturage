@@ -100,7 +100,7 @@ describe("CarpoolAcquisitionService", () => {
     });
   });
 
-  it("Should update carpool", async () => {
+  it("Should patch carpool", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
     const statusRepositoryL = sinon.spy(statusRepository);
