@@ -57,7 +57,7 @@ export interface PolicyHandlerStaticInterface {
   readonly id: string;
   readonly tz?: Timezone;
   readonly boosterDates?: string[];
-  mode?<T>(date: Date, regular: T, booster: T): T;
+  mode?<T>(date: Date, ...args: T[] | unknown[]): T;
   /**
    * Optional max amount to spend for the policy
    */
