@@ -82,7 +82,7 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
       },
     },
     {
-      start: 29_500,
+      start: 30_000,
       end: 60_000,
       fn: () => 0,
     },
