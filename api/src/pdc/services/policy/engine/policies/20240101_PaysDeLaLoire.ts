@@ -34,7 +34,6 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends Abs
   static readonly tz: Timezone = "Europe/Paris";
 
   public static mode<T>(date: Date, regular: T, booster: T): T {
-    console.log("PaysDeLaLoire2024.boosterDates", PaysDeLaLoire2024.boosterDates);
     if (!PaysDeLaLoire2024.boosterDates) return regular;
 
     const ymd = toTzString(date).slice(0, 10);
