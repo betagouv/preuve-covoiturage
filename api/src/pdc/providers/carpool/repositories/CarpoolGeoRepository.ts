@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
@@ -24,11 +24,7 @@ export class CarpoolGeoRepository {
       return result.rows[0] ?? null;
     } catch (e) {
       logger.error(`[carpool-geo] error finding carpool geo for ${carpool_id}: ${e.message}`);
-      if (!client) {
-        cl.release();
-      }
-
-      throw new NotFoundException(e.message);
+      throw new DatabaseException(e.message);
     } finally {
       if (!client) {
         cl.release();
@@ -106,10 +102,6 @@ export class CarpoolGeoRepository {
       `);
     } catch (e) {
       logger.error(`[carpool-geo] error deleting carpool geo for ${carpool_id}: ${e.message}`);
-      if (!client) {
-        cl.release();
-      }
-
       throw new DatabaseException(e.message);
     } finally {
       if (!client) {
