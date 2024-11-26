@@ -1,8 +1,6 @@
+import { Timezone } from "@/pdc/providers/validator/types.ts";
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -10,19 +8,14 @@ import {
   LimitTargetEnum,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
+  watchForPersonMaxAmountByYear,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import {
-  endsAt,
-  startsAndEndsAt,
-  startsAt,
-} from "@/pdc/services/policy/engine/helpers/position.ts";
+import { endsAt, startsAndEndsAt, startsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
+import { toTzString } from "@/pdc/services/policy/helpers/index.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
   OperatorsEnum,
@@ -35,10 +28,21 @@ import { description } from "./20240101_PaysDeLaLoire.html.ts";
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
-export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "pdll_2024";
+  static readonly tz: Timezone = "Europe/Paris";
+
+  public static mode<T>(date: Date, regular: T, booster: T): T {
+    if (!PaysDeLaLoire2024.boosterDates) return regular;
+
+    const ymd = toTzString(date).slice(0, 10);
+    return PaysDeLaLoire2024.boosterDates.includes(ymd) ? booster : regular;
+  }
+
+  // List dates in the YYYY-MM-DD format in the Europe/Paris timezone
+  // or use the dateRange() helper function for consecutive dates.
+  protected static boosterDates: string[] = [];
 
   protected operators: TimestampedOperators = [
     {
@@ -60,7 +64,7 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     },
   ];
 
-  protected slices: RunnableSlices = [
+  protected regularSlices: RunnableSlices = [
     {
       start: 5_000,
       end: 17_000,
@@ -69,12 +73,39 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     {
       start: 17_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 17_000, limit: 29_500 })),
+      fn: (ctx: StatelessContextInterface) => {
+        // 0,10 euro par trajet par km par passager avec un maximum de 2,00 euros
+        return perSeat(
+          ctx,
+          Math.min(perKm(ctx, { amount: 10, offset: 17_000, limit: 30_000 }), 200 - 75),
+        );
+      },
     },
     {
       start: 30_000,
-      fn: (_ctx: StatelessContextInterface) => 0,
+      end: 60_000,
+      fn: () => 0,
+    },
+  ];
+
+  protected boosterSlices: RunnableSlices = [
+    {
+      start: 5_000,
+      end: 17_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 165),
+    },
+    {
+      start: 17_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => {
+        // 0,10 euro par trajet par km par passager avec un maximum de 2,90 euros
+        return perSeat(ctx, Math.min(perKm(ctx, { amount: 10, offset: 17_000, limit: 30_000 }), 290 - 165));
+      },
+    },
+    {
+      start: 30_000,
+      end: 60_000,
+      fn: () => 0,
     },
   ];
 
@@ -82,15 +113,15 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     super();
     this.limits = [
       [
+        "5499304F-2C64-AB1A-7392-52FF88F5E78D",
+        this.max_amount,
+        watchForGlobalMaxAmount,
+      ],
+      [
         "8C5251E8-AB82-EB29-C87A-2BF59D4F6328",
         6,
         watchForPersonMaxTripByDay,
         LimitTargetEnum.Driver,
-      ],
-      [
-        "5499304F-2C64-AB1A-7392-52FF88F5E78D",
-        this.max_amount,
-        watchForGlobalMaxAmount,
       ],
       [
         "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
@@ -98,47 +129,27 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
         watchForPersonMaxAmountByMonth,
         LimitTargetEnum.Driver,
       ],
+      [
+        "c5ba8ecd-f1ee-4005-b2b0-fe94901d1286",
+        1008_00,
+        watchForPersonMaxAmountByYear,
+        LimitTargetEnum.Driver,
+      ],
     ];
   }
 
-  protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(
-      ctx,
-      getOperatorsAt(this.operators, ctx.carpool.datetime),
-    );
-    onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
-    isOperatorClassOrThrow(ctx, ["C"]);
-    isAdultOrThrow(ctx);
-
-    /*
-      Exclure les trajets :
-       - 244400404: Nantes Métropole -> Nantes Métropole,
-       - 244900015: CU Angers Loire Métropole -> CU Angers Loire Métropole,
-       - 247200132: CU Le Mans Métropole -> CU Le Mans Métropole,
-       - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
-     */
-    if (
-      startsAndEndsAt(ctx, { aom: ["244400404"] }) ||
-      startsAndEndsAt(ctx, { aom: ["244900015"] }) ||
-      startsAndEndsAt(ctx, { aom: ["247200132"] }) ||
-      startsAndEndsAt(ctx, { aom: ["200071678"] })
-    ) {
-      throw new NotEligibleTargetException();
-    }
-
-    // Exclure les trajets qui ne sont pas dans l'AOM
-    if (!startsAt(ctx, { reg: ["52"] }) || !endsAt(ctx, { reg: ["52"] })) {
-      throw new NotEligibleTargetException();
-    }
-  }
-
-  processStateless(ctx: StatelessContextInterface): void {
+  public processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
+    if (!PaysDeLaLoire2024.mode) {
+      throw new Error("PaysDeLaLoire2024.mode is not defined");
+    }
+
     // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    const slices = PaysDeLaLoire2024.mode(ctx.carpool.datetime, this.regularSlices, this.boosterSlices);
+    for (const { start, fn } of slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
@@ -147,21 +158,57 @@ export const PaysDeLaLoire2024: PolicyHandlerStaticInterface = class
     ctx.incentive.set(amount);
   }
 
-  params(): PolicyHandlerParamsInterface {
+  public params(date?: Date): PolicyHandlerParamsInterface {
+    if (!PaysDeLaLoire2024.mode) {
+      throw new Error("PaysDeLaLoire2024.mode is not defined");
+    }
+
     return {
-      tz: "Europe/Paris",
-      slices: this.slices,
+      tz: PaysDeLaLoire2024.tz,
+      slices: date ? PaysDeLaLoire2024.mode(date, this.regularSlices, this.boosterSlices) : this.regularSlices,
       operators: getOperatorsAt(this.operators),
-      allTimeOperators: Array.from(
-        new Set(this.operators.flatMap((entry) => entry.operators)),
-      ),
+      allTimeOperators: Array.from(new Set(this.operators.flatMap((entry) => entry.operators))),
       limits: {
         glob: this.max_amount,
       },
     };
   }
 
-  describe(): string {
+  public describe(): string {
     return description;
+  }
+
+  protected processExclusion(ctx: StatelessContextInterface) {
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
+    onDistanceRangeOrThrow(ctx, { min: 5_000, max: 60_001 });
+    isOperatorClassOrThrow(ctx, ["C"]);
+    isAdultOrThrow(ctx);
+
+    this.excludeLocalAOM(ctx);
+    this.excludeOutsideOfAOM(ctx);
+  }
+
+  /**
+   * Exclure les trajets :
+   *  - 244400404: Nantes Métropole -> Nantes Métropole,
+   *  - 244900015: CU Angers Loire Métropole -> CU Angers Loire Métropole,
+   *  - 247200132: CU Le Mans Métropole -> CU Le Mans Métropole,
+   *  - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
+   */
+  protected excludeLocalAOM(ctx: StatelessContextInterface) {
+    if (
+      startsAndEndsAt(ctx, { aom: ["244400404"] }) ||
+      startsAndEndsAt(ctx, { aom: ["244900015"] }) ||
+      startsAndEndsAt(ctx, { aom: ["247200132"] }) ||
+      startsAndEndsAt(ctx, { aom: ["200071678"] })
+    ) {
+      throw new NotEligibleTargetException();
+    }
+  }
+
+  protected excludeOutsideOfAOM(ctx: StatelessContextInterface) {
+    if (!startsAt(ctx, { reg: ["52"] }) || !endsAt(ctx, { reg: ["52"] })) {
+      throw new NotEligibleTargetException();
+    }
   }
 };
