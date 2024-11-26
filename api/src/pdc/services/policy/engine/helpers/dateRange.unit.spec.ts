@@ -67,4 +67,24 @@ describe("dateRange", () => {
       assertEquals(e.message, "Invalid Date");
     }
   });
+
+  it("should handle single date input", () => {
+    const date = "2022-01-01";
+    const result = dateRange(date);
+    assertEquals(result, ["2022-01-01"]);
+  });
+
+  it("should handle same date for start and end", () => {
+    const start = "2022-01-01";
+    const end = "2022-01-01";
+    const result = dateRange(start, end);
+    assertEquals(result, ["2022-01-01"]);
+  });
+
+  it("should handle large date ranges", () => {
+    const start = "2022-01-01";
+    const end = "2022-12-31";
+    const result = dateRange(start, end);
+    assertEquals(result.length, 365);
+  });
 });
