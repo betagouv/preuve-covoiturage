@@ -38,6 +38,14 @@ describe("dateRange", () => {
     assertEquals(result, ["2022-01-01", "2022-01-02", "2022-01-03"]);
   });
 
+  it("should handle no input", () => {
+    try {
+      dateRange();
+    } catch (e) {
+      assertEquals(e.message, "At least one date is required");
+    }
+  });
+
   it("should handle invalid date format", () => {
     const start = "2022-13-45";
     const end = "2022-01-03";

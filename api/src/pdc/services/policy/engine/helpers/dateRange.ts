@@ -46,9 +46,10 @@ function format(d: Date): string {
 
 function fill(first: Date, last: Date): Array<string> {
   const dates = new Set<string>();
-  let d;
-  for (d = first; d <= last; d.setDate(d.getDate() + 1)) {
-    dates.add(format(d));
+  const current = new Date(first);
+  while (current <= last) {
+    dates.add(format(current));
+    current.setDate(current.getDate() + 1);
   }
 
   return [...dates];
