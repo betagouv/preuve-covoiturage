@@ -71,17 +71,7 @@ export const LaRochelle2024: PolicyHandlerStaticInterface = class extends Abstra
     ];
   }
 
-  protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(
-      ctx,
-      getOperatorsAt(this.operators, ctx.carpool.datetime),
-    );
-
-    onDistanceRangeOrThrow(ctx, { min: 5_000 });
-    isOperatorClassOrThrow(ctx, ["B", "C"]);
-  }
-
-  processStateless(ctx: StatelessContextInterface): void {
+  public processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
@@ -98,7 +88,7 @@ export const LaRochelle2024: PolicyHandlerStaticInterface = class extends Abstra
     ctx.incentive.set(amount);
   }
 
-  params(): PolicyHandlerParamsInterface {
+  public params(): PolicyHandlerParamsInterface {
     return {
       tz: "Europe/Paris",
       slices: this.slices,
@@ -109,7 +99,13 @@ export const LaRochelle2024: PolicyHandlerStaticInterface = class extends Abstra
     };
   }
 
-  describe(): string {
+  public describe(): string {
     return description;
+  }
+
+  protected processExclusion(ctx: StatelessContextInterface) {
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
+    onDistanceRangeOrThrow(ctx, { min: 5_000 });
+    isOperatorClassOrThrow(ctx, ["B", "C"]);
   }
 };
