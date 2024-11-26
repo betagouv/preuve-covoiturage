@@ -1,6 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
+import { CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { OperatorJourneyId } from "../../../services/cee/contracts/common/CeeApplicationInterface.ts";
 import { CarpoolStatus } from "../interfaces/database/label.ts";
 import { Id, InsertableCarpoolAcquisitionStatus } from "../interfaces/index.ts";
@@ -13,11 +14,16 @@ export class CarpoolStatusRepository {
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async saveAcquisitionStatus(
-    data: InsertableCarpoolAcquisitionStatus,
-    client?: PoolClient,
-  ): Promise<void> {
+  public async saveAcquisitionStatus(data: InsertableCarpoolAcquisitionStatus, client?: PoolClient): Promise<void> {
     await this.setStatus(data.carpool_id, "acquisition", data.status, client);
+  }
+
+  public async saveFraudStatus(carpool_id: Id, status: CarpoolFraudStatusEnum, client?: PoolClient): Promise<void> {
+    await this.setStatus(carpool_id, "fraud", status, client);
+  }
+
+  public async saveAnomalyStatus(carpool_id: Id, status: string, client?: PoolClient): Promise<void> {
+    await this.setStatus(carpool_id, "anomaly", status, client);
   }
 
   public async setTermsViolationErrorLabels(
@@ -45,7 +51,7 @@ export class CarpoolStatusRepository {
 
   public async setStatus(
     carpool_id: Id,
-    statusType: "acquisition",
+    statusType: "acquisition" | "fraud" | "anomaly",
     statusValue: string,
     client?: PoolClient,
   ): Promise<void> {
@@ -60,8 +66,7 @@ export class CarpoolStatusRepository {
       )
       ON CONFLICT (carpool_id)
       DO UPDATE 
-      SET 
-          ${raw(statusType)}_status = excluded.${raw(statusType)}_status
+      SET ${raw(statusType)}_status = excluded.${raw(statusType)}_status
       WHERE status.carpool_id = ${carpool_id}
     `;
     await cl.query(sqlQuery);

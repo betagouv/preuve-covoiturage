@@ -1,13 +1,11 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { get, omit } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import { OperatorClass } from "@/pdc/providers/carpool/interfaces/index.ts";
+import { OperatorClass, PatchRequest, Position } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/patch.contract.ts";
 import { alias } from "../contracts/patch.schema.ts";
-
-import { get } from "@/lib/object/index.ts";
 
 @handler({
   ...handlerConfig,
@@ -23,25 +21,59 @@ export class PatchJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(
-    params: ParamsInterface,
-    context: ContextType,
-  ): Promise<ResultInterface> {
-    const operator_id = get(context, "call.user.operator_id");
-    const operator_class: OperatorClass | undefined = params.operator_class && OperatorClass[params.operator_class]
-      ? OperatorClass[params.operator_class]
-      : undefined;
+  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const request = this.convertPayloadToRequest(context, params);
+    await this.acquisitionService.patchCarpool(request);
+  }
 
-    const toUpdate = {
-      ...params,
-      ...(operator_class ? { operator_class } : {}),
+  protected convertPayloadToRequest(context: ContextType, params: ParamsInterface): PatchRequest {
+    return {
+      ...omit(params, ["start", "end"]),
+      ...this.wrapDatetime(params, "start"),
+      ...this.wrapDatetime(params, "end"),
+      ...this.wrapOperatorClass(params),
+      ...this.wrapApiVersion(context),
+      ...this.wrapOperatorId(context),
+      ...this.wrapOperatorTripId(params),
     };
+  }
 
-    await this.acquisitionService.updateRequest({
-      ...toUpdate,
-      api_version: context.call?.api_version_range || "3",
-      operator_id,
-      operator_journey_id: params.operator_journey_id,
-    });
+  protected wrapDatetime(params: ParamsInterface, type: "start" | "end"): { [key: string]: Date | Position } {
+    if (!params[type]) {
+      throw new Error(`Missing '${type}' parameter`);
+    }
+
+    const { datetime, lat, lon } = params[type];
+
+    return {
+      [`${type}_datetime`]: datetime,
+      [`${type}_position`]: { lat, lon },
+    };
+  }
+
+  protected wrapApiVersion(context: ContextType): { api_version: string } {
+    return { api_version: get(context, "call.api_version_range", "3") as string };
+  }
+
+  protected wrapOperatorId(context: ContextType): { operator_id: number } {
+    const operator_id = get(context, "call.user.operator_id");
+    if (!operator_id) {
+      throw new Error("Missing 'operator_id' in context");
+    }
+
+    return { operator_id: operator_id as number };
+  }
+
+  protected wrapOperatorClass(params: ParamsInterface): { operator_class?: OperatorClass } {
+    const operator_class = params.operator_class ? OperatorClass[params.operator_class] : undefined;
+    if (operator_class === undefined) {
+      throw new Error("Invalid 'operator_class' parameter");
+    }
+
+    return operator_class ? { operator_class } : {};
+  }
+
+  protected wrapOperatorTripId(params: ParamsInterface): { operator_trip_id?: string } {
+    return params.operator_trip_id ? { operator_trip_id: params.operator_trip_id } : {};
   }
 }

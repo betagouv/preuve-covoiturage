@@ -4,8 +4,18 @@ import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
+import { CarpoolAnomalyStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
-import { CancelRequest, CarpoolAcquisitionStatusEnum, RegisterRequest, UpdateRequest } from "../interfaces/index.ts";
+import {
+  CancelRequest,
+  CarpoolAcquisitionStatusEnum,
+  PatchRequest,
+  ProcessGeoParams,
+  ProcessGeoResults,
+  RegisterRequest,
+  RegisterResponse,
+  TermsViolationErrorLabels,
+} from "../interfaces/index.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
 import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
@@ -78,11 +88,7 @@ export class CarpoolAcquisitionService {
     return result;
   }
 
-  public async registerRequest(
-    data: RegisterRequest,
-  ): Promise<
-    { created_at: Date; terms_violation_error_labels: Array<string> }
-  > {
+  public async registerRequest(data: RegisterRequest): Promise<RegisterResponse> {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
@@ -98,7 +104,7 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
-      let terms_violation_error_labels: Array<string> = [];
+      let terms_violation_error_labels: TermsViolationErrorLabels = [];
       if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {
         await this.statusRepository.saveAcquisitionStatus(
           new CarpoolAcquisitionStatus(
@@ -153,17 +159,19 @@ export class CarpoolAcquisitionService {
     }
   }
 
-  public async updateRequest(data: UpdateRequest): Promise<void> {
+  public async patchCarpool(data: PatchRequest): Promise<void> {
     const conn = await this.connection.getClient().connect();
     await conn.query("BEGIN");
     try {
       const { api_version, operator_id, operator_journey_id, ...carpoolData } = data;
+
       const carpool = await this.carpoolRepository.update(
         operator_id,
         operator_journey_id,
         carpoolData,
         conn,
       );
+
       const request = await this.requestRepository.save(
         {
           api_version,
@@ -183,6 +191,12 @@ export class CarpoolAcquisitionService {
         ),
         conn,
       );
+
+      await this.statusRepository.saveFraudStatus(carpool._id, CarpoolFraudStatusEnum.Pending, conn);
+      await this.statusRepository.saveAnomalyStatus(carpool._id, CarpoolAnomalyStatusEnum.Pending, conn);
+
+      await this.geoRepository.delete(carpool._id, conn);
+
       await conn.query("COMMIT");
     } catch (e) {
       await conn.query("ROLLBACK");
@@ -227,57 +241,48 @@ export class CarpoolAcquisitionService {
     }
   }
 
-  public async processGeo(
-    search: { batchSize: number; from: Date; to: Date; failedOnly: boolean },
-  ): Promise<number> {
+  public async processGeo(params: ProcessGeoParams): Promise<ProcessGeoResults> {
     const conn = await this.connection.getClient().connect();
+
     try {
-      const toProcess = await this.geoRepository.findProcessable(
-        {
-          limit: search.batchSize,
-          from: search.from,
-          to: search.to,
-          failedOnly: search.failedOnly,
-        },
-        conn,
-      );
-      for (const toEncode of toProcess) {
+      const list = await this.geoRepository.findProcessable({
+        limit: params.batchSize,
+        from: params.from,
+        to: params.to,
+        failedOnly: params.failedOnly,
+      }, conn);
+
+      for (const item of list) {
         try {
-          const start = await this.geoService.positionToInsee(toEncode.start);
-          const end = await this.geoService.positionToInsee(toEncode.end);
-          await this.geoRepository.upsert(
-            {
-              carpool_id: toEncode.carpool_id,
-              start_geo_code: start,
-              end_geo_code: end,
-            },
-            conn,
-          );
-          await this.statusRepository.saveAcquisitionStatus(
-            {
-              carpool_id: toEncode.carpool_id,
-              status: CarpoolAcquisitionStatusEnum.Processed,
-            },
-            conn,
-          );
+          const start = await this.geoService.positionToInsee(item.start);
+          const end = await this.geoService.positionToInsee(item.end);
+
+          await this.geoRepository.upsert({
+            carpool_id: item.carpool_id,
+            start_geo_code: start,
+            end_geo_code: end,
+          }, conn);
+
+          await this.statusRepository.saveAcquisitionStatus({
+            carpool_id: item.carpool_id,
+            status: CarpoolAcquisitionStatusEnum.Processed,
+          }, conn);
         } catch (e) {
           await this.geoRepository.upsert({
-            carpool_id: toEncode.carpool_id,
+            carpool_id: item.carpool_id,
             error: e.message,
           }, conn);
-          await this.statusRepository.saveAcquisitionStatus(
-            {
-              carpool_id: toEncode.carpool_id,
-              status: CarpoolAcquisitionStatusEnum.Failed,
-            },
-            conn,
-          );
-          logger.error(
-            `[geo] error encoding ${toEncode.carpool_id} : ${e.message}`,
-          );
+
+          await this.statusRepository.saveAcquisitionStatus({
+            carpool_id: item.carpool_id,
+            status: CarpoolAcquisitionStatusEnum.Failed,
+          }, conn);
+
+          logger.error(`[geo] error encoding ${item.carpool_id} : ${e.message}`);
         }
       }
-      return toProcess.length;
+
+      return list.length;
     } finally {
       conn.release();
     }
