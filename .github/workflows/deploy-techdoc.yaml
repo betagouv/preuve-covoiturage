@@ -24,7 +24,7 @@ jobs:
         uses: bump-sh/github-action@v1
         with:
           doc: api
-          token: ${{secrets.BUMP_TOKEN}}
+          token: ${{secrets.BUMP_TOKEN_API}}
           file: api/specs/api-v3.1.yaml
           branch: v3.1
 
@@ -32,8 +32,16 @@ jobs:
         uses: bump-sh/github-action@v1
         with:
           doc: api
-          token: ${{secrets.BUMP_TOKEN}}
+          token: ${{secrets.BUMP_TOKEN_API}}
           file: api/specs/api-v3.0.yaml
+          branch: v3.0
+  
+      - name: Deploy CEE documentation v3.0
+        uses: bump-sh/github-action@v1
+        with:
+          doc: cee
+          token: ${{secrets.BUMP_TOKEN_CEE}}
+          file: api/specs/cee-v3.0.yaml
           branch: v3.0
   
   # api-diff:
@@ -47,7 +55,7 @@ jobs:
   #       uses: bump-sh/github-action@v1
   #       with:
   #         doc: registre-de-preuve-de-covoiturage
-  #         token: ${{secrets.BUMP_TOKEN}}
+  #         token: ${{secrets.BUMP_TOKEN_API}}
   #         file: api/specs/api-v3.1.yaml
   #         command: diff
   #       env:
