@@ -1,17 +1,13 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
 import { streamData } from "../../../../helpers/index.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "../../../../interfaces/index.ts";
 
 export class EurostatSimplifiedCountries2024 extends AbstractDataset {
   static producer = "eurostat";
   static dataset = "simplified_countries";
   static year = 2024;
   static table = "eurostat_simplified_countries_2024";
-  static url =
-    "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_60M_2024_4326.geojson";
+  static url = "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_60M_2024_4326.geojson";
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
     ["codeiso3", ["properties->>ISO3_CODE", "varchar"]],
@@ -41,7 +37,7 @@ export class EurostatSimplifiedCountries2024 extends AbstractDataset {
                 )
                 WITH tmp as(
                   SELECT * FROM
-                  json_to_recordset($1)
+                  json_to_recordset($1::json)
                   as tmp(type varchar, properties json,geometry json)
                 )
                 SELECT
@@ -50,7 +46,7 @@ export class EurostatSimplifiedCountries2024 extends AbstractDataset {
                 FROM tmp
                 ON CONFLICT DO NOTHING
               `,
-              values: [JSON.stringify(results.value.map((r: any) => r.value))],
+              values: [JSON.stringify(results.value)],
             };
             await connection.query(query);
           }

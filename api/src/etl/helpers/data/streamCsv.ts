@@ -8,7 +8,7 @@ export async function* streamCsv<T>(
 ): AsyncIterable<T[]> {
   const fsStream = createReadStream(filepath, { encoding: "utf-8" });
   const parser = parse({
-    columns: (header: any) => Object.keys(header).map((k) => k.toLowerCase()),
+    columns: (header: Record<string, unknown>) => Object.keys(header).map((k) => k.toLowerCase()),
     ...sheetOptions,
   });
   fsStream.pipe(parser);
