@@ -1,9 +1,9 @@
-
-name: Deploy techdoc on Bump.sh
+name: Deploy API documentations
 permissions:
   contents: read
   pull-requests: write
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -14,52 +14,30 @@ on:
 jobs:
   deploy-doc:
     if: ${{ github.event_name == 'push' }}
-    name: Deploy API documentation on Bump.sh
+    name: Deploy
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - doc: api
+            token: ${{ secrets.BUMP_TOKEN_API }}
+            file: api/specs/api-v3.1.yaml
+            branch: v3.1
+          - doc: api
+            token: ${{ secrets.BUMP_TOKEN_API }}
+            file: api/specs/api-v3.0.yaml
+            branch: v3.0
+          - doc: cee
+            token: ${{ secrets.BUMP_TOKEN_CEE }}
+            file: api/specs/cee-v3.0.yaml
+            branch: v3.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Deploy API documentation v3.1
+        uses: actions/checkout@v4
+      - name: Deploy
         uses: bump-sh/github-action@v1
         with:
-          doc: api
-          token: ${{secrets.BUMP_TOKEN_API}}
-          file: api/specs/api-v3.1.yaml
-          branch: v3.1
-
-      - name: Deploy API documentation v3.0
-        uses: bump-sh/github-action@v1
-        with:
-          doc: api
-          token: ${{secrets.BUMP_TOKEN_API}}
-          file: api/specs/api-v3.0.yaml
-          branch: v3.0
-  
-      - name: Deploy CEE documentation v3.0
-        uses: bump-sh/github-action@v1
-        with:
-          doc: cee
-          token: ${{secrets.BUMP_TOKEN_CEE}}
-          file: api/specs/cee-v3.0.yaml
-          branch: v3.0
-  
-  # api-diff:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   name: Check API diff on Bump.sh
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Comment pull request with API diff
-  #       uses: bump-sh/github-action@v1
-  #       with:
-  #         doc: registre-de-preuve-de-covoiturage
-  #         token: ${{secrets.BUMP_TOKEN_API}}
-  #         file: api/specs/api-v3.1.yaml
-  #         command: diff
-  #       env:
-  #         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-
-    
+          doc: ${{ matrix.doc }}
+          token: ${{ matrix.token }}
+          file: ${{ matrix.file }}
+          branch: ${{ matrix.branch }}
