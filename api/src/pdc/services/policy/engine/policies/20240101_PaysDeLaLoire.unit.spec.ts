@@ -1,6 +1,5 @@
 import { describe, it, sinon } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
-import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import { OperatorsEnum, TerritoryCodeInterface } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { PaysDeLaLoire2024 as Handler } from "./20240101_PaysDeLaLoire.ts";
@@ -44,16 +43,7 @@ describe("PaysDeLaLoire2024", () => {
     end_lon: defaultLon,
   };
 
-  /**
-   * Stub the mode method while the PaysDeLaLoire2024 class has no booster dates.
-   */
-  const boosterDates: string[] = ["2024-04-16"];
-  sinon.stub(Handler, "mode").callsFake(
-    (date: Date, regular: RunnableSlices, booster: RunnableSlices) => {
-      const ymd = date.toISOString().slice(0, 10);
-      return boosterDates.includes(ymd) ? booster : regular;
-    },
-  );
+  sinon.stub(Handler, "boosterDates").get(() => ["2024-04-16"]);
 
   const process = makeProcessHelper(defaultCarpool);
 
