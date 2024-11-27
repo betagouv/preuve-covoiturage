@@ -20,15 +20,15 @@ jobs:
       matrix:
         include:
           - doc: api
-            token: ${{ secrets.BUMP_TOKEN_API }}
+            token: BUMP_TOKEN_API
             file: api/specs/api-v3.1.yaml
             branch: v3.1
           - doc: api
-            token: ${{ secrets.BUMP_TOKEN_API }}
+            token: BUMP_TOKEN_API
             file: api/specs/api-v3.0.yaml
             branch: v3.0
           - doc: cee
-            token: ${{ secrets.BUMP_TOKEN_CEE }}
+            token: BUMP_TOKEN_CEE
             file: api/specs/cee-v3.0.yaml
             branch: v3.0
     steps:
@@ -38,6 +38,6 @@ jobs:
         uses: bump-sh/github-action@v1
         with:
           doc: ${{ matrix.doc }}
-          token: ${{ matrix.token }}
+          token: ${{ secrets[matrix.token] }}
           file: ${{ matrix.file }}
           branch: ${{ matrix.branch }}
