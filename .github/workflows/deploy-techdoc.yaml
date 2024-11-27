@@ -1,5 +1,5 @@
 
-name: Check & deploy API documentation
+name: Deploy techdoc on Bump.sh
 permissions:
   contents: read
   pull-requests: write
@@ -19,13 +19,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Deploy API documentation
+
+      - name: Deploy API documentation v3.1
         uses: bump-sh/github-action@v1
         with:
           doc: api
           token: ${{secrets.BUMP_TOKEN}}
           file: api/specs/api-v3.1.yaml
           branch: v3.1
+
+      - name: Deploy API documentation v3.0
+        uses: bump-sh/github-action@v1
+        with:
+          doc: api
+          token: ${{secrets.BUMP_TOKEN}}
+          file: api/specs/api-v3.0.yaml
+          branch: v3.0
+  
   # api-diff:
   #   if: ${{ github.event_name == 'pull_request' }}
   #   name: Check API diff on Bump.sh
