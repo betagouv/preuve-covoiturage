@@ -1,6 +1,5 @@
 import { Timezone } from "@/pdc/providers/validator/types.ts";
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import { dateRange } from "@/pdc/services/policy/engine/helpers/dateRange.ts";
 import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
@@ -54,7 +53,7 @@ export const NantesMetropole2024: PolicyHandlerStaticInterface = class extends A
   // Liste de dates au format YYYY-MM-DD dans la zone Europe/Paris
   // pour lesquelles les règles de booster s'appliquent
   protected static boosterDates: string[] = [
-    ...dateRange("2024-12-01", "2024-12-31"),
+    // ...dateRange("2024-12-01", "2024-12-31"),
   ];
 
   protected operators: TimestampedOperators = [
