@@ -25,7 +25,7 @@ jobs:
           doc: api
           token: ${{secrets.BUMP_TOKEN}}
           file: api/specs/api-v3.1.yaml
-          # branch: v3.1
+          branch: v3.1
   # api-diff:
   #   if: ${{ github.event_name == 'pull_request' }}
   #   name: Check API diff on Bump.sh
