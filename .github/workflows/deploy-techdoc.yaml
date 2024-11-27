@@ -1,0 +1,47 @@
+
+name: Check & deploy API documentation
+permissions:
+  contents: read
+  pull-requests: write
+on:
+  push:
+    branches:
+      - main
+      - chore/add-bump-action
+  pull_request:
+    branches:
+      - main
+jobs:
+  deploy-doc:
+    if: ${{ github.event_name == 'push' }}
+    name: Deploy API documentation on Bump.sh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy API documentation
+        uses: bump-sh/github-action@v1
+        with:
+          doc: registre-de-preuve-de-covoiturage
+          token: ${{secrets.BUMP_TOKEN}}
+          file: api/specs/api-v3.1.yaml
+          branch: v3.1
+  # api-diff:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   name: Check API diff on Bump.sh
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Comment pull request with API diff
+  #       uses: bump-sh/github-action@v1
+  #       with:
+  #         doc: registre-de-preuve-de-covoiturage
+  #         token: ${{secrets.BUMP_TOKEN}}
+  #         file: api/specs/api-v3.1.yaml
+  #         command: diff
+  #       env:
+  #         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+
+    

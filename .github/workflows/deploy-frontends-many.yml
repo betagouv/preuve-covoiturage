@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         env: [demo, production]
-        project_name: [attestation, dashboard, techdoc]
+        project_name: [attestation, dashboard]
         include:
           - project_name: attestation
             build_directory: attestation
@@ -39,11 +39,3 @@ jobs:
             dist_directory: dashboard/dist/dashboard
             bucket_name_var: DASHBOARD_BUCKET_NAME
             cache_dependency_path: dashboard/package-lock.json
-          - project_name: techdoc
-            build_directory: doc
-            build_command: |
-              npm run gen
-              NODE_OPTIONS=--openssl-legacy-provider npm run build
-            dist_directory: doc/dist
-            bucket_name_var: TECHDOC_BUCKET_NAME
-            cache_dependency_path: doc/package-lock.json
