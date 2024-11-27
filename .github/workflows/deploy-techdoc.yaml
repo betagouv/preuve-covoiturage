@@ -4,13 +4,8 @@ permissions:
   pull-requests: write
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - chore/add-bump-action
-  pull_request:
-    branches:
-      - main
+  release:
+    types: [published]
 jobs:
   deploy-doc:
     if: ${{ github.event_name == 'push' }}
