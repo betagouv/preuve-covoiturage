@@ -20,14 +20,14 @@ jobs:
       matrix:
         include:
           - doc: api
-            token: BUMP_TOKEN_API
             version: v3.1
-          - doc: api
             token: BUMP_TOKEN_API
+          - doc: api
             version: v3.0
+            token: BUMP_TOKEN_API
           - doc: cee
-            token: BUMP_TOKEN_CEE
             version: v3.0
+            token: BUMP_TOKEN_CEE
     steps:
       - name: Checkout
         uses: actions/checkout@v4
