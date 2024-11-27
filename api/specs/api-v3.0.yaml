@@ -3,6 +3,8 @@ info:
   title: API Trajets
   version: "3.0"
   description: |
+    test
+
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
     | [Licence Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE)
