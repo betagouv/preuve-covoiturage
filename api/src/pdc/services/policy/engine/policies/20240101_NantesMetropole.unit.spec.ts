@@ -1,8 +1,11 @@
-import { it } from "@/dev_deps.ts";
+import { it, sinon } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
+import { dateRange } from "@/pdc/services/policy/engine/helpers/dateRange.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
 import { NantesMetropole2024 as Handler } from "./20240101_NantesMetropole.ts";
+
+sinon.stub(Handler, "boosterDates").get(() => [...dateRange("2024-12-01", "2024-12-31")]);
 
 const defaultPosition = {
   arr: "44109",

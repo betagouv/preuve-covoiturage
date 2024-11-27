@@ -52,6 +52,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Lannion202305,
     LannionTregor2024,
     LaRochelle20232024,
+    LaRochelle2024,
     LavalAgglo2022,
     MetropoleRouenNormandie2022,
     MetropoleSavoie,
@@ -79,6 +80,5 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
-    LaRochelle2024,
   ].map((h) => [h.id, h]),
 );
