@@ -1,4 +1,4 @@
-name: Deploy API documentations
+name: Deploy API documentation
 permissions:
   contents: read
   pull-requests: write
@@ -21,16 +21,13 @@ jobs:
         include:
           - doc: api
             token: BUMP_TOKEN_API
-            file: api/specs/api-v3.1.yaml
-            branch: v3.1
+            version: v3.1
           - doc: api
             token: BUMP_TOKEN_API
-            file: api/specs/api-v3.0.yaml
-            branch: v3.0
+            version: v3.0
           - doc: cee
             token: BUMP_TOKEN_CEE
-            file: api/specs/cee-v3.0.yaml
-            branch: v3.0
+            version: v3.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,5 +36,5 @@ jobs:
         with:
           doc: ${{ matrix.doc }}
           token: ${{ secrets[matrix.token] }}
-          file: ${{ matrix.file }}
-          branch: ${{ matrix.branch }}
+          file: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
+          branch: ${{ matrix.version }}
