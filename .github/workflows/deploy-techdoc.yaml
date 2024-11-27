@@ -22,7 +22,7 @@ jobs:
       - name: Deploy API documentation
         uses: bump-sh/github-action@v1
         with:
-          doc: registre-de-preuve-de-covoiturage
+          doc: api
           token: ${{secrets.BUMP_TOKEN}}
           file: api/specs/api-v3.1.yaml
           # branch: v3.1
