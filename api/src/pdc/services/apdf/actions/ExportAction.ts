@@ -62,7 +62,7 @@ export class ExportAction extends Action {
         // Get declared operators
         const operators = await getCampaignOperators(
           this.kernel,
-          handlerConfig.service,
+          "apdf",
           campaign._id,
         );
 
