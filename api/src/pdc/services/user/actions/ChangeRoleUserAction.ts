@@ -1,13 +1,9 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { ContextType, handler } from "@/ilos/common/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/user/changeRole.contract.ts";
-import { alias } from "@/shared/user/changeRole.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/changeRole.contract.ts";
+import { alias } from "../contracts/changeRole.schema.ts";
 import { UserRepositoryProviderInterfaceResolver } from "../interfaces/UserRepositoryProviderInterface.ts";
 
 /*
@@ -34,11 +30,7 @@ export class ChangeRoleUserAction extends AbstractAction {
     params: ParamsInterface,
     context: ContextType,
   ): Promise<ResultInterface> {
-    const scope = params.territory_id
-      ? "territory_id"
-      : params.operator_id
-      ? "operator_id"
-      : "none";
+    const scope = params.territory_id ? "territory_id" : params.operator_id ? "operator_id" : "none";
     switch (scope) {
       case "territory_id":
         await this.userRepository.patchByTerritory(params._id, {

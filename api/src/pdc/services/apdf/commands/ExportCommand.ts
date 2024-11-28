@@ -1,22 +1,13 @@
 import { fromZonedTime } from "@/deps.ts";
 import { coerceIntList } from "@/ilos/cli/index.ts";
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-  ContextType,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { set } from "@/lib/object/index.ts";
 import {
-  ParamsInterface as ExportParams,
-  signature as exportSignature,
-} from "@/shared/apdf/export.contract.ts";
-import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from "@/shared/policy/list.contract.ts";
+} from "../../policy/contracts/list.contract.ts";
+import { ParamsInterface as ExportParams, signature as exportSignature } from "../contracts/export.contract.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 
 interface Options {
@@ -28,11 +19,10 @@ interface Options {
   verbose: boolean;
 }
 
-@command()
-export class ExportCommand implements CommandInterface {
-  static readonly signature: string = "apdf:export";
-  static readonly description: string = "Export APDF";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "apdf:export",
+  description: "Export APDF",
+  options: [
     {
       signature: "-c, --campaigns <campaigns>",
       description: "List of campaign/policy id separated by ,",
@@ -63,8 +53,9 @@ export class ExportCommand implements CommandInterface {
       signature: "--verbose",
       description: "Display CLI specific logger.info()",
     },
-  ];
-
+  ],
+})
+export class ExportCommand implements CommandInterface {
   constructor(private kernel: KernelInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {

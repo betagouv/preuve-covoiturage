@@ -1,8 +1,5 @@
-import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { bulk, join, raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "../exceptions/DatabaseException.ts";
 import {
@@ -131,27 +128,26 @@ export class CarpoolRepository {
     client?: PoolClient,
   ): Promise<WrittenCarpool> {
     const cl = client ?? (await this.connection.getClient().connect());
-    const keys = Object.keys(data)
+
+    const fields = Object.keys(data)
       .filter((key) => key in data && ["incentives"].indexOf(key) < 0)
       .map((key) => {
         if (["start_position", "end_position"].indexOf(key) >= 0) {
-          return sql`${raw(key)} = ST_SetSRID(ST_Point(${data[key].lon}, ${
-            data[key].lat
-          }), 4326)`;
+          return sql`${raw(key)} = ST_SetSRID(ST_Point(${(data as any)[key].lon}, ${(data as any)[key].lat}), 4326)`;
         }
         if (key === "passenger_payments") {
           return sql`${raw(key)} = ${JSON.stringify(data[key])}`;
         }
-        return sql`${raw(key)} = ${data[key]}`;
+        return sql`${raw(key)} = ${(data as any)[key]}`;
       });
 
-    if (!!!keys.length) {
-      throw new Error("No data provided to be updated");
+    if (!fields.length) {
+      throw new Error("No updatable fields");
     }
 
     const sqlQuery = sql`
        UPDATE ${raw(this.table)}
-       SET ${join(keys, ",")}
+       SET ${join(fields, ",")}
        WHERE
          operator_id = ${operator_id} AND
          operator_journey_id = ${operator_journey_id}
@@ -164,9 +160,13 @@ export class CarpoolRepository {
 
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
+      if (!result.rowCount) {
+        throw new NotFoundException("No record has been updated");
+      }
+
       const carpool = result.rows.pop();
       if (!carpool) {
-        throw new DatabaseException();
+        throw new DatabaseException("Failed to get carpool from update data");
       }
 
       if (data.incentives) {
@@ -191,21 +191,17 @@ export class CarpoolRepository {
     incentives: Array<CarpoolIncentive>,
     client: PoolClient,
   ): Promise<void> {
-    await client.query(
-      sql`DELETE FROM ${
-        raw(this.incentiveTable)
-      } WHERE carpool_id = ${carpool_id}`,
-    );
+    await client.query(sql`DELETE FROM ${raw(this.incentiveTable)} WHERE carpool_id = ${carpool_id}`);
+
     if (!incentives.length) {
       return;
     }
-    const sqlQuery = sql`INSERT INTO ${
-      raw(this.incentiveTable)
-    } (carpool_id, idx, siret, amount) VALUES ${
-      bulk(
-        incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]),
-      )
-    }`;
+
+    const sqlQuery = sql`
+      INSERT INTO ${raw(this.incentiveTable)}
+      (carpool_id, idx, siret, amount)
+      VALUES ${bulk(incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]))}`;
+
     await client.query(sqlQuery);
   }
 }

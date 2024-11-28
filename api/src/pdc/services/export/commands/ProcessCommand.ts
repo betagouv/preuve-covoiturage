@@ -1,4 +1,4 @@
-import { command, CommandInterface, CommandOptionType } from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
 import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
@@ -12,12 +12,11 @@ import { FileCreatorServiceInterfaceResolver } from "../services/FileCreatorServ
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
 import { NameServiceInterfaceResolver } from "../services/NameService.ts";
 
-@command()
+@command({
+  signature: "export:process",
+  description: "Process all pending exports",
+})
 export class ProcessCommand implements CommandInterface {
-  static readonly signature: string = "export:process";
-  static readonly description: string = "Process all pending exports";
-  static readonly options: CommandOptionType[] = [];
-
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected fileCreatorService: FileCreatorServiceInterfaceResolver,

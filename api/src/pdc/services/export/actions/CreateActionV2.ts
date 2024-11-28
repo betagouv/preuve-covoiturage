@@ -13,8 +13,8 @@ import {
   ResultInterfaceV2,
   ResultInterfaceV3,
   signatureV3,
-} from "@/shared/export/create.contract.ts";
-import { aliasV2 } from "@/shared/export/create.schema.ts";
+} from "../contracts/create.contract.ts";
+import { aliasV2 } from "../contracts/create.schema.ts";
 
 /**
  * @deprecated

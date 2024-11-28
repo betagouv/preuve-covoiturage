@@ -1,7 +1,7 @@
 import type {
   ParamsInterface as IncentiveParamsInterface,
   ResultInterface as IncentiveResultInterface,
-} from "@/shared/observatory/incentive/getIncentive.contract.ts";
+} from "../contracts/incentive/getIncentive.contract.ts";
 
 export type { IncentiveParamsInterface, IncentiveResultInterface };
 
@@ -11,8 +11,7 @@ export interface IncentiveRepositoryInterface {
   ): Promise<IncentiveResultInterface>;
 }
 
-export abstract class IncentiveRepositoryInterfaceResolver
-  implements IncentiveRepositoryInterface {
+export abstract class IncentiveRepositoryInterfaceResolver implements IncentiveRepositoryInterface {
   async getIncentive(
     params: IncentiveParamsInterface,
   ): Promise<IncentiveResultInterface> {

@@ -1,6 +1,6 @@
 import sql, { join, raw, Sql } from "@/lib/pg/sql.ts";
-import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { IdentityIdentifiersInterface } from "@/shared/certificate/common/interfaces/IdentityIdentifiersInterface.ts";
+import { CarpoolTypeEnum } from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { IdentityIdentifiersInterface } from "@/pdc/services/certificate/contracts/common/interfaces/IdentityIdentifiersInterface.ts";
 
 export function identitySelectorHelper(
   type: CarpoolTypeEnum,

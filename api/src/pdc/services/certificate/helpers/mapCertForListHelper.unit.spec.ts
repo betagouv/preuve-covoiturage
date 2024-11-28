@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 import { assertEquals, assertObjectMatch, it } from "@/dev_deps.ts";
-import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
+import { CarpoolTypeEnum } from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
 import {
   ResultRowInterface,
   RowType,
-} from "@/shared/certificate/common/interfaces/ResultRowInterface.ts";
+} from "@/pdc/services/certificate/contracts/common/interfaces/ResultRowInterface.ts";
 import { mapCertForListHelper } from "./mapCertForListHelper.ts";
 
 const newEmptyFormat: CertificateInterface = {

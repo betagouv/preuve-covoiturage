@@ -33,13 +33,13 @@ export class CeremaAom2019 extends AbstractDataset {
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Ods;
-  sheetOptions = {
+  override sheetOptions = {
     name: "RT 2019- Composition communale",
     startRow: 0,
   };
 
-  readonly tableIndex = "com";
-  readonly importSql = `
+  override readonly tableIndex = "com";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a SET
       aom = t.siren_aom,
       l_aom = t.nom_aom,

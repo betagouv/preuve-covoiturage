@@ -1,13 +1,13 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql from "@/lib/pg/sql.ts";
-import { identitySelectorHelper } from "@/pdc/services/certificate/helpers/identitySelectorHelper.ts";
-import { wherePositionsHelper } from "@/pdc/services/certificate/helpers/wherePositionsHelper.ts";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,
   DBCarpoolInterface,
-} from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
+} from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { identitySelectorHelper } from "@/pdc/services/certificate/helpers/identitySelectorHelper.ts";
+import { wherePositionsHelper } from "@/pdc/services/certificate/helpers/wherePositionsHelper.ts";
 import {
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
@@ -17,8 +17,7 @@ import {
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
-export class CarpoolPgRepositoryProvider
-  implements CarpoolRepositoryProviderInterface {
+export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
   constructor(protected connection: PostgresConnection) {}
 
   /**

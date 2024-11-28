@@ -69,7 +69,7 @@ export class Migrator {
     );
     const todos = [...this.config.datastructures, ...this.config.datasets]
       .filter((m) => !done.has(m));
-    if (!todos.filter((m) => !!!m.skipStatePersistence).length) {
+    if (!todos.filter((m) => !m.skipStatePersistence).length) {
       return [];
     }
     return todos;
@@ -139,7 +139,9 @@ export class Migrator {
       );
     } catch (e) {
       logger.debug(
-        `error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${e.message}`,
+        `error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${
+          (e as Error).message
+        }`,
       );
       throw e;
     }

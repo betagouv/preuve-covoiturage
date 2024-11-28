@@ -49,7 +49,7 @@ export type Payment = {
 };
 
 export type Payload = unknown;
-export type ApiVersion = number;
+export type ApiVersion = string;
 export type CancelCode = string;
 export type CancelMessage = string;
 
@@ -76,6 +76,8 @@ export enum CarpoolAcquisitionStatusEnum {
   Expired = "expired",
   TermsViolationError = "terms_violation_error",
 }
+
+export type TermsViolationErrorLabels = Array<string>;
 
 export enum CarpoolFraudStatusEnum {
   Pending = "pending",

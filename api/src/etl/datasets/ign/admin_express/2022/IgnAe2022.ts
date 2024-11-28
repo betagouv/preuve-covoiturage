@@ -1,8 +1,8 @@
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 import {
   IgnDataset,
   TransformationParamsInterface,
 } from "../../common/IgnDataset.ts";
-import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2022 extends IgnDataset {
   static producer = "ign";
@@ -10,13 +10,13 @@ export class IgnAe2022 extends IgnDataset {
   static year = 2022;
   static table = "ign_ae_2022";
 
-  readonly rows: Map<string, [string, string]> = new Map([
+  override readonly rows: Map<string, [string, string]> = new Map([
     ["arr", ["INSEE_ARM", "varchar"]],
     ["com", ["INSEE_COM", "varchar"]],
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  readonly beforeSql: string = `
+  override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
       arr varchar(5),
@@ -26,10 +26,10 @@ export class IgnAe2022 extends IgnDataset {
       centroid GEOMETRY(POINT, 4326),
       geom_simple GEOMETRY(MULTIPOLYGON, 4326)
     );
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_id_index ON ${this.tableWithSchema} USING btree (id);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_geom_index ON ${this.tableWithSchema} USING gist (geom);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
-    CREATE INDEX IF NOT EXISTS ign_ae_2021_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
+    CREATE INDEX IF NOT EXISTS ign_ae_2022_id_index ON ${this.tableWithSchema} USING btree (id);
+    CREATE INDEX IF NOT EXISTS ign_ae_2022_geom_index ON ${this.tableWithSchema} USING gist (geom);
+    CREATE INDEX IF NOT EXISTS ign_ae_2022_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
+    CREATE INDEX IF NOT EXISTS ign_ae_2022_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
   static url =
     // eslint-disable-next-line max-len
@@ -66,7 +66,7 @@ export class IgnAe2022 extends IgnDataset {
     ["SHP_WGS84G_FRA/CHFLIEU_ARRONDISSEMENT_MUNICIPAL", { key: "centroid" }],
   ];
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,

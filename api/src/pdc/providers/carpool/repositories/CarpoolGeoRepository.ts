@@ -1,10 +1,9 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
+import { CarpoolGeo, Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
 
 @provider()
 export class CarpoolGeoRepository {
@@ -13,10 +12,34 @@ export class CarpoolGeoRepository {
 
   constructor(protected connection: PostgresConnection) {}
 
+  async findOne(carpool_id: Id, client?: PoolClient): Promise<CarpoolGeo | null> {
+    const cl = client ?? (await this.connection.getClient().connect());
+    try {
+      const result = await cl.query<CarpoolGeo>(sql`
+        SELECT _id, carpool_id, start_geo_code, end_geo_code, errors
+        FROM ${raw(this.table)}
+        WHERE carpool_id = ${carpool_id}
+      `);
+
+      return result.rows[0] ?? null;
+    } catch (e) {
+      logger.error(`[carpool-geo] error finding carpool geo for ${carpool_id}: ${e.message}`);
+      throw new DatabaseException(e.message);
+    } finally {
+      if (!client) {
+        cl.release();
+      }
+    }
+  }
+
   async findProcessable(
     search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
     client: PoolClient,
   ): Promise<Array<{ carpool_id: Id; start: Position; end: Position }>> {
+    const failedOnlyClause = !search.failedOnly
+      ? raw(` AND cg._id IS NULL`)
+      : raw(` AND ( cg.start_geo_code IS NULL OR cg.end_geo_code IS NULL )`);
+
     const query = sql`
         SELECT 
           cc._id,
@@ -30,20 +53,13 @@ export class CarpoolGeoRepository {
         WHERE 
           cc.start_datetime >= ${search.from} AND
           cc.start_datetime < ${search.to}
-          ${
-      !!!search.failedOnly
-        ? raw(`
-            AND cg._id IS NULL`)
-        : raw(`
-            AND (
-              cg.start_geo_code IS NULL OR
-              cg.end_geo_code IS NULL
-            )`)
-    }
+          ${failedOnlyClause}
         ORDER BY cc.start_datetime
         LIMIT ${search.limit}
     `;
+
     const result = await client.query(query);
+
     return result.rows.map((r) => ({
       carpool_id: r._id,
       start: {
@@ -57,10 +73,7 @@ export class CarpoolGeoRepository {
     }));
   }
 
-  public async upsert(
-    data: UpsertableCarpoolGeo,
-    client: PoolClient,
-  ): Promise<void> {
+  public async upsert(data: UpsertableCarpoolGeo, client: PoolClient): Promise<void> {
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
         carpool_id, start_geo_code, end_geo_code, errors
@@ -78,5 +91,22 @@ export class CarpoolGeoRepository {
         errors = excluded.errors::jsonb
     `;
     await client.query(sqlQuery);
+  }
+
+  public async delete(carpool_id: Id, client?: PoolClient): Promise<void> {
+    const cl = client ?? (await this.connection.getClient().connect());
+    try {
+      await cl.query(sql`
+        DELETE FROM ${raw(this.table)}
+        WHERE carpool_id = ${carpool_id}
+      `);
+    } catch (e) {
+      logger.error(`[carpool-geo] error deleting carpool geo for ${carpool_id}: ${e.message}`);
+      throw new DatabaseException(e.message);
+    } finally {
+      if (!client) {
+        cl.release();
+      }
+    }
   }
 }

@@ -1,8 +1,8 @@
 // deno-fmt-ignore-file
 
 import { assertEquals, it } from "@/dev_deps.ts";
+import { CarpoolTypeEnum } from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
 import { identitySelectorHelper } from "@/pdc/services/certificate/helpers/identitySelectorHelper.ts";
-import { CarpoolTypeEnum } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
 
 it("identity_key", () => {
   const result = identitySelectorHelper(CarpoolTypeEnum.DRIVER, [

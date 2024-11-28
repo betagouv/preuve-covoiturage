@@ -9,12 +9,12 @@ import {
   makeDbBeforeAfter,
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
-import { signature } from "@/shared/cee/registerApplication.contract.ts";
-import { handlerConfig } from "@/shared/cee/simulateApplication.contract.ts";
-import { ServiceProvider } from "../ServiceProvider.ts";
+import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
+import { signature } from "../contracts/registerApplication.contract.ts";
+import { handlerConfig } from "../contracts/simulateApplication.contract.ts";
 
-const { before, after } = makeKernelBeforeAfter(ServiceProvider);
+const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 
 const defaultContext: ContextType = {
@@ -45,8 +45,7 @@ describe("SimulateCeeAction", () => {
         datetime: "2022-01-02T00:00:00.000Z",
         application_timestamp: "2022-01-02T00:00:00.000Z",
         phone_trunc: "+336273488",
-        identity_key:
-          "0000000000000000000000000000000000000000000000000000000000000000",
+        identity_key: "0000000000000000000000000000000000000000000000000000000000000000",
       },
       defaultContext,
     );
@@ -62,8 +61,7 @@ describe("SimulateCeeAction", () => {
     last_name_trunc: "DEF",
     phone_trunc: "+336273488",
     driving_license: "051227308990",
-    identity_key:
-      "0000000000000000000000000000000000000000000000000000000000000000",
+    identity_key: "0000000000000000000000000000000000000000000000000000000000000000",
   };
 
   const defaultLongPayload: any = {
@@ -71,8 +69,7 @@ describe("SimulateCeeAction", () => {
     last_name_trunc: "ABC",
     phone_trunc: "+336273488",
     driving_license: "051227308989",
-    identity_key:
-      "0000000000000000000000000000000000000000000000000000000000000000",
+    identity_key: "0000000000000000000000000000000000000000000000000000000000000000",
   };
 
   it(

@@ -21,14 +21,14 @@ export class InseeCom2023 extends AbstractDataset {
     ["com", ["11", "varchar(5)"]],
   ]);
 
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN arr SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly tableIndex = "arr";
-  readonly importSql = `
+  override readonly tableIndex = "arr";
+  override readonly importSql = `
     UPDATE ${this.targetTableWithSchema} AS a
       SET l_arr = t.libelle, com = t.com
     FROM ${this.tableWithSchema} t

@@ -13,11 +13,12 @@ import {
   ResultType,
   SingleMiddlewareConfigType,
 } from "@/ilos/common/index.ts";
+import { handlerListIdentifier } from "@/ilos/core/constants.ts";
 import { compose } from "../helpers/index.ts";
 import { normalizeHandlerConfig } from "../helpers/normalizeHandlerConfig.ts";
 
 export class HandlerRegistry {
-  static readonly key: symbol = Symbol.for("handlers");
+  static readonly key: symbol = handlerListIdentifier;
 
   constructor(protected container: ContainerInterface) {}
 
@@ -59,7 +60,6 @@ export class HandlerRegistry {
     const method = Reflect.getMetadata(HandlerMeta.METHOD, handler);
     const version = Reflect.getMetadata(HandlerMeta.VERSION, handler);
     const local = Reflect.getMetadata(HandlerMeta.LOCAL, handler);
-    const queue = Reflect.getMetadata(HandlerMeta.QUEUE, handler);
 
     const middlewares = Reflect.getMetadata(HandlerMeta.MIDDLEWARES, handler) ||
       [];
@@ -68,7 +68,6 @@ export class HandlerRegistry {
       method,
       version,
       local,
-      queue,
     });
 
     this.container.bind(handler).toSelf();
@@ -117,10 +116,6 @@ export class HandlerRegistry {
     if (!("local" in config) || config.local === undefined) {
       config.local = true;
     }
-    // remote/async is not possible now
-    if ("local" in config && !config.local && "queue" in config && config) {
-      config.queue = false;
-    }
 
     const handlers = this.all()
       .filter(
@@ -130,17 +125,11 @@ export class HandlerRegistry {
           // same method or *
           (config.method === hconfig.method || hconfig.method === "*") &&
           // local + remote or just remote if asked
-          (config.local || !hconfig.local) &&
-          // async + sync or just sync if asked
-          (config.queue || !hconfig.queue),
+          (config.local || !hconfig.local),
       )
       .sort((hconfig1, hconfig2) => {
         if (hconfig1.local !== hconfig2.local) {
           return hconfig1.local === config.local ? -1 : 1;
-        }
-
-        if (hconfig1.queue !== hconfig2.queue) {
-          return hconfig1.queue === config.queue ? -1 : 1;
         }
 
         if (hconfig1.method !== hconfig2.method) {

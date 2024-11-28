@@ -86,6 +86,8 @@ migrate:
     --allow-write \
     --allow-sys \
     --allow-ffi \
+    --allow-run \
+    --v8-flags=--max-old-space-size=4096 \
     src/db/main.ts
 
 # Run external data migrations
@@ -97,6 +99,7 @@ external_data_migrate:
     --allow-write \
     --allow-sys \
     --allow-ffi \
+    --allow-import \
     src/external_data/index.ts
 
 # Seed data
@@ -139,7 +142,7 @@ api *command:
 
 # Start the HTTP API server on port 8080
 @serve:
-  if [[ "${IS_WORKER:-}" != "true" ]]; then just api http \$PORT; else just api queue \$APP_REDIS_URL; fi
+  just api http \$PORT
 
 # List all the APP_ environment variables
 env:

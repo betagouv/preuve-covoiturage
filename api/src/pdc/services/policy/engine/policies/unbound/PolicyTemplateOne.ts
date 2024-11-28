@@ -1,4 +1,4 @@
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
+import { PolicyTemplateDescriptions } from "../../../contracts/common/classes/PolicyTemplateDescription.ts";
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -15,8 +15,7 @@ import {
 } from "../../helpers/index.ts";
 import { AbstractPolicyHandler } from "../AbstractPolicyHandler.ts";
 
-export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PolicyTemplateOne: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   params(): PolicyHandlerParamsInterface {
     throw new Error("Method not implemented.");
@@ -36,8 +35,7 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 50_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
     },
   ];
 

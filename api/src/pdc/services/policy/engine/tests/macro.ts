@@ -1,5 +1,5 @@
 import { assertEquals } from "@/dev_deps.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { PolicyStatusEnum } from "../../contracts/common/interfaces/PolicyInterface.ts";
 import {
   CarpoolInterface,
   MetadataLifetime,
@@ -28,8 +28,7 @@ interface ProcessResult {
   meta?: Array<{ key: string; value: number }>;
 }
 
-class MemoryMetadataRepository
-  implements MetadataRepositoryProviderInterfaceResolver {
+class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceResolver {
   constructor(public data: SerializedStoredMetadataInterface[] = []) {}
 
   async get(
@@ -50,12 +49,11 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
     input: ProcessParams,
     expected: ProcessResult,
   ) => {
-    const inputMeta: Array<SerializedStoredMetadataInterface> =
-      (input.meta || []).map((m) => ({
-        datetime: new Date(),
-        policy_id: 1,
-        ...m,
-      }));
+    const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map((m) => ({
+      datetime: new Date(),
+      policy_id: 1,
+      ...m,
+    }));
     const carpools = input.carpool.map((c) => generateCarpool(c, cp));
     const [start_date, end_date] = carpools
       .map((c) => c.datetime)

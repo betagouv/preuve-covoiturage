@@ -1,6 +1,6 @@
 import { excel } from "@/deps.ts";
 import { assertEquals, describe, it } from "@/dev_deps.ts";
-import { SliceStatInterface } from "@/shared/apdf/interfaces/PolicySliceStatInterface.ts";
+import { SliceStatInterface } from "@/pdc/services/apdf/contracts/interfaces/PolicySliceStatInterface.ts";
 import { BuildExcel } from "./BuildExcel.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 
@@ -74,16 +74,13 @@ describe.skip("SlicesWorksheetWriter", () => {
       `Jusqu'à ${slice0.slice.end / 1000} km`,
     );
     assertEquals(worksheet?.getCell("B2").value, {
-      formula:
-        'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
+      formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
     });
     assertEquals(worksheet?.getCell("C2").value, {
-      formula:
-        'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
+      formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
     });
     assertEquals(worksheet?.getCell("D2").value, {
-      formula:
-        'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
+      formula: 'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=0",Trajets!M:M,"<2000")',
     });
 
     assertEquals(
@@ -91,16 +88,13 @@ describe.skip("SlicesWorksheetWriter", () => {
       `De ${slices[1].slice.start / 1000} km à ${slice1.slice.end / 1000} km`,
     );
     assertEquals(worksheet?.getCell("B3").value, {
-      formula:
-        'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
+      formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
     });
     assertEquals(worksheet?.getCell("C3").value, {
-      formula:
-        'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
+      formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
     });
     assertEquals(worksheet?.getCell("D3").value, {
-      formula:
-        'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
+      formula: 'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=2000",Trajets!M:M,"<30000")',
     });
 
     assertEquals(
@@ -108,15 +102,13 @@ describe.skip("SlicesWorksheetWriter", () => {
       `Supérieure à ${slices[2].slice.start / 1000} km`,
     );
     assertEquals(worksheet?.getCell("B4").value, {
-      formula:
-        'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=30000")',
+      formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">=30000")',
     });
     assertEquals(worksheet?.getCell("C4").value, {
       formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">=30000")',
     });
     assertEquals(worksheet?.getCell("D4").value, {
-      formula:
-        'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=30000")',
+      formula: 'COUNTIFS(Trajets!R:R,">0",Trajets!S:S,"normale",Trajets!M:M,">=30000")',
     });
   });
 });

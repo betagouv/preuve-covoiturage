@@ -1,25 +1,13 @@
 import { unlink } from "@/deps.ts";
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import {
-  BucketName,
-  S3StorageProvider,
-} from "@/pdc/providers/storage/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/apdf/export.contract.ts";
-import { alias } from "@/shared/apdf/export.schema.ts";
-import { ResultInterface as PolicyResultInterface } from "@/shared/policy/find.contract.ts";
+import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
+import { ResultInterface as PolicyResultInterface } from "../../policy/contracts/find.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/export.contract.ts";
+import { alias } from "../contracts/export.schema.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 import { getCampaignOperators } from "../helpers/getCampaignOperators.helper.ts";
 import { DataRepositoryProviderInterfaceResolver } from "../interfaces/APDFRepositoryProviderInterface.ts";
@@ -103,9 +91,7 @@ export class ExportAction extends Action {
             $$$  - end_date:   ${campaign.end_date.toISOString()}
             $$$  - used:       ${campaign.incentive_sum / 100}€
             $$$ Declared  :    ${operators.map((i) => `#${i}`).join(", ")}
-            $$$ Operators :    ${
-            activeOperatorIds.map((i) => `#${i}`).join(", ")
-          }
+            $$$ Operators :    ${activeOperatorIds.map((i) => `#${i}`).join(", ")}
           `);
         }
 
@@ -146,8 +132,7 @@ export class ExportAction extends Action {
 
               files.push(file);
             } catch (error) {
-              const message =
-                `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
+              const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
               logger.error(message);
               files.push(message);
             }

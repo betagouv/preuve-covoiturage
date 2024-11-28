@@ -1,6 +1,6 @@
-import { RPCException } from "./RPCException.ts";
+import { Exception } from "./Exception.ts";
 
-export class TooManyRequestsException extends RPCException {
+export class TooManyRequestsException extends Exception {
   constructor(data?: any) {
     super("Too Many Requests Error");
     this.nolog = true;
@@ -9,5 +9,6 @@ export class TooManyRequestsException extends RPCException {
       code: -32029,
       message: this.message,
     };
+    this.httpCode = 429;
   }
 }

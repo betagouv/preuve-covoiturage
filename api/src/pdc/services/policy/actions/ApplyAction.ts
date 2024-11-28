@@ -1,21 +1,12 @@
 import { defaultTimezone } from "@/config/time.ts";
 import { isAfter, maxDate, minDate } from "@/deps.ts";
-import {
-  ContextType,
-  handler,
-  InvalidParamsException,
-  NotFoundException,
-} from "@/ilos/common/index.ts";
+import { ContextType, handler, InvalidParamsException, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/apply.contract.ts";
-import { alias } from "@/shared/policy/apply.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/apply.contract.ts";
+import { alias } from "../contracts/apply.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import { subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
@@ -172,9 +163,7 @@ export class ApplyAction extends AbstractAction {
     } while (!done);
 
     logger.info(
-      `[policy ${policy_id}] finished - ${total} in ${
-        new Date().getTime() - bench.getTime()
-      }ms`,
+      `[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`,
     );
   }
 }

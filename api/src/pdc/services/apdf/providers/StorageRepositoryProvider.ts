@@ -8,7 +8,7 @@ import {
   S3ObjectList,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
-import { EnrichedApdfType } from "@/shared/apdf/list.contract.ts";
+import { EnrichedApdfType } from "../contracts/list.contract.ts";
 import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
@@ -17,8 +17,7 @@ import {
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,
 })
-export class StorageRepositoryProvider
-  implements StorageRepositoryProviderInterfaceResolver {
+export class StorageRepositoryProvider implements StorageRepositoryProviderInterfaceResolver {
   private bucket: BucketName = BucketName.APDF;
 
   constructor(

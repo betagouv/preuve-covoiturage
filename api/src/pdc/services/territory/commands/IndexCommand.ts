@@ -1,18 +1,11 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-  KernelInterfaceResolver,
-  ResultType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { signature as indexGeo } from "@/shared/territory/indexAllGeo.contract.ts";
+import { signature as indexGeo } from "@/pdc/services/territory/contracts/indexAllGeo.contract.ts";
 
-@command()
+@command({
+  signature: "territory:index",
+})
 export class IndexCommand implements CommandInterface {
-  static readonly signature: string = "territory:index";
-  static readonly options: CommandOptionType[] = [];
-
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(): Promise<ResultType> {

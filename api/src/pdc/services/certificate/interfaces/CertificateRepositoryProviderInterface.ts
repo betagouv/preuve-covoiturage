@@ -1,6 +1,6 @@
-import { CertificateBaseInterface } from "@/shared/certificate/common/interfaces/CertificateBaseInterface.ts";
-import { CertificateInterface } from "@/shared/certificate/common/interfaces/CertificateInterface.ts";
-import { Pagination } from "@/shared/certificate/list.contract.ts";
+import { CertificateBaseInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateBaseInterface.ts";
+import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
+import { Pagination } from "@/pdc/services/certificate/contracts/list.contract.ts";
 
 export interface CertificateRepositoryProviderInterface {
   find(): Promise<CertificateInterface[]>;
@@ -18,8 +18,7 @@ export interface CertificateRepositoryProviderInterface {
   count(operator_id?: number): Promise<number>;
 }
 
-export abstract class CertificateRepositoryProviderInterfaceResolver
-  implements CertificateRepositoryProviderInterface {
+export abstract class CertificateRepositoryProviderInterfaceResolver implements CertificateRepositoryProviderInterface {
   async find(
     withLog = false,
     pagination?: Pagination,

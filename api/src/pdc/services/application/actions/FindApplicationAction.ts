@@ -1,16 +1,9 @@
 import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import {
-  copyFromContextMiddleware,
-  hasPermissionByScopeMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/application/find.contract.ts";
-import { alias } from "@/shared/application/find.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
+import { alias } from "../contracts/find.schema.ts";
 import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/ApplicationRepositoryProviderInterface.ts";
 
 @handler({
@@ -27,8 +20,7 @@ import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/Ap
 })
 export class FindApplicationAction extends AbstractAction {
   constructor(
-    private applicationRepository:
-      ApplicationRepositoryProviderInterfaceResolver,
+    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
   ) {
     super();
   }

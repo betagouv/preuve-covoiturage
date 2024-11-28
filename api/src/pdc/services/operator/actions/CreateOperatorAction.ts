@@ -2,14 +2,10 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/create.contract.ts";
+import { alias } from "../contracts/create.schema.ts";
 import { phoneComplianceHelper } from "../helpers/phoneComplianceHelper.ts";
 import { OperatorRepositoryProviderInterfaceResolver } from "../interfaces/OperatorRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/operator/create.contract.ts";
-import { alias } from "@/shared/operator/create.schema.ts";
 
 @handler({
   ...handlerConfig,

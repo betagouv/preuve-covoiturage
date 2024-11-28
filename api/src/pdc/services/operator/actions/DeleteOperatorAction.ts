@@ -1,20 +1,12 @@
-import {
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { ContextType, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Sentry } from "@/pdc/providers/sentry/index.ts";
 
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/operator/delete.contract.ts";
-import { alias } from "@/shared/operator/delete.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/delete.contract.ts";
+import { alias } from "../contracts/delete.schema.ts";
 import { OperatorRepositoryProviderInterfaceResolver } from "../interfaces/OperatorRepositoryProviderInterface.ts";
 
 @handler({

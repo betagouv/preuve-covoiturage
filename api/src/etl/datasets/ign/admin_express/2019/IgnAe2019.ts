@@ -1,8 +1,8 @@
+import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 import {
   IgnDataset,
   TransformationParamsInterface,
 } from "../../common/IgnDataset.ts";
-import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class IgnAe2019 extends IgnDataset {
   static producer = "ign";
@@ -10,7 +10,7 @@ export class IgnAe2019 extends IgnDataset {
   static year = 2019;
   static table = "ign_ae_2019";
 
-  readonly beforeSql: string = `
+  override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
       com varchar(5) NOT NULL,
@@ -39,7 +39,7 @@ export class IgnAe2019 extends IgnDataset {
     ["SHP_WGS84_FR/CHEF_LIEU_CARTO.shp", { key: "centroid" }],
   ];
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       centroid,

@@ -1,9 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  KernelInterfaceResolver,
-  provider,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { env } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
@@ -11,10 +6,10 @@ import {
   NotificationTransporterInterfaceResolver,
   StaticMailTemplateNotificationInterface,
 } from "@/pdc/providers/notification/index.ts";
-import { PolicyTemplateDescriptions } from "@/shared/policy/common/classes/PolicyTemplateDescription.ts";
-import { ResultInterface as SimulateOnPastResult } from "@/shared/policy/simulateOnPastGeo.contract.ts";
-import { ParamsInterface as SendMailParamsInterface } from "@/shared/user/notify.contract.ts";
-import { ParamsInterface as SimulationPolicyParamsInterface } from "@/shared/user/simulatePolicyform.contract.ts";
+import { PolicyTemplateDescriptions } from "../../policy/contracts/common/classes/PolicyTemplateDescription.ts";
+import { ResultInterface as SimulateOnPastResult } from "../../policy/contracts/simulateOnPastGeo.contract.ts";
+import { ParamsInterface as SendMailParamsInterface } from "../contracts/notify.contract.ts";
+import { ParamsInterface as SimulationPolicyParamsInterface } from "../contracts/simulatePolicyform.contract.ts";
 import {
   ConfirmEmailNotification,
   ContactFormNotification,
@@ -109,10 +104,11 @@ link:  ${link}
   }
 
   /**
-   * Queue email by using user:notify
+   * Queue email
    */
   protected async queueEmail(data: SendMailParamsInterface): Promise<void> {
-    await this.kernel.notify("user:notify", data, this.defaultContext);
+    // TODO : Should be queued
+    await this.kernel.call("user:notify", data, this.defaultContext);
   }
 
   async sendEmail(data: SendMailParamsInterface): Promise<void> {
@@ -233,17 +229,14 @@ link:  ${link}
           formParams.simulation.policy_template_id,
         ),
 
-        simulation_result_one_month_trip_subsidized:
-          simulationResult["1"].trip_subsidized,
+        simulation_result_one_month_trip_subsidized: simulationResult["1"].trip_subsidized,
         simulation_result_one_month_amount: simulationResult["1"].amount / 100,
 
-        simulation_result_three_months_trip_subsidized:
-          simulationResult["3"].trip_subsidized,
+        simulation_result_three_months_trip_subsidized: simulationResult["3"].trip_subsidized,
         simulation_result_three_months_amount: simulationResult["3"].amount /
           100,
 
-        simulation_result_six_months_trip_subsidized:
-          simulationResult["6"].trip_subsidized,
+        simulation_result_six_months_trip_subsidized: simulationResult["6"].trip_subsidized,
         simulation_result_six_months_amount: simulationResult["6"].amount / 100,
       },
     });

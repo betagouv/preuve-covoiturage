@@ -1,9 +1,6 @@
 import { assertEquals, describe, it, sinon } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import {
-  ParamsInterfaceV2,
-  ParamsInterfaceV3,
-} from "@/shared/export/create.contract.ts";
+import { ParamsInterfaceV2, ParamsInterfaceV3 } from "../contracts/create.contract.ts";
 import { CreateActionV2 } from "./CreateActionV2.ts";
 
 // ----------------------------------------------------------------------------------------
@@ -15,8 +12,7 @@ describe("CreateActionV2", () => {
   // but get the converted params
   const kernel = new (class extends KernelInterfaceResolver {})();
   sinon.stub(kernel, "call").callsFake(
-    (_signature: string, params: unknown) =>
-      new Promise((resolve) => resolve(params)),
+    (_signature: string, params: unknown) => new Promise((resolve) => resolve(params)),
   );
 
   // ----------------------------------------------------------------------------------------

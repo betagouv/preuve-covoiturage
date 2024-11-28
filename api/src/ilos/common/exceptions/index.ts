@@ -1,13 +1,15 @@
 export { ConflictException } from "./ConflictException.ts";
+export { Exception } from "./Exception.ts";
 export { ForbiddenException } from "./ForbiddenException.ts";
 export { InvalidParamsException } from "./InvalidParamsException.ts";
 export { InvalidRequestException } from "./InvalidRequestException.ts";
 export { MethodNotFoundException } from "./MethodNotFoundException.ts";
 export { NotFoundException } from "./NotFoundException.ts";
 export { ParseErrorException } from "./ParseErrorException.ts";
-export { RPCException } from "./RPCException.ts";
-export { ServiceException } from "./ServiceException.ts";
+export { ServiceDisabledException } from "./ServiceDisabledException.ts";
 export { TimeoutException } from "./TimeoutException.ts";
 export { TooManyRequestsException } from "./TooManyRequestsException.ts";
 export { UnauthorizedException } from "./UnauthorizedException.ts";
+export { UnexpectedException } from "./UnexpectedException.ts";
 export { UnimplementedException } from "./UnimplementedException.ts";
+export { UnprocessableRequestException } from "./UnprocessableRequestException.ts";

@@ -1,15 +1,8 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-  ContextType,
-  KernelInterfaceResolver,
-  ResultType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { signature as apply } from "@/shared/policy/apply.contract.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { signature as apply } from "../contracts/apply.contract.ts";
+import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
@@ -21,11 +14,10 @@ interface CommandOptions {
   override: boolean;
 }
 
-@command()
-export class ApplyCommand implements CommandInterface {
-  static readonly signature: string = "campaign:apply";
-  static readonly description: string = "Apply stateless campaign rules";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "campaign:apply",
+  description: "Apply stateless campaign rules",
+  options: [
     {
       signature: "-c, --campaigns <campaigns>",
       description: "list of campaign_id",
@@ -55,8 +47,9 @@ export class ApplyCommand implements CommandInterface {
       description: "override existing incentives",
       default: false,
     },
-  ];
-
+  ],
+})
+export class ApplyCommand implements CommandInterface {
   constructor(
     protected kernel: KernelInterfaceResolver,
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
@@ -70,11 +63,9 @@ export class ApplyCommand implements CommandInterface {
       await this.policyRepository.updateAllCampaignStatuses();
 
       // list campaigns
-      const campaigns = options.campaigns.length
-        ? options.campaigns
-        : (await this.policyRepository.findWhere({
-          status: PolicyStatusEnum.ACTIVE,
-        })).map((c) => c._id);
+      const campaigns = options.campaigns.length ? options.campaigns : (await this.policyRepository.findWhere({
+        status: PolicyStatusEnum.ACTIVE,
+      })).map((c) => c._id);
 
       for (const policy_id of campaigns) {
         const context: ContextType = { channel: { service: "campaign" } };

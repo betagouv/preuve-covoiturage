@@ -1,28 +1,15 @@
 import { defaultTimezone } from "@/config/time.ts";
-import {
-  ConfigInterfaceResolver,
-  handler,
-  KernelInterfaceResolver,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/policy/finalize.contract.ts";
-import { alias } from "@/shared/policy/finalize.schema.ts";
-import { signature as syncincentivesumSignature } from "@/shared/policy/syncIncentiveSum.contract.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/finalize.contract.ts";
+import { alias } from "../contracts/finalize.schema.ts";
+import { signature as syncincentivesumSignature } from "../contracts/syncIncentiveSum.contract.ts";
 import { MetadataStore } from "../engine/entities/MetadataStore.ts";
 import { Policy } from "../engine/entities/Policy.ts";
-import {
-  castUserStringToUTC,
-  subDaysTz,
-  today,
-  toTzString,
-} from "../helpers/index.ts";
+import { castUserStringToUTC, subDaysTz, today, toTzString } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -102,9 +89,7 @@ export class FinalizeAction extends AbstractAction {
 
         // eslint-disable-next-line prettier/prettier,max-len
         logger.info(
-          `[campaign:finalize] stateful starting from ${
-            toTzString(currentFrom)
-          } until ${toTzString(currentTo)}`,
+          `[campaign:finalize] stateful starting from ${toTzString(currentFrom)} until ${toTzString(currentTo)}`,
         );
         await this.processStatefulPolicies(policyMap, currentTo, currentFrom);
         logger.debug("[campaign:finalize] stateful finished");
@@ -115,9 +100,7 @@ export class FinalizeAction extends AbstractAction {
         logger.debug("[campaign:finalize] lock finished");
       } catch (e) {
         logger.debug(
-          `[campaign:finalize] unlock all incentive until ${
-            toTzString(currentTo)
-          } in catch block`,
+          `[campaign:finalize] unlock all incentive until ${toTzString(currentTo)} in catch block`,
         );
         await this.incentiveRepository.setStatus(currentFrom, currentTo, true);
         throw e;

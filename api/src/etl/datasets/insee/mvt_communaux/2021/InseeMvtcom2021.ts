@@ -9,7 +9,7 @@ export class InseeMvtcom2021 extends AbstractDataset {
   static dataset = "mvtcom";
   static year = 2021;
   static table = "insee_mvtcom_2021";
-  readonly targetTable = "com_evolution";
+  override readonly targetTable = "com_evolution";
   static url =
     "https://www.insee.fr/fr/statistiques/fichier/5057840/mvtcommune2021-csv.zip";
 
@@ -23,13 +23,13 @@ export class InseeMvtcom2021 extends AbstractDataset {
     ["com_ap", ["9", "varchar"]],
   ]);
 
-  readonly extraBeforeSql =
+  override readonly extraBeforeSql =
     `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN mod SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
-  sheetOptions = {};
+  override sheetOptions = {};
 
-  readonly importSql = `
+  override readonly importSql = `
     INSERT INTO ${this.targetTableWithSchema} (
       year,
       mod,

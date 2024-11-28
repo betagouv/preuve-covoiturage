@@ -1,11 +1,11 @@
 import type {
   ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
-} from "@/shared/observatory/distribution/journeysByDistances.contract.ts";
+} from "../contracts/distribution/journeysByDistances.contract.ts";
 import type {
   ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
-} from "@/shared/observatory/distribution/journeysByHours.contract.ts";
+} from "../contracts/distribution/journeysByHours.contract.ts";
 
 export type {
   JourneysByDistancesParamsInterface,
@@ -23,8 +23,7 @@ export interface DistributionRepositoryInterface {
   ): Promise<JourneysByDistancesResultInterface>;
 }
 
-export abstract class DistributionRepositoryInterfaceResolver
-  implements DistributionRepositoryInterface {
+export abstract class DistributionRepositoryInterfaceResolver implements DistributionRepositoryInterface {
   async getJourneysByHours(
     params: JourneysByHoursParamsInterface,
   ): Promise<JourneysByHoursResultInterface> {

@@ -1,3 +1,5 @@
+import type { pg } from "@/deps.ts";
+import { SqlError, ValidationError } from "../errors/index.ts";
 import {
   DatasetInterface,
   FileManagerInterface,
@@ -6,8 +8,6 @@ import {
   StaticAbstractDataset,
   StaticMigrable,
 } from "../interfaces/index.ts";
-import { Pool } from "@/deps.ts";
-import { SqlError, ValidationError } from "../errors/index.ts";
 
 export abstract class AbstractDatatreatment implements DatasetInterface {
   static skipStatePersistence = true;
@@ -29,7 +29,7 @@ export abstract class AbstractDatatreatment implements DatasetInterface {
   required: Set<StaticMigrable> = new Set();
 
   constructor(
-    protected connection: Pool,
+    protected connection: pg.Pool,
     protected file: FileManagerInterface,
     protected targetSchema: string = "public",
   ) {}

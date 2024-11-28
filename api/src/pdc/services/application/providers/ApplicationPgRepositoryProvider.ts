@@ -1,15 +1,11 @@
-import {
-  ConfigInterfaceResolver,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
-import { RepositoryInterface as ListInterface } from "@/shared/application/list.contract.ts";
-import { RepositoryInterface as FindInterface } from "@/shared/application/find.contract.ts";
-import { RepositoryInterface as CreateInterface } from "@/shared/application/create.contract.ts";
-import { RepositoryInterface as RevokeInterface } from "@/shared/application/revoke.contract.ts";
-import { ApplicationInterface } from "@/shared/application/common/interfaces/ApplicationInterface.ts";
+import { ApplicationInterface } from "../contracts/common/interfaces/ApplicationInterface.ts";
+import { RepositoryInterface as CreateInterface } from "../contracts/create.contract.ts";
+import { RepositoryInterface as FindInterface } from "../contracts/find.contract.ts";
+import { RepositoryInterface as ListInterface } from "../contracts/list.contract.ts";
+import { RepositoryInterface as RevokeInterface } from "../contracts/revoke.contract.ts";
 import {
   ApplicationRepositoryProviderInterface,
   ApplicationRepositoryProviderInterfaceResolver,
@@ -18,8 +14,7 @@ import {
 @provider({
   identifier: ApplicationRepositoryProviderInterfaceResolver,
 })
-export class ApplicationPgRepositoryProvider
-  implements ApplicationRepositoryProviderInterface {
+export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
   public readonly table = "application.applications";
 
   constructor(

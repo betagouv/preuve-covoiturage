@@ -1,5 +1,5 @@
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import { PolicyStatusEnum } from "@/shared/policy/common/interfaces/PolicyInterface.ts";
+import { PolicyStatusEnum } from "../../contracts/common/interfaces/PolicyInterface.ts";
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -57,7 +57,7 @@ export interface PolicyHandlerStaticInterface {
   readonly id: string;
   readonly tz?: Timezone;
   readonly boosterDates?: string[];
-  mode?<T>(date: Date, regular: T, booster: T): T;
+  mode?<T>(date: Date, ...args: T[] | unknown[]): T;
   /**
    * Optional max amount to spend for the policy
    */

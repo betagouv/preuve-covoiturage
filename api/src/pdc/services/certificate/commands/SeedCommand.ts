@@ -1,9 +1,5 @@
 import { faker } from "@/deps.ts";
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface } from "@/ilos/common/index.ts";
 import type { PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env } from "@/lib/env/index.ts";
@@ -16,14 +12,10 @@ interface CommandOptions {
   passenger: string;
 }
 
-@command()
-export class SeedCommand implements CommandInterface {
-  private db: PoolClient;
-
-  static readonly signature: string = "seed:certificate";
-  static readonly description: string =
-    "Seed fake identities, carpools and policies to fill out certificates";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "seed:certificate",
+  description: "Seed fake identities, carpools and policies to fill out certificates",
+  options: [
     {
       signature: "-u, --database-uri <uri>",
       description: "Postgres connection string",
@@ -45,9 +37,12 @@ export class SeedCommand implements CommandInterface {
       description: "Passenger phone number",
       default: "+33687654321",
     },
-  ];
+  ],
+})
+export class SeedCommand implements CommandInterface {
+  private db: PoolClient;
 
-  public async call(options: CommandOptions): Promise<string> {
+  public async call(options: CommandOptions): Promise<void> {
     // connect DB
     const postgres = new PostgresConnection({
       connectionString: options.databaseUri,
@@ -101,8 +96,7 @@ export class SeedCommand implements CommandInterface {
     if (result.rowCount > 0) return result.rows[0];
 
     const created = await this.db.query<any>({
-      text:
-        ` INSERT INTO carpool.identities ( phone, over_18 ) VALUES ( $1, $2 ) RETURNING _id`,
+      text: ` INSERT INTO carpool.identities ( phone, over_18 ) VALUES ( $1, $2 ) RETURNING _id`,
       values: [id, true],
     });
 

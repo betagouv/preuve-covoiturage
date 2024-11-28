@@ -1,7 +1,4 @@
-import {
-  BoundedSlices,
-  UnboundedSlices,
-} from "@/shared/policy/common/interfaces/Slices.ts";
+import { BoundedSlices, UnboundedSlices } from "../../../policy/contracts/common/interfaces/Slices.ts";
 
 export function wrapSlices(
   slices: BoundedSlices | UnboundedSlices | undefined | null,
@@ -18,9 +15,7 @@ export function toBoundedSlices(
   slices: BoundedSlices | UnboundedSlices,
 ): BoundedSlices {
   const sorted = slices.sort(({ start: a }, { start: b }) => a - b);
-  return (sorted[sorted.length - 1]?.end
-    ? slices
-    : sorted.slice(0, sorted.length - 1)) as BoundedSlices;
+  return (sorted[sorted.length - 1]?.end ? slices : sorted.slice(0, sorted.length - 1)) as BoundedSlices;
 }
 
 export function findBoundary(

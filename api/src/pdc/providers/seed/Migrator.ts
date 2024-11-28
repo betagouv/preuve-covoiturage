@@ -1,22 +1,12 @@
 import { migrate } from "@/db/index.ts";
-import {
-  addDate,
-  createReadStream,
-  CsvOptions as ParseOptions,
-  parse,
-  URL,
-} from "@/deps.ts";
+import { addDate, createReadStream, CsvOptions as ParseOptions, parse, URL } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Carpool, carpoolsV2 } from "./carpools.ts";
 import { companies, Company } from "./companies.ts";
 import { Operator, operators } from "./operators.ts";
-import {
-  CreateTerritoryGroupInterface,
-  territory_groups,
-  TerritorySelectorsInterface,
-} from "./territories.ts";
+import { CreateTerritoryGroupInterface, territory_groups, TerritorySelectorsInterface } from "./territories.ts";
 import { User, users } from "./users.ts";
 
 const __dirname = import.meta.dirname;
@@ -37,9 +27,7 @@ export class Migrator {
     const dbUrl = new URL(dbUrlString);
     this.hasTmpDb = createTmpDb;
     this.dbName = createTmpDb
-      ? `test_${Date.now().valueOf()}_${
-        (Math.random() + 1).toString(36).substring(7)
-      }`
+      ? `test_${Date.now().valueOf()}_${(Math.random() + 1).toString(36).substring(7)}`
       : dbUrl.pathname.replace("/", "");
 
     const currentConnection = new URL(dbUrlString);
@@ -190,9 +178,7 @@ export class Migrator {
       const data = await cursor.next();
       if (data.value && Array.isArray(data.value)) {
         await this.testConn.getClient().query<any>({
-          text: `INSERT INTO ${tablename} VALUES (${
-            data.value.map((_, i) => `$${i + 1}`).join(", ")
-          })`,
+          text: `INSERT INTO ${tablename} VALUES (${data.value.map((_, i) => `$${i + 1}`).join(", ")})`,
           values: data.value,
         });
       }
@@ -318,7 +304,7 @@ export class Migrator {
         driverCarpool.operator_id,
         driverCarpool.operator_journey_id,
         null,
-        3,
+        "3",
         null,
         null,
       ],

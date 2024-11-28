@@ -1,11 +1,9 @@
 import { injectable, METADATA_KEY } from "@/deps.ts";
 import type { ExtensionConfigurationType } from "./types/core/ExtensionInterface.ts";
 import { extensionConfigurationMetadataKey } from "./types/core/ExtensionInterface.ts";
-import type {
-  HandlerConfigType,
-  MiddlewareConfigType,
-} from "./types/handler/index.ts";
+import type { HandlerConfigType, MiddlewareConfigType } from "./types/handler/index.ts";
 import { HandlerMeta } from "./types/handler/index.ts";
+export { command } from "@/ilos/cli/index.ts";
 
 type AnyConfig = { [k: string]: any };
 
@@ -40,9 +38,7 @@ class Metadata {
     if (this.key === METADATA_KEY.NAMED_TAG) {
       return `named: ${String(this.value).toString()} `;
     } else {
-      return `tagged: { key:${this.key.toString()}, value: ${
-        String(this.value)
-      } }`;
+      return `tagged: { key:${this.key.toString()}, value: ${String(this.value)} }`;
     }
   }
 }
@@ -61,7 +57,7 @@ export function provider(config: AnyConfig = {}) {
 export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   const { service } = config;
   // eslint-disable-next-line prefer-const
-  let { method, version, local, queue, middlewares, ...other } = config;
+  let { method, version, local, middlewares, ...other } = config;
 
   if (!("method" in config)) {
     method = "*";
@@ -72,9 +68,6 @@ export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   if (!("local" in config)) {
     local = true;
   }
-  if (!("queue" in config)) {
-    queue = false;
-  }
   if (!("middlewares" in config)) {
     middlewares = [];
   }
@@ -83,7 +76,6 @@ export function handler(config: HandlerConfigType & MiddlewareConfigType) {
     Reflect.defineMetadata(HandlerMeta.METHOD, method, target);
     Reflect.defineMetadata(HandlerMeta.VERSION, version, target);
     Reflect.defineMetadata(HandlerMeta.LOCAL, local, target);
-    Reflect.defineMetadata(HandlerMeta.QUEUE, queue, target);
     Reflect.defineMetadata(HandlerMeta.MIDDLEWARES, middlewares, target);
     return injectable()(extensionTag(other)(target));
   };
@@ -101,9 +93,6 @@ export function kernel(config: AnyConfig) {
   };
 }
 
-export function command() {
-  return injectable();
-}
 export function middleware() {
   return injectable();
 }

@@ -3,10 +3,7 @@ import { AbstractDataset } from "../../../common/AbstractDataset.ts";
 import { SqlError } from "../../../errors/SqlError.ts";
 import { TransformError } from "../../../errors/TransformError.ts";
 import { streamData } from "../../../helpers/index.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-} from "../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "../../../interfaces/index.ts";
 
 export interface TransformationParamsInterface {
   key: string;
@@ -30,11 +27,12 @@ export abstract class IgnDataset extends AbstractDataset {
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.SevenZip;
   readonly rows: Map<string, [string, string]> = new Map([
+    ["arr", ["INSEE_ARM", "varchar"]],
     ["com", ["INSEE_COM", "varchar"]],
     ["pop", ["POPULATION", "integer"]],
   ]);
 
-  sheetOptions = {
+  override sheetOptions = {
     filter: "features",
   };
 
@@ -44,7 +42,7 @@ export abstract class IgnDataset extends AbstractDataset {
     { file: string; key: string } & { [k: string]: any }
   > = [];
 
-  async transform(): Promise<void> {
+  override async transform(): Promise<void> {
     try {
       const filepaths: string[] = [];
       for await (const [file, customConfig] of this.transformations) {
@@ -86,7 +84,7 @@ export abstract class IgnDataset extends AbstractDataset {
     }
   }
 
-  async load(): Promise<void> {
+  override async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
     let i = 1;
@@ -97,12 +95,13 @@ export abstract class IgnDataset extends AbstractDataset {
           const cursor = streamData(file, this.fileType, this.sheetOptions);
           let done = false;
           const comField = this.rows.get("com") || [];
+          const arrField = this.rows.get("arr") || [];
           do {
             const results = await cursor.next();
             done = !!results.done;
             if (results.value) {
               const values = [
-                JSON.stringify(results.value.map((r) => r.value)),
+                JSON.stringify(results.value.map((r: any) => r.value)),
               ];
               logger.debug(`Batch ${i}`);
               switch (key) {
@@ -119,9 +118,7 @@ export abstract class IgnDataset extends AbstractDataset {
                       )
                       SELECT ${
                       [...this.rows]
-                        .map(([k, r]) =>
-                          `(properties->>'${r[0]}')::${r[1]} AS ${k}`
-                        )
+                        .map(([k, r]) => `(properties->>'${r[0]}')::${r[1]} AS ${k}`)
                         .join(", \n")
                     },
                       st_multi(ST_SetSRID(st_geomfromgeojson(geometry),4326)) as ${key} 
@@ -141,9 +138,8 @@ export abstract class IgnDataset extends AbstractDataset {
                         json_to_recordset($1)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
-                      WHERE com = (tt.properties->>'${comField[0]}')::${
-                      comField[1]
-                    }
+                      WHERE (arr is not null AND arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
+                      OR (arr is null AND com = (tt.properties->>'${comField[0]}')::${comField[1]})
                     `,
                     values,
                   });
@@ -158,9 +154,8 @@ export abstract class IgnDataset extends AbstractDataset {
                         json_to_recordset($1)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
-                      WHERE com = (tt.properties->>'${comField[0]}')::${
-                      comField[1]
-                    }
+                      WHERE (arr is not null AND arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
+                      OR (arr is null AND com = (tt.properties->>'${comField[0]}')::${comField[1]})
                     `,
                     values,
                   });

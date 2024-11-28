@@ -1,4 +1,4 @@
-import { ApiVersion, CancelCode, CancelMessage, Id, Uuid } from "./common.ts";
+import { ApiVersion, CancelCode, CancelMessage, Id, TermsViolationErrorLabels, Uuid } from "./common.ts";
 import { InsertableCarpool, UpdatableCarpool } from "./database/carpool.ts";
 
 interface ApiVersionObject {
@@ -6,8 +6,12 @@ interface ApiVersionObject {
 }
 
 export type RegisterRequest = InsertableCarpool & ApiVersionObject;
+export type RegisterResponse = {
+  created_at: Date;
+  terms_violation_error_labels: TermsViolationErrorLabels;
+};
 
-export interface UpdateRequest extends UpdatableCarpool, ApiVersionObject {
+export interface PatchRequest extends UpdatableCarpool, ApiVersionObject {
   operator_id: Id;
   operator_journey_id: Uuid;
 }
@@ -18,3 +22,12 @@ export interface CancelRequest extends ApiVersionObject {
   cancel_code: CancelCode;
   cancel_message: CancelMessage;
 }
+
+export type ProcessGeoParams = {
+  batchSize: number;
+  from: Date;
+  to: Date;
+  failedOnly: boolean;
+};
+
+export type ProcessGeoResults = number;

@@ -1,20 +1,10 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-  KernelInterfaceResolver,
-  ResultType,
-} from "@/ilos/common/index.ts";
-import {
-  handlerConfig,
-  signature as handlerSignature,
-} from "@/shared/policy/stats.contract.ts";
+import { command, CommandInterface, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
+import { handlerConfig, signature as handlerSignature } from "../contracts/stats.contract.ts";
 
-@command()
+@command({
+  signature: "campaign:stats",
+})
 export class StatsCommand implements CommandInterface {
-  static readonly signature: string = "campaign:stats";
-  static readonly options: CommandOptionType[] = [];
-
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(): Promise<ResultType> {

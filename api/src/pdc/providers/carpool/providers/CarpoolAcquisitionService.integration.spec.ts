@@ -23,7 +23,7 @@ import { CarpoolRequestRepository } from "../repositories/CarpoolRequestReposito
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
 import { CarpoolAcquisitionService } from "./CarpoolAcquisitionService.ts";
 
-describe("CarpoolAcquistionService", () => {
+describe("CarpoolAcquisitionService", () => {
   let carpoolRepository: CarpoolRepository;
   let statusRepository: CarpoolStatusRepository;
   let requestRepository: CarpoolRequestRepository;
@@ -51,12 +51,12 @@ describe("CarpoolAcquistionService", () => {
   beforeEach(() => {
     sinon = Sinon.createSandbox();
   });
+
   afterEach(() => {
     sinon.restore();
   });
-  function getService(
-    overrides: any,
-  ): CarpoolAcquisitionService {
+
+  function getService(overrides: any): CarpoolAcquisitionService {
     return new CarpoolAcquisitionService(
       db.connection,
       overrides.statusRepository ?? statusRepository,
@@ -67,6 +67,7 @@ describe("CarpoolAcquistionService", () => {
       geoService,
     );
   }
+
   it("Should create carpool", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
@@ -79,20 +80,19 @@ describe("CarpoolAcquistionService", () => {
     });
 
     const data = { ...insertableCarpool };
-    await service.registerRequest({ ...data, api_version: 3 });
+    await service.registerRequest({ ...data, api_version: "3" });
 
-    // console.log(carpoolRepository.register.getCalls());
     assert(carpoolRepositoryL.register.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
       data.operator_id,
       data.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+
     assertObjectMatch(carpool, {
       ...data,
       fraud_status: "pending",
@@ -100,7 +100,7 @@ describe("CarpoolAcquistionService", () => {
     });
   });
 
-  it("Should update carpool", async () => {
+  it("Should patch carpool", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
     const statusRepositoryL = sinon.spy(statusRepository);
@@ -112,25 +112,24 @@ describe("CarpoolAcquistionService", () => {
     });
 
     const data = { ...updatableCarpool };
-    await service.updateRequest({
+    await service.patchCarpool({
       ...data,
-      api_version: 3,
+      api_version: "3",
       operator_id: insertableCarpool.operator_id,
       operator_journey_id: insertableCarpool.operator_journey_id,
     });
 
-    // console.log(carpoolRepository.update.getCalls());
     assert(carpoolRepositoryL.update.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = await lookupRepository.findOne(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+
     assertObjectMatch(carpool, {
       ...insertableCarpool,
       ...updatableCarpool,
@@ -153,24 +152,23 @@ describe("CarpoolAcquistionService", () => {
     const data = {
       cancel_code: "FRAUD",
       cancel_message: "Got u",
-      api_version: 3,
+      api_version: "3",
       operator_id: insertableCarpool.operator_id,
       operator_journey_id: insertableCarpool.operator_journey_id,
     };
     await service.cancelRequest(data);
 
-    // console.log(lookupRepository.findOneStatus.getCalls());
     assert(lookupRepositoryL.findOneStatus.calledOnce);
-    // console.log(requestRepository.save.getCalls());
     assert(requestRepositoryL.save.calledOnce);
-    // console.log(statusRepository.saveAcquisitionStatus.getCalls());
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
 
     const r = lookupRepository.findOne(
       insertableCarpool.operator_id,
       insertableCarpool.operator_journey_id,
     );
+
     const { _id, uuid, created_at, updated_at, ...carpool } = await r || {};
+
     assertObjectMatch(carpool, {
       ...insertableCarpool,
       ...updatableCarpool,
@@ -179,7 +177,7 @@ describe("CarpoolAcquistionService", () => {
     });
   });
 
-  it("Should rollback if something fail", async () => {
+  it("Should rollback if something fails", async () => {
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
     const requestRepositoryL = sinon.spy(requestRepository);
     sinon.replace(
@@ -197,7 +195,7 @@ describe("CarpoolAcquistionService", () => {
       ...insertableCarpool,
       operator_journey_id: "operator_journey_id_2",
     };
-    await assertRejects(async () => await service.registerRequest({ ...data, api_version: 3 }));
+    await assertRejects(async () => await service.registerRequest({ ...data, api_version: "3" }));
 
     assert(carpoolRepositoryL.register.calledOnce);
     assert(requestRepositoryL.save.calledOnce);
@@ -212,7 +210,7 @@ describe("CarpoolAcquistionService", () => {
     assertEquals(result.rows, []);
   });
 
-  it("Should raise error if terms is violated", async () => {
+  it("Should raise error if distance too short terms is violated", async () => {
     const carpoolL = sinon.spy(lookupRepository);
     const service = getService({
       CarpoolLookupRepository: carpoolL,
@@ -229,10 +227,7 @@ describe("CarpoolAcquistionService", () => {
       operator_trip_id: "operator_trip_id",
     };
 
-    const errors = await service.verifyTermsViolation({
-      ...data,
-      distance: 100,
-    });
+    const errors = await service.verifyTermsViolation({ ...data, distance: 100 });
     assertEquals(errors, ["distance_too_short"]);
     assertEquals(
       carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
@@ -240,6 +235,7 @@ describe("CarpoolAcquistionService", () => {
         [
           {
             identity_key: ["key_driver", "key_passenger"],
+            identity_key_or: true,
             start_date: {
               max: new Date("2024-01-01T22:59:59.999Z"),
               min: new Date("2023-12-31T23:00:00.000Z"),
@@ -251,6 +247,7 @@ describe("CarpoolAcquistionService", () => {
         [
           {
             identity_key: ["key_driver", "key_passenger"],
+            identity_key_or: false,
             start_date: {
               min: new Date("2024-01-01T02:00:00.000Z"),
               max: new Date("2024-01-01T04:30:00.000Z"),
@@ -261,6 +258,67 @@ describe("CarpoolAcquistionService", () => {
             },
             operator_trip_id: "operator_trip_id",
             operator_id: 1,
+          },
+          undefined,
+        ],
+      ],
+    );
+  });
+
+  it("Should raise error if expired terms is violated", async () => {
+    const carpoolL = sinon.spy(lookupRepository);
+    const service = getService({
+      CarpoolLookupRepository: carpoolL,
+    });
+
+    const data = {
+      operator_id: 1,
+      created_at: new Date("2024-10-24 06:37:58.000Z"),
+      start_datetime: new Date("2024-10-23 05:00:00.000Z"),
+      distance: 4_000,
+      driver_identity_key: "key_driver",
+      passenger_identity_key: "key_passenger",
+      end_datetime: new Date("2024-10-23 07:20:00.000Z"),
+      operator_trip_id: "operator_trip_id",
+    };
+
+    const errors = await service.verifyTermsViolation(data);
+    assertEquals(errors, ["expired"]);
+    assertEquals(
+      carpoolL.countJourneyBy.getCalls().map((c: any) => c.args),
+      [
+        [
+          {
+            identity_key: [
+              "key_driver",
+              "key_passenger",
+            ],
+            identity_key_or: true,
+            operator_id: 1,
+            start_date: {
+              max: new Date("2024-10-23T21:59:59.999Z"),
+              min: new Date("2024-10-22T22:00:00.000Z"),
+            },
+          },
+          undefined,
+        ],
+        [
+          {
+            end_date: {
+              max: new Date("2024-10-23T07:20:00.000Z"),
+              min: new Date("2024-10-23T04:30:00.000Z"),
+            },
+            identity_key: [
+              "key_driver",
+              "key_passenger",
+            ],
+            identity_key_or: false,
+            operator_id: 1,
+            operator_trip_id: "operator_trip_id",
+            start_date: {
+              max: new Date("2024-10-23T07:50:00.000Z"),
+              min: new Date("2024-10-23T05:00:00.000Z"),
+            },
           },
           undefined,
         ],

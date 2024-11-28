@@ -1,5 +1,5 @@
-import { RPCException } from "@/ilos/common/index.ts";
+import { Exception } from "@/ilos/common/index.ts";
 
-export function isAnRPCException(error: Error): error is RPCException {
-  return (error as RPCException).rpcError !== undefined;
+export function isAnRPCException(error: Error): error is Exception {
+  return (error as Exception).rpcError !== undefined;
 }

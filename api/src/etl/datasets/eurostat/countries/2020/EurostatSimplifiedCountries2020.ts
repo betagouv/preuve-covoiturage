@@ -19,11 +19,11 @@ export class EurostatSimplifiedCountries2020 extends AbstractDataset {
   ]);
 
   fileType: FileTypeEnum = FileTypeEnum.Geojson;
-  sheetOptions = {
+  override sheetOptions = {
     filter: "features",
   };
 
-  async load(): Promise<void> {
+  override async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
     try {
@@ -50,7 +50,7 @@ export class EurostatSimplifiedCountries2020 extends AbstractDataset {
                 FROM tmp
                 ON CONFLICT DO NOTHING
               `,
-              values: [JSON.stringify(results.value.map((r) => r.value))],
+              values: [JSON.stringify(results.value.map((r: any) => r.value))],
             };
             await connection.query(query);
           }
@@ -65,5 +65,5 @@ export class EurostatSimplifiedCountries2020 extends AbstractDataset {
     }
   }
 
-  async import(): Promise<void> {}
+  override async import(): Promise<void> {}
 }

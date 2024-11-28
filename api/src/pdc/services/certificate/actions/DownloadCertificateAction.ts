@@ -11,17 +11,14 @@ import {
   channelServiceWhitelistMiddleware,
   copyGroupIdAndApplyGroupPermissionMiddlewares,
 } from "@/pdc/providers/middleware/index.ts";
-import {
-  PdfCertProviderInterfaceResolver,
-  PdfTemplateData,
-} from "@/pdc/providers/pdfcert/index.ts";
+import { PdfCertProviderInterfaceResolver, PdfTemplateData } from "@/pdc/providers/pdfcert/index.ts";
 import { QrcodeProviderInterfaceResolver } from "@/pdc/providers/qrcode/index.ts";
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from "@/shared/certificate/download.contract.ts";
-import { alias } from "@/shared/certificate/download.schema.ts";
+} from "@/pdc/services/certificate/contracts/download.contract.ts";
+import { alias } from "@/pdc/services/certificate/contracts/download.schema.ts";
 import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/CertificateRepositoryProviderInterface.ts";
 
 @handler({
@@ -59,9 +56,7 @@ export class DownloadCertificateAction extends AbstractAction {
       params.operator_id,
     );
     const thumbnail = await this.getThumbnailBase64(certificate.operator_id);
-    const validationUrl = `${
-      this.config.get("templates.certificate.validation.url")
-    }/${params.uuid}`;
+    const validationUrl = `${this.config.get("templates.certificate.validation.url")}/${params.uuid}`;
 
     const data: PdfTemplateData = {
       title: this.config.get(
@@ -133,8 +128,7 @@ export class DownloadCertificateAction extends AbstractAction {
       body: await this.pdfCert.pdf(data),
       headers: {
         "Content-type": "application/pdf",
-        "Content-disposition":
-          `attachment; filename=covoiturage-${params.uuid}.pdf`,
+        "Content-disposition": `attachment; filename=covoiturage-${params.uuid}.pdf`,
       },
     };
   }

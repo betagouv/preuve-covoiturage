@@ -1,7 +1,4 @@
-import {
-  HandlerConfigType,
-  MethodNotFoundException,
-} from "@/ilos/common/index.ts";
+import { HandlerConfigType, MethodNotFoundException } from "@/ilos/common/index.ts";
 
 const regexp = new RegExp("^([a-z]*)@?([.0-9]*|latest):([a-zA-Z]*|\\*)$");
 
@@ -42,16 +39,14 @@ export function getSignatureByConfig(
       `Invalid method object (service:${method.service}, method:${method.method}, version:${method.version})`,
     );
   }
-  return `${method.service}@${
-    "version" in method && method.version ? method.version : "latest"
-  }:${method.method}`;
+  return `${method.service}@${"version" in method && method.version ? method.version : "latest"}:${method.method}`;
 }
 
 export function normalizeHandlerConfig(
   handlerConfig: HandlerConfigType,
 ): HandlerConfigType {
   let { service, method, version, signature } = handlerConfig;
-  const { local, queue } = handlerConfig;
+  const { local } = handlerConfig;
 
   if (
     typeof handlerConfig.signature === "string" &&
@@ -76,9 +71,7 @@ export function normalizeHandlerConfig(
   let containerSignature;
 
   if ("local" in handlerConfig) {
-    containerSignature = `HandlerInterface/${signature}/${
-      local ? "local" : "remote"
-    }${queue ? "/async" : ""}`;
+    containerSignature = `HandlerInterface/${signature}/${local ? "local" : "remote"}`;
   }
 
   return {
@@ -86,7 +79,6 @@ export function normalizeHandlerConfig(
     method,
     version,
     local,
-    queue,
     containerSignature,
   };
 }

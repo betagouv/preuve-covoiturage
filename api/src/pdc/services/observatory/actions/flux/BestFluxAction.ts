@@ -3,12 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { FluxRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/FluxRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/observatory/flux/getBestFlux.contract.ts";
-import { alias } from "@/shared/observatory/flux/getBestFlux.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/flux/getBestFlux.contract.ts";
+import { alias } from "../../contracts/flux/getBestFlux.schema.ts";
 
 @handler({
   ...handlerConfig,

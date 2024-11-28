@@ -37,7 +37,7 @@ export const description = `<p id="summary">
     <li><b>Le 25/10/2024</b></li>
   </ul>
   <p>
-  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant proposant des preuves de classe C</b>.
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant et Mobicoop proposant des preuves de classe C</b>.
   <p>
   <p>
   Klaxit ne fait plus partie des opérateurs partenaires depuis le juillet 2024

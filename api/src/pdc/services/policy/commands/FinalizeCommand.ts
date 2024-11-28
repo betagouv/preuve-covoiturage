@@ -1,17 +1,7 @@
-import {
-  command,
-  CommandInterface,
-  CommandOptionType,
-  ContextType,
-  KernelInterfaceResolver,
-  ResultType,
-} from "@/ilos/common/index.ts";
+import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
-import {
-  ParamsInterface,
-  signature as finalize,
-} from "@/shared/policy/finalize.contract.ts";
+import { ParamsInterface, signature as finalize } from "../contracts/finalize.contract.ts";
 import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
 
 interface CommandOptions {
@@ -22,11 +12,10 @@ interface CommandOptions {
   clear: boolean;
 }
 
-@command()
-export class FinalizeCommand implements CommandInterface {
-  static readonly signature: string = "campaign:finalize";
-  static readonly description: string = "Finalize stateful campaign rules";
-  static readonly options: CommandOptionType[] = [
+@command({
+  signature: "campaign:finalize",
+  description: "Finalize stateful campaign rules",
+  options: [
     {
       signature: "-f, --from <from>",
       description: "from date <YYYY-MM-DD>",
@@ -45,8 +34,9 @@ export class FinalizeCommand implements CommandInterface {
       description: "resync the max_amount_restriction keys to incentive_sum",
       default: false,
     },
-  ];
-
+  ],
+})
+export class FinalizeCommand implements CommandInterface {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(options: CommandOptions): Promise<ResultType> {

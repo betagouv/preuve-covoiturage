@@ -1,5 +1,5 @@
-import { CarpoolInterface } from "@/shared/certificate/common/interfaces/CarpoolInterface.ts";
-import { IdentityIdentifiersInterface } from "@/shared/certificate/common/interfaces/IdentityIdentifiersInterface.ts";
+import { CarpoolInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CarpoolInterface.ts";
+import { IdentityIdentifiersInterface } from "@/pdc/services/certificate/contracts/common/interfaces/IdentityIdentifiersInterface.ts";
 import { PointInterface } from "@/shared/common/interfaces/PointInterface.ts";
 export interface FindParamsInterface {
   identities: IdentityIdentifiersInterface[];
@@ -15,8 +15,7 @@ export interface CarpoolRepositoryProviderInterface {
   find(params: FindParamsInterface): Promise<CarpoolInterface[]>;
 }
 
-export abstract class CarpoolRepositoryProviderInterfaceResolver
-  implements CarpoolRepositoryProviderInterface {
+export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
     throw new Error("Method not implemented.");
   }

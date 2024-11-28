@@ -1,8 +1,4 @@
-import {
-  InsertableCarpool,
-  OperatorClass,
-  UpdatableCarpool,
-} from "../../interfaces/index.ts";
+import { InsertableCarpool, OperatorClass, UpdatableCarpool } from "../../interfaces/index.ts";
 
 export const insertableCarpool: InsertableCarpool = {
   operator_id: 1,
@@ -21,16 +17,14 @@ export const insertableCarpool: InsertableCarpool = {
   },
   distance: 3542,
   licence_plate: "ZZ-0123-AD",
-  driver_identity_key:
-    "0000000000000000000000000000000000000000000000000000000000000000",
+  driver_identity_key: "0".repeat(64),
   driver_operator_user_id: "driver_operator_user_id_1",
   driver_phone: null,
   driver_phone_trunc: null,
   driver_travelpass_name: null,
   driver_travelpass_user_id: null,
   driver_revenue: 200,
-  passenger_identity_key:
-    "1111111111111111111111111111111111111111111111111111111111111111",
+  passenger_identity_key: "1".repeat(64),
   passenger_operator_user_id: "driver_operator_user_id_2",
   passenger_phone: null,
   passenger_phone_trunc: null,

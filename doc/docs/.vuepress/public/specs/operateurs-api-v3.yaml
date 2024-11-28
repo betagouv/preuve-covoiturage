@@ -18,7 +18,7 @@ info:
     ### Précisions d'usage
 
     - Attention, l'API v3 nécessite d'envoyer des preuves au plus tard 24h après le début du trajet.
-    - Un _rate limiting_ de 20000 requêtes par minute est appliqué sur l'envoi des trajets.    
+    - Un _rate limiting_ de 20000 requêtes par minute est appliqué sur l'envoi des trajets. Les différents points d'API ont des _rate limiters_ indépendants.
 
 components:
   securitySchemes:
@@ -240,6 +240,46 @@ components:
           '$ref': "#/components/schemas/lat"
         lon:
           '$ref': "#/components/schemas/lon"
+    geo_selector:
+      type: object
+      minProperties: 0
+      maxProperties: 8
+      additionalProperties: false
+      description: Sélecteur géographique par découpage administratif
+      properties:
+        arr:
+          type: array
+          items:
+            type: string
+            description: Code consolidé de la zone géographique
+        com:
+          type: array
+          items:
+            type: string
+            description: Code INSEE de la commune
+        epci:
+          type: array
+          items:
+            type: string
+            description: Code INSEE de l'EPCI
+        aom:
+          type: array
+          items:
+            type: string
+            description: SIRET de l'AOM
+        reg:
+          type: array
+          items:
+            type: string
+            description: SIRET de la région
+        dep:
+          type: array
+          items:
+            type: string
+            description: Code INSEE du département
+      example:
+        aom: ["200067652"]
+
     datetime:
       type: string
       format: date-time
@@ -1023,6 +1063,105 @@ paths:
             'application/json':
               schema:
                 '$ref': '#/components/schemas/geopoint'
+  /exports:
+    post:
+      tags: 
+        - Export
+      security:
+        - token: []
+      summary: Exporter des trajets
+      description: |
+        ## Exporter des trajets en CSV
+
+        Les exports sont conservés 7 jours.
+        
+        La création d'un export peut prendre plusieurs minutes.
+      operationId: export:createVersionThree
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - tz
+                - start_at
+                - end_at
+                - operator_id
+              additionalProperties: false
+              properties:
+                tz: 
+                  type: string
+                  description: Fuseau horaire
+                  example: Europe/Paris
+                start_at:
+                  type: string
+                  format: date-time
+                  description: |
+                    Date de début au format ISO. Sélectionne les trajets >= date
+                  example: 2024-01-01T00:00:00+0100
+                end_at:
+                  type: string
+                  format: date-time
+                  description: |
+                    Date de fin au format ISO nécessairement supérieur à
+                    start_at. Sélectionne les trajets < date
+                  example: 2024-02-01T00:00:00+0100
+                operator_id:
+                  type: array
+                  minItems: 0
+                  maxItems: 128
+                  description: Identifiant du ou des opérateurs à exporter
+                  items:
+                    type: number
+                  example: [1, 2, 3]
+                recipients:
+                  type: array
+                  minItems: 0
+                  maxItems: 24
+                  description: |
+                    Liste des adresses email des destinataires de l'export. Ces
+                    personnes recevront une notification avec un lien de
+                    téléchargement.
+                  items:
+                    type: string
+                    format: email
+                geo_selector:
+                  '$ref': '#/components/schemas/geo_selector'
+      responses:
+        '201':
+          description: |
+            La demande d'export a été créée. Un email sera envoyé aux
+            destinataires avec un lien de téléchargement une fois l'export terminée.
+
+            En cas d'erreur, la personne qui a commandé l'export sera notifiée,
+            ainsi que l'équipe technique du RPC.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - uuid
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  target:
+                    type: string
+                    enum: [operator, territory, opendata]
+                  status:
+                    type: string
+                    enum: [pending, running, uploading, uploaded, notify, success, failure]
+                  start_at:
+                    type: string
+                    format: date-time
+                    example: 2024-01-01T00:00:00+0100
+                  end_at:
+                    type: string
+                    format: date-time
+                    example: 2024-02-01T00:00:00+0100
+      
   /certificates:
     post:
       tags:

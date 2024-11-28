@@ -1,4 +1,7 @@
 {
+  "[deno_dependencies_files]": {
+    "editor.formatOnSave": false
+  },
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
@@ -16,6 +19,9 @@
   },
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
+  "files.associations": {
+    "*deps.ts": "deno_dependencies_files"
+  },
   "files.exclude": {
     "**/*.d.ts": true,
     "**/*.postman_collection.json": true,
@@ -26,8 +32,8 @@
   "files.watcherExclude": {
     "**/dist/**": true,
     "**/node_modules": true,
-    "public/.next": true,
-    "dashboard/.angular": true
+    "dashboard/.angular": true,
+    "public/.next": true
   },
   "javascript.preferences.quoteStyle": "single",
   "search.exclude": {

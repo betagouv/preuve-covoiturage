@@ -1,5 +1,4 @@
-export const description =
-  `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description = `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 01 janvier 2024 au 31 Décembre 2025</b></p>
   
@@ -26,7 +25,25 @@ export const description =
     <li><b>De 17 à 29,5 km : 0.10 € par trajet par km par passager avec un maximum de 2,90 €</b></li>
     <li><b>De 29,5 à 60 km : 2,90 € par passager transporté</b></li>
   </ul>
-  
+
+  <p>
+    Les trajets au départ OU à l'arrivée dans Nantes Métropôle effectués au sein
+    des Pays de la Loire sont incités selon les règles suivantes dans les conditions
+    "booster" uniquement :
+  </p>
+
+  <ul>
+    <li><b>De 5 à 60 km : 0,90 € par passager transporté</b></li>
+  </ul>
+
+  <p>
+    Les mois déclarés comme <b>"booster"</b> sont les suivants :
+  </p>
+
+  <ul>
+    <!--<li>Décembre 2024</li>-->
+  </ul>
+
   <p>Les restrictions suivantes seront appliquées :</p>
   
   <ul>

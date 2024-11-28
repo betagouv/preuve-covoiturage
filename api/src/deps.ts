@@ -1,6 +1,7 @@
 // @deno-types="npm:@types/node@^20"
 import http from "node:http";
 import process from "node:process";
+export * as superstruct from "jsr:@superstruct/core@^2";
 import "npm:reflect-metadata@^0.2";
 export { Buffer } from "node:buffer";
 export {
@@ -49,19 +50,19 @@ export type {
   Response,
   Router,
 } from "npm:express@^4";
-export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/filters/FilterBase.js";
+//export type { FilterOptions as StreamJsonOptions } from "npm:stream-json@^1.8/filters/FilterBase.js";
 // @deno-types="npm:@types/express@^4"
 import express from "npm:express@^4";
 import extractZip from "npm:extract-zip@^2.0";
 // @deno-types="npm:@types/stream-json@^1.7"
-import StreamJsonFilter from "npm:stream-json@^1.8/filters/Filter.js";
-import StreamJsonStreamArray from "npm:stream-json@^1.8/streamers/StreamArray.js";
 // @deno-types="npm:@types/node-7z@^2"
 export { extractFull } from "npm:node-7z@^3.0";
 // @deno-types="npm:@types/node-7z@^2"
 export type { SevenZipOptions } from "npm:node-7z@^3";
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.2/package/types/index.d.ts"
-import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs";
+//export const jsonStreamArrayUrl = "npm:stream-json@^1.8/streamers/StreamArray.js";
+//export const jsonPickUrl = "npm:stream-json@^1.8/filters/Pick.js";
+import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
 import excel from "npm:exceljs@^4.4";
 
 import ajvErrors from "npm:ajv-errors@^3";
@@ -72,15 +73,6 @@ import jsonSchemaSecureJson from "npm:ajv@^8.12/lib/refs/json-schema-secure.json
 };
 import FormData from "npm:form-data@^4.0";
 import mapshaper from "npm:mapshaper@^0.6";
-
-export { Job, Queue, QueueScheduler, Worker } from "npm:bullmq@^1.91";
-export type {
-  JobsOptions,
-  Processor,
-  QueueOptions,
-  QueueSchedulerOptions,
-  WorkerOptions,
-} from "npm:bullmq@^1.91";
 
 export { Ajv } from "npm:ajv@^8.12";
 export type {
@@ -237,12 +229,11 @@ export {
   rateLimit,
   RateLimitRedisStore,
   RedisStore,
-  StreamJsonFilter,
-  StreamJsonStreamArray,
   xlsx,
   xss,
 };
 export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
+export * as semver from "jsr:@std/semver@1";
 export * as crypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
 export {
   decodeBase64,

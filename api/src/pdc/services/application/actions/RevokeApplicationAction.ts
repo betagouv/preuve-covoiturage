@@ -1,16 +1,9 @@
-import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { ContextType, handler } from "@/ilos/common/index.ts";
-import {
-  copyFromContextMiddleware,
-  hasPermissionByScopeMiddleware,
-} from "@/pdc/providers/middleware/index.ts";
+import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "@/shared/application/revoke.contract.ts";
-import { alias } from "@/shared/application/revoke.schema.ts";
+import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/revoke.contract.ts";
+import { alias } from "../contracts/revoke.schema.ts";
 import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/ApplicationRepositoryProviderInterface.ts";
 
 @handler({
@@ -27,8 +20,7 @@ import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/Ap
 })
 export class RevokeApplicationAction extends AbstractAction {
   constructor(
-    private applicationRepository:
-      ApplicationRepositoryProviderInterfaceResolver,
+    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
