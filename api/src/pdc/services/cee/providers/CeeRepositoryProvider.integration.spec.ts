@@ -10,10 +10,7 @@ import {
   it,
 } from "@/dev_deps.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
-import {
-  CarpoolAcquisitionStatusEnum,
-  CarpoolFraudStatusEnum,
-} from "@/pdc/providers/carpool/interfaces/index.ts";
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { config } from "../config/index.ts";
 import {
@@ -527,9 +524,7 @@ describe("CeeRepositoryProvider", () => {
     assertEquals(result1.rows[0].identity_key, app1.identity_key);
 
     // importing several times should raise an exception
-    await assertRejects(async () =>
-      repository.importSpecificApplicationIdentity(app1)
-    );
+    await assertRejects(async () => repository.importSpecificApplicationIdentity(app1));
 
     /**
      * Get a CEE application UUID where the identity_key is null
@@ -558,9 +553,7 @@ describe("CeeRepositoryProvider", () => {
     assertEquals(result2.rows[0].identity_key, app2.identity_key);
 
     // importing several times should raise an exception
-    await assertRejects(async () =>
-      repository.importStandardizedApplicationIdentity(app2)
-    );
+    await assertRejects(async () => repository.importStandardizedApplicationIdentity(app2));
   });
 
   it("Should find existing application", async () => {
@@ -580,12 +573,20 @@ describe("CeeRepositoryProvider", () => {
       values: [applicationUuid],
     });
     assertEquals(uuidResult.rowCount, 0);
+    const uuidDResult = await db.connection.getClient().query<any>({
+      text: `
+      SELECT _id as uuid
+      FROM ${repository.ceeDeletedApplicationsTable}
+      WHERE _id = $1
+      LIMIT 1
+    `,
+      values: [applicationUuid],
+    });
+    assertEquals(uuidDResult.rowCount, 1);
   });
 
   it("Should raise exception if not found", async () => {
     await assertRejects(async () => repository.findCeeByUuid(applicationUuid));
-    await assertRejects(async () =>
-      repository.deleteCeeByUuid(1, applicationUuid)
-    );
+    await assertRejects(async () => repository.deleteCeeByUuid(1, applicationUuid));
   });
 });
