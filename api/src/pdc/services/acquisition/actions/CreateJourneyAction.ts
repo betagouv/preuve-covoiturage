@@ -11,9 +11,8 @@ import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { RegisterRequest, RegisterResponse } from "@/pdc/providers/carpool/interfaces/acquisition.ts";
+import { OperatorClass } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { ParamsInterface, PayloadV3, ResultInterface } from "../contracts/create.contract.ts";
-
 import { CreateJourney } from "@/pdc/services/acquisition/dto/CreateJourney.ts";
 
 export interface ResultInterface {
@@ -62,7 +61,7 @@ export class CreateJourneyAction extends AbstractAction {
     }
   }
 
-  protected async validateParams(journey: ParamsInterface): Promise<void> {
+  protected async validateParams(journey: CreateJourney): Promise<void> {
     const now = new Date();
     const start = get(journey, "start.datetime") as Date;
     const end = get(journey, "end.datetime") as Date;
@@ -88,13 +87,13 @@ export class CreateJourneyAction extends AbstractAction {
     return get(context, "call.user.operator_id") as RegisterRequest["operator_id"];
   }
 
-  protected convertPayloadToRequest(context: ContextType, payload: PayloadV3): RegisterRequest {
+  protected convertPayloadToRequest(context: ContextType, payload: CreateJourney): RegisterRequest {
     const request: RegisterRequest = {
       api_version: context.call?.api_version_range || "3",
       operator_id: this.getOperatorId(context),
       operator_journey_id: payload.operator_journey_id,
       operator_trip_id: payload.operator_trip_id,
-      operator_class: payload.operator_class,
+      operator_class: payload.operator_class as OperatorClass,
       start_datetime: payload.start.datetime,
       start_position: {
         lat: payload.start.lat,
@@ -106,24 +105,24 @@ export class CreateJourneyAction extends AbstractAction {
         lon: payload.end.lon,
       },
       distance: payload.distance,
-      licence_plate: payload.licence_plate || null,
+      licence_plate: payload.licence_plate,
       driver_identity_key: payload.driver.identity.identity_key,
       driver_operator_user_id: payload.driver.identity.operator_user_id,
-      driver_phone: payload.driver.identity.phone || null,
-      driver_phone_trunc: payload.driver.identity.phone_trunc || null,
-      driver_travelpass_name: payload.driver.identity.travel_pass?.name || null,
-      driver_travelpass_user_id: payload.driver.identity.travel_pass?.user_id || null,
+      driver_phone: payload.driver.identity.phone,
+      driver_phone_trunc: payload.driver.identity.phone_trunc,
+      driver_travelpass_name: payload.driver.identity.travel_pass?.name,
+      driver_travelpass_user_id: payload.driver.identity.travel_pass?.user_id,
       driver_revenue: payload.driver.revenue,
       passenger_identity_key: payload.passenger.identity.identity_key,
       passenger_operator_user_id: payload.passenger.identity.operator_user_id,
-      passenger_phone: payload.passenger.identity.phone || null,
-      passenger_phone_trunc: payload.passenger.identity.phone_trunc || null,
-      passenger_travelpass_name: payload.passenger.identity.travel_pass?.name || null,
-      passenger_travelpass_user_id: payload.passenger.identity.travel_pass?.user_id || null,
+      passenger_phone: payload.passenger.identity.phone,
+      passenger_phone_trunc: payload.passenger.identity.phone_trunc,
+      passenger_travelpass_name: payload.passenger.identity.travel_pass?.name,
+      passenger_travelpass_user_id: payload.passenger.identity.travel_pass?.user_id,
       passenger_over_18: payload.passenger.identity.over_18 ?? true,
       passenger_seats: payload.passenger.seats ?? 1,
       passenger_contribution: payload.passenger.contribution,
-      passenger_payments: payload.passenger.payments || null,
+      passenger_payments: payload.passenger.payments || [],
       incentives: payload.incentives,
     };
 
