@@ -2,10 +2,9 @@ import { ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { get, omit } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
-import { OperatorClass, PatchRequest } from "@/pdc/providers/carpool/interfaces/index.ts";
+import { OperatorClass, PatchRequest, Position } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/helpers.ts";
 import { PatchJourney } from "@/pdc/services/acquisition/dto/PatchJourney.ts";
-import { Position } from "@/pdc/services/geo/contracts/GeoJson.ts";
 
 @handler({
   service: "acquisition",
