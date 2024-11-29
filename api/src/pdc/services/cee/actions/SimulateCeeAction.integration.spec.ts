@@ -11,8 +11,6 @@ import {
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
-import { signature } from "../contracts/registerApplication.contract.ts";
-import { handlerConfig } from "../contracts/simulateApplication.contract.ts";
 
 const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
@@ -23,6 +21,11 @@ const defaultContext: ContextType = {
 };
 
 describe("SimulateCeeAction", () => {
+  const signature = "cee:registerCeeApplication";
+  const handlerConfig = {
+    service: "cee",
+    method: "simulateCeeApplication",
+  };
   let kernel: KernelContext;
   let db: DbContext;
 

@@ -13,7 +13,6 @@ import {
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
 import {
   CeeJourneyTypeEnum,
   CeeLongApplicationInterface,
@@ -21,6 +20,10 @@ import {
 } from "../interfaces/CeeApplicationInterface.ts";
 
 describe("RegisterCeeAction", () => {
+  const handlerConfig = {
+    service: "cee",
+    method: "registerCeeApplication",
+  };
   let db: DbContext;
   let kernel: KernelContext;
   config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");

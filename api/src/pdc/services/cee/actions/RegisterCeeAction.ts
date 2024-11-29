@@ -14,7 +14,6 @@ import { createSignatory } from "@/lib/crypto/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { RegisterApplication } from "@/pdc/services/cee/dto/RegisterApplication.ts";
 import { castToStatusEnum } from "../../../providers/carpool/helpers/castStatus.ts";
-import { timestampSchema } from "../contracts/common/ceeSchema.ts";
 import { getDateOrFail } from "../helpers/getDateOrFail.ts";
 import { getOperatorIdOrFail } from "../helpers/getOperatorIdOrFail.ts";
 import { isBeforeOrFail, isBetweenOrFail } from "../helpers/isBeforeOrFail.ts";
@@ -123,7 +122,7 @@ export class RegisterCeeAction extends AbstractAction {
       );
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
-      `data/application_timestamp ${timestampSchema.errorMessage}`,
+      `data/application_timestamp not valid`,
     );
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
@@ -189,7 +188,7 @@ export class RegisterCeeAction extends AbstractAction {
     );
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
-      `data/application_timestamp ${timestampSchema.errorMessage}`,
+      `data/application_timestamp not valid`,
     );
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(datetime, this.timeConstraint.long);
