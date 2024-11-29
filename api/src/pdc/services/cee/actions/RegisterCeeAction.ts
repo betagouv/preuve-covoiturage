@@ -122,7 +122,7 @@ export class RegisterCeeAction extends AbstractAction {
       );
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
-      `data/application_timestamp not valid`,
+      "data/application_timestamp not valid",
     );
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
@@ -184,11 +184,11 @@ export class RegisterCeeAction extends AbstractAction {
   ): Promise<CeeApplicationResultInterface> {
     const datetime = getDateOrFail(
       params.datetime,
-      `data/datetime ${timestampSchema.errorMessage}`,
+      "data/datetime not valid",
     );
     const application_timestamp = getDateOrFail(
       params.application_timestamp,
-      `data/application_timestamp not valid`,
+      "data/application_timestamp not valid",
     );
     isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(datetime, this.timeConstraint.long);

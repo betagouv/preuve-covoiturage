@@ -8,7 +8,7 @@ import {
   S3ObjectList,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
-import { EnrichedApdfType } from "../contracts/list.contract.ts";
+import { EnrichedApdfType } from "../actions/ListAction.ts";
 import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
