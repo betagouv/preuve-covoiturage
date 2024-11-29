@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  InvalidRequestException,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
+import { ConflictException, InvalidRequestException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { Uuid } from "@/pdc/providers/carpool/interfaces/index.ts";
@@ -26,9 +21,9 @@ import {
 @provider({
   identifier: CeeRepositoryProviderInterfaceResolver,
 })
-export class CeeRepositoryProvider
-  extends CeeRepositoryProviderInterfaceResolver {
+export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly ceeApplicationsTable = "cee.cee_applications";
+  public readonly ceeDeletedApplicationsTable = "cee.cee_deleted_applications";
   public readonly errorTable = "cee.cee_application_errors";
   public readonly carpoolV2Table = "carpool_v2.carpools";
   public readonly carpoolV2StatusTable = "carpool_v2.status";
@@ -51,9 +46,7 @@ export class CeeRepositoryProvider
     ]]
       .filter((k) => !k.filter((kk) => !(kk in search)).length)
       .map((k, i) => {
-        let text = `${
-          k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(" AND ")
-        }`;
+        let text = `${k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(" AND ")}`;
         if (k[0] == "last_name_trunc") {
           text = `${text} AND ce.identity_key IS NULL`;
         }
@@ -130,12 +123,8 @@ export class CeeRepositoryProvider
         journeyType === CeeJourneyTypeEnum.Short
           ? constraint.short.standardized.year
           : constraint.long.standardized.year,
-        journeyType === CeeJourneyTypeEnum.Short
-          ? constraint.short.specific.year
-          : constraint.long.specific.year,
-        journeyType === CeeJourneyTypeEnum.Short
-          ? constraint.short.specific.after
-          : constraint.long.specific.after,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
         search.datetime,
         ...values,
       ],
@@ -272,9 +261,7 @@ export class CeeRepositoryProvider
 
     const query = {
       text: `
-        INSERT INTO ${this.ceeApplicationsTable} (${
-        fields.map(([f]) => f).join(",")
-      })
+        INSERT INTO ${this.ceeApplicationsTable} (${fields.map(([f]) => f).join(",")})
         SELECT tmp.* FROM (
           SELECT
             ${fields.map(([f, c], i) => `$${i + 1}::${c} as ${f}`).join(",")}
@@ -298,9 +285,7 @@ export class CeeRepositoryProvider
             OR cep.driving_license = tmp.driving_license
             OR cep.identity_key = tmp.identity_key
           ) AND (
-            cep.datetime >= tmp.datetime::timestamp - $${
-        values.length + 1
-      } * interval '1 year' AND
+            cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year' AND
             cep.datetime >= $${values.length + 2}
           )
 
@@ -316,22 +301,16 @@ export class CeeRepositoryProvider
             OR ced.driving_license = tmp.driving_license
             OR ced.identity_key = tmp.identity_key
           )
-          AND ced.datetime >= tmp.datetime::timestamp - $${
-        values.length + 3
-      } * interval '1 year'
+          AND ced.datetime >= tmp.datetime::timestamp - $${values.length + 3} * interval '1 year'
 
         WHERE cep._id IS NULL
           AND ced._id IS NULL
       `;
       values.push(
-        journeyType === CeeJourneyTypeEnum.Short
-          ? constraint.short.specific.year
-          : constraint.long.specific.year,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
       );
       values.push(
-        journeyType === CeeJourneyTypeEnum.Short
-          ? constraint.short.specific.after
-          : constraint.long.specific.after,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
       );
       values.push(
         journeyType === CeeJourneyTypeEnum.Short
@@ -515,9 +494,7 @@ export class CeeRepositoryProvider
           ON op._id = ce.operator_id
         LEFT JOIN ${raw(this.carpoolV2Table)} AS cc
           ON ce.operator_id = cc.operator_id AND ce.operator_journey_id = cc.operator_journey_id
-        LEFT JOIN ${
-      raw(this.carpoolV2StatusTable)
-    } AS cs ON cc._id = cs.carpool_id
+        LEFT JOIN ${raw(this.carpoolV2StatusTable)} AS cs ON cc._id = cs.carpool_id
         WHERE ce._id = ${uuid}
         LIMIT 1
     `;
@@ -532,9 +509,13 @@ export class CeeRepositoryProvider
 
   async deleteCeeByUuid(operator_id: number, uuid: string): Promise<void> {
     const query = sql`
-      DELETE FROM ${raw(this.ceeApplicationsTable)}
-      WHERE _id = ${uuid} AND operator_id = ${operator_id}
-      RETURNING _id AS uuid
+      WITH data AS (
+        DELETE FROM ${raw(this.ceeApplicationsTable)}
+        WHERE _id = ${uuid} AND operator_id = ${operator_id}
+        RETURNING *
+      )
+      INSERT INTO ${raw(this.ceeDeletedApplicationsTable)}
+      SELECT * FROM data
     `;
 
     const result = await this.connection.getClient().query(query);
