@@ -1,31 +1,34 @@
 'use client';
 import { MainNavigation } from '@codegouvfr/react-dsfr/MainNavigation';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../../providers/AuthProvider';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const {isAuth} = useAuth(); 
+  const items = isAuth ? [{
+    linkProps: {
+      href: '/activite',
+      title: 'Activité',
+      'aria-label': 'Activité'
+    },
+    text: 'Activité',
+    isActive: pathname === '/activite',
+  },
+  {
+    linkProps: {
+      href: '/administration',
+      title: 'Administration',
+      'aria-label': 'Administration'
+    },
+    text: 'Administration',
+    isActive: pathname === '/administration',
+  }] : [];
   return (
     <MainNavigation
       id='header-navigation'
       items={[
-        {
-          linkProps: {
-            href: '/activite',
-            title: 'Activité',
-            'aria-label': 'Activité'
-          },
-          text: 'Activité',
-          isActive: pathname === '/activite',
-        },
-        {
-          linkProps: {
-            href: '/administration',
-            title: 'Administration',
-            'aria-label': 'Administration'
-          },
-          text: 'Administration',
-          isActive: pathname === '/administration',
-        },
+        ...items,
         {
           linkProps: {
             href: 'https://doc.covoiturage.beta.gouv.fr/',

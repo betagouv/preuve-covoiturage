@@ -1,16 +1,11 @@
 'use client';
-import Keycloak from 'keycloak-js';
+import crypto from 'crypto';
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Config } from '../config';
-
-export const kc = new Keycloak({
-  url: Config.get<string>("auth.keycloak_url"),
-  realm: Config.get<string>("auth.keycloak_realm"),
-  clientId: Config.get<string>("auth.keycloak_id"),
-});
 
 interface AuthContextProps {
   isAuth: boolean;
+  state?: string,
+  nonce?: string,
   token?: string;
   user: {name: string, role: string};
   login: () => void;
@@ -22,46 +17,40 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
   
   const initOnce = useRef(false);
   const [isAuth, SetIsAuth] = useState(false);
+  const [state, SetState] = useState<string>();
+  const [nonce, SetNonce] = useState<string>();
   const [token, SetToken] = useState<string>();
   const [user, SetUser] = useState({
     name: '',
     role: ''
   })
   const login = () => {
-    return kc.login();
+    return '';
   };
   const logout = () => {
-    return kc.logout();
+    return '';
   };
+
+  const generateNonce = () => {
+    return crypto.randomBytes(16).toString('hex');
+  }
 
   useEffect(() => {
     const init = async () => {
       try {
         if (!initOnce.current) {
           initOnce.current = true;
-          const initialized = await kc.init({ onLoad: "check-sso" });
+          const initialized = true;
           if (initialized) {
-            SetIsAuth(kc.authenticated ?? false);
-            SetToken(kc.token);
-            SetUser({
-              name:kc.tokenParsed?.name,
-              role:kc.tokenParsed?.role,
-            });
+            SetIsAuth(true)
+            SetState(generateNonce())
+            SetNonce(generateNonce())
+            SetToken('abcdef')
+            SetUser({name:'Ludo', role:'admin'})
           }
-          // Configure le renouvellement automatique du token
-          kc.onTokenExpired = async () => {
-            try {
-              const refreshed = await kc.updateToken(30); // Renouvelle si le token expire dans moins de 30s
-              if (refreshed) SetToken(kc.token);
-            } catch (e) {
-              console.error("Failed to refresh the token", e);
-              kc.logout();
-              throw e;
-            }
-          };
         }
       } catch (e) {
-        console.error("Keycloak initialization failed", e);
+        console.error("Initialization failed", e);
         throw e;
       }
     };
@@ -69,7 +58,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
   }, []);
 
   return(
-    <AuthContext.Provider value={{isAuth, token, user, login, logout}}>
+    <AuthContext.Provider value={{isAuth, state, nonce, token, user, login, logout}}>
       {children}
     </AuthContext.Provider>
   );
