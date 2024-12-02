@@ -39,7 +39,6 @@ jobs:
       - name: Validate OpenAPI syntax
         uses: swaggerexpert/swagger-editor-validate@v1
         with:
-          swagger-editor-url: https://editor-next.swagger.io
           definition-file: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
 
       - name: Deploy
