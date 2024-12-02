@@ -1,25 +1,28 @@
 openapi: '3.0.2'
 info:
-  title: API Registre de preuve de covoiturage
+  title: Registre de preuve de covoiturage (API)
   version: "3.1"
+  termsOfService: https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/cgu-conditions-generales-dutilisation
+  contact:
+    name: Équipe technique du RPC
+    email: technique@covoiturage.beta.gouv.fr
+  license:
+    name: Licence Apache-2.0
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
   description: |
-    [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
-    | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
-    | [Licence Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE)
-    | [Documentation Générale](https://doc.covoiturage.beta.gouv.fr/)
+    L'API du Registre de preuve de covoiturage permet aux opérateurs de covoiturage
+    enregistrés comme partenaires du RPC de transmettre des trajets de covoiturage,
+    de les consulter et de les modifier.
 
-    ℹ️ _Contactez [notre équipe](mailto:technique@covoiturage.beta.gouv.fr) pour obtenir un accès développeur sur l'application._
-
-    ### Précisions d'usage
-
-    - Attention, l'API v3.1 nécessite d'envoyer des preuves au plus tard 24h après le début du trajet.
-    - Un _rate limiting_ de 20000 requêtes par minute est appliqué sur l'envoi des trajets. Les différents points d'API ont des _rate limiters_ indépendants.
+    L'API CEE permet aux opérateurs de transmettre des demandes de certificats 
+    d'économies d'énergie (CEE) pour les trajets de covoiturage éligibles.
 
 servers:
   - url: https://api.covoiturage.beta.gouv.fr/v3.1
     description: Production
   - url: https://api.demo.covoiturage.beta.gouv.fr/v3.1
     description: Pré-production
+
 
 security:
   - token: []
@@ -628,11 +631,11 @@ components:
       additionalProperties: false
       oneOf:
         - required:
-          - cee_application_type
-          - cee_application_uuid
+          - Demandes CEE_application_type
+          - Demandes CEE_application_uuid
           - identity_key
         - required:
-          - cee_application_type
+          - Demandes CEE_application_type
           - identity_key
           - phone_trunc
           - last_name_trunc
@@ -759,9 +762,16 @@ paths:
   /journeys:
     post:
       tags:
-      - Trajets
+      - Trajets courte distance
       summary: Envoyer un trajet
       description: |
+        #### Précisions d'usage :
+
+        - **Attention**, l'API v3.1 nécessite d'envoyer des preuves au plus tard 24h après le début du trajet.
+        - Un _rate limiting_ de 20000 requêtes par minute est appliqué sur l'envoi des trajets. Les différents points d'API ont des _rate limiters_ indépendants.
+
+        ---
+
         Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
 
         ### Unités de mesure
@@ -779,6 +789,7 @@ paths:
         > Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
 
         ### Validation
+        
         Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
 
         ### Vérification
@@ -797,8 +808,6 @@ paths:
         Le trajet est incohérent ou physiquement impossible.
         Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
         Voir la section du schema "anomaly_label" pour plus de détails
-      security:
-        - token: []
       operationId: acquisition:create
       requestBody:
         required: true
@@ -888,7 +897,7 @@ paths:
             Le trajet est déjà enregistré.
     get:
       tags:
-      - Trajets
+      - Trajets courte distance
       summary: Liste des trajets
       description: |
         La liste est toujours ordonnée de manière antechronologique.
@@ -950,9 +959,8 @@ paths:
           '$ref': '#/components/schemas/operator_journey_id'
     get:
       tags:
-      - Trajets
-      security:
-        - token: []
+      - Trajets courte distance
+
       operationId: acquisition:status
       summary: Vérifier le statut d'un trajet envoyé
       description: |
@@ -1041,9 +1049,8 @@ paths:
                 error: Not found
     patch:
       tags:
-      - Trajets
-      security:
-        - token: []
+      - Trajets courte distance
+
       summary: Mettre à jour un trajet
       description: |
         Permet de mettre à jour un trajet qui est en erreur suite à un problème de validation sur le payload. Par exemple suite à un problème de validation sur les coordonnées géographiques envoyées
@@ -1088,7 +1095,7 @@ paths:
           '$ref': '#/components/schemas/operator_journey_id'
     post:
       tags:
-      - Trajets
+      - Trajets courte distance
       summary: Invalider un trajet envoyé
       description: |
         Annule un trajet déjà envoyé dans le registre.
@@ -1097,8 +1104,7 @@ paths:
 
         Le `code` est un champ libre de 32 caractères maximum. Obligatoire.
         Le `message` est un champ libre pour expliquer la raison de l'invalidation. Optionnel.
-      security:
-        - token: []
+
       operationId: acquisition:cancel
       requestBody:
         required: true
@@ -1150,8 +1156,7 @@ paths:
       tags:
         - Campagnes
       summary: Simuler une incitation sur un trajet
-      security:
-        - token: []
+
       requestBody:
         required: true
         content:
@@ -1196,8 +1201,7 @@ paths:
     get:
       tags:
       - Géographie
-      security:
-        - token: []
+
       summary: Calcul théorique de la distance et de la durée
       parameters:
         - name: start
@@ -1229,8 +1233,7 @@ paths:
     get:
       tags:
       - Géographie
-      security:
-        - token: []
+
       summary: Geocoding à partir d'une adresse litérale
       parameters:
         - name: literal
@@ -1258,8 +1261,7 @@ paths:
     get:
       tags:
       - Géographie
-      security:
-        - token: []
+
       summary: Geocoding à partir d'un code insee
       parameters:
         - name: code
@@ -1281,8 +1283,7 @@ paths:
     post:
       tags: 
         - Export
-      security:
-        - token: []
+
       summary: Exporter des trajets
       description: |
         ## Exporter des trajets en CSV
@@ -1379,10 +1380,9 @@ paths:
   /certificates:
     post:
       tags:
-      - Attestations
-      security:
-        - token: []
-      summary: Créer un certificat
+      - Attestations opérateurs (déprécié)
+
+      summary: Créer une attestation
       description: |
         ## Configuration de la requête
 
@@ -1393,8 +1393,6 @@ paths:
         4. Les dates de début et de fin sont optionnelles
         5. La date de fin la plus récente possible est J-6
         6. La date de début la plus ancienne est le 1er janvier de l'année précédente
-
-        > Voir la [création avancée](#creation-avancee) pour le détail des options
 
         ## Création simple
 
@@ -1508,14 +1506,14 @@ paths:
     parameters:
       - name: uuid
         in: path
-        description: Identifiant du certificat précédemment créé.
+        description: Identifiant de l'attestation précédemment créé.
         required: true
         schema:
           type: string
           format: uuid
     post:
       tags:
-      - Attestations
+      - Attestations opérateurs (déprécié)
       summary: Télécharger une attestation
       description: |
         ## Upload du logo opérateur
@@ -1536,8 +1534,7 @@ paths:
         Ces meta-données optionnelles ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
 
         Le PDF généré n'est pas stocké sur nos serveurs. L'appel d'API vous renvoie un fichier binaire que vous sauvegardez de votre côté. Vous pouvez générer le PDF d'une attestation plusieurs fois de suite.
-      security:
-        - token: []
+
       operationId: certificate:download
       requestBody:
         required: true
@@ -1612,7 +1609,7 @@ paths:
     parameters:
       - name: uuid
         in: path
-        description: Identifiant du certificat précédemment créé.
+        description: Identifiant de l'attestation précédemment créé.
         required: true
         schema:
           type: string
@@ -1620,10 +1617,9 @@ paths:
         example: 9415300a-7a51-4296-96d1-68636e46485d
     get:
       tags:
-      - Attestations
-      summary: Vérifier un certificat
-      security:
-        - token: []
+      - Attestations opérateurs (déprécié)
+      summary: Vérifier une attestation
+
       operationId: certificate:verify
       parameters: []
       responses:
@@ -1710,12 +1706,11 @@ paths:
   /policies/cee:
     post:
       tags:
-      - CEE
+      - Demandes CEE
       summary: Enregistrer une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:register
       requestBody:
         required: true
@@ -1768,12 +1763,11 @@ paths:
   /policies/cee/simulate:
     post:
       tags:
-      - CEE
+      - Demandes CEE
       summary: Simuler une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:simulate
       requestBody:
         required: true
@@ -1818,12 +1812,11 @@ paths:
   /policies/cee/import:
     post:
       tags:
-      - CEE
+      - Demandes CEE
       summary: Importez des demandes CEE existantes par lot
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:import
       requestBody:
         required: true
@@ -1844,12 +1837,11 @@ paths:
   /policies/cee/import/identity:
     post:
       tags:
-      - CEE
-      summary: Importez les clées d'identité des demandes CEE existantes par lot
+      - Demandes CEE
+      summary: Importez les clés d'identité des demandes CEE existantes par lot
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:import:identity
       requestBody:
         required: true
@@ -1870,12 +1862,11 @@ paths:
   /policies/cee/{uuid}:
     get:
       tags:
-      - CEE
-      summary: Chercher une demande CEE
+      - Demandes CEE
+      summary: Rechercher une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:find
       parameters:
         - name: uuid
@@ -1897,12 +1888,11 @@ paths:
           description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur
     delete:
       tags:
-      - CEE
+      - Demandes CEE
       summary: Supprimer une demande CEE
       description: |
         L'API peut être utilisée jusqu'à 20.000x par minute.
-      security:
-        - token: []
+
       operationId: policy:cee:delete
       parameters:
         - name: uuid
