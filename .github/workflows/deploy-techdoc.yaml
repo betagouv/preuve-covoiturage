@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
   release:
     types: [published]
+  push:
+    branches:
+      - chore/add-bump-action
 jobs:
   deploy-doc:
     name: Deploy
