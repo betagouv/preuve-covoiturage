@@ -1,4 +1,8 @@
 import Analytics from '@/components/layout/Analytics';
+import { AppFooter } from '@/components/layout/AppFooter';
+import { AppHeader } from '@/components/layout/AppHeader';
+import { Follow } from '@/components/layout/Follow';
+import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { Skiplinks } from '@/components/layout/Skiplinks';
 import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
@@ -45,7 +49,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <DsfrProvider>
             <MuiDsfrThemeProvider>
               <Skiplinks />
-              {children}
+              <AppHeader />
+              <main tabIndex={-1}>
+                {children}
+                <ScrollToTop />
+                <Follow />
+              </main>
+              <AppFooter />
             </MuiDsfrThemeProvider>
           </DsfrProvider>
         </AuthProvider>
