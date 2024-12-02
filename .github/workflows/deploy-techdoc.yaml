@@ -1,0 +1,50 @@
+name: Deploy API documentation
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+  push:
+    branches:
+      - chore/add-bump-action
+jobs:
+  deploy-doc:
+    name: Deploy
+    runs-on: ubuntu-latest
+  
+    # add files here
+    strategy:
+      matrix:
+        include:
+          - doc: api
+            version: v3.1
+            token: BUMP_TOKEN_API
+          - doc: api
+            version: v3.0
+            token: BUMP_TOKEN_API
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify OpenAPI files
+        run: |
+          file="api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml"
+          if [ ! -f "$file" ]; then
+            echo "Error: $file does not exist"
+            exit 1
+          fi
+
+      - name: Validate OpenAPI syntax
+        uses: swaggerexpert/swagger-editor-validate@v1
+        with:
+          definition-file: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
+
+      - name: Deploy
+        uses: bump-sh/github-action@v1
+        with:
+          doc: ${{ matrix.doc }}
+          token: ${{ secrets[matrix.token] }}
+          file: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
+          branch: ${{ matrix.version }}
