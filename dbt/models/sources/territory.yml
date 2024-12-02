@@ -4,6 +4,17 @@ sources:
   - name: territory
     schema: territory
     tables:
+      - name: territory_group_selector
+        columns:
+          - name: territory_group_id
+            description: ''
+            data_type: integer
+          - name: selector_type
+            description: ''
+            data_type: character varying
+          - name: selector_value
+            description: ''
+            data_type: character varying
       - name: territories
         columns:
           - name: _id
