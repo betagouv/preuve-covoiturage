@@ -37,9 +37,9 @@ jobs:
           fi
 
       - name: Validate OpenAPI syntax
-        uses: swagger-api/validator-action@v1
+        uses: swaggerexpert/swagger-editor-validate@v1
         with:
-          files: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
+          definition-file: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
 
       - name: Deploy
         uses: bump-sh/github-action@v1
