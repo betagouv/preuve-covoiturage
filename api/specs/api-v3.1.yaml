@@ -267,7 +267,7 @@ components:
     operator_journey_id:
       type: string
       description: Identifiant unique du trajet envoyé par l'opérateur. Attention, cela correspond au `journey_id` de la version 2 de l'API.
-      pattern: /^[a-z0-9]{1,256}$/
+      pattern: ^[a-z0-9]{1,256}$
       minLength: 1
       maxLength: 256
     status:
@@ -494,16 +494,18 @@ components:
       minLength: 64
       maxLength: 64
       description: |
-        Correspond au SHA d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
-        - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
-        - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe (regexp: [A-Z ]*)
-        Par exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit "+33701020304-D HERUG DE L HERAULT"
+        Correspond au SHA d'une chaîne concaténée tel que : `sha256({phone_number}-{last_name})` où :
+        
+        - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : `+33601020304`
+        - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe :  
+           Regexp: `[A-Z ]*`  
+           Exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit `+33701020304-D HERUG DE L HERAULT`
     travel_pass:
       type: object
       description: |
         Numéro de carte de transport (TCL, Navigo, Trabool, etc.) de l'occupant.
         Obligatoire si l'information est disponible.
-        Actuellement supporté: Navigo
+        Actuellement supporté: navigo
       additionalProperties: false
       required:
         - name
@@ -524,14 +526,14 @@ components:
       example: '+33601020304, +590690101010'
     phone_trunc:
       type: string
-      pattern: /^\+[0-9]{8,12}$/
+      pattern: ^\+[0-9]{8,12}$
       minLength: 10
       maxLength: 14
       description: Numéro de téléphone au format ITU-T E.164 tronqué des 2 derniers chiffres
       example: '+336010203'
     last_name_trunc:
       type: string
-      pattern: /^[A-Z ]{3}$/
+      pattern: ^[A-Z ]{3}$
       minLength: 3
       maxLength: 3
       description: |
@@ -551,25 +553,25 @@ components:
           - type: string
             description: Numéro de permis de conduire composé de 12 chiffres après 1975.
             example: '051227308989'
-            pattern: /^[0-9]{12}$/
+            pattern: ^[0-9]{12}$
             minLength: 12
             maxLength: 12
           - type: string
             description: Numéro de permis de conduire composé de 1 à 15 caractères suivis de 4 chiffres avant 1975.
             example: '822146819'
-            pattern: /^[A-Z0-9]{1,15}[0-9]{4}$/
+            pattern: ^[A-Z0-9]{1,15}[0-9]{4}$
             minLength: 5
             maxLength: 19
           - type: string
             description: Numéro de permis de conduire plus anciens composé de 1 à 15 caractères.
             example: '123456A'
-            pattern: /^[A-Z0-9]{1,15}$/
+            pattern: ^[A-Z0-9]{1,15}$
             minLength: 1
             maxLength: 15
           - type: string
             description: Numéro de permis étranger préfixé de l'indicatif '99-'.
             example: '99-X23836'
-            pattern: /^99-.*$/
+            pattern: ^99-.*$
             minLength: 4
             maxLength: 64
     operator_user_id:
@@ -1266,7 +1268,7 @@ paths:
               properties:
                 code:
                   type: string
-                  pattern: /^[0-9A-Za-z_-]{0,32}$/
+                  pattern: ^[0-9A-Za-z_-]{0,32}$
                 message:
                   type: string
                   maxLength: 512
