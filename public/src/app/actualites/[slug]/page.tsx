@@ -1,11 +1,14 @@
+import MDContent from "@/components/common/MDContent";
 import PageTitle from "@/components/common/PageTitle";
 import Share from "@/components/common/Share";
 import { Config } from "@/config";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
+import { ButtonProps } from '@codegouvfr/react-dsfr/Button';
+import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
-import { fetchAPI, shorten } from "@/helpers/cms";
-import MDContent from "@/components/common/MDContent";
+import { Button } from '../../../interfaces/cms/collectionsInterface';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -122,6 +125,30 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
             <MDContent source={data.attributes.content} />
           </div>
         </div>
+      }
+      {
+        data.attributes.buttons && 
+        <ButtonsGroup
+          alignment={'right'}
+          inlineLayoutWhen={'always'}
+          buttons={data.attributes.buttons.map((b:Button) => {
+            return {
+              children:b.title,
+              linkProps: b.url.startsWith('http') ? {
+                href: b.url,
+                title:`${b.title} - nouvelle fenêtre` ,
+                "aria-label":`${b.title} - nouvelle fenêtre`,
+                target:'_blank',
+                rel: "noopener noreferrer"
+              } : {
+                href: b.url,
+              },
+              iconId: b.icon ?? '',
+              priority: b.color ?? 'primary',
+            } 
+          }) as [ButtonProps, ...ButtonProps[]]}
+          buttonsIconPosition={'right'}
+        />
       }
       </div>
     </article>
