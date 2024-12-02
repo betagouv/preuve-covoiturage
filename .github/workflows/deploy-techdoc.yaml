@@ -12,6 +12,8 @@ jobs:
   deploy-doc:
     name: Deploy
     runs-on: ubuntu-latest
+  
+    # add files here
     strategy:
       matrix:
         include:
@@ -21,9 +23,7 @@ jobs:
           - doc: api
             version: v3.0
             token: BUMP_TOKEN_API
-          - doc: cee
-            version: v3.0
-            token: BUMP_TOKEN_CEE
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
