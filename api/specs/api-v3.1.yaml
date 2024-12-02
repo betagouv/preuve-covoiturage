@@ -42,12 +42,11 @@ tags:
       Dans le cadre des fiches standardisées et bonifiées pour le covoiturage
       courte et longue distance, le Registre de preuve de covoiturage met à
       disposition des opérateurs de covoiturage, une API (Application
-      Programming Interface, voir [qu'est-ce qu'une API
-      ?](https://api.gouv.fr/guides/api-definition)) permettant à ces derniers
-      de vérifier en partie l'éligibilité d'un dossier de demande CEE
-      (vérification de l'historique et du dédoublonnage) et de récolter des
-      données du RPC nécessaires à la bonne constitution du dossier avant envoi
-      de celui-ci par l'opérateur de covoiturage au PNCEE.
+      Programming Interface permettant à ces derniers de vérifier en partie
+      l'éligibilité d'un dossier de demande CEE (vérification de l'historique et
+      du dédoublonnage) et de récolter des données du RPC nécessaires à la bonne
+      constitution du dossier avant envoi de celui-ci par l'opérateur de
+      covoiturage au PNCEE.
 
       Cette API a pour but de fluidifier et de fiabiliser les demandes de
       dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en
@@ -73,11 +72,15 @@ tags:
       - siret de l'opérateur ;
       - type de trajet (short ou long) ;
       - numéro de permis ;
-      - horodatage au format ISO 8601 UTC (ex: "2022-11-22T08:54:19Z").
+      - horodatage au format _ISO 8601 UTC_ (ex: `2022-11-22T08:54:19Z``).
 
-      Ces informations sont utilisées pour former une chaîne de caractères comme suit "siret/type/permis/horadatage", exemple : "13002526500013/short/051227308989/2022-11-22T08:54:19Z". Cette chaîne est hachée via un SHA512 et constitue le message.
+      Ces informations sont utilisées pour former une chaîne de caractères comme
+      suit `siret/type/permis/horadatage``,  
+      exemple : `13002526500013/short/051227308989/2022-11-22T08:54:19Z`. Cette
+      chaîne est hachée via un SHA512 et constitue le message.
 
-      Ce message est signé via une clé RSA et peut donc être vérifié avec la clé publique du Registre ci après :
+      Ce message est signé via une clé RSA et peut donc être vérifié avec la clé
+      publique du Registre ci-après :
 
       ```
       -----BEGIN PUBLIC KEY-----
@@ -94,7 +97,6 @@ tags:
       vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
       7Ul3uRRHi8Nb63mjjmRmd2MCAQM=
       -----END PUBLIC KEY-----
-
       ```
 
       ## Technique de dédoublonnage
@@ -1862,8 +1864,8 @@ paths:
         - Si une demande a déjà été enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistrement a été fait.
         - Si le trajet envoyé n'est pas trouvé, alors une réponse 404 est retournée.
        
-        Ce point d'API est consultable à $J+7$ pour la courte et la longue
-        distance, $J$ étant la date de réalisation du trajet. Il est prévu que
+        Ce point d'API est consultable à `J+7` pour la courte et la longue
+        distance, `J` étant la date de réalisation du trajet. Il est prévu que
         ce délai soit réduit à 48h après la réalisation du trajet suite au
         déploiement de l’API V3.
       operationId: policy:cee:register
