@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+openapi: 3.1.0
 info:
   title: Registre de preuve de covoiturage (API)
   version: "3.1"
@@ -27,9 +27,29 @@ servers:
 security:
   - token: []
 
-x-topic:
-  - name: Accès à l'API
+tags:
+  - name: Trajets courte distance
     description: |
+      Trajets de covoiturage de moins de 80 km.
+  - name: Campagnes
+    description: |
+      Campagnes de covoiturage.
+  - name: Export
+    description: |
+      Export de données.
+  - name: Attestations opérateurs (déprécié)
+    description: |
+      Attestations des opérateurs de covoiturage.
+  - name: Demandes CEE
+    description: |
+      Demandes de certificats d'économies d'énergie (CEE).
+  - name: Géographie
+    description: |
+      Requêtes géographiques.
+
+x-topics:
+  - title: Accès à l'API
+    content: |
       Envoyer un trajet de covoiturage à l’API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
 
       - 1️⃣ Une entité “**opérateur de covoiturage**” est créée sur l’application du registre.
@@ -40,14 +60,14 @@ x-topic:
           1. Production : [https://api.covoiturage.beta.gouv.fr](https://api.covoiturage.beta.gouv.fr/)
           2. Pré-production : [https://api.demo.covoiturage.beta.gouv.fr](https://api.demo.covoiturage.beta.gouv.fr/)
 
-  - name: Accéder à l’application du Registre
-    description: |
+  - title: Accéder à l’application du Registre
+    content: |
       Afin de valider les critères 1️⃣ et 2️⃣ , veuillez contacter [l'équipe du
       Registre](mailto:contact@covoiturage.beta.gouv.fr) qui vous ouvrira un
       accès à l'application.
 
-  - name: Créer un token applicatif
-    description: |
+  - title: Créer un token applicatif
+    content: |
       Cette manipulation est réalisable, uniquement pour les utilisateurs dits
       *administrateurs*, sur l'interface applicative du Registre de preuve de
       covoiturage.
@@ -60,17 +80,17 @@ x-topic:
       Ce token ne pourra pas être ré-affiché ni récupéré. Si le token est perdu, il doit être recréé par la même procédure.
       :::
 
-  - name: Authentification
-    description: |
+  - title: Authentification
+    content: |
       Le token applicatif donné lors de la création de l’application doit être
       envoyé dans les _Headers_ des requêtes serveurs comme ceci :
-
+    example: |
       ```
       Authorization: Bearer {token}
       ```
 
-  - name: Rate limiting
-    description: |
+  - title: Rate limiting
+    content: |
       Nous appliquons une limite au nombre de requêtes HTTP qui peuvent
       être effectuées dans une période donnée. Lorsque cette limite est
       atteinte, notre API renverra une erreur `429 Too Many Requests`.
