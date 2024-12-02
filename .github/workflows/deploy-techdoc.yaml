@@ -1,14 +1,12 @@
 name: Deploy API documentation
 permissions:
   contents: read
-  pull-requests: write
 on:
   workflow_dispatch:
   release:
     types: [published]
 jobs:
   deploy-doc:
-    if: ${{ github.event_name == 'push' }}
     name: Deploy
     runs-on: ubuntu-latest
     strategy:
@@ -26,6 +24,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Verify OpenAPI files
+        run: |
+          file="api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml"
+          if [ ! -f "$file" ]; then
+            echo "Error: $file does not exist"
+            exit 1
+          fi
+
+      - name: Validate OpenAPI syntax
+        uses: swagger-api/validator-action@v1
+        with:
+          files: api/specs/${{ matrix.doc }}-${{ matrix.version }}.yaml
+
       - name: Deploy
         uses: bump-sh/github-action@v1
         with:
