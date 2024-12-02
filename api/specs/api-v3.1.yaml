@@ -32,73 +32,39 @@ tags:
       Trajets de covoiturage de moins de 80 km.
   - name: Demandes CEE
     description: |
-      > Définitions :
+      > **Définitions :**
       > 
       > - CEE : Crédits d'Economie d'Energie
       > - PNCEE : Pôle National des Crédits d'Economie d'Energie
 
       ## Présentation
 
-      Dans le cadre des fiches standardisées et bonifiées pour le covoiturage courte et longue distance, le Registre de preuve de covoiturage met à disposition des opérateurs de covoiturage, une API (Application Programming Interface, voir [qu'est-ce qu'une API ?](https://api.gouv.fr/guides/api-definition)) permettant à ces derniers de vérifier en partie l'éligibilité d'un dossier de demande CEE (vérification de l'historique et du dédoublonnage) et de récolter des données du RPC nécessaires à la bonne constitution du dossier avant envoi de celui-ci par l'opérateur de covoiturage au PNCEE.
+      Dans le cadre des fiches standardisées et bonifiées pour le covoiturage
+      courte et longue distance, le Registre de preuve de covoiturage met à
+      disposition des opérateurs de covoiturage, une API (Application
+      Programming Interface, voir [qu'est-ce qu'une API
+      ?](https://api.gouv.fr/guides/api-definition)) permettant à ces derniers
+      de vérifier en partie l'éligibilité d'un dossier de demande CEE
+      (vérification de l'historique et du dédoublonnage) et de récolter des
+      données du RPC nécessaires à la bonne constitution du dossier avant envoi
+      de celui-ci par l'opérateur de covoiturage au PNCEE.
 
-      Cette API a pour but de fluidifier et de fiabiliser les demandes de dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en cas de doublon par exemple.
+      Cette API a pour but de fluidifier et de fiabiliser les demandes de
+      dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en
+      cas de doublon par exemple.
 
       ## Ressources utiles
 
       - [Arrêté de création des opérations standardisées CEE covoiturage (fonctionnement non bonifié)](https://www.legifrance.gouv.fr/jorf/id/JORFSCTA000046374229)
       - Arrêté de création de la bonification : en cours
 
-      ## Objectifs de l'API
+      ## Objectifs
 
       - vérification de l'éligibilité d'un usager à l'opération standardisée :
           - vérification de l'historique : invalidation des usagers ayant déjà bénéficié d'opérations spécifiques 3 ans avant la réalisation du trajet. Comparatif sur la base des données transmises par les opérateurs
           - vérification dédoublonnage : invalidation des usagers ayant déjà bénéficié de l'opération standardisée quelque soit la plateforme de covoiturage utilisée.
       - confirmation de l'éligibilité et mise à disposition d'éléments constitutifs du dossier de demande de prime
           - transmission des éléments suivants : journey_id; status et token (signature RPC)
-
-      ## Utilisation de l'API
-
-      L'utilisation de l'API nécessite la possession d'un token applicatif comme décrit dans [la documentation de l'API de preuve](https://www.notion.so/operateurs/acces.html). 2 environnements seront alors accessibles :
-
-      - 1 environnement de pré-production pour la réalisation des tests
-
-      > Pré-production : https://api.demo.covoiturage.beta.gouv.fr (opens new window)
-      > 
-      - 1 environnement de production
-
-      > Production : https://api.covoiturage.beta.gouv.fr (opens new window)
-      > 
-
-      ## Fonctionnalité de l'API
-
-      Trois fonctionnalités sont proposées :
-
-      ### 1. Simuler une demande CEE
-
-      > Possibilité de simuler une demande avant la réalisation du trajet par un usager afin de vérifier partiellement la pré-éligibilité de ce dernier (vérification de l'historique mais pas du dédoublonnége).
-      Seront nécessaire : numéros de permis de conduire, trois premières lettres du nom de famille et 8 premiers chiffres du numéro de téléphone. Cf la documentation /policies/cee/simulate.
-      > 
-
-      ### 2. Enregistrer une demande CEE
-
-      > Vérification complète de l'éligibilité de l'usager (historique et dédoublonnage) et enregistrement de la demande CEE dans l'API CEE :
-      > 
-      > - Si la conformité de la demande est valide, alors une réponse 201 est retournée validant l'enregistrement de la demande.
-      > - Si une demande a déjà été enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistremennt a été fait.
-      > - Si le trajet envoyé n'est pas trouvé, alors une réponse 404 est retournée.
-
-      > Ce point d'API est consultable à J+7 pour la courte et la longue distance, J étant la date de réalisation du trajet.
-      Il est prévu que ce délai soit réduit à 48h après la réalisation du trajet suite au déploiement de l’API V3.
-      > 
-
-      ### 3. Importer des demandes CEE existantes par lot
-
-      > Envoi par chaque opérateur concerné de l'historique des bénéficiaires d'opérations spécifiques sur les 3 années précédents 2023. Pour chaque bénéficiaires les informations suivantes seront requises : phone_trunc, last_name_trunc, datetime et journey_type
-      À noter que ce point d'API ne sera peut-être pas mis en place et remplacé par un CSV standardisé.
-      > 
-
-      > Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter l'historique au registre au plus tôt.
-      > 
 
       ## Vérifier un token
 
@@ -133,15 +99,23 @@ tags:
 
       ## Technique de dédoublonnage
 
-      Le processus de dédoublonnage permet d'identifier les bénéficiaires potentiellement en double dans la base de données. Il s'appuie sur plusieurs critères pour comparer les enregistrements et déterminer s'ils correspondent à la même personne.
+      Le processus de dédoublonnage permet d'identifier les bénéficiaires
+      potentiellement en double dans la base de données. Il s'appuie sur
+      plusieurs critères pour comparer les enregistrements et déterminer s'ils
+      correspondent à la même personne.
 
-      L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un des champs suivants est similaire avec un enregistrement existant, la tentative d'enregistrement est considéré comme un doublon.
+      L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un
+      des champs suivants est similaire avec un enregistrement existant, la
+      tentative d'enregistrement est considéré comme un doublon.
 
       - Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les bénéficiaires avec certitude.
       - Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un bénéficiaire, elle est utilisée pour le dédoublonner de manière unique.
       - Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaison n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
 
-      Cette correspondance est faite de manière distincte sur la courte et la longue distance. Elle est également limitée dans le temps à la date de l'enregistrement qui a eu une correspondance en fonction de la nature de l'opération (spécifique ou standardisée).
+      Cette correspondance est faite de manière distincte sur la courte et la
+      longue distance. Elle est également limitée dans le temps à la date de
+      l'enregistrement qui a eu une correspondance en fonction de la nature de
+      l'opération (spécifique ou standardisée).
 
   - name: Export
     description: |
@@ -165,9 +139,6 @@ x-topics:
       - 2️⃣ Un utilisateur appartenant à cet opérateur de covoiturage est **administrateur**.
       - 3️⃣ L’administrateur opérateur **crée un token applicatif**.
       - 4️⃣ Ce token applicatif est **installé sur le serveur de l’opérateur** qui va envoyer les données et sera passé dans le *Header* de chacune des requêtes.
-      - 5️⃣ Le serveur peut **communiquer** avec les serveurs suivants :
-          1. Production : [https://api.covoiturage.beta.gouv.fr](https://api.covoiturage.beta.gouv.fr/)
-          2. Pré-production : [https://api.demo.covoiturage.beta.gouv.fr](https://api.demo.covoiturage.beta.gouv.fr/)
 
   - title: Accéder à l’application du Registre
     content: |
@@ -185,18 +156,7 @@ x-topics:
       2. Donner un nom à ce token ;
       3. Copier le token généré et le conserver de manière sécurisée. **Il devra être envoyé dans le header de chaque requête serveur.**
 
-      :::
-      Ce token ne pourra pas être ré-affiché ni récupéré. Si le token est perdu, il doit être recréé par la même procédure.
-      :::
-
-  - title: Authentification
-    content: |
-      Le token applicatif donné lors de la création de l’application doit être
-      envoyé dans les _Headers_ des requêtes serveurs comme ceci :
-    example: |
-      ```
-      Authorization: Bearer {token}
-      ```
+      > ⚠️ Ce token ne pourra pas être ré-affiché ni récupéré. Si le token est perdu, il doit être recréé par la même procédure.
 
   - title: Rate limiting
     content: |
@@ -1895,8 +1855,17 @@ paths:
       - Demandes CEE
       summary: Enregistrer une demande CEE
       description: |
-        L'API peut être utilisée jusqu'à 20.000x par minute.
-
+        Vérification complète de l'éligibilité de l'usager (historique et
+        dédoublonnage) et enregistrement de la demande CEE dans l'API CEE :
+        
+        - Si la conformité de la demande est valide, alors une réponse 201 est retournée validant l'enregistrement de la demande.
+        - Si une demande a déjà été enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistrement a été fait.
+        - Si le trajet envoyé n'est pas trouvé, alors une réponse 404 est retournée.
+       
+        Ce point d'API est consultable à $J+7$ pour la courte et la longue
+        distance, $J$ étant la date de réalisation du trajet. Il est prévu que
+        ce délai soit réduit à 48h après la réalisation du trajet suite au
+        déploiement de l’API V3.
       operationId: policy:cee:register
       requestBody:
         required: true
@@ -1952,8 +1921,12 @@ paths:
       - Demandes CEE
       summary: Simuler une demande CEE
       description: |
-        L'API peut être utilisée jusqu'à 20.000x par minute.
-
+        Possibilité de simuler une demande avant la réalisation du trajet par un
+        usager afin de vérifier partiellement la pré-éligibilité de ce dernier
+        (vérification de l'historique mais pas du dédoublonnége).
+        
+        Seront nécessaire : numéros de permis de conduire, trois premières
+        lettres du nom de famille et 8 premiers chiffres du numéro de téléphone.
       operationId: policy:cee:simulate
       requestBody:
         required: true
@@ -2001,8 +1974,14 @@ paths:
       - Demandes CEE
       summary: Importez des demandes CEE existantes par lot
       description: |
-        L'API peut être utilisée jusqu'à 20.000x par minute.
-
+        Envoi par chaque opérateur concerné de l'historique des bénéficiaires
+        d'opérations spécifiques sur les 3 années précédents 2023. Pour chaque
+        bénéficiaires les informations suivantes seront requises : phone_trunc,
+        last_name_trunc, datetime et journey_type À noter que ce point d'API ne
+        sera peut-être pas mis en place et remplacé par un CSV standardisé.
+        
+        Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter
+        l'historique au registre au plus tôt.
       operationId: policy:cee:import
       requestBody:
         required: true
