@@ -3,6 +3,9 @@ permissions:
   contents: read
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - chore/add-bump-action
   release:
     types: [published]
 jobs:
