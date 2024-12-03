@@ -1,29 +1,45 @@
 'use client';
 import crypto from 'crypto';
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import { Config } from '../config';
 
 interface AuthContextProps {
   isAuth: boolean;
   state?: string,
   nonce?: string,
-  token?: string;
-  user: {name: string, role: string};
-  login: () => void;
-  logout: () => void;
+  code?: string,
+  iss?: string,
+  user: {name: string, role: string},
+  getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void,
+  login: () => void,
+  logout: () => void,
 }
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export function AuthProvider({children}: { children: React.ReactNode}) {
   
-  const initOnce = useRef(false);
   const [isAuth, SetIsAuth] = useState(false);
   const [state, SetState] = useState<string>();
   const [nonce, SetNonce] = useState<string>();
-  const [token, SetToken] = useState<string>();
+  const [code, SetCode] = useState<string>();
   const [user, SetUser] = useState({
     name: '',
     role: ''
   })
+
+  const getCode = (stateValue: string | null, codeValue: string | null, issValue: string | null) => {
+    try {
+      console.debug(state)
+      console.debug(stateValue)
+      if(stateValue === state && issValue === `${Config.get('auth.domain')}/api/v2`) {
+        console.debug('toto')
+        SetCode(codeValue ?? undefined);
+      }
+    } catch (e) {
+      console.error("Code validation failed", e);
+      throw e;
+    }
+  };
   const login = () => {
     return '';
   };
@@ -31,34 +47,12 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     return '';
   };
 
-  const generateNonce = () => {
+  const generateString = () => {
     return crypto.randomBytes(16).toString('hex');
   }
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        if (!initOnce.current) {
-          initOnce.current = true;
-          const initialized = true;
-          if (initialized) {
-            SetIsAuth(true)
-            SetState(generateNonce())
-            SetNonce(generateNonce())
-            SetToken('abcdef')
-            SetUser({name:'Ludo', role:'admin'})
-          }
-        }
-      } catch (e) {
-        console.error("Initialization failed", e);
-        throw e;
-      }
-    };
-    init();
-  }, []);
-
   return(
-    <AuthContext.Provider value={{isAuth, state, nonce, token, user, login, logout}}>
+    <AuthContext.Provider value={{isAuth, state, nonce, code, getCode, user, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

@@ -99,7 +99,6 @@ Table des matières
       - Attaques par clickjacking
       - Attaques par sniffing
       - Attaques par MITM
-      - Attaques physiques
       - DNSSEC
 
 3.  Processus de divulgation et de correction

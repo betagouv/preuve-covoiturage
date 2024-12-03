@@ -29,8 +29,6 @@ export function AuthButton() {
   };
 
   return ( 
-    <>
     <ProConnectButton onClick={() => {router.push(convertParamsToQueryString(baseUrl, params))}} /> 
-    </>  
   );
 };
