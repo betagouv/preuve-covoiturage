@@ -13,8 +13,7 @@
 
 ## Merge
 
-Je squash la PR et vérifie que le message de commit utilise
-[la convention d'Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) :
+Je squash la PR et vérifie que le message de commit utilise [la convention d'Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) :
 
 ```
 <type>(<scope>): <short summary>

@@ -10,12 +10,52 @@ info:
     name: Licence Apache-2.0
     url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
   description: |
-    L'API du Registre de preuve de covoiturage permet aux opérateurs de covoiturage
-    enregistrés comme partenaires du RPC de transmettre des trajets de covoiturage,
-    de les consulter et de les modifier.
+      ## Le produit
 
-    L'API CEE permet aux opérateurs de transmettre des demandes de certificats 
-    d'économies d'énergie (CEE) pour les trajets de covoiturage éligibles.
+      Le Registre de preuve de covoiturage est un service numérique développé
+      par le Ministère de la transition écologique et l'ADEME. Il fait partie de
+      l'incubateur des Startups d'État : la communauté
+      [beta.gouv.fr](https://beta.gouv.fr/)
+
+      ## Pour qui ?
+
+      Cette documentation technique est destinée aux personnes :
+
+      - souhaitant se connecter à l'API pour envoyer des preuves, générer des attestations ;
+      - souhaitant comprendre l'organisation globale de l'application ;
+      - souhaitant installer, exécuter, tester, modifier le code ;
+      - souhaitant soumettre des correctifs ou des améliorations ;
+      - souhaitant comprendre les méthodes de calcul utilisées pour les incitations ;
+      - souhaitant effectuer des tests de sécurité sur l'application ;
+      - ...
+
+      sinon, la [documentation générale du produit](https://doc.covoiturage.beta.gouv.fr/) est peut-être pour vous.
+
+      ## Écosystème
+
+      Plusieurs services sont gérés par l'équipe du Registre de preuve de covoiturage :
+
+      - [Le site vitrine](https://covoiturage.beta.gouv.fr/) présente le produit ;
+      - [La documentation générale](https://doc.covoiturage.beta.gouv.fr/) ;
+      - [L'application](https://app.covoiturage.beta.gouv.fr/) permet aux opérateurs et aux territoires de gérer les campagnes ;
+      - [Les statistiques](https://app.covoiturage.beta.gouv.fr/stats) des chiffres clés de la Startup d'État ;
+      - [Le statut des applications](https://status.covoiturage.beta.gouv.fr/) pour suivre les incidents et l'accessibilité des services ;
+      - [Le générateur d'attestations sur l'honneur](https://attestation.covoiturage.beta.gouv.fr/) permet aux personnes qui covoiturent de produire facilement un document pour leur employeur dans le but de profiter du Forfait Mobilités Durables.
+      - [L'observatoire national du covoiturage](https://observatoire.covoiturage.gouv.fr/) permet de suivre l'évolution des pratiques du covoiturage courte distance.
+
+      ## Langues
+
+      Cette documentation est principalement rédigée en français afin d'éviter
+      de traduire des termes précis du langage administratif. Les parties
+      relatives au code de l'application peuvent être en anglais.
+
+      ## Édition
+
+      Le code source de l'application est ouvert. Vous pouvez soumettre des
+      corrections ou des propositions d'évolution. Pour cela, vous devez avoir
+      un compte sur la plateforme [Github](https://github.com/).
+
+      ## Licence et version
 
 servers:
   - url: https://api.covoiturage.beta.gouv.fr/v3.1
@@ -119,9 +159,167 @@ tags:
       l'enregistrement qui a eu une correspondance en fonction de la nature de
       l'opération (spécifique ou standardisée).
 
-  - name: Export
+  - name: Export de trajets
     description: |
-      Export de données.
+      ## Schema d'export des trajets v3.0
+
+      Les trajets sont exportés au format XLSX (CSV à venir).
+
+      Le 🔒 indique que ces données ne sont pas présentes dans l'export Open data.
+
+      ### Trajet
+
+      | Colonne                     | Explications                                                                                                                                                                                                                  |
+      | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | journey_id                  | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                               |
+      | operator_trip_id&nbsp;🔒    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet                                                                                                                                      |
+      | operator_journey_id&nbsp;🔒 | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                         |
+      | operator_class              | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c) |
+      | operator&nbsp;🔒            | Nom de l'opérateur                                                                                                                                                                                                            |
+      | status                      | Statut du trajet pour le RPC                                                                                                                                                                                                  |
+
+      ### Dates et heures
+
+      | Colonne        | Explications                                                                                 |
+      | -------------- | -------------------------------------------------------------------------------------------- |
+      | start_datetime | Date et heure locale du départ au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+      | start_date     | Date locale du départ au format ISO 8601 (YYYY-MM-DD)                                        |
+      | start_time     | Heure locale du départ au format Thh:mm:ss). Plage de 10 minutes                             |
+      |                |                                                                                              |
+      | end_datetime   | Date et heure locale d'arrivée au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+      | end_date       | Date locale d'arrivée au format ISO 8601 (YYYY-MM-DD)                                        |
+      | end_time       | Heure locale d'arrivée au format Thh:mm:ss). Plage de 10 minutes                             |
+      |                |                                                                                              |
+      | duration       | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                                    |
+
+      > Les dates et heures sont exprimées dans le fuseau horaire `Europe/Paris`.
+
+      ### Lieux
+
+      | Colonne           | Explications                                                                                                                           |
+      | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+      | distance          | Distance covoiturée en kilomètres (précision au mètre)                                                                                 |
+      |                   |                                                                                                                                        |
+      | start_lat         | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+      | start_lon         | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+      | end_lat           | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+      | end_lon           | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+      |                   |                                                                                                                                        |
+      | start_insee       | Code INSEE commune ou arrondissement de la position de départ                                                                          |
+      | start_commune     | Nom commune de départ                                                                                                                  |
+      | start_departement | Nom du département de la position de départ                                                                                            |
+      | start_epci        | EPCI de départ                                                                                                                         |
+      | start_aom         | AOM de départ                                                                                                                          |
+      | start_region      | Nom de la région de départ                                                                                                             |
+      | start_pays        | Nom du pays de départ                                                                                                                  |
+      | end_insee         | Code INSEE commune ou arrondissement de la position d'arrivée                                                                          |
+      | end_commune       | Nom commune d'arrivée                                                                                                                  |
+      | end_departement   | Nom du département de la position d'arrivée                                                                                            |
+      | end_epci          | EPCI d'arrivée                                                                                                                         |
+      | end_aom           | AOM d'arrivée                                                                                                                          |
+      | end_region        | Nom de la région d'arrivée                                                                                                             |
+      | end_pays          | Nom du pays d'arrivée                                                                                                                  |
+
+      ### Participants
+
+      | Colonne                        | Explications                                                  |
+      | ------------------------------ | ------------------------------------------------------------- |
+      | passenger_seats                | Nombre de sièges réservés par l'occupant passager. Défaut : 1 |
+      |                                |                                                               |
+      | operator_passenger_id&nbsp;🔒  | identifiant opérateur du passager                             |
+      | passenger_identity_key&nbsp;🔒 | identifiant unique inter-opérateur du passager                |
+      | operator_driver_id&nbsp;🔒     | identifiant opérateur du conducteur                           |
+      | driver_identity_key&nbsp;🔒    | identifiant unique inter-opérateur du conducteur              |
+
+      ### Subventions
+
+      | Colonne                           | Explications                                                                                                                                                                                                                                          |
+      | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | cee_application                   | Lien avec un dossier CEE (Oui/Non)                                                                                                                                                                                                                    |
+      |                                   |                                                                                                                                                                                                                                                       |
+      | driver_revenue&nbsp;🔒            | La somme en € réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers ont été versées et que la commission de l'opérateur soit prise |
+      | passenger_contribution&nbsp;🔒    | Coût réel total en € du service pour l'occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations ont été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc)                    |
+      | incentive_type                    | Période "normale" ou "booster"                                                                                                                                                                                                                        |
+      | incentive\_{N}\_siret             | SIRET de la contrepartie financière N                                                                                                                                                                                                                 |
+      | incentive\_{N}\_name              | Organisme distributeur                                                                                                                                                                                                                                |
+      | incentive\_{N}\_amount            | Montant en € de la contrepartie financière N                                                                                                                                                                                                          |
+      | incentive_rpc\_{N}\_campaign_id   | ID de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                 |
+      | incentive_rpc\_{N}\_campaign_name | Nom de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                |
+      | incentive_rpc\_{N}\_siret         | SIRET du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                  |
+      | incentive_rpc\_{N}\_name          | Nom du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                    |
+      | incentive_rpc\_{N}\_amount        | Montant en € de la contrepartie financière N calculée par le RPC                                                                                                                                                                                      |
+
+      ## Comparatif V2.0 / V3.0
+
+      Tableau comparatif des colonnes entre les versions 2 et 3 de l'export des
+      trajets.
+
+      | V2.0                             | V3.0                          | Remarques sur la migration V2 -> V3                                            |
+      | -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ |
+      | journey_id                       | journey_id                    | Identifiant unique de couple passager/conducteur                               |
+      | trip_id                          |                               | Identifiant de regroupement des couples généré par le RPC                      |
+      |                                  | operator_trip_id              | Identifiant de regroupement des couples généré par l'opérateur                 |
+      |                                  | operator_journey_id           | Identifiant de couple généré par l'opérateur                                   |
+      | journey_start_datetime           | start_datetime                | Passage en UTC                                                                 |
+      | journey_start_date               | start_date                    | Passage en UTC                                                                 |
+      | journey_start_time               | start_time                    | Passage en UTC                                                                 |
+      | journey_start_lon                | start_lon                     |                                                                                |
+      | journey_start_lat                | start_lat                     |                                                                                |
+      | journey_start_insee              | start_insee                   |                                                                                |
+      | journey_start_department         | start_departement             |                                                                                |
+      | journey_start_town               | start_commune                 |                                                                                |
+      | journey_start_towngroup          | start_epci                    |                                                                                |
+      | journey_start_country            | start_pays                    |                                                                                |
+      | journey_end_datetime             | end_datetime                  | Passage en UTC                                                                 |
+      | journey_end_date                 | end_date                      | Passage en UTC                                                                 |
+      | journey_end_time                 | end_time                      | Passage en UTC                                                                 |
+      | journey_end_lon                  | end_lon                       |                                                                                |
+      | journey_end_lat                  | end_lat                       |                                                                                |
+      | journey_end_insee                | end_insee                     |                                                                                |
+      | journey_end_department           | end_departement               |                                                                                |
+      | journey_end_town                 | end_commune                   |                                                                                |
+      | journey_end_towngroup            | end_epci                      |                                                                                |
+      | journey_end_country              | end_pays                      |                                                                                |
+      | driver_card                      |                               |                                                                                |
+      | passenger_card                   |                               |                                                                                |
+      | passenger_over_18                |                               |                                                                                |
+      | passenger_seats                  | passenger_seats               |                                                                                |
+      | operator_class                   | operator_class                |                                                                                |
+      | operator                         | operator                      |                                                                                |
+      | journey_distance_anounced        | distance                      | La distance envoyée par l'opérateur. Changement de format (m -> km)            |
+      | journey_distance_calculated      |                               |                                                                                |
+      | journey_duration_anounced        |                               |                                                                                |
+      | journey_duration_calculated      | duration                      | La durée indicative calculée par le RPC. Changement de format (MM -> HH:MM:SS) |
+      | operator_passenger_id            | operator_passenger_id         |                                                                                |
+      |                                  | passenger_identity_id         | Identifiant personnel inter-opérateurs                                         |
+      | operator_driver_id               | operator_driver_id            |                                                                                |
+      |                                  | driver_identity_key           | Identifiant personnel inter-opérateurs                                         |
+      | status                           | status                        | Statut du trajet : `acquisition_error`, `validation_error`, `normalization_error`, `fraud_error`, `anomaly_error`, `ok`, `expired`, `canceled`, `pending`, `unknown`                                                        |
+      | passenger_id                     |                               |                                                                                |
+      | passenger_contribution           | passenger_contribution        |                                                                                |
+      | passenger_incentive_N_siret      |                               |                                                                                |
+      | passenger_incentive_N_amount     |                               |                                                                                |
+      | passenger_incentive_rpc_N_siret  |                               |                                                                                |
+      | passenger_incentive_rpc_N_name   |                               |                                                                                |
+      | passenger_incentive_rpc_N_amount |                               |                                                                                |
+      | driver_id                        |                               |                                                                                |
+      | driver_revenue                   | driver_revenue                |                                                                                |
+      | driver_incentive_N_siret         |                               |                                                                                |
+      | driver_incentive_N_amount        |                               |                                                                                |
+      | driver_incentive_rpc_N_siret     |                               |                                                                                |
+      | driver_incentive_rpc_N_name      |                               |                                                                                |
+      | driver_incentive_rpc_N_amount    |                               |                                                                                |
+      |                                  | cee_application               | Demande de dossier CEE (oui/non)                                               |
+      |                                  | incentive_type                | Type d'incitation (normale/booster)                                            |
+      |                                  | incentive_N_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
+      |                                  | incentive_N_name              | Incitation envoyée par l'opérateur : nom                                       |
+      |                                  | incentive_N_amount            | Incitation envoyée par l'opérateur : montant en €                              |
+      |                                  | incentive_rpc_N_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
+      |                                  | incentive_rpc_N_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
+      |                                  | incentive_rpc_N_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
+      |                                  | incentive_rpc_N_name          | Incitation calculée par le RPC : nom du sponsor                                |
+      |                                  | incentive_rpc_N_amount        | Incitation calculée par le RPC : montant en €                                  |
+
   - name: Campagnes
     description: |
       Campagnes de covoiturage.
@@ -133,18 +331,30 @@ tags:
       Requêtes géographiques.
 
 x-topics:
+  - title: Authentication
+    content: |
+      Le token applicatif donné lors de la création de l'application doit être
+      envoyé dans les Headers des requêtes HTTP envoyée au serveur :
+
+      ```
+      Authorization: Bearer {token}
+      ```
+
+      Le token est au format JWT a durée de vie longue. Il est recommandé de le
+      changer régulièrement.
+
   - title: Accès à l'API
     content: |
-      Envoyer un trajet de covoiturage à l’API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
+      Envoyer un trajet de covoiturage à l'API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
 
-      - 1️⃣ Une entité “**opérateur de covoiturage**” est créée sur l’application du registre.
-      - 2️⃣ Un utilisateur appartenant à cet opérateur de covoiturage est **administrateur**.
-      - 3️⃣ L’administrateur opérateur **crée un token applicatif**.
-      - 4️⃣ Ce token applicatif est **installé sur le serveur de l’opérateur** qui va envoyer les données et sera passé dans le *Header* de chacune des requêtes.
+      1. Une entité “**opérateur de covoiturage**” est créée sur l'application du registre.
+      2. Un utilisateur appartenant à cet opérateur de covoiturage est **administrateur**.
+      3. L'administrateur opérateur **crée un token applicatif**.
+      4. Ce token applicatif est **installé sur le serveur de l'opérateur** qui va envoyer les données et sera passé dans le *Header* de chacune des requêtes.
 
-  - title: Accéder à l’application du Registre
+  - title: Accéder à l'application du Registre
     content: |
-      Afin de valider les critères 1️⃣ et 2️⃣ , veuillez contacter [l'équipe du
+      Afin de valider les critères 1 et 2 , veuillez contacter [l'équipe du
       Registre](mailto:contact@covoiturage.beta.gouv.fr) qui vous ouvrira un
       accès à l'application.
 
@@ -174,6 +384,26 @@ x-topics:
       - `RateLimit-Limit` : nombre total de requêtes entre deux réinitialisations de quota ;
       - `RateLimit-Remaining` : nombre de requêtes jusqu'à la réinitialisation du quota ;
       - `RateLimit-Reset` : temps restant (en secondes) jusqu'à la réinitialisation du quota.
+
+  - title: Définitions
+    content: |
+      Acronymes utilisés dans la documentation :
+      
+      - **RPC** : Registre de preuve de covoiturage
+      - **CEE** : Crédits d'Economie d'Energie
+      - **PNCEE** : Pôle National des Crédits d'Economie d'Energie
+      - **SIRET** : Système d'Identification du Répertoire des Établissements
+      - **EPCI** : Établissement Public de Coopération Intercommunale
+      - **AOM** : Autorité Organisatrice de la Mobilité
+
+      Concepts utilisés :
+
+      - **Opérateur de covoiturage** : entité qui propose un service de covoiturage
+      - **Territoire** : entité qui propose des campagnes de covoiturage (AOM, EPCI, ...)
+      - **Trajet** : déplacement effectué par un conducteur et un passager
+                    (on parle aussi de couple conducteur/passager)
+      - **Journey ID** : identifiant unique d'un trajet assigné par le RPC
+      - **Operator Journey ID** : identifiant unique d'un trajet assigné par l'opérateur
 
 components:
   securitySchemes:
@@ -237,7 +467,7 @@ components:
           minimum: 0
           multipleOf: 1
           description: |
-            La somme réellement perçue par le conducteur **APRÈS** que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l’opérateur soit prise.
+            La somme réellement perçue par le conducteur **APRÈS** que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l'opérateur soit prise.
             Somme exprimée en centimes.
     passenger:
       type: object
@@ -255,7 +485,7 @@ components:
           minimum: 0
           multipleOf: 1
           description: |
-            Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés **APRÈS** que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc).|
+            Coût réel total du service pour l'occupant passager en fonction du nombre de sièges réservés **APRÈS** que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc).|
             Somme exprimée en centimes.
         seats:
           type: number
@@ -348,7 +578,7 @@ components:
       description: |
         Zéro, une ou plusieurs méthodes de paiement utilisées (ex. carte employeur préchargée permettant de payer directement le covoiturage sur une application).
         ### Tip
-        La prise en charge des frais de transports personnel (carburant et forfait mobilité) pourra prendre la forme d’une solution de paiement spécifique, dématérialisée et prépayée, intitulée « titre-mobilité ». Ainsi, il apparaît comme pertinent de détailler la solution de paiement utilisée dans le cadre d'un trajet covoituré, s'il s'agit de Titre-Mobilité.
+        La prise en charge des frais de transports personnel (carburant et forfait mobilité) pourra prendre la forme d'une solution de paiement spécifique, dématérialisée et prépayée, intitulée « titre-mobilité ». Ainsi, il apparaît comme pertinent de détailler la solution de paiement utilisée dans le cadre d'un trajet covoituré, s'il s'agit de Titre-Mobilité.
       items:
         type: object
         additionalProperties: false
@@ -723,10 +953,14 @@ components:
     fraudcheck_label:
       type: string
       enum:
-        - interoperator_fraud
+        - interoperator_overlap
+        - interoperator_too_many_trips_by_day
+        - interoperator_too_close_trips
       description: |
         Etiquette possible pour un cas de fraude détectée :
-          - `interoperator_fraud` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent
+          - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`) 
+          - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+          - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.    
     anomaly_label:
       type: string
       enum:
@@ -1429,10 +1663,11 @@ paths:
             'application/json':
               schema:
                 '$ref': '#/components/schemas/geopoint'
+
   /exports:
     post:
       tags: 
-        - Export
+        - Export de trajets
 
       summary: Exporter des trajets
       description: |
@@ -1679,7 +1914,7 @@ paths:
 
         ## Téléchargement
 
-        Une fois l’attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
+        Une fois l'attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
 
         Ces meta-données optionnelles ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
 
@@ -1869,7 +2104,7 @@ paths:
         Ce point d'API est consultable à `J+7` pour la courte et la longue
         distance, `J` étant la date de réalisation du trajet. Il est prévu que
         ce délai soit réduit à 48h après la réalisation du trajet suite au
-        déploiement de l’API V3.
+        déploiement de l'API V3.
       operationId: policy:cee:register
       requestBody:
         required: true
@@ -1898,8 +2133,8 @@ paths:
               - de classe C
         '400':
           description: |
-            - "expired" : correspond a un trajet envoyé "hors délais". Il faut qu’il soit enregistré dans le RPC dans les 5 jours qui suivent sa réalisation
-            - "Date should be before 7 days from now" : correspondant à un appel à l’API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet 
+            - "expired" : correspond a un trajet envoyé "hors délais". Il faut qu'il soit enregistré dans le RPC dans les 5 jours qui suivent sa réalisation
+            - "Date should be before 7 days from now" : correspondant à un appel à l'API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet 
               sur la courte distance et à moins de J+7 de la date de paiement au conducteur par l'opérateur sur le longue distance.
         '409':
           description: |
