@@ -331,6 +331,18 @@ tags:
       Requêtes géographiques.
 
 x-topics:
+  - title: Authentication
+    content: |
+      Le token applicatif donné lors de la création de l'application doit être
+      envoyé dans les Headers des requêtes HTTP envoyée au serveur :
+
+      ```
+      Authorization: Bearer {token}
+      ```
+
+      Le token est au format JWT a durée de vie longue. Il est recommandé de le
+      changer régulièrement.
+
   - title: Accès à l'API
     content: |
       Envoyer un trajet de covoiturage à l'API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
