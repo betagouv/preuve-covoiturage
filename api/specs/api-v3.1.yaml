@@ -10,12 +10,56 @@ info:
     name: Licence Apache-2.0
     url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
   description: |
-    L'API du Registre de preuve de covoiturage permet aux opérateurs de covoiturage
-    enregistrés comme partenaires du RPC de transmettre des trajets de covoiturage,
-    de les consulter et de les modifier.
+      ## Le produit
 
-    L'API CEE permet aux opérateurs de transmettre des demandes de certificats 
-    d'économies d'énergie (CEE) pour les trajets de covoiturage éligibles.
+      Le Registre de preuve de covoiturage est un service numérique développé
+      par le Ministère de la transition écologique et l'ADEME. Il fait partie de
+      l'incubateur des Startups d'État : la communauté
+      [beta.gouv.fr](https://beta.gouv.fr/)
+
+      ## Pour qui ?
+
+      Cette documentation technique est destinée aux personnes :
+
+      - souhaitant se connecter à l'API pour envoyer des preuves, générer des attestations ;
+      - souhaitant comprendre l'organisation globale de l'application ;
+      - souhaitant installer, exécuter, tester, modifier le code ;
+      - souhaitant soumettre des correctifs ou des améliorations ;
+      - souhaitant comprendre les méthodes de calcul utilisées pour les incitations ;
+      - souhaitant effectuer des tests de sécurité sur l'application ;
+      - ...
+
+      sinon, la [documentation générale du produit](https://doc.covoiturage.beta.gouv.fr/) est peut-être pour vous.
+
+      ## Écosystème
+
+      Plusieurs services sont gérés par l'équipe du Registre de preuve de covoiturage :
+
+      - [Le site vitrine](https://covoiturage.beta.gouv.fr/) présente le produit ;
+      - [La documentation générale](https://doc.covoiturage.beta.gouv.fr/) ;
+      - [L'application](https://app.covoiturage.beta.gouv.fr/) permet aux opérateurs et aux territoires de gérer les campagnes ;
+      - [Les statistiques](https://app.covoiturage.beta.gouv.fr/stats) des chiffres clés de la Startup d'État ;
+      - [Le statut des applications](https://status.covoiturage.beta.gouv.fr/) pour suivre les incidents et l'accessibilité des services ;
+      - [Le générateur d'attestations sur l'honneur](https://attestation.covoiturage.beta.gouv.fr/) permet aux personnes qui covoiturent de produire facilement un document pour leur employeur dans le but de profiter du Forfait Mobilités Durables.
+      - [L'observatoire national du covoiturage](https://observatoire.covoiturage.gouv.fr/) permet de suivre l'évolution des pratiques du covoiturage courte distance.
+
+      ## Langues
+
+      Cette documentation est principalement rédigée en français afin d'éviter
+      de traduire des termes précis du langage administratif. Les parties
+      relatives au code de l'application peuvent être en anglais.
+
+      ## Édition
+
+      Le code source de l'application est ouvert. Vous pouvez soumettre des
+      corrections ou des propositions d'évolution. Pour cela, vous devez avoir
+      un compte sur la plateforme [Github](https://github.com/).
+
+      ## Licence
+
+      Cette documentation est sous licence
+      [Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE).  
+      © Ministère de la Transition Écologique 2024.
 
 servers:
   - url: https://api.covoiturage.beta.gouv.fr/v3.1
@@ -291,59 +335,6 @@ tags:
       Requêtes géographiques.
 
 x-topics:
-  - title: Introduction
-    content: |
-      ## Le produit
-
-      Le Registre de preuve de covoiturage est un service numérique développé
-      par le Ministère de la transition écologique et l'ADEME. Il fait partie de
-      l'incubateur des Startups d'État : la communauté
-      [beta.gouv.fr](https://beta.gouv.fr/)
-
-      ## Pour qui ?
-
-      Cette documentation technique est destinée aux personnes :
-
-      - souhaitant se connecter à l'API pour envoyer des preuves, générer des attestations ;
-      - souhaitant comprendre l'organisation globale de l'application ;
-      - souhaitant installer, exécuter, tester, modifier le code ;
-      - souhaitant soumettre des correctifs ou des améliorations ;
-      - souhaitant comprendre les méthodes de calcul utilisées pour les incitations ;
-      - souhaitant effectuer des tests de sécurité sur l'application ;
-      - ...
-
-      sinon, la [documentation générale du produit](https://doc.covoiturage.beta.gouv.fr/) est peut-être pour vous.
-
-      ## Écosystème
-
-      Plusieurs services sont gérés par l'équipe du Registre de preuve de covoiturage :
-
-      - [Le site vitrine](https://covoiturage.beta.gouv.fr/) présente le produit ;
-      - [La documentation générale](https://doc.covoiturage.beta.gouv.fr/) ;
-      - [L'application](https://app.covoiturage.beta.gouv.fr/) permet aux opérateurs et aux territoires de gérer les campagnes ;
-      - [Les statistiques](https://app.covoiturage.beta.gouv.fr/stats) des chiffres clés de la Startup d'État ;
-      - [Le statut des applications](https://status.covoiturage.beta.gouv.fr/) pour suivre les incidents et l'accessibilité des services ;
-      - [Le générateur d'attestations sur l'honneur](https://attestation.covoiturage.beta.gouv.fr/) permet aux personnes qui covoiturent de produire facilement un document pour leur employeur dans le but de profiter du Forfait Mobilités Durables.
-      - [L'observatoire national du covoiturage](https://observatoire.covoiturage.gouv.fr/) permet de suivre l'évolution des pratiques du covoiturage courte distance.
-
-      ## Langues
-
-      Cette documentation est principalement rédigée en français afin d'éviter
-      de traduire des termes précis du langage administratif. Les parties
-      relatives au code de l'application peuvent être en anglais.
-
-      ## Édition
-
-      Le code source de l'application est ouvert. Vous pouvez soumettre des
-      corrections ou des propositions d'évolution. Pour cela, vous devez avoir
-      un compte sur la plateforme [Github](https://github.com/).
-
-      ## Licence
-
-      Cette documentation est sous licence
-      [Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE).  
-      © Ministère de la Transition Écologique 2024.
-
   - title: Accès à l'API
     content: |
       Envoyer un trajet de covoiturage à l'API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
@@ -400,6 +391,7 @@ x-topics:
       Concepts utilisés :
 
       - **Opérateur de covoiturage** : entité qui propose un service de covoiturage
+      - **Territoire** : entité qui propose des campagnes de covoiturage (AOM, EPCI, ...)
       - **Trajet** : déplacement effectué par un conducteur et un passager
                     (on parle aussi de couple conducteur/passager)
       - **Journey ID** : identifiant unique d'un trajet assigné par le RPC
@@ -953,10 +945,14 @@ components:
     fraudcheck_label:
       type: string
       enum:
-        - interoperator_fraud
+        - interoperator_overlap
+        - interoperator_too_many_trips_by_day
+        - interoperator_too_close_trips
       description: |
         Etiquette possible pour un cas de fraude détectée :
-          - `interoperator_fraud` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent
+          - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`) 
+          - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+          - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.    
     anomaly_label:
       type: string
       enum:
