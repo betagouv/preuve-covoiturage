@@ -37,3 +37,5 @@ models:
       +schema: "observatoire"
     geo:
       +schema: "geo"
+    dashboard:
+      +schema: "dashboard"
