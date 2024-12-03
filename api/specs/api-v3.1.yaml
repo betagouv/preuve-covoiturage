@@ -55,11 +55,7 @@ info:
       corrections ou des propositions d'évolution. Pour cela, vous devez avoir
       un compte sur la plateforme [Github](https://github.com/).
 
-      ## Licence
-
-      Cette documentation est sous licence
-      [Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE).  
-      © Ministère de la Transition Écologique 2024.
+      ## Licence et version
 
 servers:
   - url: https://api.covoiturage.beta.gouv.fr/v3.1
