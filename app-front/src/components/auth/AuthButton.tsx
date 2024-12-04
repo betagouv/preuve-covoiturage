@@ -1,34 +1,38 @@
 'use client'
 import { Config } from '@/config';
+import { addParamsToUrl, generateNonce } from '@/helpers/auth';
 import { useAuth } from '@/providers/AuthProvider';
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
 
 export function AuthButton() {
-  const { state, nonce } = useAuth();
+  const { setState, setNonce } = useAuth();
   const router = useRouter();
-  const baseUrl:string = Config.get('auth.domain');
-  const params = {
-    response_type: 'code',
-    client_id: Config.get('auth.client_id'),
-    redirect_uri: Config.get('auth.redirect_uri'),
-    //acr_values:'eidas1',
-    scope: Config.get('auth.scopes'),
-    state: state,
-    nonce: nonce,
+
+  const generateToken = () => {
+    const stateToken = generateNonce();
+    setState(stateToken);
+    sessionStorage.setItem('stateToken', stateToken);
+    const nonceToken = generateNonce();
+    setNonce(nonceToken);
+    sessionStorage.setItem('nonceToken', nonceToken);
+    return ({stateToken, nonceToken})
   }
-  const convertParamsToQueryString = (baseUrl:string, params:object) => {
-    const queryString = new URLSearchParams();
-  
-    // Ajouter chaque paramètre encodé
-    Object.entries(params).forEach(([key, value]) => {
-      queryString.append(key, value);
-    });
-  
-    return `${baseUrl}/api/v2/authorize?${queryString.toString()}`;
+  const handleClick = () => {
+    const {stateToken, nonceToken} = generateToken();
+    const baseUrl:string = `${Config.get('auth.domain')}/api/v2/authorize`;
+    const params = {
+      response_type: 'code',
+      client_id: Config.get('auth.client_id'),
+      redirect_uri: Config.get('auth.redirect_uri'),
+      scope: Config.get('auth.scopes'),
+      state: stateToken,
+      nonce: nonceToken,
+    };
+    router.push(addParamsToUrl(baseUrl, params));
   };
 
   return ( 
-    <ProConnectButton onClick={() => {router.push(convertParamsToQueryString(baseUrl, params))}} /> 
+    <ProConnectButton onClick={() => handleClick()} /> 
   );
 };

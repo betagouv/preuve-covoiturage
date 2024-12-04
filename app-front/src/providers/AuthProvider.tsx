@@ -1,58 +1,53 @@
-'use client';
-import crypto from 'crypto';
-import { createContext, useContext, useState } from "react";
+'use client'
+import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from '../config';
 
 interface AuthContextProps {
   isAuth: boolean;
   state?: string,
+  setState:(newState: string | undefined) => void,
   nonce?: string,
+  setNonce:(newNonce: string | undefined) => void,
   code?: string,
   iss?: string,
-  user: {name: string, role: string},
+  user?: {name: string, role: string},
   getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void,
-  login: () => void,
-  logout: () => void,
 }
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export function AuthProvider({children}: { children: React.ReactNode}) {
   
-  const [isAuth, SetIsAuth] = useState(false);
-  const [state, SetState] = useState<string>();
-  const [nonce, SetNonce] = useState<string>();
-  const [code, SetCode] = useState<string>();
-  const [user, SetUser] = useState({
-    name: '',
-    role: ''
-  })
+  const [isAuth, setIsAuth] = useState(false);
+  const [state, setState] = useState<string>();
+  const [nonce, setNonce] = useState<string>();
+  const [code, setCode] = useState<string>();
+  
 
   const getCode = (stateValue: string | null, codeValue: string | null, issValue: string | null) => {
     try {
-      console.debug(state)
-      console.debug(stateValue)
       if(stateValue === state && issValue === `${Config.get('auth.domain')}/api/v2`) {
-        console.debug('toto')
-        SetCode(codeValue ?? undefined);
+        setCode(codeValue ?? undefined);
+        setIsAuth(true);
       }
     } catch (e) {
       console.error("Code validation failed", e);
       throw e;
     }
   };
-  const login = () => {
-    return '';
-  };
-  const logout = () => {
-    return '';
-  };
 
-  const generateString = () => {
-    return crypto.randomBytes(16).toString('hex');
-  }
+  useEffect(() => {
+    const stateToken = sessionStorage.getItem('stateToken');
+    const nonceToken = sessionStorage.getItem('nonceToken');
+    if (stateToken && nonceToken) {
+      setState(stateToken);
+      setNonce(nonceToken);
+    }
+  }, []);
+
+  
 
   return(
-    <AuthContext.Provider value={{isAuth, state, nonce, code, getCode, user, login, logout}}>
+    <AuthContext.Provider value={{isAuth, state, setState, nonce, setNonce, code, getCode}}>
       {children}
     </AuthContext.Provider>
   );
