@@ -1,0 +1,2314 @@
+openapi: 3.0.3
+info:
+  title: Registre de preuve de covoiturage (API)
+  version: "3.1"
+  termsOfService: https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/cgu-conditions-generales-dutilisation
+  contact:
+    name: Équipe technique du RPC
+    email: technique@covoiturage.beta.gouv.fr
+  license:
+    name: Licence Apache-2.0
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
+  description: |
+      ## Le produit
+
+      Le Registre de preuve de covoiturage est un service numérique développé
+      par le Ministère de la transition écologique et l'ADEME. Il fait partie de
+      l'incubateur des Startups d'État : la communauté
+      [beta.gouv.fr](https://beta.gouv.fr/)
+
+      ## Pour qui ?
+
+      Cette documentation technique est destinée aux personnes :
+
+      - souhaitant se connecter à l'API pour envoyer des preuves, générer des attestations ;
+      - souhaitant comprendre l'organisation globale de l'application ;
+      - souhaitant installer, exécuter, tester, modifier le code ;
+      - souhaitant soumettre des correctifs ou des améliorations ;
+      - souhaitant comprendre les méthodes de calcul utilisées pour les incitations ;
+      - souhaitant effectuer des tests de sécurité sur l'application ;
+      - ...
+
+      sinon, la [documentation générale du produit](https://doc.covoiturage.beta.gouv.fr/) est peut-être pour vous.
+
+      ## Écosystème
+
+      Plusieurs services sont gérés par l'équipe du Registre de preuve de covoiturage :
+
+      - [Le site vitrine](https://covoiturage.beta.gouv.fr/) présente le produit ;
+      - [La documentation générale](https://doc.covoiturage.beta.gouv.fr/) ;
+      - [L'application](https://app.covoiturage.beta.gouv.fr/) permet aux opérateurs et aux territoires de gérer les campagnes ;
+      - [Les statistiques](https://app.covoiturage.beta.gouv.fr/stats) des chiffres clés de la Startup d'État ;
+      - [Le statut des applications](https://status.covoiturage.beta.gouv.fr/) pour suivre les incidents et l'accessibilité des services ;
+      - [Le générateur d'attestations sur l'honneur](https://attestation.covoiturage.beta.gouv.fr/) permet aux personnes qui covoiturent de produire facilement un document pour leur employeur dans le but de profiter du Forfait Mobilités Durables.
+      - [L'observatoire national du covoiturage](https://observatoire.covoiturage.gouv.fr/) permet de suivre l'évolution des pratiques du covoiturage courte distance.
+
+      ## Langues
+
+      Cette documentation est principalement rédigée en français afin d'éviter
+      de traduire des termes précis du langage administratif. Les parties
+      relatives au code de l'application peuvent être en anglais.
+
+      ## Édition
+
+      Le code source de l'application est ouvert. Vous pouvez soumettre des
+      corrections ou des propositions d'évolution. Pour cela, vous devez avoir
+      un compte sur la plateforme [Github](https://github.com/).
+
+      ## Licence et version
+
+servers:
+  - url: https://api.covoiturage.beta.gouv.fr/v3.1
+    description: Production
+  - url: https://api.demo.covoiturage.beta.gouv.fr/v3.1
+    description: Pré-production
+
+security:
+  - token: []
+
+tags:
+  - name: Trajets courte distance
+    description: |
+      Trajets de covoiturage de moins de 80 km.
+  - name: Demandes CEE
+    description: |
+      > **Définitions :**
+      > 
+      > - CEE : Crédits d'Economie d'Energie
+      > - PNCEE : Pôle National des Crédits d'Economie d'Energie
+
+      ## Présentation
+
+      Dans le cadre des fiches standardisées et bonifiées pour le covoiturage
+      courte et longue distance, le Registre de preuve de covoiturage met à
+      disposition des opérateurs de covoiturage, une API (Application
+      Programming Interface permettant à ces derniers de vérifier en partie
+      l'éligibilité d'un dossier de demande CEE (vérification de l'historique et
+      du dédoublonnage) et de récolter des données du RPC nécessaires à la bonne
+      constitution du dossier avant envoi de celui-ci par l'opérateur de
+      covoiturage au PNCEE.
+
+      Cette API a pour but de fluidifier et de fiabiliser les demandes de
+      dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en
+      cas de doublon par exemple.
+
+      ## Ressources utiles
+
+      - [Arrêté de création des opérations standardisées CEE covoiturage (fonctionnement non bonifié)](https://www.legifrance.gouv.fr/jorf/id/JORFSCTA000046374229)
+      - Arrêté de création de la bonification : en cours
+
+      ## Objectifs
+
+      - vérification de l'éligibilité d'un usager à l'opération standardisée :
+          - vérification de l'historique : invalidation des usagers ayant déjà bénéficié d'opérations spécifiques 3 ans avant la réalisation du trajet. Comparatif sur la base des données transmises par les opérateurs
+          - vérification dédoublonnage : invalidation des usagers ayant déjà bénéficié de l'opération standardisée quelque soit la plateforme de covoiturage utilisée.
+      - confirmation de l'éligibilité et mise à disposition d'éléments constitutifs du dossier de demande de prime
+          - transmission des éléments suivants : journey_id; status et token (signature RPC)
+
+      ## Vérifier un token
+
+      Pour vérifier le token, il faut disposer des informations suivantes :
+
+      - siret de l'opérateur ;
+      - type de trajet (short ou long) ;
+      - numéro de permis ;
+      - horodatage au format _ISO 8601 UTC_ (ex: `2022-11-22T08:54:19Z``).
+
+      Ces informations sont utilisées pour former une chaîne de caractères comme
+      suit `siret/type/permis/horadatage``,  
+      exemple : `13002526500013/short/051227308989/2022-11-22T08:54:19Z`. Cette
+      chaîne est hachée via un SHA512 et constitue le message.
+
+      Ce message est signé via une clé RSA et peut donc être vérifié avec la clé
+      publique du Registre ci-après :
+
+      ```
+      -----BEGIN PUBLIC KEY-----
+      MIICIDANBgkqhkiG9w0BAQEFAAOCAg0AMIICCAKCAgEA0m019dxJhmGl9XKCEBxl
+      fgfKkmsre3KXlAkgan34k1vPyBuc1vz+3IQPuVrnEABghaSG8E7FpZ1DV913bWQ+
+      0MTnnr801ZeE23wFYFlmpTfoOY7e89rvekLgB4oA1kisc28a5VAkGY+VggzGB9x+
+      gWd82+LloPbzd1CgR3atNYXjPdQLqtEA1g6Pmj0eUNfSSr5SFUFlzmAhJyK0uUM4
+      O/PKQFVBDqbrUU4fwhWJum6awmVc9G7OMUneOmu0wCl949U+Ek7VIstZpfmz3+JU
+      4lMQ+9CU5OHR461WpyfC64cBcS9RbMflqivQGWMKoGgOBchVAB8vMn47ni66T5cV
+      1SrKOe5IEbb4vEcHA5d1e5VwpCV4aoIRIQNzos/PO9rXOT3osTJV3wylQxIu2+5j
+      yKDv0/mIKG+0HPt9fORA2TwqYZ0QEaBd8eCpgKHeKTZeAe15y1PKRUZuPKji1DL3
+      1ceMIJY5iCvjMi5fwzD3rD20a1ttKvYRtqNFzYaVpmnxhnysSPUJp99KDZh6HO9g
+      vfmzoi/adJ46P5+WEbOnfBO31+yKd6nnX4p7XM1F6vkDw6RXj9dE/SOKtfAljySO
+      vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
+      7Ul3uRRHi8Nb63mjjmRmd2MCAQM=
+      -----END PUBLIC KEY-----
+      ```
+
+      ## Technique de dédoublonnage
+
+      Le processus de dédoublonnage permet d'identifier les bénéficiaires
+      potentiellement en double dans la base de données. Il s'appuie sur
+      plusieurs critères pour comparer les enregistrements et déterminer s'ils
+      correspondent à la même personne.
+
+      L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un
+      des champs suivants est similaire avec un enregistrement existant, la
+      tentative d'enregistrement est considéré comme un doublon.
+
+      - Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les bénéficiaires avec certitude.
+      - Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un bénéficiaire, elle est utilisée pour le dédoublonner de manière unique.
+      - Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaison n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
+
+      Cette correspondance est faite de manière distincte sur la courte et la
+      longue distance. Elle est également limitée dans le temps à la date de
+      l'enregistrement qui a eu une correspondance en fonction de la nature de
+      l'opération (spécifique ou standardisée).
+
+  - name: Export de trajets
+    description: |
+      ## Schema d'export des trajets v3.0
+
+      Les trajets sont exportés au format XLSX (CSV à venir).
+
+      Le 🔒 indique que ces données ne sont pas présentes dans l'export Open data.
+
+      ### Trajet
+
+      | Colonne                     | Explications                                                                                                                                                                                                                  |
+      | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | journey_id                  | Identifiant RPC d'un couple passager/conducteur                                                                                                                                                                               |
+      | operator_trip_id&nbsp;🔒    | Identifiant opérateur permettant de regrouper plusieurs couples au sein d'un même trajet                                                                                                                                      |
+      | operator_journey_id&nbsp;🔒 | Identifiant opérateur d'un couple passager/conducteur                                                                                                                                                                         |
+      | operator_class              | La classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c) |
+      | operator&nbsp;🔒            | Nom de l'opérateur                                                                                                                                                                                                            |
+      | status                      | Statut du trajet pour le RPC                                                                                                                                                                                                  |
+
+      ### Dates et heures
+
+      | Colonne        | Explications                                                                                 |
+      | -------------- | -------------------------------------------------------------------------------------------- |
+      | start_datetime | Date et heure locale du départ au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+      | start_date     | Date locale du départ au format ISO 8601 (YYYY-MM-DD)                                        |
+      | start_time     | Heure locale du départ au format Thh:mm:ss). Plage de 10 minutes                             |
+      |                |                                                                                              |
+      | end_datetime   | Date et heure locale d'arrivée au format ISO 8601 (YYYY-MM-DDThh:mm:ss). Plage de 10 minutes |
+      | end_date       | Date locale d'arrivée au format ISO 8601 (YYYY-MM-DD)                                        |
+      | end_time       | Heure locale d'arrivée au format Thh:mm:ss). Plage de 10 minutes                             |
+      |                |                                                                                              |
+      | duration       | Durée indicative du trajet (HH:MM:SS) calculée par le RPC                                    |
+
+      > Les dates et heures sont exprimées dans le fuseau horaire `Europe/Paris`.
+
+      ### Lieux
+
+      | Colonne           | Explications                                                                                                                           |
+      | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+      | distance          | Distance covoiturée en kilomètres (précision au mètre)                                                                                 |
+      |                   |                                                                                                                                        |
+      | start_lat         | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+      | start_lon         | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+      | end_lat           | Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense   |
+      | end_lon           | Longitude comprise entre 180deg et -90deg décimaux en datum WSG-84 Précision à 3 décimales zone dense et 2 décimales en zone peu dense |
+      |                   |                                                                                                                                        |
+      | start_insee       | Code INSEE commune ou arrondissement de la position de départ                                                                          |
+      | start_commune     | Nom commune de départ                                                                                                                  |
+      | start_departement | Nom du département de la position de départ                                                                                            |
+      | start_epci        | EPCI de départ                                                                                                                         |
+      | start_aom         | AOM de départ                                                                                                                          |
+      | start_region      | Nom de la région de départ                                                                                                             |
+      | start_pays        | Nom du pays de départ                                                                                                                  |
+      | end_insee         | Code INSEE commune ou arrondissement de la position d'arrivée                                                                          |
+      | end_commune       | Nom commune d'arrivée                                                                                                                  |
+      | end_departement   | Nom du département de la position d'arrivée                                                                                            |
+      | end_epci          | EPCI d'arrivée                                                                                                                         |
+      | end_aom           | AOM d'arrivée                                                                                                                          |
+      | end_region        | Nom de la région d'arrivée                                                                                                             |
+      | end_pays          | Nom du pays d'arrivée                                                                                                                  |
+
+      ### Participants
+
+      | Colonne                        | Explications                                                  |
+      | ------------------------------ | ------------------------------------------------------------- |
+      | passenger_seats                | Nombre de sièges réservés par l'occupant passager. Défaut : 1 |
+      |                                |                                                               |
+      | operator_passenger_id&nbsp;🔒  | identifiant opérateur du passager                             |
+      | passenger_identity_key&nbsp;🔒 | identifiant unique inter-opérateur du passager                |
+      | operator_driver_id&nbsp;🔒     | identifiant opérateur du conducteur                           |
+      | driver_identity_key&nbsp;🔒    | identifiant unique inter-opérateur du conducteur              |
+
+      ### Subventions
+
+      | Colonne                           | Explications                                                                                                                                                                                                                                          |
+      | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | cee_application                   | Lien avec un dossier CEE (Oui/Non)                                                                                                                                                                                                                    |
+      |                                   |                                                                                                                                                                                                                                                       |
+      | driver_revenue&nbsp;🔒            | La somme en € réellement perçue par le conducteur APRÈS que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers ont été versées et que la commission de l'opérateur soit prise |
+      | passenger_contribution&nbsp;🔒    | Coût réel total en € du service pour l'occupant passager en fonction du nombre de sièges réservés APRÈS que toutes les possibles incitations ont été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc)                    |
+      | incentive_type                    | Période "normale" ou "booster"                                                                                                                                                                                                                        |
+      | incentive\_{N}\_siret             | SIRET de la contrepartie financière N                                                                                                                                                                                                                 |
+      | incentive\_{N}\_name              | Organisme distributeur                                                                                                                                                                                                                                |
+      | incentive\_{N}\_amount            | Montant en € de la contrepartie financière N                                                                                                                                                                                                          |
+      | incentive_rpc\_{N}\_campaign_id   | ID de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                 |
+      | incentive_rpc\_{N}\_campaign_name | Nom de la campagne de la contrepartie financière N calculée par le RPC                                                                                                                                                                                |
+      | incentive_rpc\_{N}\_siret         | SIRET du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                  |
+      | incentive_rpc\_{N}\_name          | Nom du sponsor de la contrepartie financière N calculée par le RPC                                                                                                                                                                                    |
+      | incentive_rpc\_{N}\_amount        | Montant en € de la contrepartie financière N calculée par le RPC                                                                                                                                                                                      |
+
+      ## Comparatif V2.0 / V3.0
+
+      Tableau comparatif des colonnes entre les versions 2 et 3 de l'export des
+      trajets.
+
+      | V2.0                             | V3.0                          | Remarques sur la migration V2 -> V3                                            |
+      | -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ |
+      | journey_id                       | journey_id                    | Identifiant unique de couple passager/conducteur                               |
+      | trip_id                          |                               | Identifiant de regroupement des couples généré par le RPC                      |
+      |                                  | operator_trip_id              | Identifiant de regroupement des couples généré par l'opérateur                 |
+      |                                  | operator_journey_id           | Identifiant de couple généré par l'opérateur                                   |
+      | journey_start_datetime           | start_datetime                | Passage en UTC                                                                 |
+      | journey_start_date               | start_date                    | Passage en UTC                                                                 |
+      | journey_start_time               | start_time                    | Passage en UTC                                                                 |
+      | journey_start_lon                | start_lon                     |                                                                                |
+      | journey_start_lat                | start_lat                     |                                                                                |
+      | journey_start_insee              | start_insee                   |                                                                                |
+      | journey_start_department         | start_departement             |                                                                                |
+      | journey_start_town               | start_commune                 |                                                                                |
+      | journey_start_towngroup          | start_epci                    |                                                                                |
+      | journey_start_country            | start_pays                    |                                                                                |
+      | journey_end_datetime             | end_datetime                  | Passage en UTC                                                                 |
+      | journey_end_date                 | end_date                      | Passage en UTC                                                                 |
+      | journey_end_time                 | end_time                      | Passage en UTC                                                                 |
+      | journey_end_lon                  | end_lon                       |                                                                                |
+      | journey_end_lat                  | end_lat                       |                                                                                |
+      | journey_end_insee                | end_insee                     |                                                                                |
+      | journey_end_department           | end_departement               |                                                                                |
+      | journey_end_town                 | end_commune                   |                                                                                |
+      | journey_end_towngroup            | end_epci                      |                                                                                |
+      | journey_end_country              | end_pays                      |                                                                                |
+      | driver_card                      |                               |                                                                                |
+      | passenger_card                   |                               |                                                                                |
+      | passenger_over_18                |                               |                                                                                |
+      | passenger_seats                  | passenger_seats               |                                                                                |
+      | operator_class                   | operator_class                |                                                                                |
+      | operator                         | operator                      |                                                                                |
+      | journey_distance_anounced        | distance                      | La distance envoyée par l'opérateur. Changement de format (m -> km)            |
+      | journey_distance_calculated      |                               |                                                                                |
+      | journey_duration_anounced        |                               |                                                                                |
+      | journey_duration_calculated      | duration                      | La durée indicative calculée par le RPC. Changement de format (MM -> HH:MM:SS) |
+      | operator_passenger_id            | operator_passenger_id         |                                                                                |
+      |                                  | passenger_identity_id         | Identifiant personnel inter-opérateurs                                         |
+      | operator_driver_id               | operator_driver_id            |                                                                                |
+      |                                  | driver_identity_key           | Identifiant personnel inter-opérateurs                                         |
+      | status                           | status                        | Statut du trajet : `acquisition_error`, `validation_error`, `normalization_error`, `fraud_error`, `anomaly_error`, `ok`, `expired`, `canceled`, `pending`, `unknown`                                                        |
+      | passenger_id                     |                               |                                                                                |
+      | passenger_contribution           | passenger_contribution        |                                                                                |
+      | passenger_incentive_N_siret      |                               |                                                                                |
+      | passenger_incentive_N_amount     |                               |                                                                                |
+      | passenger_incentive_rpc_N_siret  |                               |                                                                                |
+      | passenger_incentive_rpc_N_name   |                               |                                                                                |
+      | passenger_incentive_rpc_N_amount |                               |                                                                                |
+      | driver_id                        |                               |                                                                                |
+      | driver_revenue                   | driver_revenue                |                                                                                |
+      | driver_incentive_N_siret         |                               |                                                                                |
+      | driver_incentive_N_amount        |                               |                                                                                |
+      | driver_incentive_rpc_N_siret     |                               |                                                                                |
+      | driver_incentive_rpc_N_name      |                               |                                                                                |
+      | driver_incentive_rpc_N_amount    |                               |                                                                                |
+      |                                  | cee_application               | Demande de dossier CEE (oui/non)                                               |
+      |                                  | incentive_type                | Type d'incitation (normale/booster)                                            |
+      |                                  | incentive_N_siret             | Incitation envoyée par l'opérateur : SIRET                                     |
+      |                                  | incentive_N_name              | Incitation envoyée par l'opérateur : nom                                       |
+      |                                  | incentive_N_amount            | Incitation envoyée par l'opérateur : montant en €                              |
+      |                                  | incentive_rpc_N_campaign_id   | Incitation calculée par le RPC : identifiant campagne                          |
+      |                                  | incentive_rpc_N_campaign_name | Incitation calculée par le RPC : nom de la campagne                            |
+      |                                  | incentive_rpc_N_siret         | Incitation calculée par le RPC : SIRET du sponsor                              |
+      |                                  | incentive_rpc_N_name          | Incitation calculée par le RPC : nom du sponsor                                |
+      |                                  | incentive_rpc_N_amount        | Incitation calculée par le RPC : montant en €                                  |
+
+  - name: Campagnes
+    description: |
+      Campagnes de covoiturage.
+  - name: Attestations opérateurs (déprécié)
+    description: |
+      Attestations des opérateurs de covoiturage.
+  - name: Géographie
+    description: |
+      Requêtes géographiques.
+
+x-topics:
+  - title: Authentication
+    content: |
+      Le token applicatif donné lors de la création de l'application doit être
+      envoyé dans les Headers des requêtes HTTP envoyée au serveur :
+
+      ```
+      Authorization: Bearer {token}
+      ```
+
+      Le token est au format JWT a durée de vie longue. Il est recommandé de le
+      changer régulièrement.
+
+  - title: Accès à l'API
+    content: |
+      Envoyer un trajet de covoiturage à l'API du Registre de Preuve de Covoiturage nécessite que plusieurs critères soient remplis.
+
+      1. Une entité “**opérateur de covoiturage**” est créée sur l'application du registre.
+      2. Un utilisateur appartenant à cet opérateur de covoiturage est **administrateur**.
+      3. L'administrateur opérateur **crée un token applicatif**.
+      4. Ce token applicatif est **installé sur le serveur de l'opérateur** qui va envoyer les données et sera passé dans le *Header* de chacune des requêtes.
+
+  - title: Accéder à l'application du Registre
+    content: |
+      Afin de valider les critères 1 et 2 , veuillez contacter [l'équipe du
+      Registre](mailto:contact@covoiturage.beta.gouv.fr) qui vous ouvrira un
+      accès à l'application.
+
+  - title: Créer un token applicatif
+    content: |
+      Cette manipulation est réalisable, uniquement pour les utilisateurs dits
+      *administrateurs*, sur l'interface applicative du Registre de preuve de
+      covoiturage.
+
+      1. Créer un nouveau token ;
+      2. Donner un nom à ce token ;
+      3. Copier le token généré et le conserver de manière sécurisée. **Il devra être envoyé dans le header de chaque requête serveur.**
+
+      > ⚠️ Ce token ne pourra pas être ré-affiché ni récupéré. Si le token est perdu, il doit être recréé par la même procédure.
+
+  - title: Rate limiting
+    content: |
+      Nous appliquons une limite au nombre de requêtes HTTP qui peuvent
+      être effectuées dans une période donnée. Lorsque cette limite est
+      atteinte, notre API renverra une erreur `429 Too Many Requests`.
+
+      Chaque type de route a une limite de requêtes différente. La limite
+      pour l'envoi des trajets est de 20000 requêtes par minute.
+
+      Les en-têtes suivants sont envoyés avec chaque réponse :
+
+      - `RateLimit-Limit` : nombre total de requêtes entre deux réinitialisations de quota ;
+      - `RateLimit-Remaining` : nombre de requêtes jusqu'à la réinitialisation du quota ;
+      - `RateLimit-Reset` : temps restant (en secondes) jusqu'à la réinitialisation du quota.
+
+  - title: Définitions
+    content: |
+      Acronymes utilisés dans la documentation :
+      
+      - **RPC** : Registre de preuve de covoiturage
+      - **CEE** : Crédits d'Economie d'Energie
+      - **PNCEE** : Pôle National des Crédits d'Economie d'Energie
+      - **SIRET** : Système d'Identification du Répertoire des Établissements
+      - **EPCI** : Établissement Public de Coopération Intercommunale
+      - **AOM** : Autorité Organisatrice de la Mobilité
+
+      Concepts utilisés :
+
+      - **Opérateur de covoiturage** : entité qui propose un service de covoiturage
+      - **Territoire** : entité qui propose des campagnes de covoiturage (AOM, EPCI, ...)
+      - **Trajet** : déplacement effectué par un conducteur et un passager
+                    (on parle aussi de couple conducteur/passager)
+      - **Journey ID** : identifiant unique d'un trajet assigné par le RPC
+      - **Operator Journey ID** : identifiant unique d'un trajet assigné par l'opérateur
+
+components:
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    offset:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Offset
+    total:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Limite
+    limit:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Limite
+    pagination:
+      type: object
+      required:
+        - offset
+        - limit
+      additionalProperties: false
+      properties:
+        offset:
+          '$ref': '#/components/schemas/offset'
+        limit:
+          '$ref': '#/components/schemas/limit'
+        total:
+          '$ref': '#/components/schemas/total'
+    operator_trip_id:
+      type: string
+      description: Identifiant généré par l'opérateur pour regrouper des trajets (plusieurs passagers avec un même conducteur)
+    operator_class:
+      enum:
+        - A
+        - B
+        - C
+      description: classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c).
+    licence_plate:
+      type: string
+      description: Plaque d'immatriculation du véhicule
+    driver:
+      type: object
+      additionalProperties: false
+      required:
+        - identity
+        - revenue
+      properties:
+        identity:
+          '$ref': '#/components/schemas/identity'
+        revenue:
+          type: number
+          minimum: 0
+          multipleOf: 1
+          description: |
+            La somme réellement perçue par le conducteur **APRÈS** que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l'opérateur soit prise.
+            Somme exprimée en centimes.
+    passenger:
+      type: object
+      additionalProperties: false
+      required:
+        - identity
+        - contribution
+      properties:
+        identity:
+          '$ref': '#/components/schemas/identity'
+        payments:
+          '$ref': '#/components/schemas/payments'
+        contribution:
+          type: number
+          minimum: 0
+          multipleOf: 1
+          description: |
+            Coût réel total du service pour l'occupant passager en fonction du nombre de sièges réservés **APRÈS** que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc).|
+            Somme exprimée en centimes.
+        seats:
+          type: number
+          minimum: 1
+          maximum: 8
+          multipleOf: 1
+          default: 1
+          description: Nombre de sièges réservés par l'occupant passager.
+    operator_journey_id:
+      type: string
+      description: Identifiant unique du trajet envoyé par l'opérateur. Attention, cela correspond au `journey_id` de la version 2 de l'API.
+      pattern: ^[a-z0-9]{1,256}$
+      minLength: 1
+      maxLength: 256
+    status:
+      type: string
+      enum:
+        - fraud_error
+        - anomaly_error
+        - validation_error
+        - acquisition_error
+        - normalization_error
+        - ok
+        - canceled
+        - pending
+        - unknown
+        - terms_violation_error
+      description: |
+        Statut du trajet tel que :
+          - validation_error : les données envoyées ne sont pas valides
+          - anomaly_error : le trajet est incohérent ou physiquement impossible
+          - acquisition_error : le trajet n'a pas du tout été enregistré
+          - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
+          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
+          - ok : le trajet a correctement été traité
+          - pending : le trajet a été enregistré mais n'a pas encore été traité
+          - canceled : le trajet a été annulé par l'opérateur
+          - unknown : une erreur inconnue a affecté le trajet
+          - terms_violation_error : le trajet ne respecte pas les conditions générales d'utilisation
+    duration:
+      type: number
+      minimum: 0
+      multipleOf: 1
+      maximum: 36000
+      description: Durée exprimée en seconde
+    distance:
+      type: number
+      minimum: 0
+      multipleOf: 1
+      maximum: 1000000
+      description: Distance exprimée en mètre
+    incentives:
+      type: array
+      description: |
+        Tableau reprenant la liste complète des incitations appliquées (ordre d'application, montant, identifiant de l'incitateur). Si aucune incitation, envoyer un tableau vide.
+
+        ## Ordre par défaut
+        Par défaut, l'ordre d'application des politiques incitatives est le suivant :
+        1. Territoire (AOM, Région, ...)
+        2. Sponsors (incitations employeur, CE, etc.)
+        3. Opérateur (opération promotionnelle, offres, etc.)
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - index
+          - amount
+          - siret
+        properties:
+          index:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Ordre d'application de l'incitation
+            example: 0
+          amount:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Montant de l'incitation en centimes d'euros
+            example: 100
+          siret:
+            type: string
+            description: |
+              Numéro de SIRET de l'incitateur
+              Le SIRET est un identifiant unique par structure juridique. Toutes les entités incitatrices en possèdent un.
+            example: "11000101300017"
+    payments:
+      type: array
+      description: |
+        Zéro, une ou plusieurs méthodes de paiement utilisées (ex. carte employeur préchargée permettant de payer directement le covoiturage sur une application).
+        ### Tip
+        La prise en charge des frais de transports personnel (carburant et forfait mobilité) pourra prendre la forme d'une solution de paiement spécifique, dématérialisée et prépayée, intitulée « titre-mobilité ». Ainsi, il apparaît comme pertinent de détailler la solution de paiement utilisée dans le cadre d'un trajet covoituré, s'il s'agit de Titre-Mobilité.
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - index
+          - siret
+          - type
+          - amount
+        properties:
+          index:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Ordre d'application
+            example: 0
+          amount:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Montant du paiement en centimes d'euros
+            example: 100
+          siret:
+            type: string
+            description: Numéro de SIRET du payeur
+            example: "11000101300017"
+          type:
+            type: string
+            description: Nom du titre
+    lat:
+      type: number
+      description: Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
+      example: 47.682821
+    lon:
+      type: number
+      description: Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
+      example: -0.557483
+    geopoint:
+      type: object
+      additionalProperties: false
+      description: |
+        Position lat/lon
+      required:
+        - lat
+        - lon
+      properties:
+        lat:
+          '$ref': "#/components/schemas/lat"
+        lon:
+          '$ref': "#/components/schemas/lon"
+    geo_selector:
+      type: object
+      minProperties: 0
+      maxProperties: 8
+      additionalProperties: false
+      description: Sélecteur géographique par découpage administratif
+      properties:
+        arr:
+          type: array
+          items:
+            type: string
+            description: Code consolidé de la zone géographique
+        com:
+          type: array
+          items:
+            type: string
+            description: Code INSEE de la commune
+        epci:
+          type: array
+          items:
+            type: string
+            description: Code INSEE de l'EPCI
+        aom:
+          type: array
+          items:
+            type: string
+            description: SIRET de l'AOM
+        reg:
+          type: array
+          items:
+            type: string
+            description: SIRET de la région
+        dep:
+          type: array
+          items:
+            type: string
+            description: Code INSEE du département
+      example:
+        aom: ["200067652"]
+    datetime:
+      type: string
+      format: date-time
+      description: |
+        Date et heure du départ/arrivée du passager au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+        L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
+      example: '2021-01-01T11:00:00Z'
+    time_geopoint:
+      type: object
+      additionalProperties: false
+      description: |
+        Position lat/lon + date  du passager
+      required:
+        - datetime
+        - lat
+        - lon
+      properties:
+        datetime:
+          '$ref': "#/components/schemas/datetime"
+        lat:
+          '$ref': "#/components/schemas/lat"
+        lon:
+          '$ref': "#/components/schemas/lon"
+    identity:
+      type: object
+      description: |
+        Ces données personnelles permettent d'identifier la personne effectuant le covoiturage afin de pouvoir comptabiliser ses trajets et lui distribuer des incitations en fonction des politiques applicables.
+        Deux options sont disponibles pour la transmission du numéro de téléphone :
+        - Numéro complet au format ITU E.164 (phone) (ex. +33601020304, +590690101010)
+        - Numéro au format ITU E.164 tronqué des 2 derniers chiffres (phone_trunc) (ex. +336010203, +5906901010) + identifiant unique de l'opérateur (operator_user_id)
+      additionalProperties: false
+      required:
+        - operator_user_id
+        - identity_key
+        - phone_trunc
+      properties:
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
+        travel_pass:
+          '$ref': '#/components/schemas/travel_pass'
+        phone: 
+          '$ref': '#/components/schemas/phone'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        application_timestamp:
+          '$ref': '#/components/schemas/application_timestamp'
+        driving_license:
+          '$ref': '#/components/schemas/driving_license'
+        operator_user_id:
+          '$ref': '#/components/schemas/operator_user_id'
+        over_18:
+          '$ref': '#/components/schemas/over_18'
+    identity_key:
+      type: string
+      minLength: 64
+      maxLength: 64
+      description: |
+        Correspond au SHA d'une chaîne concaténée tel que : `sha256({phone_number}-{last_name})` où :
+        
+        - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : `+33601020304`
+        - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe :  
+           Regexp: `[A-Z ]*`  
+           Exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit `+33701020304-D HERUG DE L HERAULT`
+    travel_pass:
+      type: object
+      description: |
+        Numéro de carte de transport (TCL, Navigo, Trabool, etc.) de l'occupant.
+        Obligatoire si l'information est disponible.
+        Actuellement supporté: navigo
+      additionalProperties: false
+      required:
+        - name
+        - user_id
+      properties:
+        name:
+          enum:
+            - navigo
+          description: Nom du titre
+          example: navigo
+        user_id:
+          type: string
+          description: Numéro de carte de transport
+          example: 00-MFR-6782929
+    phone:
+      type: string
+      description: Numéro au format ITU E.164
+      example: '+33601020304, +590690101010'
+    phone_trunc:
+      type: string
+      pattern: ^\+[0-9]{8,12}$
+      minLength: 10
+      maxLength: 14
+      description: Numéro de téléphone au format ITU-T E.164 tronqué des 2 derniers chiffres
+      example: '+336010203'
+    last_name_trunc:
+      type: string
+      pattern: ^[A-Z ]{3}$
+      minLength: 3
+      maxLength: 3
+      description: |
+        Correspond aux trois premièrs caractères du nom de famille complet en majuscule, sans accent ni tiret ni apostrophe. Dans le cas où le nom comporterait moins de 3 lettres, compléter avec des espaces.
+        Ex 1: M. D'Hérûg-de-l'Hérault => "D H"
+        Ex 2: M. Tô => "TO "
+    
+    application_timestamp:
+      type: string
+      format: datetime
+      description: Date de signature de l'engagement par le demandeur.
+    driving_license:
+        description: |
+          Numéro de permis de conduire (également appelé code driving_license)
+          cf https://permisdeconduire.ants.gouv.fr/tout-savoir-sur-le-permis/le-numero-de-dossier-sur-un-permis-au-format-carte-bancaire
+        oneOf:
+          - type: string
+            description: Numéro de permis de conduire composé de 12 chiffres après 1975.
+            example: '051227308989'
+            pattern: ^[0-9]{12}$
+            minLength: 12
+            maxLength: 12
+          - type: string
+            description: Numéro de permis de conduire composé de 1 à 15 caractères suivis de 4 chiffres avant 1975.
+            example: '822146819'
+            pattern: ^[A-Z0-9]{1,15}[0-9]{4}$
+            minLength: 5
+            maxLength: 19
+          - type: string
+            description: Numéro de permis de conduire plus anciens composé de 1 à 15 caractères.
+            example: '123456A'
+            pattern: ^[A-Z0-9]{1,15}$
+            minLength: 1
+            maxLength: 15
+          - type: string
+            description: Numéro de permis étranger préfixé de l'indicatif '99-'.
+            example: '99-X23836'
+            pattern: ^99-.*$
+            minLength: 4
+            maxLength: 64
+    operator_user_id:
+      type: string
+      description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
+      example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
+    over_18:
+      enum:
+        - true
+        - false
+        - null
+      description: |
+        Applicable seulement au passager.
+          - true si majeur
+          - false si mineur
+          - null si non fourni
+
+        > De nombreuses campagnes utilisent cette information pour s'assurer que les bénéficiaires d'incitations sont majeures. La valeur `NULL` les exclues.
+
+    journey_type:
+      type: string
+      enum: ['short', 'long']
+    
+    long_distance_application:
+      type: object
+      additionalProperties: false
+      required:
+        - journey_type
+        - identity_key
+        - driving_license
+        - last_name_trunc
+        - phone_trunc
+        - datetime
+        - application_timestamp
+      properties:
+        journey_type:
+          type: string
+          enum: ['long']
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
+        driving_license:
+          '$ref': '#/components/schemas/driving_license'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date de partage des frais.
+        application_timestamp:
+          '$ref': '#/components/schemas/application_timestamp'
+    short_distance_application:
+      type: object
+      additionalProperties: false
+      required:
+        - journey_type
+        - identity_key
+        - driving_license
+        - last_name_trunc
+        - operator_journey_id
+        - application_timestamp
+      properties:
+        journey_type:
+          type: string
+          enum: ['short']
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
+        driving_license:
+          '$ref': '#/components/schemas/driving_license'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        operator_journey_id:
+          '$ref': '#/components/schemas/operator_journey_id'
+        application_timestamp:
+          '$ref': '#/components/schemas/application_timestamp'
+    identitycert:
+      type: object
+      description: |
+        L'identité peut être passée de 3 manières différentes :
+        1. `phone` : le numéro de téléphone complet au format ISO
+        2. `phone_trunc` + `operator_user_id` : le numéro de téléphone tronqué plus votre identifiant utilisateur
+        3. `operator_user_id` : votre identifiant utilisateur uniquement (valable uniquement si vous avez transmis des trajets avec le couple `phone_trunc` + `operator_user_id`)
+      additionalProperties: false
+      properties:
+        phone:
+          type: string
+          description: Numéro au format ITU E.164
+          example: '+33601020304, +590690101010'
+        phone_trunc:
+          type: string
+          description: Numéro au format ITU E.164 tronqué des 2 derniers chiffres. Obligatoire si `phone` n'est pas renseigné.
+          example: '+336010203, +5906901010'
+        operator_user_id:
+          type: string
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
+          example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
+    certificate_data:
+      type: object
+      additionalProperties: false
+      properties:
+        total:
+          type: object
+          properties:
+            trips:
+              type: integer
+            week_trips:
+              type: integer
+            weekend_trips:
+              type: integer
+            distance:
+              '$ref': '#/components/schemas/distance'
+            amount:
+              type: number
+              description: montant en centimes d'euros
+        trips:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                  - driver
+                  - passenger
+              datetime:
+                type: string
+                format: date-time
+              trips:
+                type: integer
+              distance:
+                '$ref': '#/components/schemas/distance'
+              amount:
+                type: number
+                description: montant en centimes d'euros
+    terms_violation_label:
+      type: string
+      enum:
+        - distance_too_short
+        - too_many_trips_by_day
+        - too_close_trips
+        - expired
+      description: |
+        Etiquette possible pour un cas de non respect des CGU :
+          - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+          - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
+          - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
+          - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
+    fraudcheck_label:
+      type: string
+      enum:
+        - interoperator_overlap
+        - interoperator_too_many_trips_by_day
+        - interoperator_too_close_trips
+      description: |
+        Etiquette possible pour un cas de fraude détectée :
+          - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`) 
+          - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+          - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.    
+    anomaly_label:
+      type: string
+      enum:
+        - temporal_overlap_anomaly
+        - distance_duration_anomaly
+      description: |
+        # Etiquette possible pour une anomalie détectée
+          - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
+          - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
+
+        ## Règles utilisées pour detecter les anomalies de type `distance_duration_anomaly`
+
+         - distance estimée par osrm ou transmises inférieure à 300m.
+         Le trajet est beaucoup trop court en termes de distance.
+         - durée estimée par osrm ou transmise inférieure à 1 minute.
+         Le trajet est beaucoup trop court en termes de durée
+         - durée estimée par osrm supérieure à 2.5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis de 10 minutes
+         Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+         - distance estimée par osrm supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
+         La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+         - distance transmise supérieure à 4 fois la distance estimée osrm. Exemple: 10 km estimé pour 40 km transmis
+         La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
+         - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
+         La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
+
+    cee_application_import:
+      type: object
+      description: Précédente demande de CEE
+      additionalProperties: false
+      required:
+        - phone_trunc
+        - last_name_trunc
+        - datetime
+        - journey_type
+      properties:
+        journey_type:
+          '$ref': '#/components/schemas/journey_type'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date d'engagement de l'opération concernée.
+    cee_application_identity_import:
+      type: object
+      description: |
+        Précédente demande de CEE.
+        S'il s'agit d'une opération spécifique, le payload est le même que sur l'import, en ajoutant le champs "cee_application_type": "specific".
+        S'il s'agit d'une opération standarisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }.
+      additionalProperties: false
+      oneOf:
+        - required:
+          - Demandes CEE_application_type
+          - Demandes CEE_application_uuid
+          - identity_key
+        - required:
+          - Demandes CEE_application_type
+          - identity_key
+          - phone_trunc
+          - last_name_trunc
+          - journey_type
+          - datetime
+      properties:
+        cee_application_type:
+          '$ref': '#/components/schemas/cee_application_type'
+        cee_application_uuid:
+          '$ref': '#/components/schemas/cee_application_uuid'
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
+        journey_type:
+          '$ref': '#/components/schemas/journey_type'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date d'engagement de l'opération concernée.
+    cee_application_identity_import_response:
+      type: object
+      description: Retour de la requête d'import des demandes CEE en batch
+      additionalProperties: false
+      required:
+        - imported
+        - failed
+        - failed_details
+      properties:
+        imported:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes importées avec succès
+        failed:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes non importées
+        failed_details:
+          type: array
+          minItems: 0
+          maxItems: 1000
+          items:
+            allOf:
+              - '$ref': '#/components/schemas/cee_application_identity_import'
+              - type: object
+                required: 
+                  - error
+                properties:
+                  error:
+                    type: string
+    cee_application_import_response:
+      type: object
+      description: Retour de la requête d'import des demandes CEE en batch
+      additionalProperties: false
+      required:
+        - imported
+        - failed
+        - failed_details
+      properties:
+        imported:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes importées avec succès
+        failed:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes non importées
+        failed_details:
+          type: array
+          minItems: 0
+          maxItems: 1000
+          items:
+            allOf:
+              - '$ref': '#/components/schemas/cee_application_import'
+              - type: object
+                required: 
+                  - error
+                properties:
+                  error:
+                    type: string
+    cee_application_type:
+      type: string
+      description: Type de demande cee
+      enum:
+        - specific
+        - standardized
+    cee_application_uuid:
+      type: string
+      format: uuid
+      description: UUID V4 de la demande
+    cee_application:
+      type: object
+      description: Demande de CEE
+      additionalProperties: false
+      required:
+        - datetime
+        - uuid
+        - token
+      properties:
+        datetime:
+          type: number
+          description: Date de l'opération, en l'occurence date de fin du trajet pour la courte distance et date de paiement pour la longue.
+        uuid:
+          '$ref': '#/components/schemas/cee_application_uuid'
+        journey_id:
+          type: number
+          description: Numéro de trajet interne au rpc correspondant à l'operator_journey_id envoyé
+        status:
+          type: string
+          description: Statut du trajet correspondant à l'operator_journey_id envoyé.
+        token:
+          type: string
+          description: signature(sha512([SIRET_OPERATEUR]/[journey_type]/[driving_license]//[DATETIME UTC]))
+          example: signature(sha512(13002526500013/short/051227308989/2022-11-22T08:54:19Z))
+
+
+paths:
+  /journeys:
+    post:
+      tags:
+      - Trajets courte distance
+      summary: Envoyer un trajet
+      description: |
+        #### Précisions d'usage :
+
+        - **Attention**, l'API v3.1 nécessite d'envoyer des preuves au plus tard 24h après le début du trajet.
+        - Un _rate limiting_ de 20000 requêtes par minute est appliqué sur l'envoi des trajets. Les différents points d'API ont des _rate limiters_ indépendants.
+
+        ---
+
+        Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
+
+        ### Unités de mesure
+
+        Les unités utilisées pour les valeurs sont :
+
+        - montants financiers en **centimes d'Euros**
+        - distances en **mètres**
+
+        ### Données financières
+
+        Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet.
+        Ainsi, les propriétés `passenger.contribution` et `driver.revenue` combinées au tableau `incentives` doivent permettre ce calcul.
+        Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
+        > Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
+
+        ### Validation
+        
+        Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
+
+        ### Vérification
+        Les vérifications sont faites de manière asynchrone.
+        Le statut ne peut plus changer 48h après la date de fin du trajet.
+        En cas d'indisponibilité du ou des services, le trajet est considéré comme `ok` après 48h
+
+        ## Détection de fraude
+
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
+        Ces trajets seront retournés avec un champs `status` à `fraud_error` et un label dans `fraud_error_labels` à `interoperator_fraud`.
+        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
+
+        ## Détection d'anomalie
+
+        Le trajet est incohérent ou physiquement impossible.
+        Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
+        Voir la section du schema "anomaly_label" pour plus de détails
+      operationId: acquisition:create
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - operator_journey_id
+                - operator_trip_id
+                - incentives
+                - operator_class
+                - start
+                - end
+                - distance
+                - driver
+                - passenger
+              additionalProperties: false
+              properties:
+                operator_journey_id:
+                  '$ref': '#/components/schemas/operator_journey_id'
+                operator_trip_id:
+                  '$ref': '#/components/schemas/operator_trip_id'
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                incentives:
+                  '$ref': '#/components/schemas/incentives'
+                licence_plate:
+                  '$ref': '#/components/schemas/licence_plate'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+                driver:
+                  '$ref': '#/components/schemas/driver'
+                passenger:
+                  '$ref': '#/components/schemas/passenger'
+      responses:
+        '201':
+          description: OK. Le trajet a bien été enregistré.
+          content:
+            'application/json':
+               schema:
+                 type: object
+                 required:
+                   - operator_journey_id
+                   - created_at
+                 properties:
+                   operator_journey_id:
+                     '$ref': '#/components/schemas/operator_journey_id'
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: La date de création dans le registre
+        '400':
+          description: Mauvaise requête
+          content:
+            'application/json':
+              example:
+                id: 1
+                error:
+                  data: "data/driver/identity/phone_trunc must match format \"phonetrunc\", data/driver/identity/phone_trunc must pass \"macro\" keyword validation"
+                  code: -32602
+                  message: Invalid params
+                jsonrpc: '2.0'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '409':
+          description: |
+            Le trajet est déjà enregistré.
+    get:
+      tags:
+      - Trajets courte distance
+      summary: Liste des trajets
+      description: |
+        La liste est toujours ordonnée de manière antechronologique.
+        Les trajets apparaissent au plus tard 24h après leur envoi.
+        Dans le cadre de la fraude inter-opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Ces trajets peuvent être listés en passant un paramètre `status` à `fraud_error`.
+      parameters:
+        - name: status
+          in: query
+          description: Statut du trajet
+          required: true
+          example: "ok"
+          schema:
+            '$ref': '#/components/schemas/status'
+        - name: limit
+          in: query
+          description: Limite, par défaut 50.
+          schema:
+            '$ref': '#/components/schemas/limit'
+        - name: start
+          in: query
+          required: false
+          description: Date de début de recherche, par défaut dans la semaine qui précède. Elle ne peut pas être inférieure à 90 jours à la date du jour.
+          schema:
+            '$ref': '#/components/schemas/datetime'
+        - name: end
+          in: query
+          required: false
+          description: Date de fin de recherche, par défaut le jour même.
+          schema:
+            '$ref': '#/components/schemas/datetime'
+        - name: offset
+          in: query
+          description: Offset, par défaut 0.
+          required: false
+          schema:
+            '$ref': '#/components/schemas/offset'
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - operator_journey_id
+                  properties:
+                    operator_journey_id:
+                      '$ref': '#/components/schemas/operator_journey_id'
+  /journeys/{operator_journey_id}:
+    parameters:
+      - name: operator_journey_id
+        in: path
+        description: operator_journey_id of the journey created
+        required: true
+        schema:
+          '$ref': '#/components/schemas/operator_journey_id'
+    get:
+      tags:
+      - Trajets courte distance
+
+      operationId: acquisition:status
+      summary: Vérifier le statut d'un trajet envoyé
+      description: |
+        Lors de l'envoi d'un trajet, un code 201 et un payload avec le `operator_journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables.
+        Les trajets ne seront visibles dans l'interface utilisateurs que **24 heures** après leur envoi.
+
+        Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
+
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
+        Un trajet detecté sera retourné avec un champ `status` à `fraud_error`.
+        Le statut ne peut plus changer 48h après la date de fin du trajet. En cas d'indisponibilité du service, le trajet est considéré comme ok après les 48h
+        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
+      responses:
+        '200':
+          description: |
+            OK
+            Le trajet a été trouvé et son statut est retourné.
+            Attention, le trajet peut être en erreur malgré le code 200, vérifiez le statut retourné.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - status
+                  - operator_journey_id
+                  - created_at
+                properties:
+                  status:
+                    '$ref': '#/components/schemas/status'
+                  operator_journey_id:
+                    '$ref': '#/components/schemas/operator_journey_id'
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
+                  fraud_error_labels:
+                    type: array
+                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    items:
+                      '$ref': "#/components/schemas/fraudcheck_label"
+                  anomaly_error_details:
+                    type: array
+                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
+                    items:
+                      properties:
+                        label:
+                          '$ref': "#/components/schemas/anomaly_label"
+                        metas:
+                          type: object
+                          properties:
+                            conflicting_journey_id:
+                              type: string
+                              description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
+                            temporal_overlap_duration_ratio:
+                              type: number
+                              description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+                  terms_violation_details:
+                    type: array
+                    description: | 
+                      Liste des raisons ayant abouti au rejet du trajet.
+                    items:
+                      '$ref': "#/components/schemas/terms_violation_label"
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: Le trajet n'a pas été trouvé
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+    patch:
+      tags:
+      - Trajets courte distance
+
+      summary: Mettre à jour un trajet
+      description: |
+        Permet de mettre à jour un trajet qui est en erreur suite à un problème de validation sur le payload. Par exemple suite à un problème de validation sur les coordonnées géographiques envoyées
+      operationId: acquisition:update
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - incentives
+                - operator_class
+                - start
+                - end
+                - distance
+
+              additionalProperties: false
+              properties:
+                operator_trip_id:
+                  '$ref': '#/components/schemas/operator_trip_id'
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                incentives:
+                  '$ref': '#/components/schemas/incentives'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+      responses:
+        '200':
+          description: ok
+  /journeys/{operator_journey_id}/cancel:
+    parameters:
+      - name: operator_journey_id
+        in: path
+        description: operator_journey_id of the journey created
+        required: true
+        schema:
+          '$ref': '#/components/schemas/operator_journey_id'
+    post:
+      tags:
+      - Trajets courte distance
+      summary: Invalider un trajet envoyé
+      description: |
+        Annule un trajet déjà envoyé dans le registre.
+        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre.
+        Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité à tout moment.
+
+        Le `code` est un champ libre de 32 caractères maximum. Obligatoire.
+        Le `message` est un champ libre pour expliquer la raison de l'invalidation. Optionnel.
+
+      operationId: acquisition:cancel
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - code
+              additionalProperties: false
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9A-Za-z_-]{0,32}$
+                message:
+                  type: string
+                  maxLength: 512
+      responses:
+        '200':
+          description: |
+            Ok
+            La demande d'invalidation a été prise en compte
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: Le trajet n'a pas été trouvé
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /policies/simulate:
+    post:
+      tags:
+        - Campagnes
+      summary: Simuler une incitation sur un trajet
+
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - operator_class
+                - start
+                - end
+                - distance
+                - driver
+                - passenger
+              additionalProperties: false
+              properties:
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+                driver:
+                  '$ref': '#/components/schemas/driver'
+                passenger:
+                  '$ref': '#/components/schemas/passenger'
+      responses:
+        '200':
+          description: |
+            L'API retourne un objet avec les incitations sur le trajet soumis. Attention, ce calcul n'est pas définitif en raison des seuils qui peuvent s'appliquer sur une campagne. Par exemple, une campagne limitant le nombre de trajets par jour à X. C'est donc un résultat provisoire - sans valeur contractuelle - qui est retourné.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - incentives
+                properties:
+                  incentives:
+                    '$ref': '#/components/schemas/incentives'
+  /geo/route:
+    get:
+      tags:
+      - Géographie
+
+      summary: Calcul théorique de la distance et de la durée
+      parameters:
+        - name: start
+          in: query
+          required: true
+          schema:
+            '$ref': '#/components/schemas/geopoint'
+        - name: end
+          in: query
+          required: true
+          schema:
+            '$ref': '#/components/schemas/geopoint'
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - distance
+                  - duration
+                properties:
+                  distance:
+                    '$ref': '#/components/schemas/distance'
+                  duration:
+                    '$ref': '#/components/schemas/duration'
+  /geo/point/by_address:
+    get:
+      tags:
+      - Géographie
+
+      summary: Geocoding à partir d'une adresse litérale
+      parameters:
+        - name: literal
+          in: query
+          description: Adresse littérale
+          example: 5 rue du Paradis, 75010 Paris
+          required: true
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: Nom complet du pays
+          example: France
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/geopoint'
+  /geo/point/by_insee:
+    get:
+      tags:
+      - Géographie
+
+      summary: Geocoding à partir d'un code insee
+      parameters:
+        - name: code
+          in: query
+          description: |
+            Code INSEE commune ou arrondissement de la position
+            Pour le métropoles qui comportent un code INSEE global et des codes par arrondissement, utiliser le code arrondissement.
+          example: "91177"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/geopoint'
+
+  /exports:
+    post:
+      tags: 
+        - Export de trajets
+
+      summary: Exporter des trajets
+      description: |
+        ## Exporter des trajets en CSV
+
+        Les exports sont conservés 7 jours.
+        
+        La création d'un export peut prendre plusieurs minutes.
+      operationId: export:createVersionThree
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - tz
+                - start_at
+                - end_at
+                - operator_id
+              additionalProperties: false
+              properties:
+                tz: 
+                  type: string
+                  description: Fuseau horaire
+                  example: Europe/Paris
+                start_at:
+                  type: string
+                  format: date-time
+                  description: |
+                    Date de début au format ISO. Sélectionne les trajets >= date
+                  example: 2024-01-01T00:00:00+0100
+                end_at:
+                  type: string
+                  format: date-time
+                  description: |
+                    Date de fin au format ISO nécessairement supérieur à
+                    start_at. Sélectionne les trajets < date
+                  example: 2024-02-01T00:00:00+0100
+                operator_id:
+                  type: array
+                  minItems: 0
+                  maxItems: 128
+                  description: Identifiant du ou des opérateurs à exporter
+                  items:
+                    type: number
+                  example: [1, 2, 3]
+                recipients:
+                  type: array
+                  minItems: 0
+                  maxItems: 24
+                  description: |
+                    Liste des adresses email des destinataires de l'export. Ces
+                    personnes recevront une notification avec un lien de
+                    téléchargement.
+                  items:
+                    type: string
+                    format: email
+                geo_selector:
+                  '$ref': '#/components/schemas/geo_selector'
+      responses:
+        '201':
+          description: |
+            La demande d'export a été créée. Un email sera envoyé aux
+            destinataires avec un lien de téléchargement une fois l'export terminée.
+
+            En cas d'erreur, la personne qui a commandé l'export sera notifiée,
+            ainsi que l'équipe technique du RPC.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - uuid
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  target:
+                    type: string
+                    enum: [operator, territory, opendata]
+                  status:
+                    type: string
+                    enum: [pending, running, uploading, uploaded, notify, success, failure]
+                  start_at:
+                    type: string
+                    format: date-time
+                    example: 2024-01-01T00:00:00+0100
+                  end_at:
+                    type: string
+                    format: date-time
+                    example: 2024-02-01T00:00:00+0100
+      
+  /certificates:
+    post:
+      tags:
+      - Attestations opérateurs (déprécié)
+
+      summary: Créer une attestation
+      description: |
+        ## Configuration de la requête
+
+        1. La requête est authentifiée avec un [token applicatif](/operateurs/preuves/acces) à ajouter à l'entête de la requête : `Authorization: Bearer <token>`
+        2. Le fuseau horaire est requis
+        2. L'identité est requise
+        3. Le filtrage géographique est optionnel
+        4. Les dates de début et de fin sont optionnelles
+        5. La date de fin la plus récente possible est J-6
+        6. La date de début la plus ancienne est le 1er janvier de l'année précédente
+
+        ## Création simple
+
+        Les données requises pour la création ne concernent que l'identité de la personne et le fuseau horaire.
+
+        Par défaut, l'attestation sera générée pour l'année précédente sans restrictions géographiques.
+
+        Chaque appel, même si les paramètres sont les mêmes, entraine la création d'une attestation unique.
+
+        Les attestations ne peuvent être supprimées. [Contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr) au besoin.
+
+        ### Astuce
+        Vous pouvez récupérer le fuseau horaire de l'utilisateur en Javascript.
+        ```js
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        ```
+      operationId: certificate:create
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - identity
+                - tz
+              additionalProperties: false
+              properties:
+                identity:
+                  '$ref': '#/components/schemas/identitycert'
+                tz:
+                  type: string
+                  description: fuseau horaire
+                  example: Europe/Paris
+                start_at:
+                  type: string
+                  format: date-time
+                  description: Date de début au format ISO. Sélectionne les trajet >= date
+                  example: 2021-01-01T00:00:00+0100
+                end_at:
+                  type: string
+                  format: date-time
+                  description: Date de fin au format ISO nécessairement supérieur à start_at. Sélectionne les trajets < date
+                  example: 2021-07-01T00:00:00+0200
+                positions:
+                  type: array
+                  minItems: 2
+                  description: |
+                    Pour sélectionner des trajets en fonction de leur point de départ et d'arrivée, il est possible de les préciser avec la clé `positions`.
+                    Tous les trajets ayant un départ **et** une arrivée dans un rayon de `1km` autour des points donnés seront inclus à l'attestation.
+                  items:
+                    '$ref': "#/components/schemas/geopoint"
+      responses:
+        '201':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: |
+                  Les données calculées de l'attestation sont retournées dans la réponse pour permettre leur affichage par votre application.
+                  Vous pouvez reconstruire l'URL de validation publique avec l'UUID.
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  meta:
+                    type: object
+                    properties:
+                      tz:
+                        type: string
+                        example: Europe/Paris
+                      positions:
+                        type: array
+                        items:
+                          '$ref': "#/components/schemas/geopoint"
+                      driver:
+                        '$ref': '#/components/schemas/certificate_data'
+                      passenger:
+                        '$ref': '#/components/schemas/certificate_data'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'identité n'a pu être trouvée. Vérifiez les identifiants envoyés.
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /certificates/{uuid}/attachment:
+    parameters:
+      - name: uuid
+        in: path
+        description: Identifiant de l'attestation précédemment créé.
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+      - Attestations opérateurs (déprécié)
+      summary: Télécharger une attestation
+      description: |
+        ## Upload du logo opérateur
+
+        Vous pouvez personnaliser le logo opérateur présent sur l'attestation.
+
+        Contrairement aux meta-données envoyées lors de la création de l'attestation, le logo est configuré au préalable via le page de profil de votre opérateur.
+
+        - [Ajouter mon logo en production](https://app.covoiturage.beta.gouv.fr/admin/operator)
+        - [Ajouter mon logo pour les tests](https://app.demo.covoiturage.beta.gouv.fr/admin/operator)
+
+        > _Le poids de l'image est de 2Mo maximum et sa taille de 1024x1024 pixels._
+
+        ## Téléchargement
+
+        Une fois l'attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
+
+        Ces meta-données optionnelles ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
+
+        Le PDF généré n'est pas stocké sur nos serveurs. L'appel d'API vous renvoie un fichier binaire que vous sauvegardez de votre côté. Vous pouvez générer le PDF d'une attestation plusieurs fois de suite.
+
+      operationId: certificate:download
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                meta:
+                  type: object
+                  description: |
+                    personnalisation optionnelle de l'en-tête
+                    omettre 'meta' si pas de personnalisation
+                    toutes les propriétés sont facultatives
+                  properties:
+                    operator:
+                      type: string
+                      maxLength: 305
+                      description: |
+                        zone de texte. Maximum de 305 caractères
+                        Maximum de 6 lignes séparées par \n
+                    identity:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 26
+                          description: Nom de la personne
+                        content:
+                          type: string
+                          maxLength: 305
+                          description: |
+                            zone de texte. Maximum de 305 caractères
+                            Maximum de 6 lignes séparées par \n
+                    note:
+                      type: string
+                      description: |
+                        zone de texte. Maximum de 440 caractères
+                        Retour à la ligne automatique
+
+      responses:
+        '200':
+          description: |
+            OK, le fichier binaire est envoyé.
+            ![Attestations](/attestations.png)
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'attestation n'a pu être trouvée
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /certificates/{uuid}:
+    parameters:
+      - name: uuid
+        in: path
+        description: Identifiant de l'attestation précédemment créé.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 9415300a-7a51-4296-96d1-68636e46485d
+    get:
+      tags:
+      - Attestations opérateurs (déprécié)
+      summary: Vérifier une attestation
+
+      operationId: certificate:verify
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - ok
+                      - expired
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  tz:
+                    type: string
+                    example: Europe/Paris
+                  start_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  end_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  identity:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                  operator:
+                    type: object
+                    properties:
+                      _id:
+                        type: integer
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                  positions:
+                    type: array
+                    items:
+                      '$ref': "#/components/schemas/geopoint"
+                  driver:
+                    '$ref': '#/components/schemas/certificate_data'
+                  passenger:
+                    '$ref': '#/components/schemas/certificate_data'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'attestation n'a pu être trouvée
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+
+  /policies/cee:
+    post:
+      tags:
+      - Demandes CEE
+      summary: Enregistrer une demande CEE
+      description: |
+        Vérification complète de l'éligibilité de l'usager (historique et
+        dédoublonnage) et enregistrement de la demande CEE dans l'API CEE :
+        
+        - Si la conformité de la demande est valide, alors une réponse 201 est retournée validant l'enregistrement de la demande.
+        - Si une demande a déjà été enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistrement a été fait.
+        - Si le trajet envoyé n'est pas trouvé, alors une réponse 404 est retournée.
+       
+        Ce point d'API est consultable à `J+7` pour la courte et la longue
+        distance, `J` étant la date de réalisation du trajet. Il est prévu que
+        ce délai soit réduit à 48h après la réalisation du trajet suite au
+        déploiement de l'API V3.
+      operationId: policy:cee:register
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              oneOf:
+                - '$ref': '#/components/schemas/short_distance_application'
+                - '$ref': '#/components/schemas/long_distance_application'
+      responses:
+        '201':
+          description: Ok, la demande est enregistrée
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application'
+        '404':
+          description: |
+            La demande n'a pas pu aboutir car un trajet éligible n'a pas été trouvé soit parce que
+            l'identifiant envoyé ne correspond pas à un trajet inscrit dans le registre,
+            soit parce que celui-ci ne correspond pas au critères d'éligibilité.
+            Pour rappel, un trajet éligible est un trajet:
+              - après le 1er janvier 2023
+              - de moins de 80 km
+              - dont le départ ou l'arrivée est en France
+              - de classe C
+        '400':
+          description: |
+            - "expired" : correspond a un trajet envoyé "hors délais". Il faut qu'il soit enregistré dans le RPC dans les 5 jours qui suivent sa réalisation
+            - "Date should be before 7 days from now" : correspondant à un appel à l'API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet 
+              sur la courte distance et à moins de J+7 de la date de paiement au conducteur par l'opérateur sur le longue distance.
+        '409':
+          description: |
+            Une demande similaire a déjà enregistrée.
+            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande, le `journey_id` et le `status` si la demande initiale concerne la courte distance.
+            Dans le cas contraire, seul le champs datetime correspondant à la date de l'opération est renvoyé.
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  datetime:
+                    type: string
+                    format: datetime
+                    description: Date de l'opération, en l'occurence date de fin du trajet pour la courte distance et date de paiement pour la longue.
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID V4 de la demande si la demande a déjà été effectuée par l'opérateur.
+  /policies/cee/simulate:
+    post:
+      tags:
+      - Demandes CEE
+      summary: Simuler une demande CEE
+      description: |
+        Possibilité de simuler une demande avant la réalisation du trajet par un
+        usager afin de vérifier partiellement la pré-éligibilité de ce dernier
+        (vérification de l'historique mais pas du dédoublonnége).
+        
+        Seront nécessaire : numéros de permis de conduire, trois premières
+        lettres du nom de famille et 8 premiers chiffres du numéro de téléphone.
+      operationId: policy:cee:simulate
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - last_name_trunc
+                - phone_trunc
+                - journey_type
+              properties:
+                driving_license:
+                  '$ref': '#/components/schemas/driving_license'
+                last_name_trunc:
+                  '$ref': '#/components/schemas/last_name_trunc'
+                phone_trunc:
+                  '$ref': '#/components/schemas/phone_trunc'
+                journey_type:
+                  '$ref': '#/components/schemas/journey_type'
+                identity_key:
+                  '$ref': '#/components/schemas/identity_key'
+      responses:
+        '200':
+          description: Ok, la demande est possible
+        '409':
+          description: Une demande similaire a déjà été enregistrée
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  datetime:
+                    type: string
+                    format: datetime
+                    description: Date à laquelle la demande a été effectuée
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID V4 de la demande si la demande a déjà été effectuée par l'opérateur.
+  /policies/cee/import:
+    post:
+      tags:
+      - Demandes CEE
+      summary: Importez des demandes CEE existantes par lot
+      description: |
+        Envoi par chaque opérateur concerné de l'historique des bénéficiaires
+        d'opérations spécifiques sur les 3 années précédents 2023. Pour chaque
+        bénéficiaires les informations suivantes seront requises : phone_trunc,
+        last_name_trunc, datetime et journey_type À noter que ce point d'API ne
+        sera peut-être pas mis en place et remplacé par un CSV standardisé.
+        
+        Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter
+        l'historique au registre au plus tôt.
+      operationId: policy:cee:import
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: array
+              maxItems: 1000
+              items:
+                '$ref': '#/components/schemas/cee_application_import'
+      responses:
+        '201':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application_import_response'
+  /policies/cee/import/identity:
+    post:
+      tags:
+      - Demandes CEE
+      summary: Importez les clés d'identité des demandes CEE existantes par lot
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+
+      operationId: policy:cee:import:identity
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: array
+              maxItems: 1000
+              items:
+                '$ref': '#/components/schemas/cee_application_identity_import'
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application_identity_import_response'
+  /policies/cee/{uuid}:
+    get:
+      tags:
+      - Demandes CEE
+      summary: Rechercher une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+
+      operationId: policy:cee:find
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID de la demande
+          schema:
+            '$ref': '#/components/schemas/cee_application_uuid'
+      responses:
+        '200':
+          description: La demande a été trouvée et appartient à l'opérateur.
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application'
+        '404':
+          description: La demande n'a pas été trouvée
+        '403':
+          description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur
+    delete:
+      tags:
+      - Demandes CEE
+      summary: Supprimer une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+
+      operationId: policy:cee:delete
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID de la demande
+          schema:
+            '$ref': '#/components/schemas/cee_application_uuid'      
+      responses:
+        '204':
+          description: La demande a été trouvée et a bien été supprimée.
+        '404':
+          description: La demande n'a pas été trouvée.
+        '403':
+          description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur.
