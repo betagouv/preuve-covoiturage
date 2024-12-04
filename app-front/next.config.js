@@ -5,7 +5,6 @@ const nextConfig = {
   output: "export",
   trailingSlash: true,
   reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
-  swcMinify: true,
   images: {
     dangerouslyAllowSVG: true,
     unoptimized: true,
