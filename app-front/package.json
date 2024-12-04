@@ -1,0 +1,33 @@
+{
+  "name": "app-front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev -p 4200",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start",
+    "lint": "NEXT_TELEMETRY_DISABLED=1 next lint",
+    "predev": "only-include-used-icons",
+    "prebuild": "only-include-used-icons"
+  },
+  "dependencies": {
+    "@codegouvfr/react-dsfr": "^1.15.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/material": "^6.1.10",
+    "@socialgouv/matomo-next": "^1.9.2",
+    "next": "^15.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "remixicon": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "^15.0.3",
+    "sass": "^1.80.6",
+    "typescript": "^5"
+  }
+}
