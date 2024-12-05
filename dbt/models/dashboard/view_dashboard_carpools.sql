@@ -6,7 +6,7 @@ SELECT
   c.end_geo_code,
   a.operator_id,
   d.name AS operator_name,
-  e.amount AS incentive_amount,
+  coalesce(e.amount,0) AS incentive_amount,
   CASE
     WHEN
       c.start_geo_code::text ~ '^97[1-2]'::text

@@ -14,6 +14,7 @@ SELECT
   operator_id,
   operator_name,
   sum(journeys)    AS journeys,
+  sum(incented_journeys) AS incented_journeys,
   sum(incentive_amount) AS incentive_amount
 FROM {{ ref('operators_by_day') }} AS a
 {% if is_incremental() %}

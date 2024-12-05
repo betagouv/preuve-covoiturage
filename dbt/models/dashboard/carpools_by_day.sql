@@ -14,6 +14,7 @@ SELECT
   operator_id,
   operator_name,
   count(*) AS journeys,
+  count(*) filter (where coalesce(incentive_amount,0) > 0) AS incented_journeys,
   sum(incentive_amount) as incentive_amount
 FROM {{ ref('view_dashboard_carpools') }} a
 LEFT JOIN {{ ref('view_perimeters_territories') }} b ON a.start_geo_code = b.arr
