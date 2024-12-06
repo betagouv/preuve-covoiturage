@@ -3,8 +3,10 @@ import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
-import { OperatorsAction } from "@/pdc/services/dashboard/actions/OperatorsAction.ts";
+import { OperatorsByDayAction } from "@/pdc/services/dashboard/actions/OperatorsByDayAction.ts";
+import { OperatorsByMonthAction } from "./actions/OperatorsByMonthAction.ts";
 import { config } from "./config/index.ts";
+import { binding as OperatorsByDayBinding } from "./contracts/operators/operatorsByDay.schema.ts";
 import { binding as OperatorsByMonthBinding } from "./contracts/operators/operatorsByMonth.schema.ts";
 import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProvider.ts";
 
@@ -17,9 +19,11 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
   ],
   validator: [
     OperatorsByMonthBinding,
+    OperatorsByDayBinding,
   ],
   handlers: [
-    OperatorsAction,
+    OperatorsByMonthAction,
+    OperatorsByDayAction,
   ],
   middlewares: [...defaultMiddlewareBindings, [
     "validate",
