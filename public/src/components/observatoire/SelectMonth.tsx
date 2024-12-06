@@ -1,12 +1,12 @@
 'use client'
-import { DashboardContext } from '@/context/DashboardProvider';
 import { monthList } from '@/helpers/lists';
-import { useContext, useEffect, useState } from 'react';
+import { useDashboard } from '@/hooks/useDashboard';
+import { useEffect, useState } from 'react';
 import SelectInList from '../common/SelectInList';
 
 
 export default function SelectMonth() {
-  const { dashboard } =useContext(DashboardContext);
+  const dashboard = useDashboard();
  
   const [monthAvailable, setMonthAvailable] = useState<{id: number; name: string; disabled: boolean;}[]>([]);
   useEffect(()=>{

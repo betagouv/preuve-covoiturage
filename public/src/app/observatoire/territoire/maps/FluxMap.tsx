@@ -1,20 +1,20 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
-import { DashboardContext } from '@/context/DashboardProvider';
 import { classWidth, getLegendClasses, jenks } from '@/helpers/analyse';
+import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
+import { useDashboard } from '@/hooks/useDashboard';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcLayer } from '@deck.gl/layers/typed';
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useContext, useMemo } from 'react';
-import { GetApiUrl } from '../../../../helpers/api';
+import { useMemo } from 'react';
 
 export default function FluxMap({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const dashboard = useDashboard();
   const params = [
     `code=${dashboard.params.code}`,
     `type=${dashboard.params.type}`,
