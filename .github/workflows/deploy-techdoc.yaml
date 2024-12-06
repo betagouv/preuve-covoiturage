@@ -7,7 +7,7 @@ on:
     types: [published]
   push:
     branches:
-      - chore/add-bump-action
+      - chore/update-techdoc
 jobs:
   deploy-doc:
     name: Deploy
