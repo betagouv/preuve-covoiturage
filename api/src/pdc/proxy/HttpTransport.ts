@@ -868,39 +868,19 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerDashboardRoutes() {
-    /*const routes: Array<RouteParams> = [
+    const routes: Array<RouteParams> = [
       {
         path: "/dashboard/operators/month",
         action: "dashboard:operatorsByMonth",
         method: "GET",
-        successHttpCode: 200,
+      },
+      {
+        path: "/dashboard/operators/day",
+        action: "dashboard:operatorsByDay",
+        method: "GET",
       },
     ];
-    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));*/
-    type ObservatoryMethod = string;
-    type ObservatoryURL = string;
-
-    const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
-      Object.entries({
-        operatorsByMonth: "operators/month",
-      }),
-    );
-
-    for (const [obsMethod, obsUrl] of routes) {
-      this.app.get(
-        `/dashboard/${obsUrl}`,
-        rateLimiter(),
-        this.cache.set({ prefix: "dashboard", ttl: CacheTTL.MONTH }),
-        asyncHandler(async (req: Request, res: Response) => {
-          const response = await this.kernel.handle(
-            createRPCPayload(`dashboard:${obsMethod}`, req.query, {
-              permissions: ["common.dashboard.stats"],
-            }),
-          );
-          this.send(res, response as RPCResponseType);
-        }),
-      );
-    }
+    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
   }
 
   private registerObservatoryRoutes() {
