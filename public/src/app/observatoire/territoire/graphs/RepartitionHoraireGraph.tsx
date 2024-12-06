@@ -1,18 +1,17 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { DashboardContext } from '@/context/DashboardProvider';
+import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
+import { useDashboard } from '@/hooks/useDashboard';
 import { Hour } from '@/interfaces/observatoire/Perimeter';
 import { DistributionHoraireDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { BarElement, CategoryScale, ChartData, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { GetApiUrl } from '../../../../helpers/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 export default function RepartitionHoraireGraph({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const dashboard = useDashboard();
   const options = {
     responsive: true,
     maintainAspectRatio: false,

@@ -1,6 +1,8 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { DashboardContext } from '@/context/DashboardProvider';
+import { GetApiUrl } from '@/helpers/api';
+import { chartLabels } from '@/helpers/graph';
 import { useApi } from '@/hooks/useApi';
+import { useDashboard } from '@/hooks/useDashboard';
 import { fr } from '@codegouvfr/react-dsfr';
 import {
   CategoryScale,
@@ -13,15 +15,12 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { useContext } from 'react';
 import { Line } from 'react-chartjs-2';
-import { GetApiUrl } from '../../../../helpers/api';
-import { chartLabels } from '../../../../helpers/graph';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 export default function DistanceGraph({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const dashboard = useDashboard();
   const options = {
     responsive: true,
     plugins: {
