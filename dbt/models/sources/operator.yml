@@ -33,10 +33,10 @@ sources:
           - name: company
             description: ''
             data_type: json
-          - name: bank
+          - name: address
             description: ''
             data_type: json
-          - name: address
+          - name: bank
             description: ''
             data_type: json
           - name: contacts

@@ -128,3 +128,6 @@ sources:
           - name: fraud_status
             description: ''
             data_type: USER-DEFINED
+          - name: anomaly_status
+            description: ''
+            data_type: USER-DEFINED

@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: view_first_date_passenger
+    columns:
+      - name: passenger_id
+        description: ''
+        data_type: character varying
+      - name: first_date
+        description: ''
+        data_type: date

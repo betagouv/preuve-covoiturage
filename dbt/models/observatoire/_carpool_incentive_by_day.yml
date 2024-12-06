@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: carpool_incentive_by_day
+    columns:
+      - name: from
+        description: ''
+        data_type: character varying
+      - name: to
+        description: ''
+        data_type: character varying
+      - name: start_date
+        description: ''
+        data_type: date
+      - name: collectivite
+        description: ''
+        data_type: bigint
+      - name: operateur
+        description: ''
+        data_type: bigint
+      - name: autres
+        description: ''
+        data_type: bigint
