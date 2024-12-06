@@ -1,7 +1,6 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
-import { DashboardContext } from '@/context/DashboardProvider';
 import { useApi } from '@/hooks/useApi';
 import { useSwitchFilters } from '@/hooks/useSwitchFilters';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
@@ -13,11 +12,12 @@ import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function AiresCovoiturageMap({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const { dashboard } = useDashboardContext();
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/aires-covoiturage?code=${dashboard.params.code}&type=${dashboard.params.type}`;

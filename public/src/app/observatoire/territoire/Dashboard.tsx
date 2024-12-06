@@ -1,21 +1,21 @@
 'use client'
 import SectionTitle from '@/components/common/SectionTitle';
 import SelectInList from '@/components/common/SelectInList';
+import SelectMonth from '@/components/observatoire/SelectMonth';
 import SelectObserve from '@/components/observatoire/SelectObserve';
 import SelectPeriod from '@/components/observatoire/SelectPeriod';
+import SelectSemester from '@/components/observatoire/SelectSemester';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
-import { DashboardContext } from '@/context/DashboardProvider';
+import SelectTrimester from '@/components/observatoire/SelectTrimester';
+import SelectYear from '@/components/observatoire/SelectYear';
+import { GetPeriod } from '@/helpers/dashboard';
 import { graphList, mapList } from '@/helpers/lists';
+import { useDashboard } from '@/hooks/useDashboard';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSearchParams } from 'next/navigation';
-import { useContext, useEffect } from 'react';
-import SelectMonth from '../../../components/observatoire/SelectMonth';
-import SelectSemester from '../../../components/observatoire/SelectSemester';
-import SelectTrimester from '../../../components/observatoire/SelectTrimester';
-import SelectYear from '../../../components/observatoire/SelectYear';
-import { GetPeriod } from '../../../helpers/dashboard';
+import { useEffect } from 'react';
 import DistanceGraph from './graphs/DistanceGraph';
 import FluxGraph from './graphs/FluxGraph';
 import IncentiveGraph from './graphs/IncentiveGraph';
@@ -32,7 +32,7 @@ import BestTerritoriesTable from './tables/BestTerritoriesTable';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
-  const { dashboard } =useContext(DashboardContext);
+  const dashboard =useDashboard();
   const period = GetPeriod();
   const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
   useEffect(() => {

@@ -1,8 +1,7 @@
 import { territoryList } from '@/helpers/lists';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { useContext } from 'react';
-import { DashboardContext } from '@/context/DashboardProvider';
+import { useDashboardContext } from '../../context/DashboardProvider';
 
 type SelectObserveProps = {
   id: string,
@@ -10,7 +9,7 @@ type SelectObserveProps = {
 };
 
 export default function SelectObserve(props: SelectObserveProps) {
-  const { dashboard } =useContext(DashboardContext);
+  const { dashboard } = useDashboardContext();
 
   const observeObject = territoryList.find(d=>d.id===dashboard.params.type)
   const filteredList = observeObject ? territoryList.filter(d=> territoryList.indexOf(d) < territoryList.indexOf(observeObject)) : [];
