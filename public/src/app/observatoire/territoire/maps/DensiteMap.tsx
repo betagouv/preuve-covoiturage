@@ -3,7 +3,6 @@ import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
 import { classColor, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { H3HexagonLayer } from '@deck.gl/geo-layers/typed';
@@ -12,9 +11,10 @@ import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useMemo } from 'react';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function DensiteMap({ title }: { title: string }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&zoom=8`;

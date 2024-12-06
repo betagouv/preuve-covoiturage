@@ -1,7 +1,7 @@
 import { periodList } from '@/helpers/lists';
-import { useDashboard } from '@/hooks/useDashboard';
 import { PeriodType } from '@/interfaces/observatoire/componentsInterfaces';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useDashboardContext } from '../../context/DashboardProvider';
 
 type SelectPeriodProps = {
   id: string,
@@ -9,7 +9,7 @@ type SelectPeriodProps = {
 };
 
 export default function SelectPeriod(props: SelectPeriodProps) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   return (
     <>
       <FormControl sx={{ minWidth: 200, margin: '0 0.5em' }}>

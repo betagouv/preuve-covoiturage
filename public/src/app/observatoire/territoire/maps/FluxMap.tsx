@@ -4,7 +4,6 @@ import { Config } from '@/config';
 import { classWidth, getLegendClasses, jenks } from '@/helpers/analyse';
 import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcLayer } from '@deck.gl/layers/typed';
@@ -12,9 +11,10 @@ import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useMemo } from 'react';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function FluxMap({ title }: { title: string }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const params = [
     `code=${dashboard.params.code}`,
     `type=${dashboard.params.type}`,

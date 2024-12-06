@@ -1,13 +1,13 @@
 import Rows from '@/components/observatoire/indicators/Rows';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import { KeyFiguresDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
+import { useDashboardContext } from '../../../context/DashboardProvider';
 
 export default function KeyFigures() {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = () => {
     const params = [

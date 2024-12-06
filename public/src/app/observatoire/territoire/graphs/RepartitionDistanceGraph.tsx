@@ -1,17 +1,17 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import { DistributionDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcElement, ChartData, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
 import { Doughnut } from 'react-chartjs-2';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
 export default function RepartitionDistanceGraph({ title }: { title: string }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const options = {
     responsive: true,
     maintainAspectRatio: false,

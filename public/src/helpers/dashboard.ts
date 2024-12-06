@@ -1,7 +1,7 @@
-import { useDashboard } from "@/hooks/useDashboard";
+import { useDashboardContext } from "../context/DashboardProvider";
 
 export function GetPeriod() {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const period = {
     start_date: new Date(dashboard.params.year, dashboard.params.month - 1, 2)
       .toISOString().slice(0, 10),

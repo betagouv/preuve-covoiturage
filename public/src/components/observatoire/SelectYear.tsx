@@ -1,11 +1,11 @@
 'use client'
 import { yearList } from '@/helpers/lists';
-import { useDashboard } from '@/hooks/useDashboard';
+import { useDashboardContext } from '../../context/DashboardProvider';
 import SelectInList from '../common/SelectInList';
 
 
 export default function SelectYear() {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
  
   return (
     <>
