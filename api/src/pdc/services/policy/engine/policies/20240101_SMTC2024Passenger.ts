@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -9,10 +6,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
@@ -27,8 +21,7 @@ import { description } from "./20240101_SMTC2024Passenger.html.ts";
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
 // aom = 256300120
-export const SMTC2024Passenger: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const SMTC2024Passenger: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "smtc_2024_passenger";
   protected operators: TimestampedOperators = [
@@ -59,9 +52,8 @@ export const SMTC2024Passenger: PolicyHandlerStaticInterface = class
   protected slices: RunnableSlices = [
     {
       start: 5_000,
-      end: 30_001,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10 })),
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })),
     },
   ];
 

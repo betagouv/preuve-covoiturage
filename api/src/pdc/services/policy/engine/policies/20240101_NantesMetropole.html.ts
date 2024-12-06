@@ -41,6 +41,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
   </p>
 
   <ul>
+    <li></li>
     <!--<li>Décembre 2024</li>-->
   </ul>
 

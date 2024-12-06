@@ -1,5 +1,4 @@
-export const description =
-  `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description = `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage du <b> 15 septembre 2024 au 31 aout 2025</b></p>
   
@@ -24,7 +23,7 @@ export const description =
   
   <p>
     La campagne est éligible à l'opérateur de covoiturage
-    BBC Daily
+    BlaBlaCar Daily
     proposant des preuves de classe <b>B</b> ou <b>C</b>
   </p>
 
