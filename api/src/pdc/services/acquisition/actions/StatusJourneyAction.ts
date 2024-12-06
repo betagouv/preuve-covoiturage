@@ -2,18 +2,36 @@ import { ContextType, handler, NotFoundException } from "@/ilos/common/index.ts"
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
+import { Infer } from "@/lib/superstruct/index.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/status.contract.ts";
-import { alias } from "../contracts/status.schema.ts";
+import { JourneyStatus } from "@/pdc/services/acquisition/dto/shared.ts";
+import { StatusJourney } from "@/pdc/services/acquisition/dto/StatusJourney.ts";
+
+interface AnomalyErrorDetails {
+  label: "temporal_overlap_anomaly";
+  metas: {
+    conflicting_journey_id: string;
+    temporal_overlap_duration_ratio: number;
+  };
+}
+interface ResultInterface {
+  operator_journey_id: string;
+  status: Infer<typeof JourneyStatus>;
+  created_at: Date;
+  fraud_error_labels?: string[];
+  anomaly_error_details?: AnomalyErrorDetails[];
+  terms_violation_details?: string[];
+}
 
 @handler({
-  ...handlerConfig,
+  service: "acquisition",
+  method: "status",
   middlewares: [
-    ["validate", alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: "operator.acquisition.status",
     }),
+    ["validate", StatusJourney],
   ],
 })
 export class StatusJourneyAction extends AbstractAction {
@@ -23,7 +41,7 @@ export class StatusJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected async handle(params: StatusJourney, context: ContextType): Promise<ResultInterface> {
     const { operator_journey_id, operator_id } = params;
     const result = await this.statusService.findByOperatorJourneyId(
       operator_id,
