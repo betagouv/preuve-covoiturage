@@ -1,15 +1,15 @@
 'use client'
 import { castPerimeterType, getUrl } from '@/helpers/search';
-import { useDashboard } from '@/hooks/useDashboard';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useDashboardContext } from '../../context/DashboardProvider';
 
 export default function SelectIncentiveTerritory(props: { url: string, data:any[] }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const router = useRouter();
   const defaultOption = [props.data,{
     code: dashboard.params.code,

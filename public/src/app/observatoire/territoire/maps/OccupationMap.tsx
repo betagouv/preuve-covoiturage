@@ -4,7 +4,6 @@ import { Config } from '@/config';
 import { getLegendClasses } from '@/helpers/analyse';
 import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { OccupationDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { AnalyseInterface } from '@/interfaces/observatoire/helpersInterfaces';
@@ -15,9 +14,10 @@ import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function OccupationMap({ title }: { title: string }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const mapTitle = title;
   const params = [
     `code=${dashboard.params.code}`,

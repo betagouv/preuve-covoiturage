@@ -2,7 +2,6 @@ import DownloadButton from '@/components/observatoire/DownloadButton';
 import { GetApiUrl } from '@/helpers/api';
 import { chartLabels } from '@/helpers/graph';
 import { useApi } from '@/hooks/useApi';
-import { useDashboard } from '@/hooks/useDashboard';
 import { OccupationIndicators } from '@/interfaces/observatoire/componentsInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import {
@@ -17,11 +16,12 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 export default function TrajetsGraph({ title,indic }: { title: string, indic:OccupationIndicators }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const options = {
     responsive: true,
     plugins: {

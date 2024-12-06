@@ -1,11 +1,11 @@
 import { GetApiUrl } from '@/helpers/api';
 import { useApi } from "@/hooks/useApi";
-import { useDashboard } from '@/hooks/useDashboard';
 import { BestFluxDataInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table as TableStyled } from "@codegouvfr/react-dsfr/Table";
 import { css } from "@emotion/react";
 import styled from '@emotion/styled';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 const Table = styled(TableStyled)(
   css`
@@ -22,7 +22,7 @@ const Table = styled(TableStyled)(
 `);
 
 export default function BestFluxTable({ title, limit}: { title: string, limit: number }) {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   const params = [
     `code=${dashboard.params.code}`,
     `type=${dashboard.params.type}`,

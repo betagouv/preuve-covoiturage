@@ -1,11 +1,11 @@
 import { Config } from "@/config";
-import { useDashboard } from "../hooks/useDashboard";
+import { useDashboardContext } from "../context/DashboardProvider";
 
 export const GetApiUrl = (
   route: string,
   params: string[],
 ) => {
-  const dashboard = useDashboard();
+  const { dashboard } = useDashboardContext();
   switch (dashboard.params.period) {
     case "month":
       params.push(`month=${dashboard.params.month}`);
