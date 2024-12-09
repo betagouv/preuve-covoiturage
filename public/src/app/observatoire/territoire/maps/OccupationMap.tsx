@@ -1,8 +1,8 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
-import { DashboardContext } from '@/context/DashboardProvider';
 import { getLegendClasses } from '@/helpers/analyse';
+import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
 import { ClasseInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import type { OccupationDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -12,12 +12,12 @@ import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
-import { GetApiUrl } from '../../../../helpers/api';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function OccupationMap({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const { dashboard } = useDashboardContext();
   const mapTitle = title;
   const params = [
     `code=${dashboard.params.code}`,
