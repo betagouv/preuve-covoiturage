@@ -889,6 +889,11 @@ export class HttpTransport implements TransportInterface {
         action: "dashboard:incentiveByDay",
         method: "GET",
       },
+      {
+        path: "/dashboard/campaigns",
+        action: "dashboard:campaigns",
+        method: "GET",
+      },
     ];
     routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
   }
