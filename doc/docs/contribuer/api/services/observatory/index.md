@@ -1,1 +1,0 @@
-/* eslint-disable max-len

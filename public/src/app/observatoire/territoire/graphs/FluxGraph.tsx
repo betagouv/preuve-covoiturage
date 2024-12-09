@@ -1,5 +1,6 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
-import { DashboardContext } from '@/context/DashboardProvider';
+import { GetApiUrl } from '@/helpers/api';
+import { chartLabels } from '@/helpers/graph';
 import { useApi } from '@/hooks/useApi';
 import { FluxIndicators } from '@/interfaces/observatoire/componentsInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -14,15 +15,13 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { useContext } from 'react';
 import { Line } from 'react-chartjs-2';
-import { GetApiUrl } from '../../../../helpers/api';
-import { chartLabels } from '../../../../helpers/graph';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 export default function TrajetsGraph({ title,indic }: { title: string, indic:FluxIndicators }) {
-  const { dashboard } =useContext(DashboardContext);
+  const { dashboard } = useDashboardContext();
   const options = {
     responsive: true,
     plugins: {

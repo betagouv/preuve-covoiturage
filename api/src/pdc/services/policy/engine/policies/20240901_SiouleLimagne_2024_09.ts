@@ -1,13 +1,7 @@
 import { Timezone } from "@/pdc/providers/validator/types.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
-import {
-  isAfter,
-  IsAfterParams,
-} from "@/pdc/services/policy/engine/helpers/isAfter.ts";
+import { isAfter, IsAfterParams } from "@/pdc/services/policy/engine/helpers/isAfter.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -15,10 +9,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
@@ -29,11 +20,10 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import { description } from "./20240805_CCVMM_2024_05.html.ts";
+import { description } from "./20240901_SiouleLimagne_2024_09.html.ts";
 
 /* eslint-disable-next-line */
-export const SiouleLimagne: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const SiouleLimagne: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "SiouleLimagne_2024_09";
   static readonly tz: Timezone = "Europe/Paris";

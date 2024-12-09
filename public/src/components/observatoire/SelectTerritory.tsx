@@ -1,15 +1,15 @@
 'use client'
-import { DashboardContext } from '@/context/DashboardProvider';
 import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
 import { fr } from '@codegouvfr/react-dsfr';
 import Tag from '@codegouvfr/react-dsfr/Tag';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/navigation';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
+import { useDashboardContext } from '../../context/DashboardProvider';
 
 export default function SelectTerritory(props: { url:string }) {
-  const { dashboard } =useContext(DashboardContext)
+  const { dashboard } = useDashboardContext();
   const router = useRouter();
   const defaultOption = {
     territory: dashboard.params.code,

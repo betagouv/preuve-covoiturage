@@ -1,7 +1,6 @@
 import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
-import { DashboardContext } from '@/context/DashboardProvider';
 import { classColor, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
@@ -11,10 +10,11 @@ import bbox from '@turf/bbox';
 import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useDashboardContext } from '../../../../context/DashboardProvider';
 
 export default function DensiteMap({ title }: { title: string }) {
-  const { dashboard } =useContext(DashboardContext);
+  const { dashboard } = useDashboardContext();
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/location?code=${dashboard.params.code}&type=${dashboard.params.type}&year=${dashboard.params.year}&month=${dashboard.params.month}&zoom=8`;
