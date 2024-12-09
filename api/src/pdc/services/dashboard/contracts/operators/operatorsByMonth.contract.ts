@@ -9,7 +9,7 @@ export interface SingleResultInterface {
   operator_name: string;
   journeys: number;
   incented_journeys: number;
-  inventive_amount: number;
+  incentive_amount: number;
 }
 
 export type ResultInterface = SingleResultInterface[];
