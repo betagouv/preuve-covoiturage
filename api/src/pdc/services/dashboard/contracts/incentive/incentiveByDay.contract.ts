@@ -4,8 +4,6 @@ export interface SingleResultInterface {
   date: Date;
   territory_id: string;
   direction: Direction;
-  operator_id: number;
-  operator_name: string;
   journeys: number;
   incented_journeys: number;
   incentive_amount: number;
@@ -21,7 +19,7 @@ export interface ParamsInterface {
 
 export const handlerConfig = {
   service: "dashboard",
-  method: "operatorsByDay",
+  method: "incentiveByDay",
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
