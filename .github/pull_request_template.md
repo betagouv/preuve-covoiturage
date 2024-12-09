@@ -15,6 +15,9 @@
 
 Je squash la PR et vérifie que le message de commit utilise [la convention d'Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) :
 
+<details>
+<summary>Voir la convention de message de commit...</summary>
+
 ```
 <type>(<scope>): <short summary>
   │       │             │
@@ -36,3 +39,4 @@ Types de commit
  - test: Adding missing tests or correcting existing tests
 
 Le _scope_ (optionnel) précise le module ou le composant impacté par le commit.
+</details>
