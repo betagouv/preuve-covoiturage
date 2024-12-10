@@ -3,15 +3,17 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { get, omit } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { OperatorClass, PatchRequest, Position } from "@/pdc/providers/carpool/interfaces/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/patch.contract.ts";
-import { alias } from "../contracts/patch.schema.ts";
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/helpers.ts";
+import { PatchJourney } from "@/pdc/services/acquisition/dto/PatchJourney.ts";
 
 @handler({
-  ...handlerConfig,
+  service: "acquisition",
+  method: "patch",
   middlewares: [
-    ["validate", alias],
-    hasPermissionMiddleware("operator.acquisition.create"),
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: "operator.acquisition.create",
+    }),
+    ["validate", PatchJourney],
   ],
 })
 export class PatchJourneyAction extends AbstractAction {
@@ -21,12 +23,12 @@ export class PatchJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected async handle(params: PatchJourney, context: ContextType): Promise<void> {
     const request = this.convertPayloadToRequest(context, params);
     await this.acquisitionService.patchCarpool(request);
   }
 
-  protected convertPayloadToRequest(context: ContextType, params: ParamsInterface): PatchRequest {
+  protected convertPayloadToRequest(context: ContextType, params: PatchJourney): PatchRequest {
     return {
       ...omit(params, ["start", "end"]),
       ...this.wrapDatetime(params, "start"),
@@ -38,7 +40,7 @@ export class PatchJourneyAction extends AbstractAction {
     };
   }
 
-  protected wrapDatetime(params: ParamsInterface, type: "start" | "end"): { [key: string]: Date | Position } {
+  protected wrapDatetime(params: PatchJourney, type: "start" | "end"): { [key: string]: Date | Position } {
     if (!params[type]) {
       throw new Error(`Missing '${type}' parameter`);
     }
@@ -64,7 +66,7 @@ export class PatchJourneyAction extends AbstractAction {
     return { operator_id: operator_id as number };
   }
 
-  protected wrapOperatorClass(params: ParamsInterface): { operator_class?: OperatorClass } {
+  protected wrapOperatorClass(params: PatchJourney): { operator_class?: OperatorClass } {
     const operator_class = params.operator_class ? OperatorClass[params.operator_class] : undefined;
     if (operator_class === undefined) {
       throw new Error("Invalid 'operator_class' parameter");
@@ -73,7 +75,7 @@ export class PatchJourneyAction extends AbstractAction {
     return operator_class ? { operator_class } : {};
   }
 
-  protected wrapOperatorTripId(params: ParamsInterface): { operator_trip_id?: string } {
+  protected wrapOperatorTripId(params: PatchJourney): { operator_trip_id?: string } {
     return params.operator_trip_id ? { operator_trip_id: params.operator_trip_id } : {};
   }
 }

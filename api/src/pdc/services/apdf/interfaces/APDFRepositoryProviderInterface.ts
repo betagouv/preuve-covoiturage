@@ -1,7 +1,7 @@
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
-import { PolicyStatsInterface } from "../contracts/interfaces/PolicySliceStatInterface.ts";
 import { APDFTripInterface } from "./APDFTripInterface.ts";
+import { PolicyStatsInterface } from "./PolicySliceStatInterface.ts";
 
 export interface TzResultInterface {
   name: string;

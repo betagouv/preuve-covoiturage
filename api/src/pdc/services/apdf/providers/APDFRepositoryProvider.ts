@@ -5,13 +5,13 @@ import { set } from "@/lib/object/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
-import { PolicyStatsInterface } from "../contracts/interfaces/PolicySliceStatInterface.ts";
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
 } from "../interfaces/APDFRepositoryProviderInterface.ts";
 import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
+import { PolicyStatsInterface } from "../interfaces/PolicySliceStatInterface.ts";
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {

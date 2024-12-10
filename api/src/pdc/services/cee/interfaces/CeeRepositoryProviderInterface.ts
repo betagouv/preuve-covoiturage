@@ -1,5 +1,5 @@
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
-import { CeeJourneyTypeEnum, JourneyId } from "../contracts/common/CeeApplicationInterface.ts";
+import { CeeJourneyTypeEnum, JourneyId } from "./CeeApplicationInterface.ts";
 export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {
@@ -103,7 +103,7 @@ export interface CeeApplicationError {
   operator_id: number;
   error_type: CeeApplicationErrorEnum;
   journey_type: CeeJourneyTypeEnum;
-  datetime?: string;
+  datetime?: Date;
   last_name_trunc?: string;
   phone_trunc?: string;
   driving_license?: string;
