@@ -2419,3 +2419,23 @@ x-topics:
         L'identifiant unique de l'attestation est utilisé pour générer un PDF
         imprimable. Les données stockées lors de la création de l'attestation
         sont mises en forme sur un document au format A4.
+
+  - title: Open data
+    content: |
+      Les trajets réalisés en covoiturage sont disponibles en Open Data sur la
+      [Plateforme ouverte des données publiques françaises (data.gouv.fr)](https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/).
+
+      Le jeu de données est mis à jour chaque début de mois et contient les trajets
+      effectués par les utilisateurs des plateformes de covoiturage partenaires
+      du Registre de preuve de covoiturage.
+
+      Afin de garantir la confidentialité des utilisateurs, les données sont anonymisées et filtrées selon les règles suivantes :
+
+      - Anonymisation des données via la suppression des identifitants conducteurs et passagers.
+      - Application de tranches horaires : les heures de départs et arrivées sont arrondis à 10 minutes près.
+      - Carroyage des données géographiques :
+        - Lorsque la densité du point de départ ou arrivée est faible : la latitude et longitude sont tronqués à 2 décimales (précision de ~700m).
+        - Lorsque la densité du point de départ ou arrivée est forte : la latitude et longitude sont tronqués à 3 décimales (précision de ~70m).
+      - Suppression des trajets afférents à une maille géographique "solitaire" :
+        - Si le nombre d'occurences du code INSEE de départ est < 6 sur le jeu de données, le trajet est supprimé.
+        - Si le nombre d'occurences du code INSEE d'arrivée est < 6 sur le jeu de données, le trajet est supprimé.
