@@ -4,6 +4,7 @@ import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { Tile } from "@codegouvfr/react-dsfr/Tile";
 import { Metadata } from 'next';
 import Image from 'next/image';
+import TabBref from './tabs/TabBref';
 
 export const metadata: Metadata = {
   title: 'Activité | app.covoiturage.gouv.fr',
@@ -19,7 +20,7 @@ export default function Activite() {
           label="Name of the tabs system"
           tabs={[
             {
-              content: <p>Content of tab1</p>,
+              content: <TabBref />,
               label: 'Activité en bref'
             },
             {

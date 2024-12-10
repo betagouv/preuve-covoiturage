@@ -10,6 +10,7 @@ const _configuration = objectToMap({
   analytics,
   search,
   auth,
+  next: nextEnvironmentVariables(),
 });
 
 // ---------------------------------------------------------------------------------------
@@ -18,7 +19,7 @@ const _configuration = objectToMap({
 
 export type ConfigObject = string | number | boolean | null | { [key: string]: ConfigObject } | undefined;
 
-/*function nextEnvironmentVariables(): ConfigObject {
+function nextEnvironmentVariables(): ConfigObject {
   return Object.entries(process.env)
     .filter(([key]) => key.startsWith("NEXT_"))
     .filter(([key]) => typeof process.env[key] !== "undefined")
@@ -27,7 +28,7 @@ export type ConfigObject = string | number | boolean | null | { [key: string]: C
       acc[k] = process.env[key];
       return acc;
     }, {} as Record<string, ConfigObject>);
-}*/
+}
 
 function objectToMap(obj: ConfigObject): Map<string, ConfigObject> {
   const map = new Map();
