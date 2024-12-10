@@ -8,9 +8,9 @@ import SelectSemester from '@/components/observatoire/SelectSemester';
 import SelectTerritory from '@/components/observatoire/SelectTerritory';
 import SelectTrimester from '@/components/observatoire/SelectTrimester';
 import SelectYear from '@/components/observatoire/SelectYear';
+import { useDashboardContext } from '@/context/DashboardProvider';
 import { GetPeriod } from '@/helpers/dashboard';
 import { graphList, mapList } from '@/helpers/lists';
-import { useDashboard } from '@/hooks/useDashboard';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { fr } from '@codegouvfr/react-dsfr';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -32,7 +32,7 @@ import BestTerritoriesTable from './tables/BestTerritoriesTable';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
-  const dashboard =useDashboard();
+  const {dashboard} =useDashboardContext();
   const period = GetPeriod();
   const observeLabel = dashboard.params.map == 1 ? 'Flux entre:' : 'Territoires observés';
   useEffect(() => {
