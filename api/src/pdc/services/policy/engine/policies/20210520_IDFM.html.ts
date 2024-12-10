@@ -19,7 +19,7 @@ export const description = `<p id="summary">
     <li><b>Le 18/02/2022</b></li>
     <li><b>Du 25/03/2022 au 28/03/2022</b></li>
     <li><b>Le 18/06/2022</b></li>
-    <li><b>Le 6/07/2022</b></li>
+    <li><b>Le 60/07/2022</b></li>
     <li><b>Le 10/11/2022</b></li>
     <li><b>Le 19/01/2023</b></li>
     <li><b>Le 31/01/2023</b></li>
@@ -35,6 +35,7 @@ export const description = `<p id="summary">
     <li><b>Le 13/04/2023</b></li>
     <li><b>Du 12/08/2023 au 14/08/2023 inclus</b></li>
     <li><b>Le 25/10/2024</b></li>
+    <li><b>Le 11/12/2024</b></li>
   </ul>
   <p>
   La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant et Mobicoop proposant des preuves de classe C</b>.
