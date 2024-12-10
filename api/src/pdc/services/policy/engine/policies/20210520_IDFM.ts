@@ -1,9 +1,6 @@
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
 import { atDate } from "@/pdc/services/policy/engine/helpers/atDate.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAfter } from "@/pdc/services/policy/engine/helpers/isAfter.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -13,15 +10,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import {
-  endsAt,
-  startsAt,
-} from "@/pdc/services/policy/engine/helpers/position.ts";
+import { endsAt, startsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -34,8 +25,7 @@ import {
 import { description } from "./20210520_IDFM.html.ts";
 
 // Politique d'Île-de-France Mobilité
-export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "459";
 
@@ -110,8 +100,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
@@ -140,6 +129,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     "2023-08-13",
     "2023-08-14",
     "2024-10-25",
+    "2024-12-11",
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
