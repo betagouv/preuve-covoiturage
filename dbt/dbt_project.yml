@@ -37,7 +37,7 @@ models:
       +schema: "observatoire"
     geo:
       +schema: "geo"
-    fraud:
-      +schema: "fraud"
     dashboard:
       +schema: "dashboard"
+    fraud:
+      +schema: "fraud"
