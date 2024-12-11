@@ -20,3 +20,6 @@ notebooks/scripts/playground
 # python
 *.pyc
 __pycache__
+
+#dbt
+logs/dbt.log
