@@ -17,5 +17,5 @@ default:
       password: "{{ env_var('DBT_PASSWORD', 'password') }}"
       port: "{{ env_var('DBT_PORT', 5432) | int }}"
       dbname: "{{ env_var('DBT_DBNAME', 'covoiturage_production') }}" # or database instead of dbname
-      schema: "stats"
+      schema: "{{ env_var('DBT_SCHEMA', '') }}"
       threads: 6
