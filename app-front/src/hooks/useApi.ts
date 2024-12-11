@@ -13,7 +13,7 @@ export const useApi = <T>(input: RequestInfo | URL, init?: RequestInit) => {
         setData(res);
         setLoading(false);
       } else {
-        setError(res.error.data);
+        setError(res);
         setData(undefined);
         setLoading(false);
       }

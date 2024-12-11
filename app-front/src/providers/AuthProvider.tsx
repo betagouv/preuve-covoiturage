@@ -10,7 +10,7 @@ interface AuthContextProps {
   setNonce:(newNonce: string | undefined) => void,
   code?: string,
   iss?: string,
-  user?: {name: string, role: string},
+  user?: {name: string, role: string, territory_id?: string},
   getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void,
 }
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -21,6 +21,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
   const [state, setState] = useState<string>();
   const [nonce, setNonce] = useState<string>();
   const [code, setCode] = useState<string>();
+  const [user, setUser] = useState<AuthContextProps["user"]>();
   
 
   const getCode = (stateValue: string | null, codeValue: string | null, issValue: string | null) => {
@@ -28,6 +29,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
       if(stateValue === state && issValue === `${Config.get('auth.domain')}/api/v2`) {
         setCode(codeValue ?? undefined);
         setIsAuth(true);
+        
       }
     } catch (e) {
       console.error("Code validation failed", e);
@@ -41,13 +43,14 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     if (stateToken && nonceToken) {
       setState(stateToken);
       setNonce(nonceToken);
+      setUser({name:'Ludovic Delhomme', role:'admin'});
     }
   }, []);
 
   
 
   return(
-    <AuthContext.Provider value={{isAuth, state, setState, nonce, setNonce, code, getCode}}>
+    <AuthContext.Provider value={{isAuth, state, setState, nonce, setNonce, code, getCode, user}}>
       {children}
     </AuthContext.Provider>
   );

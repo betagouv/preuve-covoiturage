@@ -6,8 +6,10 @@ import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validat
 import { CampaignsAction } from "@/pdc/services/dashboard/actions/CampaignsAction.ts";
 import { IncentiveByDayAction } from "@/pdc/services/dashboard/actions/IncentiveByDayAction.ts";
 import { OperatorsByDayAction } from "@/pdc/services/dashboard/actions/OperatorsByDayAction.ts";
+import { TerritoriesAction } from "@/pdc/services/dashboard/actions/TerritoriesAction.ts";
 import { CampaignsRepositoryProvider } from "@/pdc/services/dashboard/providers/CampaignsRepositoryProvider.ts";
 import { IncentiveRepositoryProvider } from "@/pdc/services/dashboard/providers/IncentiveRepositoryProvider.ts";
+import { TerritoriesRepositoryProvider } from "@/pdc/services/dashboard/providers/TerritoriesRepositoryProvider.ts";
 import { IncentiveByMonthAction } from "./actions/IncentiveByMonthAction.ts";
 import { OperatorsByMonthAction } from "./actions/OperatorsByMonthAction.ts";
 import { config } from "./config/index.ts";
@@ -16,6 +18,7 @@ import { binding as IncentiveByDayBinding } from "./contracts/incentive/incentiv
 import { binding as IncentiveByMonthBinding } from "./contracts/incentive/incentiveByMonth.schema.ts";
 import { binding as OperatorsByDayBinding } from "./contracts/operators/operatorsByDay.schema.ts";
 import { binding as OperatorsByMonthBinding } from "./contracts/operators/operatorsByMonth.schema.ts";
+import { binding as TerritoriesBinding } from "./contracts/territories/territories.schema.ts";
 import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProvider.ts";
 
 /* eslint-enable */
@@ -26,6 +29,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     OperatorsRepositoryProvider,
     IncentiveRepositoryProvider,
     CampaignsRepositoryProvider,
+    TerritoriesRepositoryProvider,
   ],
   validator: [
     OperatorsByMonthBinding,
@@ -33,6 +37,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     IncentiveByMonthBinding,
     IncentiveByDayBinding,
     CampaignsBinding,
+    TerritoriesBinding,
   ],
   handlers: [
     OperatorsByMonthAction,
@@ -40,6 +45,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     IncentiveByMonthAction,
     IncentiveByDayAction,
     CampaignsAction,
+    TerritoriesAction,
   ],
   middlewares: [...defaultMiddlewareBindings, [
     "validate",
