@@ -11,6 +11,7 @@ import {
 })
 export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInterface {
   private readonly table = "territory.territory_group";
+  private readonly tableData = "dashboard_stats.operators_by_month";
 
   constructor(private pg: PostgresConnection) {}
 
@@ -20,6 +21,7 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
         _id AS id,
         name
       FROM ${this.table} 
+      WHERE _id::varchar IN (SELECT DISTINCT territory_id FROM ${this.tableData})
       ORDER BY name
     `;
     const response = await this.pg.getClient().query({
