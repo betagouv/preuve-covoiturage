@@ -1,0 +1,88 @@
+version: 2
+
+sources:
+  - name: policy
+    schema: policy
+    tables:
+      - name: incentives
+        columns:
+          - name: _id
+            description: ''
+            data_type: integer
+          - name: policy_id
+            description: ''
+            data_type: integer
+          - name: status
+            description: ''
+            data_type: USER-DEFINED
+          - name: meta
+            description: ''
+            data_type: json
+          - name: carpool_id
+            description: ''
+            data_type: integer
+          - name: amount
+            description: ''
+            data_type: integer
+          - name: datetime
+            description: ''
+            data_type: timestamp with time zone
+          - name: result
+            description: ''
+            data_type: integer
+          - name: state
+            description: ''
+            data_type: USER-DEFINED
+          - name: operator_id
+            description: ''
+            data_type: integer
+          - name: operator_journey_id
+            description: ''
+            data_type: character varying
+      - name: policies
+        columns:
+          - name: _id
+            description: ''
+            data_type: integer
+          - name: created_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: updated_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: deleted_at
+            description: ''
+            data_type: timestamp with time zone
+          - name: territory_id
+            description: ''
+            data_type: integer
+          - name: start_date
+            description: ''
+            data_type: timestamp with time zone
+          - name: end_date
+            description: ''
+            data_type: timestamp with time zone
+          - name: name
+            description: ''
+            data_type: character varying
+          - name: description
+            description: ''
+            data_type: character varying
+          - name: unit
+            description: ''
+            data_type: USER-DEFINED
+          - name: status
+            description: ''
+            data_type: USER-DEFINED
+          - name: handler
+            description: ''
+            data_type: character varying
+          - name: incentive_sum
+            description: ''
+            data_type: integer
+          - name: max_amount
+            description: ''
+            data_type: integer
+          - name: tz
+            description: ''
+            data_type: character varying

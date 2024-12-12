@@ -39,3 +39,5 @@ models:
       +schema: "geo"
     fraud:
       +schema: "fraud"
+    dashboard:
+      +schema: "dashboard"
