@@ -12,19 +12,31 @@ import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
 } from "../../policy/contracts/find.contract.ts";
-import { handlerConfig, ParamsInterface, ResultsInterface } from "../contracts/list.contract.ts";
-import { alias } from "../contracts/list.schema.ts";
+import { ListApdf } from "../dto/ListApdf.ts";
 import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
 
+export type EnrichedApdfType = {
+  signed_url: string;
+  key: string;
+  size: number;
+  operator_id: number;
+  campaign_id: number;
+  datetime: Date;
+  name: string;
+};
+
+export type ResultsInterface = EnrichedApdfType[];
+
 @handler({
-  ...handlerConfig,
+  service: "apdf",
+  method: "list",
   middlewares: [
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       territory: "territory.apdf.list",
       operator: "operator.apdf.list",
       registry: "registry.apdf.list",
     }),
-    ["validate", alias],
+    ["validate", ListApdf],
   ],
 })
 export class ListAction extends Action {
@@ -37,7 +49,7 @@ export class ListAction extends Action {
   }
 
   public async handle(
-    params: ParamsInterface,
+    params: ListApdf,
     context: ContextType,
   ): Promise<ResultsInterface> {
     const { campaign_id, operator_id } = params;
