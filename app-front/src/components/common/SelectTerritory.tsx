@@ -4,12 +4,12 @@ import { useApi } from '@/hooks/useApi';
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useState } from "react";
 
-export default function SelectTerritory(props: { onChangeTerritory:(id:string) => void }) {
-  const [ value, setValue ] = useState<string>();
+export default function SelectTerritory(props: { defaultValue: string, onChangeTerritory:(id:string) => void }) {
+  const [ value, setValue ] = useState<string>(props.defaultValue);
   const url = `${Config.get<string>("next.public_api_url", "")}/v3/dashboard/territories`;
   const { data } = useApi<Record<string, string>[]>(url);
   return(
-    <Select label='' 
+    <Select label='Sélectionner un territoire' 
       nativeSelectProps={{
         value: value,
         onChange: (e) => {

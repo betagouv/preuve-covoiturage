@@ -1,18 +1,9 @@
 'use client'
+import { AuthContextProps } from '@/interfaces/providersInterface';
 import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from '../config';
 
-interface AuthContextProps {
-  isAuth: boolean;
-  state?: string,
-  setState:(newState: string | undefined) => void,
-  nonce?: string,
-  setNonce:(newNonce: string | undefined) => void,
-  code?: string,
-  iss?: string,
-  user?: {name: string, role: string, territory_id?: string},
-  getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void,
-}
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export function AuthProvider({children}: { children: React.ReactNode}) {

@@ -1,7 +1,6 @@
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
-import { ApiResult } from '@/interfaces/hooksInterface';
-import { Directions, Periods } from '@/interfaces/vizInterface';
+import { Directions } from '@/interfaces/vizInterface';
 import { fr } from '@codegouvfr/react-dsfr';
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
@@ -22,35 +21,46 @@ import { Line } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 
-export default function OperatorsGraph(props: {title:string, territoryId:string}) {
-  const [period, setPeriod] = useState<Periods>('month');
+export default function JourneysGraph(props: {title:string, territoryId:string}) {
+  const [period, setPeriod] = useState<'month' | 'day'>('month');
   const [direction, setDirection] = useState<Directions>('both');
   const getUrl = () => {
     const host = Config.get<string>("next.public_api_url", "");
-    return `${host}/v3/dashboard/operators/${period}/?direction=${direction}&territory_id=${props.territoryId}`;
+    return `${host}/v3/dashboard/incentive/${period}/?direction=${direction}&territory_id=${props.territoryId}`;
   };
-  const { data } = useApi<ApiResult>(getUrl());
-  const name = [...new Set(data?.map(d => d.operator_name))] as string[]
-  const colors = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f','#667dcf','#72b77a']
+  const { data } = useApi<Record<string, string | number>[]>(getUrl());
+  const name = ['Tous les trajets', 'Trajets incités dans une campagne RPC']
+  const colors = ['#6a6af4','#000091']
   const labels = period === 'month' 
     ? [...new Set(data?.map(d => `${String(d.month).padStart(2, "0")}/${d.year}`))] as string[]
     : [...new Set(data?.map(d => d.start_date))] as string[]
 
-  const datasets = name.map((n,i) => {
-    const dataOp = data?.filter(d => d.operator_name === n) ?? []
-    return {
+  const datasets = [
+    {
       data:labels.map(t=>{
         return period === 'month' 
-          ? dataOp.find(d => `${String(d.month).padStart(2, "0")}/${d.year}` === t)?.journeys ?? 0
-          : dataOp.find(d => d.start_date === t)?.journeys ?? 0;
+          ? data?.find(d => `${String(d.month).padStart(2, "0")}/${d.year}` === t)?.journeys ?? 0
+          : data?.find(d => d.start_date === t)?.journeys ?? 0;
       }),
       fill: true,
-      borderColor: colors[i],
-      backgroundColor:`${colors[i]}33`,
+      borderColor: colors[0],
+      backgroundColor:`${colors[0]}33`,
       tension: 0.1,
-      label:n
+      label:name[0],
+    },
+    {
+      data:labels.map(t=>{
+        return period === 'month' 
+          ? data?.find(d => `${String(d.month).padStart(2, "0")}/${d.year}` === t)?.incented_journeys ?? 0
+          : data?.find(d => d.start_date === t)?.incented_journeys ?? 0;
+      }),
+      fill: true,
+      borderColor: colors[1],
+      backgroundColor:`${colors[1]}33`,
+      tension: 0.1,
+      label:name[1],
     }
-  });
+  ];
   const chartData = { labels: labels, datasets: datasets };
   const options = {
     responsive: true,

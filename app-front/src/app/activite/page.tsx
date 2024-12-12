@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Développer le covoiturage de courte distance',
 }
 
-export default function Activite() {
+export default function Activite() {  
   return (
     <div className={fr.cx('fr-container')}>
       <div id='content'>
