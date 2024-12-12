@@ -5,6 +5,7 @@ import { Tile } from "@codegouvfr/react-dsfr/Tile";
 import { Metadata } from 'next';
 import Image from 'next/image';
 import TabBref from './tabs/TabBref';
+import TabCampaigns from './tabs/TabCampaigns';
 
 export const metadata: Metadata = {
   title: 'Activité | app.covoiturage.gouv.fr',
@@ -24,7 +25,7 @@ export default function Activite() {
               label: 'Activité en bref'
             },
             {
-              content: <p>Content of tab2</p>,
+              content: <TabCampaigns />,
               label: `Suivi de la campagne d'incitation`
             },
             {
