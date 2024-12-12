@@ -1,0 +1,25 @@
+version: 2
+models:
+  - name: distribution_distances_by_day
+    columns:
+      - name: code
+        description: ''
+        data_type: character varying
+      - name: type
+        description: ''
+        data_type: text
+      - name: start_date
+        description: ''
+        data_type: date
+      - name: dist_classes
+        description: ''
+        data_type: text
+      - name: direction
+        description: ''
+        data_type: text
+      - name: journeys
+        description: ''
+        data_type: numeric
+      - name: intra_journeys
+        description: ''
+        data_type: numeric
