@@ -7,7 +7,7 @@
 ## Checklist
 
 - [ ] [j'ai suivi les guidelines du "clean code"](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29)
-- [ ] [j'ai mis à jour la documentation technique](https://www.notion.so/Documentation-technique-du-Registre-de-preuve-de-covoiturage-14b994bec93180f98a89da28aff88f32)
+- [ ] j'ai mis à jour la documentation technique dans `/api/specs`
 - [ ] ajout ou mise à jour des tests unitaires
 - [ ] ajout ou mise à jour des tests d'intégration
 
