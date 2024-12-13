@@ -101,7 +101,7 @@ export abstract class IgnDataset extends AbstractDataset {
             done = !!results.done;
             if (results.value) {
               const values = [
-                JSON.stringify(results.value.map((r: any) => r.value)),
+                JSON.stringify(results.value),
               ];
               logger.debug(`Batch ${i}`);
               switch (key) {
@@ -113,7 +113,7 @@ export abstract class IgnDataset extends AbstractDataset {
                       )
                       WITH tmp as(
                         SELECT * FROM
-                        json_to_recordset($1)
+                        json_to_recordset($1::json)
                         as t(type varchar, properties json,geometry json)
                       )
                       SELECT ${
@@ -135,7 +135,7 @@ export abstract class IgnDataset extends AbstractDataset {
                       SET ${key} = st_multi(ST_SetSRID(st_geomfromgeojson(tt.geometry),4326))
                       FROM (
                         SELECT * FROM
-                        json_to_recordset($1)
+                        json_to_recordset($1::json)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
                       WHERE (arr is not null AND arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
@@ -151,7 +151,7 @@ export abstract class IgnDataset extends AbstractDataset {
                       SET ${key} = ST_SetSRID(st_geomfromgeojson(tt.geometry),4326)
                       FROM (
                         SELECT * FROM
-                        json_to_recordset($1)
+                        json_to_recordset($1::json)
                         as t(type varchar, properties json,geometry json)
                       ) AS tt
                       WHERE (arr is not null AND arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
