@@ -12,3 +12,8 @@ export interface Button {
   icon?: string;
   color?: "primary" | "secondary";
 }
+export interface PaginationProps {
+  count: number;
+  defaultPage?: number;
+  onChange: (id: number) => void;
+}
