@@ -1,9 +1,5 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 import { EurostatCountries2020 } from "../../../eurostat/countries/2020/EurostatCountries2020.ts";
 import { EurostatSimplifiedCountries2020 } from "../../../eurostat/countries/2020/EurostatSimplifiedCountries2020.ts";
 
@@ -12,8 +8,7 @@ export class InseePays2022 extends AbstractDataset {
   static dataset = "pays";
   static year = 2022;
   static table = "insee_pays_2022";
-  static url =
-    "https://www.insee.fr/fr/statistiques/fichier/6051727/pays_2022.csv";
+  static url = "https://www.insee.fr/fr/statistiques/fichier/6051727/pays_2022.csv";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
@@ -29,8 +24,7 @@ export class InseePays2022 extends AbstractDataset {
     ["codeiso3", ["9", "varchar"]],
     ["codenum3", ["10", "varchar"]],
   ]);
-  override readonly extraBeforeSql =
-    `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
+  override readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
   override sheetOptions = {};

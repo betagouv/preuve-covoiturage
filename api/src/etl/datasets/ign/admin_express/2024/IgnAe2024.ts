@@ -1,8 +1,5 @@
 import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
-import {
-  IgnDataset,
-  TransformationParamsInterface,
-} from "../../common/IgnDataset.ts";
+import { IgnDataset, TransformationParamsInterface } from "../../common/IgnDataset.ts";
 
 export class IgnAe2024 extends IgnDataset {
   static producer = "ign";

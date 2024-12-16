@@ -1,10 +1,6 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
 import { CeremaAom2024 } from "../../../../datasets.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 
 export class DgclBanatic2024 extends AbstractDataset {
   static producer = "dgcl";
