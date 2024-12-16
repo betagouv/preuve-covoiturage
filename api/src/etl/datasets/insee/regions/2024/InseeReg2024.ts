@@ -1,17 +1,12 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-  StaticAbstractDataset,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum, StaticAbstractDataset } from "../../../../interfaces/index.ts";
 
 export class InseeReg2024 extends AbstractDataset {
   static producer = "insee";
   static dataset = "reg";
   static year = 2024;
   static table = "insee_reg_2024";
-  static url =
-    "https://www.insee.fr/fr/statistiques/fichier/7766585/v_region_2024.csv";
+  static url = "https://www.insee.fr/fr/statistiques/fichier/7766585/v_region_2024.csv";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
@@ -22,8 +17,7 @@ export class InseeReg2024 extends AbstractDataset {
     ["nccenr", ["4", "varchar"]],
     ["libelle", ["5", "varchar"]],
   ]);
-  override readonly extraBeforeSql =
-    `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN reg SET NOT NULL;`;
+  override readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN reg SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
   override sheetOptions = {};

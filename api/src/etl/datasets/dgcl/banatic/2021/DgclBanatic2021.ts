@@ -1,8 +1,5 @@
 import { CeremaAom2021 } from "../../../../datasets.ts";
-import {
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
 
 // This file is no longer available

@@ -1,13 +1,5 @@
 import { access } from "@/deps.ts";
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  assertRejects,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { EurostatCountries2024 as Dataset } from "./EurostatCountries2024.ts";

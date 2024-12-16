@@ -1,13 +1,5 @@
 import { access } from "@/deps.ts";
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  assertRejects,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { Migrator } from "../../../../Migrator.ts";
 import { CreateGeoTable } from "../../../../datastructure/000_CreateGeoTable.ts";
 import { CreateComEvolutionTable } from "../../../../datastructure/001_CreateComEvolutionTable.ts";

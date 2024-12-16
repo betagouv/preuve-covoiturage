@@ -6,8 +6,7 @@ export class InseePerim2021 extends InseePerimDataset {
   static dataset = "perim";
   static year = 2021;
   static table = "insee_perim_2021";
-  static url =
-    "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip";
+  static url = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {

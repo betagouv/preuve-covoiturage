@@ -1,8 +1,5 @@
 import { CeremaAom2022 } from "../../../../datasets.ts";
-import {
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
 
 export class DgclBanatic2022 extends DgclBanaticDataset {

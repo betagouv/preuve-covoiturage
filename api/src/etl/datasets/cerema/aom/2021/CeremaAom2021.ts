@@ -1,16 +1,12 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "../../../../interfaces/index.ts";
 
 export class CeremaAom2021 extends AbstractDataset {
   static producer = "cerema";
   static dataset = "aom";
   static year = 2021;
   static table = "cerema_aom_2021";
-  static url =
-    "https://www.cerema.fr/system/files/documents/2021/06/base_rt_2021_v4_diffusion.xlsx";
+  static url = "https://www.cerema.fr/system/files/documents/2021/06/base_rt_2021_v4_diffusion.xlsx";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
