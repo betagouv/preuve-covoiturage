@@ -231,7 +231,7 @@ export {
 };
 export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
 export * as semver from "jsr:@std/semver@1";
-export * as crypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
+export * as stdCrypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
 export {
   decodeBase64,
   encodeBase64,
@@ -241,4 +241,3 @@ export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import * as _bcrypt_worker from "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts"; // FIX https://github.com/JamesBroadberry/deno-bcrypt/issues/31
 export { difference } from "https://deno.land/std@0.224.0/datetime/difference.ts";
-

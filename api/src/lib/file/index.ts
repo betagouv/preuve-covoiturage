@@ -1,3 +1,4 @@
+import { assert } from "@/dev_deps.ts";
 import { env_or_default } from "@/lib/env/index.ts";
 
 /**
@@ -35,24 +36,40 @@ export type OpenFileDescriptor = Deno.FsFile;
  * @param options
  * @returns
  */
-export function open(
-  filepath: string,
-  options: OpenFileOptions = { read: true },
-): Promise<OpenFileDescriptor> {
+export function open(filepath: string, options: OpenFileOptions = { read: true }): Promise<OpenFileDescriptor> {
   return Deno.open(filepath, {
     ...options,
     create: true,
   });
 }
 
-export function stat(
-  filepath: string,
-): Promise<Deno.FileInfo> {
+export function read(filepath: string): Promise<Deno.FsFile> {
+  assert(exists(filepath), `File ${filepath} does not exist`);
+  return Deno.open(filepath, { read: true });
+}
+
+export function stat(filepath: string): Promise<Deno.FileInfo> {
   return Deno.stat(filepath);
+}
+
+export async function exists(filepath: string): Promise<boolean> {
+  try {
+    await stat(filepath);
+    return true;
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      return false;
+    }
+    throw error;
+  }
 }
 
 export function readFile(filepath: string) {
   return Deno.readFile(filepath);
+}
+
+export function writeSync(filepath: string, data: string, options?: Deno.WriteFileOptions): void {
+  return Deno.writeTextFileSync(filepath, data, options);
 }
 
 export function remove(filepath: string): void {

@@ -29,5 +29,6 @@ export const logger = {
   error,
   info,
   warn,
+  // @ts-ignore typing fails
   log: (...args: unknown[]) => debug(...args),
 };
