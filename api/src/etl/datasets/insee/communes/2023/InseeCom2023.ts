@@ -6,7 +6,7 @@ export class InseeCom2023 extends AbstractDataset {
   static dataset = "com";
   static year = 2023;
   static table = "insee_com_2023";
-  static url = "https://www.insee.fr/fr/statistiques/fichier/6800675/v_commune_2023.csv";]]
+  static url = "https://www.insee.fr/fr/statistiques/fichier/6800675/v_commune_2023.csv";
   static sha256 = "4eab963278b704758bb5018cd1999ec22d86fdf8fd609b953cf695b926f7afaf";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
