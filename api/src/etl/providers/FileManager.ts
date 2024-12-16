@@ -1,18 +1,10 @@
 import { access, mapshaper, mkdir } from "@/deps.ts";
-import { basename, join } from "@/lib/path/index.ts";
-import {
-  getAllFiles,
-  getFileExtensions,
-  un7zFile,
-  ungzFile,
-  unzipFile,
-  writeFile,
-} from "../helpers/index.ts";
-
 import { createHash } from "@/lib/crypto/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { basename, join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
+import { getAllFiles, getFileExtensions, un7zFile, ungzFile, unzipFile, writeFile } from "../helpers/index.ts";
 import {
   ArchiveFileTypeEnum,
   FileManagerConfigInterface,
@@ -28,8 +20,7 @@ export class FileManager implements FileManagerInterface {
 
   constructor(config: FileManagerConfigInterface) {
     this.basePath = config.basePath;
-    this.downloadPath = config.downloadPath ||
-      join(config.basePath, "download");
+    this.downloadPath = config.downloadPath || join(config.basePath, "download");
     this.mirrorUrl = config.mirrorUrl;
   }
 

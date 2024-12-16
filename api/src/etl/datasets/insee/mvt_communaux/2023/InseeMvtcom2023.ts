@@ -8,6 +8,7 @@ export class InseeMvtcom2023 extends AbstractDataset {
   static table = "insee_mvtcom_2023";
   override readonly targetTable = "com_evolution";
   static url = "https://www.insee.fr/fr/statistiques/fichier/6800675/v_mvtcommune_2023.csv";
+  static sha256 = "af4ee3e61ae5553d1480f580713a4e6ed44198c0efed63619dd676bb38d634fd";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

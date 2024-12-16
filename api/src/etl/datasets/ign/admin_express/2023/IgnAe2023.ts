@@ -28,9 +28,10 @@ export class IgnAe2023 extends IgnDataset {
     CREATE INDEX IF NOT EXISTS ign_ae_2023_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
     CREATE INDEX IF NOT EXISTS ign_ae_2023_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
-  static url =
-    // eslint-disable-next-line max-len
-    "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z";
+  // deno-fmt-ignore
+  static url = "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS-COG-CARTO/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z";
+  static sha256 = "42334ed4e3fe49905e8859ba2f682f0b9d09791568eb9603c23e0dfd2e32a5cd";
+
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]
   > = [

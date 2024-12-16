@@ -8,6 +8,8 @@ export class EurostatSimplifiedCountries2024 extends AbstractDataset {
   static year = 2024;
   static table = "eurostat_simplified_countries_2024";
   static url = "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_60M_2024_4326.geojson";
+  static sha256 = "830c5fba3d9e38d4881d33e558bc43cc256eeff9294b7f08f67cb9d9977b0003";
+
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
     ["codeiso3", ["properties->>ISO3_CODE", "varchar"]],
