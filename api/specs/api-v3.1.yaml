@@ -1243,28 +1243,28 @@ components:
     status:
       description: |
         Statut du trajet tel que :
-          - `validation_error` : les données envoyées ne sont pas valides
-          - `anomaly_error` : le trajet est incohérent ou physiquement impossible
           - `acquisition_error` : le trajet n'a pas du tout été enregistré
-          - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
+          - `anomaly_error` : le trajet est incohérent ou physiquement impossible
+          - `canceled` : le trajet a été annulé par l'opérateur
           - `fraud_error` : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
+          - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
           - `ok` : le trajet a correctement été traité
           - `pending` : le trajet a été enregistré mais n'a pas encore été traité
-          - `canceled` : le trajet a été annulé par l'opérateur
-          - `unknown` : une erreur inconnue a affecté le trajet
           - `terms_violation_error` : le trajet ne respecte pas les conditions générales d'utilisation
+          - `unknown` : une erreur inconnue a affecté le trajet
+          - `validation_error` : les données envoyées ne sont pas valides
       type: string
       enum:
-        - fraud_error
-        - anomaly_error
-        - validation_error
         - acquisition_error
+        - anomaly_error
+        - canceled
+        - fraud_error
         - normalization_error
         - ok
-        - canceled
         - pending
-        - unknown
         - terms_violation_error
+        - unknown
+        - validation_error
     duration:
       description: Durée en secondes
       type: number
