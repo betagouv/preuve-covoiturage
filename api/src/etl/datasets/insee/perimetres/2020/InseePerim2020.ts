@@ -7,6 +7,7 @@ export class InseePerim2020 extends InseePerimDataset {
   static year = 2020;
   static table = "insee_perim_2020";
   static url = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2020_v1.zip";
+  static sha256 = "496b0b6754193ef1e7eebfdfa3a3822d915abf25c1a0b83246ac70d75b7a18d9";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {

@@ -9,6 +9,7 @@ export class InseePays2022 extends AbstractDataset {
   static year = 2022;
   static table = "insee_pays_2022";
   static url = "https://www.insee.fr/fr/statistiques/fichier/6051727/pays_2022.csv";
+  static sha256 = "b1ece474e85aab68f5d54a71c6f617033280e2bfd589af2ee72c19bb0f9d64cd";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

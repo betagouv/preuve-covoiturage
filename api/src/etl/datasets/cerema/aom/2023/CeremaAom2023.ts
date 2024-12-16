@@ -7,6 +7,7 @@ export class CeremaAom2023 extends AbstractDataset {
   static year = 2023;
   static table = "cerema_aom_2023";
   static url = "http://www.cerema.fr/system/files/documents/2023/04/base_rt_diffusion.ods";
+  static sha256 = "880b2ed170da900ff524c08fac89f1f1327267e5f5de902b51fd803d74bf7a32";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

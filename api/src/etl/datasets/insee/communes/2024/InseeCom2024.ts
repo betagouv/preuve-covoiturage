@@ -7,6 +7,7 @@ export class InseeCom2024 extends AbstractDataset {
   static year = 2024;
   static table = "insee_com_2024";
   static url = "https://www.insee.fr/fr/statistiques/fichier/7766585/v_commune_2024.csv";
+  static sha256 = "469acd3a616a09cce93d84ad6bde2cbe3ff4cefd813d66db8267affcc7984b7f";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

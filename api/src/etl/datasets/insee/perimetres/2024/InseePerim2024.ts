@@ -7,6 +7,7 @@ export class InseePerim2024 extends InseePerimDataset {
   static year = 2024;
   static table = "insee_perim_2024";
   static url = "https://www.insee.fr/fr/statistiques/fichier/2510634/epci_au_01-01-2024.zip";
+  static sha256 = "b6c9dee214175983f45dcb89a16d069e5fa7a0fd3897a4a8da56d67aab90dafb";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {

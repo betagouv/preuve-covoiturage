@@ -7,9 +7,9 @@ export class DgclBanatic2023 extends DgclBanaticDataset {
   static dataset = "banatic";
   static year = 2023;
   static table = "dgcl_banatic_2023";
-  static url =
-    // eslint-disable-next-line max-len
-    "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2023&format=C";
+  // 404 Not Found
+  // deno-fmt-ignore
+  static url = "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2023&format=C";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {
