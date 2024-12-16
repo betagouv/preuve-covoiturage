@@ -1,9 +1,5 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 import { EurostatCountries2024 } from "../../../eurostat/countries/2024/EurostatCountries2024.ts";
 import { EurostatSimplifiedCountries2024 } from "../../../eurostat/countries/2024/EurostatSimplifiedCountries2024.ts";
 
@@ -12,8 +8,7 @@ export class InseePays2024 extends AbstractDataset {
   static dataset = "pays";
   static year = 2024;
   static table = "insee_pays_2024";
-  static url =
-    "https://www.insee.fr/fr/statistiques/fichier/7766585/v_pays_territoire_2024.csv";
+  static url = "https://www.insee.fr/fr/statistiques/fichier/7766585/v_pays_territoire_2024.csv";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
@@ -27,8 +22,7 @@ export class InseePays2024 extends AbstractDataset {
     ["codeiso3", ["7", "varchar"]],
     ["codenum3", ["8", "varchar"]],
   ]);
-  override readonly extraBeforeSql =
-    `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
+  override readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN cog SET NOT NULL;`;
 
   fileType: FileTypeEnum = FileTypeEnum.Csv;
   override sheetOptions = {};
