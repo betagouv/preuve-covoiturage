@@ -21,9 +21,9 @@ export class IgnAe2019 extends IgnDataset {
     CREATE INDEX IF NOT EXISTS ign_ae_2019_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
     CREATE INDEX IF NOT EXISTS ign_ae_2019_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
-  static url =
-    // eslint-disable-next-line max-len
-    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-0__SHP__FRA_WGS84G_2019-09-24.7z";
+  // deno-fmt-ignore
+  static url = "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-0__SHP__FRA_WGS84G_2019-09-24.7z";
+  static sha256 = "ed8be4045813f50deb5659e401ee3cd389bcad7cabcc2e7baddaf76f3a232e37";
 
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]

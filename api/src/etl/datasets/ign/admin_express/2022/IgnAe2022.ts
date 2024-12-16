@@ -28,9 +28,9 @@ export class IgnAe2022 extends IgnDataset {
     CREATE INDEX IF NOT EXISTS ign_ae_2022_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
     CREATE INDEX IF NOT EXISTS ign_ae_2022_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
-  static url =
-    // eslint-disable-next-line max-len
-    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG-CARTO_3-1__SHP__FRA_WM_2022-04-15.7z";
+  // deno-fmt-ignore
+  static url = "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG-CARTO_3-1__SHP__FRA_WM_2022-04-15.7z";
+  static sha256 = "378dc955f0c955400c28d870d21a4318e78d728af00301716abb2913ff13a3c9";
 
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]

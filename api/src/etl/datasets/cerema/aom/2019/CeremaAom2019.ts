@@ -7,6 +7,7 @@ export class CeremaAom2019 extends AbstractDataset {
   static year = 2019;
   static table = "cerema_aom_2019";
   static url = "http://www.cerema.fr/system/files/documents/2019/07/base_rt_2019_-_v1-1_-_version_diffusable_0.ods";
+  static sha256 = "f5ecb0e113e06ba371294eeaa724adab4411bf56d912c71bec79b3a401d563fa";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
