@@ -1,11 +1,7 @@
 import type { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
-import {
-  getDatasetUuid,
-  loadFileAsString,
-  streamData,
-} from "../helpers/index.ts";
+import { getDatasetUuid, loadFileAsString, streamData } from "../helpers/index.ts";
 import {
   ArchiveFileTypeEnum,
   DatasetInterface,
@@ -44,6 +40,10 @@ export abstract class AbstractDataset implements DatasetInterface {
     return (this.constructor as StaticAbstractDataset).url;
   }
 
+  get sha256(): string | undefined {
+    return (this.constructor as StaticAbstractDataset).sha256;
+  }
+
   get table(): string {
     return (this.constructor as StaticAbstractDataset).table;
   }
@@ -68,9 +68,7 @@ export abstract class AbstractDataset implements DatasetInterface {
     if (difference.size > 0) {
       throw new ValidationError(
         this,
-        `Cant apply this dataset, element is missing (${
-          [...difference].map((d) => d.uuid).join(", ")
-        })`,
+        `Cant apply this dataset, element is missing (${[...difference].map((d) => d.uuid).join(", ")})`,
       );
     }
   }
@@ -105,7 +103,7 @@ export abstract class AbstractDataset implements DatasetInterface {
   async download(): Promise<void> {
     try {
       const filepaths: string[] = [];
-      const filepath = await this.file.download(this.url);
+      const filepath = await this.file.download(this.url, this.sha256);
       if (this.fileArchiveType !== ArchiveFileTypeEnum.None) {
         filepaths.push(
           ...(await this.file.decompress(

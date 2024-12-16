@@ -72,9 +72,16 @@ export async function createHash(message: string): Promise<string> {
   return hashHex;
 }
 
-export async function sha256sum(filePath: string): Promise<string> {
-  assert(await exists(filePath), `File ${filePath} does not exist`);
-  const file = await read(filePath);
-  const hashBuffer = await stdCrypto.crypto.subtle.digest("SHA-256", file.readable);
+export async function sha256sum(source: string | ReadableStream<Uint8Array>): Promise<string> {
+  let stream;
+  if (source instanceof ReadableStream) {
+    stream = source;
+  } else {
+    assert(await exists(source), `File ${source} does not exist`);
+    const file = await read(source);
+    stream = file.readable;
+  }
+
+  const hashBuffer = await stdCrypto.crypto.subtle.digest("SHA-256", stream);
   return encodeHex(hashBuffer);
 }

@@ -1,4 +1,4 @@
-import { Pool } from "@/deps.ts";
+import { pg } from "@/deps.ts";
 import { FileManagerInterface, StateManagerInterface } from "./index.ts";
 
 export interface StaticMigrable {
@@ -7,7 +7,7 @@ export interface StaticMigrable {
   readonly year: number;
   readonly skipStatePersistence?: boolean;
   new (
-    connection: Pool,
+    connection: pg.Pool,
     file: FileManagerInterface,
     targetSchema: string,
   ): DatasetInterface;
@@ -15,6 +15,7 @@ export interface StaticMigrable {
 
 export interface StaticAbstractDataset extends StaticMigrable {
   readonly url: string;
+  readonly sha256: string | undefined;
   readonly producer: string;
   readonly dataset: string;
 }
