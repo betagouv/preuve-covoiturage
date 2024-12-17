@@ -1,4 +1,9 @@
 import type {
+  ParamsInterface as OperatorsParamsInterface,
+  ResultInterface as OperatorsResultInterface,
+} from "../contracts/operators/operators.contract.ts";
+
+import type {
   ParamsInterface as OperatorsByMonthParamsInterface,
   ResultInterface as OperatorsByMonthResultInterface,
 } from "../contracts/operators/operatorsByMonth.contract.ts";
@@ -13,9 +18,14 @@ export type {
   OperatorsByDayResultInterface,
   OperatorsByMonthParamsInterface,
   OperatorsByMonthResultInterface,
+  OperatorsParamsInterface,
+  OperatorsResultInterface,
 };
 
 export interface OperatorsRepositoryInterface {
+  getOperators(
+    params: OperatorsParamsInterface,
+  ): Promise<OperatorsResultInterface>;
   getOperatorsByMonth(
     params: OperatorsByMonthParamsInterface,
   ): Promise<OperatorsByMonthResultInterface>;
@@ -25,6 +35,11 @@ export interface OperatorsRepositoryInterface {
 }
 
 export abstract class OperatorsRepositoryInterfaceResolver implements OperatorsRepositoryInterface {
+  async getOperators(
+    params: OperatorsParamsInterface,
+  ): Promise<OperatorsResultInterface> {
+    throw new Error();
+  }
   async getOperatorsByMonth(
     params: OperatorsByMonthParamsInterface,
   ): Promise<OperatorsByMonthResultInterface> {

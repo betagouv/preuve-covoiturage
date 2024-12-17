@@ -26,7 +26,7 @@ export default function Activite() {
             },
             {
               content: <TabCampaigns />,
-              label: `Suivi de la campagne d'incitation`
+              label: `Suivi des campagnes`
             },
             {
               content: <p>Content of tab3</p>,

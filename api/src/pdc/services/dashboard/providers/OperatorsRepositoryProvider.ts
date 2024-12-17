@@ -5,19 +5,41 @@ import {
   OperatorsByDayResultInterface,
   OperatorsByMonthParamsInterface,
   OperatorsByMonthResultInterface,
+  OperatorsParamsInterface,
   OperatorsRepositoryInterface,
   OperatorsRepositoryInterfaceResolver,
+  OperatorsResultInterface,
 } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
 
 @provider({
   identifier: OperatorsRepositoryInterfaceResolver,
 })
 export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface {
+  private readonly table = "operator.operators";
   private readonly tableByMonth = "dashboard_stats.operators_by_month";
   private readonly tableByDay = "dashboard_stats.operators_by_day";
 
   constructor(private pg: PostgresConnection) {}
 
+  async getOperators(
+    params: OperatorsParamsInterface,
+  ): Promise<OperatorsResultInterface> {
+    const queryValues: (string | number)[] = params.id ? [params.id] : [];
+    const conditions = params.id ? ["_id=$1", "deleted_at is null"] : ["deleted_at is null"];
+    const queryText = `
+      SELECT 
+        _id as id,
+        name
+      FROM ${this.table}
+      WHERE ${conditions.join(" AND ")}
+      ORDER BY _id
+    `;
+    const response = await this.pg.getClient().query({
+      text: queryText,
+      values: queryValues,
+    });
+    return response.rows;
+  }
   async getOperatorsByDay(
     params: OperatorsByDayParamsInterface,
   ): Promise<OperatorsByDayResultInterface> {

@@ -1,4 +1,3 @@
-import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { Directions } from '@/interfaces/vizInterface';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -17,6 +16,7 @@ import {
 } from 'chart.js';
 import { useState } from 'react';
 import { Line } from 'react-chartjs-2';
+import { getApiUrl } from '../../../helpers/api';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -24,11 +24,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export default function JourneysGraph(props: {title:string, territoryId:string}) {
   const [period, setPeriod] = useState<'month' | 'day'>('month');
   const [direction, setDirection] = useState<Directions>('both');
-  const getUrl = () => {
-    const host = Config.get<string>("next.public_api_url", "");
-    return `${host}/v3/dashboard/incentive/${period}/?direction=${direction}&territory_id=${props.territoryId}`;
-  };
-  const { data } = useApi<Record<string, string | number>[]>(getUrl());
+  const url = getApiUrl('v3', `dashboard/incentive/${period}/?direction=${direction}&territory_id=${props.territoryId}`)
+  const { data } = useApi<Record<string, string | number>[]>(url);
   const name = ['Tous les trajets', 'Trajets incités dans une campagne RPC']
   const colors = ['#6a6af4','#000091']
   const labels = period === 'month' 

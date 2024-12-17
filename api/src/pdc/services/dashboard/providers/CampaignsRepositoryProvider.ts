@@ -1,6 +1,16 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import {
+  APDFNameProvider,
+  BucketName,
+  S3Object,
+  S3ObjectList,
+  S3StorageProvider,
+} from "@/pdc/providers/storage/index.ts";
+import {
+  CampaignApdfParamsInterface,
+  CampaignApdfResultInterface,
   CampaignsParamsInterface,
   CampaignsRepositoryInterface,
   CampaignsRepositoryInterfaceResolver,
@@ -13,8 +23,13 @@ import {
 export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface {
   private readonly table = "policy.policies";
   private readonly tableTerritory = "territory.territory_group";
+  private bucket: BucketName = BucketName.APDF;
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(
+    private pg: PostgresConnection,
+    private s3StorageProvider: S3StorageProvider,
+    private APDFNameProvider: APDFNameProvider,
+  ) {}
 
   async getCampaigns(
     params: CampaignsParamsInterface,
@@ -50,5 +65,36 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
       values: queryValues,
     });
     return response.rows;
+  }
+
+  async getCampaignApdf(
+    params: CampaignApdfParamsInterface,
+  ): Promise<CampaignApdfResultInterface> {
+    try {
+      const list = await this.s3StorageProvider.list(
+        this.bucket,
+        `${params.campaign_id}`,
+      );
+      return await this.enrichApdf(list.filter((obj) => obj.size > 0));
+    } catch (e) {
+      logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
+      logger.debug(e.stack);
+      throw e;
+    }
+  }
+
+  async enrichApdf(list: S3ObjectList): Promise<CampaignApdfResultInterface> {
+    return Promise.all(
+      list.map(async (o: S3Object) => ({
+        ...this.APDFNameProvider.parse(o.key),
+        signed_url: await this.s3StorageProvider.getSignedUrl(
+          this.bucket,
+          o.key,
+          S3StorageProvider.TEN_MINUTES,
+        ),
+        key: o.key,
+        size: o.size,
+      })),
+    );
   }
 }

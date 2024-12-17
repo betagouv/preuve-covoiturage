@@ -1,6 +1,5 @@
-import { Config } from '@/config';
+import { getApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
-import { ApiResult } from '@/interfaces/hooksInterface';
 import { Directions, Periods } from '@/interfaces/vizInterface';
 import { fr } from '@codegouvfr/react-dsfr';
 import { Select } from "@codegouvfr/react-dsfr/Select";
@@ -25,11 +24,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export default function OperatorsGraph(props: {title:string, territoryId:string}) {
   const [period, setPeriod] = useState<Periods>('month');
   const [direction, setDirection] = useState<Directions>('both');
-  const getUrl = () => {
-    const host = Config.get<string>("next.public_api_url", "");
-    return `${host}/v3/dashboard/operators/${period}/?direction=${direction}&territory_id=${props.territoryId}`;
-  };
-  const { data } = useApi<ApiResult>(getUrl());
+  const url = getApiUrl('v3', `dashboard/operators/${period}/?direction=${direction}&territory_id=${props.territoryId}`)
+  const { data } = useApi<Record<string, string | number>[]>(url);
   const name = [...new Set(data?.map(d => d.operator_name))] as string[]
   const colors = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f','#667dcf','#72b77a']
   const labels = period === 'month' 

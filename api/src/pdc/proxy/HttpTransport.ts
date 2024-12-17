@@ -870,6 +870,11 @@ export class HttpTransport implements TransportInterface {
   private registerDashboardRoutes() {
     const routes: Array<RouteParams> = [
       {
+        path: "/dashboard/operators",
+        action: "dashboard:operators",
+        method: "GET",
+      },
+      {
         path: "/dashboard/operators/month",
         action: "dashboard:operatorsByMonth",
         method: "GET",
@@ -892,6 +897,11 @@ export class HttpTransport implements TransportInterface {
       {
         path: "/dashboard/campaigns",
         action: "dashboard:campaigns",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/campaign-apdf",
+        action: "dashboard:campaignApdf",
         method: "GET",
       },
       {
