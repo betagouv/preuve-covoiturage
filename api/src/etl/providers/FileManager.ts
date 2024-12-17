@@ -1,5 +1,4 @@
 import { access, mapshaper, mkdir } from "@/deps.ts";
-import { assert } from "@/dev_deps.ts";
 import { createHash, sha256sum } from "@/lib/crypto/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -164,6 +163,8 @@ export class FileManager implements FileManagerInterface {
 
   protected async checkSignature(data: ReadableStream<Uint8Array>, sha256: string | undefined): Promise<void> {
     if (typeof sha256 === "undefined" || sha256 === "") return;
-    assert(await sha256sum(data), sha256);
+    if (await sha256sum(data) !== sha256) {
+      throw new Error("SHA256 checksum does not match");
+    }
   }
 }
