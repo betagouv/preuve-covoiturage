@@ -1,10 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
 import { remove } from "@/lib/file/index.ts";
-import {
-  BucketName,
-  S3ObjectList,
-  S3StorageProvider,
-} from "@/pdc/providers/storage/index.ts";
+import { BucketName, S3ObjectList, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 
 export abstract class StorageServiceInterfaceResolver {
   public async init(): Promise<void> {
@@ -52,6 +48,6 @@ export class StorageService {
   }
 
   public async cleanup(filepath: string): Promise<void> {
-    remove(filepath);
+    await remove(filepath);
   }
 }
