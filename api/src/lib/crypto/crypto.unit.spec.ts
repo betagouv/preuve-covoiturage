@@ -16,6 +16,6 @@ describe("crypto:sha256sum", () => {
     const path = getTmpDir() + "/hello.txt";
     writeSync(path, str, { create: true });
     assertEquals(await sha256sum(path), sha);
-    remove(path);
+    await remove(path);
   });
 });

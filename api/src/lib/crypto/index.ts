@@ -1,5 +1,4 @@
 import { bcrypt, decodeBase64, encodeBase64, stdCrypto } from "@/deps.ts";
-import { assert } from "@/dev_deps.ts";
 import { exists, read } from "@/lib/file/index.ts";
 import { encodeHex } from "https://deno.land/std@0.214.0/encoding/hex.ts";
 
@@ -77,7 +76,10 @@ export async function sha256sum(source: string | ReadableStream<Uint8Array>): Pr
   if (source instanceof ReadableStream) {
     stream = source;
   } else {
-    assert(await exists(source), `File ${source} does not exist`);
+    if (!await exists(source)) {
+      throw new Error(`File not found: ${source}`);
+    }
+
     const file = await read(source);
     stream = file.readable;
   }
