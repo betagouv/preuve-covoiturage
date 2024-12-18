@@ -19,7 +19,7 @@ export default function ApdfTable(props: {title:string, campaignId:number}) {
   const operatorsList = useApi<Record<string, string | number>[]>(operatorsApiUrl);
   const dataTable = data?.map((d, i) => [
     (d.datetime as string).slice(0,7),
-    operatorsList.data!.find(o => o.id === d.operator_id)!.name,
+    operatorsList.data?.find(o => o.id === d.operator_id)!.name,
     d.trips,
     d.subsidized,
     `${(Number(d.amount)/100).toLocaleString()} €`,

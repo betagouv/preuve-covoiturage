@@ -58,7 +58,7 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
       FROM ${this.table} a
       LEFT JOIN ${this.tableTerritory} b on a.territory_id = b._id
       ${conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""}
-      ORDER BY a.start_date desc
+      ORDER BY status, a.start_date desc 
     `;
     const response = await this.pg.getClient().query({
       text: queryText,

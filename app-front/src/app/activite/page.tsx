@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import TabBref from './tabs/TabBref';
 import TabCampaigns from './tabs/TabCampaigns';
+import TabExport from './tabs/TabExport';
 
 export const metadata: Metadata = {
   title: 'Activité | app.covoiturage.gouv.fr',
@@ -29,7 +30,7 @@ export default function Activite() {
               label: `Suivi des campagnes`
             },
             {
-              content: <p>Content of tab3</p>,
+              content: <TabExport />,
               label: 'Export des données'
             }
           ]}
