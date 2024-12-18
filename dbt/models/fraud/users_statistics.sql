@@ -34,7 +34,7 @@ trips as (
 ),
 stats as (select 
 	c.user_identity_key,
-  {{ create_sql_statements_for_users_stats('count(distinct operator_trip_id)','num_trips') }},
+  {{ create_sql_statements_for_users_stats('count(distinct operator_trip_id)','num_trips') }}, -- noqa disable=all
   {{ create_sql_statements_for_users_stats('count(distinct operator_journey_id)','num_journeys') }},
   {{ create_sql_statements_for_users_stats('min(start_datetime)','datetime_first_trip') }},
   {{ create_sql_statements_for_users_stats('max(start_datetime)','datetime_last_trip') }},
@@ -47,7 +47,7 @@ stats as (select
   {{ create_sql_statements_for_users_stats('array_agg(distinct c.operator_id)','list_distinct_operators') }},
   {{ create_sql_statements_for_users_stats('avg(passenger_seats)','average_passenger_seats') }},
   {{ create_sql_statements_for_users_stats('sum((date_part(\'hour\',start_datetime)<5 OR date_part(\'hour\',start_datetime)>22)::int)','num_nightime_22_5_trips') }},
-	sum(i.total_incentive_amount) as total_incentives_as_driver
+	sum(i.total_incentive_amount) as total_incentives_as_driver -- noqa enable=all
 from trips c 
 left join incentives i  on c._id= i.carpool_id and role='driver'
 group by 1)

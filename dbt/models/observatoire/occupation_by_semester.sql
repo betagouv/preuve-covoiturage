@@ -36,14 +36,14 @@ SELECT
   a.year,
   a.semester,
   a.code,
-  b.l_territory AS libelle,
+  b.l_territory                 AS libelle,
   a.type,
   a.direction,
   a.journeys::int,
   round(
     (drivers_distance + passengers_distance) / drivers_distance, 2
-  )::float             AS occupation_rate,
-  st_asgeojson(b.geom,6)::json as geom
+  )::float                      AS occupation_rate,
+  st_asgeojson(b.geom, 6)::json AS geom
 FROM sum_distance AS a
 LEFT JOIN
   (

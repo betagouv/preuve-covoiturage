@@ -13,10 +13,10 @@ SELECT
   direction,
   operator_id,
   operator_name,
-  sum(journeys)    AS journeys,
-  sum(incented_journeys) AS incented_journeys,
-  sum(incentive_amount) AS incentive_amount
-FROM {{ ref('operators_by_day') }} AS a
+  sum(journeys)                         AS journeys,
+  sum(incented_journeys)                AS incented_journeys,
+  sum(incentive_amount)                 AS incentive_amount
+FROM {{ ref('operators_by_day') }}
 {% if is_incremental() %}
   WHERE
     (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))

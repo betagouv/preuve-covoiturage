@@ -8,78 +8,84 @@
   )
 }}
 
-WITH perimeters as (
-  SELECT * 
+WITH perimeters AS (
+  SELECT *
   FROM {{ source('geo','perimeters') }}
   WHERE year >= 2020
 )
-SELECT year,
-  'com' as type,
-  arr as code,
-  l_arr as libelle,
-  geom_simple as geom
-  FROM perimeters
-  WHERE com IS NOT NULL
-  {% if is_incremental() %}
-    AND year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
-UNION
-SELECT year, 
-  'epci' as type,
-  epci as code,
-  l_epci as libelle,
-  st_multi(st_union(geom_simple)) as geom
-  FROM perimeters
-  WHERE epci IS NOT NULL
-  {% if is_incremental() %}
-    AND year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
-  GROUP BY year, epci, l_epci
-UNION
-SELECT year,
-  'aom' as type,
-  aom as code,
-  l_aom as libelle,
-  st_multi(st_union(geom_simple)) as geom
-  FROM perimeters
-  WHERE aom IS NOT NULL
-  {% if is_incremental() %}
-    AND year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
-  GROUP BY year,aom,l_aom
-UNION
-SELECT year,
-  'dep' as type,
-  dep as code,
-  l_dep as libelle,
-  st_multi(st_union(geom_simple)) as geom
-  FROM perimeters
-  WHERE dep IS NOT NULL
-  {% if is_incremental() %}
-    AND year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
-  GROUP BY year,dep,l_dep
-UNION
-SELECT year,
-  'reg' as type,
-  reg as code,
-  l_reg as libelle,
-  st_multi(st_union(geom_simple)) as geom
-  FROM perimeters
-  WHERE reg IS NOT NULL
-  {% if is_incremental() %}
-    AND year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
-  GROUP BY year,reg,l_reg
-UNION
-SELECT distinct on (year,country) 
+
+SELECT
   year,
-  'country' as type,
-  country as code,
-  l_country as libelle,
-  st_multi(st_union(geom_simple)) as geom
-  FROM perimeters
-  {% if is_incremental() %}
+  'com'       AS type,
+  arr         AS code,
+  l_arr       AS libelle,
+  geom_simple AS geom
+FROM perimeters
+WHERE com IS NOT NULL
+{% if is_incremental() %}
+    AND year > (SELECT MAX(year) FROM {{ this }})
+  {% endif %}
+UNION
+SELECT
+  year,
+  'epci'                          AS type,
+  epci                            AS code,
+  l_epci                          AS libelle,
+  st_multi(st_union(geom_simple)) AS geom
+FROM perimeters
+WHERE epci IS NOT NULL
+{% if is_incremental() %}
+    AND year > (SELECT MAX(year) FROM {{ this }})
+  {% endif %}
+GROUP BY year, epci, l_epci
+UNION
+SELECT
+  year,
+  'aom'                           AS type,
+  aom                             AS code,
+  l_aom                           AS libelle,
+  st_multi(st_union(geom_simple)) AS geom
+FROM perimeters
+WHERE aom IS NOT NULL
+{% if is_incremental() %}
+    AND year > (SELECT MAX(year) FROM {{ this }})
+  {% endif %}
+GROUP BY year, aom, l_aom
+UNION
+SELECT
+  year,
+  'dep'                           AS type,
+  dep                             AS code,
+  l_dep                           AS libelle,
+  st_multi(st_union(geom_simple)) AS geom
+FROM perimeters
+WHERE dep IS NOT NULL
+{% if is_incremental() %}
+    AND year > (SELECT MAX(year) FROM {{ this }})
+  {% endif %}
+GROUP BY year, dep, l_dep
+UNION
+SELECT
+  year,
+  'reg'                           AS type,
+  reg                             AS code,
+  l_reg                           AS libelle,
+  st_multi(st_union(geom_simple)) AS geom
+FROM perimeters
+WHERE reg IS NOT NULL
+{% if is_incremental() %}
+    AND year > (SELECT MAX(year) FROM {{ this }})
+  {% endif %}
+GROUP BY year, reg, l_reg
+UNION
+SELECT DISTINCT ON (year, country)
+  year,
+  'country'                       AS type,
+  country                         AS code,
+  l_country                       AS libelle,
+  st_multi(st_union(geom_simple)) AS geom
+FROM perimeters
+{% if is_incremental() %}
     WHERE year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
-  GROUP BY year,country,l_country
+GROUP BY year, country, l_country

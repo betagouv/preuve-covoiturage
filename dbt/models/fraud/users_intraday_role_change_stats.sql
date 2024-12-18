@@ -24,7 +24,8 @@ lagged as (
     *,
     lag(role, -1)
       over (
-        partition by user_identity_key, date_trunc('day', start_datetime)
+        partition by
+          user_identity_key, date_trunc('day', start_datetime)
         order by start_datetime
       )
     as next_role
@@ -42,7 +43,7 @@ intraday_stats as (
 
 select
   user_identity_key,
-  count(start_day) as total_traveled_days,
+  count(start_day)               as total_traveled_days,
   sum(count_consecutive_changes) as total_consecutives_role_changes,
   avg(count_consecutive_changes) as avg_daily_consecutive_role_changes,
   max(count_consecutive_changes) as max_daily_consecutive_role_change
