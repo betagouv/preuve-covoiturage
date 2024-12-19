@@ -11,7 +11,7 @@ import ApdfTable from './ApdfTable';
 
 export default function CampaignsTable(props: {title:string, territoryId:string | undefined}) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [offset, setOffset] = useState([0,25]);
+  const [offset, setOffset] = useState([0,15]);
   const [campaignId, setCampaignId] = useState<number>();
   const resultByPage = 15;
 

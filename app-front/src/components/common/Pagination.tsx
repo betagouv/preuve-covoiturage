@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function Pagination(props:PaginationProps) {
   
   const getPagination = (count:number, defaultPage: number) => {
-    const maxVisiblePages = 10;
+    const maxVisiblePages = 5;
     // first n pages
     if (count <= maxVisiblePages) {
       return Array.from({ length: count }, (_, v) => ({

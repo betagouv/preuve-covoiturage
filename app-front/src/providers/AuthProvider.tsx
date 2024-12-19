@@ -34,6 +34,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     if (stateToken && nonceToken) {
       setState(stateToken);
       setNonce(nonceToken);
+      setIsAuth(true);
       setUser({name:'Ludovic Delhomme', role:'admin'});
     }
   }, []);

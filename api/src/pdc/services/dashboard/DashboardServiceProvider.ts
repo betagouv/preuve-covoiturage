@@ -10,9 +10,9 @@ import { IncentiveByDayAction } from "@/pdc/services/dashboard/actions/Incentive
 import { OperatorsAction } from "@/pdc/services/dashboard/actions/OperatorsAction.ts";
 import { OperatorsByDayAction } from "@/pdc/services/dashboard/actions/OperatorsByDayAction.ts";
 import { TerritoriesAction } from "@/pdc/services/dashboard/actions/TerritoriesAction.ts";
+import { UsersAction } from "@/pdc/services/dashboard/actions/UsersAction.ts";
 import { CampaignsRepositoryProvider } from "@/pdc/services/dashboard/providers/CampaignsRepositoryProvider.ts";
 import { IncentiveRepositoryProvider } from "@/pdc/services/dashboard/providers/IncentiveRepositoryProvider.ts";
-import { TerritoriesRepositoryProvider } from "@/pdc/services/dashboard/providers/TerritoriesRepositoryProvider.ts";
 import { IncentiveByMonthAction } from "./actions/IncentiveByMonthAction.ts";
 import { OperatorsByMonthAction } from "./actions/OperatorsByMonthAction.ts";
 import { config } from "./config/index.ts";
@@ -24,7 +24,9 @@ import { binding as OperatorsBinding } from "./contracts/operators/operators.sch
 import { binding as OperatorsByDayBinding } from "./contracts/operators/operatorsByDay.schema.ts";
 import { binding as OperatorsByMonthBinding } from "./contracts/operators/operatorsByMonth.schema.ts";
 import { binding as TerritoriesBinding } from "./contracts/territories/territories.schema.ts";
+import { binding as UsersBinding } from "./contracts/users/users.schema.ts";
 import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProvider.ts";
+import { UsersRepositoryProvider } from "./providers/UsersRepositoryProvider.ts";
 
 /* eslint-enable */
 @serviceProvider({
@@ -35,7 +37,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     OperatorsRepositoryProvider,
     IncentiveRepositoryProvider,
     CampaignsRepositoryProvider,
-    TerritoriesRepositoryProvider,
+    UsersRepositoryProvider,
   ],
   validator: [
     OperatorsBinding,
@@ -46,6 +48,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     CampaignsBinding,
     CampaignApdfBinding,
     TerritoriesBinding,
+    UsersBinding,
   ],
   handlers: [
     OperatorsByMonthAction,
@@ -56,6 +59,7 @@ import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProv
     CampaignApdfAction,
     TerritoriesAction,
     OperatorsAction,
+    UsersAction,
   ],
   middlewares: [...defaultMiddlewareBindings, [
     "validate",

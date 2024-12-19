@@ -19,7 +19,6 @@ export default function Activite() {
       <div id='content'>
         <PageTitle title={`Suivez votre activité`} />
         <Tabs
-          label="Name of the tabs system"
           tabs={[
             {
               content: <TabBref />,
