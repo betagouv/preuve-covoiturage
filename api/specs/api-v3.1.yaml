@@ -135,19 +135,38 @@ paths:
             Le trajet est déjà enregistré.
         '422':
           description: |
-            Le trajet est en erreur.
-            Le payload envoyé est incorrect.
+            Le payload envoyé ne respecte pas le contrat d'interface / les Conditions Générales d'Utilisation.
+            Le trajet n'a pas été enregistré par le Registre de Preuve de Covoiturage.
           content:
             application/json:
-              example:
-                id: 1
-                jsonrpc: '2.0'
-                error:
-                  data: 
-                    terms_violation_labels:
-                      - expired
-                  code: -32422
-                  message: Unprocessable Request
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  jsonrpc:
+                    type: string
+                    enum:
+                      - '2.0'
+                  error:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          terms_violation_labels:
+                            $ref: '#/components/schemas/terms_violation_label'
+                        required:
+                          - terms_violation_labels
+                      code:
+                        type: integer
+                        enum:
+                          - -32422
+                      message:
+                        type: string
+                        enum:
+                          - Unprocessable Request
       tags:
         - Trajets courte distance
     get:

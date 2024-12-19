@@ -23,7 +23,7 @@ export interface RouteParams {
   rpcAnswerOnFailure?: boolean;
 }
 
-const SUPPORTED_VERSIONS = ["3.0.0", "3.1.0"].map((v) => semver.parse(v));
+const SUPPORTED_VERSIONS = ["3.1.0"].map((v) => semver.parse(v));
 const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
   successHttpCode: 200,
   rateLimiter: {
