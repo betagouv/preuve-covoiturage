@@ -1,9 +1,12 @@
 import { access, mapshaper, mkdir } from "@/deps.ts";
+import { FileResource } from "@/etl/interfaces/FileManagerInterface.ts";
+import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import { createHash, sha256sum } from "@/lib/crypto/index.ts";
-import fetcher from "@/lib/fetcher/index.ts";
+import { remove } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
+import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 import { getAllFiles, getFileExtensions, un7zFile, ungzFile, unzipFile, writeFile } from "../helpers/index.ts";
 import {
   ArchiveFileTypeEnum,
@@ -24,49 +27,9 @@ export class FileManager implements FileManagerInterface {
     this.mirrorUrl = config.mirrorUrl;
   }
 
-  protected async getTemporaryDirectoryPath(name?: string): Promise<string> {
-    return name ? join(this.basePath, name) : await this.getTemporaryFilePath();
-  }
-
-  protected async getTemporaryFilePath(
-    data?: string,
-    isDownload = false,
-  ): Promise<string> {
-    return join(
-      isDownload ? this.downloadPath : this.basePath,
-      data ? await createHash(data) : uuidV4(),
-    );
-  }
-
-  protected async getMirrorUrl(url: string): Promise<string | undefined> {
-    if (!this.mirrorUrl) {
-      return;
-    }
-    return `${this.mirrorUrl}/${await createHash(url)}`;
-  }
-
-  async install(): Promise<void> {
-    if (this.isReady) {
-      return;
-    }
-
-    for (const path of [this.basePath, this.downloadPath]) {
-      try {
-        await access(path);
-      } catch {
-        await mkdir(path, { recursive: true });
-      }
-    }
-    this.isReady = true;
-  }
-
-  async decompress(
-    filepath: string,
-    archiveType: ArchiveFileTypeEnum,
-    fileType: FileTypeEnum,
-  ): Promise<string[]> {
+  async decompress(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]> {
     try {
-      await this.install();
+      await this.ensureDirPath();
       await access(filepath);
       const extractPath = await this.getTemporaryDirectoryPath(
         `${basename(filepath)}-extract`,
@@ -101,35 +64,20 @@ export class FileManager implements FileManagerInterface {
     }
   }
 
-  async download(url: string, sha256?: string): Promise<string> {
+  async download({ url, sha256 }: FileResource): Promise<string> {
     const filepath = await this.getTemporaryFilePath(url, true);
-    await this.install();
+
+    await this.ensureDirPath();
+    await this.clear(filepath);
+
+    // Download from mirror or fallback to direct download
     try {
-      await access(filepath);
-    } catch (_e) {
-      // If file not found download it !
-      try {
-        const response = await fetcher.get(url);
-        if (!response.body) {
-          throw new Error(`Failed to download ${url}`);
-        }
-        await this.checkSignature(response.body, sha256);
-        await writeFile(response.body, filepath);
-      } catch (e) {
-        // If not found and have mirror, try download
-        const mirrorUrl = await this.getMirrorUrl(url);
-        if (mirrorUrl) {
-          const response = await fetcher.get(mirrorUrl);
-          if (!response.body) {
-            throw new Error(`Failed to download from mirror: ${url}`);
-          }
-          await this.checkSignature(response.body, sha256);
-          await writeFile(response.body, filepath);
-        } else {
-          throw e;
-        }
-      }
+      await this.retrieveFromCache(filepath, url, sha256);
+    } catch (e) {
+      logger.info(`Cache failed (${e.message}), Trying direct download`);
+      await this.downloadAndCache(filepath, url, sha256);
     }
+
     return filepath;
   }
 
@@ -161,7 +109,116 @@ export class FileManager implements FileManagerInterface {
     }
   }
 
-  protected async checkSignature(data: ReadableStream<Uint8Array>, sha256: string | undefined): Promise<void> {
+  async ensureDirPath(): Promise<void> {
+    if (this.isReady) {
+      return;
+    }
+
+    for (const path of [this.basePath, this.downloadPath]) {
+      try {
+        await access(path);
+      } catch {
+        await mkdir(path, { recursive: true });
+      }
+    }
+    this.isReady = true;
+  }
+
+  protected async fileExists(filepath: string): Promise<boolean> {
+    try {
+      await access(filepath);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  protected async retrieveFromCache(destination: string, url: string, sha256: string | undefined): Promise<void> {
+    const mirror = await this.getMirrorUrl(url);
+    if (!mirror) {
+      throw new Error("No mirror URL provided");
+    }
+
+    logger.info(`Downloading from mirror ${mirror}`);
+
+    const response = await fetch(mirror, { method: "GET", redirect: "follow" });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`mirror status = ${response.statusText} - ${url}`);
+    }
+
+    await this.save(destination, response.body);
+    await this.check(destination, sha256);
+
+    logger.info("Downloading from mirror OK");
+  }
+
+  protected async downloadAndCache(destination: string, url: string, sha256: string | undefined): Promise<void> {
+    logger.info(`Downloading ${url}`);
+
+    const response = await fetch(url, { method: "GET", redirect: "follow" });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`Failed to download ${url}: ${response.statusText}`);
+    }
+
+    await this.save(destination, response.body);
+    await this.check(destination, sha256);
+    await this.cache(destination);
+
+    logger.info("Direct downloading OK");
+  }
+
+  protected async cache(destination: string): Promise<void> {
+    logger.info(`Caching ${destination}`);
+
+    try {
+      const s3 = new S3StorageProvider(new ConfigStore({}));
+      await s3.init();
+      const filename = basename(destination);
+      const key = await s3.upload(BucketName.GeoDatasetsMirror, destination, filename, undefined, {
+        prefix: "",
+        metadata: {
+          "x-amz-acl": "public-read",
+        },
+      });
+
+      logger.info(`File cached: ${key}`);
+    } catch (e) {
+      logger.error(`Caching failed: ${e.message}`);
+    }
+  }
+
+  protected async getTemporaryDirectoryPath(name?: string): Promise<string> {
+    return name ? join(this.basePath, name) : await this.getTemporaryFilePath();
+  }
+
+  protected async getTemporaryFilePath(data?: string, isDownload = false): Promise<string> {
+    return join(
+      isDownload ? this.downloadPath : this.basePath,
+      data ? await createHash(data) : uuidV4(),
+    );
+  }
+
+  protected async getMirrorUrl(url: string): Promise<string | undefined> {
+    if (!this.mirrorUrl) {
+      logger.warn("No mirror URL provided");
+      return;
+    }
+
+    return `${this.mirrorUrl}/${await createHash(url)}`;
+  }
+
+  protected async clear(filepath: string): Promise<void> {
+    await remove(filepath);
+  }
+
+  protected async save(destination: string, stream: ReadableStream<Uint8Array>): Promise<void> {
+    await writeFile(destination, stream);
+    logger.info(`Saved to ${destination}`);
+  }
+
+  protected async check(data: string | ReadableStream<Uint8Array>, sha256: string | undefined): Promise<void> {
     if (typeof sha256 === "undefined" || sha256 === "") return;
     if (await sha256sum(data) !== sha256) {
       throw new Error("SHA256 checksum does not match");

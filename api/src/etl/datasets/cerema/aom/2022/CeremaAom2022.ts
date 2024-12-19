@@ -6,8 +6,9 @@ export class CeremaAom2022 extends AbstractDataset {
   static dataset = "aom";
   static year = 2022;
   static table = "cerema_aom_2022";
-  // 404 Not Found
-  static url = "http://www.cerema.fr/system/files/documents/2022/09/base_rt_2022_diffusion.ods";
+  static url = "https://www.data.gouv.fr/fr/datasets/r/dcfa6baf-5e8c-4842-a32e-e5ff31f9defd";
+  static sha256 = "a51aaf16a1f75435235db3f4b777233386d47caf8087f30bd5c51285b209212a";
+  static filename = "base-rt-2022-diffusion.xlsx";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

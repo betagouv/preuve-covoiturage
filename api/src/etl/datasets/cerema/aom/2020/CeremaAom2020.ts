@@ -6,8 +6,9 @@ export class CeremaAom2020 extends AbstractDataset {
   static dataset = "aom";
   static year = 2020;
   static table = "cerema_aom_2020";
-  static url = "https://www.cerema.fr/system/files/documents/2020/07/base_rt_2020_v1-1_diffusion_0.ods";
-  static sha256 = "f27e673a98d986281e771014555647be1c5473fd1bc813bb4a056f8aef2f888a";
+  static url = "https://www.data.gouv.fr/fr/datasets/r/695e40e6-77f4-45ef-a29b-afdd417add50";
+  static sha256 = "415d5c1f236977ee917a70e70dc17116f83ffb5ab7bcc9a28550c4852a587003";
+  static filename = "base-rt-2020-v1-2-avec-communes-aom.ods";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

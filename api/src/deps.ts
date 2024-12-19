@@ -229,8 +229,8 @@ export {
   xlsx,
   xss,
 };
-export * as collections from "https://deno.land/std@0.224.0/collections/mod.ts";
 export * as semver from "jsr:@std/semver@1";
+export * as collections from "jsr:@std/collections@1";
 export * as stdCrypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
 export {
   decodeBase64,

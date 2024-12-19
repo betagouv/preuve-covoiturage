@@ -6,8 +6,9 @@ export class CeremaAom2021 extends AbstractDataset {
   static dataset = "aom";
   static year = 2021;
   static table = "cerema_aom_2021";
-  static url = "https://www.cerema.fr/system/files/documents/2021/06/base_rt_2021_v4_diffusion.xlsx";
+  static url = "https://www.data.gouv.fr/fr/datasets/r/4d5c743e-8846-4bdf-bf2e-01af6e7a75af";
   static sha256 = "5e0aa65dac5804efdfc5033700c6533a478dad3f2ca85ed628e6bb6c92a452dd";
+  static filename = "base-rt-2021-v4-diffusion.xlsx";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
