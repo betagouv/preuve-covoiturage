@@ -1,4 +1,4 @@
-import { Pool } from "@/deps.ts";
+import { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
   AppConfigInterface,
@@ -14,7 +14,7 @@ export class DatabaseStateManager implements DatabaseStateManagerInterface {
   readonly migrations: Map<string, StaticMigrable>;
   readonly targetSchema: string;
 
-  constructor(protected connection: Pool, config: AppConfigInterface) {
+  constructor(protected connection: pg.Pool, config: AppConfigInterface) {
     this.targetSchema = config.targetSchema;
     this.migrations = new Map(
       [...config.datastructures, ...config.datasets].map((m) => [m.uuid, m]),

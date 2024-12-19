@@ -1,16 +1,14 @@
-import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-} from "../../../../interfaces/index.ts";
+import { AbstractDataset } from "@/etl/common/AbstractDataset.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "@/etl/interfaces/FileInterface.ts";
 
 export class CeremaAom2024 extends AbstractDataset {
   static producer = "cerema";
   static dataset = "aom";
   static year = 2024;
   static table = "cerema_aom_2024";
-  static url =
-    "https://www.data.gouv.fr/fr/datasets/r/0f49f5b0-9607-49cf-a018-490f6e1ec69f";
+  static url = "https://www.data.gouv.fr/fr/datasets/r/a2350747-651e-42e2-9888-26b2604474f7";
+  static sha256 = "17a35867a376ef460723bdf2850f5e6e8612d8165365c384e8944c12445762a7";
+  static filename = "base-rt-2024-diffusion-v2.ods";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

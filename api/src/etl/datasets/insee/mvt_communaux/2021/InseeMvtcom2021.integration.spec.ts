@@ -1,13 +1,5 @@
 import { access } from "@/deps.ts";
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  assertRejects,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { createFileManager, createPool } from "../../../../helpers/index.ts";
 import { MemoryStateManager } from "../../../../providers/MemoryStateManager.ts";
 import { InseeMvtcom2021 as Dataset } from "./InseeMvtcom2021.ts";
