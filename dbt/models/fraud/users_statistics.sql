@@ -17,6 +17,7 @@ select
 from {{ source('carpool', 'operator_incentives') }} 
 group by 1
 ),
+
 trips as (
   select
     _id,
@@ -32,6 +33,7 @@ trips as (
   from
     {{ ref('users_trips') }}
 ),
+
 stats as (select 
 	c.user_identity_key,
   {{ create_sql_statements_for_users_stats('count(distinct operator_trip_id)','num_trips') }}, -- noqa disable=all
@@ -51,10 +53,11 @@ stats as (select
 from trips c 
 left join incentives i  on c._id= i.carpool_id and role='driver'
 group by 1)
+
 select
   s.*,
-  uircs.total_consecutives_role_changes,
-  uircs.avg_daily_consecutive_role_changes,
-  uircs.max_daily_consecutive_role_change
+  uircs.total_consecutives_intraday_role_changes,
+  uircs.avg_daily_consecutives_intraday_role_changes,
+  uircs.max_daily_consecutives_intraday_role_change
 from stats s
 left join {{ ref('users_intraday_role_change_stats') }} uircs on s.user_identity_key=uircs.user_identity_key

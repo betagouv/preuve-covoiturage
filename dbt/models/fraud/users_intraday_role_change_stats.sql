@@ -44,8 +44,10 @@ intraday_stats as (
 select
   user_identity_key,
   count(start_day)               as total_traveled_days,
-  sum(count_consecutive_changes) as total_consecutives_role_changes,
-  avg(count_consecutive_changes) as avg_daily_consecutive_role_changes,
-  max(count_consecutive_changes) as max_daily_consecutive_role_change
+  sum(count_consecutive_changes) as total_consecutives_intraday_role_changes,
+  avg(
+    count_consecutive_changes
+  )                              as avg_daily_consecutives_intraday_role_changes,
+  max(count_consecutive_changes) as max_daily_consecutives_intraday_role_change
 from intraday_stats
 group by 1

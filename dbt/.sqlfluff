@@ -9,14 +9,6 @@ profiles_dir = ./profiles
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
 
-[sqlfluff:templater:jinja:macros]
-# Macros provided as builtins for dbt projects
-dbt_ref = {% macro ref(model_ref) %}{{model_ref}}{% endmacro %}
-dbt_source = {% macro source(source_name, table) %}{{source_name}}_{{table}}{% endmacro %}
-dbt_config = {% macro config() %}{% for k in kwargs %}{% endfor %}{% endmacro %}
-dbt_var = {% macro var(variable, default='') %}item{% endmacro %}
-dbt_is_incremental = {% macro is_incremental() %}True{% endmacro %}
-
 [sqlfluff:layout:type:alias_expression]
 # We want non-default spacing _before_ the alias expressions.
 spacing_before = align
@@ -29,7 +21,3 @@ align_within = select_clause
 # when we hit brackets is usually a good rule of thumb for this
 # configuration.
 align_scope = bracketed
-
-[sqlfluff:indentation]
-indent_unit = space
-tab_space_size = 2
