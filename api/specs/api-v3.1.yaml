@@ -1243,28 +1243,28 @@ components:
     status:
       description: |
         Statut du trajet tel que :
-          - `validation_error` : les données envoyées ne sont pas valides
-          - `anomaly_error` : le trajet est incohérent ou physiquement impossible
           - `acquisition_error` : le trajet n'a pas du tout été enregistré
-          - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
+          - `anomaly_error` : le trajet est incohérent ou physiquement impossible
+          - `canceled` : le trajet a été annulé par l'opérateur
           - `fraud_error` : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
+          - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
           - `ok` : le trajet a correctement été traité
           - `pending` : le trajet a été enregistré mais n'a pas encore été traité
-          - `canceled` : le trajet a été annulé par l'opérateur
-          - `unknown` : une erreur inconnue a affecté le trajet
           - `terms_violation_error` : le trajet ne respecte pas les conditions générales d'utilisation
+          - `unknown` : une erreur inconnue a affecté le trajet
+          - `validation_error` : les données envoyées ne sont pas valides
       type: string
       enum:
-        - fraud_error
-        - anomaly_error
-        - validation_error
         - acquisition_error
+        - anomaly_error
+        - canceled
+        - fraud_error
         - normalization_error
         - ok
-        - canceled
         - pending
-        - unknown
         - terms_violation_error
+        - unknown
+        - validation_error
     duration:
       description: Durée en secondes
       type: number
@@ -1709,7 +1709,7 @@ components:
       description: |
         Etiquette possible pour un cas de non respect des CGU :
 
-        - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+        - `distance_too_short` : le trajet a une distance trop faible (<2 km à vol d'oiseau)
         - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
         - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
         - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
