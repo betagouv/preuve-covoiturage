@@ -58,6 +58,6 @@ select
   s.*,
   uircs.total_consecutives_intraday_role_changes,
   uircs.avg_daily_consecutives_intraday_role_changes,
-  uircs.max_daily_consecutives_intraday_role_change
+  uircs.max_daily_consecutives_intraday_role_changes
 from stats s
 left join {{ ref('users_intraday_role_change_stats') }} uircs on s.user_identity_key=uircs.user_identity_key

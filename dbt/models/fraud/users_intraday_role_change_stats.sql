@@ -48,6 +48,6 @@ select
   avg(
     count_consecutive_changes
   )                              as avg_daily_consecutives_intraday_role_changes,
-  max(count_consecutive_changes) as max_daily_consecutives_intraday_role_change
+  max(count_consecutive_changes) as max_daily_consecutives_intraday_role_changes
 from intraday_stats
 group by 1
