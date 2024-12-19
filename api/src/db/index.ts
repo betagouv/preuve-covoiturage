@@ -75,13 +75,11 @@ export async function migrate(config: string) {
         datasets: new Set(),
       },
     });
-    console.debug("[etl] prepare migrator");
     await geoInstance.prepare();
-    console.debug("[etl] run migrator");
     await geoInstance.run();
-    await geoInstance.pool.end();
-    console.debug("[etl] done!");
+    await geoInstance.cleanup();
   }
+
   if (!(env_or_false("SKIP_SQL_MIGRATIONS"))) {
     await runMigrations(config);
   }

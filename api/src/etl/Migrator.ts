@@ -14,8 +14,7 @@ import {
 } from "./interfaces/index.ts";
 
 export class Migrator {
-  protected migrableInstances: Map<StaticMigrable, DatasetInterface> =
-    new Map();
+  protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();
 
   constructor(
     readonly pool: pg.Pool,
@@ -40,7 +39,7 @@ export class Migrator {
     await this.dbStateManager.install();
 
     logger.info(`[fs] Ensure filesystem is ready`);
-    await this.file.install();
+    await this.file.ensureDirPath();
     logger.info(`[fs] ok`);
   }
 
@@ -81,9 +80,8 @@ export class Migrator {
     stateManager: StateManagerInterface,
   ): Promise<void> {
     const migrableCtor = migrable.constructor as StaticMigrable;
-    logger.debug(
-      `start: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`,
-    );
+    logger.debug(`start: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`);
+
     try {
       switch (migrableState) {
         case State.Planned:
@@ -134,23 +132,15 @@ export class Migrator {
         default:
           throw new Error();
       }
-      logger.debug(
-        `end: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`,
-      );
+      logger.debug(`end: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`);
     } catch (e) {
-      logger.debug(
-        `error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${
-          (e as Error).message
-        }`,
-      );
+      logger.debug(`error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${e?.message || ""}`);
+
       throw e;
     }
   }
 
-  async process(
-    migrableCtor: StaticMigrable,
-    stateManager: StateManagerInterface,
-  ): Promise<void> {
+  async process(migrableCtor: StaticMigrable, stateManager: StateManagerInterface): Promise<void> {
     try {
       const migrable = this.getInstance(migrableCtor);
       for (const state of [...flow]) {
@@ -163,8 +153,11 @@ export class Migrator {
   }
 
   async run(todo?: StaticMigrable[]): Promise<void> {
+    logger.info(`[db] Running migrations`);
+
     const state = await this.dbStateManager.toMemory();
     state.plan(todo || (await this.getTodo(state)));
+
     const iter = state.todo();
     let done = false;
     do {
@@ -178,17 +171,19 @@ export class Migrator {
           const migrable = this.getInstance(migrableCtor);
           await this.do(migrable, migrableState, state);
         } catch (e) {
-          logger.error(
-            `Error during processing ${migrableCtor.uuid} - ${migrableState} : ${
-              (e as Error).message
-            }`,
-          );
+          logger.error(`Error during processing ${migrableCtor.uuid} - ${migrableState} : ${e?.message || ""}`);
           state.set(migrableCtor, State.Failed);
           const migrablesToUnplan = state.get(migrableState);
           [...migrablesToUnplan].map((mc) => state.set(mc, State.Unplanned));
         }
       }
     } while (!done);
+
     await this.dbStateManager.fromMemory(state);
+  }
+
+  async cleanup(): Promise<void> {
+    logger.info(`[db] Cleaning up`);
+    await this.pool.end();
   }
 }

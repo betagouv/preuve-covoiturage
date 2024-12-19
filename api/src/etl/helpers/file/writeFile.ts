@@ -1,6 +1,3 @@
-export function writeFile(
-  stream: ReadableStream,
-  filepath: string,
-): Promise<void> {
+export function writeFile(filepath: string, stream: ReadableStream): Promise<void> {
   return Deno.writeFile(filepath, stream);
 }

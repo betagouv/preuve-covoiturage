@@ -44,6 +44,10 @@ export abstract class AbstractDataset implements DatasetInterface {
     return (this.constructor as StaticAbstractDataset).sha256;
   }
 
+  get filename(): string | undefined {
+    return (this.constructor as StaticAbstractDataset).filename;
+  }
+
   get table(): string {
     return (this.constructor as StaticAbstractDataset).table;
   }
@@ -103,7 +107,7 @@ export abstract class AbstractDataset implements DatasetInterface {
   async download(): Promise<void> {
     try {
       const filepaths: string[] = [];
-      const filepath = await this.file.download(this.url, this.sha256);
+      const filepath = await this.file.download({ url: this.url, sha256: this.sha256 });
       if (this.fileArchiveType !== ArchiveFileTypeEnum.None) {
         filepaths.push(
           ...(await this.file.decompress(
