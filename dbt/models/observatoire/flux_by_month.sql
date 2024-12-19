@@ -56,14 +56,18 @@ flux_agg AS (
   FROM flux AS a
   LEFT JOIN
     (
-      SELECT arr,epci
+      SELECT
+        arr,
+        epci
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
     (
-      SELECT arr,epci
+      SELECT
+        arr,
+        epci
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS c
@@ -86,14 +90,18 @@ flux_agg AS (
   FROM flux AS a
   LEFT JOIN
     (
-      SELECT arr,aom
+      SELECT
+        arr,
+        aom
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
     (
-      SELECT arr,aom
+      SELECT
+        arr,
+        aom
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS c
@@ -114,14 +122,18 @@ flux_agg AS (
   FROM flux AS a
   LEFT JOIN
     (
-      SELECT arr,dep
+      SELECT
+        arr,
+        dep
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
     (
-      SELECT arr,dep
+      SELECT
+        arr,
+        dep
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS c
@@ -142,14 +154,18 @@ flux_agg AS (
   FROM flux AS a
   LEFT JOIN
     (
-      SELECT arr,reg
+      SELECT
+        arr,
+        reg
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
     (
-      SELECT arr,reg
+      SELECT
+        arr,
+        reg
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS c
@@ -170,14 +186,18 @@ flux_agg AS (
   FROM flux AS a
   LEFT JOIN
     (
-      SELECT arr,country
+      SELECT
+        arr,
+        country
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS b
     ON a.from = b.arr
   LEFT JOIN
     (
-      SELECT arr,country
+      SELECT
+        arr,
+        country
       FROM {{ source('geo','perimeters') }}
       WHERE year = geo.get_latest_millesime()
     ) AS c
@@ -207,26 +227,44 @@ SELECT
 FROM flux_agg AS a
 LEFT JOIN
   (
-    SELECT territory, type, l_territory, geom
+    SELECT
+      territory,
+      type,
+      l_territory,
+      geom
     FROM {{ source('geo','perimeters_centroid') }}
     WHERE year = geo.get_latest_millesime()
     UNION
-    SELECT territory, 'com', l_territory, geom
+    SELECT
+      territory,
+      'com',
+      l_territory,
+      geom
     FROM {{ source('geo','perimeters_centroid') }}
-    WHERE year = geo.get_latest_millesime()
-    AND type = 'country'
+    WHERE
+      year = geo.get_latest_millesime()
+      AND type = 'country'
   ) AS b
   ON concat(a.territory_1, a.type) = concat(b.territory, b.type)
 LEFT JOIN
   (
-    SELECT territory, type, l_territory, geom
+    SELECT
+      territory,
+      type,
+      l_territory,
+      geom
     FROM {{ source('geo','perimeters_centroid') }}
     WHERE year = geo.get_latest_millesime()
     UNION
-    SELECT territory, 'com', l_territory, geom
+    SELECT
+      territory,
+      'com',
+      l_territory,
+      geom
     FROM {{ source('geo','perimeters_centroid') }}
-    WHERE year = geo.get_latest_millesime()
-    AND type = 'country'
+    WHERE
+      year = geo.get_latest_millesime()
+      AND type = 'country'
   ) AS c
   ON concat(a.territory_2, a.type) = concat(c.territory, c.type)
 ORDER BY a.territory_1, a.territory_2

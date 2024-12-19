@@ -9,13 +9,13 @@
 }}
 
 SELECT
-  extract('year' FROM start_date)::int  AS year,
+  extract('year' FROM start_date)::int AS year,
   a.code,
-  b.l_territory AS libelle,
+  b.l_territory                        AS libelle,
   a.type,
   a.direction,
-  sum(a.new_drivers)                         AS new_drivers,
-  sum(a.new_passengers)                         AS new_passengers
+  sum(a.new_drivers)                   AS new_drivers,
+  sum(a.new_passengers)                AS new_passengers
 FROM {{ ref('directions_newcomer_by_day') }} AS a
 LEFT JOIN
   (
@@ -30,7 +30,7 @@ LEFT JOIN
   ON a.code = b.territory AND a.type = b.type
 WHERE
   a.code IS NOT null
-  {% if is_incremental() %}
+{% if is_incremental() %}
     AND
       extract('year' FROM start_date)
       >= (SELECT max(year) FROM {{ this }})

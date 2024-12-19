@@ -9,23 +9,23 @@
 }}
 with directions as (
   select
-    "from"          as territory_id,
-    'from'          as direction,
+    "from"                 as territory_id,
+    'from'                 as direction,
     start_date,
     operator_id,
     operator_name,
-    sum(journeys)   as journeys,
+    sum(journeys)          as journeys,
     coalesce(
       sum(journeys) filter (where "from" = "to"), 0
-    )               as intra_journeys,
-    sum(incented_journeys)   as incented_journeys,
+    )                      as intra_journeys,
+    sum(incented_journeys) as incented_journeys,
     coalesce(
       sum(incented_journeys) filter (where "from" = "to"), 0
-    )               as intra_incented_journeys,
-    sum(incentive_amount)    as incentive_amount,
+    )                      as intra_incented_journeys,
+    sum(incentive_amount)  as incentive_amount,
     coalesce(
       sum(incentive_amount) filter (where "from" = "to"), 0
-    )               as intra_incentive_amount
+    )                      as intra_incentive_amount
   from {{ ref('carpools_by_day') }}
   {% if is_incremental() %}
     where start_date >= (select max(start_date) from {{ this }})
@@ -33,23 +33,23 @@ with directions as (
   group by 1, 3, 4, 5
   union
   select
-    "to"                 as territory_id,
-    'to'                 as direction,
+    "to"                   as territory_id,
+    'to'                   as direction,
     start_date,
     operator_id,
     operator_name,
-    sum(journeys)   as journeys,
+    sum(journeys)          as journeys,
     coalesce(
       sum(journeys) filter (where "from" = "to"), 0
-    )               as intra_journeys,
-    sum(incented_journeys)   as incented_journeys,
+    )                      as intra_journeys,
+    sum(incented_journeys) as incented_journeys,
     coalesce(
       sum(incented_journeys) filter (where "from" = "to"), 0
-    )               as intra_incented_journeys,
-    sum(incentive_amount)    as incentive_amount,
+    )                      as intra_incented_journeys,
+    sum(incentive_amount)  as incentive_amount,
     coalesce(
       sum(incentive_amount) filter (where "from" = "to"), 0
-    )               as intra_incentive_amount
+    )                      as intra_incentive_amount
   from {{ ref('carpools_by_day') }}
   {% if is_incremental() %}
     where start_date >= (select max(start_date) from {{ this }})
@@ -63,9 +63,9 @@ select
   direction,
   operator_id,
   operator_name,
-  sum(journeys)         as journeys,
+  sum(journeys)          as journeys,
   sum(incented_journeys) as incented_journeys,
-  sum(incentive_amount) as incentive_amount
+  sum(incentive_amount)  as incentive_amount
 from directions
 where territory_id is not null
 group by 1, 2, 3, 4, 5
@@ -73,12 +73,12 @@ union
 select
   territory_id,
   start_date,
-  'both' as direction, 
+  'both'                                                as direction,
   operator_id,
-  operator_name,                                           
-  sum(journeys) - sum(intra_journeys)               as journeys,
+  operator_name,
+  sum(journeys) - sum(intra_journeys)                   as journeys,
   sum(incented_journeys) - sum(intra_incented_journeys) as incented_journeys,
-  sum(incentive_amount) - sum(intra_incentive_amount) as incentive_amount
+  sum(incentive_amount) - sum(intra_incentive_amount)   as incentive_amount
 from directions
 where territory_id is not null
 group by 1, 2, 3, 4, 5

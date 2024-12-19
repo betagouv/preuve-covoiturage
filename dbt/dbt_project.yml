@@ -34,8 +34,10 @@ models:
     analytics:
       +schema: "analytics"
     observatoire:
-      +schema: "observatoire"
+      +schema: "observatoire_stats"
     geo:
-      +schema: "geo"
+      +schema: "geo_stats"
     dashboard:
-      +schema: "dashboard"
+      +schema: "dashboard_stats"
+    fraud:
+      +schema: "fraud"

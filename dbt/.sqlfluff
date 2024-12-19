@@ -9,7 +9,6 @@ profiles_dir = ./profiles
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
 
-
 [sqlfluff:layout:type:alias_expression]
 # We want non-default spacing _before_ the alias expressions.
 spacing_before = align
@@ -22,7 +21,3 @@ align_within = select_clause
 # when we hit brackets is usually a good rule of thumb for this
 # configuration.
 align_scope = bracketed
-
-[sqlfluff:indentation]
-indent_unit = space
-tab_space_size = 2

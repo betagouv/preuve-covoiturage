@@ -1,8 +1,24 @@
 {{ config(materialized='view') }}
 
-SELECT distinct d.arr, d.l_arr, a._id as territory_id, a.name as l_territory
-from territory.territories a 
-JOIN territory.territory_group b on b.company_id = a.company_id
-JOIN territory.territory_group_selector c on c.territory_group_id = b._id
-JOIN geo.perimeters d on (c.selector_value = d.arr or c.selector_value = d.epci or c.selector_value = d.aom or c.selector_value = d.dep or c.selector_value=d.reg) and d.year = 2023
-order by  d.arr
+SELECT DISTINCT
+  d.arr,
+  d.l_arr,
+  a._id  AS territory_id,
+  a.name AS l_territory
+FROM territory.territories AS a
+INNER JOIN territory.territory_group AS b ON a.company_id = b.company_id
+INNER JOIN
+  territory.territory_group_selector AS c
+  ON b._id = c.territory_group_id
+INNER JOIN
+  geo.perimeters AS d
+  ON
+    (
+      c.selector_value = d.arr
+      OR c.selector_value = d.epci
+      OR c.selector_value = d.aom
+      OR c.selector_value = d.dep
+      OR c.selector_value = d.reg
+    )
+    AND d.year = 2023
+ORDER BY d.arr
