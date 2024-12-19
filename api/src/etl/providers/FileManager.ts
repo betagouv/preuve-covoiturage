@@ -1,18 +1,10 @@
 import { access, mapshaper, mkdir } from "@/deps.ts";
-import { basename, join } from "@/lib/path/index.ts";
-import {
-  getAllFiles,
-  getFileExtensions,
-  un7zFile,
-  ungzFile,
-  unzipFile,
-  writeFile,
-} from "../helpers/index.ts";
-
-import { createHash } from "@/lib/crypto/index.ts";
+import { createHash, sha256sum } from "@/lib/crypto/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { basename, join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
+import { getAllFiles, getFileExtensions, un7zFile, ungzFile, unzipFile, writeFile } from "../helpers/index.ts";
 import {
   ArchiveFileTypeEnum,
   FileManagerConfigInterface,
@@ -28,8 +20,7 @@ export class FileManager implements FileManagerInterface {
 
   constructor(config: FileManagerConfigInterface) {
     this.basePath = config.basePath;
-    this.downloadPath = config.downloadPath ||
-      join(config.basePath, "download");
+    this.downloadPath = config.downloadPath || join(config.basePath, "download");
     this.mirrorUrl = config.mirrorUrl;
   }
 
@@ -110,18 +101,19 @@ export class FileManager implements FileManagerInterface {
     }
   }
 
-  async download(url: string): Promise<string> {
+  async download(url: string, sha256?: string): Promise<string> {
     const filepath = await this.getTemporaryFilePath(url, true);
     await this.install();
     try {
       await access(filepath);
-    } catch (e) {
+    } catch (_e) {
       // If file not found download it !
       try {
         const response = await fetcher.get(url);
         if (!response.body) {
-          throw new Error(`Failed to dowload ${url}`);
+          throw new Error(`Failed to download ${url}`);
         }
+        await this.checkSignature(response.body, sha256);
         await writeFile(response.body, filepath);
       } catch (e) {
         // If not found and have mirror, try download
@@ -129,8 +121,9 @@ export class FileManager implements FileManagerInterface {
         if (mirrorUrl) {
           const response = await fetcher.get(mirrorUrl);
           if (!response.body) {
-            throw new Error(`Failed to dowload ${url}`);
+            throw new Error(`Failed to download from mirror: ${url}`);
           }
+          await this.checkSignature(response.body, sha256);
           await writeFile(response.body, filepath);
         } else {
           throw e;
@@ -165,6 +158,13 @@ export class FileManager implements FileManagerInterface {
     } catch (err) {
       logger.error(err);
       throw err;
+    }
+  }
+
+  protected async checkSignature(data: ReadableStream<Uint8Array>, sha256: string | undefined): Promise<void> {
+    if (typeof sha256 === "undefined" || sha256 === "") return;
+    if (await sha256sum(data) !== sha256) {
+      throw new Error("SHA256 checksum does not match");
     }
   }
 }

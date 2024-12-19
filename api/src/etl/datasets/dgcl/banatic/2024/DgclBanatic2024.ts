@@ -1,19 +1,16 @@
 import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
 import { CeremaAom2024 } from "../../../../datasets.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-  StateManagerInterface,
-} from "../../../../interfaces/index.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
 
 export class DgclBanatic2024 extends AbstractDataset {
   static producer = "dgcl";
   static dataset = "banatic";
   static year = 2024;
   static table = "dgcl_banatic_2024";
-  static url =
-    // eslint-disable-next-line max-len
-    "https://www.banatic.interieur.gouv.fr/api/export/pregenere/telecharger/France";
+  // deno-fmt-ignore
+  static url = "https://www.banatic.interieur.gouv.fr/api/export/pregenere/telecharger/France";
+  static sha256 = "53b0328ffef2dde57145308004ee6773ed584f898d22efe4f30d8443269dd8ed";
+  // Intercommunalités_20241216.xlsx
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([

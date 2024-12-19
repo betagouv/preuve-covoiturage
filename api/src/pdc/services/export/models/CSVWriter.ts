@@ -180,7 +180,7 @@ export class CSVWriter<T extends { [k: string]: unknown }> {
     zip.writeZip(this.archivePath);
 
     if (this.options.cleanup) {
-      remove(this.csvPath);
+      await remove(this.csvPath);
     }
 
     return this;
