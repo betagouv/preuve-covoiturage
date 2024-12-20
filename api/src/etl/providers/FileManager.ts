@@ -31,9 +31,10 @@ export class FileManager implements FileManagerInterface {
     try {
       await this.ensureDirPath();
       await access(filepath);
-      const extractPath = await this.getTemporaryDirectoryPath(
-        `${basename(filepath)}-extract`,
-      );
+      const extractPath = await this.getTmpPath(`${basename(filepath)}-extract`);
+
+      logger.info(`Extracting ${filepath} to ${extractPath}`);
+
       try {
         await access(extractPath);
       } catch {
@@ -52,11 +53,15 @@ export class FileManager implements FileManagerInterface {
           case ArchiveFileTypeEnum.None:
             break;
           default:
-            throw new Error();
+            throw new Error(`Unsupported archive type: ${archiveType}`);
         }
       }
+
       const files: Set<string> = new Set();
       await getAllFiles(extractPath, getFileExtensions(fileType), files);
+
+      logger.info(`Extracted ${files.size} files`, [...files]);
+
       return [...files];
     } catch (err) {
       logger.error(err);
@@ -68,7 +73,16 @@ export class FileManager implements FileManagerInterface {
     const filepath = await this.getTemporaryFilePath(url, true);
 
     await this.ensureDirPath();
-    await this.clear(filepath);
+
+    if (await this.fileExists(filepath)) {
+      try {
+        await this.check(filepath, sha256);
+        logger.info(`File already exists: ${filepath}`);
+        return filepath;
+      } catch {
+        await this.clear(filepath);
+      }
+    }
 
     // Download from mirror or fallback to direct download
     try {
@@ -144,7 +158,7 @@ export class FileManager implements FileManagerInterface {
     const response = await fetch(mirror, { method: "GET", redirect: "follow" });
 
     if (!response.ok || !response.body) {
-      throw new Error(`mirror status = ${response.statusText} - ${url}`);
+      throw new Error(response.statusText);
     }
 
     await this.save(destination, response.body);
@@ -189,7 +203,7 @@ export class FileManager implements FileManagerInterface {
     }
   }
 
-  protected async getTemporaryDirectoryPath(name?: string): Promise<string> {
+  protected async getTmpPath(name?: string): Promise<string> {
     return name ? join(this.basePath, name) : await this.getTemporaryFilePath();
   }
 
