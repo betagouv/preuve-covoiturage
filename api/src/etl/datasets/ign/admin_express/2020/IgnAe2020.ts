@@ -22,7 +22,7 @@ export class IgnAe2020 extends IgnDataset {
     CREATE INDEX IF NOT EXISTS ign_ae_2020_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
   // deno-fmt-ignore
-  static url = "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z";
+  static url = "https://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z";
   static sha256 = "1b80affb74f93b0fd9fd89612c4dfbbde6d0b3f7c1562822c8ef1461bb7cf42a";
 
   readonly transformations: Array<
