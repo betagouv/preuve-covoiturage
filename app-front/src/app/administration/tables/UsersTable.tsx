@@ -20,13 +20,21 @@ export default function UsersTable(props: {title:string}) {
     'Prénom',
     'Nom',
     'Adresse mail',
+    'Opérateur',
+    'Territoire'
   ];
+  const operatorsApiUrl = getApiUrl("v3", `dashboard/operators`);
+  const operatorsList = useApi<Record<string, string | number>[]>(operatorsApiUrl);
+  const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
+  const territoriesList = useApi<Record<string, string | number>[]>(territoriesApiUrl);
   const dataTable = data?.map((d) => [
     d.role,
     d.status,
     d.firstname,
     d.lastname,
-    d.email
+    d.email,
+    operatorsList.data?.find(o => o.id === d.operator_id)?.name,
+    territoriesList.data?.find(o => o.id === d.operator_id)?.name,
   ]) ?? [];
   const countPage = Math.ceil(dataTable.length/resultByPage);
   useEffect(() => {

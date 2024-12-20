@@ -5,25 +5,42 @@ import Link from 'next/link';
 export default function Pagination(props:PaginationProps) {
   
   const getPagination = (count:number, defaultPage: number) => {
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 10;
+    const slicesSize = 4;
     // first n pages
     if (count <= maxVisiblePages) {
-      return Array.from({ length: count }, (_, v) => ({
-        number: v + 1,
-        active: defaultPage === v + 1
-      }));
+        return Array.from({ length: count }, (_, v) => ({
+            number: v + 1,
+            active: defaultPage === v + 1
+        }));
     }
     // last n pages
     if (defaultPage > count - maxVisiblePages) {
-      return Array.from({ length: maxVisiblePages }, (_, v) => {
-        const pageNumber = count - (maxVisiblePages - v) + 1;
-        return {
-          number: pageNumber,
-          active: defaultPage === pageNumber
-        };
-      });
+        return Array.from({ length: maxVisiblePages }, (_, v) => {
+            const pageNumber = count - (maxVisiblePages - v) + 1;
+            return {
+                number: pageNumber,
+                active: defaultPage === pageNumber
+            };
+        });
     }
-    return []
+    // slices
+    return [
+        ...Array.from({ length: slicesSize }, (_, v) => {
+            if (defaultPage > slicesSize) {
+                const pageNumber = v + defaultPage;
+                return { number: pageNumber, active: defaultPage === pageNumber };
+            }
+            return { number: v + 1, active: defaultPage === v + 1 };
+        }),
+        ...Array.from({ length: slicesSize }, (_, v) => {
+            const pageNumber = count - (slicesSize - v) + 1;
+            return {
+                number: pageNumber,
+                active: defaultPage === pageNumber
+            };
+        })
+    ];
   };
   const defaultPage = props.defaultPage ? props.defaultPage : 1;
   const pages = getPagination(props.count, defaultPage);

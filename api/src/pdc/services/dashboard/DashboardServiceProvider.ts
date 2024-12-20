@@ -13,6 +13,7 @@ import { TerritoriesAction } from "@/pdc/services/dashboard/actions/TerritoriesA
 import { UsersAction } from "@/pdc/services/dashboard/actions/UsersAction.ts";
 import { CampaignsRepositoryProvider } from "@/pdc/services/dashboard/providers/CampaignsRepositoryProvider.ts";
 import { IncentiveRepositoryProvider } from "@/pdc/services/dashboard/providers/IncentiveRepositoryProvider.ts";
+import { TerritoriesRepositoryProvider } from "@/pdc/services/dashboard/providers/TerritoriesRepositoryProvider.ts";
 import { IncentiveByMonthAction } from "./actions/IncentiveByMonthAction.ts";
 import { OperatorsByMonthAction } from "./actions/OperatorsByMonthAction.ts";
 import { config } from "./config/index.ts";
@@ -38,6 +39,7 @@ import { UsersRepositoryProvider } from "./providers/UsersRepositoryProvider.ts"
     IncentiveRepositoryProvider,
     CampaignsRepositoryProvider,
     UsersRepositoryProvider,
+    TerritoriesRepositoryProvider,
   ],
   validator: [
     OperatorsBinding,
