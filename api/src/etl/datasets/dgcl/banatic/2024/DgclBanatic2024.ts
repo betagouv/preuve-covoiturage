@@ -7,10 +7,8 @@ export class DgclBanatic2024 extends AbstractDataset {
   static dataset = "banatic";
   static year = 2024;
   static table = "dgcl_banatic_2024";
-  // deno-fmt-ignore
-  static url = "https://www.banatic.interieur.gouv.fr/api/export/pregenere/telecharger/France";
-  static sha256 = "53b0328ffef2dde57145308004ee6773ed584f898d22efe4f30d8443269dd8ed";
-  // Intercommunalités_20241216.xlsx
+  static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/dgcl_banatic_2024.xlsx";
+  static sha256 = "1d223cd6375dd358f1eb78fcb9a9e0efa29f2dae9278faa22e41c1f86913d487";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly rows: Map<string, [string, string]> = new Map([
