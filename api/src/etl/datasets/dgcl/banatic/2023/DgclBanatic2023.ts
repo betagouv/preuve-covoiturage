@@ -7,9 +7,8 @@ export class DgclBanatic2023 extends DgclBanaticDataset {
   static dataset = "banatic";
   static year = 2023;
   static table = "dgcl_banatic_2023";
-  // 404 Not Found
-  // deno-fmt-ignore
-  static url = "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/04/2023&format=C";
+  static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/dgcl_banatic_2023.csv";
+  static sha256 = "7e74a95df281f65460255b305c5264017ed021f808a4523d0fbac6c2986c6439";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {

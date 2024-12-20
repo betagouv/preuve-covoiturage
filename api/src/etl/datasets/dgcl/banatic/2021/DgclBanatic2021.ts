@@ -9,12 +9,8 @@ export class DgclBanatic2021 extends DgclBanaticDataset {
   static dataset = "banatic";
   static year = 2021;
   static table = "dgcl_banatic_2021";
-  // 404 Not Found
-  // Le fichier original n'est plus disponible, il a été remplacé par l'édition 2022.
-  // Suite à ce pb, une sauvegarde des fichiers des datasets a été mis en place.
-  // cf /docs/datasets.md
-  // deno-fmt-ignore
-  static url = "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php?zone=N&date=01/01/2022&format=C";
+  static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/dgcl_banatic_2021.csv";
+  static sha256 = "31681db2273802244d608b5701756a1e1ca70da30b42b68115a4bb682baf28a2";
 
   fileType: FileTypeEnum = FileTypeEnum.Xls;
   override sheetOptions = {
