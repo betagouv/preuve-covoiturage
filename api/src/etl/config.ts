@@ -44,7 +44,7 @@ export const config: ConfigInterface = {
   file: {
     basePath: env_or_default("CACHE_DIRECTORY", getTmpDir()),
     downloadPath: env("DOWNLOAD_DIRECTORY"),
-    mirrorUrl: env("MIRROR_URL"),
+    mirrorUrl: env("ETL_MIRROR_URL"),
   },
   app: {
     noCleanup: false,
