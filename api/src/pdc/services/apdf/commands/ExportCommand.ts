@@ -3,11 +3,11 @@ import { coerceIntList } from "@/ilos/cli/index.ts";
 import { command, CommandInterface, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { set } from "@/lib/object/index.ts";
+import { ExportApdf } from "@/pdc/services/apdf/dto/ExportApdf.ts";
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
 } from "../../policy/contracts/list.contract.ts";
-import { ParamsInterface as ExportParams, signature as exportSignature } from "../contracts/export.contract.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
 
 interface Options {
@@ -59,7 +59,8 @@ export class ExportCommand implements CommandInterface {
   constructor(private kernel: KernelInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {
-    const params: Partial<ExportParams> = {
+    const exportSignature = "apdf:export";
+    const params: Partial<ExportApdf> = {
       format: { tz: options.tz },
     };
 
@@ -90,7 +91,7 @@ export class ExportCommand implements CommandInterface {
     }
 
     // fetch active campaigns at the given date
-    const { start_date, end_date } = castExportParams(params as ExportParams);
+    const { start_date, end_date } = castExportParams(params as ExportApdf);
     const campaign_list = options.campaigns.length
       ? options.campaigns
       : await this.findActiveCampaigns(start_date.toISOString());
