@@ -13,18 +13,21 @@ import {
   FileManagerConfigInterface,
   FileManagerInterface,
   FileTypeEnum,
+  MirrorAclEnum,
 } from "../interfaces/index.ts";
 
 export class FileManager implements FileManagerInterface {
   readonly basePath: string;
   readonly downloadPath: string;
   readonly mirrorUrl: string | undefined;
+  readonly mirrorAcl: MirrorAclEnum;
   protected isReady = false;
 
   constructor(config: FileManagerConfigInterface) {
     this.basePath = config.basePath;
     this.downloadPath = config.downloadPath || join(config.basePath, "download");
     this.mirrorUrl = config.mirrorUrl;
+    this.mirrorAcl = config.mirrorAcl;
   }
 
   async decompress(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]> {
@@ -184,6 +187,11 @@ export class FileManager implements FileManagerInterface {
   }
 
   protected async cache(destination: string): Promise<void> {
+    if (this.mirrorAcl !== MirrorAclEnum.READ_WRITE) {
+      logger.warn("No write permission to cache the dataset");
+      return;
+    }
+
     logger.info(`Caching ${destination}`);
 
     try {
