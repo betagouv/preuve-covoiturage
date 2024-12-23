@@ -2,7 +2,7 @@ import { readFileSync } from "@/deps.ts";
 import { env, env_or_default, env_or_int } from "@/lib/env/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { datasets, datastructures } from "./datasets.ts";
-import { ConfigInterface } from "./interfaces/ConfigInterface.ts";
+import { ConfigInterface, MirrorAclEnum } from "./interfaces/ConfigInterface.ts";
 
 function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   const asVarEnvName = baseEnvKey;
@@ -45,6 +45,8 @@ export const config: ConfigInterface = {
     basePath: env_or_default("CACHE_DIRECTORY", getTmpDir()),
     downloadPath: env("DOWNLOAD_DIRECTORY"),
     mirrorUrl: env("ETL_MIRROR_URL"),
+    mirrorAcl: env_or_default("ETL_MIRROR_ACL", MirrorAclEnum.READ) as MirrorAclEnum,
+    archivesUrl: env("ETL_ARCHIVES_URL"),
   },
   app: {
     noCleanup: false,

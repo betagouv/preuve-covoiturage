@@ -136,7 +136,9 @@ services:
       AWS_REGION: fr-par
       AWS_ACCESS_KEY_ID: minioadmin 
       AWS_SECRET_ACCESS_KEY: minioadmin
-      ETL_MIRROR_URL: http://minioadmin:minioadmin@s3:9000
+      ETL_MIRROR_ACL: r
+      ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
+      ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
       APP_MAIL_SMTP_URL: smtp://mailer:1025
