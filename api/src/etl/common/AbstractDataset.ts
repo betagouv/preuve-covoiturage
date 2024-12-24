@@ -1,5 +1,4 @@
 import type { pg } from "@/deps.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
 import { getDatasetUuid, loadFileAsString, streamData } from "../helpers/index.ts";
 import {
@@ -130,32 +129,27 @@ export abstract class AbstractDataset implements DatasetInterface {
   async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
-    let i = 1;
+
     try {
       for (const filepath of this.filepaths) {
+        let i = 1;
         const cursor = streamData(filepath, this.fileType, this.sheetOptions);
         let done = false;
+        let results;
         do {
-          const results = await cursor.next();
+          results = await cursor.next();
           done = !!results.done;
           if (results.value) {
-            logger.debug(`Batch ${i}`);
             const query = {
               text: `
-                        INSERT INTO ${this.tableWithSchema} (
-                            ${[...this.rows.keys()].join(", \n")}
-                        )
-                        SELECT *
-                        FROM json_to_recordset ($1)
-                          AS tmp (
-                          ${
-                [...this.rows.values()].map((r) => `"${r[0]}" ${r[1]}`).join(
-                  ", \n",
+                INSERT INTO ${this.tableWithSchema} (
+                  ${[...this.rows.keys()].join(", \n")}
                 )
-              }
-                          )
-                        ON CONFLICT DO NOTHING
-                      `,
+                SELECT * FROM json_to_recordset ($1) AS tmp (
+                  ${[...this.rows.values()].map((r) => `"${r[0]}" ${r[1]}`).join(", \n")}
+                )
+                ON CONFLICT DO NOTHING
+              `,
               values: [JSON.stringify(results.value)],
             };
             await connection.query(query);
@@ -163,6 +157,7 @@ export abstract class AbstractDataset implements DatasetInterface {
           i += 1;
         } while (!done);
       }
+
       await connection.query("COMMIT");
       connection.release();
     } catch (e) {
@@ -176,7 +171,7 @@ export abstract class AbstractDataset implements DatasetInterface {
     try {
       await this.connection.query(this.importSql);
     } catch (e) {
-      throw new SqlError(this, (e as Error).message);
+      throw new SqlError(this, e.message);
     }
   }
 

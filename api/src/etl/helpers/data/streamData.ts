@@ -1,13 +1,9 @@
-import {
-  CsvOptions,
-  FileTypeEnum,
-  JsonOptions,
-  StreamDataOptions,
-  XlsxOptions,
-} from "../../interfaces/index.ts";
-import { streamJson } from "./streamJson.ts";
-import { streamXlsx } from "./streamXlsx.ts";
-import { streamCsv } from "./streamCsv.ts";
+import { CsvOptions } from "@/deps.ts";
+import { streamCsv } from "@/etl/helpers/data/streamCsv.ts";
+import { streamJson } from "@/etl/helpers/data/streamJson.ts";
+import { streamXlsx } from "@/etl/helpers/data/streamXlsx.ts";
+import { FileTypeEnum } from "@/etl/interfaces/FileInterface.ts";
+import { JsonOptions, StreamDataOptions, XlsxOptions } from "@/etl/interfaces/StreamDataOptions.ts";
 
 export function streamData<T>(
   filepath: string,
