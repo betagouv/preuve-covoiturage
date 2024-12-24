@@ -6,32 +6,29 @@ export class CeremaAom2024 extends AbstractDataset {
   static dataset = "aom";
   static year = 2024;
   static table = "cerema_aom_2024";
-  static url = "https://www.data.gouv.fr/fr/datasets/r/a2350747-651e-42e2-9888-26b2604474f7";
-  static sha256 = "17a35867a376ef460723bdf2850f5e6e8612d8165365c384e8944c12445762a7";
-  static filename = "base-rt-2024-diffusion-v2.ods";
+  static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/cerema_aom_2024.csv";
+  static sha256 = "4c7c5128d5351e458bfd6a2b5aaa85595ca88cc4d590f448626fa4035c37d5dc";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
+  readonly fileType: FileTypeEnum = FileTypeEnum.Csv;
+
   readonly rows: Map<string, [string, string]> = new Map([
-    ["id_reseau", ["17", "varchar"]],
-    ["siren_aom", ["7", "varchar"]],
+    ["id_reseau", ["17", "integer"]],
+    ["nom_reseau", ["15", "varchar"]],
+    ["siren_aom", ["16", "varchar"]],
     ["nom_aom", ["6", "varchar"]],
-    ["forme_juridique_aom", ["8", "varchar"]],
-    ["region", ["13", "varchar"]],
-    ["departement", ["14", "varchar"]],
-    ["siren_group", ["16", "varchar"]],
-    ["siren_membre", ["1", "varchar"]],
     ["com", ["2", "varchar"]],
   ]);
 
-  fileType: FileTypeEnum = FileTypeEnum.Csv;
   override readonly tableIndex = "com";
   override readonly importSql = `
-    UPDATE ${this.targetTableWithSchema} AS a SET
-      aom = CASE WHEN t.siren_aom ~ '^[0-9]*$' THEN t.siren_aom ELSE NULL END,
+    UPDATE ${this.targetTableWithSchema} AS target
+    SET
+      aom = t.siren_aom,
       l_aom = t.nom_aom,
-      reseau = null,
-      l_reseau = null
+      reseau = CASE WHEN t.id_reseau::text <> '-' THEN t.id_reseau ELSE NULL END,
+      l_reseau = t.nom_reseau
     FROM ${this.tableWithSchema} t
-    WHERE a.com = t.com AND year = 2024;
+    WHERE target.com = t.com AND target.year = 2024
   `;
 }

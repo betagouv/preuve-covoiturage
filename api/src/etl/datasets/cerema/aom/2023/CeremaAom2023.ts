@@ -8,7 +8,6 @@ export class CeremaAom2023 extends AbstractDataset {
   static table = "cerema_aom_2023";
   static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/cerema_aom_2023.csv";
   static sha256 = "b3013e9d3b819be29f4bb65db2d19e4973e929e22b0f694cf14b1b60cb34f94b";
-  static filename = "cerema_aom_2023.csv";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
   readonly fileType: FileTypeEnum = FileTypeEnum.Csv;
