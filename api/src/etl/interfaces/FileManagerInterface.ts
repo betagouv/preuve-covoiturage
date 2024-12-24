@@ -7,7 +7,7 @@ export type FileResource = {
 
 export interface FileManagerInterface {
   ensureDirPath(): Promise<void>;
-  decompress(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]>;
+  extract(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]>;
   download(src: FileResource): Promise<string>;
   transform(filepath: string, format: string, precision: number, force: boolean, simplify?: string): Promise<string>;
 }

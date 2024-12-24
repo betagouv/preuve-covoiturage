@@ -10,6 +10,7 @@ export class IgnAe2019 extends IgnDataset {
   override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
+      arr varchar(5),
       com varchar(5) NOT NULL,
       pop integer,
       geom geometry(MULTIPOLYGON,4326),
@@ -51,7 +52,7 @@ export class IgnAe2019 extends IgnDataset {
       geom,
       geom_simple,
       st_area(geom::geography)/1000000 as surface,
-      com,
+      CASE WHEN arr IS NOT NULL THEN arr ELSE com END as arr,
       pop,
       'XXXXX' as country,
       'France' as l_country

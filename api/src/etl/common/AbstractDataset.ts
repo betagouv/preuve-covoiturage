@@ -110,7 +110,7 @@ export abstract class AbstractDataset implements DatasetInterface {
       const filepath = await this.file.download({ url: this.url, sha256: this.sha256 });
       if (this.fileArchiveType !== ArchiveFileTypeEnum.None) {
         filepaths.push(
-          ...(await this.file.decompress(
+          ...(await this.file.extract(
             filepath,
             this.fileArchiveType,
             this.fileType,
