@@ -30,49 +30,9 @@ export class FileManager implements FileManagerInterface {
     this.mirrorAcl = config.mirrorAcl;
   }
 
-  async decompress(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]> {
-    try {
-      await this.ensureDirPath();
-      await access(filepath);
-      const extractPath = await this.getTmpPath(`${basename(filepath)}-extract`);
-
-      logger.info(`Extracting ${filepath} to ${extractPath}`);
-
-      try {
-        await access(extractPath);
-      } catch {
-        // If directory not found, create it and decompress
-        await mkdir(extractPath);
-        switch (archiveType) {
-          case ArchiveFileTypeEnum.Zip:
-            await unzipFile(filepath, extractPath);
-            break;
-          case ArchiveFileTypeEnum.GZip:
-            await ungzFile(filepath, extractPath);
-            break;
-          case ArchiveFileTypeEnum.SevenZip:
-            await un7zFile(filepath, extractPath);
-            break;
-          case ArchiveFileTypeEnum.None:
-            break;
-          default:
-            throw new Error(`Unsupported archive type: ${archiveType}`);
-        }
-      }
-
-      const files: Set<string> = new Set();
-      await getAllFiles(extractPath, getFileExtensions(fileType), files);
-
-      logger.info(`Extracted ${files.size} files`, [...files]);
-
-      return [...files];
-    } catch (err) {
-      logger.error(err);
-      throw err;
-    }
-  }
-
   async download({ url, sha256 }: FileResource): Promise<string> {
+    logger.info(`Downloading ${url}`);
+
     const filepath = await this.getTemporaryFilePath(url, true);
 
     await this.ensureDirPath();
@@ -96,6 +56,47 @@ export class FileManager implements FileManagerInterface {
     }
 
     return filepath;
+  }
+
+  async extract(filepath: string, archiveType: ArchiveFileTypeEnum, fileType: FileTypeEnum): Promise<string[]> {
+    try {
+      await this.ensureDirPath();
+      await access(filepath);
+      const extractPath = filepath.replace("/download/", "/extract/");
+
+      logger.info(`Extracting to ${extractPath}`);
+
+      try {
+        await access(extractPath);
+      } catch {
+        await mkdir(extractPath, { recursive: true });
+        switch (archiveType) {
+          case ArchiveFileTypeEnum.Zip:
+            await unzipFile(filepath, extractPath);
+            break;
+          case ArchiveFileTypeEnum.GZip:
+            await ungzFile(filepath, extractPath);
+            break;
+          case ArchiveFileTypeEnum.SevenZip:
+            await un7zFile(filepath, extractPath);
+            break;
+          case ArchiveFileTypeEnum.None:
+            break;
+          default:
+            throw new Error(`Unsupported archive type: ${archiveType}`);
+        }
+      }
+
+      const files: Set<string> = new Set();
+      await getAllFiles(extractPath, getFileExtensions(fileType), files);
+
+      logger.info(`Extracted ${files.size} files`);
+
+      return [...files];
+    } catch (err) {
+      logger.error(err);
+      throw err;
+    }
   }
 
   async transform(
