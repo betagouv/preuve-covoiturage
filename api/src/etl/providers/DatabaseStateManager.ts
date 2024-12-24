@@ -70,6 +70,7 @@ export class DatabaseStateManager implements DatabaseStateManagerInterface {
       `,
       values: [values],
     };
+
     await this.connection.query(query);
   }
 }
