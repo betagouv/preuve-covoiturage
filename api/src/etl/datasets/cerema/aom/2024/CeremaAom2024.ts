@@ -14,8 +14,9 @@ export class CeremaAom2024 extends AbstractDataset {
 
   readonly rows: Map<string, [string, string]> = new Map([
     ["id_reseau", ["17", "integer"]],
-    ["nom_reseau", ["15", "varchar"]],
-    ["siren_aom", ["16", "varchar"]],
+    ["siren_group", ["16", "varchar"]],
+    ["nom_group", ["15", "varchar"]],
+    ["siren_aom", ["7", "varchar"]],
     ["nom_aom", ["6", "varchar"]],
     ["com", ["2", "varchar"]],
   ]);
@@ -27,7 +28,7 @@ export class CeremaAom2024 extends AbstractDataset {
       aom = t.siren_aom,
       l_aom = t.nom_aom,
       reseau = CASE WHEN t.id_reseau::text <> '-' THEN t.id_reseau ELSE NULL END,
-      l_reseau = t.nom_reseau
+      l_reseau = t.nom_group
     FROM ${this.tableWithSchema} t
     WHERE target.com = t.com AND target.year = 2024
   `;
