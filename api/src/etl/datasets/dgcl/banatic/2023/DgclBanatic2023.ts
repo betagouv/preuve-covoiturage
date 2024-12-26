@@ -1,6 +1,7 @@
-import { CeremaAom2023 } from "../../../../datasets.ts";
-import { FileTypeEnum, StateManagerInterface } from "../../../../interfaces/index.ts";
-import { DgclBanaticDataset } from "../common/DgclBanaticDataset.ts";
+import { CeremaAom2023 } from "@/etl/datasets.ts";
+import { DgclBanaticDataset } from "@/etl/datasets/dgcl/banatic/common/DgclBanaticDataset.ts";
+import { FileTypeEnum } from "@/etl/interfaces/FileInterface.ts";
+import { StateManagerInterface } from "@/etl/interfaces/StateManagerInterface.ts";
 
 export class DgclBanatic2023 extends DgclBanaticDataset {
   static producer = "dgcl";
@@ -8,35 +9,51 @@ export class DgclBanatic2023 extends DgclBanaticDataset {
   static year = 2023;
   static table = "dgcl_banatic_2023";
   static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/dgcl_banatic_2023.csv";
-  static sha256 = "7e74a95df281f65460255b305c5264017ed021f808a4523d0fbac6c2986c6439";
+  static sha256 = "fc7789433f6ae76cd2157abdc444c9eaf2318780eba62e398d7db4b8ca789e2d";
 
-  fileType: FileTypeEnum = FileTypeEnum.Xls;
-  override sheetOptions = {
-    name: "Sheet1",
-    startRow: 0,
-  };
+  readonly fileType: FileTypeEnum = FileTypeEnum.Csv;
 
   override async validate(state: StateManagerInterface) {
     state.plan([CeremaAom2023]);
   }
 
+  /**
+   * La compétence mobilité est la C4530 "Organisation de la mobilité, au sens
+   * des articles L.1231-1 et suivants du code des transports"
+   */
+  readonly rows: Map<string, [string, string]> = new Map([
+    ["siren", ["4", "varchar"]],
+    ["nom", ["5", "varchar"]],
+    ["nature", ["6", "varchar"]],
+    ["date_creation", ["9", "varchar"]],
+    ["date_effet", ["10", "varchar"]],
+    ["competence", ["109", "boolean"]],
+  ]);
+
   override readonly importSql = `
-    UPDATE ${this.targetTableWithSchema} AS a
-      SET l_aom = t.nom, aom = t.siren
+    UPDATE ${this.targetTableWithSchema} AS target
+    SET
+      l_aom = t.nom,
+      aom = t.siren
     FROM (
       SELECT distinct a.com, b.siren, b.nom
       FROM ${this.targetSchema}.${CeremaAom2023.table} AS a
-      JOIN ${this.tableWithSchema} AS b
-      ON a.siren_group = b.siren
+      JOIN ${this.tableWithSchema} AS b ON a.siren_group = b.siren
       WHERE a.siren_aom is null AND b.competence is true
     ) t
-    WHERE  a.com = t.com AND a.year = 2023;
+    WHERE target.com = t.com AND target.year = 2023;
   `;
-  /* Attribution des code aom région (identique au code siren de la région) pour les communes
-  n'ayant pas pris la compétence  !!! Attention, il y a plusieurs erreurs dans le fichier source
-  CeremaAom2023: les codes régions ont été attribués en tant que code aom mais parfois les codes ne
-  coincident pas. Les erreurs sont corrigés en remplaçant les codes aom des valeurs nulles
-  ou <= à 2 caractères via la requête ci-dessous */
+
+  /**
+   * Attribution des codes AOM région (identique au code siren de la région)
+   * pour les communes n'ayant pas pris la compétence.
+   *
+   * !!! Attention, il y a plusieurs erreurs dans le fichier source
+   * CeremaAom2023: les codes régions ont été attribués en tant que code AOM
+   * mais parfois les codes ne coincident pas. Les erreurs sont corrigés en
+   * remplaçant les codes AOM des valeurs nulles ou <= à 2 caractères via la
+   * requête ci-dessous
+   */
   override readonly extraImportSql = `
     UPDATE ${this.targetTableWithSchema} SET 
       aom = CASE WHEN reg = '84' THEN '200053767'
