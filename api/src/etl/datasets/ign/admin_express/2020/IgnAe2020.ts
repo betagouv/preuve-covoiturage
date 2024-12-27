@@ -1,8 +1,5 @@
 import { StaticAbstractDataset } from "../../../../interfaces/index.ts";
-import {
-  IgnDataset,
-  TransformationParamsInterface,
-} from "../../common/IgnDataset.ts";
+import { IgnDataset, TransformationParamsInterface } from "../../common/IgnDataset.ts";
 
 export class IgnAe2020 extends IgnDataset {
   static producer = "ign";
@@ -13,6 +10,7 @@ export class IgnAe2020 extends IgnDataset {
   override readonly beforeSql: string = `
     CREATE TABLE IF NOT EXISTS ${this.tableWithSchema} (
       id SERIAL PRIMARY KEY,
+      arr varchar(5),
       com varchar(5) NOT NULL,
       pop integer,
       geom geometry(MULTIPOLYGON,4326),
@@ -24,9 +22,9 @@ export class IgnAe2020 extends IgnDataset {
     CREATE INDEX IF NOT EXISTS ign_ae_2020_centroid_index ON ${this.tableWithSchema} USING gist (centroid);
     CREATE INDEX IF NOT EXISTS ign_ae_2020_geom_simple_index ON ${this.tableWithSchema} USING gist (geom_simple);
   `;
-  static url =
-    // eslint-disable-next-line max-len
-    "http://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z";
+  // deno-fmt-ignore
+  static url = "https://files.opendatarchives.fr/professionnels.ign.fr/adminexpress/ADMIN-EXPRESS-COG_2-1__SHP__FRA_WGS84G_2020-11-20.7z";
+  static sha256 = "1b80affb74f93b0fd9fd89612c4dfbbde6d0b3f7c1562822c8ef1461bb7cf42a";
 
   readonly transformations: Array<
     [string, Partial<TransformationParamsInterface>]
@@ -76,7 +74,7 @@ export class IgnAe2020 extends IgnDataset {
       geom as geom,
       geom_simple as geom_simple,
       st_area(geom::geography)/1000000 as surface,
-      com,
+      CASE WHEN arr IS NOT NULL THEN arr ELSE com END as arr,
       pop,
       'XXXXX' as country,
       'France' as l_country

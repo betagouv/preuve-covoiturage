@@ -9,10 +9,17 @@ export interface AppConfigInterface {
   sevenZipBinPath?: string;
 }
 
+export enum MirrorAclEnum {
+  READ = "r",
+  READ_WRITE = "rw",
+}
+
 export interface FileManagerConfigInterface {
   basePath: string;
   downloadPath?: string;
+  mirrorAcl: MirrorAclEnum;
   mirrorUrl?: string;
+  archivesUrl?: string;
 }
 
 export interface LoggerConfigInterface {

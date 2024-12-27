@@ -1,15 +1,26 @@
 import { command, CommandInterface } from "@/ilos/common/index.ts";
-import { env } from "@/lib/env/index.ts";
+import { env, env_or_false } from "@/lib/env/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
+
+type Options = {
+  noFlashGeoSchema: boolean;
+  skipMigrations: boolean;
+  databaseUri: string;
+};
 
 @command({
   signature: "seed",
   description: "Seed database",
   options: [
     {
-      signature: "--skip-migration",
-      description: "skip migration before seeding",
-      default: false,
+      signature: "--no-flash-geo-schema",
+      description: "migrate geo schema from source, not cache",
+      default: env_or_false("SKIP_FLASH_GEO_SCHEMA"),
+    },
+    {
+      signature: "--skip-migrations",
+      description: "skip all migrations before seeding",
+      default: env_or_false("SKIP_ALL_MIGRATIONS"),
     },
     {
       signature: "-u, --database-uri <uri>",
@@ -19,13 +30,16 @@ import { Migrator } from "@/pdc/providers/seed/index.ts";
   ],
 })
 export class SeedCommand implements CommandInterface {
-  public async call(options): Promise<void> {
+  public async call(options: Options): Promise<void> {
     const db = new Migrator(options.databaseUri, false);
     await db.up();
-    if (!options.skipMigration) {
-      await db.migrate();
-    }
+
+    await db.migrate({
+      skip: options.skipMigrations,
+      flash: !options.noFlashGeoSchema,
+    });
     await db.seed();
+
     await db.down();
   }
 }

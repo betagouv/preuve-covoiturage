@@ -1,4 +1,10 @@
-import { env_or_fail } from "@/lib/env/index.ts";
-import { migrate } from "./index.ts";
+import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
+import { Migrator } from "@/pdc/providers/seed/Migrator.ts";
 
-migrate(env_or_fail("APP_POSTGRES_URL"));
+const migrator = new Migrator(env_or_fail("APP_POSTGRES_URL"), false);
+await migrator.up();
+await migrator.migrate({
+  skip: env_or_false("SKIP_ALL_MIGRATIONS"),
+  flash: !env_or_false("SKIP_FLASH_GEO_SCHEMA"),
+});
+await migrator.down();

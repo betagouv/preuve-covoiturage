@@ -1,17 +1,17 @@
 import { log } from "@/deps.ts";
 import { env_or_default } from "@/lib/env/index.ts";
 
-log.setup({
-  handlers: {
-    default: new log.ConsoleHandler(
-      env_or_default("LOG_LEVEL", "DEBUG") as log.LevelName,
-      {
-        formatter: log.formatters.jsonFormatter,
-        useColors: false,
-      },
-    ),
+const level = env_or_default("APP_LOG_LEVEL", "DEBUG").toUpperCase() as log.LevelName;
+
+const consoleHandler = new log.ConsoleHandler(
+  level,
+  {
+    formatter: log.formatters.jsonFormatter,
+    useColors: false,
   },
-});
+);
+
+log.setup({ handlers: { default: consoleHandler } });
 
 export const getPerformanceTimer = () => {
   const start = performance.now();
@@ -29,5 +29,5 @@ export const logger = {
   error,
   info,
   warn,
-  log: (...args: unknown[]) => debug(...args),
+  log: debug,
 };

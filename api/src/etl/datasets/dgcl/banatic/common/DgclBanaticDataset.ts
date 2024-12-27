@@ -1,6 +1,6 @@
-import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import { SqlError } from "../../../../errors/SqlError.ts";
-import { ArchiveFileTypeEnum } from "../../../../interfaces/index.ts";
+import { AbstractDataset } from "@/etl/common/AbstractDataset.ts";
+import { SqlError } from "@/etl/errors/SqlError.ts";
+import { ArchiveFileTypeEnum } from "@/etl/interfaces/FileInterface.ts";
 
 export abstract class DgclBanaticDataset extends AbstractDataset {
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;

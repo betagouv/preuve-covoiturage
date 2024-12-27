@@ -1,11 +1,6 @@
 import type { pg } from "@/deps.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
-import {
-  getDatasetUuid,
-  loadFileAsString,
-  streamData,
-} from "../helpers/index.ts";
+import { getDatasetUuid, loadFileAsString, streamData } from "../helpers/index.ts";
 import {
   ArchiveFileTypeEnum,
   DatasetInterface,
@@ -44,6 +39,14 @@ export abstract class AbstractDataset implements DatasetInterface {
     return (this.constructor as StaticAbstractDataset).url;
   }
 
+  get sha256(): string | undefined {
+    return (this.constructor as StaticAbstractDataset).sha256;
+  }
+
+  get filename(): string | undefined {
+    return (this.constructor as StaticAbstractDataset).filename;
+  }
+
   get table(): string {
     return (this.constructor as StaticAbstractDataset).table;
   }
@@ -68,9 +71,7 @@ export abstract class AbstractDataset implements DatasetInterface {
     if (difference.size > 0) {
       throw new ValidationError(
         this,
-        `Cant apply this dataset, element is missing (${
-          [...difference].map((d) => d.uuid).join(", ")
-        })`,
+        `Cant apply this dataset, element is missing (${[...difference].map((d) => d.uuid).join(", ")})`,
       );
     }
   }
@@ -105,10 +106,10 @@ export abstract class AbstractDataset implements DatasetInterface {
   async download(): Promise<void> {
     try {
       const filepaths: string[] = [];
-      const filepath = await this.file.download(this.url);
+      const filepath = await this.file.download({ url: this.url, sha256: this.sha256 });
       if (this.fileArchiveType !== ArchiveFileTypeEnum.None) {
         filepaths.push(
-          ...(await this.file.decompress(
+          ...(await this.file.extract(
             filepath,
             this.fileArchiveType,
             this.fileType,
@@ -128,32 +129,27 @@ export abstract class AbstractDataset implements DatasetInterface {
   async load(): Promise<void> {
     const connection = await this.connection.connect();
     await connection.query("BEGIN TRANSACTION");
-    let i = 1;
+
     try {
       for (const filepath of this.filepaths) {
+        let i = 1;
         const cursor = streamData(filepath, this.fileType, this.sheetOptions);
         let done = false;
+        let results;
         do {
-          const results = await cursor.next();
+          results = await cursor.next();
           done = !!results.done;
           if (results.value) {
-            logger.debug(`Batch ${i}`);
             const query = {
               text: `
-                        INSERT INTO ${this.tableWithSchema} (
-                            ${[...this.rows.keys()].join(", \n")}
-                        )
-                        SELECT *
-                        FROM json_to_recordset ($1)
-                          AS tmp (
-                          ${
-                [...this.rows.values()].map((r) => `"${r[0]}" ${r[1]}`).join(
-                  ", \n",
+                INSERT INTO ${this.tableWithSchema} (
+                  ${[...this.rows.keys()].join(", \n")}
                 )
-              }
-                          )
-                        ON CONFLICT DO NOTHING
-                      `,
+                SELECT * FROM json_to_recordset ($1) AS tmp (
+                  ${[...this.rows.values()].map((r) => `"${r[0]}" ${r[1]}`).join(", \n")}
+                )
+                ON CONFLICT DO NOTHING
+              `,
               values: [JSON.stringify(results.value)],
             };
             await connection.query(query);
@@ -161,6 +157,7 @@ export abstract class AbstractDataset implements DatasetInterface {
           i += 1;
         } while (!done);
       }
+
       await connection.query("COMMIT");
       connection.release();
     } catch (e) {
@@ -174,7 +171,7 @@ export abstract class AbstractDataset implements DatasetInterface {
     try {
       await this.connection.query(this.importSql);
     } catch (e) {
-      throw new SqlError(this, (e as Error).message);
+      throw new SqlError(this, e.message);
     }
   }
 

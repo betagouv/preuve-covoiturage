@@ -5,9 +5,20 @@ données. Les répertoires de niveau n-1 correspondent à un jeu de données. Le
 répertoires de niveau n-2 correspondent à un millésime du jeu de données. Le nom
 du dataset est la concaténation de ces 3 informations. Afin de garantir la
 pérennité des données, nous avons ajouté un système de sauvegarde des fichiers
-associés aux datasets inclus dans le projet. En cas d'échec de téléchargement
-d'un fichier, il sera récupérer automatiquement depuis le mirror mis en place
-dans l'infrastructure du RPC.
+associés aux datasets inclus dans le projet.
+
+## Buckets utilisés
+
+- Archives : https://geo-datasets-archives.s3.fr-par.scw.cloud/
+- Mirroir : https://geo-datasets-mirror.s3.fr-par.scw.cloud/
+
+Les archives sont des fichiers devenus introuvables sur les sites officiels et
+le mirroir est un système de cache des fichiers pour éviter de surcharger les
+sites officiels et garantir la disponibilité des fichiers.
+
+Contrairement aux archives, les fichiers du mirroir peuvent être supprimés.
+
+Le nom des fichiers est le `sha256` de l'URL source.
 
 ## [CEREMA](https://www.cerema.fr/)
 
@@ -38,6 +49,27 @@ organisatrices de la mobilité (l_aom) dans la table `perimeters` et permet
 d'associer le code aom des régions (identique au code siren de la région) pour
 les communes n'ayant pas pris la compétence transport.
 
+En 2024, le site de Banatic a évolué et les données sont disponibles à l'adresse
+https://www.banatic.interieur.gouv.fr/archive
+
+Les fichiers de Banatic ont été copiés dans le bucket `geo-datasets-archives`
+pour avoir une URL statique.
+
+Pour télécharger une archive (au 12/2024), il faut :
+
+1. https://www.banatic.interieur.gouv.fr/archive
+2. Sélectionner la période
+3. Type d'archive : Périmètre des groupements
+4. Échelon géographique : France
+5. Télécharger un CSV
+
+Dans LibreOffice Calc, il faut ré-enregistrer le fichier en format `csv` avec
+les paramètres suivants :
+
+- Encodage : `UTF-8`
+- Séparateur de champ : `,`
+- Texte délimité par : `"`
+
 ```
 ├── dgcl
 │   └── banatic
@@ -45,9 +77,15 @@ les communes n'ayant pas pris la compétence transport.
 │       │   └── DgclBanatic2021.ts
 │       ├── 2022
 │       │   └── DgclBanatic2022.ts
+│       ├── 2023
+│       │   └── DgclBanatic2023.ts
+│       ├── 2024
+│       │   └── DgclBanatic2024.ts
 │       └── common
 │           └── DgclBanaticDataset.ts
 ```
+
+https://www.collectivites-locales.gouv.fr/competences/la-mobilite
 
 ## Commission européenne
 

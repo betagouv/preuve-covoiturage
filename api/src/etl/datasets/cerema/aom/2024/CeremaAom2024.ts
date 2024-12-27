@@ -1,39 +1,35 @@
-import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
-import {
-  ArchiveFileTypeEnum,
-  FileTypeEnum,
-} from "../../../../interfaces/index.ts";
+import { AbstractDataset } from "@/etl/common/AbstractDataset.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "@/etl/interfaces/FileInterface.ts";
 
 export class CeremaAom2024 extends AbstractDataset {
   static producer = "cerema";
   static dataset = "aom";
   static year = 2024;
   static table = "cerema_aom_2024";
-  static url =
-    "https://www.data.gouv.fr/fr/datasets/r/0f49f5b0-9607-49cf-a018-490f6e1ec69f";
+  static url = "https://geo-datasets-archives.s3.fr-par.scw.cloud/cerema_aom_2024.csv";
+  static sha256 = "4c7c5128d5351e458bfd6a2b5aaa85595ca88cc4d590f448626fa4035c37d5dc";
 
   readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
+  readonly fileType: FileTypeEnum = FileTypeEnum.Csv;
+
   readonly rows: Map<string, [string, string]> = new Map([
-    ["id_reseau", ["17", "varchar"]],
+    ["id_reseau", ["17", "integer"]],
+    ["siren_group", ["16", "varchar"]],
+    ["nom_group", ["15", "varchar"]],
     ["siren_aom", ["7", "varchar"]],
     ["nom_aom", ["6", "varchar"]],
-    ["forme_juridique_aom", ["8", "varchar"]],
-    ["region", ["13", "varchar"]],
-    ["departement", ["14", "varchar"]],
-    ["siren_group", ["16", "varchar"]],
-    ["siren_membre", ["1", "varchar"]],
     ["com", ["2", "varchar"]],
   ]);
 
-  fileType: FileTypeEnum = FileTypeEnum.Csv;
   override readonly tableIndex = "com";
   override readonly importSql = `
-    UPDATE ${this.targetTableWithSchema} AS a SET
-      aom = CASE WHEN t.siren_aom ~ '^[0-9]*$' THEN t.siren_aom ELSE NULL END,
+    UPDATE ${this.targetTableWithSchema} AS target
+    SET
+      aom = t.siren_aom,
       l_aom = t.nom_aom,
-      reseau = null,
-      l_reseau = null
+      reseau = CASE WHEN t.id_reseau::text <> '-' THEN t.id_reseau ELSE NULL END,
+      l_reseau = t.nom_group
     FROM ${this.tableWithSchema} t
-    WHERE a.com = t.com AND year = 2024;
+    WHERE target.com = t.com AND target.year = 2024
   `;
 }
