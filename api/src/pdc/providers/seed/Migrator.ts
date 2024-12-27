@@ -1,13 +1,18 @@
-import { migrate } from "@/db/index.ts";
+import { flashGeoSchema, migrateGeoSchema } from "@/db/geo.ts";
+import { migrateSQL } from "@/db/migrations.ts";
 import { addDate, createReadStream, CsvOptions as ParseOptions, parse, URL } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { join } from "@/lib/path/index.ts";
-import { Carpool, carpoolsV2 } from "./carpools.ts";
-import { companies, Company } from "./companies.ts";
-import { Operator, operators } from "./operators.ts";
-import { CreateTerritoryGroupInterface, territory_groups, TerritorySelectorsInterface } from "./territories.ts";
-import { User, users } from "./users.ts";
+import { Carpool, carpoolsV2 } from "@/pdc/providers/seed/carpools.ts";
+import { companies, Company } from "@/pdc/providers/seed/companies.ts";
+import { Operator, operators } from "@/pdc/providers/seed/operators.ts";
+import {
+  CreateTerritoryGroupInterface,
+  territory_groups,
+  TerritorySelectorsInterface,
+} from "@/pdc/providers/seed/territories.ts";
+import { User, users } from "@/pdc/providers/seed/users.ts";
 
 const __dirname = import.meta.dirname;
 export class Migrator {
@@ -71,24 +76,32 @@ export class Migrator {
   async create() {
     if (this.hasTmpDb) {
       logger.debug(`[migrator] creating database ${this.dbName}`);
-      await this.baseConn.getClient().query(
-        `CREATE DATABASE ${this.dbName}`,
-      );
+      await this.baseConn.getClient().query(`CREATE DATABASE ${this.dbName}`);
     }
   }
 
-  async migrate() {
-    await migrate(this.currentConnectionString);
+  async migrate({ skip = false, flash = true } = {}) {
+    if (skip) {
+      logger.warn("[migrator] skipping migrations");
+      return;
+    }
+
+    if (flash) {
+      logger.info("[migrator] flash geo schema");
+      await flashGeoSchema(this.currentConnectionString);
+    } else {
+      logger.info("[migrator] migrate geo schema from sources");
+      await migrateGeoSchema(this.currentConnectionString);
+    }
+
+    await migrateSQL(this.currentConnectionString);
   }
 
   async seed() {
-    await this.up();
-
     logger.debug("[migrator] seeding...");
 
-    await this.testConn.getClient().query(
-      `SET session_replication_role = 'replica'`,
-    );
+    await this.up();
+    await this.testConn.getClient().query(`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
       this.verbose &&
@@ -121,40 +134,11 @@ export class Migrator {
       await this.seedCarpoolV2(carpool);
     }
 
-    /*
-          - Territoires
-            - company.companies
-
-          - Operateurs
-            - operator.operators
-            - operator.thumbnails
-            - application.applications
-            - company.companies
-            - territory.territory_operators
-
-          - Politiques
-            - policy.policies
-
-          - Trajets
-
-          - Liste des tables
-            - certificates.**
-            - honor.tracking
-            - fraudcheck.fraudchecks
-            - policy.policy_metas
-            - policy.incentives
-            +++ VIEWS +++
-    */
-    await this.testConn.getClient().query<any>(
-      `SET session_replication_role = 'origin'`,
-    );
-    logger.debug("[migrator] seeding...done");
+    await this.testConn.getClient().query(`SET session_replication_role = 'origin'`);
+    logger.debug("[migrator] seeding... done");
   }
 
-  protected async *dataFromCsv<P>(
-    filename: string,
-    options: ParseOptions = {},
-  ): AsyncIterator<P> {
+  protected async *dataFromCsv<P>(filename: string, options: ParseOptions = {}): AsyncIterator<P> {
     const filepath = join(import.meta.dirname!, filename);
     const parser = createReadStream(filepath).pipe(
       parse({
@@ -162,6 +146,7 @@ export class Migrator {
         ...options,
       }),
     );
+
     for await (const record of parser) {
       yield record;
     }

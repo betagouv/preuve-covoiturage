@@ -70,6 +70,10 @@ export async function readFile(filepath: string) {
   return Deno.readFile(filepath);
 }
 
+export async function readTextFile(filepath: string): Promise<string> {
+  return Deno.readTextFile(filepath);
+}
+
 export function writeSync(filepath: string, data: string, options?: Deno.WriteFileOptions): void {
   return Deno.writeTextFileSync(filepath, data, options);
 }
