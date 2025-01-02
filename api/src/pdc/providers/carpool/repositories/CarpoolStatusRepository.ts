@@ -76,14 +76,15 @@ export class CarpoolStatusRepository {
     operator_id: Id,
     operator_journey_id: OperatorJourneyId,
     client?: PoolClient,
-  ): Promise<CarpoolStatus & { created_at: Date } | undefined> {
+  ): Promise<CarpoolStatus & { created_at: Date; legacy_id: number } | undefined> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
       SELECT
         cs.acquisition_status,
         cs.fraud_status,
         cs.anomaly_status,
-        cc.created_at
+        cc.created_at,
+        cc.legacy_id
       FROM ${raw(this.table)} cs
       JOIN ${raw(this.carpoolTable)} cc
         ON cc._id = cs.carpool_id
