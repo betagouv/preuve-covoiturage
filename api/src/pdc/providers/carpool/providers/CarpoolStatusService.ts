@@ -1,5 +1,6 @@
+import { semver } from "@/deps.ts";
 import { provider } from "@/ilos/common/Decorators.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { CarpoolLabel, CarpoolStatus } from "../interfaces/database/label.ts";
 import { CarpoolLabelRepository } from "../repositories/CarpoolLabelRepository.ts";
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
@@ -23,6 +24,7 @@ export class CarpoolStatusService {
       anomaly: Array<CarpoolLabel<unknown>>;
       fraud: Array<CarpoolLabel<unknown>>;
       terms: Array<CarpoolLabel<unknown>>;
+      legacy_id?: number;
     } | undefined
   > {
     const statusResult = await this.statusRepository
@@ -33,7 +35,7 @@ export class CarpoolStatusService {
     if (!statusResult) {
       return;
     }
-    const { created_at, ...status } = statusResult;
+    const { created_at, legacy_id, ...status } = statusResult;
     const anomaly = await this.labelRepository.findAnomalyByOperatorJourneyId(
       operator_id,
       operator_journey_id,
@@ -56,6 +58,7 @@ export class CarpoolStatusService {
       anomaly,
       fraud,
       terms,
+      ...(semver.satisfies(semver.parse("3.2.0"), semver.parseRange(api_version)) ? { journey_id: legacy_id } : {}),
     };
   }
 
