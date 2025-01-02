@@ -75,6 +75,7 @@ describe("CarpoolStatusRepository", () => {
       anomaly_status: CarpoolAnomalyStatusEnum.Pending,
       fraud_status: CarpoolFraudStatusEnum.Pending,
       created_at: result?.created_at,
+      legacy_id: result?.legacy_id,
     });
   });
 
