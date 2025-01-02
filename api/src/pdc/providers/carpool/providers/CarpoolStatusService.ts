@@ -1,6 +1,6 @@
 import { semver } from "@/deps.ts";
 import { provider } from "@/ilos/common/Decorators.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CarpoolLabel, CarpoolStatus } from "../interfaces/database/label.ts";
 import { CarpoolLabelRepository } from "../repositories/CarpoolLabelRepository.ts";
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
