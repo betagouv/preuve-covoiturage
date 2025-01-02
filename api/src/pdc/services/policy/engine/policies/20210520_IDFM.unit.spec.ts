@@ -12,7 +12,7 @@ const defaultPosition = {
   dep: "91",
   reg: "11",
   country: "XXXXX",
-  reseau: "232",
+  reseau: 232,
 };
 const defaultLat = 48.72565703413325;
 const defaultLon = 2.261827843187402;
@@ -138,7 +138,7 @@ it(
 );
 
 it(
-  "strike days",
+  "should work on special tarification days",
   async () =>
     await process(
       {
@@ -169,6 +169,18 @@ it(
             driver_identity_key: "5",
             datetime: new Date("2023-02-07"),
           },
+          {
+            distance: 6_306,
+            driver_identity_key: "6",
+            datetime: new Date("2024-12-11"),
+            start: { ...defaultPosition, com: "78172" },
+          },
+          {
+            distance: 30_000,
+            driver_identity_key: "6",
+            datetime: new Date("2024-12-31"),
+            start: { ...defaultPosition, com: "95323" },
+          },
         ],
         meta: [],
       },
@@ -179,6 +191,8 @@ it(
           300 * 1.5,
           150 * 1.5,
           150 * 1.5,
+          150 * 1.5,
+          300 * 1.5,
         ],
         meta: [
           {
@@ -187,7 +201,7 @@ it(
           },
           {
             key: "max_amount_restriction.global.campaign.global",
-            value: 1709,
+            value: 2384,
           },
           {
             key: "max_amount_restriction.0-2.month.1-2023",
@@ -204,6 +218,10 @@ it(
           {
             key: "max_amount_restriction.0-5.month.1-2023",
             value: 225,
+          },
+          {
+            key: "max_amount_restriction.0-6.month.11-2024",
+            value: 675,
           },
         ],
       },
