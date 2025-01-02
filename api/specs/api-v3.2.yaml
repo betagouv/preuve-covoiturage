@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Registre de preuve de covoiturage - Documentation technique
-  version: '3.1'
+  version: '3.2'
   termsOfService: 'https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/cgu-conditions-generales-dutilisation'
   contact:
     name: Équipe technique du RPC
@@ -62,9 +62,9 @@ info:
 
     ## Licence et version
 servers:
-  - url: 'https://api.covoiturage.beta.gouv.fr/v3.1'
+  - url: 'https://api.covoiturage.beta.gouv.fr/v3.2'
     description: Production
-  - url: 'https://api.demo.covoiturage.beta.gouv.fr/v3.1'
+  - url: 'https://api.demo.covoiturage.beta.gouv.fr/v3.2'
     description: Pré-production
 paths:
   /journeys:
@@ -2253,7 +2253,7 @@ x-topics:
       l'opération (spécifique ou standardisée).
   - title: Export de trajets
     content: |
-      ## Schema d'export des trajets v3.1
+      ## Schema d'export des trajets v3.2
 
       Les trajets sont exportés au format CSV (séparateur : `,`) et compressés au
       format ZIP.
