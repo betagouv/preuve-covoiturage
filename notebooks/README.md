@@ -55,3 +55,7 @@ Please use untracked playground folder as much as possible for local analysis
 - `/run/research` is meant for data exploration sharing. It will not be part of industrialized code
 - `/run/helpers` utility functions reused across notebooks
 - `/run/tests` unit tests for python helpers
+
+## Tips
+
+- In order to run `distance_duration_anomalycheck.ipynb` localy, it is possible to proxy forward osrm that run on the cluster
