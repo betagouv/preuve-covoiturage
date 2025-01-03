@@ -2415,9 +2415,6 @@ x-topics:
 
   - title: Attestations opérateurs ⚠️
     content: |
-      > warn
-      > Cette API sera dépréciée en v3.2 et ne sera pas remplacée.
-
       > info
       > Cette page concerne les attestations fournies par les opérateurs de covoiturage.
       >
