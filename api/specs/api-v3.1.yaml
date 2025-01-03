@@ -155,10 +155,10 @@ paths:
                       data:
                         type: object
                         properties:
-                          terms_violation_labels:
-                            $ref: '#/components/schemas/terms_violation_label'
+                          rejected_reasons:
+                            $ref: '#/components/schemas/rejected_reasons'
                         required:
-                          - terms_violation_labels
+                          - rejected_reasons
                       code:
                         type: integer
                         enum:
@@ -260,29 +260,8 @@ paths:
                     description: 'la date d''enregistrement du trajet ou à défaut d''enregistrement, la date de l''erreur d''enregistrement'
                     type: string
                     format: date-time
-                  fraud_error_labels:
-                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/fraudcheck_label'
-                  anomaly_error_details:
-                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
-                    type: array
-                    items:
-                      properties:
-                        label:
-                          $ref: '#/components/schemas/anomaly_label'
-                        metas:
-                          type: object
-                          properties:
-                            conflicting_journey_id:
-                              description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
-                              type: string
-                            temporal_overlap_duration_ratio:
-                              description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
-                              type: number
-                  terms_violation_details:
-                    $ref: '#/components/schemas/terms_violation_details'
+                  rejected_reasons:
+                    $ref: '#/components/schemas/rejected_reasons'
                 required:
                   - status
                   - operator_journey_id
@@ -1243,28 +1222,104 @@ components:
     status:
       description: |
         Statut du trajet tel que :
-          - `validation_error` : les données envoyées ne sont pas valides
-          - `anomaly_error` : le trajet est incohérent ou physiquement impossible
-          - `acquisition_error` : le trajet n'a pas du tout été enregistré
-          - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
-          - `fraud_error` : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
-          - `ok` : le trajet a correctement été traité
           - `pending` : le trajet a été enregistré mais n'a pas encore été traité
+          - `accepted` : le trajet a correctement été traité
+          - `rejected` : le trajet a été refusé
           - `canceled` : le trajet a été annulé par l'opérateur
-          - `unknown` : une erreur inconnue a affecté le trajet
-          - `terms_violation_error` : le trajet ne respecte pas les conditions générales d'utilisation
       type: string
       enum:
-        - fraud_error
-        - anomaly_error
-        - validation_error
+        - pending
+        - accepted
+        - rejected
+        - canceled
+      example: rejected
+    rejected_reasons:
+      description: |
+        Liste des raisons ayant abouti au rejet du trajet.
+      type: array
+      items:
+        $ref: '#/components/schemas/rejected_reason'
+      example:
+        - interoperator_too_many_trips_by_day
+        - too_many_trips_by_day
+    rejected_reason:
+      description: |
+        note: les champs noté d'un 📦 sont d'anciens statut qui pourraientt-être supprimés de l'API
+
+        Raisons du rejet du trajet :
+        
+        # Etiquettes possibles pour non respect de l'OpenAPI :
+
+        - `acquisition_error` : le trajet n'a pas du tout été enregistré
+        - `normalization_error` : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisées
+        - `validation_error` : les données envoyées ne sont pas valides
+
+        # Etiquettes possibles pour un cas de non respect des CGU :
+
+        - 📦 `terms_violation_error` : le trajet ne respecte pas les conditions générales d'utilisation
+        - `distance_too_short` : le trajet a une distance trop faible (<2 km)
+        - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
+        - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
+        - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
+
+        # Etiquettes relatives à la detection de fraude inter-opérateur :
+
+        - 📦 `fraud_error` : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
+        - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`)
+        - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
+        - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+  
+        # Etiquette possible pour une anomalie détectée :
+
+        - 📦 `anomaly_error` : le trajet est incohérent ou physiquement impossible
+        - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente. Les règles de detections sont :
+          - distance estimée par OSRM ou transmises inférieure à 300m.
+          Le trajet est beaucoup trop court en termes de distance.
+          - durée estimée par OSRM ou transmise inférieure à 1 minute.
+          Le trajet est beaucoup trop court en termes de durée
+          - durée estimée par OSRM supérieure à 2,5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis de 10 minutes
+          Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+          - distance estimée par OSRM supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
+          La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+          - distance transmise supérieure à 4 fois la distance estimée OSRM. Exemple: 10 km estimé pour 40 km transmis
+          La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
+          - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
+          La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
+        - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
+
+        # Autres
+          - `unknown` : une erreur inconnue a affecté le trajet
+      type: string
+      enum:
+        # Keep ordering by group, deprecated, alphabetical
+        # OpenAPI not respected
         - acquisition_error
         - normalization_error
-        - ok
-        - canceled
-        - pending
-        - unknown
+        - validation_error
+
+        # T&C
         - terms_violation_error
+        - distance_too_short
+        - expired
+        - too_close_trips
+        - too_many_trips_by_day
+        
+        # Interoperator fraud
+        - fraud_error
+        - interoperator_overlap
+        - interoperator_too_close_trips
+        - interoperator_too_many_trips_by_day
+
+        # Anomaly errors
+        - anomaly_error
+        - distance_duration_anomaly
+        - temporal_overlap_anomaly
+
+        # Other errors
+        - unknown
+      example:
+        - interoperator_too_many_trips_by_day
+        
     duration:
       description: Durée en secondes
       type: number
@@ -1699,65 +1754,6 @@ components:
                 description: montant en centimes d'euros
                 type: number
       additionalProperties: false
-    terms_violation_details:
-      description: |
-        Liste des raisons ayant abouti au rejet du trajet.
-      type: array
-      items:
-        $ref: '#/components/schemas/terms_violation_label'
-    terms_violation_label:
-      description: |
-        Etiquette possible pour un cas de non respect des CGU :
-
-        - `distance_too_short` : le trajet a une distance trop faible (<2 km)
-        - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
-        - `too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key). Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
-        - `expired` : le trajet a dépassé la date limite d'envoi de 24h après la date de début du trajet. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
-      type: string
-      enum:
-        - distance_too_short
-        - too_many_trips_by_day
-        - too_close_trips
-        - expired
-      example:
-        - expired
-    fraudcheck_label:
-      description: |
-        Etiquette possible pour un cas de fraude détectée :
-
-        - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`)
-        - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
-        - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
-      type: string
-      enum:
-        - interoperator_overlap
-        - interoperator_too_many_trips_by_day
-        - interoperator_too_close_trips
-    anomaly_label:
-      description: |
-        Etiquette possible pour une anomalie détectée :
-
-        - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
-        - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
-
-        ## Règles utilisées pour detecter les anomalies de type `distance_duration_anomaly`
-
-         - distance estimée par OSRM ou transmises inférieure à 300m.
-         Le trajet est beaucoup trop court en termes de distance.
-         - durée estimée par OSRM ou transmise inférieure à 1 minute.
-         Le trajet est beaucoup trop court en termes de durée
-         - durée estimée par OSRM supérieure à 2,5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis de 10 minutes
-         Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
-         - distance estimée par OSRM supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
-         La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
-         - distance transmise supérieure à 4 fois la distance estimée OSRM. Exemple: 10 km estimé pour 40 km transmis
-         La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
-         - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
-         La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
-      type: string
-      enum:
-        - temporal_overlap_anomaly
-        - distance_duration_anomaly
     cee_application_import:
       description: Précédente demande de CEE
       type: object
