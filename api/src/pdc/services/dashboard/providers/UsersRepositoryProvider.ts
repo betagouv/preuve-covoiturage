@@ -18,8 +18,12 @@ export class UsersRepositoryProvider implements UsersRepositoryInterface {
   async getUsers(
     params: UsersParamsInterface,
   ): Promise<UsersResultInterface> {
-    const queryValues: (string | number)[] = params.id ? [params.id] : [];
-    const conditions = params.id ? ["_id=$1", "hidden = false"] : ["hidden = false"];
+    const queryValues: (string | number)[] = [];
+    const conditions = ["hidden = false"];
+    Object.entries(params).forEach(([k, v]) => {
+      conditions.push(k === "id" ? `_${k}= $${queryValues.length + 1}` : `${k}= $${queryValues.length + 1}`);
+      queryValues.push(v);
+    });
     const queryText = `
       SELECT 
         _id as id,

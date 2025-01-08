@@ -35,14 +35,14 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
       setState(stateToken);
       setNonce(nonceToken);
       setIsAuth(true);
-      setUser({name:'Ludovic Delhomme', role:'admin'});
+      setUser({name:'Ludovic Delhomme', role:'registry'});
     }
   }, []);
 
   
 
   return(
-    <AuthContext.Provider value={{isAuth, state, setState, nonce, setNonce, code, getCode, user}}>
+    <AuthContext.Provider value={{isAuth,setIsAuth, state, setState, nonce, setNonce, code, getCode, user}}>
       {children}
     </AuthContext.Provider>
   );

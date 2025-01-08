@@ -19,7 +19,7 @@ export default function TabExport() {
   return(
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-        {user?.role === 'admin' &&
+        {user?.role === 'registry' &&
           <SelectTerritory defaultValue={territoryId} onChangeTerritory={onChangeTerritory} />
         }
         <span><DatePicker label="Début" value={startDate} onChange={(v) => setStartDate(v!)} minDate={dayjs().subtract(2, 'years')} maxDate={endDate}/></span>

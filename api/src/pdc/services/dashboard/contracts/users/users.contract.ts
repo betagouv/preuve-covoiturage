@@ -12,6 +12,8 @@ export interface SingleResultInterface {
 
 export interface ParamsInterface {
   id?: number;
+  operator_id?: number;
+  territory_id?: number;
 }
 
 export type ResultInterface = SingleResultInterface[];

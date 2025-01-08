@@ -1,14 +1,15 @@
 'use client'
 import { useAuth } from '@/providers/AuthProvider';
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
+import TabOperators from './TabOperators';
 import TabProfil from './TabProfil';
+import TabTerritories from './TabTerritories';
 import TabUsers from './TabUsers';
 
 
 export default function TabsNav() {
   const { user } = useAuth();
-  const roles = ["admin","operator"]
-  const getTabs = (roles: string[]) => {
+  const getTabs = () => {
     const tabs =  [
       {
         content: <TabProfil />,
@@ -19,11 +20,19 @@ export default function TabsNav() {
         label: `Utilisateurs et accès`
       }
     ];
-    if(roles.includes(user?.role ? user.role : 'territory')){ 
+    if(["registry","operator"].includes(user?.role ?user.role : '')){ 
       tabs.push(
         {
-        content: <p>Content of tab3</p>,
+        content: <TabOperators />,
         label: 'Opérateurs'
+        }
+      )
+    }
+    if(["registry","territory"].includes(user?.role ?user.role : '')){ 
+      tabs.push(
+        {
+        content: <TabTerritories />,
+        label: 'Territoires'
         }
       )
     }
@@ -32,7 +41,7 @@ export default function TabsNav() {
 
   return (
     <Tabs
-      tabs={getTabs(roles)}
+      tabs={getTabs()}
     />
   );
 }

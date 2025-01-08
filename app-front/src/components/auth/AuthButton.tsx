@@ -2,11 +2,13 @@
 import { Config } from '@/config';
 import { addParamsToUrl, generateNonce } from '@/helpers/auth';
 import { useAuth } from '@/providers/AuthProvider';
+import Button from '@codegouvfr/react-dsfr/Button';
+
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
 
 export function AuthButton() {
-  const { setState, setNonce } = useAuth();
+  const { state, setState, setNonce, isAuth, setIsAuth } = useAuth();
   const router = useRouter();
 
   const generateToken = () => {
@@ -18,7 +20,7 @@ export function AuthButton() {
     sessionStorage.setItem('nonceToken', nonceToken);
     return ({stateToken, nonceToken})
   }
-  const handleClick = () => {
+  const authClick = () => {
     const {stateToken, nonceToken} = generateToken();
     const baseUrl:string = `${Config.get('auth.domain')}/api/v2/authorize`;
     const params = {
@@ -32,7 +34,32 @@ export function AuthButton() {
     router.push(addParamsToUrl(baseUrl, params));
   };
 
-  return ( 
-    <ProConnectButton onClick={() => handleClick()} /> 
+  const disconnectClick = () => {
+    const baseUrl:string = `${Config.get('auth.domain')}/api/v2/session/end`;
+    const params = {
+      id_token_hint: sessionStorage.getItem('idToken'),
+      state: state,
+      post_logout_redirect_uri: Config.get('auth.redirect_uri'),
+    };
+    router.push(addParamsToUrl(baseUrl, params));
+    setIsAuth(false);
+  };
+
+  return (
+    <>
+      {!isAuth && 
+        <ProConnectButton onClick={() => authClick()} />
+      }
+      {isAuth && 
+        <Button
+          linkProps={{
+            href: '',
+            onClick: disconnectClick
+          }}
+        >
+        Déconnexion
+        </Button>
+      }
+    </> 
   );
 };

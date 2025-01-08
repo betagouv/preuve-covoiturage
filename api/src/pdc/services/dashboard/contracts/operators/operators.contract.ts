@@ -1,6 +1,8 @@
 export interface SingleResultInterface {
   id: number;
   name: string;
+  legal_name: string;
+  siret: number;
 }
 
 export interface ParamsInterface {

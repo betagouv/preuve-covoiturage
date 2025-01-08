@@ -7,6 +7,12 @@ export const schema = {
     id: {
       type: "integer",
     },
+    operator_id: {
+      type: "integer",
+    },
+    territory_id: {
+      type: "integer",
+    },
   },
 };
 

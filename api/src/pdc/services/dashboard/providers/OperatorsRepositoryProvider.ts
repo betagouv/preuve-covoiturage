@@ -29,7 +29,9 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
     const queryText = `
       SELECT 
         _id as id,
-        name
+        name,
+        legal_name,
+        siret
       FROM ${this.table}
       WHERE ${conditions.join(" AND ")}
       ORDER BY _id

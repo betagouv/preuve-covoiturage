@@ -1,5 +1,6 @@
 export interface AuthContextProps {
   isAuth: boolean;
+  setIsAuth: (newIsAuth: boolean) => void;
   state?: string;
   setState: (newState: string | undefined) => void;
   nonce?: string;

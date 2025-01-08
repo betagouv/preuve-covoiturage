@@ -13,7 +13,7 @@ export default function TabBref() {
   };
   return(
     <>
-      {user?.role === 'admin' &&
+      {user?.role === 'registry' &&
         <SelectTerritory defaultValue={territoryId} onChangeTerritory={onChangeTerritory} />
       }
       <JourneysGraph title='Evolution des trajets' territoryId={territoryId} />
