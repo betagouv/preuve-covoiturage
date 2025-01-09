@@ -8,7 +8,7 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract createOrUpdateMany(
     data: Array<SerializedIncentiveInterface<undefined>>,
   ): Promise<void>;
-  abstract disableOnCanceledTrip(from: Date, to: Date): Promise<void>;
+  abstract disableOnExcludedCarpool(from: Date, to: Date): Promise<void>;
   abstract setStatus(from: Date, to: Date, hasFailed?: boolean): Promise<void>;
   abstract findDraftIncentive(
     to: Date,

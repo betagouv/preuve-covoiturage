@@ -79,12 +79,12 @@ export class FinalizeAction extends AbstractAction {
       try {
         // Update incentive on canceled carpool
         const subtimer = getPerformanceTimer();
-        await this.incentiveRepository.disableOnCanceledTrip(
+        await this.incentiveRepository.disableOnExcludedCarpool(
           currentFrom,
           currentTo,
         );
         logger.info(
-          `[campaign:finalize] disableOnCanceledTrip in ${subtimer.stop()} ms`,
+          `[campaign:finalize] disableOnExcludedCarpool in ${subtimer.stop()} ms`,
         );
 
         // eslint-disable-next-line prettier/prettier,max-len

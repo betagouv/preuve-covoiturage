@@ -13,15 +13,14 @@ import {
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,
 })
-export class IncentiveRepositoryProvider
-  implements IncentiveRepositoryProviderInterfaceResolver {
+export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
   public readonly incentivesTable = "policy.incentives";
   public readonly carpoolTable = "carpool_v2.carpools";
   public readonly carpoolStatusTable = "carpool_v2.status";
 
   constructor(protected connection: PostgresConnection) {}
 
-  async disableOnCanceledTrip(from: Date, to: Date): Promise<void> {
+  async disableOnExcludedCarpool(from: Date, to: Date): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.incentivesTable} AS pi
@@ -35,7 +34,11 @@ export class IncentiveRepositoryProvider
           AND cc.start_datetime <  $2::timestamp
           AND cc.operator_id = pi.operator_id
           AND cc.operator_journey_id = pi.operator_journey_id
-          AND cs.acquisition_status = 'canceled'
+          AND (
+            cs.acquisition_status = 'canceled'
+            OR cs.cs.anomaly_status = 'failed'
+            OR cs.fraud_status = 'failed'
+          )
       `,
       values: [from, to],
     };
@@ -83,16 +86,15 @@ export class IncentiveRepositoryProvider
     });
 
     // pick values for the given keys. Override status if defined
-    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] =
-      filteredData.reduce(
-        ([ids, amounts, statuses], i) => {
-          ids.push(i._id);
-          amounts.push(i.statefulAmount);
-          statuses.push(status ?? i.status);
-          return [ids, amounts, statuses];
-        },
-        [[], [], []],
-      );
+    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] = filteredData.reduce(
+      ([ids, amounts, statuses], i) => {
+        ids.push(i._id);
+        amounts.push(i.statefulAmount);
+        statuses.push(status ?? i.status);
+        return [ids, amounts, statuses];
+      },
+      [[], [], []],
+    );
 
     const query = {
       text: `
@@ -215,9 +217,7 @@ export class IncentiveRepositoryProvider
       .map((i) => ({
         ...i,
         status: i.status || IncentiveStatusEnum.Draft,
-        state: i.statefulAmount === 0
-          ? IncentiveStateEnum.Null
-          : IncentiveStateEnum.Regular,
+        state: i.statefulAmount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
 
