@@ -1,6 +1,8 @@
 {{
   config(
     materialized = 'table',
+    tags=["fraud"],
+    unique_key='user_identity_key',
     indexes = [
       {
         "columns":["user_identity_key"],

@@ -20,4 +20,8 @@ notebooks/scripts/playground
 # python
 *.pyc
 __pycache__
+
+#dbt
 logs/dbt.log
+dbt/target
+dbt/edr_target
