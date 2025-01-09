@@ -1,13 +1,23 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { CampaignApdf } from "@/pdc/services/dashboard/dto/CampaignApdf.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/campaigns/campaignApdf.contract.ts";
-import { alias } from "../contracts/campaigns/campaignApdf.schema.ts";
+
+export type ResultInterface = Array<{
+  signed_url: string;
+  key: string;
+  size: number;
+  operator_id: number;
+  campaign_id: number;
+  datetime: Date;
+  name: string;
+}>;
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "campaignApdf",
   middlewares: [
-    ["validate", alias],
+    ["validate", CampaignApdf],
   ],
 })
 export class CampaignApdfAction extends AbstractAction {
@@ -15,7 +25,7 @@ export class CampaignApdfAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: CampaignApdf): Promise<ResultInterface> {
     return this.repository.getCampaignApdf(params);
   }
 }
