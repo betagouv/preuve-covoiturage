@@ -17,8 +17,10 @@ export const useDashboard = () => {
     name: "France",
     type: "country" as PerimeterType,
     observe: "com" as PerimeterType,
-    year: new Date(lastDataDate()).getFullYear(),
-    month: new Date(lastDataDate()).getMonth(),
+    year: new Date(lastDataDate()).getMonth() > 0
+      ? new Date(lastDataDate()).getFullYear()
+      : new Date(lastDataDate()).getFullYear() - 1,
+    month: new Date(lastDataDate()).getMonth() > 0 ? new Date(lastDataDate()).getMonth() : 12,
     period: "month" as PeriodType,
     trimester: Math.floor(new Date(lastDataDate()).getMonth() / 3),
     semester: Math.floor(new Date(lastDataDate()).getMonth() / 6),
@@ -37,9 +39,7 @@ export const useDashboard = () => {
   const onLoadTerritory = useCallback(
     async (value?: { code: INSEECode; type: PerimeterType }) => {
       setLoading(true);
-      const params = value
-        ? value
-        : { code: "XXXXX", type: "country" as PerimeterType };
+      const params = value ? value : { code: "XXXXX", type: "country" as PerimeterType };
       const name = await getName(params);
       setParams((p) => {
         return { ...p, ...params, name: name, observe: "com" } as typeof p;
