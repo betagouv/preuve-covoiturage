@@ -57,6 +57,8 @@ sources:
                     period: day
                     count: 1
                   seasonality: day_of_week
+                  config:
+                    severity: warn
               - elementary.column_anomalies:
                   name: Anomalies sur la distance par opérateur
                   dimensions:
@@ -69,6 +71,8 @@ sources:
                     period: day
                     count: 1
                   seasonality: day_of_week
+                  config:
+                    severity: warn
           - name: licence_plate
             data_type: character varying
           - name: driver_identity_key
