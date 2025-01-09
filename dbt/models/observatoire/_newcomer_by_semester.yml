@@ -3,26 +3,18 @@ models:
   - name: newcomer_by_semester
     columns:
       - name: year
-        description: ''
         data_type: integer
       - name: semester
-        description: ''
         data_type: integer
       - name: code
-        description: ''
         data_type: character varying
       - name: libelle
-        description: ''
         data_type: character varying
       - name: type
-        description: ''
         data_type: text
       - name: direction
-        description: ''
         data_type: text
       - name: new_drivers
-        description: ''
         data_type: numeric
       - name: new_passengers
-        description: ''
         data_type: numeric

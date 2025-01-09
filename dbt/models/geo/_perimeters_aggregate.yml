@@ -3,17 +3,12 @@ models:
   - name: perimeters_aggregate
     columns:
       - name: year
-        description: ''
         data_type: smallint
       - name: type
-        description: ''
         data_type: text
       - name: code
-        description: ''
         data_type: character varying
       - name: libelle
-        description: ''
         data_type: character varying
       - name: geom
-        description: ''
         data_type: USER-DEFINED

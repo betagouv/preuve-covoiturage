@@ -1,0 +1,4 @@
+version: 2
+models:
+  - name: view_dashboard_carpools
+    columns: []

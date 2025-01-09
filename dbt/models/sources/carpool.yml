@@ -69,7 +69,6 @@ sources:
           - name: uuid
             data_type: uuid
           - name: legacy_id
-            description: ''
             data_type: bigint
       - name: geo
         columns:
@@ -102,16 +101,12 @@ sources:
           - name: _id
             data_type: integer
           - name: carpool_id
-            description: ''
             data_type: integer
           - name: target_is_driver
-            description: ''
             data_type: boolean
           - name: siret
-            description: ''
             data_type: character varying
           - name: amount
-            description: ''
             data_type: integer
       - name: status
         columns:
@@ -120,14 +115,10 @@ sources:
           - name: carpool_id
             data_type: integer
           - name: updated_at
-            description: ''
             data_type: timestamp with time zone
           - name: acquisition_status
-            description: ''
             data_type: USER-DEFINED
           - name: fraud_status
-            description: ''
             data_type: USER-DEFINED
           - name: anomaly_status
-            description: ''
             data_type: USER-DEFINED

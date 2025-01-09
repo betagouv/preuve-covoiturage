@@ -8,16 +8,12 @@ sources:
           - name: year
             data_type: smallint
           - name: mod
-            description: ''
             data_type: smallint
           - name: old_com
-            description: ''
             data_type: character varying
           - name: new_com
-            description: ''
             data_type: character varying
           - name: l_mod
-            description: ''
             data_type: character varying
       - name: perimeters
         columns:
@@ -60,10 +56,8 @@ sources:
           - name: aom
             data_type: character varying
           - name: l_reseau
-            description: ''
             data_type: character varying
           - name: reseau
-            description: ''
             data_type: integer
           - name: pop
             data_type: integer

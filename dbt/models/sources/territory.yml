@@ -7,93 +7,64 @@ sources:
       - name: territory_group_selector
         columns:
           - name: territory_group_id
-            description: ''
             data_type: integer
           - name: selector_type
-            description: ''
             data_type: character varying
           - name: selector_value
-            description: ''
             data_type: character varying
       - name: territories
         columns:
           - name: _id
-            description: ''
             data_type: integer
           - name: company_id
-            description: ''
             data_type: integer
           - name: created_at
-            description: ''
             data_type: timestamp with time zone
           - name: updated_at
-            description: ''
             data_type: timestamp with time zone
           - name: deleted_at
-            description: ''
             data_type: timestamp with time zone
           - name: level
-            description: ''
             data_type: USER-DEFINED
           - name: name
-            description: ''
             data_type: character varying
           - name: shortname
-            description: ''
             data_type: character varying
           - name: activable
-            description: ''
             data_type: boolean
           - name: active
-            description: ''
             data_type: boolean
           - name: active_since
-            description: ''
             data_type: timestamp with time zone
           - name: contacts
-            description: ''
             data_type: json
           - name: address
-            description: ''
             data_type: json
           - name: population
-            description: ''
             data_type: integer
           - name: surface
-            description: ''
             data_type: bigint
           - name: geo
-            description: ''
             data_type: USER-DEFINED
           - name: ui_status
-            description: ''
             data_type: json
       - name: territory_group
         columns:
           - name: _id
-            description: ''
             data_type: integer
           - name: company_id
-            description: ''
             data_type: integer
           - name: created_at
-            description: ''
             data_type: timestamp with time zone
           - name: updated_at
-            description: ''
             data_type: timestamp with time zone
           - name: deleted_at
-            description: ''
             data_type: timestamp with time zone
           - name: name
-            description: ''
             data_type: character varying
           - name: shortname
-            description: ''
             data_type: character varying
           - name: contacts
-            description: ''
             data_type: json
           - name: address
-            description: ''
             data_type: json
