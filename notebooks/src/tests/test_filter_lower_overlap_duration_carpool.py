@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from scripts.helpers.apply_metods import remove_carpool_with_lowest_overlap_duration
+from helpers.apply_metods import remove_carpool_with_lowest_overlap_duration
 
 class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
 

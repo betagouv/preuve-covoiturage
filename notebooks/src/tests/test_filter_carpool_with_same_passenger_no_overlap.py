@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from scripts.helpers.apply_metods import remove_carpool_with_same_passenger_and_no_overlap
+from helpers.apply_metods import remove_carpool_with_same_passenger_and_no_overlap
 
 
 class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
