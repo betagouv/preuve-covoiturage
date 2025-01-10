@@ -4,7 +4,6 @@ import {
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
 } from "../../policy/contracts/find.contract.ts";
-import { handlerConfig } from "../contracts/export.contract.ts";
 
 @provider()
 export class CheckCampaign {
@@ -22,7 +21,7 @@ export class CheckCampaign {
       GetCampaignParamInterface,
       GetCampaignResultInterface
     >(getCampaignSignature, getCampaignParamInterface, {
-      channel: { service: handlerConfig.service },
+      channel: { service: "apdf" },
       call: { user: { permissions: ["registry.policy.find"] } },
     });
 

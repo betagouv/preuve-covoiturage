@@ -1,34 +1,33 @@
-import { ContextType, handler } from "@/ilos/common/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/revoke.contract.ts";
-import { alias } from "../contracts/revoke.schema.ts";
-import { ApplicationRepositoryProviderInterfaceResolver } from "../interfaces/ApplicationRepositoryProviderInterface.ts";
+import { RevokeApplication } from "@/pdc/services/application/dto/RevokeApplication.ts";
+import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
 
 @handler({
-  ...handlerConfig,
+  service: "application",
+  method: "revoke",
   middlewares: [
-    ["validate", alias],
     copyFromContextMiddleware("call.user.operator_id", "owner_id"),
     hasPermissionByScopeMiddleware(undefined, [
       "operator.application.revoke",
       "call.user.operator_id",
       "owner_id",
     ]),
+    ["validate", RevokeApplication],
   ],
 })
 export class RevokeApplicationAction extends AbstractAction {
   constructor(
-    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
+    private applicationRepository: ApplicationPgRepositoryProvider,
   ) {
     super();
   }
 
   public async handle(
-    params: ParamsInterface,
-    context: ContextType,
-  ): Promise<ResultInterface> {
+    params: RevokeApplication,
+  ): Promise<void> {
     await this.applicationRepository.revoke({
       ...params,
       owner_service: "operator",

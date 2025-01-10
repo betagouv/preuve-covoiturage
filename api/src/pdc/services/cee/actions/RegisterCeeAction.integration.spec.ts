@@ -17,10 +17,13 @@ import {
   CeeJourneyTypeEnum,
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
-} from "../contracts/common/CeeApplicationInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
+} from "../interfaces/CeeApplicationInterface.ts";
 
 describe("RegisterCeeAction", () => {
+  const handlerConfig = {
+    service: "cee",
+    method: "registerCeeApplication",
+  };
   let db: DbContext;
   let kernel: KernelContext;
   config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
