@@ -15,7 +15,9 @@ with distances as (
     type,
     direction,
     json_agg(
-      json_build_object('dist_classes', dist_classes, 'journeys', journeys)
+      json_build_object(
+        'dist_classes', dist_classes, 'journeys', journeys
+      )
     ) as distances
   from (
     select

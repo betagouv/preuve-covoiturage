@@ -7,17 +7,17 @@
 ) }}
 
 SELECT
-  extract('year' FROM start_date)::int  AS year,
-  case
-    when extract('quarter' from start_date)::int > 3 then 2 else 1
-  end                             as semester,
+  extract('year' FROM start_date)::int AS year,
+  CASE
+    WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1
+  END                                  AS semester,
   a.code,
-  b.l_territory AS libelle,
+  b.l_territory                        AS libelle,
   a.type,
   a.direction,
-  sum(a.collectivite)                         AS collectivite,
-  sum(a.operateur)                         AS operateur,
-  sum(a.autres)                         AS autres
+  sum(a.collectivite)                  AS collectivite,
+  sum(a.operateur)                     AS operateur,
+  sum(a.autres)                        AS autres
 FROM {{ ref('directions_incentive_by_day') }} AS a
 LEFT JOIN
   (
@@ -32,7 +32,7 @@ LEFT JOIN
   ON a.code = b.territory AND a.type = b.type
 WHERE
   a.code IS NOT null
-  {% if is_incremental() %}
+{% if is_incremental() %}
     AND
       (extract('year' FROM start_date) * 10 + CASE WHEN extract('quarter' FROM start_date)::int > 3 THEN 2 ELSE 1 END)
       >= (SELECT max(year * 10 + semester) FROM {{ this }})

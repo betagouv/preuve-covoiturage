@@ -3,7 +3,7 @@
   "python.testing.unittestArgs": [
     "-v",
     "-s",
-    "./scripts",
+    "./src/tests",
     "-p",
     "test_*.py"
   ],

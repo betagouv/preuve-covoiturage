@@ -33,8 +33,8 @@ export default function KeyFigures() {
   const row1 = (data && data.length > 0)
     ? [
         { __component: 'row.indicator',
-          value: data[0].journeys.toLocaleString(),
-          text: 'Covoiturages réalisés',
+          value: data[0].passengers.toLocaleString(),
+          text: 'Passagers transportés',
           icon:'ri-car-line',
         },
         { __component: 'row.indicator',

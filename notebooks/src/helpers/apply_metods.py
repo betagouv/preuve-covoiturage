@@ -43,6 +43,7 @@ def remove_carpool_with_lowest_overlap_duration(df):
         df_altered = df.drop(carpool_to_remove.index)
         return df_altered
 
+
 def remove_carpool_with_same_passenger_and_no_overlap(df):
     """Return an altered dataframe with removed carpool with same passenger identity"""
     df_counted_other_identity_key = df.groupby(['other_identity_key']).count()

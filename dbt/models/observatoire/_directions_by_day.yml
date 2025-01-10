@@ -1,0 +1,34 @@
+version: 2
+models:
+  - name: directions_by_day
+    columns:
+      - name: code
+        description: ''
+        data_type: character varying
+      - name: type
+        description: ''
+        data_type: text
+      - name: start_date
+        description: ''
+        data_type: date
+      - name: direction
+        description: ''
+        data_type: text
+      - name: journeys
+        description: ''
+        data_type: numeric
+      - name: intra_journeys
+        description: ''
+        data_type: numeric
+      - name: drivers
+        description: ''
+        data_type: numeric
+      - name: passengers
+        description: ''
+        data_type: numeric
+      - name: passenger_seats
+        description: ''
+        data_type: numeric
+      - name: distance
+        description: ''
+        data_type: numeric

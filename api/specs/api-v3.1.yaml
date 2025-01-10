@@ -116,58 +116,57 @@ paths:
           description: OK. Le trajet a bien été enregistré.
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  operator_journey_id:
-                    $ref: '#/components/schemas/operator_journey_id'
-                  created_at:
-                    description: Date de création dans le RPC
-                    type: string
-                    format: date-time
-                required:
-                  - operator_journey_id
-                  - created_at
-        '400':
-          description: Mauvaise requête
-          content:
-            application/json:
               example:
                 id: 1
-                error:
-                  data: 'data/driver/identity/phone_trunc must match format "phonetrunc", data/driver/identity/phone_trunc must pass "macro" keyword validation'
-                  code: -32602
-                  message: Invalid params
                 jsonrpc: '2.0'
+                result:
+                  meta: null
+                  data:
+                    operator_journey_id: cb82956e-3833-4925-9891-47d9b2ba0186
+                    created_at: '2021-01-01T00:00:00+0100'
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: |
-            Accès refusé
-            Les permissions de votre token applicatif ne vous permettent pas de créer un trajet.
-            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '409':
           description: |
             Le trajet est déjà enregistré.
         '422':
           description: |
-            Le trajet est en erreur.
-            Le payload envoyé est incorrect.
+            Le payload envoyé ne respecte pas le contrat d'interface / les Conditions Générales d'Utilisation.
+            Le trajet n'a pas été enregistré par le Registre de Preuve de Covoiturage.
           content:
             application/json:
-              example:
-                code: 422
-                error: Unprocessable entity
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  jsonrpc:
+                    type: string
+                    enum:
+                      - '2.0'
+                  error:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          terms_violation_labels:
+                            $ref: '#/components/schemas/terms_violation_label'
+                        required:
+                          - terms_violation_labels
+                      code:
+                        type: integer
+                        enum:
+                          - -32422
+                      message:
+                        type: string
+                        enum:
+                          - Unprocessable Request
       tags:
         - Trajets courte distance
     get:
@@ -218,7 +217,7 @@ paths:
             default: 0
       responses:
         '200':
-          description: Ok
+          $ref: '#/components/responses/http_200'
           content:
             application/json:
               schema:
@@ -236,7 +235,6 @@ paths:
     parameters:
       - name: operator_journey_id
         in: path
-        description: operator_journey_id of the journey created
         required: true
         schema:
           $ref: '#/components/schemas/operator_journey_id'
@@ -284,29 +282,15 @@ paths:
                               description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
                               type: number
                   terms_violation_details:
-                    description: |
-                      Liste des raisons ayant abouti au rejet du trajet.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/terms_violation_label'
+                    $ref: '#/components/schemas/terms_violation_details'
                 required:
                   - status
                   - operator_journey_id
                   - created_at
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: Accès refusé
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: Le trajet n'a pas été trouvé
           content:
@@ -350,7 +334,11 @@ paths:
                 - distance
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/http_200'
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
       tags:
         - Trajets courte distance
   '/journeys/{operator_journey_id}/cancel':
@@ -400,19 +388,9 @@ paths:
             OK
             La demande d'invalidation a été prise en compte
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: Accès refusé
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: Le trajet n'a pas été trouvé
           content:
@@ -438,7 +416,7 @@ paths:
             $ref: '#/components/schemas/geopoint'
       responses:
         '200':
-          description: Ok
+          description: OK
           content:
             application/json:
               schema:
@@ -473,7 +451,7 @@ paths:
           example: France
       responses:
         '200':
-          description: Ok
+          description: OK
           content:
             application/json:
               schema:
@@ -608,6 +586,10 @@ paths:
                     example: '2024-02-01T00:00:00+0100'
                 required:
                   - uuid
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
       tags:
         - Export de trajets
   /certificates:
@@ -718,22 +700,9 @@ paths:
                       passenger:
                         $ref: '#/components/schemas/certificate_data'
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: |
-            Accès refusé
-            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.
-            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: L'identité n'a pu être trouvée. Vérifiez les identifiants envoyés.
           content:
@@ -827,22 +796,9 @@ paths:
         '200':
           description: OK, le fichier binaire est envoyé
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: |
-            Accès refusé
-            Les permissions de votre token applicatif ne vous permettent pas de télécharger une attestation.
-            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: L'attestation n'a pu être trouvée
           content:
@@ -926,22 +882,9 @@ paths:
                   passenger:
                     $ref: '#/components/schemas/certificate_data'
         '401':
-          description: Non authentifié. Le token applicatif est manquant ou invalide
-          content:
-            application/json:
-              example:
-                code: 401
-                error: Unauthorized
+          $ref: '#/components/responses/http_401_rpc'
         '403':
-          description: |
-            Accès refusé
-            Les permissions de votre token applicatif ne vous permettent pas de vérifier une attestation.
-            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
-          content:
-            application/json:
-              example:
-                code: 403
-                error: Forbidden
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: L'attestation n'a pu être trouvée
           content:
@@ -975,7 +918,7 @@ paths:
                 - $ref: '#/components/schemas/long_distance_application'
       responses:
         '201':
-          description: 'Ok, la demande est enregistrée'
+          description: 'OK, la demande est enregistrée'
           content:
             application/json:
               schema:
@@ -985,6 +928,10 @@ paths:
             - "expired" : correspond a un trajet envoyé "hors délais". Il faut qu'il soit enregistré dans le RPC dans les 5 jours qui suivent sa réalisation
             - "Date should be before 7 days from now" : correspondant à un appel à l'API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet
               sur la courte distance et à moins de J+7 de la date de paiement au conducteur par l'opérateur sur le longue distance.
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
         '404':
           description: |
             La demande n'a pas pu aboutir car un trajet éligible n'a pas été
@@ -1058,7 +1005,11 @@ paths:
                 - journey_type
       responses:
         '200':
-          description: 'Ok, la demande est possible'
+          description: 'OK, la demande est possible'
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
         '409':
           description: Une demande similaire a déjà été enregistrée
           content:
@@ -1071,7 +1022,7 @@ paths:
                     type: string
                     format: datetime
                   uuid:
-                    description: UUID V4 de la demande si la demande a déjà été effectuée par l'opérateur.
+                    description: UUID de la demande si la demande a déjà été effectuée par l'opérateur.
                     type: string
                     format: uuid
       tags:
@@ -1099,11 +1050,15 @@ paths:
               maxItems: 1000
       responses:
         '201':
-          description: Ok
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application_import_response'
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
       tags:
         - Demandes CEE
   /policies/cee/import/identity:
@@ -1122,11 +1077,15 @@ paths:
               maxItems: 1000
       responses:
         '200':
-          description: Ok
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application_identity_import_response'
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
       tags:
         - Demandes CEE
   '/policies/cee/{uuid}':
@@ -1148,7 +1107,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application'
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
         '403':
+          $ref: '#/components/responses/http_403_rpc'
           description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur
         '404':
           description: La demande n'a pas été trouvée
@@ -1168,7 +1130,10 @@ paths:
       responses:
         '204':
           description: La demande a été trouvée et a bien été supprimée.
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
         '403':
+          $ref: '#/components/responses/http_403_rpc'
           description: La demande ne peut aboutir car celle-ci appartient à un autre opérateur.
         '404':
           description: La demande n'a pas été trouvée.
@@ -1734,6 +1699,12 @@ components:
                 description: montant en centimes d'euros
                 type: number
       additionalProperties: false
+    terms_violation_details:
+      description: |
+        Liste des raisons ayant abouti au rejet du trajet.
+      type: array
+      items:
+        $ref: '#/components/schemas/terms_violation_label'
     terms_violation_label:
       description: |
         Etiquette possible pour un cas de non respect des CGU :
@@ -1748,12 +1719,14 @@ components:
         - too_many_trips_by_day
         - too_close_trips
         - expired
+      example:
+        - expired
     fraudcheck_label:
       description: |
         Etiquette possible pour un cas de fraude détectée :
 
         - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`)
-        - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets sur des opérateurs différents dans la même journée.
+        - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets (trip_id) sur des opérateurs différents dans la même journée.
         - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
       type: string
       enum:
@@ -1810,11 +1783,17 @@ components:
         Précédente demande de CEE.
         
         S'il s'agit d'une opération spécifique, le payload est le même que sur
-        l'import, en ajoutant le champs "cee_application_type": "specific".
+        l'import, en ajoutant le champs `"cee_application_type": "specific"`.
         
         S'il s'agit d'une opération standarisée, il convient d'envoyer l'UUID de
-        la demande tel que : { cee_application_type: 'standardized',
-        cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }.
+        la demande tel que : 
+        ```
+        {
+          "cee_application_type": "standardized",
+          "cee_application_uuid": "{{uuid de la demande}}",
+          "identity_key": "{{identity_key}}"
+        }
+        ```
       type: object
       properties:
         cee_application_type:
@@ -1917,7 +1896,7 @@ components:
         - specific
         - standardized
     cee_application_uuid:
-      description: UUID V4 de la demande
+      description: UUID de la demande
       type: string
       format: uuid
     cee_application:
@@ -1947,6 +1926,42 @@ components:
         - datetime
         - uuid
         - token
+  responses:
+    http_200:
+      description: OK
+    http_400_rpc:
+      description: Requête invalide
+      content:
+        application/json:
+          example:
+            id: 1
+            jsonrpc: '2.0'
+            error:
+              data: 'data/driver/identity/phone_trunc must match format "phonetrunc", data/driver/identity/phone_trunc must pass "macro" keyword validation'
+              code: -32602
+              message: Invalid params
+    http_401_rpc:
+      description: Non authentifié. Le token applicatif est manquant ou invalide.
+      content:
+        application/json:
+          example:
+            id: 1
+            jsonrpc: "2.0"
+            error:
+              data: "Unauthorized application"
+              code: -32501
+              message: "Unauthorized Error"
+    http_403_rpc:
+      description: Non autorisé
+      content:
+        application/json:
+          example:
+            id: 1
+            jsonrpc: "2.0"
+            error:
+              data: "Invalid permissions"
+              code: -32503
+              message: "Forbidden Error"
   securitySchemes:
     token:
       type: http
@@ -2423,3 +2438,23 @@ x-topics:
         L'identifiant unique de l'attestation est utilisé pour générer un PDF
         imprimable. Les données stockées lors de la création de l'attestation
         sont mises en forme sur un document au format A4.
+
+  - title: Open data
+    content: |
+      Les trajets réalisés en covoiturage sont disponibles en Open Data sur la
+      [Plateforme ouverte des données publiques françaises (data.gouv.fr)](https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/).
+
+      Le jeu de données est mis à jour chaque début de mois et contient les trajets
+      effectués par les utilisateurs des plateformes de covoiturage partenaires
+      du Registre de preuve de covoiturage.
+
+      Afin de garantir la confidentialité des utilisateurs, les données sont anonymisées et filtrées selon les règles suivantes :
+
+      - Anonymisation des données via la suppression des identifitants conducteurs et passagers.
+      - Application de tranches horaires : les heures de départs et arrivées sont arrondis à 10 minutes près.
+      - Carroyage des données géographiques :
+        - Lorsque la densité du point de départ ou arrivée est faible : la latitude et longitude sont tronqués à 2 décimales (précision de ~700m).
+        - Lorsque la densité du point de départ ou arrivée est forte : la latitude et longitude sont tronqués à 3 décimales (précision de ~70m).
+      - Suppression des trajets afférents à une maille géographique "solitaire" :
+        - Si le nombre d'occurences du code INSEE de départ est < 6 sur le jeu de données, le trajet est supprimé.
+        - Si le nombre d'occurences du code INSEE d'arrivée est < 6 sur le jeu de données, le trajet est supprimé.

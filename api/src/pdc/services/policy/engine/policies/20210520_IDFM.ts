@@ -1,10 +1,8 @@
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
 import { atDate } from "@/pdc/services/policy/engine/helpers/atDate.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAfter } from "@/pdc/services/policy/engine/helpers/isAfter.ts";
+import { isBefore } from "@/pdc/services/policy/engine/helpers/isBefore.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -13,15 +11,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import {
-  endsAt,
-  startsAt,
-} from "@/pdc/services/policy/engine/helpers/position.ts";
+import { endsAt, startsAt, startsOrEndsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -34,8 +26,7 @@ import {
 import { description } from "./20210520_IDFM.html.ts";
 
 // Politique d'Île-de-France Mobilité
-export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "459";
 
@@ -110,8 +101,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
@@ -140,7 +130,36 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
     "2023-08-13",
     "2023-08-14",
     "2024-10-25",
+    "2024-12-11",
+    "2024-12-12",
+    "2024-12-13",
   ];
+
+  protected boosterDatesRangesOnCom = {
+    start_date: new Date("2024-12-6"),
+    end_date: new Date("2024-12-31"),
+    coms: [
+      "95074",
+      "78172",
+      "78382",
+      "78498",
+      "78551",
+      "78005",
+      "95450",
+      "95218",
+      "95183",
+      "95510",
+      "95637",
+      "95306",
+      "95572",
+      "95323",
+      "95394",
+      "95127",
+      "95476",
+      "95388",
+      "95500",
+    ],
+  };
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(
@@ -188,6 +207,16 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class
 
     // Jour de pollution/grève
     if (atDate(ctx, { dates: this.boosterDates })) {
+      amount *= 1.5;
+    }
+
+    // Tarif spécial pour les communes
+    if (
+      isAfter(ctx, { date: this.boosterDatesRangesOnCom.start_date }) &&
+      isBefore(ctx, this.boosterDatesRangesOnCom.end_date) &&
+      startsOrEndsAt(ctx, { com: this.boosterDatesRangesOnCom.coms }) &&
+      !atDate(ctx, { dates: this.boosterDates })
+    ) {
       amount *= 1.5;
     }
 

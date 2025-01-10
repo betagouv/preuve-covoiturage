@@ -7,13 +7,16 @@
 ## Checklist
 
 - [ ] [j'ai suivi les guidelines du "clean code"](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29)
-- [ ] [j'ai mis à jour la documentation technique](https://www.notion.so/Documentation-technique-du-Registre-de-preuve-de-covoiturage-14b994bec93180f98a89da28aff88f32)
+- [ ] j'ai mis à jour la documentation technique dans `/api/specs`
 - [ ] ajout ou mise à jour des tests unitaires
 - [ ] ajout ou mise à jour des tests d'intégration
 
 ## Merge
 
 Je squash la PR et vérifie que le message de commit utilise [la convention d'Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) :
+
+<details>
+<summary>Voir la convention de message de commit...</summary>
 
 ```
 <type>(<scope>): <short summary>
@@ -36,3 +39,4 @@ Types de commit
  - test: Adding missing tests or correcting existing tests
 
 Le _scope_ (optionnel) précise le module ou le composant impacté par le commit.
+</details>

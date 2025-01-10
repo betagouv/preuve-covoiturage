@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: view_location
+    columns:
+      - name: carpool_id
+        description: ''
+        data_type: integer
+      - name: start_geo_code
+        description: ''
+        data_type: character varying
+      - name: end_geo_code
+        description: ''
+        data_type: character varying
+      - name: start_datetime
+        description: ''
+        data_type: timestamp without time zone
+      - name: start_lat
+        description: ''
+        data_type: double precision
+      - name: start_lon
+        description: ''
+        data_type: double precision
+      - name: end_lat
+        description: ''
+        data_type: double precision
+      - name: end_lon
+        description: ''
+        data_type: double precision
