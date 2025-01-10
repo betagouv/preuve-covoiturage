@@ -1,12 +1,9 @@
 import type {
-  ParamsInterface as CampaignsParamsInterface,
-  ResultInterface as CampaignsResultInterface,
-} from "../contracts/campaigns/campaigns.contract.ts";
-
-import type {
-  ParamsInterface as CampaignApdfParamsInterface,
   ResultInterface as CampaignApdfResultInterface,
-} from "../contracts/campaigns/campaignApdf.contract.ts";
+} from "@/pdc/services/dashboard/actions/CampaignApdfAction.ts";
+import type { ResultInterface as CampaignsResultInterface } from "@/pdc/services/dashboard/actions/CampaignsAction.ts";
+import { CampaignApdf as CampaignApdfParamsInterface } from "@/pdc/services/dashboard/dto/CampaignApdf.ts";
+import { Campaigns as CampaignsParamsInterface } from "@/pdc/services/dashboard/dto/Campaigns.ts";
 
 export type {
   CampaignApdfParamsInterface,

@@ -1,13 +1,28 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Campaigns } from "@/pdc/services/dashboard/dto/Campaigns.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/campaigns/campaigns.contract.ts";
-import { alias } from "../contracts/campaigns/campaigns.schema.ts";
+
+export type ResultInterface = Array<{
+  id: string;
+  start_date: Date;
+  end_date: Date;
+  territory_id: string;
+  territory_name: string;
+  name: string;
+  description: string;
+  unit: string;
+  status: string;
+  handler: string;
+  incentive_sum: number;
+  max_amount: number;
+}>;
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "campaigns",
   middlewares: [
-    ["validate", alias],
+    ["validate", Campaigns],
   ],
 })
 export class CampaignsAction extends AbstractAction {
@@ -15,7 +30,7 @@ export class CampaignsAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: Campaigns): Promise<ResultInterface> {
     return this.repository.getCampaigns(params);
   }
 }
