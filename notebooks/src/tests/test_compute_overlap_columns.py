@@ -2,7 +2,7 @@ import datetime
 import unittest
 import pandas as pd
 
-from scripts.helpers.apply_metods import add_overlap_columns
+from helpers.apply_metods import add_overlap_columns
 
 
 class TestComputeCarpoolOverlaps(unittest.TestCase):
