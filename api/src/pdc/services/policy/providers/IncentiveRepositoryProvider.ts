@@ -36,7 +36,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           AND cc.operator_journey_id = pi.operator_journey_id
           AND (
             cs.acquisition_status = 'canceled'
-            OR cs.cs.anomaly_status = 'failed'
+            OR cs.anomaly_status = 'failed'
             OR cs.fraud_status = 'failed'
           )
       `,
