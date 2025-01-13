@@ -3,7 +3,7 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { CampaignApdf } from "@/pdc/services/dashboard/dto/CampaignApdf.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
 
-export type ResultInterface = Array<{
+export type ResultInterface = {
   signed_url: string;
   key: string;
   size: number;
@@ -11,7 +11,7 @@ export type ResultInterface = Array<{
   campaign_id: number;
   datetime: Date;
   name: string;
-}>;
+}[];
 
 @handler({
   service: "dashboard",

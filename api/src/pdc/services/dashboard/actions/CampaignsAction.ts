@@ -3,7 +3,7 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Campaigns } from "@/pdc/services/dashboard/dto/Campaigns.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
 
-export type ResultInterface = Array<{
+export type ResultInterface = {
   id: string;
   start_date: Date;
   end_date: Date;
@@ -16,7 +16,7 @@ export type ResultInterface = Array<{
   handler: string;
   incentive_sum: number;
   max_amount: number;
-}>;
+}[];
 
 @handler({
   service: "dashboard",

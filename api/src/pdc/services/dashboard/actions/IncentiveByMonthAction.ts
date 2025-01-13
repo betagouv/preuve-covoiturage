@@ -1,14 +1,25 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Infer } from "@/lib/superstruct/index.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
+import { IncentiveByMonth } from "@/pdc/services/dashboard/dto/IncentiveByMonth.ts";
 import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
 import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/incentive/incentiveByMonth.contract.ts";
-import { alias } from "../contracts/incentive/incentiveByMonth.schema.ts";
+export type ResultInterface = {
+  year: number;
+  month: number;
+  territory_id: string;
+  direction: Infer<typeof Direction>;
+  journeys: number;
+  incented_journeys: number;
+  incentive_amount: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "incentiveByMonth",
   middlewares: [
-    ["validate", alias],
+    ["validate", IncentiveByMonth],
   ],
 })
 export class IncentiveByMonthAction extends AbstractAction {
@@ -16,7 +27,7 @@ export class IncentiveByMonthAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: IncentiveByMonth): Promise<ResultInterface> {
     if (params.year) {
       params.year = limitNumberParamWithinRange(
         params.year,

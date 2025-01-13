@@ -1,12 +1,11 @@
 import type {
-  ParamsInterface as IncentiveByMonthParamsInterface,
-  ResultInterface as IncentiveByMonthResultInterface,
-} from "../contracts/operators/operatorsByMonth.contract.ts";
-
-import type {
-  ParamsInterface as IncentiveByDayParamsInterface,
   ResultInterface as IncentiveByDayResultInterface,
-} from "../contracts/operators/operatorsByDay.contract.ts";
+} from "@/pdc/services/dashboard/actions/IncentiveByDayAction.ts";
+import type {
+  ResultInterface as IncentiveByMonthResultInterface,
+} from "@/pdc/services/dashboard/actions/IncentiveByMonthAction.ts";
+import type { IncentiveByDay as IncentiveByDayParamsInterface } from "@/pdc/services/dashboard/dto/IncentiveByDay.ts";
+import type { IncentiveByMonth as IncentiveByMonthParamsInterface } from "@/pdc/services/dashboard/dto/IncentiveByMonth.ts";
 
 export type {
   IncentiveByDayParamsInterface,

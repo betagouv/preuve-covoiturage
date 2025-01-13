@@ -1,13 +1,23 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Infer } from "@/lib/superstruct/index.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
+import { IncentiveByDay } from "@/pdc/services/dashboard/dto/IncentiveByDay.ts";
 import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/incentive/incentiveByDay.contract.ts";
-import { alias } from "../contracts/incentive/incentiveByDay.schema.ts";
+export type ResultInterface = {
+  date: Date;
+  territory_id: number;
+  direction: Infer<typeof Direction>;
+  journeys: number;
+  incented_journeys: number;
+  incentive_amount: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "incentiveByDay",
   middlewares: [
-    ["validate", alias],
+    ["validate", IncentiveByDay],
   ],
 })
 export class IncentiveByDayAction extends AbstractAction {
@@ -15,7 +25,7 @@ export class IncentiveByDayAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: IncentiveByDay): Promise<ResultInterface> {
     return this.repository.getIncentiveByDay(params);
   }
 }
