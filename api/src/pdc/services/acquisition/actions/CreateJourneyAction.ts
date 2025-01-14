@@ -63,6 +63,19 @@ export class CreateJourneyAction extends AbstractAction {
     if (end > now || start > end) {
       throw new ParseErrorException("Journeys cannot happen in the future");
     }
+
+    if (
+      !journey.driver?.identity?.phone &&
+      !journey.driver?.identity?.phone_trunc
+    ) {
+      throw new InvalidRequestException(`driver.identity should have a phone or phone_trunc`);
+    }
+    if (
+      !journey.passenger?.identity?.phone &&
+      !journey.passenger?.identity?.phone_trunc
+    ) {
+      throw new InvalidRequestException(`passenger.identity should have a phone or phone_trunc`);
+    }
   }
 
   protected validateResults(context: ContextType, result: RegisterResponse): void {
