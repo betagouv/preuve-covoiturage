@@ -1,13 +1,17 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Territories } from "@/pdc/services/dashboard/dto/Territories.ts";
 import { TerritoriesRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/TerritoriesRepositoryProviderInterface.ts";
-import { handlerConfig, ResultInterface } from "../contracts/territories/territories.contract.ts";
-import { alias } from "../contracts/territories/territories.schema.ts";
+export type ResultInterface = {
+  id: string;
+  name: string;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "territories",
   middlewares: [
-    ["validate", alias],
+    ["validate", Territories],
   ],
 })
 export class TerritoriesAction extends AbstractAction {
@@ -15,7 +19,7 @@ export class TerritoriesAction extends AbstractAction {
     super();
   }
 
-  public async handle(): Promise<ResultInterface> {
-    return this.repository.getTerritories();
+  public async handle(params: Territories): Promise<ResultInterface> {
+    return this.repository.getTerritories(params);
   }
 }

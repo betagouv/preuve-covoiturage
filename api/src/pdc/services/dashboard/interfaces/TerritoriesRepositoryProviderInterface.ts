@@ -1,13 +1,14 @@
-import type { ResultInterface as TerritoriesResultInterface } from "../contracts/territories/territories.contract.ts";
+import type { ResultInterface as TerritoriesResultInterface } from "@/pdc/services/dashboard/actions/TerritoriesAction.ts";
+import { Territories as TerritoriesParamsInterface } from "@/pdc/services/dashboard/dto/Territories.ts";
 
-export type { TerritoriesResultInterface };
+export type { TerritoriesParamsInterface, TerritoriesResultInterface };
 
 export interface TerritoriesRepositoryInterface {
-  getTerritories(): Promise<TerritoriesResultInterface>;
+  getTerritories(params: TerritoriesParamsInterface): Promise<TerritoriesResultInterface>;
 }
 
 export abstract class TerritoriesRepositoryInterfaceResolver implements TerritoriesRepositoryInterface {
-  async getTerritories(): Promise<TerritoriesResultInterface> {
+  async getTerritories(params: TerritoriesParamsInterface): Promise<TerritoriesResultInterface> {
     throw new Error();
   }
 }

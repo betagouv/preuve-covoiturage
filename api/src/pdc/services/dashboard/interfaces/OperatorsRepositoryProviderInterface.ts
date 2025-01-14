@@ -1,17 +1,9 @@
-import type {
-  ParamsInterface as OperatorsParamsInterface,
-  ResultInterface as OperatorsResultInterface,
-} from "../contracts/operators/operators.contract.ts";
-
-import type {
-  ParamsInterface as OperatorsByMonthParamsInterface,
-  ResultInterface as OperatorsByMonthResultInterface,
-} from "../contracts/operators/operatorsByMonth.contract.ts";
-
-import type {
-  ParamsInterface as OperatorsByDayParamsInterface,
-  ResultInterface as OperatorsByDayResultInterface,
-} from "../contracts/operators/operatorsByDay.contract.ts";
+import type { ResultInterface as OperatorsResultInterface } from "@/pdc/services/dashboard/actions/OperatorsAction.ts";
+import type { ResultInterface as OperatorsByDayResultInterface } from "@/pdc/services/dashboard/actions/OperatorsByDayAction.ts";
+import type { ResultInterface as OperatorsByMonthResultInterface } from "@/pdc/services/dashboard/actions/OperatorsByMonthAction.ts";
+import { Operators as OperatorsParamsInterface } from "@/pdc/services/dashboard/dto/Operators.ts";
+import { OperatorsByDay as OperatorsByDayParamsInterface } from "@/pdc/services/dashboard/dto/OperatorsByDay.ts";
+import { OperatorsByMonth as OperatorsByMonthParamsInterface } from "@/pdc/services/dashboard/dto/OperatorsByMonth.ts";
 
 export type {
   OperatorsByDayParamsInterface,

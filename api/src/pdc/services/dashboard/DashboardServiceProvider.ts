@@ -16,13 +16,11 @@ import { IncentiveRepositoryProvider } from "@/pdc/services/dashboard/providers/
 import { TerritoriesRepositoryProvider } from "@/pdc/services/dashboard/providers/TerritoriesRepositoryProvider.ts";
 import { IncentiveByMonthAction } from "./actions/IncentiveByMonthAction.ts";
 import { OperatorsByMonthAction } from "./actions/OperatorsByMonthAction.ts";
-import { config } from "./config/index.ts";
 import { OperatorsRepositoryProvider } from "./providers/OperatorsRepositoryProvider.ts";
 import { UsersRepositoryProvider } from "./providers/UsersRepositoryProvider.ts";
 
 /* eslint-enable */
 @serviceProvider({
-  config,
   commands: [],
   providers: [
     S3StorageProvider,

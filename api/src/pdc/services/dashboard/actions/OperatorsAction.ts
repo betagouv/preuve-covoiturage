@@ -1,13 +1,19 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Operators } from "@/pdc/services/dashboard/dto/Operators.ts";
 import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/operators/operators.contract.ts";
-import { alias } from "../contracts/operators/operators.schema.ts";
+export type ResultInterface = {
+  id: number;
+  name: string;
+  legal_name: string;
+  siret: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "operators",
   middlewares: [
-    ["validate", alias],
+    ["validate", Operators],
   ],
 })
 export class OperatorsAction extends AbstractAction {
@@ -15,7 +21,7 @@ export class OperatorsAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: Operators): Promise<ResultInterface> {
     return this.repository.getOperators(params);
   }
 }

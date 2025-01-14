@@ -1,14 +1,26 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Infer } from "@/lib/superstruct/index.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
+import { OperatorsByMonth } from "@/pdc/services/dashboard/dto/OperatorsByMonth.ts";
 import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
-import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/operators/operatorsByMonth.contract.ts";
-import { alias } from "../contracts/operators/operatorsByMonth.schema.ts";
+export type ResultInterface = {
+  year: number;
+  month: number;
+  territory_id: string;
+  direction: Infer<typeof Direction>;
+  operator_id: number;
+  operator_name: string;
+  journeys: number;
+  incented_journeys: number;
+  incentive_amount: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "operatorsByMonth",
   middlewares: [
-    ["validate", alias],
+    ["validate", OperatorsByMonth],
   ],
 })
 export class OperatorsByMonthAction extends AbstractAction {
@@ -16,14 +28,7 @@ export class OperatorsByMonthAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (params.year) {
-      params.year = limitNumberParamWithinRange(
-        params.year,
-        2020,
-        new Date().getFullYear(),
-      );
-    }
+  public async handle(params: OperatorsByMonth): Promise<ResultInterface> {
     return this.repository.getOperatorsByMonth(params);
   }
 }

@@ -1,13 +1,24 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Users } from "@/pdc/services/dashboard/dto/Users.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/users/users.contract.ts";
-import { alias } from "../contracts/users/users.schema.ts";
+export type ResultInterface = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  operator_id?: number;
+  territory_id?: number;
+  phone: string;
+  status: string;
+  role: string;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "dashboard",
+  method: "users",
   middlewares: [
-    ["validate", alias],
+    ["validate", Users],
   ],
 })
 export class UsersAction extends AbstractAction {
@@ -15,7 +26,7 @@ export class UsersAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: Users): Promise<ResultInterface> {
     return this.repository.getUsers(params);
   }
 }

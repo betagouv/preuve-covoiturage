@@ -4,7 +4,6 @@ import { Infer } from "@/lib/superstruct/index.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { IncentiveByMonth } from "@/pdc/services/dashboard/dto/IncentiveByMonth.ts";
 import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
-import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
 export type ResultInterface = {
   year: number;
   month: number;
@@ -28,13 +27,6 @@ export class IncentiveByMonthAction extends AbstractAction {
   }
 
   public async handle(params: IncentiveByMonth): Promise<ResultInterface> {
-    if (params.year) {
-      params.year = limitNumberParamWithinRange(
-        params.year,
-        2020,
-        new Date().getFullYear(),
-      );
-    }
     return this.repository.getIncentiveByMonth(params);
   }
 }
