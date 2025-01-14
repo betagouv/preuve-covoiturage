@@ -32,6 +32,7 @@ export interface ResultInterface {
   fraud_error_labels?: string[];
   anomaly_error_details?: AnomalyErrorDetails[];
   terms_violation_details?: string[];
+  journey_id?: number;
 }
 
 export const handlerConfig = {

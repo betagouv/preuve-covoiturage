@@ -63,11 +63,26 @@ export class CreateJourneyAction extends AbstractAction {
     if (end > now || start > end) {
       throw new ParseErrorException("Journeys cannot happen in the future");
     }
+
+    if (
+      !journey.driver?.identity?.phone &&
+      !journey.driver?.identity?.phone_trunc
+    ) {
+      throw new InvalidRequestException(`driver.identity should have a phone or phone_trunc`);
+    }
+    if (
+      !journey.passenger?.identity?.phone &&
+      !journey.passenger?.identity?.phone_trunc
+    ) {
+      throw new InvalidRequestException(`passenger.identity should have a phone or phone_trunc`);
+    }
   }
 
   protected validateResults(context: ContextType, result: RegisterResponse): void {
     if (result.terms_violation_error_labels.length) {
-      if (semver.satisfies(semver.parse("3.1.0"), semver.parseRange(context.call?.api_version_range || "3.0"))) {
+      if (
+        semver.rangeIntersects(semver.parseRange(">=3.1"), semver.parseRange(context.call?.api_version_range || "3.0"))
+      ) {
         throw new UnprocessableRequestException({
           terms_violation_labels: result.terms_violation_error_labels,
         });
