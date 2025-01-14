@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   TerritoriesParamsInterface,
   TerritoriesRepositoryInterface,
@@ -17,22 +18,19 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
   constructor(private pg: PostgresConnection) {}
 
   async getTerritories(params: TerritoriesParamsInterface): Promise<TerritoriesResultInterface> {
-    const queryValues: (string | number)[] = params.id ? [params.id] : [];
-    const conditions = params.id
-      ? ["_id=$1", `_id::varchar IN (SELECT DISTINCT territory_id FROM ${this.tableData})`]
-      : [`_id::varchar IN (SELECT DISTINCT territory_id FROM ${this.tableData})`];
-    const queryText = `
+    const filters = [`_id IN (SELECT DISTINCT territory_id FROM ${this.tableData})`];
+    if (params.id) {
+      filters.push(`_id = ${params.id}`);
+    }
+    const query = sql`
       SELECT
         _id AS id,
         name
-      FROM ${this.table} 
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.table)} 
+      WHERE ${raw(filters.join(" AND "))}
       ORDER BY name
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

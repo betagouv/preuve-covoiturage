@@ -1,6 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   APDFNameProvider,
   BucketName,
@@ -34,14 +35,11 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
   async getCampaigns(
     params: CampaignsParamsInterface,
   ): Promise<CampaignsResultInterface> {
-    const queryValues: (string | number)[] = [];
-    const conditions = [];
+    const filters = [];
     if (params.territory_id) {
-      queryValues.push(params.territory_id);
-      conditions.push(`territory_id = $1`);
+      filters.push(`territory_id = ${params.territory_id}`);
     }
-
-    const queryText = `
+    const query = sql`
       SELECT 
         a._id AS id,
         to_char(a.start_date, 'YYYY-MM-DD') AS start_date,
@@ -55,15 +53,12 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
         a.handler,
         a.incentive_sum::int,
         a.max_amount::int
-      FROM ${this.table} a
-      LEFT JOIN ${this.tableTerritory} b on a.territory_id = b._id
-      ${conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""}
+      FROM ${raw(this.table)} a
+      LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
+      ${raw(filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "")}
       ORDER BY status, a.start_date desc 
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 

@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   UsersParamsInterface,
   UsersRepositoryInterface,
@@ -18,13 +19,11 @@ export class UsersRepositoryProvider implements UsersRepositoryInterface {
   async getUsers(
     params: UsersParamsInterface,
   ): Promise<UsersResultInterface> {
-    const queryValues: (string | number)[] = [];
-    const conditions = ["hidden = false"];
+    const filters = ["hidden = false"];
     Object.entries(params).forEach(([k, v]) => {
-      conditions.push(k === "id" ? `_${k}= $${queryValues.length + 1}` : `${k}= $${queryValues.length + 1}`);
-      queryValues.push(v);
+      filters.push(k === "id" ? `_${k}= ${v}` : `${k}= ${v}`);
     });
-    const queryText = `
+    const query = sql`
       SELECT 
         _id as id,
         firstname,
@@ -35,14 +34,11 @@ export class UsersRepositoryProvider implements UsersRepositoryInterface {
         phone,
         status,
         role
-      FROM ${this.table}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.table)}
+      WHERE ${raw(filters.join(" AND "))}
       ORDER BY _id
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

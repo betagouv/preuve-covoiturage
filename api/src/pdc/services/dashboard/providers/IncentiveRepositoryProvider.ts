@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   IncentiveByDayParamsInterface,
   IncentiveByDayResultInterface,
@@ -21,26 +22,15 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
   async getIncentiveByDay(
     params: IncentiveByDayParamsInterface,
   ): Promise<IncentiveByDayResultInterface> {
-    const queryValues: (string | number)[] = [
-      params.territory_id,
-    ];
-    const conditions = [
-      "territory_id = $1",
-    ];
     const date = params.date ? new Date(params.date) : new Date();
-    queryValues.push(date.toISOString().split("T")[0]);
-    queryValues.push(new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]);
-    conditions.push("start_date <= $2");
-    conditions.push("start_date >= $3");
-
-    if (params.direction) {
-      queryValues.push(params.direction);
-      conditions.push(`direction = $4`);
-    } else {
-      conditions.push(`direction='both'`);
-    }
-
-    const queryText = `
+    const direction = params.direction ? params.direction : "both";
+    const filters = [
+      `territory_id = ${params.territory_id}`,
+      `start_date <= '${date.toISOString().split("T")[0]}'`,
+      `start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
+      `direction = '${direction}'`,
+    ];
+    const query = sql`
       SELECT 
         to_char(start_date, 'YYYY-MM-DD') AS start_date,
         territory_id,
@@ -48,40 +38,28 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
         sum(journeys)::int as journeys,
         sum(incented_journeys)::int as incented_journeys,
         sum(incentive_amount)::int as incentive_amount
-      FROM ${this.tableByDay}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.tableByDay)}
+      WHERE ${raw(filters.join(" AND "))}
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 
   async getIncentiveByMonth(
     params: IncentiveByMonthParamsInterface,
   ): Promise<IncentiveByMonthResultInterface> {
-    const queryValues: (string | number)[] = [
-      params.territory_id,
+    const direction = params.direction ? params.direction : "both";
+    const filters = [
+      `territory_id = ${params.territory_id}`,
+      `direction = '${direction}'`,
     ];
-    const conditions = [
-      "territory_id = $1",
-    ];
-
-    if (params.direction) {
-      queryValues.push(params.direction);
-      conditions.push(`direction = $2`);
-    } else {
-      conditions.push(`direction='both'`);
-    }
     if (params.year) {
-      queryValues.push(params.year);
-      conditions.push(`year = ${params.direction ? "$3" : "$2"}`);
+      filters.push(`year = ${params.year}`);
     }
 
-    const queryText = `
+    const query = sql`
       SELECT 
         year,
         month,
@@ -90,14 +68,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
         sum(journeys)::int as journeys,
         sum(incented_journeys)::int as incented_journeys,
         sum(incentive_amount)::int as incentive_amount
-      FROM ${this.tableByMonth}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.tableByMonth)}
+      WHERE ${raw(filters.join(" AND "))}
       GROUP BY 1,2,3,4
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }
