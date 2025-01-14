@@ -67,7 +67,9 @@ export class CreateJourneyAction extends AbstractAction {
 
   protected validateResults(context: ContextType, result: RegisterResponse): void {
     if (result.terms_violation_error_labels.length) {
-      if (semver.satisfies(semver.parse("3.1.0"), semver.parseRange(context.call?.api_version_range || "3.0"))) {
+      if (
+        semver.rangeIntersects(semver.parseRange(">=3.1"), semver.parseRange(context.call?.api_version_range || "3.0"))
+      ) {
         throw new UnprocessableRequestException({
           terms_violation_labels: result.terms_violation_error_labels,
         });
