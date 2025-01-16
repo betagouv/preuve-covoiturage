@@ -20,7 +20,7 @@ describe("Carpool Label Repository", () => {
   // frauds
   const fraud_label_1_V3 = "interoperator_fraud";
 
-  const fraud_label_1_V3_1 = "interoperator_overlap_trip";
+  const fraud_label_1_V3_1 = "interoperator_overlap";
   const fraud_label_2_V3_1 = "interoperator_too_many_trips_by_day";
 
   const { before, after } = makeDbBeforeAfter();
