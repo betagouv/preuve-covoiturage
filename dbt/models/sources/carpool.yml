@@ -54,10 +54,22 @@ sources:
             tests:
               - elementary.column_anomalies:
                   name: Anomalies sur la distance
+                  column_anomalies:
+                    - null_count
+                    - min
+                    - max
+                    - average
+                    - zero_count
                   config:
                     severity: warn
               - elementary.column_anomalies:
                   name: Anomalies sur la distance par opérateur
+                  column_anomalies:
+                    - null_count
+                    - min
+                    - max
+                    - average
+                    - zero_count
                   dimensions:
                     - operator_id
                   config:
@@ -78,6 +90,25 @@ sources:
             data_type: character varying
           - name: driver_revenue
             data_type: integer
+            tests:
+              - elementary.column_anomalies:
+                  name: Anomalies sur les revenus conducteurs
+                  column_anomalies:
+                    - null_count
+                    - max
+                    - average
+                  config:
+                    severity: warn
+              - elementary.column_anomalies:
+                  name: Anomalies sur les revenus conducteurs par opérateurs
+                  column_anomalies:
+                    - null_count
+                    - max
+                    - average
+                  dimensions:
+                    - operator_id
+                  config:
+                    severity: warn
           - name: passenger_identity_key
             data_type: character varying
           - name: passenger_operator_user_id
