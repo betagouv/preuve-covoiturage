@@ -17,13 +17,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - doc: api
+          - doc: rpc-documentation-technique
             version: v3.2
             token: BUMP_TOKEN_API
-          - doc: api
+          - doc: rpc-documentation-technique
             version: v3.1
             token: BUMP_TOKEN_API
-          - doc: api
+          - doc: rpc-documentation-technique
             version: v3.0
             token: BUMP_TOKEN_API
 
