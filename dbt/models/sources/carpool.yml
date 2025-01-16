@@ -6,6 +6,7 @@ sources:
 
     tables:
       - name: carpools
+        tags: ['carpools_source']
         meta:
           elementary: # default config
             timestamp_column: start_datetime
@@ -134,6 +135,7 @@ sources:
           - name: legacy_id
             data_type: bigint
       - name: geo
+        tags: ['geo_source']
         meta:
           elementary: # default config
             timestamp_column: updated_at
