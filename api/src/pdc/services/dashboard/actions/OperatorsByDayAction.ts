@@ -1,6 +1,7 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { OperatorsByDay } from "@/pdc/services/dashboard/dto/OperatorsByDay.ts";
 import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
@@ -20,6 +21,7 @@ export type ResultInterface = {
   method: "operatorsByDay",
   middlewares: [
     ["validate", OperatorsByDay],
+    hasPermissionMiddleware("common.observatory.stats"),
   ],
 })
 export class OperatorsByDayAction extends AbstractAction {

@@ -1,6 +1,7 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { IncentiveByMonth } from "@/pdc/services/dashboard/dto/IncentiveByMonth.ts";
 import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
@@ -19,6 +20,7 @@ export type ResultInterface = {
   method: "incentiveByMonth",
   middlewares: [
     ["validate", IncentiveByMonth],
+    hasPermissionMiddleware("common.observatory.stats"),
   ],
 })
 export class IncentiveByMonthAction extends AbstractAction {

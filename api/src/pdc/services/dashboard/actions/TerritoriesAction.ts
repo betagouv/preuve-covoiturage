@@ -1,5 +1,6 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Territories } from "@/pdc/services/dashboard/dto/Territories.ts";
 import { TerritoriesRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/TerritoriesRepositoryProviderInterface.ts";
 export type ResultInterface = {
@@ -12,6 +13,7 @@ export type ResultInterface = {
   method: "territories",
   middlewares: [
     ["validate", Territories],
+    hasPermissionMiddleware("common.territory.list"),
   ],
 })
 export class TerritoriesAction extends AbstractAction {

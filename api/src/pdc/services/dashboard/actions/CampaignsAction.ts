@@ -1,5 +1,6 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Campaigns } from "@/pdc/services/dashboard/dto/Campaigns.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
 
@@ -23,6 +24,7 @@ export type ResultInterface = {
   method: "campaigns",
   middlewares: [
     ["validate", Campaigns],
+    hasPermissionMiddleware("common.policy.list"),
   ],
 })
 export class CampaignsAction extends AbstractAction {
