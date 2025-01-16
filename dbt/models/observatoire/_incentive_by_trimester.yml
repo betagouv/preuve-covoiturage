@@ -3,29 +3,20 @@ models:
   - name: incentive_by_trimester
     columns:
       - name: year
-        description: ''
         data_type: integer
       - name: trimester
-        description: ''
         data_type: integer
       - name: code
-        description: ''
         data_type: character varying
       - name: libelle
-        description: ''
         data_type: character varying
       - name: type
-        description: ''
         data_type: text
       - name: direction
-        description: ''
         data_type: text
       - name: collectivite
-        description: ''
         data_type: numeric
       - name: operateur
-        description: ''
         data_type: numeric
       - name: autres
-        description: ''
         data_type: numeric

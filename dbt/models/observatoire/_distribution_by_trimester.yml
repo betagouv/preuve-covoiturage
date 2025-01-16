@@ -3,26 +3,18 @@ models:
   - name: distribution_by_trimester
     columns:
       - name: year
-        description: ''
         data_type: numeric
       - name: trimester
-        description: ''
         data_type: integer
       - name: code
-        description: ''
         data_type: character varying
       - name: libelle
-        description: ''
         data_type: character varying
       - name: type
-        description: ''
         data_type: text
       - name: direction
-        description: ''
         data_type: text
       - name: hours
-        description: ''
         data_type: json
       - name: distances
-        description: ''
         data_type: json

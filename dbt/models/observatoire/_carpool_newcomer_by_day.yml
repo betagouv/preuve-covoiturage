@@ -3,17 +3,12 @@ models:
   - name: carpool_newcomer_by_day
     columns:
       - name: from
-        description: ''
         data_type: character varying
       - name: to
-        description: ''
         data_type: character varying
       - name: start_date
-        description: ''
         data_type: date
       - name: new_drivers
-        description: ''
         data_type: bigint
       - name: new_passengers
-        description: ''
         data_type: bigint

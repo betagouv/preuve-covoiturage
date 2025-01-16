@@ -22,6 +22,11 @@ clean-targets: # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
+flags:
+  # Needed for elementary
+  require_explicit_package_overrides_for_builtin_materializations: False
+  source_freshness_run_project_hooks: True
+
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
@@ -41,3 +46,7 @@ models:
       +schema: "dashboard_stats"
     fraud:
       +schema: "fraud"
+
+  ## see docs: https://docs.elementary-data.com/
+  elementary:
+    +schema: "elementary"

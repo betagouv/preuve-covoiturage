@@ -3,29 +3,20 @@ models:
   - name: carpool_by_day
     columns:
       - name: from
-        description: ''
         data_type: character varying
       - name: to
-        description: ''
         data_type: character varying
       - name: start_date
-        description: ''
         data_type: date
       - name: journeys
-        description: ''
         data_type: bigint
       - name: drivers
-        description: ''
         data_type: bigint
       - name: passengers
-        description: ''
         data_type: bigint
       - name: passenger_seats
-        description: ''
         data_type: bigint
       - name: distance
-        description: ''
         data_type: bigint
       - name: duration
-        description: ''
         data_type: interval

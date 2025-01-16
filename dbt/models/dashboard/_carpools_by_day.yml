@@ -1,0 +1,4 @@
+version: 2
+models:
+  - name: carpools_by_day
+    columns: []

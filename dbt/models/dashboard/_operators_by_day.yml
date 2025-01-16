@@ -1,0 +1,4 @@
+version: 2
+models:
+  - name: operators_by_day
+    columns: []
