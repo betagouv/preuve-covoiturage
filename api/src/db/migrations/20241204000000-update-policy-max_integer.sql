@@ -1,0 +1,1 @@
+ALTER TABLE policy.policies ALTER COLUMN max_amount TYPE bigint;
