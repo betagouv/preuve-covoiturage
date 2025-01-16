@@ -1711,7 +1711,7 @@ components:
         $ref: '#/components/schemas/terms_violation_label'
     terms_violation_label:
       description: |
-        Etiquette possible pour un cas de non respect des CGU :
+        Etiquette possible pour un cas de non respect des CGU au sein du même opérateur:
 
         - `distance_too_short` : le trajet a une distance trop faible (<2 km)
         - `too_many_trips_by_day` : le participant (driver_identity_key ou passenger_identity_key) a fait plus de 4 trajets dans la même journée (4 operator_trip_id maximum par usager et par jour sur la même date de départ)
@@ -1729,12 +1729,12 @@ components:
       description: |
         Etiquette possible pour un cas de fraude détectée :
 
-        - `interoperator_overlap` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`)
+        - `interoperator_overlap_trip` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent. (anciennement `interoperator_fraud`)
         - `interoperator_too_many_trips_by_day` : le participant (`identity_key`) a fait plus de 4 trajets (trip_id) sur des opérateurs différents dans la même journée.
-        - `interoperator_too_close_trips` : le trajet d'un couple d'`identity_key` (passager/ conducteur) est trop rapproché (inférieur à 30 min) d'un trajet précédent impliquant ce même couple sur un autre opérateur.
+        - `interoperator_too_close_trips` : le trajet est trop rapproché d'un trajet précédent ou suivant réalisé avec la même personne (Délai minimum de 30mn entre 2 trajets (operator_trip_id différent) impliquant un même usager (driver_identity_key ou passenger_identity_key) sur des opérateurs différents. Sont pris en compte les trajets finissant moins de 30 min avant le départ du trajet soumis ou démarrant moins de 30 min après la fin du trajet soumis.
       type: string
       enum:
-        - interoperator_overlap
+        - interoperator_overlap_trip
         - interoperator_too_many_trips_by_day
         - interoperator_too_close_trips
     anomaly_label:
@@ -1979,7 +1979,7 @@ tags:
       mettre à jour ou de les invalider.
 
       Un trajet est un couple passager.ère / conducteur.rice ayant des points et
-      de horaires de départ et d'arrivée. Si une conductrice covoiture avec
+      de horaires de départ et d'arrivée identiques. Si une conductrice covoiture avec
       plusieurs passagères, plusieurs trajets sont déclarés.
 
       ### Délais et vérifications
@@ -1987,9 +1987,9 @@ tags:
       Les délais à observer sont les suivants :
 
       - 0h : date et heure de départ du trajet passager ;
-      - 0h - 24h : délai pour envoyer le trajet au RPC ;
-      - 0h - 48h : possibilité de mettre à jour ou invalider un trajet ;
-      - 48h - J+5 : phase de traitement du trajet par le RPC.
+      - 0h - 24h : délai pour envoyer le trajet au RPC et possibilité de mettre à jour un trajet qui est en erreur ;
+      - 24h - 48h  : phase de détection d'anomalie ou de fraude sur le trajet par le RPC ;
+      - +48h : calcul des incitations par le RPC sur les campagnes paramétrées ;
 
       Les trajets envoyés après 24h seront refusés.
 
@@ -2029,8 +2029,8 @@ tags:
       vérifier le statut du trajet au plus tôt 24h après la réalisation de
       celui-ci.
 
-      Ces trajets seront retournés avec un champs `status` à `fraud_error` et un
-      label dans `fraud_error_labels` à `interoperator_fraud`.
+      Ces trajets seront retournés avec un champs `status` à `fraud_error` et un ensembles de
+      labels dans `fraud_error_labels`.
 
       L'algorithme de détection de fraude inter opérateurs est appliqué sur tous
       les trajets envoyés.
