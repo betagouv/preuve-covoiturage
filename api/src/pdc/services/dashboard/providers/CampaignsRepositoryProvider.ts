@@ -1,7 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import sql, { raw } from "@/lib/pg/sql.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   APDFNameProvider,
   BucketName,
@@ -37,7 +37,7 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
   ): Promise<CampaignsResultInterface> {
     const filters = [];
     if (params.territory_id) {
-      filters.push(`territory_id = ${params.territory_id}`);
+      filters.push(sql`territory_id = ${params.territory_id}`);
     }
     const query = sql`
       SELECT 
@@ -55,7 +55,7 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
         a.max_amount::int
       FROM ${raw(this.table)} a
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
-      ${raw(filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "")}
+      ${filters.length > 0 ? `WHERE ${join(filters, " AND ")}` : ""}
       ORDER BY status, a.start_date desc 
     `;
     const response = await this.pg.getClient().query(query);

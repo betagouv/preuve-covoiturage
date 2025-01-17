@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql, { raw } from "@/lib/pg/sql.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   OperatorsByDayParamsInterface,
   OperatorsByDayResultInterface,
@@ -25,9 +25,9 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
   async getOperators(
     params: OperatorsParamsInterface,
   ): Promise<OperatorsResultInterface> {
-    const filters = ["deleted_at is null"];
+    const filters = [sql`deleted_at is null`];
     if (params.id) {
-      filters.push(`_id=${params.id}`);
+      filters.push(sql`_id=${params.id}`);
     }
     const query = sql`
       SELECT 
@@ -36,7 +36,7 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
         legal_name,
         siret
       FROM ${raw(this.table)}
-      WHERE ${raw(filters.join(" AND "))}
+      WHERE ${join(filters, " AND ")}
       ORDER BY _id
     `;
     const response = await this.pg.getClient().query(query);
@@ -48,10 +48,10 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
-      `territory_id = ${params.territory_id}`,
-      `start_date <= '${date.toISOString().split("T")[0]}'`,
-      `start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
-      `direction = '${direction}'`,
+      sql`territory_id = ${params.territory_id}`,
+      sql`start_date <= '${date.toISOString().split("T")[0]}'`,
+      sql`start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
+      sql`direction = '${direction}'`,
     ];
 
     const query = sql`
@@ -65,7 +65,7 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
         incented_journeys::int,
         incentive_amount::int
       FROM ${raw(this.tableByDay)}
-      WHERE ${raw(filters.join(" AND "))}
+      WHERE ${join(filters, " AND ")}
       ORDER BY start_date
     `;
     const response = await this.pg.getClient().query(query);
@@ -77,11 +77,11 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
   ): Promise<OperatorsByMonthResultInterface> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
-      `territory_id = ${params.territory_id}`,
-      `direction = '${direction}'`,
+      sql`territory_id = ${params.territory_id}`,
+      sql`direction = '${direction}'`,
     ];
     if (params.year) {
-      filters.push(`year = ${params.year}`);
+      filters.push(sql`year = ${params.year}`);
     }
     const query = sql`
       SELECT 
@@ -95,7 +95,7 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
         incented_journeys::int,
         incentive_amount::int
       FROM ${raw(this.tableByMonth)}
-      WHERE ${raw(filters.join(" AND "))}
+      WHERE ${join(filters, " AND ")}
     `;
     const response = await this.pg.getClient().query(query);
     return response.rows;

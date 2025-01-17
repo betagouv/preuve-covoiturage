@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql, { raw } from "@/lib/pg/sql.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   IncentiveByDayParamsInterface,
   IncentiveByDayResultInterface,
@@ -25,10 +25,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
-      `territory_id = ${params.territory_id}`,
-      `start_date <= '${date.toISOString().split("T")[0]}'`,
-      `start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
-      `direction = '${direction}'`,
+      sql`territory_id = ${params.territory_id}`,
+      sql`start_date <= '${date.toISOString().split("T")[0]}'`,
+      sql`start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
+      sql`direction = '${direction}'`,
     ];
     const query = sql`
       SELECT 
@@ -39,7 +39,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
         sum(incented_journeys)::int as incented_journeys,
         sum(incentive_amount)::int as incentive_amount
       FROM ${raw(this.tableByDay)}
-      WHERE ${raw(filters.join(" AND "))}
+      WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
@@ -52,11 +52,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
   ): Promise<IncentiveByMonthResultInterface> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
-      `territory_id = ${params.territory_id}`,
-      `direction = '${direction}'`,
+      sql`territory_id = ${params.territory_id}`,
+      sql`direction = '${direction}'`,
     ];
     if (params.year) {
-      filters.push(`year = ${params.year}`);
+      filters.push(sql`year = ${params.year}`);
     }
 
     const query = sql`
@@ -69,7 +69,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
         sum(incented_journeys)::int as incented_journeys,
         sum(incentive_amount)::int as incentive_amount
       FROM ${raw(this.tableByMonth)}
-      WHERE ${raw(filters.join(" AND "))}
+      WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3,4
     `;
     const response = await this.pg.getClient().query(query);
