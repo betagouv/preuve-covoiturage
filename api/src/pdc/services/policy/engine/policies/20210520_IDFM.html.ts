@@ -1,13 +1,13 @@
 export const description = `<p id="summary">
-  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2024</b>, toute la semaine
+  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2025</b>, toute la semaine
   </p>
   <p>Cette campagne est limitée à
-    <b>16 800 000 euros </b>.
+    <b>23 300 000 euros </b>.
   </p>
   <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes : </p>
   <ul>
-    <li><b>De 2 à 15 km : 1.5 euros par trajet par passager.</b></li>
-    <li><b>De 15 à 30 km : 0.1 euro par trajet par km par passager.</b></li>
+    <li><b>De 2 à 15 km : 1,50 € par trajet par passager.</b></li>
+    <li><b>De 15 à 30 km : 0,10 € par trajet par km par passager.</b></li>
   </ul>
   <p>Les restrictions suivantes seront appliquées :</p>
   <ul>
