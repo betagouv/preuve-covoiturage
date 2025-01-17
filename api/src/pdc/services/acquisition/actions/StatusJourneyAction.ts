@@ -41,7 +41,7 @@ export class StatusJourneyAction extends AbstractAction {
       status,
       created_at: result.created_at,
       fraud_error_labels: result.fraud.map((f) =>
-        (f.label == "interoperator_overlap_trip") ? "interoperator_overlap" : f.label
+        (f.label && f.label == "interoperator_overlap_trip") ? "interoperator_overlap" : f.label
       ),
       anomaly_error_details: result.anomaly as any,
       terms_violation_details: result.terms.map((f) => f.label),
