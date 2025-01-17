@@ -52,10 +52,7 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
 
-      // FIXME: This is a dirty hack to ensure backward compatibility
-      const apiVersion = api_version == "v3" ? "v3.0" : api_version;
-
-      const versionRange = semver.tryParseRange(apiVersion);
+      const versionRange = semver.tryParseRange(api_version);
       if (!versionRange) {
         return res.status(404).end();
       }
