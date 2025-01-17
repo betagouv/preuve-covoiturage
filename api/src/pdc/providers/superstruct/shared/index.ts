@@ -1,4 +1,4 @@
-import { coerce, date, enums, integer, min, pattern, size, string } from "@/lib/superstruct/index.ts";
+import { coerce, date, enums, integer, pattern, size, string } from "@/lib/superstruct/index.ts";
 
 export const Serial = size(integer(), 0, 2147483647);
 export const DateOnly = coerce(
@@ -23,4 +23,5 @@ export const Phone = pattern(Varchar, /^\+[0-9]{6,20}$/);
 
 export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
 export const Direction = enums(["from", "to", "both"]);
-export const Year = size(min(integer(), 2020), 0, 4);
+export const Year = size(integer(), 2020, new Date().getFullYear());
+export const Id = coerce(Serial, string(), (v) => Math.abs(parseInt(v, 10)));

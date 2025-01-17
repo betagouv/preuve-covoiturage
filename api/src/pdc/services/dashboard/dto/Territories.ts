@@ -1,8 +1,8 @@
-import { coerce, Infer, object, optional, string } from "@/lib/superstruct/index.ts";
-import { Serial } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Infer, object, optional } from "@/lib/superstruct/index.ts";
+import { Id } from "@/pdc/providers/superstruct/shared/index.ts";
 
 export const Territories = object({
-  id: optional(coerce(Serial, string(), (v) => parseInt(v))),
+  id: optional(Id),
 });
 
 export type Territories = Infer<typeof Territories>;
