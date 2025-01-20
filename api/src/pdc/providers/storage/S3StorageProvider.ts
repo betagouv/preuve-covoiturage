@@ -96,13 +96,14 @@ export class S3StorageProvider implements ProviderInterface {
     };
 
     try {
+      console.log(key, rs.readable, params);
       await client.putObject(key, rs.readable, params);
       return key;
     } catch (e) {
+      // rs is closed by the putObject as the stream is consumed
+      // do not call rs.close() or you get a Bad Resource ID error.
       logger.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
-    } finally {
-      rs.close();
     }
   }
 
