@@ -1,4 +1,5 @@
-import { flashGeoSchema, migrateGeoSchema } from "@/db/geo.ts";
+import { flashData } from "@/db/data.ts";
+import { migrateGeoSchema } from "@/db/geo.ts";
 import { migrateSQL } from "@/db/migrations.ts";
 import { addDate, createReadStream, CsvOptions as ParseOptions, parse, URL } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
@@ -80,23 +81,26 @@ export class Migrator {
     }
   }
 
-  async migrate({ skip = false, flash = true } = {}) {
+  async migrate({ skip = false, flash = true, skipGeo = false } = {}) {
     if (skip) {
       logger.warn("[migrator] skipping migrations");
       return;
     }
 
-    if (flash) {
-      logger.info("[migrator] flash geo schema");
-      await flashGeoSchema(this.currentConnectionString);
-      logger.info("[migrator] flash geo schema DONE");
-    } else {
-      logger.info("[migrator] migrate geo schema from sources");
-      await migrateGeoSchema(this.currentConnectionString);
-    }
-
-    logger.info("[migrator] Migrate application schema");
+    logger.info("[migrator] Migrate database schema");
     await migrateSQL(this.currentConnectionString);
+
+    if (flash) {
+      logger.info("[migrator] flash data");
+      await flashData(this.currentConnectionString);
+    } else {
+      if (!skipGeo) {
+        logger.info("[migrator] migrate geo schema from sources");
+        await migrateGeoSchema(this.currentConnectionString);
+      } else {
+        logger.warn("[migrator] No geo data migration!");
+      }
+    }
   }
 
   async seed() {

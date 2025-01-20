@@ -3,8 +3,9 @@ import { env, env_or_false } from "@/lib/env/index.ts";
 import { Migrator } from "@/pdc/providers/seed/index.ts";
 
 type Options = {
-  noFlashGeoSchema: boolean;
+  skipFlashData: boolean;
   skipMigrations: boolean;
+  skipGeoMigrations: boolean;
   databaseUri: string;
 };
 
@@ -13,14 +14,19 @@ type Options = {
   description: "Seed database",
   options: [
     {
-      signature: "--no-flash-geo-schema",
-      description: "migrate geo schema from source, not cache",
-      default: env_or_false("SKIP_FLASH_GEO_SCHEMA"),
+      signature: "--skip-flash-data",
+      description: "do not flash data before seeding",
+      default: env_or_false("SKIP_FLASH_DATA"),
     },
     {
       signature: "--skip-migrations",
       description: "skip all migrations before seeding",
       default: env_or_false("SKIP_ALL_MIGRATIONS"),
+    },
+    {
+      signature: "--skip-geo-migrations",
+      description: "skip geo migrations before seeding",
+      default: env_or_false("SKIP_GEO_MIGRATIONS"),
     },
     {
       signature: "-u, --database-uri <uri>",
@@ -36,7 +42,8 @@ export class SeedCommand implements CommandInterface {
 
     await db.migrate({
       skip: options.skipMigrations,
-      flash: !options.noFlashGeoSchema,
+      flash: !options.skipFlashData,
+      skipGeo: options.skipGeoMigrations,
     });
     await db.seed();
 

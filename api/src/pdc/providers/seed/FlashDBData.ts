@@ -7,7 +7,7 @@ import { exists, getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basename, join } from "@/lib/path/index.ts";
 
-type FlashGeoSchemaConfig = {
+type FlashDBDataConfig = {
   connectionString: string;
   dirname: string;
   cache: { url: string; sha: string };
@@ -15,14 +15,14 @@ type FlashGeoSchemaConfig = {
 
 type SetupPaths = { dir: string; arc: string; sql: string; db: string };
 
-export class FlashGeoSchema {
-  protected config: FlashGeoSchemaConfig;
+export class FlashDBData {
+  protected config: FlashDBDataConfig;
   protected archiveFileName: string;
   protected sqlFileName: string;
   protected pool: PgPool | null = null;
   protected client: PgPoolClient | null = null;
 
-  constructor(config: Partial<FlashGeoSchemaConfig> = {}) {
+  constructor(config: Partial<FlashDBDataConfig> = {}) {
     this.config = this.validateConfig(config);
     this.archiveFileName = basename(this.config.cache.url);
     this.sqlFileName = this.archiveFileName.replace(/\.7z$/, "");
@@ -43,7 +43,7 @@ export class FlashGeoSchema {
   // Private methods
   // ---------------------------------------------------------------------------
 
-  private validateConfig(partial: Partial<FlashGeoSchemaConfig> = {}): FlashGeoSchemaConfig {
+  private validateConfig(partial: Partial<FlashDBDataConfig> = {}): FlashDBDataConfig {
     const struct = s.object({
       connectionString: s.defaulted(s.string(), () => env("APP_POSTGRES_URL"), { strict: true }),
       dirname: s.defaulted(
@@ -53,11 +53,11 @@ export class FlashGeoSchema {
       cache: s.object({
         url: s.refine(s.string(), "CacheURL", (value) => {
           if (!value.startsWith("https://")) {
-            logger.warn(`[FlashGeoSchema] Cache URL should start with "https://", got: ${value}`);
+            logger.warn(`[FlashDBData] Cache URL should start with "https://", got: ${value}`);
           }
 
           if (!value.endsWith(".7z")) {
-            logger.error(`[FlashGeoSchema] Cache URL should end with ".7z", got: ${value}`);
+            logger.error(`[FlashDBData] Cache URL should end with ".7z", got: ${value}`);
             return false;
           }
 
@@ -74,7 +74,7 @@ export class FlashGeoSchema {
   }
 
   private async setup(): Promise<SetupPaths> {
-    logger.info(`[FlashGeoSchema] Setting up...`);
+    logger.info(`[FlashDBData] Setting up...`);
     const dir = await this.ensureDestination();
     const arc = await this.ensureArchiveFilePath();
     const sql = await this.ensureSqlFilePath();
@@ -99,16 +99,16 @@ export class FlashGeoSchema {
   }
 
   private async downloadArchive({ arc }: Pick<SetupPaths, "arc">): Promise<void> {
-    logger.info(`[FlashGeoSchema] Downloading archive from cache...`);
+    logger.info(`[FlashDBData] Downloading archive from cache...`);
 
     // local cache
     if (await exists(arc)) {
       try {
         await this.validateArchive(arc);
-        logger.info(`[FlashGeoSchema] File exists in cache, skipping download...`);
+        logger.info(`[FlashDBData] File exists in cache, skipping download...`);
         return;
       } catch {
-        logger.info(`[FlashGeoSchema] Existing archive is invalid, download again...`);
+        logger.info(`[FlashDBData] Existing archive is invalid, download again...`);
       }
     }
 
@@ -124,12 +124,12 @@ export class FlashGeoSchema {
   }
 
   private async extractArchive({ dir, arc, sql }: Omit<SetupPaths, "db">): Promise<void> {
-    logger.info(`[FlashGeoSchema] Extracting 7z archive...`);
+    logger.info(`[FlashDBData] Extracting 7z archive...`);
 
     await this.validateArchive(arc);
 
     if (await exists(sql)) {
-      logger.info(`[FlashGeoSchema] SQL file exists in cache, skipping extraction...`);
+      logger.info(`[FlashDBData] SQL file exists in cache, skipping extraction...`);
       return;
     }
 
@@ -144,18 +144,17 @@ export class FlashGeoSchema {
 
   private async restore({ sql, db }: Pick<SetupPaths, "sql" | "db">): Promise<void> {
     try {
-      logger.info(`[FlashGeoSchema] Restoring schema...`);
+      logger.info(`[FlashDBData] Restoring schema...`);
 
       this.pool = new PgPool(this.config.connectionString, 10);
       this.client = await this.pool.connect();
       await this.client.queryArray("BEGIN");
-      // await this.client.queryArray("CREATE SCHEMA IF NOT EXISTS geo");
       await this.client.queryArray("CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public");
       await this.client.queryArray("COMMIT");
       await this.restoreDump(db, sql);
     } catch (e) {
       this.client && await this.client.queryArray("ROLLBACK");
-      logger.error(`[FlashGeoSchema] Error restoring schema: ${e.message}`);
+      logger.error(`[FlashDBData] Error restoring schema: ${e.message}`);
     } finally {
       this.client && this.client.release();
       this.pool && await this.pool.end();
@@ -168,11 +167,11 @@ export class FlashGeoSchema {
     const { stdout, stderr } = await child.output();
 
     if (stdout.length) {
-      logger.info(`[FlashGeoSchema] Restored dump: ${new TextDecoder().decode(stdout)}`);
+      logger.info(`[FlashDBData] Restored dump: ${new TextDecoder().decode(stdout)}`);
     }
 
     if (stderr.length) {
-      logger.error(`[FlashGeoSchema] Error restoring dump: ${new TextDecoder().decode(stderr)}`);
+      logger.error(`[FlashDBData] Error restoring dump: ${new TextDecoder().decode(stderr)}`);
     }
   }
 }
