@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql, { join, raw } from "@/lib/pg/sql.ts";
+import sql, { empty, join, raw } from "@/lib/pg/sql.ts";
 import { checkIndicParam, checkTerritoryParam } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
@@ -33,17 +33,17 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     params: GetFluxParamsInterface,
   ): Promise<GetFluxResultInterface> {
     const tableName = this.table(params);
-    const observeParam = sql`${checkTerritoryParam(params.observe)}`;
-    const typeParam = sql`${checkTerritoryParam(params.type)}`;
+    const observeParam = checkTerritoryParam(params.observe);
+    const typeParam = checkTerritoryParam(params.type);
 
     const perimTableQuery = sql`
-      SELECT ${observeParam} 
+      SELECT ${raw(observeParam)} 
       FROM (
         SELECT com, epci, aom, dep, reg, country 
         FROM ${raw(this.perim_table)} 
         WHERE year = geo.get_latest_millesime_or(${params.year}::smallint)
       ) t 
-      WHERE ${typeParam} = ${params.code}
+      WHERE ${raw(typeParam)} = ${params.code}
     `;
 
     const filters = [
@@ -72,7 +72,6 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       FROM ${raw(tableName)}
       WHERE ${join(filters, " AND ")}
     `;
-    console.log(query);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }
@@ -88,16 +87,16 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       "distance",
       "duration",
     ];
-    const indicParam = sql`${checkIndicParam(params.indic, indics, "journeys")}`;
+    const indicParam = checkIndicParam(params.indic, indics, "journeys");
     const typeParam = sql`${checkTerritoryParam(params.type)}`;
     const limit = sql`${params.past ? Number(params.past) * 12 + 1 : 25}`;
     const selectedVar = [
       sql`year`,
-      sql`sum(${indicParam}) AS ${indicParam}`,
+      sql`sum(${raw(indicParam)}::numeric) AS ${raw(indicParam)}`,
     ];
     const filters = [
       sql`type = ${typeParam}`,
-      sql`(territory_1 = '${params.code}' OR territory_2 = '${params.code}')`,
+      sql`(territory_1 = ${params.code} OR territory_2 = ${params.code})`,
     ];
     const groupBy = [
       sql`year`,
@@ -116,14 +115,14 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     }
     const query = sql`
       SELECT ${join(selectedVar, ", ")} 
-      ${indicParam == sql`distance` ? sql`, sum(journeys) AS journeys` : ""}
+      ${indicParam == `distance` ? sql`, sum(journeys) AS journeys` : empty}
       FROM ${raw(tableName)}
       WHERE ${join(filters, " AND ")}
       GROUP BY ${join(groupBy, ", ")} 
       ORDER BY (${join(groupBy, ", ")}) DESC
       LIMIT ${limit};
     `;
-
+    console.log(query.values, query.text);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }
@@ -133,7 +132,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     params: GetBestFluxParamsInterface,
   ): Promise<GetBestFluxResultInterface> {
     const tableName = this.table(params);
-    const typeParam = sql`${checkTerritoryParam(params.type)}`;
+    const typeParam = checkTerritoryParam(params.type);
     const perimTableQuery = sql`
       SELECT com
       FROM (
@@ -141,7 +140,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         FROM ${raw(this.perim_table)} 
         WHERE year = geo.get_latest_millesime_or(${params.year}::smallint)
       ) t 
-      WHERE ${typeParam} = ${params.code}
+      WHERE ${raw(typeParam)} = ${params.code}
     `;
     const filters = [
       sql`year = ${params.year}`,

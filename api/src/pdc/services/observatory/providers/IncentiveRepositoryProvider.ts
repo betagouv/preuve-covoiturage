@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   IncentiveParamsInterface,
@@ -11,8 +12,7 @@ import {
 @provider({
   identifier: IncentiveRepositoryInterfaceResolver,
 })
-export class IncentiveRepositoryProvider
-  implements IncentiveRepositoryInterface {
+export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface {
   private readonly table = (
     params: IncentiveParamsInterface,
   ) => {
@@ -24,40 +24,25 @@ export class IncentiveRepositoryProvider
     params: IncentiveParamsInterface,
   ): Promise<IncentiveResultInterface> {
     const tableName = this.table(params);
-    const conditions = [
-      `year = $1`,
-      `type = $2`,
-      `code = $3`,
-    ];
-    const queryValues = [
-      params.year,
-      params.type,
-      params.code,
+    const filters = [
+      sql`year = ${params.year}`,
+      sql`type = ${params.type}`,
+      sql`code = ${params.code}`,
     ];
     if (params.direction) {
-      queryValues.push(params.direction);
-      conditions.push(`direction = $4`);
+      filters.push(sql`direction = ${params.direction}`);
     }
     if (params.month) {
-      queryValues.push(params.month);
-      params.direction
-        ? conditions.push(`month = $5`)
-        : conditions.push(`month = $4`);
+      filters.push(sql`month = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      params.direction
-        ? conditions.push(`trimester = $5`)
-        : conditions.push(`trimester = $4`);
+      filters.push(sql`trimester = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      params.direction
-        ? conditions.push(`semester = $5`)
-        : conditions.push(`semester = $4`);
+      filters.push(sql`semester = ${params.semester}`);
     }
 
-    const queryText = `
+    const query = sql`
       SELECT 
         code, 
         libelle,
@@ -65,13 +50,10 @@ export class IncentiveRepositoryProvider
         collectivite,
         operateur,
         autres 
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

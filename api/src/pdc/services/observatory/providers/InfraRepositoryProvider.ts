@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   AiresCovoiturageParamsInterface,
@@ -19,9 +20,19 @@ export class InfraRepositoryProvider implements InfraRepositoryInterface {
   async getAiresCovoiturage(
     params: AiresCovoiturageParamsInterface,
   ): Promise<AiresCovoiturageResultInterface> {
-    const sql = {
-      values: [params.code],
-      text: `SELECT 
+    const typeParam = checkTerritoryParam(params.type);
+    const filters = [
+      sql`ouvert = true`,
+    ];
+    if (params.code) {
+      filters.push(sql`insee IN (
+        SELECT arr 
+        FROM ${raw(this.perim_table)}
+        WHERE year = geo.get_latest_millesime() 
+        AND ${raw(typeParam)} = ${params.code})`);
+    }
+
+    const query = sql`SELECT 
       id_lieu, 
       nom_lieu, 
       com_lieu, 
@@ -34,20 +45,10 @@ export class InfraRepositoryProvider implements InfraRepositoryInterface {
       proprio, 
       lumiere, 
       ST_AsGeoJSON(geom,6)::json as geom 
-      FROM ${this.table}
-      WHERE ouvert = true
-      ${
-        checkTerritoryParam(params.type) && params.code
-          ? `AND insee IN (
-          SELECT arr 
-          FROM ${this.perim_table}
-          WHERE year = geo.get_latest_millesime() 
-          AND ${checkTerritoryParam(params.type)} = $1
-        )`
-          : ""
-      };`,
-    };
-    const response = await this.pg.getClient().query(sql);
+      FROM ${raw(this.table)}
+      WHERE ${join(filters, " AND ")}
+    `;
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

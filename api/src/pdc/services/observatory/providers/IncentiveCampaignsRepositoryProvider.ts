@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   CampaignsParamsInterface,
@@ -11,8 +12,7 @@ import {
 @provider({
   identifier: IncentiveCampaignsRepositoryInterfaceResolver,
 })
-export class IncentiveCampaignsRepositoryProvider
-  implements IncentiveCampaignsRepositoryInterface {
+export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsRepositoryInterface {
   private readonly table = "observatoire_stats.incentive_campaigns";
   private readonly perim_table = "geo_stats.perimeters_aggregate";
 
@@ -21,47 +21,34 @@ export class IncentiveCampaignsRepositoryProvider
   async getCampaigns(
     params: CampaignsParamsInterface,
   ): Promise<CampaignsResultInterface> {
-    const typeParam = params.type !== undefined
-      ? checkTerritoryParam(params.type)
-      : null;
-    const queryValues: (string | number)[] = [];
-    const conditions = [
-      `b.geom IS NOT NULL`,
+    const typeParam = params.type !== undefined ? checkTerritoryParam(params.type) : null;
+    const filters = [
+      sql`b.geom IS NOT NULL`,
     ];
     if (params.code) {
-      queryValues.push(params.code);
-      params.year
-        ? conditions.push(`left(a.code,9) = $2`)
-        : conditions.push(`left(a.code,9) = $1`);
+      filters.push(sql`left(a.code,9) = ${params.code}`);
     }
     if (params.year && !params.code) {
-      queryValues.push(params.year);
-      //conditions.push(`right(a.date_debut,4) = $1::varchar`);
-      conditions.push(`right(a.date_fin,4) = $1::varchar`);
-      conditions.push(`to_date(a.date_fin,'DD/MM/YYYY') < now()`);
+      filters.push(sql`right(a.date_fin,4) = ${params.year}::varchar`);
+      filters.push(sql`to_date(a.date_fin,'DD/MM/YYYY') < now()`);
     }
     if (params.year && params.code) {
-      queryValues.push(params.year);
-      //conditions.push(`right(a.date_debut,4) = $2::varchar`);
-      conditions.push(`right(a.date_fin,4) = $2::varchar`);
+      filters.push(sql`right(a.date_fin,4) = ${params.year}::varchar`);
     }
     if (!params.year && !params.code) {
-      conditions.push(`to_date(a.date_fin,'DD/MM/YYYY') > now()`);
+      filters.push(sql`to_date(a.date_fin,'DD/MM/YYYY') > now()`);
     }
     if (typeParam) {
-      conditions.push(`a.type = '${typeParam}'`);
+      filters.push(sql`a.type = ${typeParam}`);
     }
-    const queryText = `
+    const query = sql`
       SELECT a.*, ST_AsGeoJSON(b.geom,6)::json as geom
-      FROM ${this.table} a 
-      LEFT JOIN ${this.perim_table} b on a.type = b.type AND left(a.code,9) = b.code 
+      FROM ${raw(this.table)} a 
+      LEFT JOIN ${raw(this.perim_table)} b on a.type = b.type AND left(a.code,9) = b.code 
       AND b.year = geo.get_latest_millesime()
-      WHERE ${conditions.join(" AND ")}
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }
