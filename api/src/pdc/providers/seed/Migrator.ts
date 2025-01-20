@@ -89,11 +89,13 @@ export class Migrator {
     if (flash) {
       logger.info("[migrator] flash geo schema");
       await flashGeoSchema(this.currentConnectionString);
+      logger.info("[migrator] flash geo schema DONE");
     } else {
       logger.info("[migrator] migrate geo schema from sources");
       await migrateGeoSchema(this.currentConnectionString);
     }
 
+    logger.info("[migrator] Migrate application schema");
     await migrateSQL(this.currentConnectionString);
   }
 

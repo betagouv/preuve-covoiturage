@@ -6,7 +6,6 @@ import { env, env_or_default } from "@/lib/env/index.ts";
 import { exists, getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basename, join } from "@/lib/path/index.ts";
-import { streamStderr, streamStdout } from "../../../lib/logger/streams.ts";
 
 type FlashGeoSchemaConfig = {
   connectionString: string;
@@ -35,16 +34,9 @@ export class FlashGeoSchema {
 
   public async exec(): Promise<void> {
     const { dir, arc, sql, db } = await this.setup();
-
-    logger.info(`[FlashGeoSchema] Downloading archive from cache...`);
-
     await this.downloadArchive({ arc });
     await this.extractArchive({ dir, arc, sql });
-
-    logger.info(`[FlashGeoSchema] Restoring...`);
     await this.restore({ sql, db });
-
-    logger.info(`[FlashGeoSchema] Cleaning up...`);
   }
 
   // ---------------------------------------------------------------------------
@@ -107,6 +99,8 @@ export class FlashGeoSchema {
   }
 
   private async downloadArchive({ arc }: Pick<SetupPaths, "arc">): Promise<void> {
+    logger.info(`[FlashGeoSchema] Downloading archive from cache...`);
+
     // local cache
     if (await exists(arc)) {
       try {
@@ -155,12 +149,12 @@ export class FlashGeoSchema {
       this.pool = new PgPool(this.config.connectionString, 10);
       this.client = await this.pool.connect();
       await this.client.queryArray("BEGIN");
-      await this.client.queryArray("CREATE SCHEMA IF NOT EXISTS geo");
-      await this.client.queryArray("CREATE EXTENSION IF NOT EXISTS postgis");
+      // await this.client.queryArray("CREATE SCHEMA IF NOT EXISTS geo");
+      await this.client.queryArray("CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public");
       await this.client.queryArray("COMMIT");
       await this.restoreDump(db, sql);
     } catch (e) {
-      await this.client.queryArray("ROLLBACK");
+      this.client && await this.client.queryArray("ROLLBACK");
       logger.error(`[FlashGeoSchema] Error restoring schema: ${e.message}`);
     } finally {
       this.client && this.client.release();
@@ -169,16 +163,16 @@ export class FlashGeoSchema {
   }
 
   private async restoreDump(db: string, sql: string): Promise<void> {
-    const cmd = new Deno.Command(
-      "pg_restore",
-      {
-        args: ["-xO", "--clean", "-d", db, sql],
-        stdout: "piped",
-        stderr: "piped",
-      },
-    );
+    const cmd = new Deno.Command("pg_restore", { args: ["-xO", "-d", db, sql], stdout: "piped", stderr: "piped" });
     const child = cmd.spawn();
-    streamStdout(child.stdout, "INFO");
-    streamStderr(child.stderr, "ERROR");
+    const { stdout, stderr } = await child.output();
+
+    if (stdout.length) {
+      logger.info(`[FlashGeoSchema] Restored dump: ${new TextDecoder().decode(stdout)}`);
+    }
+
+    if (stderr.length) {
+      logger.error(`[FlashGeoSchema] Error restoring dump: ${new TextDecoder().decode(stderr)}`);
+    }
   }
 }

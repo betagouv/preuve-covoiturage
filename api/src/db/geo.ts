@@ -34,13 +34,9 @@ export async function flashGeoSchema(connectionString: string): Promise<void> {
 
   const flash = new FlashGeoSchema({
     connectionString,
-    // cache: {
-    //   url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/2024-12-26_geo_schema.sql.7z",
-    //   sha: "a6ac18a0d519f0759e34c158d067e3b512fc590fa3aa15d720525762f914fc9b",
-    // },
     cache: {
-      url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/2024-12-27_geo_schema.pgsql.7z",
-      sha: "c19653a746cc4c08f8616b6407a12a0a471975a6acc72ac4d411e964ce8f5afd",
+      url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/20250120_geo.pgsql.7z",
+      sha: "57e3808df9fc77506ab96667f5ab4b072aa012a82d752b9b15e37d8e0ec89424",
     },
   });
 
