@@ -1,5 +1,4 @@
 import { flashData } from "@/db/data.ts";
-import { migrateGeoSchema } from "@/db/geo.ts";
 import { migrateSQL } from "@/db/migrations.ts";
 import { addDate, createReadStream, CsvOptions as ParseOptions, parse, URL } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
@@ -81,7 +80,7 @@ export class Migrator {
     }
   }
 
-  async migrate({ skip = false, flash = true, skipGeo = false } = {}) {
+  async migrate({ skip = false, flash = true } = {}) {
     if (skip) {
       logger.warn("[migrator] skipping migrations");
       return;
@@ -93,13 +92,6 @@ export class Migrator {
     if (flash) {
       logger.info("[migrator] flash data");
       await flashData(this.currentConnectionString);
-    } else {
-      if (!skipGeo) {
-        logger.info("[migrator] migrate geo schema from sources");
-        await migrateGeoSchema(this.currentConnectionString);
-      } else {
-        logger.warn("[migrator] No geo data migration!");
-      }
     }
   }
 

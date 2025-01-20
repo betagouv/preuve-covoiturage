@@ -20,7 +20,6 @@ import { OperatorServiceProvider } from "../services/operator/OperatorServicePro
 import { PolicyServiceProvider } from "../services/policy/PolicyServiceProvider.ts";
 import { TerritoryServiceProvider } from "../services/territory/TerritoryServiceProvider.ts";
 import { UserServiceProvider } from "../services/user/UserServiceProvider.ts";
-import { SeedCommand } from "./commands/SeedCommand.ts";
 import { config } from "./config/index.ts";
 
 @kernel({
@@ -42,7 +41,7 @@ import { config } from "./config/index.ts";
     ObservatoryServiceProvider,
     GeoServiceProvider,
   ],
-  commands: [SeedCommand, ListCommand],
+  commands: [ListCommand],
   providers: [
     SentryProvider,
     TokenProvider,

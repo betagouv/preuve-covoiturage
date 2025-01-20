@@ -1,7 +1,7 @@
-import { FlashDBData } from "../pdc/providers/seed/FlashDBData.ts";
+import { FlashDBData } from "@/pdc/providers/seed/FlashDBData.ts";
 
 /**
- * Configure the cache for the geo schema.
+ * Configure the cache for the data.
  *
  * Requirements:
  * - `pg_dump`
@@ -11,8 +11,8 @@ import { FlashDBData } from "../pdc/providers/seed/FlashDBData.ts";
  * # Dump and compress the schema + data
  *
  * ```sh
- * pg_dump -Fp -xO -n geo | 7z a -si $(date +%F)_geo_schema.sql.7z
- * sha256sum $(date +%F)_geo_schema.sql.7z | tee $(date +%F)_geo_schema.sql.7z.sha
+ * pg_dump -Fp -xO -a -n geo | 7z a -si $(date +%F)_data.sql.7z
+ * sha256sum $(date +%F)_data.sql.7z | tee $(date +%F)_data.sql.7z.sha
  * ```
  *
  * # Upload the archive to the cache
@@ -27,8 +27,8 @@ export async function flashData(connectionString: string): Promise<void> {
   const flash = new FlashDBData({
     connectionString,
     cache: {
-      url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/20250120_geo.pgsql.7z",
-      sha: "57e3808df9fc77506ab96667f5ab4b072aa012a82d752b9b15e37d8e0ec89424",
+      url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/20250120_data.pgsql.7z",
+      sha: "9fbbd21fe84b77bac0536c270a2365c9a721ab067f8c9ccc1103e4b51a0432bf",
     },
   });
 

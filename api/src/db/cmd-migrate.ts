@@ -6,6 +6,5 @@ await migrator.up();
 await migrator.migrate({
   skip: env_or_false("SKIP_ALL_MIGRATIONS"),
   flash: !env_or_false("SKIP_FLASH_DATA"),
-  skipGeo: env_or_false("SKIP_GEO_MIGRATIONS"),
 });
 await migrator.down();
