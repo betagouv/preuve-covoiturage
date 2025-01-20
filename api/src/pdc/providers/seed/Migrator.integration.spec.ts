@@ -7,7 +7,7 @@ describe("seed", () => {
   beforeAll(async () => {
     await db.create();
     await db.up();
-    await db.migrate();
+    await db.migrate({ flash: false, verbose: false });
     await db.seed();
   });
 
