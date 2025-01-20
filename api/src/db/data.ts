@@ -23,13 +23,14 @@ import { FlashDBData } from "@/pdc/providers/seed/FlashDBData.ts";
  *
  * # Update the cache configuration below
  */
-export async function flashData(connectionString: string): Promise<void> {
+export async function flashData(connectionString: string, verbose = true): Promise<void> {
   const flash = new FlashDBData({
     connectionString,
     cache: {
       url: "https://geo-datasets-archives.s3.fr-par.scw.cloud/20250120_data.pgsql.7z",
       sha: "9fbbd21fe84b77bac0536c270a2365c9a721ab067f8c9ccc1103e4b51a0432bf",
     },
+    verbose,
   });
 
   await flash.exec();

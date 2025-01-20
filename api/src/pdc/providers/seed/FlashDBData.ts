@@ -11,6 +11,7 @@ type FlashDBDataConfig = {
   connectionString: string;
   dirname: string;
   cache: { url: string; sha: string };
+  verbose: boolean;
 };
 
 type SetupPaths = { dir: string; arc: string; sql: string; db: string };
@@ -65,6 +66,7 @@ export class FlashDBData {
         }),
         sha: s.pattern(s.string(), /^[a-f0-9]{64}$/i),
       }),
+      verbose: s.defaulted(s.boolean(), () => true),
     });
 
     const complete = s.create(partial, struct);
@@ -74,7 +76,7 @@ export class FlashDBData {
   }
 
   private async setup(): Promise<SetupPaths> {
-    logger.info(`[FlashDBData] Setting up...`);
+    this.config.verbose && logger.info(`[FlashDBData] Setting up...`);
     const dir = await this.ensureDestination();
     const arc = await this.ensureArchiveFilePath();
     const sql = await this.ensureSqlFilePath();
@@ -99,16 +101,16 @@ export class FlashDBData {
   }
 
   private async downloadArchive({ arc }: Pick<SetupPaths, "arc">): Promise<void> {
-    logger.info(`[FlashDBData] Downloading archive from cache...`);
+    this.config.verbose && logger.info(`[FlashDBData] Downloading archive from cache...`);
 
     // local cache
     if (await exists(arc)) {
       try {
         await this.validateArchive(arc);
-        logger.info(`[FlashDBData] File exists in cache, skipping download...`);
+        this.config.verbose && logger.info(`[FlashDBData] File exists in cache, skipping download...`);
         return;
       } catch {
-        logger.info(`[FlashDBData] Existing archive is invalid, download again...`);
+        this.config.verbose && logger.info(`[FlashDBData] Existing archive is invalid, download again...`);
       }
     }
 
@@ -124,12 +126,12 @@ export class FlashDBData {
   }
 
   private async extractArchive({ dir, arc, sql }: Omit<SetupPaths, "db">): Promise<void> {
-    logger.info(`[FlashDBData] Extracting 7z archive...`);
+    this.config.verbose && logger.info(`[FlashDBData] Extracting 7z archive...`);
 
     await this.validateArchive(arc);
 
     if (await exists(sql)) {
-      logger.info(`[FlashDBData] SQL file exists in cache, skipping extraction...`);
+      this.config.verbose && logger.info(`[FlashDBData] SQL file exists in cache, skipping extraction...`);
       return;
     }
 
@@ -144,7 +146,7 @@ export class FlashDBData {
 
   private async restore({ sql, db }: Pick<SetupPaths, "sql" | "db">): Promise<void> {
     try {
-      logger.info(`[FlashDBData] Restoring schema...`);
+      this.config.verbose && logger.info(`[FlashDBData] Restoring schema...`);
 
       this.pool = new PgPool(this.config.connectionString, 10);
       this.client = await this.pool.connect();
@@ -167,7 +169,7 @@ export class FlashDBData {
     const { stdout, stderr } = await child.output();
 
     if (stdout.length) {
-      logger.info(`[FlashDBData] Restored dump: ${new TextDecoder().decode(stdout)}`);
+      this.config.verbose && logger.info(`[FlashDBData] Restored dump: ${new TextDecoder().decode(stdout)}`);
     }
 
     if (stderr.length) {

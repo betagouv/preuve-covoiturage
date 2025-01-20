@@ -47,7 +47,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
         "postgresql://postgres:postgres@localhost:5432/local";
       const db = new Migrator(connectionString);
       await db.create();
-      await db.migrate({ flash: false });
+      await db.migrate({ flash: false, verbose: false });
       await db.seed();
 
       return { db, connection: db.testConn };

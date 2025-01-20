@@ -30,7 +30,12 @@ async function getDoneMigrations(client: PgClient): Promise<Set<string>> {
   return new Set(result.rows.map((r) => r.name));
 }
 
-async function runMigrations(config: string) {
+export async function migrateSQL(config: string, verbose = true) {
+  if (env_or_false("SKIP_SQL_MIGRATIONS")) {
+    logger.warn("Skipping SQL migrations");
+    return;
+  }
+
   const pool = new PgPool(config, 20);
   const conn = await pool.connect();
 
@@ -52,7 +57,7 @@ async function runMigrations(config: string) {
       await transaction.begin();
 
       try {
-        logger.info(`RUN ${td}`);
+        verbose && logger.info(` - migrate ${td}`);
         await transaction.queryArray(statements);
         await transaction.queryArray`INSERT INTO public.migrations (name, run_on) VALUES (${td}, NOW())`;
         await transaction.commit();
@@ -68,13 +73,4 @@ async function runMigrations(config: string) {
     conn.release();
     await pool.end();
   }
-}
-
-export async function migrateSQL(config: string) {
-  if (env_or_false("SKIP_SQL_MIGRATIONS")) {
-    logger.warn("Skipping SQL migrations");
-    return;
-  }
-
-  await runMigrations(config);
 }

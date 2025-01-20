@@ -80,18 +80,18 @@ export class Migrator {
     }
   }
 
-  async migrate({ skip = false, flash = true } = {}) {
+  async migrate({ skip = false, flash = true, verbose = true } = {}) {
     if (skip) {
       logger.warn("[migrator] skipping migrations");
       return;
     }
 
-    logger.info("[migrator] Migrate database schema");
-    await migrateSQL(this.currentConnectionString);
+    verbose && logger.info("[migrator] Migrate database schema");
+    await migrateSQL(this.currentConnectionString, verbose);
 
     if (flash) {
-      logger.info("[migrator] flash data");
-      await flashData(this.currentConnectionString);
+      verbose && logger.info("[migrator] flash data");
+      await flashData(this.currentConnectionString, verbose);
     }
   }
 
