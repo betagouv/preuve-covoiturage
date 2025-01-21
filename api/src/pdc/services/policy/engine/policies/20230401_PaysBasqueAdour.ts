@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAdultOrThrow } from "@/pdc/services/policy/engine/helpers/isAdultOrThrow.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -11,10 +8,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
@@ -28,8 +22,7 @@ import {
 import { description } from "./20230401_PaysBasqueAdour.html.ts";
 
 // Pays Basque Adour
-export const PaysBasque20232024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "pays_basque_2023";
 
@@ -51,6 +44,12 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
         OperatorsEnum.KAROS,
       ],
     },
+    {
+      date: new Date("2025-01-01T00:00:00+0100"),
+      operators: [
+        OperatorsEnum.BLABLACAR_DAILY,
+      ],
+    },
   ];
 
   protected slices: RunnableSlices = [
@@ -62,8 +61,7 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
     },
   ];
 
@@ -78,7 +76,7 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class
       ],
       [
         "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
-        150_00,
+        100_00,
         watchForPersonMaxAmountByMonth,
         LimitTargetEnum.Driver,
       ],
