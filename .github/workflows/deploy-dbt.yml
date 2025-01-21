@@ -1,4 +1,4 @@
-name: 'Deploy Data'
+name: 'Deploy DBT'
 
 on:
   workflow_dispatch:
