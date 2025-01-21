@@ -1,6 +1,7 @@
 import { latLngToCell } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   LocationParamsInterface,
@@ -23,67 +24,54 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
   ): Promise<LocationResultInterface> {
     const result: LocationResultInterface = [];
     const typeParam = checkTerritoryParam(params.type);
-    const perimTableQuery = `
+    const perimTableQuery = sql`
       SELECT com 
       FROM (
         SELECT com, epci, aom, dep, reg, country 
-        FROM ${this.perim_table} 
-        WHERE year = geo.get_latest_millesime_or($1::smallint)
+        FROM ${raw(this.perim_table)} 
+        WHERE year = geo.get_latest_millesime_or(${params.year}::smallint)
       ) t 
-      WHERE ${typeParam} = $2
+      WHERE ${raw(typeParam)} = ${params.code}
     `;
 
-    const conditions = [
-      `extract('year' from start_datetime) = $1`,
-      `(start_geo_code IN (${perimTableQuery}) OR end_geo_code IN (${perimTableQuery}))`,
-    ];
-
-    const queryValues = [
-      params.year,
-      params.code,
+    const filters = [
+      sql`extract('year' from start_datetime) = ${params.year}`,
+      sql`(start_geo_code IN (${perimTableQuery}) OR end_geo_code IN (${perimTableQuery}))`,
     ];
 
     if (params.month) {
-      queryValues.push(params.month);
-      conditions.push(`extract('month' from start_datetime) = $3`);
+      filters.push(sql`extract('month' from start_datetime) = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      conditions.push(`extract('quarter' FROM start_datetime) = $3`);
+      filters.push(sql`extract('quarter' FROM start_datetime) = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      conditions.push(
-        `(CASE WHEN extract('quarter' FROM start_datetime)::int > 3 THEN 2 ELSE 1 END) = $3`,
+      filters.push(
+        sql`(CASE WHEN extract('quarter' FROM start_datetime)::int > 3 THEN 2 ELSE 1 END) = ${params.semester}`,
       );
     }
 
-    const queryText = `
+    const query = sql`
       SELECT 
         start_lat as lat, 
         start_lon as lon
-      FROM ${this.table}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.table)}
+      WHERE ${join(filters, " AND ")}
       UNION ALL
       SELECT
         end_lat as lat, 
         end_lon as lon
-      FROM ${this.table} 
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.table)} 
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     const geomToHex = response.rows
       .map((r) => latLngToCell(r.lat, r.lon, params.zoom))
       .reduce<Record<string, number>>(
         (acc, curr) => ((acc[curr] = (acc[curr] || 0) + 1), acc),
         {},
       );
-    Object.entries(geomToHex).forEach(([key, val]) =>
-      result.push({ hex: key, count: Number(val) })
-    );
+    Object.entries(geomToHex).forEach(([key, val]) => result.push({ hex: key, count: Number(val) }));
     return result;
   }
 }
