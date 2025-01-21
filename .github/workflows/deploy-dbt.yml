@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Workflow
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env: 
           TARGET_VERSION: ${{ needs.tag.outputs.value }}
         with:
