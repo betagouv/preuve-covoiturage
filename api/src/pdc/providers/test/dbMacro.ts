@@ -1,7 +1,7 @@
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { Migrator } from "@/pdc/providers/seed/index.ts";
+import { Migrator } from "../migration/index.ts";
 
 interface Config {
   connectionString: string;
@@ -47,7 +47,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
         "postgresql://postgres:postgres@localhost:5432/local";
       const db = new Migrator(connectionString);
       await db.create();
-      await db.migrate();
+      await db.migrate({ flash: false, verbose: false });
       await db.seed();
 
       return { db, connection: db.testConn };

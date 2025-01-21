@@ -77,7 +77,7 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
     openssl x509 -req -in {{ cert_dir }}/cert.csr -CA {{ cert_dir }}/localCA.pem -CAkey {{ cert_dir }}/localCA.key -CAcreateserial -out {{ cert_dir }}/cert.crt -days 500 -sha256
   fi
 
-# Run migrations
+# Migrate the schemas and flash production data
 migrate:
   deno run \
     --allow-net \
@@ -87,8 +87,32 @@ migrate:
     --allow-sys \
     --allow-ffi \
     --allow-run \
+    src/db/cmd-migrate.ts
+
+# Migrate the schemas and seed test data
+seed:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    --allow-run \
+    src/db/cmd-seed.ts
+
+# Source the geo.perimeters data
+source:
+  deno run \
+    --allow-net \
+    --allow-env \
+    --allow-read \
+    --allow-write \
+    --allow-sys \
+    --allow-ffi \
+    --allow-run \
     --v8-flags=--max-old-space-size=4096 \
-    src/db/main.ts
+    src/db/cmd-source.ts
 
 # Run external data migrations
 external_data_migrate:
@@ -100,11 +124,7 @@ external_data_migrate:
     --allow-sys \
     --allow-ffi \
     --allow-import \
-    src/external_data/index.ts
-
-# Seed data
-seed:
-  just api seed
+    src/db/external_data/index.ts
 
 # Create a new bucket
 [private]

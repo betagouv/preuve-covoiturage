@@ -40,6 +40,7 @@
               export PRE_COMMIT_ALLOW_NO_CONFIG=1
               export GH_REPO=betagouv/preuve-covoiturage
               export DENO_NO_UPDATE_CHECK=true
+              export SEVEN_ZIP_BIN_PATH=$(which 7z)
             '';
           };
         });

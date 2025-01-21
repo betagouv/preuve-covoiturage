@@ -44,6 +44,7 @@ it("should fail with a wrong siret id", async () => {
     assert(true);
     return;
   }
+
   const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(
     new Extensions.ConfigStore({
       dataSource,

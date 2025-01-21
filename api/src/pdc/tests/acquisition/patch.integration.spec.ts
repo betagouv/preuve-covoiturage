@@ -1,5 +1,4 @@
 import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   CarpoolAcquisitionService,
@@ -55,11 +54,6 @@ describe("Operator patches a journey", () => {
       geoProvider,
     );
   }
-
-  const defaultContext: ContextType = {
-    call: { user: { permissions: ["common.acquisition.create"] } },
-    channel: { service: "proxy" },
-  };
 
   const payload = { ...insertableCarpool };
 
@@ -129,7 +123,7 @@ describe("Operator patches a journey", () => {
     assert(carpool);
     const geo = await geoRepository.findOne(carpool._id);
     assertEquals(geo?.start_geo_code, "91377");
-    assertEquals(geo?.end_geo_code, "91661");
+    assertEquals(geo?.end_geo_code, "91477");
   });
 
   it("should fake async fraud and anomaly checks", async () => {
@@ -192,7 +186,7 @@ describe("Operator patches a journey", () => {
     const geo = await geoRepository.findOne(carpool._id);
 
     // check inverted start and end positions
-    assertEquals(geo?.start_geo_code, "91661");
+    assertEquals(geo?.start_geo_code, "91477");
     assertEquals(geo?.end_geo_code, "91377");
   });
 });

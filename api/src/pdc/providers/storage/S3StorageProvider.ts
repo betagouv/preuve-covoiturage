@@ -1,9 +1,5 @@
 import { access, fsConstants, S3Client, URL } from "@/deps.ts";
-import {
-  ConfigInterfaceResolver,
-  provider,
-  ProviderInterface,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, provider, ProviderInterface } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
@@ -27,19 +23,14 @@ export class S3StorageProvider implements ProviderInterface {
 
     // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
-    this.s3Instances.set(
-      BucketName.Export,
-      this.createInstance(BucketName.Export),
-    );
-    this.s3Instances.set(
-      BucketName.Public,
-      this.createInstance(BucketName.Public),
-    );
+    this.s3Instances.set(BucketName.Export, this.createInstance(BucketName.Export));
+    this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
+    this.s3Instances.set(BucketName.GeoDatasetsMirror, this.createInstance(BucketName.GeoDatasetsMirror));
   }
 
   protected createInstance(bucket: BucketName): S3Client {
     if (!this.endpoint || !this.region) {
-      throw new Error();
+      throw new Error("Missing endpoint or region in bucket configuration");
     }
     const endPointUrl = new URL(this.endpoint);
     const params = {
@@ -84,29 +75,33 @@ export class S3StorageProvider implements ProviderInterface {
     filepath: string,
     filename?: string,
     folder?: string,
+    options: Record<string, any> = {},
   ): Promise<string> {
     // Check if file exists
     await access(filepath, fsConstants.R_OK);
     const client = this.s3Instances.get(bucket);
     if (!client) {
-      throw new Error();
+      throw new Error("Failed to create a client for the bucket");
     }
+    const rs = await Deno.open(filepath, { read: true });
+    let key = filename ?? filenameFromPath(filepath);
+
+    if (folder) {
+      key = `${folder}/${key}`;
+    }
+
+    const params = {
+      ...options,
+      bucketName: getBucketName(bucket, options.prefix),
+    };
+
     try {
-      const rs = await Deno.open(filepath, { read: true });
-      let key = filename ?? filenameFromPath(filepath);
-
-      if (folder) {
-        key = `${folder}/${key}`;
-      }
-
-      const params = {
-        bucketName: getBucketName(bucket),
-      };
-
+      console.log(key, rs.readable, params);
       await client.putObject(key, rs.readable, params);
-
       return key;
     } catch (e) {
+      // rs is closed by the putObject as the stream is consumed
+      // do not call rs.close() or you get a Bad Resource ID error.
       logger.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
     }

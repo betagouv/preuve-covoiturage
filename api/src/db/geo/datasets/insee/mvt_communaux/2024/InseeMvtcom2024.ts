@@ -1,0 +1,56 @@
+import { AbstractDataset } from "../../../../common/AbstractDataset.ts";
+import { ArchiveFileTypeEnum, FileTypeEnum } from "../../../../interfaces/FileInterface.ts";
+
+export class InseeMvtcom2024 extends AbstractDataset {
+  static producer = "insee";
+  static dataset = "mvtcom";
+  static year = 2024;
+  static table = "insee_mvtcom_2024";
+  override readonly targetTable = "com_evolution";
+  static url = "https://www.insee.fr/fr/statistiques/fichier/7766585/v_mvt_commune_2024.csv";
+  static sha256 = "ac8f374f068908e6a83ffcaa2404eb122b666392c5aa2d58d89eabdd2d5888ba";
+
+  readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
+  readonly fileType: FileTypeEnum = FileTypeEnum.Csv;
+
+  readonly rows: Map<string, [string, string]> = new Map([
+    ["mod", ["0", "smallint"]],
+    ["date_eff", ["1", "varchar"]],
+    ["typecom_av", ["2", "varchar"]],
+    ["typecom_ap", ["8", "varchar"]],
+    ["com_av", ["3", "varchar"]],
+    ["com_ap", ["9", "varchar"]],
+  ]);
+
+  override readonly extraBeforeSql = `ALTER TABLE ${this.tableWithSchema} ALTER COLUMN mod SET NOT NULL;`;
+
+  override readonly importSql = `
+    INSERT INTO ${this.targetTableWithSchema} (
+      year,
+      mod,
+      old_com,
+      new_com,
+      l_mod
+    ) SELECT
+      date_part('year',date_eff::date)::int as year,
+      mod,
+      com_av,
+      com_ap,
+      CASE WHEN mod = 20 THEN 'création'
+           WHEN mod = 21 THEN 'rétablissement'
+           WHEN mod = 30 THEN 'suppression'
+           WHEN mod = 31 THEN 'fusion simple'
+           WHEN mod = 32 THEN 'création de commune nouvelle'
+           WHEN mod = 33 THEN 'fusion association'
+           WHEN mod = 41 THEN 'Changement de code dû à un changement de département'
+           WHEN mod = 50 THEN 'Changement de code dû à un transfert de chef-lieu'
+      END::varchar as libelle_mod
+    FROM ${this.tableWithSchema} 
+    WHERE (date_eff::date >= '2024-01-01')
+      AND mod in (20,21,30,31,32,33,41,50)
+      AND typecom_ap = 'COM'
+      AND typecom_av = 'COM'
+    ORDER BY date_eff,com_ap
+    ON CONFLICT DO NOTHING;
+  `;
+}

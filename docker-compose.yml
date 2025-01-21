@@ -81,8 +81,6 @@ services:
     command: 'just migrate'
     tty: true
     env_file: ./api/.env
-    environment:
-      - SKIP_GEO_MIGRATIONS=true
     networks:
       - back
 
