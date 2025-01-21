@@ -1,18 +1,24 @@
 import { NotFoundException } from "@/ilos/common/index.ts";
 
 class Fetcher {
-  async raw(
-    input: string | URL | Request,
-    init?: RequestInit,
-  ): Promise<Response> {
-    const response = await fetch(input, init);
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new NotFoundException();
+  async raw(input: string | URL | Request, init?: RequestInit): Promise<Response> {
+    let response: Response | null = null;
+
+    try {
+      response = await fetch(input, init);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new NotFoundException();
+        }
+
+        throw new Error(`HTTP Error ${response.status}`);
       }
-      throw new Error(`HTTP Error ${response.status}`);
+
+      return response;
+    } catch (e) {
+      await response?.body?.cancel();
+      throw e;
     }
-    return response;
   }
 
   async get(input: string | URL, init?: RequestInit) {

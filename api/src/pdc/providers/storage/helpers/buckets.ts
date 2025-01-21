@@ -6,11 +6,11 @@ export function getBucketPrefix(): string {
   return env_or_fail("AWS_BUCKET_PREFIX", "");
 }
 
-export function getBucketName(bucket: BucketName): string {
+export function getBucketName(bucket: BucketName, prefix?: string): string {
   // bucketPrefix is used to namespace all buckets.
   // It is different than 'Prefix' (named folder here)
   // which is used to filter a list of objects and can be used to mock folders.
-  const bucketPrefix = getBucketPrefix();
+  const bucketPrefix = prefix ?? getBucketPrefix();
 
   return bucketPrefix.length ? `${bucketPrefix}-${bucket}` : bucket;
 }

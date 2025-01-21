@@ -18,7 +18,7 @@ import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
-import { User, users } from "@/pdc/providers/seed/users.ts";
+import { User, users } from "@/pdc/providers/migration/seeds/users.ts";
 import {
   AJVParamsInterface,
   assertHandler,

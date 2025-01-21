@@ -165,5 +165,7 @@ jobs:
           KC_BOT_CLIENT_SECRET: so_secret_000
           KC_ADMIN_CLIENT: pdc-manager
           KC_ADMIN_CLIENT_SECRET: so_secret_000
+          ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
+          ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
         run: just ci_test_integration
         working-directory: api

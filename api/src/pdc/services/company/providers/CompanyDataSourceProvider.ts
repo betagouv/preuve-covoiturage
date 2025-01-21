@@ -1,8 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  NotFoundException,
-  provider,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
 
 import {
   CompanyDataSourceProviderInterface,
@@ -17,8 +13,7 @@ import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.t
 @provider({
   identifier: CompanyDataSourceProviderInterfaceResolver,
 })
-export class CompanyDataSourceProvider
-  implements CompanyDataSourceProviderInterface {
+export class CompanyDataSourceProvider implements CompanyDataSourceProviderInterface {
   constructor(private readonly config: ConfigInterfaceResolver) {}
 
   async find(siret: string): Promise<CompanyInterface> {
@@ -30,6 +25,7 @@ export class CompanyDataSourceProvider
           Accept: "application/json",
         },
       });
+
       const data = await response.json();
 
       if (data.message) {
@@ -77,9 +73,7 @@ export class CompanyDataSourceProvider
           null,
         ),
         nonprofit_code: null,
-        intra_vat: `FR${
-          `0${((parseInt(siren, 10) % 97) * 3 + 12) % 97}${siren}`.substr(-11)
-        }`,
+        intra_vat: `FR${`0${((parseInt(siren, 10) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
         address: [
           "etablissement.adresseEtablissement.numeroVoieEtablissement",
           "etablissement.adresseEtablissement.typeVoieEtablissement",
@@ -109,8 +103,7 @@ export class CompanyDataSourceProvider
           "etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement",
           null,
         ),
-        headquarter:
-          get(data, "etablissement.etablissementSiege", null) === true,
+        headquarter: get(data, "etablissement.etablissementSiege", null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {
