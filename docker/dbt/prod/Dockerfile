@@ -6,5 +6,5 @@ RUN addgroup --gid 1000 dbt \
 
 WORKDIR /data
 USER dbt
-ADD --chown=dbt:dbt . /data
+COPY --chown=dbt:dbt . /data
 RUN dbt deps
