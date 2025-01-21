@@ -102,7 +102,7 @@ seed:
     src/db/cmd-seed.ts
 
 # Source the geo.perimeters data
-source_geo_perimeters:
+source:
   deno run \
     --allow-net \
     --allow-env \
@@ -124,7 +124,7 @@ external_data_migrate:
     --allow-sys \
     --allow-ffi \
     --allow-import \
-    src/external_data/index.ts
+    src/db/external_data/index.ts
 
 # Create a new bucket
 [private]
