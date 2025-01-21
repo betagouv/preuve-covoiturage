@@ -122,7 +122,6 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       ORDER BY (${join(groupBy, ", ")}) DESC
       LIMIT ${limit};
     `;
-    console.log(query.values, query.text);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }
