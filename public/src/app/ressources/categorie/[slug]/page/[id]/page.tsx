@@ -1,22 +1,23 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
-import RessourceCard from "@/components/ressources/RessourceCard";
-import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
-import Pagination from "@/components/common/Pagination";
 import CategoryTags from '@/components/common/CategoryTags';
+import PageTitle from "@/components/common/PageTitle";
+import Pagination from "@/components/common/Pagination";
+import RessourceCard from "@/components/ressources/RessourceCard";
+import { cmsRessourcesByPage, fetchAPI } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 
-export async function generateMetadata({ params }: { params: { slug: string, id: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string, id: string }>}) {
+  const { slug, id } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       }
     }
   };
   const {data} =  await fetchAPI('/categories',query);  
   return {
-    title: `Ressources page ${params.id} pour la catégorie ${data ? data[0].attributes.label : ''}| Observatoire.covoiturage.gouv.fr`,
-    description: `Page ${params.id} des ressources sur le covoiturage de courte distance pour la catégorie ${data ? data[0].attributes.label : ''}`,
+    title: `Ressources page ${id} pour la catégorie ${data ? data[0].attributes.label : ''}| Observatoire.covoiturage.gouv.fr`,
+    description: `Page ${id} des ressources sur le covoiturage de courte distance pour la catégorie ${data ? data[0].attributes.label : ''}`,
   }
 }
 
@@ -57,21 +58,21 @@ export async function generateStaticParams() {
   return data.flat()
 }
 
-export default async function RessourceCategoriePage({ params }: { params: { slug: string, id: string }}) {
-
+export default async function RessourceCategoriePage({ params }: { params: Promise<{ slug: string, id: string }>}) {
+  const { slug, id } = await params;
   const query = {
     populate: 'img,file',
     sort:'public_date:desc',
     filters:{
       categories:{
         slug:{
-          $eq: params.slug
+          $eq: slug
         }
       }
     },
     pagination: {
       pageSize: cmsRessourcesByPage,
-      page: params.id,
+      page: id,
     }
   };
   const { data, meta }  = await fetchAPI('/resources',query);
@@ -86,13 +87,13 @@ export default async function RessourceCategoriePage({ params }: { params: { slu
   }
   const categories =  await fetchAPI('/categories',catQuery);
   const nbPage = meta ? meta.pagination.pageCount : 1;
-  const pageTitle= `Ressources de la catégorie ${categories.data.find((c:any) => c.attributes.slug = params.slug).attributes.label} page ${params.id}`; 
+  const pageTitle= `Ressources de la catégorie ${categories.data.find((c:any) => c.attributes.slug = slug).attributes.label} page ${id}`; 
 
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} active={params.slug} type={'ressources'} page={params.id}/>}
+        {categories.data && <CategoryTags categories={categories.data} active={slug} type={'ressources'} page={id}/>}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -113,7 +114,7 @@ export default async function RessourceCategoriePage({ params }: { params: { slu
       </div>
       <Pagination
         count={nbPage}
-        defaultPage={Number(params.id)}
+        defaultPage={Number(id)}
         href={`/ressources`}
       />    
     </div>

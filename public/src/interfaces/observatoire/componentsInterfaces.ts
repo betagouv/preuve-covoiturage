@@ -1,5 +1,5 @@
 import { FrCxArg } from "@codegouvfr/react-dsfr";
-import type { LayersList, PickingInfo } from "@deck.gl/core/typed";
+import type { LayersList, PickingInfo } from "@deck.gl/core";
 import { LngLatBoundsLike, MapLayerMouseEvent } from "maplibre-gl";
 import { ReactNode } from "react";
 import { INSEECode, PerimeterType } from "./Perimeter";

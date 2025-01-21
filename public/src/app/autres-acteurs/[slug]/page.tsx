@@ -1,19 +1,20 @@
 import Block from "@/components/common/Block";
 import Hero from "@/components/common/Hero";
+import Highlight from '@/components/common/Highlight';
+import MDContent from "@/components/common/MDContent";
 import PageTitle from "@/components/common/PageTitle";
 import SectionTitle from "@/components/common/SectionTitle";
+import Rows from '@/components/observatoire/indicators/Rows';
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
-import MDContent from "@/components/common/MDContent";
-import Highlight from '@/components/common/Highlight';
-import Rows from '@/components/observatoire/indicators/Rows';
 
-export async function generateMetadata({ params }: { params: { slug: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
       tags:{
         slug:{
@@ -51,11 +52,12 @@ export async function generateStaticParams() {
   })) : []
 }
 
-export default async function ProfilSinglePage({ params }: { params: { slug: string }}) {
+export default async function ProfilSinglePage({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
     },
     populate: {

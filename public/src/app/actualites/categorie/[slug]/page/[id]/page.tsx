@@ -1,22 +1,23 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
-import Pagination from "@/components/common/Pagination";
 import CategoryTags from '@/components/common/CategoryTags';
+import PageTitle from "@/components/common/PageTitle";
+import Pagination from "@/components/common/Pagination";
+import { cmsActusByPage, fetchAPI, shorten } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 
-export async function generateMetadata({ params }: { params: { slug: string, id: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string, id: string }>}) {
+  const { slug, id } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       }
     }
   };
   const {data} =  await fetchAPI('/categories',query);  
   return {
-    title: `Actualités page ${params.id} pour la catégorie ${data ? data[0].attributes.label : ''}| Observatoire.covoiturage.gouv.fr`,
-    description: `Page ${params.id} des actualités sur le covoiturage de courte distance pour la catégorie ${data ? data[0].attributes.label : ''}`,
+    title: `Actualités page ${id} pour la catégorie ${data ? data[0].attributes.label : ''}| Observatoire.covoiturage.gouv.fr`,
+    description: `Page ${id} des actualités sur le covoiturage de courte distance pour la catégorie ${data ? data[0].attributes.label : ''}`,
   }
 }
 
@@ -57,21 +58,21 @@ export async function generateStaticParams() {
   return data.flat()
 }
 
-export default async function ActuCategoriePage({ params }: { params: { slug: string, id: string }}) {
-
+export default async function ActuCategoriePage({ params }: { params: Promise<{ slug: string, id: string }>}) {
+  const { slug, id } = await params;
   const query = {
     populate: 'img,file',
     sort:'public_date:desc',
     filters:{
       categories:{
         slug:{
-          $eq: params.slug
+          $eq: slug
         }
       }
     },
     pagination: {
       pageSize: cmsActusByPage,
-      page: params.id,
+      page: id,
     }
   };
   const { data, meta }  = await fetchAPI('/articles',query);
@@ -86,13 +87,13 @@ export default async function ActuCategoriePage({ params }: { params: { slug: st
   }
   const categories =  await fetchAPI('/categories',catQuery);
   const nbPage = meta ? meta.pagination.pageCount : 1;
-  const pageTitle= `Actualités de la catégorie ${categories.data.find((c:any) => c.attributes.slug = params.slug).attributes.label} page ${params.id}`; 
+  const pageTitle= `Actualités de la catégorie ${categories.data.find((c:any) => c.attributes.slug = slug).attributes.label} page ${id}`; 
 
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} active={params.slug} page={params.id}/>}
+        {categories.data && <CategoryTags categories={categories.data} active={slug} page={id}/>}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -115,7 +116,7 @@ export default async function ActuCategoriePage({ params }: { params: { slug: st
       </div>
       <Pagination
         count={nbPage}
-        defaultPage={Number(params.id)}
+        defaultPage={Number(id)}
         href={`/actualites`}
       />    
     </div>

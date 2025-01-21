@@ -10,11 +10,12 @@ import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
 import { Button } from '../../../interfaces/cms/collectionsInterface';
 
-export async function generateMetadata({ params }: { params: { slug: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       }
     },
     fields:['title','description']
