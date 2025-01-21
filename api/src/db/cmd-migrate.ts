@@ -1,6 +1,12 @@
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { Migrator } from "../pdc/providers/migration/Migrator.ts";
 
+/**
+ * Migrate command.
+ *
+ * Run SQL migrations from the migrations folder.
+ * Flash data from remote cache.
+ */
 const migrator = new Migrator(env_or_fail("APP_POSTGRES_URL"), false);
 await migrator.up();
 await migrator.migrate({
