@@ -37,7 +37,7 @@ import { description } from "./20240401_PMGFxATMB.html.ts";
 
 export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
-  static readonly id = "pmgf_x_atmb_2025";
+  static readonly id = "pmgf_atmb_2025";
 
   protected operator_class = ["B", "C"];
 
@@ -52,13 +52,13 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
     super();
     this.limits = [
       [
-        "B87E2FFA-6837-43D6-B81E-D3436AB06CF1",
+        "ddf5f99c-a40c-413c-bbea-927861cbb2f2",
         50_00,
         watchForPersonMaxAmountByMonth,
         LimitTargetEnum.Driver,
       ],
       [
-        "F50EF28B-78F5-4366-807E-80CBDBDD2DFF",
+        "cd6a2dd5-5e45-49fe-8618-09d3e8d9c679",
         this.max_amount,
         watchForGlobalMaxAmount,
       ], // required
