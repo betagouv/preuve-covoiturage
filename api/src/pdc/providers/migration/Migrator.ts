@@ -115,7 +115,7 @@ export class Migrator {
         verbose,
       });
 
-      await flash.exec();
+      await flash.missing() && await flash.exec();
     }
   }
 

@@ -1,5 +1,5 @@
 import { env_or_fail } from "@/lib/env/index.ts";
-import { Migrator } from "../pdc/providers/migration/Migrator.ts";
+import { Migrator } from "@/pdc/providers/migration/Migrator.ts";
 
 /**
  * Seed command.

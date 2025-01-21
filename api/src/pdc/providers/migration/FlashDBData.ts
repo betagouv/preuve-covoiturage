@@ -20,6 +20,7 @@ export class FlashDBData {
   protected config: FlashDBDataConfig;
   protected archiveFileName: string;
   protected sqlFileName: string;
+  protected migrationName: string;
   protected pool: PgPool | null = null;
   protected client: PgPoolClient | null = null;
 
@@ -27,11 +28,16 @@ export class FlashDBData {
     this.config = this.validateConfig(config);
     this.archiveFileName = basename(this.config.cache.url);
     this.sqlFileName = this.archiveFileName.replace(/\.7z$/, "");
+    this.migrationName = `flash:${this.sqlFileName}`;
   }
 
   // ---------------------------------------------------------------------------
   // Public methods
   // ---------------------------------------------------------------------------
+
+  public async missing(): Promise<boolean> {
+    return !await this.exists();
+  }
 
   public async exec(): Promise<void> {
     const { dir, arc, sql, db } = await this.setup();
@@ -49,7 +55,7 @@ export class FlashDBData {
       connectionString: s.defaulted(s.string(), () => env("APP_POSTGRES_URL"), { strict: true }),
       dirname: s.defaulted(
         s.string(),
-        () => env_or_default("ETL_GEO_DIRNAME", `${new Date().getTime()}-geo-schema`),
+        () => env_or_default("GEO_CACHE_DIRNAME", `${new Date().getTime()}-geo-schema`),
       ),
       cache: s.object({
         url: s.refine(s.string(), "CacheURL", (value) => {
@@ -154,6 +160,7 @@ export class FlashDBData {
       await this.client.queryArray("CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public");
       await this.client.queryArray("COMMIT");
       await this.restoreDump(db, sql);
+      await this.save();
     } catch (e) {
       this.client && await this.client.queryArray("ROLLBACK");
       logger.error(`[FlashDBData] Error restoring schema: ${e.message}`);
@@ -174,6 +181,37 @@ export class FlashDBData {
 
     if (stderr.length) {
       logger.error(`[FlashDBData] Error restoring dump: ${new TextDecoder().decode(stderr)}`);
+    }
+  }
+
+  private async save(): Promise<void> {
+    const pool = new PgPool(this.config.connectionString, 10);
+    const client = await pool.connect();
+
+    try {
+      await client.queryArray`INSERT INTO migrations (name, run_on) VALUES (${this.migrationName}, ${new Date()})`;
+    } catch (e) {
+      logger.error(`[FlashDBData] Error saving migration: ${e.message}`);
+      throw e;
+    } finally {
+      client.release();
+      await pool.end();
+    }
+  }
+
+  private async exists(): Promise<boolean> {
+    const pool = new PgPool(this.config.connectionString, 10);
+    const client = await pool.connect();
+
+    try {
+      const { rowCount } = await client.queryArray`SELECT name FROM migrations WHERE name = ${this.migrationName}`;
+      return !!rowCount;
+    } catch (e) {
+      logger.error(`[FlashDBData] Error finding migration: ${e.message}`);
+      throw e;
+    } finally {
+      client.release();
+      await pool.end();
     }
   }
 }
