@@ -11,55 +11,18 @@ Ce projet sert à construire un référentiel géographique versionné par anné
 - des géographies des pays du monde. Le programme agrége des données issues de
   différents producteurs de données (INSEE, IGN, CEREMA, Commission européenne,
   Direction générale des collectivités locales) afin d'obtenir une base de
-  données postgresql dont la structure est détaillée
-  [ici](/docs/datastructure.md).
+  données SQL dont la structure est détaillée [dans `docs/datastructures.md`](/docs/datastructure.md).
 
-Il est actuellement utilisé par deux projets Beta.gouv :
+## Dépendances
 
-- Le registre de preuve de covoiturage
-- L'observatoire du covoiturage
+- 7zip (`p7zip`)
+- une base de données postgresql >= 14 avec l'extension postgis >= 3
 
-## Installation
-
-Deux possibilités pour installer le projet:
-
-### Cloner le dépôt :
+## Usage
 
 ```shell
-git clone git@github.com:betagouv/evolution_perimetres_geo.git
+just source
 ```
-
-### Utiliser npm ou yarn pour installer le paquet comme dépendance de son projet:
-
-```shell
-yarn add @betagouvpdc/evolution-geo
-```
-
-Attention, le programme nécessite :
-
-- 7zip
-- une base de données postgresql >= 12 avec postgis >= 3
-
-Le projet inclut une façon simple de déployer un environnement local en
-utilisant Docker et Docker-compose. Cet environnement est composé de deux
-| services :              | Service                                                | Dockerfile | WorkDir                                   | Description |
-| ----------------------- | ------------------------------------------------------ | ---------- | ----------------------------------------- |
-| geo                     | [Dockerfile](/docker/geo/Dockerfile)                   | /geo       | Node 16 avec 7zip et                      |
-| Evolution-geo installés |                                                        | postgres   | [Dockerfile](/docker/postgres/Dockerfile) |
-| -                       | Base de donnée Postgresql 13 avec postgis 3.1 installé |
-
-Pour déployer l'environnement, dans un terminal, se placer à la racine du projet et exécuter:
-
-1. `cp db/geo/.env.example db/geo/.env`
-2. Editer le fichier `geo/.env` suivant sa convenance.
-3. `docker-compose up`
-4. Dans un nouveau terminal, se connecter au service GEO par la commande
-   `docker-compose exec -it geo /bin/bash`
-5. `npm run build`
-6. Importer les données dans la BDD postgres avec les paramètres par défault
-7. `npm start import`
-
-## [Usage](/docs/usage.md)
 
 ## [Usage avancé](/docs/advanced.md)
 
