@@ -2,7 +2,7 @@
 import { fitBounds } from '@/helpers/map';
 import { DeckMapInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
-import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox/typed';
+import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef } from 'react';
 import { FullscreenControl, Map, MapRef, NavigationControl, useControl } from 'react-map-gl/maplibre';

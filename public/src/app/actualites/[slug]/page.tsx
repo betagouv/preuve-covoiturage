@@ -41,13 +41,14 @@ export async function generateStaticParams() {
   })) : []
 }
 
-export default async function ActuSingle({ params }: { params: { slug: string }}) {
+export default async function ActuSingle({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const hostUrl = Config.get<string>('next.public_url', 'http://localhost:4200');
-  const location = `${hostUrl}/actualites/${params.slug}`;
+  const location = `${hostUrl}/actualites/${slug}`;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
     },
     populate: '*',  

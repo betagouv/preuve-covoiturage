@@ -52,11 +52,12 @@ export async function generateStaticParams() {
   })) : []
 }
 
-export default async function CommunSinglePage({ params }: { params: { slug: string }}) {
+export default async function CommunSinglePage({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
     },
     populate: {

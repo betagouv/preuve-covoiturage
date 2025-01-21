@@ -1,9 +1,9 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
 import CategoryTags from "@/components/common/CategoryTags";
+import PageTitle from "@/components/common/PageTitle";
 import Pagination from "@/components/common/Pagination";
+import { cmsActusByPage, fetchAPI, shorten } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -31,13 +31,14 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function ActuCategoryPage({ params }: { params: { slug: string }}) {
+export default async function ActuCategoryPage({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     populate: 'categories,img',
     filters:{
       categories:{
         slug:{
-          $eq: params.slug
+          $eq: slug
         }
       }
     },
@@ -64,7 +65,7 @@ export default async function ActuCategoryPage({ params }: { params: { slug: str
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} active={params.slug} />}
+        {categories.data && <CategoryTags categories={categories.data} active={slug} />}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -87,7 +88,7 @@ export default async function ActuCategoryPage({ params }: { params: { slug: str
       </div>
       <Pagination
         count={nbPage}
-        href={`/actualites/categorie/${params.slug}`}
+        href={`/actualites/categorie/${slug}`}
       />     
     </div>
   );

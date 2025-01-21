@@ -5,7 +5,7 @@ import { classColor, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import { H3HexagonLayer } from '@deck.gl/geo-layers/typed';
+import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import bbox from '@turf/bbox';
 import { multiPolygon } from '@turf/helpers';
 import { cellsToMultiPolygon } from 'h3-js';
