@@ -6,7 +6,7 @@ import { GetApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import { ArcLayer } from '@deck.gl/layers/typed';
+import { ArcLayer } from '@deck.gl/layers';
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';

@@ -1,14 +1,15 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
-import Pagination from "@/components/common/Pagination";
 import CategoryTags from "@/components/common/CategoryTags";
+import PageTitle from "@/components/common/PageTitle";
+import Pagination from "@/components/common/Pagination";
+import { cmsActusByPage, fetchAPI, shorten } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 
-export async function generateMetadata({ params }: { params: { id: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }>}) {
+  const { id } = await params;
   return {
-    title: `Actualités page ${params.id} | Observatoire.covoiturage.gouv.fr`,
-    description: `Page ${params.id} des actualités sur le covoiturage de courte distance`,
+    title: `Actualités page ${id} | Observatoire.covoiturage.gouv.fr`,
+    description: `Page ${id} des actualités sur le covoiturage de courte distance`,
   }
 }
 
@@ -28,13 +29,14 @@ export async function generateStaticParams() {
   });
 }
 
-export default async function ActuPage({ params }: { params: { id: string }}) {
+export default async function ActuPage({ params }: { params: Promise<{ id: string }>}) {
+  const { id } = await params;
   const query = {
     populate: 'img',
     sort:'createdAt:desc',
     pagination: {
       pageSize: cmsActusByPage,
-      page: params.id,
+      page: id,
     }
   };
   const { data, meta }  = await fetchAPI('/articles',query);
@@ -48,7 +50,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
     }
   }
   const categories =  await fetchAPI('/categories',catQuery);
-  const pageTitle=`Actualités page ${params.id}`;
+  const pageTitle=`Actualités page ${id}`;
   const nbPage = meta.pagination.pageCount;
 
   return (
@@ -56,7 +58,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
       <PageTitle title={pageTitle} />
       {categories.data && 
         <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-          <CategoryTags categories={categories.data} page={params.id}/>
+          <CategoryTags categories={categories.data} page={id}/>
         </div>
       }
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
@@ -80,7 +82,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
       </div> 
       <Pagination
         count={nbPage}
-        defaultPage={Number(params.id)}
+        defaultPage={Number(id)}
         href={`/actualites`}
       />     
     </div>

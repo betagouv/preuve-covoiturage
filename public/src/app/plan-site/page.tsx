@@ -1,8 +1,9 @@
 
-import { fr } from "@codegouvfr/react-dsfr";
-import { fetchAPI } from "@/helpers/cms";
-import { Metadata } from 'next';
 import PageTitle from '@/components/common/PageTitle';
+import { fetchAPI } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Plan du site | Observatoire.covoiturage.gouv.fr',
@@ -51,7 +52,7 @@ export default async function Plan() {
           {home && 
             <ul>
               <li>
-                <a className={fr.cx('fr-link')}  href="/" target="_self">{home.attributes.title}</a>
+                <Link className={fr.cx('fr-link')}  href="/" target="_self">{home.attributes.title}</Link>
               </li>
             </ul>
           }
@@ -61,15 +62,15 @@ export default async function Plan() {
               <ul>
                 {obs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/observatoire/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/observatoire/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
                 <li>
-                  <a className={fr.cx('fr-link')}href={`/observatoire/territoire`} target="_self">
+                  <Link className={fr.cx('fr-link')}href={`/observatoire/territoire`} target="_self">
                     Observer un territoire
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </>
@@ -80,9 +81,9 @@ export default async function Plan() {
               <ul>
                 {collectivites.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/collectivites/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/collectivites/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>
@@ -94,9 +95,9 @@ export default async function Plan() {
               <ul>
                 {autresActeurs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/autres-acteurs/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/autres-acteurs/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>
@@ -105,16 +106,16 @@ export default async function Plan() {
           {actus.data &&
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>
-                <a href={`/actualites`} target="_self">
+                <Link href={`/actualites`} target="_self">
                   Actualités
-                </a>
+                </Link>
               </h2> 
               <ul>
                 {actus.data.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/actualites/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/actualites/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>
@@ -123,16 +124,16 @@ export default async function Plan() {
           {ressources.data &&
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>
-                <a href={`/ressources`} target="_self">
+                <Link href={`/ressources`} target="_self">
                   Ressources
-                </a>
+                </Link>
               </h2> 
               <ul>
                 {ressources.data.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/ressources/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/ressources/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>
@@ -144,9 +145,9 @@ export default async function Plan() {
               <ul>
                 {communs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/${p.attributes.slug}`} target="_self">
+                    <Link className={fr.cx('fr-link')}href={`/${p.attributes.slug}`} target="_self">
                       {p.attributes.title}
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>

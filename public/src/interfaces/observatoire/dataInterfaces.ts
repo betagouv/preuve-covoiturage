@@ -1,12 +1,5 @@
-import { Feature } from "maplibre-gl";
-import {
-  Direction,
-  Distance,
-  Hour,
-  INSEECode,
-  PerimeterLabel,
-  PerimeterType,
-} from "./Perimeter";
+import { Geometry } from "geojson";
+import { Direction, Distance, Hour, INSEECode, PerimeterLabel, PerimeterType } from "./Perimeter";
 
 export interface KeyFiguresDataInterface {
   territory: INSEECode;
@@ -50,7 +43,7 @@ export interface OccupationDataInterface {
   journeys: number;
   has_incentive: number;
   occupation_rate: number;
-  geom: Feature;
+  geom: Geometry;
 }
 
 export interface AiresCovoiturageDataInterface {
@@ -65,7 +58,7 @@ export interface AiresCovoiturageDataInterface {
   horaires: string;
   proprio: string;
   lumiere: boolean;
-  geom: Feature;
+  geom: Geometry;
 }
 
 export interface TerritoryListInterface {

@@ -1,15 +1,16 @@
-import PageTitle from "@/components/common/PageTitle";
-import { fr } from "@codegouvfr/react-dsfr";
-import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
 import CategoryTags from "@/components/common/CategoryTags";
+import PageTitle from "@/components/common/PageTitle";
 import Pagination from "@/components/common/Pagination";
 import RessourceCard from '@/components/ressources/RessourceCard';
+import { cmsRessourcesByPage, fetchAPI } from "@/helpers/cms";
+import { fr } from "@codegouvfr/react-dsfr";
 
-export async function generateMetadata({ params }: { params: { slug: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       }
     }
   };
@@ -34,13 +35,14 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function ResourceCategoryPage({ params }: { params: { slug: string }}) {
+export default async function ResourceCategoryPage({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     populate: 'categories,img,file',
     filters:{
       categories:{
         slug:{
-          $eq: params.slug
+          $eq: slug
         }
       }
     },
@@ -67,7 +69,7 @@ export default async function ResourceCategoryPage({ params }: { params: { slug:
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} active={params.slug} type={'ressources'} />}
+        {categories.data && <CategoryTags categories={categories.data} active={slug} type={'ressources'} />}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -88,7 +90,7 @@ export default async function ResourceCategoryPage({ params }: { params: { slug:
       </div>
       <Pagination
         count={nbPage}
-        href={`/ressources/categorie/${params.slug}`}
+        href={`/ressources/categorie/${slug}`}
       />     
     </div>
   );

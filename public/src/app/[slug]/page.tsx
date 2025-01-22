@@ -9,11 +9,12 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
 
-export async function generateMetadata({ params }: { params: { slug: string }}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
       tags:{
         slug:{
@@ -52,11 +53,12 @@ export async function generateStaticParams() {
   })) : []
 }
 
-export default async function CommunSinglePage({ params }: { params: { slug: string }}) {
+export default async function CommunSinglePage({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params;
   const query = {
     filters: {
       slug: {
-        $eq: params.slug,
+        $eq: slug,
       },
     },
     populate: {
