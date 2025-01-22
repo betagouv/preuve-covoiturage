@@ -4,30 +4,32 @@ import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { Tile } from "@codegouvfr/react-dsfr/Tile";
 import { Metadata } from 'next';
 import Image from 'next/image';
+import TabBref from './tabs/TabBref';
+import TabCampaigns from './tabs/TabCampaigns';
+import TabExport from './tabs/TabExport';
 
 export const metadata: Metadata = {
   title: 'Activité | app.covoiturage.gouv.fr',
   description: 'Développer le covoiturage de courte distance',
 }
 
-export default function Activite() {
+export default function Activite() {  
   return (
     <div className={fr.cx('fr-container')}>
       <div id='content'>
         <PageTitle title={`Suivez votre activité`} />
         <Tabs
-          label="Name of the tabs system"
           tabs={[
             {
-              content: <p>Content of tab1</p>,
+              content: <TabBref />,
               label: 'Activité en bref'
             },
             {
-              content: <p>Content of tab2</p>,
-              label: `Suivi de la campagne d'incitation`
+              content: <TabCampaigns />,
+              label: `Suivi des campagnes`
             },
             {
-              content: <p>Content of tab3</p>,
+              content: <TabExport />,
               label: 'Export des données'
             }
           ]}

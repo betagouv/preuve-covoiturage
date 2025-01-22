@@ -1,18 +1,9 @@
 'use client'
+import { AuthContextProps } from '@/interfaces/providersInterface';
 import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from '../config';
 
-interface AuthContextProps {
-  isAuth: boolean;
-  state?: string,
-  setState:(newState: string | undefined) => void,
-  nonce?: string,
-  setNonce:(newNonce: string | undefined) => void,
-  code?: string,
-  iss?: string,
-  user?: {name: string, role: string},
-  getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void,
-}
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export function AuthProvider({children}: { children: React.ReactNode}) {
@@ -21,6 +12,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
   const [state, setState] = useState<string>();
   const [nonce, setNonce] = useState<string>();
   const [code, setCode] = useState<string>();
+  const [user, setUser] = useState<AuthContextProps["user"]>();
   
 
   const getCode = (stateValue: string | null, codeValue: string | null, issValue: string | null) => {
@@ -28,6 +20,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
       if(stateValue === state && issValue === `${Config.get('auth.domain')}/api/v2`) {
         setCode(codeValue ?? undefined);
         setIsAuth(true);
+        
       }
     } catch (e) {
       console.error("Code validation failed", e);
@@ -41,13 +34,15 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     if (stateToken && nonceToken) {
       setState(stateToken);
       setNonce(nonceToken);
+      setIsAuth(true);
+      setUser({name:'Ludovic Delhomme', role:'registry'});
     }
   }, []);
 
   
 
   return(
-    <AuthContext.Provider value={{isAuth, state, setState, nonce, setNonce, code, getCode}}>
+    <AuthContext.Provider value={{isAuth,setIsAuth, state, setState, nonce, setNonce, code, getCode, user}}>
       {children}
     </AuthContext.Provider>
   );

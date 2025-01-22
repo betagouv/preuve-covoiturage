@@ -12,6 +12,7 @@ import { ApplicationServiceProvider } from "../services/application/ApplicationS
 import { CeeServiceProvider } from "../services/cee/CeeServiceProvider.ts";
 import { CertificateServiceProvider } from "../services/certificate/CertificateServiceProvider.ts";
 import { CompanyServiceProvider } from "../services/company/CompanyServiceProvider.ts";
+import { DashboardServiceProvider } from "../services/dashboard/DashboardServiceProvider.ts";
 import { ExportServiceProvider } from "../services/export/ExportServiceProvider.ts";
 import { GeoServiceProvider } from "../services/geo/GeoServiceProvider.ts";
 import { HonorServiceProvider } from "../services/honor/HonorServiceProvider.ts";
@@ -39,6 +40,7 @@ import { config } from "./config/index.ts";
     TerritoryServiceProvider,
     UserServiceProvider,
     ObservatoryServiceProvider,
+    DashboardServiceProvider,
     GeoServiceProvider,
   ],
   commands: [ListCommand],

@@ -111,6 +111,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSimulationRoutes();
     this.registerCeeRoutes();
     this.registerHonorRoutes();
+    this.registerDashboardRoutes();
     this.registerObservatoryRoutes();
     this.registerContactformRoute();
     this.registerCallHandler();
@@ -864,6 +865,57 @@ export class HttpTransport implements TransportInterface {
         },
       ),
     );
+  }
+
+  private registerDashboardRoutes() {
+    const routes: Array<RouteParams> = [
+      {
+        path: "/dashboard/users",
+        action: "dashboard:users",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/operators",
+        action: "dashboard:operators",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/operators/month",
+        action: "dashboard:operatorsByMonth",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/operators/day",
+        action: "dashboard:operatorsByDay",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/incentive/month",
+        action: "dashboard:incentiveByMonth",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/incentive/day",
+        action: "dashboard:incentiveByDay",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/campaigns",
+        action: "dashboard:campaigns",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/campaign-apdf",
+        action: "dashboard:campaignApdf",
+        method: "GET",
+      },
+      {
+        path: "/dashboard/territories",
+        action: "dashboard:territories",
+        method: "GET",
+      },
+    ];
+    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
   }
 
   private registerObservatoryRoutes() {
