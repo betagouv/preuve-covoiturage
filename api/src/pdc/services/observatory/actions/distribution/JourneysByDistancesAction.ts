@@ -2,17 +2,25 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
+import { Infer } from "@/lib/superstruct/index.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { DistributionRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/DistributionRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "../../contracts/distribution/journeysByDistances.contract.ts";
+import { ParamsInterface } from "../../contracts/distribution/journeysByDistances.contract.ts";
 import { alias } from "../../contracts/distribution/journeysByDistances.schema.ts";
+export type ResultInterface = {
+  code: string;
+  libelle: string;
+  direction: Infer<typeof Direction>;
+  distances: {
+    dist_classes: string;
+    journeys: number;
+  }[];
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "journeysByDistances",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
     alias,
