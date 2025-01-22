@@ -87,7 +87,7 @@ export default async function ActuCategoriePage({ params }: { params: Promise<{ 
   }
   const categories =  await fetchAPI('/categories',catQuery);
   const nbPage = meta ? meta.pagination.pageCount : 1;
-  const pageTitle= `Actualités de la catégorie ${categories.data.find((c:any) => c.attributes.slug = slug).attributes.label} page ${id}`; 
+  const pageTitle = `Actualités de la catégorie ${categories.data.find((c:any) => c.attributes.slug === slug).attributes.label} page ${id}`; 
 
   return (
     <div id='content'>
