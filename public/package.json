@@ -22,7 +22,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "deck.gl": "^9.0.40",
     "h3-js": "^4.1.0",
-    "maplibre-gl": "^5.0.1",
+    "maplibre-gl": "^4.7.1",
     "meilisearch": "^0.48.2",
     "next": "^15.1.5",
     "next-mdx-remote": "^5.0.0",
