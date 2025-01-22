@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   DistributionRepositoryInterface,
@@ -13,8 +14,7 @@ import {
 @provider({
   identifier: DistributionRepositoryInterfaceResolver,
 })
-export class DistributionRepositoryProvider
-  implements DistributionRepositoryInterface {
+export class DistributionRepositoryProvider implements DistributionRepositoryInterface {
   private readonly table = (
     params:
       | JourneysByHoursParamsInterface
@@ -29,41 +29,30 @@ export class DistributionRepositoryProvider
     params: JourneysByHoursParamsInterface,
   ): Promise<JourneysByHoursResultInterface> {
     const tableName = this.table(params);
-    const conditions = [
-      `year = $1`,
-      `type = $2`,
-      `code = $3`,
-    ];
-    const queryValues = [
-      params.year,
-      params.type,
-      params.code,
+    const filters = [
+      sql`year = ${params.year}`,
+      sql`type = ${params.type}`,
+      sql`code = ${params.code}`,
     ];
     if (params.month) {
-      queryValues.push(params.month);
-      conditions.push(`month = $4`);
+      filters.push(sql`month = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      conditions.push(`trimester = $4`);
+      filters.push(sql`trimester = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      conditions.push(`semester = $4`);
+      filters.push(sql`semester = ${params.semester}`);
     }
-    const queryText = `
+    const query = sql`
       SELECT 
         code, 
         libelle,
         direction,
         hours 
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 
@@ -71,43 +60,31 @@ export class DistributionRepositoryProvider
     params: JourneysByDistancesParamsInterface,
   ): Promise<JourneysByDistancesResultInterface> {
     const tableName = this.table(params);
-    const conditions = [
-      `year = $1`,
-      `type = $2`,
-      `code = $3`,
-      `direction = $4`,
-    ];
-    const queryValues = [
-      params.year,
-      params.type,
-      params.code,
-      params.direction,
+    const filters = [
+      sql`year = ${params.year}`,
+      sql`type = ${params.type}`,
+      sql`code = ${params.code}`,
+      sql`direction = ${params.direction}`,
     ];
     if (params.month) {
-      queryValues.push(params.month);
-      conditions.push(`month = $5`);
+      filters.push(sql`month = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      conditions.push(`trimester = $5`);
+      filters.push(sql`trimester = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      conditions.push(`semester = $5`);
+      filters.push(sql`semester = ${params.semester}`);
     }
-    const queryText = `
+    const query = sql`
       SELECT 
         code, 
         libelle,
         direction,
         distances 
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

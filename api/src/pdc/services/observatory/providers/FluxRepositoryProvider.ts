@@ -1,9 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import {
-  checkIndicParam,
-  checkTerritoryParam,
-} from "@/pdc/services/observatory/helpers/checkParams.ts";
+import sql, { empty, join, raw } from "@/lib/pg/sql.ts";
+import { checkIndicParam, checkTerritoryParam } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
   FluxRepositoryInterface,
@@ -38,55 +36,43 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const observeParam = checkTerritoryParam(params.observe);
     const typeParam = checkTerritoryParam(params.type);
 
-    const perimTableQuery = `
-      SELECT ${observeParam} 
+    const perimTableQuery = sql`
+      SELECT ${raw(observeParam)} 
       FROM (
         SELECT com, epci, aom, dep, reg, country 
-        FROM ${this.perim_table} 
-        WHERE year = geo.get_latest_millesime_or($1::smallint)
+        FROM ${raw(this.perim_table)} 
+        WHERE year = geo.get_latest_millesime_or(${params.year}::smallint)
       ) t 
-      WHERE ${typeParam} = $2
+      WHERE ${raw(typeParam)} = ${params.code}
     `;
 
-    const conditions = [
-      `type = $3`,
-      `(distance / journeys) <= 80`,
-      `(territory_1 IN (${perimTableQuery}) OR territory_2 IN (${perimTableQuery}))`,
-      `territory_1 <> territory_2`,
-      `year = $1`,
-    ];
-
-    const queryValues = [
-      params.year,
-      params.code,
-      observeParam,
+    const filters = [
+      sql`type = ${observeParam}`,
+      sql`(distance / journeys) <= 80`,
+      sql`(territory_1 IN (${perimTableQuery}) OR territory_2 IN (${perimTableQuery}))`,
+      sql`territory_1 <> territory_2`,
+      sql`year = ${params.year}`,
     ];
 
     if (params.month) {
-      queryValues.push(params.month);
-      conditions.push(`month = $4`);
+      filters.push(sql`month = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      conditions.push(`trimester = $4`);
+      filters.push(sql`trimester = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      conditions.push(`semester = $4`);
+      filters.push(sql`semester = ${params.semester}`);
     }
 
-    const queryText = `
+    const query = sql`
       SELECT 
         l_territory_1 AS ter_1, lng_1, lat_1,
         l_territory_2 AS ter_2, lng_2, lat_2,
         passengers, distance, duration 
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 
@@ -102,46 +88,41 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       "duration",
     ];
     const indicParam = checkIndicParam(params.indic, indics, "journeys");
-    const typeParam = checkTerritoryParam(params.type);
-    const limit = params.past ? Number(params.past) * 12 + 1 : 25;
-    const queryValues = [typeParam, params.code, limit];
+    const typeParam = sql`${checkTerritoryParam(params.type)}`;
+    const limit = sql`${params.past ? Number(params.past) * 12 + 1 : 25}`;
     const selectedVar = [
-      "year",
-      `sum(${indicParam}) AS ${indicParam}`,
+      sql`year`,
+      sql`sum(${raw(indicParam)}::numeric) AS ${raw(indicParam)}`,
     ];
-    const conditions = [
-      `type = $1`,
-      `(territory_1 = $2 OR territory_2 = $2)`,
+    const filters = [
+      sql`type = ${typeParam}`,
+      sql`(territory_1 = ${params.code} OR territory_2 = ${params.code})`,
     ];
     const groupBy = [
-      "year",
+      sql`year`,
     ];
     if (params.month) {
-      selectedVar.push("month");
-      groupBy.push("month");
+      selectedVar.push(sql`month`);
+      groupBy.push(sql`month`);
     }
     if (params.trimester) {
-      selectedVar.push("trimester");
-      groupBy.push("trimester");
+      selectedVar.push(sql`trimester`);
+      groupBy.push(sql`trimester`);
     }
     if (params.semester) {
-      selectedVar.push("semester");
-      groupBy.push("semester");
+      selectedVar.push(sql`semester`);
+      groupBy.push(sql`semester`);
     }
-    const queryText = `
-      SELECT ${selectedVar.join(", ")} 
-      ${indicParam == "distance" ? ", sum(journeys) AS journeys" : ""}
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
-      GROUP BY ${groupBy.join(", ")} 
-      ORDER BY (${groupBy.join(", ")}) DESC
-      LIMIT $3;
+    const query = sql`
+      SELECT ${join(selectedVar, ", ")} 
+      ${indicParam == `distance` ? sql`, sum(journeys) AS journeys` : empty}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
+      GROUP BY ${join(groupBy, ", ")} 
+      ORDER BY (${join(groupBy, ", ")}) DESC
+      LIMIT ${limit};
     `;
-
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 
@@ -151,47 +132,36 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   ): Promise<GetBestFluxResultInterface> {
     const tableName = this.table(params);
     const typeParam = checkTerritoryParam(params.type);
-    const perimTableQuery = `
+    const perimTableQuery = sql`
       SELECT com
       FROM (
         SELECT com, epci, aom, dep, reg, country 
-        FROM ${this.perim_table} 
-        WHERE year = geo.get_latest_millesime_or($1::smallint)
+        FROM ${raw(this.perim_table)} 
+        WHERE year = geo.get_latest_millesime_or(${params.year}::smallint)
       ) t 
-      WHERE ${typeParam} = $2
+      WHERE ${raw(typeParam)} = ${params.code}
     `;
-    const conditions = [
-      `year = $1`,
-      `(territory_1 IN (${perimTableQuery}) OR territory_2 IN (${perimTableQuery}))`,
-    ];
-    const queryValues = [
-      params.year,
-      params.code,
-      params.limit,
+    const filters = [
+      sql`year = ${params.year}`,
+      sql`(territory_1 IN (${perimTableQuery}) OR territory_2 IN (${perimTableQuery}))`,
     ];
     if (params.month) {
-      queryValues.push(params.month);
-      conditions.push(`month = $4`);
+      filters.push(sql`month = ${params.month}`);
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      conditions.push(`trimester = $4`);
+      filters.push(sql`trimester = ${params.trimester}`);
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      conditions.push(`semester = $4`);
+      filters.push(sql`semester = ${params.semester}`);
     }
-    const queryText = `
+    const query = sql`
       SELECT territory_1, l_territory_1, territory_2, l_territory_2, journeys
-      FROM ${tableName}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(tableName)}
+      WHERE ${join(filters, " AND ")}
       ORDER BY journeys DESC
-      LIMIT $3
+      LIMIT ${params.limit}
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }

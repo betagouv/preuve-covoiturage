@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
@@ -12,8 +13,7 @@ import {
 @provider({
   identifier: KeyfiguresRepositoryInterfaceResolver,
 })
-export class KeyfiguresRepositoryProvider
-  implements KeyfiguresRepositoryInterface {
+export class KeyfiguresRepositoryProvider implements KeyfiguresRepositoryInterface {
   private readonly table = (
     params: KeyfiguresParamsInterface,
     table: "flux" | "occupation" | "newcomer",
@@ -30,78 +30,63 @@ export class KeyfiguresRepositoryProvider
   ): Promise<KeyfiguresResultInterface> {
     const typeParam = checkTerritoryParam(params.type);
     const joinOnB = [
-      "(a.territory_1 = b.code OR a.territory_2 = b.code)",
-      "a.type = b.type",
-      "a.year = b.year",
+      sql`(a.territory_1 = b.code OR a.territory_2 = b.code)`,
+      sql`a.type = b.type`,
+      sql`a.year = b.year`,
     ];
     const joinOnC = [
-      "(a.territory_1 = c.code OR a.territory_2 = c.code)",
-      "a.type = c.type",
-      "a.year = c.year",
+      sql`(a.territory_1 = c.code OR a.territory_2 = c.code)`,
+      sql`a.type = c.type`,
+      sql`a.year = c.year`,
     ];
-    const conditions = [
-      `a.year = $1`,
-      `a.type = $2`,
-      "b.code = $3",
-      "c.code = $3",
+    const filters = [
+      sql`a.year = ${params.year}`,
+      sql`a.type = ${typeParam}`,
+      sql`b.code = ${params.code}`,
+      sql`c.code = ${params.code}`,
     ];
-    const intraJourneysConditions = [
-      "territory_1 = territory_2",
-      "year = $1",
-      "type = $2",
-      "territory_1 = $3",
-    ];
-    const queryValues = [
-      params.year,
-      typeParam,
-      params.code,
+    const intraJourneysFilters = [
+      sql`territory_1 = territory_2`,
+      sql`year = ${params.year}`,
+      sql`type =  ${typeParam}`,
+      sql`territory_1 = ${params.code}`,
     ];
     if (params.direction) {
-      queryValues.push(params.direction);
-      conditions.push(`b.direction = $4`);
-      conditions.push(`c.direction = $4`);
+      filters.push(sql`b.direction = ${params.direction}`);
+      filters.push(sql`c.direction = ${params.direction}`);
     }
     if (params.month) {
-      queryValues.push(params.month);
-      joinOnB.push("a.month = b.month");
-      joinOnC.push("a.month = c.month");
-      params.direction
-        ? intraJourneysConditions.push(`month = $5`)
-        : intraJourneysConditions.push(`month = $4`);
-      params.direction
-        ? conditions.push(`a.month = $5`)
-        : conditions.push(`a.month = $4`);
+      joinOnB.push(sql`a.month = b.month`);
+      joinOnC.push(sql`a.month = c.month`);
+      if (params.direction) {
+        intraJourneysFilters.push(sql`month = ${params.month}`);
+        filters.push(sql`a.month = ${params.month}`);
+      }
     }
     if (params.trimester) {
-      queryValues.push(params.trimester);
-      joinOnB.push("a.trimester = b.trimester");
-      joinOnC.push("a.trimester = c.trimester");
-      params.direction
-        ? intraJourneysConditions.push(`trimester = $5`)
-        : intraJourneysConditions.push(`trimester = $4`);
-      params.direction
-        ? conditions.push(`a.trimester = $5`)
-        : conditions.push(`a.trimester = $4`);
+      joinOnB.push(sql`a.trimester = b.trimester`);
+      joinOnC.push(sql`a.trimester = c.trimester`);
+      if (params.direction) {
+        intraJourneysFilters.push(sql`trimester= ${params.trimester}`);
+        filters.push(sql`a.trimester = ${params.trimester}`);
+      }
     }
     if (params.semester) {
-      queryValues.push(params.semester);
-      joinOnB.push("a.semester = b.semester");
-      joinOnC.push("a.semester = c.semester");
-      params.direction
-        ? intraJourneysConditions.push(`semester = $5`)
-        : intraJourneysConditions.push(`semester = $4`);
-      params.direction
-        ? conditions.push(`a.semester = $5`)
-        : conditions.push(`a.semester = $4`);
+      joinOnB.push(sql`a.semester = b.semester`);
+      joinOnC.push(sql`a.semester = c.semester`);
+      if (params.direction) {
+        intraJourneysFilters.push(sql`semester= ${params.semester}`);
+        filters.push(sql`a.semester = ${params.semester}`);
+      }
     }
 
-    const intraJourneysQuery = `
+    const intraJourneysQuery = sql`
       SELECT journeys 
-      FROM ${this.table(params, "flux")}
-      WHERE ${intraJourneysConditions.join(" AND ")}
+      FROM ${raw(this.table(params, "flux"))}
+      WHERE ${join(intraJourneysFilters, " AND ")}
     `;
 
-    const queryText = `
+    const query = sql`
       SELECT 
         b.code,b.libelle,b.direction,
         sum(a.passengers)::int AS passengers,
@@ -112,18 +97,13 @@ export class KeyfiguresRepositoryProvider
         b.occupation_rate::float,
         c.new_drivers::int,
         c.new_passengers::int
-      FROM ${this.table(params, "flux")} a
-      LEFT JOIN ${this.table(params, "occupation")} b ON ${
-      joinOnB.join(" AND ")
-    } 
-      LEFT JOIN ${this.table(params, "newcomer")} c ON ${joinOnC.join(" AND ")}
-      WHERE ${conditions.join(" AND ")}
+      FROM ${raw(this.table(params, "flux"))} a
+      LEFT JOIN ${raw(this.table(params, "occupation"))} b ON ${join(joinOnB, " AND ")} 
+      LEFT JOIN ${raw(this.table(params, "newcomer"))} c ON ${join(joinOnC, " AND ")}
+      WHERE ${join(filters, " AND ")}
       GROUP BY b.code,b.libelle,b.direction,b.journeys,b.occupation_rate,c.new_drivers,c.new_passengers;
     `;
-    const response = await this.pg.getClient().query({
-      text: queryText,
-      values: queryValues,
-    });
+    const response = await this.pg.getClient().query(query);
     return response.rows;
   }
 }
