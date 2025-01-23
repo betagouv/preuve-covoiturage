@@ -14,6 +14,7 @@ import {
 import {
   ConfigInterface,
   ConfigInterfaceResolver,
+  ContextType,
   InvalidRequestException,
   KernelInterface,
   RPCResponseType,
@@ -48,7 +49,7 @@ import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
-import { CacheMiddleware, cacheMiddleware, CacheTTL } from "./middlewares/cacheMiddleware.ts";
+import { CacheMiddleware, cacheMiddleware } from "./middlewares/cacheMiddleware.ts";
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
 import {
@@ -184,7 +185,7 @@ export class HttpTransport implements TransportInterface {
 
     // apply CORS to all routes except the following ones
     this.app.use(
-      /\/((?!honor|contactform|policy\/simulate|observatory|geo\/search).)*/,
+      /\/((?!honor|contactform|policy\/simulate|v3\/observatory|geo\/search).)*/,
       cors({
         origin: this.config.get("proxy.cors"),
         optionsSuccessStatus: 200,
@@ -194,7 +195,7 @@ export class HttpTransport implements TransportInterface {
     );
 
     this.app.use(
-      /\/(observatory|geo\/search)/i,
+      /\/(v3\/observatory|geo\/search)/i,
       cors({
         origin: this.config.get("proxy.observatoryCors"),
         optionsSuccessStatus: 200,
@@ -919,42 +920,92 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    type ObservatoryMethod = string;
-    type ObservatoryURL = string;
-
-    const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
-      Object.entries({
-        getKeyfigures: "keyfigures",
-        getFlux: "flux",
-        getEvolFlux: "evol-flux",
-        getBestFlux: "best-flux",
-        getOccupation: "occupation",
-        getEvolOccupation: "evol-occupation",
-        getBestTerritories: "best-territories",
-        journeysByHours: "journeys-by-hours",
-        journeysByDistances: "journeys-by-distances",
-        getLocation: "location",
-        airesCovoiturage: "aires-covoiturage",
-        campaigns: "campaigns",
-        getIncentive: "incentive",
-      }),
+    const routes: Array<RouteParams> = [
+      {
+        path: "/observatory/keyfigures",
+        action: "observatory:getKeyfigures",
+        method: "GET",
+      },
+      {
+        path: "/observatory/flux",
+        action: "observatory:getFlux",
+        method: "GET",
+      },
+      {
+        path: "/observatory/evol-flux",
+        action: "observatory:getEvolFlux",
+        method: "GET",
+      },
+      {
+        path: "/observatory/best-flux",
+        action: "observatory:getBestFlux",
+        method: "GET",
+      },
+      {
+        path: "/observatory/occupation",
+        action: "observatory:getOccupation",
+        method: "GET",
+      },
+      {
+        path: "/observatory/evol-occupation",
+        action: "observatory:getEvolOccupation",
+        method: "GET",
+      },
+      {
+        path: "/observatory/best-territories",
+        action: "observatory:getBestTerritories",
+        method: "GET",
+      },
+      {
+        path: "/observatory/journeys-by-hours",
+        action: "observatory:journeysByHours",
+        method: "GET",
+      },
+      {
+        path: "/observatory/journeys-by-distances",
+        action: "observatory:journeysByDistances",
+        method: "GET",
+      },
+      {
+        path: "/observatory/location",
+        action: "observatory:getLocation",
+        method: "GET",
+      },
+      {
+        path: "/observatory/aires-covoiturage",
+        action: "observatory:airesCovoiturage",
+        method: "GET",
+      },
+      {
+        path: "/observatory/campaigns",
+        action: "observatory:campaigns",
+        method: "GET",
+      },
+      {
+        path: "/observatory/incentive",
+        action: "observatory:getIncentive",
+        method: "GET",
+      },
+    ];
+    routes.map((c) =>
+      registerExpressRoute(this.app, this.kernel, {
+        ...c,
+        actionContextFn: async (req) => {
+          return {
+            channel: {
+              service: "proxy",
+              transport: "http",
+            },
+            call: {
+              user: {
+                permissions: ["common.observatory.stats"],
+              },
+              api_version_range: "v3",
+            },
+          } as ContextType;
+        },
+      })
     );
-
-    for (const [obsMethod, obsUrl] of routes) {
-      this.app.get(
-        `/observatory/${obsUrl}`,
-        rateLimiter(),
-        this.cache.set({ prefix: "observatory", ttl: CacheTTL.MONTH }),
-        asyncHandler(async (req: Request, res: Response) => {
-          const response = await this.kernel.handle(
-            createRPCPayload(`observatory:${obsMethod}`, req.query, {
-              permissions: ["common.observatory.stats"],
-            }),
-          );
-          this.send(res, response as RPCResponseType);
-        }),
-      );
-    }
   }
 
   /**
