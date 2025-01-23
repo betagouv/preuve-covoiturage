@@ -4,14 +4,14 @@ import sql, { empty, join, raw } from "@/lib/pg/sql.ts";
 import { checkIndicParam, checkTerritoryParam } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
+  BestFluxParamsInterface,
+  BestFluxResultInterface,
+  EvolFluxParamsInterface,
+  EvolFluxResultInterface,
+  FluxParamsInterface,
   FluxRepositoryInterface,
   FluxRepositoryInterfaceResolver,
-  GetBestFluxParamsInterface,
-  GetBestFluxResultInterface,
-  GetEvolFluxParamsInterface,
-  GetEvolFluxResultInterface,
-  GetFluxParamsInterface,
-  GetFluxResultInterface,
+  FluxResultInterface,
 } from "@/pdc/services/observatory/interfaces/FluxRepositoryProviderInterface.ts";
 
 @provider({
@@ -21,17 +21,17 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   private readonly perim_table = "geo.perimeters";
   private readonly table = (
     params:
-      | GetFluxParamsInterface
-      | GetEvolFluxParamsInterface
-      | GetBestFluxParamsInterface,
+      | FluxParamsInterface
+      | EvolFluxParamsInterface
+      | BestFluxParamsInterface,
   ) => {
     return getTableName(params, "observatoire_stats", "flux");
   };
   constructor(private pg: PostgresConnection) {}
 
   async getFlux(
-    params: GetFluxParamsInterface,
-  ): Promise<GetFluxResultInterface> {
+    params: FluxParamsInterface,
+  ): Promise<FluxResultInterface> {
     const tableName = this.table(params);
     const observeParam = checkTerritoryParam(params.observe);
     const typeParam = checkTerritoryParam(params.type);
@@ -77,8 +77,8 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   }
 
   async getEvolFlux(
-    params: GetEvolFluxParamsInterface,
-  ): Promise<GetEvolFluxResultInterface> {
+    params: EvolFluxParamsInterface,
+  ): Promise<EvolFluxResultInterface> {
     const tableName = this.table(params);
     const indics = [
       "journeys",
@@ -128,8 +128,8 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
 
   // Retourne les données pour le top 10 des trajets dans le dashboard
   async getBestFlux(
-    params: GetBestFluxParamsInterface,
-  ): Promise<GetBestFluxResultInterface> {
+    params: BestFluxParamsInterface,
+  ): Promise<BestFluxResultInterface> {
     const tableName = this.table(params);
     const typeParam = checkTerritoryParam(params.type);
     const perimTableQuery = sql`
