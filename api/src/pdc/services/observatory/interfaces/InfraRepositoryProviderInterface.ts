@@ -1,7 +1,5 @@
-import type {
-  ParamsInterface as AiresCovoiturageParamsInterface,
-  ResultInterface as AiresCovoiturageResultInterface,
-} from "../contracts/infra/airesCovoiturage.contract.ts";
+import type { ResultInterface as AiresCovoiturageResultInterface } from "@/pdc/services/observatory/actions/infra/AiresCovoiturageAction.ts";
+import type { AiresCovoiturage as AiresCovoiturageParamsInterface } from "@/pdc/services/observatory/dto/infra/AiresCovoiturage.ts";
 
 export type { AiresCovoiturageParamsInterface, AiresCovoiturageResultInterface };
 

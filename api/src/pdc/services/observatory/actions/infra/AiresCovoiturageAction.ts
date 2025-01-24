@@ -1,16 +1,30 @@
+import { Feature } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/infra/airesCovoiturage.contract.ts";
-import { alias } from "../../contracts/infra/airesCovoiturage.schema.ts";
+import { AiresCovoiturage } from "@/pdc/services/observatory/dto/infra/AiresCovoiturage.ts";
 import { InfraRepositoryInterfaceResolver } from "../../interfaces/InfraRepositoryProviderInterface.ts";
+export type ResultInterface = {
+  id_lieu: string;
+  nom_lieu: string;
+  com_lieu: string;
+  type: string;
+  date_maj: Date;
+  nbre_pl: number;
+  nbre_pmr: number;
+  duree: number;
+  horaires: string;
+  proprio: string;
+  lumiere: boolean;
+  geom: Feature;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "airesCovoiturage",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    AiresCovoiturage,
   ]],
 })
 export class AiresCovoiturageAction extends AbstractAction {
@@ -18,7 +32,7 @@ export class AiresCovoiturageAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: AiresCovoiturage): Promise<ResultInterface> {
     return this.repository.getAiresCovoiturage(params);
   }
 }

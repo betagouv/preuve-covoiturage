@@ -1,16 +1,19 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/location/location.contract.ts";
-import { alias } from "../../contracts/location/location.schema.ts";
+import { Location } from "@/pdc/services/observatory/dto/Location.ts";
 import { LocationRepositoryInterfaceResolver } from "../../interfaces/LocationRepositoryProviderInterface.ts";
+export type ResultInterface = {
+  hex: string;
+  count: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "getLocation",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    Location,
   ]],
 })
 export class LocationAction extends AbstractAction {
@@ -18,7 +21,7 @@ export class LocationAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: Location): Promise<ResultInterface> {
     return this.repository.getLocation(params);
   }
 }
