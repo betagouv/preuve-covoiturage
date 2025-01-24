@@ -2,10 +2,13 @@ import { coerce, date, enums, integer, pattern, size, string, Struct, union } fr
 export const CoerceNumberMinMax = (type: Struct<number, null>, min: number, max: number) => {
   return coerce(size(type, min, max), string(), (v) => {
     const parsed = parseInt(v, 10);
-    if (isNaN(parsed)) {
+    if (Number.isNaN(parsed)) {
       throw new Error(`Invalid number: "${v}"`);
     }
-    return Math.abs(parsed);
+    if (parsed < 0) {
+      throw new Error(`Expected non-negative number, got: "${v}"`);
+    }
+    return parsed;
   });
 };
 export const Serial = size(integer(), 0, 2147483647);
