@@ -1,6 +1,6 @@
 export const description = `
 <div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-  <p>Campagne d’incitation au covoiturage du <b>2 mai 2023 au 20 décembre 2024</b>, toute la semaine</p>
+  <p>Campagne d'incitation au covoiturage du <b>2 mai 2023 au 31 décembre 2025</b>, toute la semaine</p>
   <p>Cette campagne est limitée à <b>68 400 euros</b>.</p>
   <p>Le périmètre géographique de la campagne comprend les zones suivantes :</p>
   <ul>
