@@ -1,7 +1,5 @@
-import type {
-  ParamsInterface as IncentiveParamsInterface,
-  ResultInterface as IncentiveResultInterface,
-} from "../contracts/incentive/getIncentive.contract.ts";
+import type { ResultInterface as IncentiveResultInterface } from "@/pdc/services/observatory/actions/incentive/IncentiveAction.ts";
+import type { Incentive as IncentiveParamsInterface } from "@/pdc/services/observatory/dto/Incentive.ts";
 
 export type { IncentiveParamsInterface, IncentiveResultInterface };
 

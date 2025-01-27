@@ -1,17 +1,26 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/incentive/getIncentive.contract.ts";
-import { alias } from "../../contracts/incentive/getIncentive.schema.ts";
-import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Incentive } from "@/pdc/services/observatory/dto/Incentive.ts";
 import { IncentiveRepositoryInterfaceResolver } from "../../interfaces/IncentiveRepositoryProviderInterface.ts";
 
+export type ResultInterface = {
+  code: Incentive["code"];
+  libelle: string;
+  direction: Infer<typeof Direction>;
+  collectivite: number;
+  operateur: number;
+  autres: number;
+}[];
+
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "getIncentive",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    Incentive,
   ]],
 })
 export class IncentiveAction extends AbstractAction {
@@ -19,12 +28,7 @@ export class IncentiveAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    params.year = limitNumberParamWithinRange(
-      params.year,
-      2020,
-      new Date().getFullYear(),
-    );
+  public async handle(params: Incentive): Promise<ResultInterface> {
     return this.repository.getIncentive(params);
   }
 }

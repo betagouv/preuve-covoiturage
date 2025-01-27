@@ -1,21 +1,28 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "../../contracts/distribution/journeysByHours.contract.ts";
-import { alias } from "../../contracts/distribution/journeysByHours.schema.ts";
-import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
+import { JourneysByHours } from "@/pdc/services/observatory/dto/distribution/JourneysByHours.ts";
+import { Infer } from "https://jsr.io/@superstruct/core/2.0.2/src/struct.ts";
 import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
+export type ResultInterface = {
+  code: string;
+  libelle: string;
+  direction: Infer<typeof Direction>;
+  hours: [
+    {
+      hour: number;
+      journeys: number;
+    },
+  ];
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "journeysByHours",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    JourneysByHours,
   ]],
 })
 export class JourneysByHoursAction extends AbstractAction {
@@ -23,12 +30,7 @@ export class JourneysByHoursAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    params.year = limitNumberParamWithinRange(
-      params.year,
-      2020,
-      new Date().getFullYear(),
-    );
+  public async handle(params: JourneysByHours): Promise<ResultInterface> {
     return this.repository.getJourneysByHours(params);
   }
 }

@@ -1,11 +1,15 @@
 import type {
-  ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
-} from "../contracts/distribution/journeysByDistances.contract.ts";
+} from "@/pdc/services/observatory/actions/distribution/JourneysByDistancesAction.ts";
 import type {
-  ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
-} from "../contracts/distribution/journeysByHours.contract.ts";
+} from "@/pdc/services/observatory/actions/distribution/JourneysByHoursAction.ts";
+import type {
+  JourneysByDistances as JourneysByDistancesParamsInterface,
+} from "@/pdc/services/observatory/dto/distribution/JourneysByDistances.ts";
+import type {
+  JourneysByHours as JourneysByHoursParamsInterface,
+} from "@/pdc/services/observatory/dto/distribution/JourneysByHours.ts";
 
 export type {
   JourneysByDistancesParamsInterface,

@@ -1,21 +1,20 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { BestTerritories } from "@/pdc/services/observatory/dto/occupation/BestTerritories.ts";
 import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "../../contracts/occupation/getBestTerritories.contract.ts";
-import { alias } from "../../contracts/occupation/getBestTerritories.schema.ts";
+export type ResultInterface = {
+  territory: BestTerritories["code"];
+  l_territory: string;
+  journeys: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "getBestTerritories",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    BestTerritories,
   ]],
 })
 export class BestTerritoriesAction extends AbstractAction {
@@ -23,12 +22,7 @@ export class BestTerritoriesAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    params.year = limitNumberParamWithinRange(
-      params.year,
-      2020,
-      new Date().getFullYear(),
-    );
+  public async handle(params: BestTerritories): Promise<ResultInterface> {
     return this.repository.getBestTerritories(params);
   }
 }

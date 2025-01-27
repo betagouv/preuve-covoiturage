@@ -1,17 +1,26 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/flux/getFlux.contract.ts";
-import { alias } from "../../contracts/flux/getFlux.schema.ts";
-import { limitNumberParamWithinRange } from "../../helpers/checkParams.ts";
+import { Flux } from "@/pdc/services/observatory/dto/flux/Flux.ts";
 import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
+export type ResultInterface = {
+  ter_1: Flux["code"];
+  lng_1: number;
+  lat_1: number;
+  ter_2: Flux["code"];
+  lng_2: number;
+  lat_2: number;
+  passengers: number;
+  distance: number;
+  duration: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "getFlux",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    Flux,
   ]],
 })
 export class FluxAction extends AbstractAction {
@@ -19,12 +28,7 @@ export class FluxAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    params.year = limitNumberParamWithinRange(
-      params.year,
-      2020,
-      new Date().getFullYear(),
-    );
+  public async handle(params: Flux): Promise<ResultInterface> {
     return this.repository.getFlux(params);
   }
 }

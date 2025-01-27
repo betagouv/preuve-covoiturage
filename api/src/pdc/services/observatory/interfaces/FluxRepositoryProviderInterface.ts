@@ -1,57 +1,52 @@
 // eslint-disable-next-line max-len
-
 import type {
-  ParamsInterface as GetFluxParamsInterface,
-  ResultInterface as GetFluxResultInterface,
-} from "../contracts/flux/getFlux.contract.ts";
-
+  ResultInterface as BestFluxResultInterface,
+} from "@/pdc/services/observatory/actions/flux/BestFluxAction.ts";
 import type {
-  ParamsInterface as GetEvolFluxParamsInterface,
-  ResultInterface as GetEvolFluxResultInterface,
-} from "../contracts/flux/getEvolFlux.contract.ts";
-
-import type {
-  ParamsInterface as GetBestFluxParamsInterface,
-  ResultInterface as GetBestFluxResultInterface,
-} from "../contracts/flux/getBestFlux.contract.ts";
+  ResultInterface as EvolFluxResultInterface,
+} from "@/pdc/services/observatory/actions/flux/EvolFluxAction.ts";
+import type { ResultInterface as FluxResultInterface } from "@/pdc/services/observatory/actions/flux/FluxAction.ts";
+import type { BestFlux as BestFluxParamsInterface } from "@/pdc/services/observatory/dto/flux/BestFlux.ts";
+import type { EvolFlux as EvolFluxParamsInterface } from "@/pdc/services/observatory/dto/flux/EvolFlux.ts";
+import type { Flux as FluxParamsInterface } from "@/pdc/services/observatory/dto/flux/Flux.ts";
 
 export type {
-  GetBestFluxParamsInterface,
-  GetBestFluxResultInterface,
-  GetEvolFluxParamsInterface,
-  GetEvolFluxResultInterface,
-  GetFluxParamsInterface,
-  GetFluxResultInterface,
+  BestFluxParamsInterface,
+  BestFluxResultInterface,
+  EvolFluxParamsInterface,
+  EvolFluxResultInterface,
+  FluxParamsInterface,
+  FluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
   getFlux(
-    params: GetFluxParamsInterface,
-  ): Promise<GetFluxResultInterface>;
+    params: FluxParamsInterface,
+  ): Promise<FluxResultInterface>;
   getEvolFlux(
-    params: GetEvolFluxParamsInterface,
-  ): Promise<GetEvolFluxResultInterface>;
+    params: EvolFluxParamsInterface,
+  ): Promise<EvolFluxResultInterface>;
   getBestFlux(
-    params: GetBestFluxParamsInterface,
-  ): Promise<GetBestFluxResultInterface>;
+    params: BestFluxParamsInterface,
+  ): Promise<BestFluxResultInterface>;
 }
 
 export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
   async getFlux(
-    params: GetFluxParamsInterface,
-  ): Promise<GetFluxResultInterface> {
+    params: FluxParamsInterface,
+  ): Promise<FluxResultInterface> {
     throw new Error();
   }
 
   async getEvolFlux(
-    params: GetEvolFluxParamsInterface,
-  ): Promise<GetEvolFluxResultInterface> {
+    params: EvolFluxParamsInterface,
+  ): Promise<EvolFluxResultInterface> {
     throw new Error();
   }
 
   async getBestFlux(
-    params: GetBestFluxParamsInterface,
-  ): Promise<GetBestFluxResultInterface> {
+    params: BestFluxParamsInterface,
+  ): Promise<BestFluxResultInterface> {
     throw new Error();
   }
 }

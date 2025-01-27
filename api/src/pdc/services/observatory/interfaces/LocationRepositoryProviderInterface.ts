@@ -1,10 +1,9 @@
 import type {
-  ParamsInterface as LocationParamsInterface,
   ResultInterface as LocationResultInterface,
-  SqlResultInterface as LocationSqlResultInterface,
-} from "../contracts/location/location.contract.ts";
+} from "@/pdc/services/observatory/actions/location/LocationAction.ts";
+import type { Location as LocationParamsInterface } from "@/pdc/services/observatory/dto/Location.ts";
 
-export type { LocationParamsInterface, LocationResultInterface, LocationSqlResultInterface };
+export type { LocationParamsInterface, LocationResultInterface };
 
 export interface LocationRepositoryInterface {
   getLocation(

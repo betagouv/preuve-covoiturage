@@ -1,20 +1,45 @@
+import { Feature } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from "../../contracts/incentiveCampaigns/campaigns.contract.ts";
-import { alias } from "../../contracts/incentiveCampaigns/campaigns.schema.ts";
+import { IncentiveCampaigns } from "@/pdc/services/observatory/dto/IncentiveCampaigns.ts";
 import { IncentiveCampaignsRepositoryInterfaceResolver } from "../../interfaces/IncentiveCampaignsRepositoryProviderInterface.ts";
+export type ResultInterface = {
+  type: string;
+  code: string;
+  premiere_campagne: string;
+  budget_incitations: string;
+  date_debut: string;
+  date_fin: string;
+  conducteur_montant_max_par_passager: string;
+  conducteur_montant_max_par_mois: string;
+  conducteur_montant_min_par_passager: string;
+  conducteur_trajets_max_par_mois: string;
+  passager_trajets_max_par_mois: string;
+  passager_gratuite: string;
+  passager_eligible_gratuite: string;
+  passager_reduction_ticket: string;
+  passager_eligibilite_reduction: string;
+  passager_montant_ticket: string;
+  zone_sens_des_trajets: string;
+  zone_exclusion: string;
+  si_zone_exclue_liste: string;
+  autre_exclusion: string;
+  trajet_longueur_min: string;
+  trajet_longueur_max: string;
+  trajet_classe_de_preuve: string;
+  operateurs: string;
+  autres_informations: string;
+  lien: string;
+  geom: Feature;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "campaigns",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    IncentiveCampaigns,
   ]],
 })
 export class CampaignsAction extends AbstractAction {
@@ -24,7 +49,7 @@ export class CampaignsAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: IncentiveCampaigns): Promise<ResultInterface> {
     return this.repository.getCampaigns(params);
   }
 }

@@ -1,7 +1,5 @@
-import type {
-  ParamsInterface as CampaignsParamsInterface,
-  ResultInterface as CampaignsResultInterface,
-} from "../contracts/incentiveCampaigns/campaigns.contract.ts";
+import type { ResultInterface as CampaignsResultInterface } from "@/pdc/services/observatory/actions/incentiveCampaigns/CampaignsAction.ts";
+import type { IncentiveCampaigns as CampaignsParamsInterface } from "@/pdc/services/observatory/dto/IncentiveCampaigns.ts";
 
 export type { CampaignsParamsInterface, CampaignsResultInterface };
 

@@ -1,17 +1,9 @@
-import type {
-  ParamsInterface as EvolOccupationParamsInterface,
-  ResultInterface as EvolOccupationResultInterface,
-} from "../contracts/occupation/getEvolOccupation.contract.ts";
-import type {
-  ParamsInterface as OccupationParamsInterface,
-  ResultInterface as OccupationResultInterface,
-} from "../contracts/occupation/getOccupation.contract.ts";
-
-import type {
-  ParamsInterface as BestTerritoriesParamsInterface,
-  ResultInterface as BestTerritoriesResultInterface,
-} from "../contracts/occupation/getBestTerritories.contract.ts";
-
+import type { ResultInterface as BestTerritoriesResultInterface } from "@/pdc/services/observatory/actions/occupation/BestTerritoriesAction.ts";
+import type { ResultInterface as EvolOccupationResultInterface } from "@/pdc/services/observatory/actions/occupation/EvolOccupationAction.ts";
+import type { ResultInterface as OccupationResultInterface } from "@/pdc/services/observatory/actions/occupation/OccupationAction.ts";
+import type { BestTerritories as BestTerritoriesParamsInterface } from "@/pdc/services/observatory/dto/occupation/BestTerritories.ts";
+import type { EvolOccupation as EvolOccupationParamsInterface } from "@/pdc/services/observatory/dto/occupation/EvolOccupation.ts";
+import type { Occupation as OccupationParamsInterface } from "@/pdc/services/observatory/dto/occupation/Occupation.ts";
 export type {
   BestTerritoriesParamsInterface,
   BestTerritoriesResultInterface,
