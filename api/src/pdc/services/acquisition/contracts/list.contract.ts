@@ -1,8 +1,8 @@
-import { StatusEnum } from './status.contract.ts';
+import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 
 export interface ParamsInterface {
   operator_id: number;
-  status: StatusEnum;
+  status: CarpoolStatusEnum;
   limit?: number;
   offset?: number;
   start?: Date;
@@ -14,8 +14,8 @@ export type ResultInterface = Array<{
 }>;
 
 export const handlerConfig = {
-  service: 'acquisition',
-  method: 'list',
+  service: "acquisition",
+  method: "list",
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

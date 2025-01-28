@@ -1,10 +1,6 @@
 import { assertEquals, it } from "@/dev_deps.ts";
 import { CarpoolAnomalyStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
-import {
-  CarpoolAcquisitionStatusEnum,
-  CarpoolFraudStatusEnum,
-  CarpoolStatusEnum,
-} from "../interfaces/index.ts";
+import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum, CarpoolStatusEnum } from "../interfaces/index.ts";
 import { castFromStatusEnum, castToStatusEnum } from "./castStatus.ts";
 
 for (
@@ -112,6 +108,24 @@ for (
         anomaly_status: CarpoolAnomalyStatusEnum.Failed,
       },
       expected: CarpoolStatusEnum.TermsViolationError,
+    },
+    {
+      title: "Passed fraud without anomaly -> pending",
+      args: {
+        acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+        fraud_status: CarpoolFraudStatusEnum.Passed,
+        // anomaly_status: CarpoolAnomalyStatusEnum.Passed,
+      },
+      expected: CarpoolStatusEnum.Pending,
+    },
+    {
+      title: "Passed fraud + anomaly -> ok",
+      args: {
+        acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+        fraud_status: CarpoolFraudStatusEnum.Passed,
+        anomaly_status: CarpoolAnomalyStatusEnum.Passed,
+      },
+      expected: CarpoolStatusEnum.Ok,
     },
   ]
 ) {

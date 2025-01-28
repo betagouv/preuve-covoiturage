@@ -1,4 +1,8 @@
-import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
+import {
+  CarpoolAcquisitionStatusEnum,
+  CarpoolAnomalyStatusEnum,
+  CarpoolFraudStatusEnum,
+} from "@/pdc/providers/carpool/interfaces/index.ts";
 import { CeeJourneyTypeEnum, JourneyId } from "../contracts/common/CeeApplicationInterface.ts";
 export { CeeJourneyTypeEnum };
 
@@ -16,6 +20,7 @@ export interface ExistingCeeApplication extends RegisteredCeeApplication {
   operator_journey_id?: string;
   acquisition_status?: CarpoolAcquisitionStatusEnum;
   fraud_status?: CarpoolFraudStatusEnum;
+  anomaly_status?: CarpoolAnomalyStatusEnum;
 }
 
 export interface ValidJourney {
@@ -24,6 +29,7 @@ export interface ValidJourney {
   datetime: Date;
   acquisition_status: CarpoolAcquisitionStatusEnum;
   fraud_status: CarpoolFraudStatusEnum;
+  anomaly_status: CarpoolAnomalyStatusEnum;
   already_registered: boolean;
   identity_key?: string;
 }
