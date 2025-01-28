@@ -100,7 +100,11 @@ export class DataGouvCommand implements CommandInterface {
       // upload to storage
       const dataset = await this.api.dataset();
       const resource = await this.api.upload(path);
-      await this.api.setMetadata(resource, { description: this.metadata.description() });
+      await this.api.setMetadata(resource, {
+        description: this.metadata.description({
+          start_at: params.get().start_at,
+        }),
+      });
 
       logger.info(`Resource uploaded to ${dataset.page}`);
     }
