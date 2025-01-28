@@ -36,6 +36,7 @@ import { HauteCorreze2025 } from "@/pdc/services/policy/engine/policies/20240902
 import { PetrLunevillois092024032025 } from "@/pdc/services/policy/engine/policies/20240902_PetrLunevillois.ts";
 import { CCPOA202410 } from "@/pdc/services/policy/engine/policies/20241015_CCPOA_orthe_et_arrigans_2024.ts";
 import { GrandPoitiers2025 } from "@/pdc/services/policy/engine/policies/20250101_GrandPoitiers2025.ts";
+import { LaRochelle2025 } from "@/pdc/services/policy/engine/policies/20250101_LaRochelle.ts";
 import { PMGFxATMB2025 } from "@/pdc/services/policy/engine/policies/20250101_PMGFxATMB.ts";
 import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
@@ -58,6 +59,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     LannionTregor2024,
     LaRochelle20232024,
     LaRochelle2024,
+    LaRochelle2025,
     LavalAgglo2022,
     MetropoleRouenNormandie2022,
     MetropoleSavoie,
