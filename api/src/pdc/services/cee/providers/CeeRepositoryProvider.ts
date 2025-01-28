@@ -174,6 +174,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.end_datetime AS datetime,
           cs.acquisition_status,
           cs.fraud_status,
+          cs.anomaly_status,
           ce._id IS NOT NULL AS already_registered,
           cc.driver_identity_key AS identity_key
         FROM ${this.carpoolV2Table} AS cc
@@ -202,11 +203,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       ],
     };
 
-    const result = await this.connection.getClient().query<ValidJourney>(query);
+    const result = await this.connection.getClient().query<ValidJourney & { journey_id: string }>(query);
     if (!result.rows.length) {
       throw new NotFoundException();
     }
-    return result.rows.map(this.castOutput<ValidJourney>)[0];
+    return result.rows.map(this.castOutput)[0];
   }
 
   protected async registerApplication(
@@ -331,7 +332,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     }
 
     // fetch operator data
-    const siretResult = await this.connection.getClient().query<any>({
+    const siretResult = await this.connection.getClient().query({
       text: `SELECT siret FROM ${this.operatorTable} WHERE _id = $1`,
       values: [data.operator_id],
     });

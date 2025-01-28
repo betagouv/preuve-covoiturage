@@ -140,6 +140,7 @@ export class RegisterCeeAction extends AbstractAction {
         status: castToStatusEnum({
           acquisition_status: carpoolData.acquisition_status,
           fraud_status: carpoolData.fraud_status,
+          anomaly_status: carpoolData.anomaly_status,
         }),
       };
     } catch (e) {

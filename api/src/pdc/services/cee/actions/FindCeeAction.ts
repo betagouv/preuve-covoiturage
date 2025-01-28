@@ -45,6 +45,7 @@ export class FindCeeAction extends AbstractAction {
       status: castToStatusEnum({
         acquisition_status: application.acquisition_status,
         fraud_status: application.fraud_status,
+        anomaly_status: application.anomaly_status,
       }),
       token: await this.sign(application),
     };
