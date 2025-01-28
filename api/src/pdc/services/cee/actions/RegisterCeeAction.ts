@@ -113,7 +113,7 @@ export class RegisterCeeAction extends AbstractAction {
     operator_id: number,
     params: CeeShortApplicationInterface,
   ): Promise<ResultInterface> {
-    const { identity_key: carpoolIdentityKey, ...carpoolData } = await this
+    const { identity_key: _unused, ...carpoolData } = await this
       .ceeRepository.searchForValidJourney(
         { operator_id, operator_journey_id: params.operator_journey_id },
         this.validJourneyConstraint,

@@ -35,7 +35,7 @@ export class StatusJourneyAction extends AbstractAction {
       throw new NotFoundException();
     }
 
-    const status = castToStatusEnum(result.status) as any;
+    const status = castToStatusEnum(result.status);
     return {
       operator_journey_id,
       status,
