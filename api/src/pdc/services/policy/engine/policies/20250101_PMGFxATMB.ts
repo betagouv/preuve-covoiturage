@@ -21,7 +21,7 @@ import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import { description } from "./20240401_PMGFxATMB.html.ts";
+import { description } from "./20250101_PMGFxATMB.html.ts";
 
 // INSERT INTO policy.policies (territory_id, start_date, end_date, name, unit, status, handler, max_amount)
 // VALUES (
