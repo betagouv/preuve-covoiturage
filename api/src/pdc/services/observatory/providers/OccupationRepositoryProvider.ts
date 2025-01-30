@@ -98,7 +98,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     const limit = params.past ? Number(params.past) * 12 + 1 : 25;
     const selectedVar = [
       sql`year`,
-      sql`${indicParam}`,
+      sql`${raw(indicParam)}::float AS ${raw(indicParam)}`,
     ];
     const filters = [
       sql`type = ${typeParam}`,

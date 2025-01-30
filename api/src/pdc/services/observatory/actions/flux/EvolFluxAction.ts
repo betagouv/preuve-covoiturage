@@ -1,17 +1,24 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
-
-import { limitNumberParamWithinRange } from "@/pdc/services/observatory/helpers/checkParams.ts";
+import { EvolFlux } from "@/pdc/services/observatory/dto/flux/EvolFlux.ts";
 import { FluxRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/FluxRepositoryProviderInterface.ts";
-import { handlerConfig, ParamsInterface, ResultInterface } from "../../contracts/flux/getEvolFlux.contract.ts";
-import { alias } from "../../contracts/flux/getEvolFlux.schema.ts";
+export type ResultInterface = {
+  territory: EvolFlux["code"];
+  l_territory: string;
+  journeys?: number;
+  passengers?: number;
+  has_incentive?: number;
+  distance?: number;
+  duration?: number;
+}[];
 
 @handler({
-  ...handlerConfig,
+  service: "observatory",
+  method: "getEvolFlux",
   middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
     "validate",
-    alias,
+    EvolFlux,
   ]],
 })
 export class EvolFluxAction extends AbstractAction {
@@ -19,12 +26,7 @@ export class EvolFluxAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    params.year = limitNumberParamWithinRange(
-      params.year,
-      2020,
-      new Date().getFullYear(),
-    );
+  public async handle(params: EvolFlux): Promise<ResultInterface> {
     return this.repository.getEvolFlux(params);
   }
 }

@@ -1,5 +1,16 @@
-import { coerce, date, enums, integer, pattern, size, string } from "@/lib/superstruct/index.ts";
-
+import { coerce, date, enums, integer, pattern, size, string, Struct, union } from "@/lib/superstruct/index.ts";
+export const CoerceNumberMinMax = (type: Struct<number, null>, min: number, max: number) => {
+  return coerce(size(type, min, max), string(), (v) => {
+    const parsed = parseInt(v, 10);
+    if (Number.isNaN(parsed)) {
+      throw new Error(`Invalid number: "${v}"`);
+    }
+    if (parsed < 0) {
+      throw new Error(`Expected non-negative number, got: "${v}"`);
+    }
+    return parsed;
+  });
+};
 export const Serial = size(integer(), 0, 2147483647);
 export const DateOnly = coerce(
   date(),
@@ -23,5 +34,14 @@ export const Phone = pattern(Varchar, /^\+[0-9]{6,20}$/);
 
 export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
 export const Direction = enums(["from", "to", "both"]);
-export const Year = size(integer(), 2020, new Date().getFullYear());
-export const Id = coerce(Serial, string(), (v) => Math.abs(parseInt(v, 10)));
+export const Year = CoerceNumberMinMax(integer(), 2020, new Date().getFullYear());
+export const Id = CoerceNumberMinMax(integer(), 0, 2147483647);
+export const Month = CoerceNumberMinMax(integer(), 1, 12);
+export const Trimester = CoerceNumberMinMax(integer(), 1, 4);
+export const Semester = CoerceNumberMinMax(integer(), 1, 2);
+export const Country = pattern(string(), /^[0-9X]{5}$/);
+export const Department = pattern(string(), /^[0-9][0-9A-B]{1}[0-9]{0,1}$/);
+export const Insee = pattern(string(), /^[0-9][0-9A-B][0-9]{3}$/);
+export const Siren = pattern(string(), /^[0-9]{9}$/);
+export const TerritoryCode = union([Country, Department, Insee, Siren]);
+export const TerritoryType = enums(["com", "epci", "aom", "dep", "reg", "country"]);

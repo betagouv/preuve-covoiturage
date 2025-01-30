@@ -1,7 +1,7 @@
 import type {
-  ParamsInterface as KeyfiguresParamsInterface,
   ResultInterface as KeyfiguresResultInterface,
-} from "../contracts/keyfigures/getKeyfigures.contract.ts";
+} from "@/pdc/services/observatory/actions/keyfigures/KeyfiguresAction.ts";
+import type { KeyFigures as KeyfiguresParamsInterface } from "@/pdc/services/observatory/dto/KeyFigures.ts";
 
 export type { KeyfiguresParamsInterface, KeyfiguresResultInterface };
 
