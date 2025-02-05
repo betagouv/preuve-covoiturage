@@ -219,3 +219,4 @@ sources:
             data_type: USER-DEFINED
           - name: anomaly_status
             data_type: USER-DEFINED
+      - name: terms_violation_error_labels
