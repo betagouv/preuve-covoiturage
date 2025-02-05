@@ -2387,7 +2387,7 @@ x-topics:
       |                                  | `passenger_identity_id`       | Identifiant personnel inter-opérateurs                                         |
       | `operator_driver_id`             | `operator_driver_id`          |                                                                                |
       |                                  | `driver_identity_key`         | Identifiant personnel inter-opérateurs                                         |
-      | `status`                         | `status`                      | Statut du trajet : `acquisition_error`, `validation_error`, `normalization_error`, `fraud_error`, `anomaly_error`, `ok`, `expired`, `canceled`, `pending`, `unknown`                                                        |
+      | `status`                         | `status`                      | Statut du trajet suite à différents contrôles réalisés par covoiturage.beta. Ce statut devient définitif 48h après la réalisation du trajet. Seuls les trajets en statut "ok" sont éligibles aux incitations recalculées par covoiturage.beta [Voir les statuts possibles](/operation/operation-acquisition-status#operation-acquisition-status-200-body-application-json-status)  |
       | `passenger_id`                   |                               |                                                                                |
       | `passenger_contribution`         | `passenger_contribution`      |                                                                                |
       | `passenger_incentive_N_siret`    |                               |                                                                                |
