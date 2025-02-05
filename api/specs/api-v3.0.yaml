@@ -1,12 +1,14 @@
 openapi: '3.0.2'
 info:
-  title: API Trajets
+  title: (Deprecated) API Trajets
   version: "3.0"
   description: |
     [Conditions Générales d'Utilisation](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation)
     | [Contact technique](mailto:technique@covoiturage.beta.gouv.fr)
     | [Licence Apache-2.0](https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE)
     | [Documentation Générale](https://doc.covoiturage.beta.gouv.fr/)
+
+    ⚠️ Cette version de l'API n'est plus supportée
 
     ### Environnements de l'API
 
