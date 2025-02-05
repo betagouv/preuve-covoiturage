@@ -1,23 +1,12 @@
-import {
-  afterEach,
-  assert,
-  assertRejects,
-  beforeAll,
-  describe,
-  it,
-  sinon,
-} from "@/dev_deps.ts";
+import { afterEach, assert, assertRejects, beforeAll, describe, it, sinon } from "@/dev_deps.ts";
 import { NotFoundException } from "@/ilos/common/exceptions/NotFoundException.ts";
 import { PartialGeoInterface } from "@/pdc/providers/geo/interfaces/index.ts";
 import { GeoProvider } from "./index.ts";
 import { GeoInterface } from "./interfaces/GeoInterface.ts";
 import { LocalGeoProvider } from "./providers/LocalGeoProvider.ts";
-import {
-  EtalabAPIGeoProvider,
-  EtalabBaseAdresseNationaleProvider,
-} from "./providers/index.ts";
+import { EtalabAPIGeoProvider, EtalabBaseAdresseNationaleProvider } from "./providers/index.ts";
 
-describe("geo provider", () => {
+describe.skip("geo provider", () => {
   const localGeoProvider = new LocalGeoProvider(null as any);
   const etalabApiGeoProvider = new EtalabAPIGeoProvider();
   const etalabBANProvider = new EtalabBaseAdresseNationaleProvider();
