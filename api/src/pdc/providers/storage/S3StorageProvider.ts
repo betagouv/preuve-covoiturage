@@ -96,7 +96,6 @@ export class S3StorageProvider implements ProviderInterface {
     };
 
     try {
-      console.log(key, rs.readable, params);
       await client.putObject(key, rs.readable, params);
       return key;
     } catch (e) {

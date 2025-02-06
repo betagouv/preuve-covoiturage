@@ -30,7 +30,6 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
       WHERE ${join(filters, " AND ")}
       ORDER BY name
     `;
-    console.log(query);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }
