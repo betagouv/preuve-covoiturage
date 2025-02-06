@@ -15,8 +15,8 @@ export interface StaticMigrable {
 
 export interface StaticAbstractDataset extends StaticMigrable {
   readonly url: string;
-  readonly sha256: string | undefined;
-  readonly filename: string | undefined;
+  readonly sha256?: string;
+  readonly filename?: string;
   readonly producer: string;
   readonly dataset: string;
 }
