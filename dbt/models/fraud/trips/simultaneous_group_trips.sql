@@ -40,7 +40,7 @@ with incentives as (
         )
       {% else %}
               and c.start_datetime >= now() - interval '1 year'
-            {% endif %}
+      {% endif %}
   group by 1
 ),
 
