@@ -3,6 +3,11 @@
   "packages": {
     "specifiers": {
       "jsr:@std/collections@1": "jsr:@std/collections@1.0.9",
+      "jsr:@std/crypto@1": "jsr:@std/crypto@1.0.4",
+      "jsr:@std/crypto@1.0.4": "jsr:@std/crypto@1.0.4",
+      "jsr:@std/encoding": "jsr:@std/encoding@1.0.7",
+      "jsr:@std/encoding@1": "jsr:@std/encoding@1.0.7",
+      "jsr:@std/encoding@1.0.7": "jsr:@std/encoding@1.0.7",
       "jsr:@std/semver@1": "jsr:@std/semver@1.0.3",
       "jsr:@superstruct/core@^2": "jsr:@superstruct/core@2.0.2",
       "npm:@faker-js/faker@^8.4": "npm:@faker-js/faker@8.4.1",
@@ -70,6 +75,12 @@
     "jsr": {
       "@std/collections@1.0.9": {
         "integrity": "4f58104ead08a04a2199374247f07befe50ba01d9cca8cbb23ab9a0419921e71"
+      },
+      "@std/crypto@1.0.4": {
+        "integrity": "cee245c453bd5366207f4d8aa25ea3e9c86cecad2be3fefcaa6cb17203d79340"
+      },
+      "@std/encoding@1.0.7": {
+        "integrity": "f631247c1698fef289f2de9e2a33d571e46133b38d042905e3eac3715030a82d"
       },
       "@std/semver@1.0.3": {
         "integrity": "7c139c6076a080eeaa4252c78b95ca5302818d7eafab0470d34cafd9930c13c8"
