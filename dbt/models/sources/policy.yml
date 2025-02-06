@@ -57,6 +57,6 @@ sources:
           - name: incentive_sum
             data_type: integer
           - name: max_amount
-            data_type: integer
+            data_type: bigint
           - name: tz
             data_type: character varying
