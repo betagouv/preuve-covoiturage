@@ -123,7 +123,7 @@ external_data_migrate:
     --allow-write \
     --allow-sys \
     --allow-ffi \
-    --allow-import \
+    --allow-run \
     src/db/external_data/index.ts
 
 # Create a new bucket
