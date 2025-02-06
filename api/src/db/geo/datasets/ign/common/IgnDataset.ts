@@ -119,9 +119,6 @@ export abstract class IgnDataset extends AbstractDataset {
                         SELECT *
                         FROM json_to_recordset($1::json)
                           AS t(type varchar, properties json,geometry json)
-                        JOIN ${this.tableWithSchema} target
-                          ON t.properties->>'INSEE_COM' = target.com
-                        WHERE target.${key} IS NULL
                       )
                       SELECT ${
                       [...this.rows]
@@ -145,9 +142,6 @@ export abstract class IgnDataset extends AbstractDataset {
                         SELECT *
                         FROM json_to_recordset($1::json)
                           AS t(type varchar, properties json,geometry json)
-                        JOIN ${this.tableWithSchema} target
-                          ON t.properties->>'INSEE_COM' = target.com
-                        WHERE target.${key} IS NULL
                       ) AS tt
                       WHERE (tgt.arr IS NOT NULL AND tgt.arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
                          OR (tgt.arr IS NULL AND tgt.com = (tt.properties->>'${comField[0]}')::${comField[1]})
@@ -165,9 +159,6 @@ export abstract class IgnDataset extends AbstractDataset {
                         SELECT *
                         FROM json_to_recordset($1::json)
                           AS t(type varchar, properties json,geometry json)
-                        JOIN ${this.tableWithSchema} target
-                          ON t.properties->>'INSEE_COM' = target.com
-                        WHERE target.${key} IS NULL
                       ) AS tt
                       WHERE (tgt.arr IS NOT NULL AND tgt.arr = (tt.properties->>'${arrField[0]}')::${arrField[1]})
                          OR (tgt.arr IS NULL AND tgt.com = (tt.properties->>'${comField[0]}')::${comField[1]})
