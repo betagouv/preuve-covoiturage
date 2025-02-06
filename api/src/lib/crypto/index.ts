@@ -1,6 +1,5 @@
-import { bcrypt, decodeBase64, encodeBase64, stdCrypto } from "@/deps.ts";
+import { bcrypt, decodeBase64, encodeBase64, encodeHex, stdCrypto } from "@/deps.ts";
 import { exists, read } from "@/lib/file/index.ts";
-import { encodeHex } from "https://deno.land/std@0.214.0/encoding/hex.ts";
 
 export async function bcrypt_hash(
   plaintext: string,
@@ -72,6 +71,17 @@ export async function createHash(message: string): Promise<string> {
 }
 
 export async function sha256sum(source: string | ReadableStream<Uint8Array>): Promise<string> {
+  return shaSum(source, "SHA-256");
+}
+
+export async function sha1sum(source: string | ReadableStream<Uint8Array>): Promise<string> {
+  return shaSum(source, "SHA-1");
+}
+
+export async function shaSum(
+  source: string | ReadableStream<Uint8Array>,
+  alg: stdCrypto.DigestAlgorithm = "SHA-256",
+): Promise<string> {
   let stream;
   if (source instanceof ReadableStream) {
     stream = source;
@@ -84,6 +94,6 @@ export async function sha256sum(source: string | ReadableStream<Uint8Array>): Pr
     stream = file.readable;
   }
 
-  const hashBuffer = await stdCrypto.crypto.subtle.digest("SHA-256", stream);
+  const hashBuffer = await stdCrypto.crypto.subtle.digest(alg, stream);
   return encodeHex(hashBuffer);
 }
