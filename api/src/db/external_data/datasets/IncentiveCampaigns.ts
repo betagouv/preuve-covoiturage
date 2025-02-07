@@ -6,6 +6,8 @@ export function IncentiveCampaigns(url: string): StaticAbstractDataset {
     static dataset = "incentive_campaigns";
     static year = 2024;
     static url = url;
+    static sha256 = undefined;
+    static filename = undefined;
     static table = `incentive_campaigns_temp`;
     static skipStatePersistence = true;
     readonly targetTable = "incentive_campaigns";

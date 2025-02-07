@@ -232,11 +232,12 @@ export {
 };
 export * as semver from "jsr:@std/semver@1";
 export * as collections from "jsr:@std/collections@1";
-export * as stdCrypto from "https://deno.land/std@0.224.0/crypto/mod.ts";
+export * as stdCrypto from "jsr:@std/crypto@1";
 export {
   decodeBase64,
   encodeBase64,
-} from "https://deno.land/std@0.224.0/encoding/base64.ts";
+  encodeHex,
+} from "jsr:@std/encoding@1";
 export * as log from "https://deno.land/std@0.224.0/log/mod.ts";
 export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";

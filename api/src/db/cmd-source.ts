@@ -10,7 +10,7 @@ import { env_or_fail } from "@/lib/env/index.ts";
 const connectionString = env_or_fail("APP_POSTGRES_URL");
 const migrator = buildMigrator({
   pool: { connectionString },
-  app: { targetSchema: "geo", datasets: new Set() },
+  app: { targetSchema: "geo" },
 });
 
 await migrator.prepare();

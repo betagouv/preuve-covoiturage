@@ -1,4 +1,3 @@
-import { collections } from "@/deps.ts";
 import { Migrator } from "./Migrator.ts";
 import { config as defaultConfig } from "./config.ts";
 import { bootstrap, createFileManager, createPool, createStateManager } from "./helpers/index.ts";
@@ -12,11 +11,7 @@ export function buildMigrator(userConfig: Partial<PartialConfigInterface>, shoul
 
   const pool = createPool({ ...defaultConfig.pool, ...userConfig.pool });
 
-  const appConfig = collections.deepMerge(
-    defaultConfig.app as any,
-    userConfig.app as any,
-  ) as unknown as AppConfigInterface;
-
+  const appConfig = { ...defaultConfig.app, ...userConfig.app } as AppConfigInterface;
   const stateManager = createStateManager(pool, appConfig);
 
   if (shouldBootstrap) {
