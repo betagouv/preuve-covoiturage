@@ -90,6 +90,18 @@ export class DataGouvCommand implements CommandInterface {
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
       logger.info(`Exporting ${filename} from ${s}-01 to ${e}-01`);
 
+      console.log(this.metadata.description({
+        start_at: params.get().start_at,
+        end_at: params.get().end_at,
+        count_total: 323123,
+        count_exposed: 213123,
+        count_removed: 110000,
+        count_removed_start: 1233,
+        count_removed_end: 1231,
+        count_removed_both: 412,
+      }));
+
+      return;
       const path = await this.fileCreatorService.write(
         params,
         new CSVWriter<CarpoolDataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
