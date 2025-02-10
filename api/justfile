@@ -160,6 +160,19 @@ api *command:
   --unstable-fs \
   src/main.ts {{ command }}
 
+watch:
+  deno run \
+  --allow-net \
+  --allow-env \
+  --allow-read \
+  --allow-write \
+  --allow-ffi \
+  --allow-sys \
+  --allow-run \
+  --watch \
+  --unstable-fs \
+  src/main.ts http \$PORT
+
 # Start the HTTP API server on port 8080
 @serve:
   just api http \$PORT

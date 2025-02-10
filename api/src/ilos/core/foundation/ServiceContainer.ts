@@ -8,6 +8,7 @@ import {
   RegisterHookInterface,
   ServiceContainerInterface,
   ServiceContainerInterfaceResolver,
+  children as childrenSymbol,
 } from "@/ilos/common/index.ts";
 import { ExtensionRegistry } from "../container/ExtensionRegistry.ts";
 import { Container, HookRegistry } from "../container/index.ts";
@@ -107,7 +108,7 @@ export abstract class ServiceContainer
       for (const child of children) {
         const childInstance = new child(this.getContainer());
         this.getContainer().bind(child).toConstantValue(childInstance);
-        this.getContainer().bind("children").toConstantValue(child);
+        this.getContainer().bind(childrenSymbol).toConstantValue(childInstance);
         this.registerHooks(childInstance);
       }
     }

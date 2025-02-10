@@ -12,16 +12,21 @@ import {
   Response,
 } from "@/deps.ts";
 import {
+  children,
   ConfigInterface,
   ConfigInterfaceResolver,
   ContextType,
   InvalidRequestException,
   KernelInterface,
+  proxy,
+  RegisterHookInterface,
+  router,
   RPCResponseType,
   RPCSingleCallType,
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
+import { ServiceProvider } from "@/ilos/core/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
@@ -105,6 +110,7 @@ export class HttpTransport implements TransportInterface {
     this.registerMetrics();
     this.registerGlobalMiddlewares();
     this.registerCache();
+    this.registerNestedRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
@@ -124,6 +130,18 @@ export class HttpTransport implements TransportInterface {
 
   getApp(): express.Express {
     return this.app;
+  }
+
+  private registerNestedRoutes() {
+    this.kernel.getContainer().bind(proxy).toConstantValue(this.app);
+    const serviceProviders = this.kernel.getContainer().getAll<ServiceProvider>(children);
+    for (const serviceProvider of serviceProviders) {
+      const container = serviceProvider.getContainer();
+      if (container.isBound(router)) {
+        const routerInstance = container.resolve<RegisterHookInterface>(container.get(router));
+        routerInstance.register();
+      }
+    }
   }
 
   private async getProviders(): Promise<void> {

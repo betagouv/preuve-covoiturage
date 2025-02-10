@@ -2,15 +2,10 @@ issuer: http://auth.covoiturage.test
 web:
   http: 0.0.0.0:8080
 staticClients:
-- id: $PDC_CLIENT_ID
+- id: secret
   redirectURIs:
-  - $PDC_URL
+  - http://api.covoiturage.test/auth/callback
   name: pdc
-  secret: $PDC_CLIENT_SECRET
-- id: test
-  redirectURIs:
-  - http://app.covoiturage.test/auth/redirect
-  name: test
   secret: secret
 storage:
   type: postgres
