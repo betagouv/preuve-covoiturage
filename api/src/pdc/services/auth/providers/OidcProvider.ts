@@ -24,13 +24,19 @@ export class OidcProvider {
     const redirectUrl = this.config.get("oidc.redirect_url");
     const url = new URL(authBaseUrl);
     url.pathname = "/token";
-    const form = new FormData();
+    const form = new URLSearchParams();
     form.set("grant_type", "authorization_code");
     form.set("client_id", clientId);
     form.set("client_secret", clientSecret);
     form.set("code", code);
     form.set("redirect_uri", redirectUrl);
-    const response = await fetch(url, { body: form, method: "POST" });
+    const response = await fetch(url, {
+      body: form.toString(),
+      method: "POST",
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded",
+      },
+    });
     const json = await response.json();
     return json.access_token;
   }

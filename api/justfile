@@ -160,6 +160,12 @@ api *command:
   --unstable-fs \
   src/main.ts {{ command }}
 
+debug:
+  deno repl \
+  -A \
+  --unstable-fs \
+  --eval 'import { getKernel } from "./src/debug.ts"; const kernel = await getKernel();'
+
 watch:
   deno run \
   --allow-net \
