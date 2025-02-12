@@ -23,7 +23,7 @@ export class UserRepository {
       FROM ${raw(this.table)} u
       LEFT JOIN ${raw(this.territoryTable)} t
         ON t._id = u.territory_id
-      LEFT JOIn ${raw(this.operatorTable)} o
+      LEFT JOIN ${raw(this.operatorTable)} o
         ON o._id = u.operator_id
       WHERE u.email = ${email}
       LIMIT 1
@@ -32,10 +32,8 @@ export class UserRepository {
     return results.rows[0];
   }
 
-  async touchLastLogin(_id: number): Promise<void> {
-    await this.connection.getClient().query<any>({
-      text: `UPDATE ${this.table} SET last_login_at = NOW() WHERE _id = $1`,
-      values: [_id],
-    });
+  async touchLastLogin(_id: number) {
+    const query = sql`UPDATE ${raw(this.table)} SET last_login_at = NOW() WHERE _id = ${_id}`;
+    await this.connection.getClient().query(query);
   }
 }

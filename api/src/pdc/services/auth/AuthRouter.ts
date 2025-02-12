@@ -14,7 +14,7 @@ export class AuthRouter {
   ) {}
 
   register() {
-    this.app.get("/auth/login", (req, res, next) => {
+    this.app.get("/auth/login", (req: express.Request, res: express.Response, _next: express.NextFunction) => {
       return res.redirect(this.oidcProvider.getLoginUrl());
     });
 
