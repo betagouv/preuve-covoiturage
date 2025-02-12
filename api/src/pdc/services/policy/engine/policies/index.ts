@@ -42,6 +42,7 @@ import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
 import { PolicyTemplateTwo } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateTwo.ts";
 import { PolicyHandlerStaticInterface } from "@/pdc/services/policy/interfaces/index.ts";
+import { Rennes2025 } from "./20250101_Rennes.ts";
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   [
@@ -88,5 +89,6 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
+    Rennes2025,
   ].map((h) => [h.id, h]),
 );
