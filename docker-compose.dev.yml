@@ -46,7 +46,7 @@ services:
 
   dex:
     environment:
-      PG_DB: local
+      PG_DB: dex
 
   api:
     build:

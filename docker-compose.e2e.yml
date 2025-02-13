@@ -49,6 +49,7 @@ services:
       OIDC_CLIENT_SECRET: ${PRO_CONNECT_CLIENT_SECRET}
       OIDC_REDIRECT_URL: http://auth.covoiturage.test/callback
     ports:
+      - 5557:5557
       - 8090:8080 
     networks:
       - back
@@ -158,6 +159,8 @@ services:
       OIDC_CLIENT_SECRET: secret
       OIDC_BASE_URL: http://auth.covoiturage.test
       OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
+      DEX_GRPC_HOST: localhost
+      DEX_GRPC_PORT: 5557
     networks:
       - back
       - front
