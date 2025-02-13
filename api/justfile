@@ -193,7 +193,7 @@ cache:
 
 # refresh the deno.lock file
 lock:
-  deno cache --lock=deno.lock --lock-write src/deps.ts src/dev_deps.ts
+  deno cache --lock=deno.lock --frozen=false src/deps.ts src/dev_deps.ts
 
 # Eval and run a file
 eval *filepath:
