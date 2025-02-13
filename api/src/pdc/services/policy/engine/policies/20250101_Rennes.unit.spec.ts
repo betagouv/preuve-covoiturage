@@ -14,6 +14,16 @@ const defaultPosition: TerritoryCodeInterface = {
   country: "XXXXX",
 };
 
+const startIn = {
+  lat: 48.1148,
+  lon: -1.6792,
+};
+
+const endIn = {
+  lat: 48.1257,
+  lon: -1.6588,
+};
+
 const defaultLat = 46.313355215729146;
 const defaultLon = 6.487631441991693;
 
@@ -54,10 +64,11 @@ it("should work with exclusions", async () =>
         { distance: 4_500 },
         { operator_class: "A" },
         { distance: 60_001 },
+        { start_lat: startIn.lat, start_lon: startIn.lon, end_lat: endIn.lat, end_lon: endIn.lon },
       ],
       meta: [],
     },
-    { incentive: [0, 0, 0, 0], meta: [] },
+    { incentive: [0, 0, 0, 0, 0], meta: [] },
   ));
 
 it("should work before first of july ", async () =>

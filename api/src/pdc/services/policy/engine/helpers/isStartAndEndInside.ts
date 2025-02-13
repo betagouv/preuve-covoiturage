@@ -9,21 +9,18 @@ import {
   Properties,
 } from "@/deps.ts";
 import type { GeoJSON } from "@/pdc/services/geo/contracts/GeoJson.ts";
+import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
 import { StatelessContextInterface, StatelessRuleHelper } from "../../interfaces/index.ts";
 
-interface IsCloseToParams {
-  shape: GeoJSON;
-}
-
-export const isInside: StatelessRuleHelper<IsCloseToParams> = (
+export const isStartAndEndInside: StatelessRuleHelper<GeoJSON> = (
   ctx: StatelessContextInterface,
-  params: IsCloseToParams,
+  params: GeoJSON,
 ): boolean => {
   const start = point([ctx.carpool.start_lon, ctx.carpool.start_lat]);
   const end = point([ctx.carpool.end_lon, ctx.carpool.end_lat]);
-  const shape = getShapeFromGeoJSON(params.shape);
+  const shape = getShapeFromGeoJSON(params);
 
-  return booleanPointInPolygon(start, shape) ||
+  return booleanPointInPolygon(start, shape) &&
     booleanPointInPolygon(end, shape);
 };
 
@@ -39,3 +36,12 @@ function getShapeFromGeoJSON(
   }
   throw new Error("Invalid GeoJSON");
 }
+
+export const isStartAndEndInsideOrThrow = (ctx: StatelessContextInterface, params: GeoJSON) => {
+  if (isStartAndEndInside(ctx, params)) {
+    throw new NotEligibleTargetException(
+      `Trip should not be in a common transport area: ${ctx?.carpool?.start}, ${ctx?.carpool?.end}`,
+    );
+  }
+  return true;
+};
