@@ -130,3 +130,7 @@ export function extension(config: ExtensionConfigurationType) {
 }
 
 export { inject, injectable } from "@/deps.ts";
+
+export const proxy = Symbol.for("PROXY");
+export const router = Symbol.for("ROUTER");
+export const children = Symbol.for("CHILDREN");

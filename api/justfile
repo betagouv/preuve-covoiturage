@@ -26,7 +26,7 @@ start *services="s3 postgres redis mailer":
 
 # Start docker services for e2e
 [private]
-start_e2e *services="s3 postgres redis mailer kc":
+start_e2e *services="s3 postgres redis mailer dex":
  just dc_e2e up -d {{ services }}
 
 # Stop docker services
@@ -160,6 +160,25 @@ api *command:
   --unstable-fs \
   src/main.ts {{ command }}
 
+debug:
+  deno repl \
+  -A \
+  --unstable-fs \
+  --eval 'import { getKernel } from "./src/debug.ts"; const kernel = await getKernel();'
+
+watch:
+  deno run \
+  --allow-net \
+  --allow-env \
+  --allow-read \
+  --allow-write \
+  --allow-ffi \
+  --allow-sys \
+  --allow-run \
+  --watch \
+  --unstable-fs \
+  src/main.ts http \$PORT
+
 # Start the HTTP API server on port 8080
 @serve:
   just api http \$PORT
@@ -174,7 +193,7 @@ cache:
 
 # refresh the deno.lock file
 lock:
-  deno cache --lock=deno.lock --lock-write src/deps.ts src/dev_deps.ts
+  deno cache --lock=deno.lock --frozen=false src/deps.ts src/dev_deps.ts
 
 # Eval and run a file
 eval *filepath:

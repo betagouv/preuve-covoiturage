@@ -181,7 +181,6 @@ import xss from "npm:xss@^1";
 // @deno-types="npm:@types/jsonwebtoken@^9"
 import jwt from "npm:jsonwebtoken@^9";
 import mjml2html from "npm:mjml@^4.15";
-import KcAdminClient from "npm:@keycloak/keycloak-admin-client@^25.0";
 import Handlebars from "npm:handlebars@^4.7";
 import helmet from "npm:helmet@^7.1";
 // @deno-types="npm:@types/nodemailer@^6.4"
@@ -214,7 +213,6 @@ export {
   https,
   jsonSchemaSecureJson,
   jwt,
-  KcAdminClient,
   mailer,
   mapshaper,
   mjml2html,
@@ -243,3 +241,5 @@ export * as path from "https://deno.land/std@0.224.0/path/posix/mod.ts";
 export * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import * as _bcrypt_worker from "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts"; // FIX https://github.com/JamesBroadberry/deno-bcrypt/issues/31
 export { difference } from "https://deno.land/std@0.224.0/datetime/difference.ts";
+export * as grpc from "https://deno.land/x/grpc_basic@0.4.7/client.ts";
+

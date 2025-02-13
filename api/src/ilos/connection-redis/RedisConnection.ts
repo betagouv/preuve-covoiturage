@@ -11,13 +11,11 @@ import {
  * @fixme
  */
 type WindowProcess = Window & typeof globalThis & { process: NodeJS.Process };
-(window as WindowProcess).process = process;
+if (typeof window !== "undefined") {
+  (window as WindowProcess).process = process;
+}
 
-export class RedisConnection
-  implements
-    ConnectionInterface<Redis>,
-    DestroyHookInterface,
-    InitHookInterface {
+export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookInterface, InitHookInterface {
   protected client: Redis | null = null;
 
   get connected(): boolean {

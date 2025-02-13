@@ -161,11 +161,11 @@ jobs:
           APP_SESSION_SECRET: null
           APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
-          KC_BOT_CLIENT: pdc-bot
-          KC_BOT_CLIENT_SECRET: so_secret_000
-          KC_ADMIN_CLIENT: pdc-manager
-          KC_ADMIN_CLIENT_SECRET: so_secret_000
           ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
           ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
+          PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
+          PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
+          APP_AUTH_CLIENT_ID: secret
+          APP_AUTH_CLIENT_SECRET: secret
         run: just ci_test_integration
         working-directory: api
