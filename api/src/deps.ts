@@ -213,7 +213,6 @@ export {
   https,
   jsonSchemaSecureJson,
   jwt,
-  KcAdminClient,
   mailer,
   mapshaper,
   mjml2html,
