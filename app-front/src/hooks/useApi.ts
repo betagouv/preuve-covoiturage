@@ -7,7 +7,7 @@ export const useApi = <T>(input: RequestInfo | URL, init?: RequestInit) => {
     const fetchData = async () => {
       setError(null);
       setLoading(true);
-      const response = await fetch(input, init);
+      const response = await fetch(input, { ...init, credentials: "include" });
       const res = await response.json();
       if (response.ok) {
         setData(res);

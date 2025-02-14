@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, handler, UnauthorizedException } from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { OidcCallback } from "../dto/OidcCallback.ts";
 import { OidcProvider } from "../providers/OidcProvider.ts";
@@ -32,8 +32,12 @@ export class OidcCallbackAction extends AbstractAction {
     const token = await this.oidcProvider.getTokenFromCode(params.code);
     const info = await this.oidcProvider.getUserInfoFromToken(token);
     const user = await this.userRepository.findUserByEmail(info.email);
-    if (!user || user.siret !== info.siret) {
-      throw new UnauthorizedException("User not found");
+    if (!user || (user.siret !== info.siret && user.role !== "registry.admin")) {
+      return {
+        email: info.email,
+        role: "anonymous",
+        permissions: [],
+      };
     }
     return {
       ...user,

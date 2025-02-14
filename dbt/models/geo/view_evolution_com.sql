@@ -4,7 +4,8 @@ select
   a.arr                      as arr_2020,
   coalesce(b.new_com, a.arr) as arr_2021,
   coalesce(c.new_com, a.arr) as arr_2022,
-  coalesce(d.new_com, a.arr) as arr_2023
+  coalesce(d.new_com, a.arr) as arr_2023,
+  coalesce(e.new_com, a.arr) as arr_2024
 from {{ source('geo','perimeters') }} as a
 left join
   {{ source('geo','com_evolution') }} as b
@@ -15,5 +16,8 @@ left join
 left join
   {{ source('geo','com_evolution') }} as d
   on a.arr = d.old_com and d.year = 2023
+left join
+  {{ source('geo','com_evolution') }} as e
+  on a.arr = e.old_com and e.year = 2024
 where a.year = 2020
 order by a.arr asc

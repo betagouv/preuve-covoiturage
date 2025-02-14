@@ -26,9 +26,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
-      sql`start_date <= '${date.toISOString().split("T")[0]}'`,
-      sql`start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
-      sql`direction = '${direction}'`,
+      sql`start_date <= ${date.toISOString().split("T")[0]}`,
+      sql`start_date >= ${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}`,
+      sql`direction = ${direction}`,
     ];
     const query = sql`
       SELECT 
@@ -39,10 +39,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
         sum(incented_journeys)::int as incented_journeys,
         sum(incentive_amount)::int as incentive_amount
       FROM ${raw(this.tableByDay)}
-      WHERE ${join(filters, " AND ")}
+      WHERE ${join(filters, ` AND `)}
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
+    console.debug(query);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }
@@ -53,7 +54,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
-      sql`direction = '${direction}'`,
+      sql`direction = ${direction}`,
     ];
     if (params.year) {
       filters.push(sql`year = ${params.year}`);

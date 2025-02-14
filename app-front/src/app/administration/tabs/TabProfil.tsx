@@ -9,7 +9,7 @@ export default function TabProfil() {
      { user &&
       <>
         <h3 className={fr.cx('fr-callout__title')}>Mon profil</h3>
-        <p><b>Nom:</b> {user.name}</p>
+        <p><b>Mail:</b> {user.email}</p>
         <p><b>Rôle:</b> {user.role}</p>
         {user.territory_id && <p><b>Territoire:</b> {user.territory_id}</p>}
         <a href={`${Config.get('auth.pc_uri')}/personal-information`} 
