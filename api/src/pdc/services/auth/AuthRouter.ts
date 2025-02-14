@@ -29,5 +29,12 @@ export class AuthRouter {
         return res.redirect(this.config.get("oidc.app_url"));
       }),
     );
+
+    this.app.get("/auth/me", (req: express.Request, res: express.Response) => {
+      if (req.session.user) {
+        return res.json(req.session.user);
+      }
+      return res.status(401).json({ error: "Utilisateur non authentifié" });
+    });
   }
 }

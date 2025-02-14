@@ -52,10 +52,10 @@ export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface
         a.status,
         a.handler,
         a.incentive_sum::int,
-        a.max_amount::int
+        a.max_amount 
       FROM ${raw(this.table)} a
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
-      ${filters.length > 0 ? `WHERE ${join(filters, " AND ")}` : ""}
+      ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
       ORDER BY status, a.start_date desc 
     `;
     const response = await this.pg.getClient().query(query);
