@@ -71,6 +71,10 @@ paths:
     post:
       operationId: 'acquisition:create'
       summary: Envoyer un trajet
+      description: |
+        Permet d'envoyer un trajet dans le RPC.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-envoyer-un-trajet)
       requestBody:
         required: true
         content:
@@ -241,6 +245,10 @@ paths:
     get:
       operationId: 'acquisition:status'
       summary: Vérifier le statut d'un trajet envoyé
+      description: |
+        Permet de vérifier le statut d'un trajet envoyé dans le RPC.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-verifier-le-statut-d-39-un-trajet)
       responses:
         '200':
           description: |
@@ -310,6 +318,8 @@ paths:
       description: |
         Permet de mettre à jour un trajet qui est en erreur suite à un problème
         de validation sur le payload.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-modification-d-39-un-trajet)
       requestBody:
         required: true
         content:
@@ -359,12 +369,21 @@ paths:
       description: |
         Annule un trajet déjà envoyé dans le RPC.
 
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-invalidation-d-39-un-trajet)
+
         S'il détecte un comportement inhabituel ou une fraude avérée, un
         opérateur doit communiquer auprès du service l'invalidation du trajet
         concerné dès lors qu'il est déjà inscrit dans le RPC.
         
         Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de
-        cette irrégularité à tout moment.
+        cette irrégularité, et ce à tout moment. 
+
+        Les trajets concernés seront alors associés à un statut "canceled" et exclus 
+        des données de l'observatoire. En revanche, il a été convenu — cf. CR du club
+        opérateur #27 — qu'ils seraient malgré tout éligibles au recalcul des incitations 
+        réalisés par le RPC dans le cas des campagnes suivies par le RPC uniquement. Leur
+        incitation sera donc comptabilisée dans le fichier d'appel de fonds et visible
+        dans le fichier d'export.
 
         Le `code` est un champ libre de 32 caractères maximum. Obligatoire.
         
@@ -912,6 +931,8 @@ paths:
 
         Ce point d'API est consultable à `J+7` pour la courte et la longue
         distance, `J` étant la date de réalisation du trajet.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-enregistrer-une-demande)
       requestBody:
         required: true
         content:
@@ -985,6 +1006,8 @@ paths:
 
         Sont requis : n° de permis de conduire, trois premières
         lettres du nom de famille et 8 premiers chiffres du numéro de téléphone.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-simuler-une-demande)
       requestBody:
         required: true
         content:
@@ -1010,6 +1033,8 @@ paths:
       responses:
         '200':
           description: 'OK, la demande est possible'
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
           $ref: '#/components/responses/http_401_rpc'
         '403':
@@ -1059,6 +1084,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application_import_response'
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
           $ref: '#/components/responses/http_401_rpc'
         '403':
@@ -1086,6 +1113,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application_identity_import_response'
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
           $ref: '#/components/responses/http_401_rpc'
         '403':
@@ -1096,7 +1125,10 @@ paths:
     get:
       operationId: 'policy:cee:find'
       summary: Rechercher une demande CEE
-      description: L'API peut être utilisée jusqu'à 20.000x par minute.
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-rechercher-une-demande)
       parameters:
         - name: uuid
           in: path
@@ -1111,6 +1143,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/cee_application'
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
           $ref: '#/components/responses/http_401_rpc'
         '403':
@@ -1123,7 +1157,10 @@ paths:
     delete:
       operationId: 'policy:cee:delete'
       summary: Supprimer une demande CEE
-      description: L'API peut être utilisée jusqu'à 20.000x par minute.
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+
+        [Schema de la requête HTTP](/topic/topic-schemas-des-requetes-http#topic-supprimer-une-demande)
       parameters:
         - name: uuid
           in: path
@@ -1134,6 +1171,8 @@ paths:
       responses:
         '204':
           description: La demande a été trouvée et a bien été supprimée.
+        '400':
+          $ref: '#/components/responses/http_400_rpc'
         '401':
           $ref: '#/components/responses/http_401_rpc'
         '403':
@@ -2088,16 +2127,21 @@ x-topics:
     content: |
       #### Acronymes utilisés dans la documentation :
 
-      - **RPC** : Registre de preuve de covoiturage
-      - **CEE** : Crédits d'Economie d'Energie
-      - **PNCEE** : Pôle National des Crédits d'Economie d'Energie
-      - **SIRET** : Système d'Identification du Répertoire des Établissements
-      - **EPCI** : Établissement Public de Coopération Intercommunale
       - **AOM** : Autorité Organisatrice de la Mobilité
+      - **API** (Application Programming Interface) : Interface de programmation permettant à deux applications de communiquer entre elles.
+      - **BDD** (Base de Données) : Ensemble structuré de données stockées et accessibles électroniquement.
+      - **CEE** (Certificat d'Économie d'Énergie) : Dispositif permettant de financer des travaux d'économie d'énergie.
+      - **EPCI** (Établissement Public de Coopération Intercommunale) : Structure administrative regroupant plusieurs communes pour mutualiser des services.
+      - **HTTP** (HyperText Transfer Protocol) : Protocole de communication utilisé pour transférer des données sur le web.
+      - **JSON** (JavaScript Object Notation) : Format de données léger utilisé pour l'échange de données entre un serveur et une application web.
+      - **JWT** (JSON Web Token) : Standard ouvert pour la création de tokens d'accès utilisés pour l'authentification et l'échange d'informations.
       - **OSRM** : Open Source Routing Machine
-      - **JWT** : JSON Web Token
-      - **WSG-84** : World Geodetic System 1984
-
+      - **PNCEE** (Pôle National des Crédits d'Économie d'Énergie) : Organisme chargé de la gestion des certificats d'économie d'énergie en France.
+      - **RPC** (Registre de Preuve de Covoiturage) : Service public numérique permettant de prouver la réalisation de trajets en covoiturage.
+      - **SIRET** (Système d'Identification du Répertoire des Établissements) : Numéro unique d'identification des établissements en France.
+      - **UUID** (Universally Unique Identifier) : Identifiant unique universel utilisé pour identifier de manière unique des informations dans un système.
+      - **WSG-84** (World Geodetic System 1984) : Système de référence géodésique mondial utilisé pour les coordonnées géographiques.
+      
       #### Concepts utilisés :
 
       - **Opérateur de covoiturage** : entité qui propose un service de covoiturage
@@ -2459,3 +2503,175 @@ x-topics:
       - Suppression des trajets afférents à une maille géographique "solitaire" :
         - Si le nombre d'occurences du code INSEE de départ est < 6 sur le jeu de données, le trajet est supprimé.
         - Si le nombre d'occurences du code INSEE d'arrivée est < 6 sur le jeu de données, le trajet est supprimé.
+ 
+  - title: Schémas des requêtes HTTP
+    content: |
+      ## Schema commun à toutes les routes d'API
+
+      Ce schéma représente le processus de authentification et d'autorisation des requêtes HTTP à l'API du Registre de
+      Preuve de Covoiturage.  
+      `ENDPOINT` correspond à la route de l'API appelée.
+
+      ```mermaid
+      flowchart TD
+        CLIENT --> TOKEN{Token ?}
+        TOKEN -- no --> E401[401 Unauthorized]
+        TOKEN -- yes --> PERMS{Permissions ?}
+        PERMS -- no --> E403[403 Forbidden]
+        PERMS -- yes --> APIVER{Supported API version ?}
+        APIVER -- no --> E422[422 Unprocessable Entity]
+        APIVER -- yes --> ENDPOINT
+      ```
+
+      ### Délais pour la réception et le traitement des trajets
+
+      La réception d'un trajet par le RPC est constituée de plusieurs étapes synchrones et asynchrones :
+
+      1. 0h : date et heure de départ du trajet passager ;
+      2. 0h - 24h : délai pour envoyer le trajet au RPC et possibilité de mettre à jour un trajet qui est en erreur ;
+      3. 24h - 48h : phase de détection d'anomalie ou de fraude sur le trajet par le RPC ;
+      4. +48h : calcul des incitations par le RPC sur les campagnes paramétrées ;
+
+      ```mermaid
+      sequenceDiagram
+        participant O as Opérateur
+        participant A as API
+        
+        Note over O,A: 0h - 24h
+        O->>A: envoi du trajet<br/>POST /journeys
+        A-->>O: 200 Created
+        O->>A: Vérification du statut<br/>GET /journeys/{operator_journey_id}
+        A-->>O: 200 (trajet trouvé)<br/>statut dans le payload
+        opt Modification du trajet
+          O->>A: PATCH /journeys/{operator_journey_id}
+          A-->>O: 200 trajet modifié
+        end
+        Note over O,A: 24h - 48h
+        A--)A: Normalisation<br/>géographique (async)
+        A--)A: Détection<br/>d'anomalie (async)
+        A--)A: Détection<br/>de fraude (async)
+        Note over O,A: 48h+
+        A--)A: Calcul des incitations<br/>sur les campagnes<br/>paramétrées (async)
+      ```
+
+      ### Envoyer un trajet
+
+      ```mermaid
+      flowchart TD
+        R[POST /journeys] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> UNIQ{Unique ?}
+        UNIQ -- no --> E409[409 Conflict]
+        UNIQ -- yes --> TERMS{Respect des CGU ?}
+        TERMS -- no --> E422[422 Unprocessable Entity]
+        TERMS -- yes --> OK[201 Created]
+      ```
+
+      ### Vérifier le statut d'un trajet
+
+      ```mermaid
+      flowchart TD
+        R["GET /journeys/{operator_journey_id}"] --> CHECKS{checks} --> EXIST{Exists ?}
+        EXIST -- no --> E404[404 Not Found]
+        EXIST -- yes --> OK[200 Success]
+
+      ```
+
+      ### Modification d'un trajet
+
+      ```mermaid
+      flowchart TD
+        R["POST /journeys/{operator_journey_id}"] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> OK[200 Success]
+      ```
+
+      ### Invalidation d'un trajet
+
+      ```mermaid
+      flowchart TD
+        R["POST /journeys/{operator_journey_id}/cancel"] --> CHECKS{checks} --> EXIST{Exists ?}
+        EXIST -- no --> E404[404 Not found]
+        EXIST -- yes --> OK[200 Success]
+      ```
+
+      > info
+      > L'invalidation d'un trajet a différents impacts en fonction du moment où elle est effectuée :
+      >
+      >- Avant le calcul des incitations : le trajet n'apparait pas dans les exports ou les appels de fonds ;
+      >- Après le calcul des incitations : le trajet n'apparait pas dans les exports ou les appels de fonds ;
+      >- Après le 6 du mois suivant\* : le trajet n'apparait pas dans les exports mais est dans les appels de fonds.
+      >
+      > _\* Les appels de fonds sont calculés le 6 de chaque mois pour le mois précédent._
+
+      ```mermaid
+      sequenceDiagram
+        participant O as Opérateur
+        participant A as API
+        
+        Note over O,A: 0h - 48h
+        opt Invalidation du trajet<br>AVANT<br>calcul des incitations
+          O->>A: POST /journeys/{operator_journey_id}/cancel
+          A-->>O: 200 annulation enregistrée.<br>Le trajet n'apparait pas dans les exports<br>ou les appels de fonds
+        end
+        Note over O,A: 48h - 6 du mois suivant
+        A--)A: Calcul des incitations<br/>sur les campagnes<br/>paramétrées (async)
+        opt Invalidation du trajet<br>APRÈS<br>calcul des incitations
+          O->>A: POST /journeys/{operator_journey_id}/cancel
+          A-->>O: 200 annulation enregistrée.<br>Le trajet n'apparait pas dans les exports<br>ou les appels de fonds
+        end
+        Note over O,A: Après le 6 du mois suivant
+        opt Invalidation du trajet<br>APRÈS<br>calcul des incitations
+          O->>A: POST /journeys/{operator_journey_id}/cancel
+          A-->>O: 200 annulation enregistrée.<br>Le trajet n'apparait pas dans les exports<br>mais est dans les appels de fonds
+        end
+
+      ```
+
+      # CEE
+
+      ### Enregistrer une demande
+
+      ```mermaid
+      flowchart TD
+        R[POST /policies/cee] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> EXISTS{Exists ?}
+        EXISTS -- no --> E404[404 Not Found]
+        EXISTS -- yes --> UNIQ{Unique ?}
+        UNIQ -- no --> E409[409 Conflict]
+        UNIQ -- yes --> OK[201 Created]
+      ```
+
+      ### Simuler une demande
+
+      ```mermaid
+      flowchart TD
+        R[POST /policies/cee/simulate] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> UNIQ{Unique ?}
+        UNIQ -- no --> E409[409 Conflict]
+        UNIQ -- yes --> OK[200 Success]
+      ```
+
+      ### Rechercher une demande
+
+      ```mermaid
+      flowchart TD
+        R["GET /policies/cee/{uuid}"] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> EXISTS{Exists ?}
+        EXISTS -- no --> E404[404 Not Found]
+        EXISTS -- yes --> OK[200 Success]
+      ```
+
+      ### Supprimer une demande
+
+      ```mermaid
+      flowchart TD
+        R["DELETE /policies/cee/{uuid}"] --> CHECKS{checks} --> VALID{Valid ?}
+        VALID -- no --> E400[400 Bad Request]
+        VALID -- yes --> EXISTS{Exists ?}
+        EXISTS -- no --> E404[404 Not Found]
+        EXISTS -- yes --> OK[204 No Content]
+      ```
