@@ -14,23 +14,22 @@ export default function TabsNav() {
       {
         content: <TabProfil />,
         label: 'Mon profil'
-      },
-      {
-        content: <TabUsers />,
-        label: `Utilisateurs et accès`
       }
     ];
-    if(["registry","operator"].includes(user?.role ?user.role : '')){ 
-      tabs.push(
-        {
+    if(["registry.admin","operator.admin", "territory.admin"].includes(user?.role ?? '')){
+      tabs.push({
+        content: <TabUsers />,
+        label: `Utilisateurs et accès`
+      });
+    }
+    if(["registry.admin","operator.admin"].includes(user?.role ?? '')){ 
+      tabs.push({
         content: <TabOperators />,
         label: 'Opérateurs'
-        }
-      )
+      });
     }
-    if(["registry","territory"].includes(user?.role ?user.role : '')){ 
-      tabs.push(
-        {
+    if(["registry.admin","territory.admin"].includes(user?.role ?? '')){ 
+      tabs.push({
         content: <TabTerritories />,
         label: 'Territoires'
         }

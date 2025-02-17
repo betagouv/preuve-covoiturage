@@ -21,7 +21,7 @@ import { Line } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 
-export default function OperatorsGraph(props: {title:string, territoryId:string}) {
+export default function OperatorsGraph(props: {title:string, territoryId:number}) {
   const [period, setPeriod] = useState<Periods>('month');
   const [direction, setDirection] = useState<Directions>('both');
   const url = getApiUrl('v3', `dashboard/operators/${period}/?direction=${direction}&territory_id=${props.territoryId}`)

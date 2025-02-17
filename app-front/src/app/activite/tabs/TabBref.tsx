@@ -7,14 +7,14 @@ import OperatorsGraph from '../graphs/OperatorsGraph';
 
 export default function TabBref() {
   const { user } = useAuth();
-  const [territoryId, setTerritoryId] = useState<string>(user?.territory_id ?? '36101')
-  const onChangeTerritory = (id:string) => {
+  const [territoryId, setTerritoryId] = useState<number>(user?.territory_id ?? 1)
+  const onChangeTerritory = (id:number) => {
     setTerritoryId(id);
   };
   return(
     <>
-      {user?.role === 'registry' &&
-        <SelectTerritory defaultValue={territoryId} onChangeTerritory={onChangeTerritory} />
+      {user?.role === 'registry.admin' &&
+        <SelectTerritory defaultValue={territoryId} onChange={onChangeTerritory} />
       }
       <JourneysGraph title='Evolution des trajets' territoryId={territoryId} />
       <OperatorsGraph title='Evolution des trajets par opérateurs' territoryId={territoryId} />

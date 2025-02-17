@@ -24,8 +24,20 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     checkAuth();
   }, []);
 
+  const onChangeTerritory = (id: number) => {
+    if (user) {
+      setUser({...user, territory_id: id, operator_id: null});
+    }
+  };
+
+  const onChangeOperator = (id: number) => {
+    if (user) {
+      setUser({...user, operator_id: id, territory_id: null});
+    }
+  };
+
   return(
-    <AuthContext.Provider value={{isAuth,setIsAuth, user}}>
+    <AuthContext.Provider value={{isAuth,setIsAuth, user, onChangeTerritory, onChangeOperator}}>
       {children}
     </AuthContext.Provider>
   );
