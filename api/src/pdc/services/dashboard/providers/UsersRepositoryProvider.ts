@@ -20,9 +20,15 @@ export class UsersRepositoryProvider implements UsersRepositoryInterface {
     params: UsersParamsInterface,
   ): Promise<UsersResultInterface> {
     const filters = [sql`hidden = false`];
-    Object.entries(params).forEach(([k, v]) => {
-      filters.push(k === "id" ? sql`_${k}= ${v}` : sql`${k}= ${v}`);
-    });
+    if (params.id) {
+      filters.push(sql`_id = ${params.id}`);
+    }
+    if (params.operator_id) {
+      filters.push(sql`operator_id = ${params.operator_id}`);
+    }
+    if (params.territory_id) {
+      filters.push(sql`territory_id = ${params.territory_id}`);
+    }
     const query = sql`
       SELECT 
         _id as id,

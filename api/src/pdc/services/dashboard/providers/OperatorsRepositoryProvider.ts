@@ -49,9 +49,9 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
-      sql`start_date <= '${date.toISOString().split("T")[0]}'`,
-      sql`start_date >= '${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}'`,
-      sql`direction = '${direction}'`,
+      sql`start_date <= ${date.toISOString().split("T")[0]}`,
+      sql`start_date >= ${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}`,
+      sql`direction = ${direction}`,
     ];
 
     const query = sql`
@@ -78,7 +78,7 @@ export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
-      sql`direction = '${direction}'`,
+      sql`direction = ${direction}`,
     ];
     if (params.year) {
       filters.push(sql`year = ${params.year}`);

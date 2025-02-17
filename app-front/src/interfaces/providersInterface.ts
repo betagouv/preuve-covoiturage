@@ -1,12 +1,14 @@
 export interface AuthContextProps {
   isAuth: boolean;
   setIsAuth: (newIsAuth: boolean) => void;
-  state?: string;
-  setState: (newState: string | undefined) => void;
-  nonce?: string;
-  setNonce: (newNonce: string | undefined) => void;
-  code?: string;
-  iss?: string;
-  user?: { name: string; role: string; territory_id?: string };
-  getCode: (stateValue: string | null, codeValue: string | null, issValue: string | null) => void;
+  user?: {
+    email: string;
+    role: string;
+    permissions: Array<string>;
+    operator_id: number | null;
+    territory_id: number | null;
+    siret: string | null;
+  };
+  onChangeTerritory: (id: number) => void;
+  onChangeOperator: (id: number) => void;
 }

@@ -21,7 +21,7 @@ import { getApiUrl } from '../../../helpers/api';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 
-export default function JourneysGraph(props: {title:string, territoryId:string}) {
+export default function JourneysGraph(props: {title:string, territoryId:number}) {
   const [period, setPeriod] = useState<'month' | 'day'>('month');
   const [direction, setDirection] = useState<Directions>('both');
   const url = getApiUrl('v3', `dashboard/incentive/${period}/?direction=${direction}&territory_id=${props.territoryId}`)
