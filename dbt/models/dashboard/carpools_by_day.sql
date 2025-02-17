@@ -8,8 +8,8 @@
 }}
 
 SELECT
-  b.territory_id::varchar AS from,
-  c.territory_id::varchar AS to,
+  b.territory_id AS from,
+  c.territory_id AS to,
   start_datetime::date AS start_date,
   operator_id,
   operator_name,
