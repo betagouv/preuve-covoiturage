@@ -2127,16 +2127,21 @@ x-topics:
     content: |
       #### Acronymes utilisés dans la documentation :
 
-      - **RPC** : Registre de preuve de covoiturage
-      - **CEE** : Crédits d'Economie d'Energie
-      - **PNCEE** : Pôle National des Crédits d'Economie d'Energie
-      - **SIRET** : Système d'Identification du Répertoire des Établissements
-      - **EPCI** : Établissement Public de Coopération Intercommunale
       - **AOM** : Autorité Organisatrice de la Mobilité
+      - **API** (Application Programming Interface) : Interface de programmation permettant à deux applications de communiquer entre elles.
+      - **BDD** (Base de Données) : Ensemble structuré de données stockées et accessibles électroniquement.
+      - **CEE** (Certificat d'Économie d'Énergie) : Dispositif permettant de financer des travaux d'économie d'énergie.
+      - **EPCI** (Établissement Public de Coopération Intercommunale) : Structure administrative regroupant plusieurs communes pour mutualiser des services.
+      - **HTTP** (HyperText Transfer Protocol) : Protocole de communication utilisé pour transférer des données sur le web.
+      - **JSON** (JavaScript Object Notation) : Format de données léger utilisé pour l'échange de données entre un serveur et une application web.
+      - **JWT** (JSON Web Token) : Standard ouvert pour la création de tokens d'accès utilisés pour l'authentification et l'échange d'informations.
       - **OSRM** : Open Source Routing Machine
-      - **JWT** : JSON Web Token
-      - **WSG-84** : World Geodetic System 1984
-
+      - **PNCEE** (Pôle National des Crédits d'Économie d'Énergie) : Organisme chargé de la gestion des certificats d'économie d'énergie en France.
+      - **RPC** (Registre de Preuve de Covoiturage) : Service public numérique permettant de prouver la réalisation de trajets en covoiturage.
+      - **SIRET** (Système d'Identification du Répertoire des Établissements) : Numéro unique d'identification des établissements en France.
+      - **UUID** (Universally Unique Identifier) : Identifiant unique universel utilisé pour identifier de manière unique des informations dans un système.
+      - **WSG-84** (World Geodetic System 1984) : Système de référence géodésique mondial utilisé pour les coordonnées géographiques.
+      
       #### Concepts utilisés :
 
       - **Opérateur de covoiturage** : entité qui propose un service de covoiturage
