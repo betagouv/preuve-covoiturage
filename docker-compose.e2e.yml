@@ -108,59 +108,40 @@ services:
       - back
     command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo "waiting for app"; sleep 1; done']
 
-  dashboard:
-    volumes:
-      - ./docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
-    build:
-      dockerfile: ./docker/dashboard/prod/Dockerfile
-      context: .
-    networks:
-      - back
-    depends_on:
-      - api
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.dashboard.rule=Host(`app.covoiturage.test`)'
-      - 'traefik.http.routers.dashboard.entrypoints=websecure'
-      - 'traefik.http.routers.dashboard.tls=true'
-      - 'traefik.http.services.dashboard.loadbalancer.server.port=8080'
-
   api:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
     environment:
-      LOG_LEVEL: DEBUG
-      APP_APP_URL: https://app.covoiturage.test
-      APP_JWT_SECRET: thisIsASecret0000
-      APP_SESSION_SECRET: thisIsAlsoASecret0000
-      AWS_S3_PATH_STYLE: 'true'
-      AWS_BUCKET_PREFIX: local-pdc
-      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
-      AWS_REGION: fr-par
-      AWS_ACCESS_KEY_ID: minioadmin 
-      AWS_SECRET_ACCESS_KEY: minioadmin
-      ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
-      ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
-      APP_REDIS_URL: redis://redis:6379/1
-      APP_MAIL_SMTP_URL: smtp://mailer:1025
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
-      APP_DATAGOUV_URL: http://data-gouv-url
-      APP_DATAGOUV_KEY: thisIsASecret
-      APP_CEE_PUBLIC_KEY_PATH: /app/certs/publicKey.pem
-      APP_CEE_PRIVATE_KEY_PATH: /app/certs/privateKey.pem
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
+      APP_LOG_LEVEL: DEBUG
+      APP_APP_URL: https://app.covoiturage.test
+      APP_CEE_PRIVATE_KEY_PATH: /app/certs/privateKey.pem
+      APP_CEE_PUBLIC_KEY_PATH: /app/certs/publicKey.pem
+      APP_DATAGOUV_KEY: thisIsASecret
+      APP_DATAGOUV_URL: http://data-gouv-url
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
-      APP_USER_REGISTRATION_ENABLED: 'true'
-      OIDC_CLIENT_ID: secret
-      OIDC_CLIENT_SECRET: secret
+      APP_JWT_SECRET: thisIsASecret0000
+      APP_MAIL_SMTP_URL: smtp://mailer:1025
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
+      APP_RATE_LIMIT_MAX_FACTOR: '0'
+      APP_REDIS_URL: redis://redis:6379/1
+      APP_SESSION_SECRET: thisIsAlsoASecret0000
+      APP_USER_REGISTRATION_ENABLED: 'false'
+      AWS_ACCESS_KEY_ID: minioadmin 
+      AWS_BUCKET_PREFIX: local-pdc
+      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
+      AWS_REGION: fr-par
+      AWS_S3_PATH_STYLE: 'true'
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
+      ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_BASE_URL: http://auth.covoiturage.test
       OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
-      DEX_GRPC_HOST: localhost
-      DEX_GRPC_PORT: 5557
     networks:
       - back
       - front
@@ -179,47 +160,6 @@ services:
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
     volumes:
       - ./docker/api/certs:/app/certs:ro
-
-  cms:
-    build:
-      dockerfile: ../docker/cms/prod/Dockerfile
-      context: ./cms
-    environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_NAME: test
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
-      APP_KEYS: REPLACE_ME
-      API_TOKEN_SALT: REPLACE_ME
-      JWT_SECRET: REPLACE_ME
-      ADMIN_JWT_SECRET: REPLACE_ME
-      TRANSFER_TOKEN_SALT: REPLACE_ME
-      NODE_ENV: production
-      EMAIL_SMTP_URL: smtp://mailer:1025
-      EMAIL_ADDRESS_FROM: noreply@covoiturage.beta.gouv.fr
-      EMAIL_ADDRESS_REPLY: technique@covoiturage.beta.gouv.fr
-      S3_ACCESS_KEY_ID: minioadmin
-      S3_ACCESS_SECRET: minioadmin
-      S3_ENDPOINT: http://s3:9000
-      S3_REGION: fr-par
-      S3_BUCKET: cms
-      S3_PUBLIC_URL: https://cms.s3.covoiturage.test
-      TRUSTED_ROOT_DOMAIN: covoiturage.test
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.api.rule=Host(`cms.covoiturage.test`)'
-      - 'traefik.http.routers.api.entrypoints=websecure'
-      - 'traefik.http.routers.api.tls=true'
-      - 'traefik.http.services.api.loadbalancer.server.port=1337'
-    networks:
-      - back
-      - front
-    depends_on:
-      - redis
-      - postgres
-      - mailer
-      - s3
 
   s3:
     image: minio/minio:edge
