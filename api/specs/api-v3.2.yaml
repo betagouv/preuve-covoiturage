@@ -364,7 +364,14 @@ paths:
         concerné dès lors qu'il est déjà inscrit dans le RPC.
         
         Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de
-        cette irrégularité à tout moment.
+        cette irrégularité, et ce à tout moment. 
+
+        Les trajets concernés seront alors associés à un statut "canceled" et exclus 
+        des données de l'observatoire. En revanche, il a été convenu - cf. CR du club
+        opérateur #27 - qu'ils seraient malgré tout éligibles au recalcul des incitations 
+        réalisés par le RPC - cas des campagnes suivies par le RPC uniquement -. Leur
+        incitation sera donc comptabilisée dans le fichier d'appel de fonds et visible
+        dans le fichier d'export.  
 
         Le `code` est un champ libre de 32 caractères maximum. Obligatoire.
         
