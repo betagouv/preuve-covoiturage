@@ -1,7 +1,7 @@
-import { excel } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import excel from "dep:excel";
 import { normalize } from "../../helpers/normalizeAPDFData.helper.ts";
 import { APDFTripInterface } from "../../interfaces/APDFTripInterface.ts";
 import { AbstractWorksheetWriter } from "./AbstractWorksheetWriter.ts";
@@ -97,9 +97,7 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     const b2 = new Date();
     cursor.release();
     logger.debug(
-      `[apdf:export] writing trips took: ${
-        (b2.getTime() - b1.getTime()) / 1000
-      }s`,
+      `[apdf:export] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`,
     );
 
     worksheet.commit();

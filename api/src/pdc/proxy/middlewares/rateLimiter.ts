@@ -1,13 +1,8 @@
-import {
-  rateLimit,
-  RateLimiterOptions,
-  RateLimitRedisStore,
-  RateLimitRequestHandler,
-  Redis as RedisClient,
-  Request,
-  Response,
-} from "@/deps.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
+import { Request, Response } from "dep:express";
+import rateLimit, { Options as RateLimiterOptions, RateLimitRequestHandler } from "dep:express-rate-limit";
+import RateLimitRedisStore from "dep:rate-limit-redis";
+import { Redis as RedisClient } from "dep:redis";
 import { config } from "../config/index.ts";
 
 const minute = 60000;

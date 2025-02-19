@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM alpine:3.21
 
 RUN apk add --no-cache just deno p7zip bash
 
@@ -8,12 +8,11 @@ RUN addgroup --gid 1000 deno \
   && chown deno:deno /app/
 
 USER deno
-RUN mkdir -p /app/shared
+ENV DENO_INSTALL_ROOT /app
 RUN mkdir -p /app/api
 
-COPY ./shared /app/shared
-COPY ./api /app/api
+COPY --chown=deno:deno ./api /app/api
 
 WORKDIR /app/api
-RUN deno cache --lock deno.lock src/deps.ts
+RUN just cache
 CMD ["just", "serve"]

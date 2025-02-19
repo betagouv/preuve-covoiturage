@@ -1,32 +1,25 @@
-import {
-  Handlebars,
+import Handlebars, {
   HbsHelperDelegate as HelperDelegate,
   HbsTemplateDelegate as TemplateDelegate,
-} from "@/deps.ts";
+} from "dep:handlebars";
 
 import { InitHookInterface, provider } from "@/ilos/common/index.ts";
 
-import {
-  TemplateInterface,
-  TemplateProviderInterface,
-  TemplateProviderInterfaceResolver,
-} from "./interfaces/index.ts";
-import { currency } from "./helpers/currency.ts";
 import { TemplateRenderingException } from "./exceptions/index.ts";
+import { currency } from "./helpers/currency.ts";
+import { TemplateInterface, TemplateProviderInterface, TemplateProviderInterfaceResolver } from "./interfaces/index.ts";
 import { StaticTemplateInterface } from "./interfaces/TemplateInterface.ts";
 
 @provider({
   identifier: TemplateProviderInterfaceResolver,
 })
-export class HandlebarsTemplateProvider
-  implements TemplateProviderInterface, InitHookInterface {
+export class HandlebarsTemplateProvider implements TemplateProviderInterface, InitHookInterface {
   protected helpers: Map<string, HelperDelegate> = new Map([[
     "currency",
     currency,
   ]]);
 
-  protected templateMap: Map<StaticTemplateInterface, TemplateDelegate> =
-    new Map();
+  protected templateMap: Map<StaticTemplateInterface, TemplateDelegate> = new Map();
   protected hbs: typeof Handlebars;
 
   init() {

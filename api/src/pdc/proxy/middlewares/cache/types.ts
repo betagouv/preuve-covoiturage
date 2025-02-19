@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "@/deps.ts";
-import { Redis } from "@/deps.ts";
+import { NextFunction, Request, Response } from "dep:express";
+import { Redis } from "dep:redis";
 
 export type CacheEnabled = boolean;
 export type CompressionEnabled = boolean;

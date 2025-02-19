@@ -1,4 +1,4 @@
-import { pg } from "@/deps.ts";
+import pg from "dep:pg";
 import { FileManagerInterface, StateManagerInterface } from "./index.ts";
 
 export interface StaticMigrable {

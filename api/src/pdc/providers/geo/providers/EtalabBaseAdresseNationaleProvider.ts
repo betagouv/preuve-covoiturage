@@ -1,7 +1,7 @@
-import { URLSearchParams } from "@/deps.ts";
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { get } from "@/lib/object/index.ts";
+import { URLSearchParams } from "dep:url";
 import { GeoCoderInterface, InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
 @provider()

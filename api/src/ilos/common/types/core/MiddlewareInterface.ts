@@ -1,4 +1,4 @@
-import { NextFunction } from "@/deps.ts";
+import { NextFunction } from "dep:express";
 import { ContextType, ParamsType, ResultType } from "../call/index.ts";
 
 export interface MiddlewareInterface<T = unknown> {

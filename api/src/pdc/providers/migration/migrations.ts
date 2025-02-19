@@ -1,8 +1,9 @@
-import { PgClient, PgPool, readdir } from "@/deps.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { readTextFile } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { extname, join } from "@/lib/path/index.ts";
+import { readdir } from "dep:fs-promises";
+import { Client as PgClient, Pool as PgPool } from "dep:postgres";
 
 export async function migrateSQL(connectionString: string, path: string, verbose = true) {
   if (env_or_false("SKIP_SQL_MIGRATIONS")) {

@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
@@ -9,6 +8,7 @@ import {
   ResultType,
 } from "@/ilos/common/index.ts";
 import { get } from "@/lib/object/index.ts";
+import { NextFunction } from "dep:express";
 import { ConfiguredMiddleware } from "../interfaces.ts";
 
 /**

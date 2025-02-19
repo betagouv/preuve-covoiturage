@@ -18,7 +18,6 @@
               p7zip
               just
               openssl
-              pm2
               jq
               minio-client
 

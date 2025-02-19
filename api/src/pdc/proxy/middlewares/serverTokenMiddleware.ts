@@ -1,6 +1,6 @@
-import { Request as ExpressRequest, Response } from "@/deps.ts";
 import { ForbiddenException, KernelInterface, UnauthorizedException } from "@/ilos/common/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { Request as ExpressRequest, Response } from "dep:express";
 
 import { env, env_or_true } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";

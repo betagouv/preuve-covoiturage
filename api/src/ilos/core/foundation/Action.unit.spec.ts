@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import { assertEquals, assertRejects, describe, it } from "@/dev_deps.ts";
 import {
   ContextType,
@@ -12,6 +11,7 @@ import {
   ResultType,
   serviceProvider,
 } from "@/ilos/common/index.ts";
+import { NextFunction } from "dep:express";
 import { Action } from "./Action.ts";
 import { Kernel as AbstractKernel } from "./Kernel.ts";
 

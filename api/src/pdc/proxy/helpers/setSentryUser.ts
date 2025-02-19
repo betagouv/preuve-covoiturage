@@ -1,4 +1,4 @@
-import { Request } from "@/deps.ts";
+import { Request } from "dep:express";
 
 import { get, pick } from "@/lib/object/index.ts";
 

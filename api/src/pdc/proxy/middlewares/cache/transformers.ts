@@ -1,5 +1,7 @@
-import { Buffer, gunzipSync, gzipSync, Request, Response } from "@/deps.ts";
 import { createHash } from "@/lib/crypto/index.ts";
+import { Buffer } from "dep:buffer";
+import { Request, Response } from "dep:express";
+import { gunzipSync, gzipSync } from "dep:zlib";
 import { CacheKey, GlobalCacheConfig, RouteCacheConfig } from "./types.ts";
 
 export async function getKey(

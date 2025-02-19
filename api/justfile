@@ -158,6 +158,7 @@ api *command:
   --allow-sys \
   --allow-run \
   --unstable-fs \
+  --cached-only \
   src/main.ts {{ command }}
 
 debug:
@@ -189,11 +190,11 @@ env:
 
 # cache
 cache:
-  deno cache --lock=deno.lock src/deps.ts src/dev_deps.ts
+  deno install --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
 # refresh the deno.lock file
 lock:
-  deno cache --lock=deno.lock --frozen=false src/deps.ts src/dev_deps.ts
+  deno install --frozen=false --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
 # Eval and run a file
 eval *filepath:

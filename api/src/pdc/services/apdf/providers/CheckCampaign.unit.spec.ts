@@ -1,8 +1,8 @@
-import { faker } from "@/deps.ts";
 import { afterEach, assert, assertRejects, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
 import { ResultInterface as GetCampaignResultInterface } from "@/pdc/services/policy/contracts/find.contract.ts";
+import { faker } from "dep:faker";
 import { createGetCampaignResult } from "../helpers/createGetCampaignResult.helper.ts";
 import { CheckCampaign } from "./CheckCampaign.ts";
 

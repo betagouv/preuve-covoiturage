@@ -1,8 +1,8 @@
-import { fromZonedTime } from "@/deps.ts";
 import { coerceIntList } from "@/ilos/cli/index.ts";
 import { command, CommandInterface, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { set } from "@/lib/object/index.ts";
+import { fromZonedTime } from "dep:date-fns-tz";
 import {
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,

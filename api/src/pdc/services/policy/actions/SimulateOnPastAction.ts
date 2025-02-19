@@ -1,9 +1,9 @@
-import { RedisKey } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { RedisKey } from "dep:redis";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/simulateOnPast.contract.ts";
 import { alias } from "../contracts/simulateOnPast.schema.ts";

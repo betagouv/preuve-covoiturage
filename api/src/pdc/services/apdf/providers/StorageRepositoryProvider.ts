@@ -1,4 +1,3 @@
-import { subMonths } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
@@ -8,6 +7,7 @@ import {
   S3ObjectList,
   S3StorageProvider,
 } from "@/pdc/providers/storage/index.ts";
+import { subMonths } from "dep:date-fns";
 import { EnrichedApdfType } from "../contracts/list.contract.ts";
 import {
   SerializedPolicyInterface,

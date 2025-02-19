@@ -1,14 +1,7 @@
-import {
-  booleanPointInPolygon,
-  Feature,
-  MultiPolygon,
-  multiPolygon,
-  point,
-  Polygon,
-  polygon,
-  Properties,
-} from "@/deps.ts";
 import type { GeoJSON } from "@/pdc/services/geo/contracts/GeoJson.ts";
+import { booleanPointInPolygon } from "dep:turf-boolean-point-in-polygon";
+import type { Feature, MultiPolygon, Polygon, Properties } from "dep:turf-helpers";
+import { multiPolygon, point, polygon } from "dep:turf-helpers";
 import { StatelessContextInterface, StatelessRuleHelper } from "../../interfaces/index.ts";
 
 interface IsCloseToParams {

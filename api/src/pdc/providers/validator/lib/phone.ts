@@ -1,4 +1,4 @@
-import { isValidPhoneNumber, parsePhoneNumber } from "@/deps.ts";
+import { isValidPhoneNumber, parsePhoneNumber } from "dep:libphonenumber-js";
 
 export function formatPhone(input: string): string {
   if (!input) {

@@ -1,10 +1,10 @@
-import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   MiddlewareInterface,
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import { NextFunction } from "dep:express";
 
 type middlewareInstancesWithOptionsType =
   (MiddlewareInterface | [MiddlewareInterface, any])[];

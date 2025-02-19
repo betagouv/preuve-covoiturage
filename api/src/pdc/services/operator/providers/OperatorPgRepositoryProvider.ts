@@ -1,6 +1,6 @@
-import { Buffer } from "@/deps.ts";
 import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { Buffer } from "dep:buffer";
 import { signature as companyFetchSignature } from "../../company/contracts/fetch.contract.ts";
 import {
   ParamsInterface as CompanyParamsInterface,

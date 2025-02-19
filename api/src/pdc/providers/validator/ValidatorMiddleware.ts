@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   middleware,
@@ -7,6 +6,7 @@ import {
   ResultType,
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
+import { NextFunction } from "dep:express";
 
 @middleware()
 export class ValidatorMiddleware implements MiddlewareInterface {

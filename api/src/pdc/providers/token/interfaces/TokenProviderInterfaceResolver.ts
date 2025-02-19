@@ -1,28 +1,27 @@
-import { jwt } from "@/deps.ts";
 import { ProviderInterface } from "@/ilos/common/index.ts";
+import type { SignOptions, VerifyOptions } from "dep:jsonwebtoken";
 
 export interface TokenProviderInterface extends ProviderInterface {
   sign<T extends string | Buffer | object>(
     payload: T,
-    options?: jwt.SignOptions,
+    options?: SignOptions,
   ): Promise<string>;
   verify<T extends string | object>(
     token: string,
-    options?: jwt.VerifyOptions,
+    options?: VerifyOptions,
   ): Promise<T>;
 }
 
-export abstract class TokenProviderInterfaceResolver
-  implements TokenProviderInterface {
+export abstract class TokenProviderInterfaceResolver implements TokenProviderInterface {
   async sign<T extends string | Buffer | object>(
     payload: T,
-    options?: jwt.SignOptions,
+    options?: SignOptions,
   ): Promise<string> {
     throw new Error("Method not implemented");
   }
   async verify<T extends string | object>(
     token: string,
-    options?: jwt.VerifyOptions,
+    options?: VerifyOptions,
   ): Promise<T> {
     throw new Error("Method not implemented");
   }

@@ -1,7 +1,7 @@
 // from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/health-check.ts
-import { Request, RequestHandler, Response } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { registerOnSignal } from "@/lib/process/index.ts";
+import { Request, RequestHandler, Response } from "dep:express";
 
 export function healthCheckFactory(
   checks: Array<() => Promise<any>> = [],

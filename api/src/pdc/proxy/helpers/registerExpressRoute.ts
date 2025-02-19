@@ -1,10 +1,11 @@
-import { express, NextFunction, Request, Response, semver } from "@/deps.ts";
 import { ContextType, KernelInterface, ParamsType } from "@/ilos/common/index.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
 import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
+import { express, NextFunction, Request, Response } from "dep:express";
+import { formatRange, parse, satisfies, tryParseRange } from "dep:semver";
 
 export interface RouteParams {
   path: string;
@@ -23,7 +24,7 @@ export interface RouteParams {
   rpcAnswerOnFailure?: boolean;
 }
 
-const SUPPORTED_VERSIONS = ["3.1.0", "3.2.0"].map((v) => semver.parse(v));
+const SUPPORTED_VERSIONS = ["3.1.0", "3.2.0"].map((v) => parse(v));
 const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
   successHttpCode: 200,
   rateLimiter: {
@@ -52,11 +53,11 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
 
-      const versionRange = semver.tryParseRange(api_version);
+      const versionRange = tryParseRange(api_version);
       if (!versionRange) {
         return res.status(404).end();
       }
-      if (!SUPPORTED_VERSIONS.some((version) => semver.satisfies(version, versionRange))) {
+      if (!SUPPORTED_VERSIONS.some((version) => satisfies(version, versionRange))) {
         return res.status(404).end();
       }
       const p = params.actionParamsFn ? await params.actionParamsFn(req) : { ...req.query, ...req.body, ...rparams };
@@ -67,7 +68,7 @@ export function registerExpressRoute(app: express.Express, kernel: KernelInterfa
         },
         call: {
           user,
-          api_version_range: semver.formatRange(versionRange),
+          api_version_range: formatRange(versionRange),
         },
       };
       try {

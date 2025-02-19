@@ -1,9 +1,7 @@
-import { mailer, MailOptions, mjml2html } from "@/deps.ts";
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import {
-  TemplateInterface,
-  TemplateProviderInterfaceResolver,
-} from "@/pdc/providers/template/index.ts";
+import { TemplateInterface, TemplateProviderInterfaceResolver } from "@/pdc/providers/template/index.ts";
+import mjml2html from "dep:mjml";
+import mailer, { MailOptions } from "dep:nodemailer";
 
 import { logger } from "@/lib/logger/index.ts";
 import { exit } from "@/lib/process/index.ts";
@@ -23,12 +21,11 @@ interface NotificationOptions {
 @provider({
   identifier: NotificationTransporterInterfaceResolver,
 })
-export class NotificationMailTransporter
-  implements
-    NotificationTransporterInterface<
-      MailTemplateNotificationInterface,
-      Partial<MailOptions>
-    > {
+export class NotificationMailTransporter implements
+  NotificationTransporterInterface<
+    MailTemplateNotificationInterface,
+    Partial<MailOptions>
+  > {
   transporter: mailer.Transporter | null = null;
   protected options: NotificationOptions = {} as NotificationOptions;
 
@@ -120,9 +117,7 @@ export class NotificationMailTransporter
       from: this.options.from,
       to: this.options.debug ? this.options.debugToOverride : mail.to,
       subject: mailCtor.subject,
-      html: mailCtor.templateMJML
-        ? this.render(new mailCtor.templateMJML(mail.data), true)
-        : undefined,
+      html: mailCtor.templateMJML ? this.render(new mailCtor.templateMJML(mail.data), true) : undefined,
       text: this.render(new mailCtor.templateText(mail.data)),
     });
   }

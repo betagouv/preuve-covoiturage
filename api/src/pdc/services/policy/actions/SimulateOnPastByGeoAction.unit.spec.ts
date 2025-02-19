@@ -1,6 +1,6 @@
-import { faker } from "@/deps.ts";
 import { afterEach, assertEquals, assertRejects, beforeEach, describe, it, sinon, SinonStub } from "@/dev_deps.ts";
 import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { faker } from "dep:faker";
 import { ResultInterface } from "../contracts/simulateOnPastGeo.contract.ts";
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 import { SimulateOnPastByGeoAction } from "./SimulateOnPastByGeoAction.ts";

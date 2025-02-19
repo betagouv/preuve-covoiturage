@@ -5,6 +5,6 @@ export { ValidatorExtension } from "./ValidatorExtension.ts";
 
 export type * from "./types.ts";
 
-export type { Format, KeywordDefinition } from "@/deps.ts";
+export type { Format, KeywordDefinition } from "dep:ajv";
 export { AjvValidator } from "./AjvValidator.ts";
 export { ValidatorMiddleware } from "./ValidatorMiddleware.ts";
