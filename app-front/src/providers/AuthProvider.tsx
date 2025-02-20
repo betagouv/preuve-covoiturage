@@ -2,47 +2,42 @@
 import { AuthContextProps } from '@/interfaces/providersInterface';
 import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from '../config';
-
-
+ 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
-
 export function AuthProvider({children}: { children: React.ReactNode}) {
   
   const [isAuth, setIsAuth] = useState(false);
-  const [state, setState] = useState<string>();
-  const [nonce, setNonce] = useState<string>();
-  const [code, setCode] = useState<string>();
   const [user, setUser] = useState<AuthContextProps["user"]>();
   
+  const checkAuth = async () => {
+    const response = await fetch(`${Config.get('auth.domain')}/auth/me`, { credentials: "include" });
+    const data: AuthContextProps["user"] = await response.json();
+    if (data?.role !== 'anonymous') {
+      setIsAuth(true);
+      setUser(data);
+    } else {
+      setIsAuth(false);
+      setUser(undefined);
+    }
+  };
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-  const getCode = (stateValue: string | null, codeValue: string | null, issValue: string | null) => {
-    try {
-      if(stateValue === state && issValue === `${Config.get('auth.domain')}/api/v2`) {
-        setCode(codeValue ?? undefined);
-        setIsAuth(true);
-        
-      }
-    } catch (e) {
-      console.error("Code validation failed", e);
-      throw e;
+  const onChangeTerritory = (id: number) => {
+    if (user) {
+      setUser({...user, territory_id: id, operator_id: null});
     }
   };
 
-  useEffect(() => {
-    const stateToken = sessionStorage.getItem('stateToken');
-    const nonceToken = sessionStorage.getItem('nonceToken');
-    if (stateToken && nonceToken) {
-      setState(stateToken);
-      setNonce(nonceToken);
-      setIsAuth(true);
-      setUser({name:'Ludovic Delhomme', role:'registry'});
+  const onChangeOperator = (id: number) => {
+    if (user) {
+      setUser({...user, operator_id: id, territory_id: null});
     }
-  }, []);
-
-  
+  };
 
   return(
-    <AuthContext.Provider value={{isAuth,setIsAuth, state, setState, nonce, setNonce, code, getCode, user}}>
+    <AuthContext.Provider value={{isAuth,setIsAuth, user, onChangeTerritory, onChangeOperator}}>
       {children}
     </AuthContext.Provider>
   );
