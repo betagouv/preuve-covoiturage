@@ -1,7 +1,10 @@
-import { addDate, createReadStream, CsvOptions as ParseOptions, parse, URL } from "@/deps.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basePath, join } from "@/lib/path/index.ts";
+import { Options as ParseOptions, parse } from "dep:csv-parse";
+import { add as addDate } from "dep:date-fns";
+import { createReadStream } from "dep:fs";
+import { URL } from "dep:url";
 import { FlashDBData } from "./FlashDBData.ts";
 import { migrateSQL } from "./migrations.ts";
 import { Carpool, carpoolsV2 } from "./seeds/carpools.ts";

@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "@/deps.ts";
 import { env } from "@/lib/env/index.ts";
 import { getHostName } from "@/lib/net/index.ts";
+import { NextFunction, Request, Response } from "dep:express";
 import { rateLimiter } from "./rateLimiter.ts";
 
 export function metricsMiddleware(endpoint: string) {

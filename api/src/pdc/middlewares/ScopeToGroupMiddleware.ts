@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import {
   ContextType,
   ForbiddenException,
@@ -11,6 +10,7 @@ import {
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { ConfiguredMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
+import { NextFunction } from "dep:express";
 
 export type ScopeToGroupMiddlewareParams = {
   registry: string;

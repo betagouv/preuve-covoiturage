@@ -1,8 +1,7 @@
-import { distance, point } from "@/deps.ts";
-import {
-  StatelessContextInterface,
-  StatelessRuleHelper,
-} from "../../interfaces/index.ts";
+import { distance } from "dep:turf-distance";
+import { point } from "dep:turf-helpers";
+
+import { StatelessContextInterface, StatelessRuleHelper } from "../../interfaces/index.ts";
 
 interface IsCloseToParams {
   position: { lat: number; lon: number };

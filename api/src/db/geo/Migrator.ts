@@ -10,8 +10,8 @@ import {
   StaticAbstractDataset,
   StaticMigrable,
 } from "@/db/geo/interfaces/index.ts";
-import { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
+import pg from "dep:pg";
 
 export class Migrator {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();

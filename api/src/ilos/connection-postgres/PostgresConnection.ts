@@ -1,12 +1,9 @@
-import type { CursorQueryConfig, PoolConfig } from "@/deps.ts";
-import { Cursor, Pool } from "@/deps.ts";
-import {
-  ConnectionInterface,
-  DestroyHookInterface,
-  InitHookInterface,
-} from "@/ilos/common/index.ts";
+import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "@/ilos/common/index.ts";
 import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import type { PoolConfig } from "dep:pg";
+import pg from "dep:pg";
+import Cursor, { CursorQueryConfig } from "dep:pg-cursor";
 
 export enum PgPoolStatus {
   UP = "UP",
@@ -14,7 +11,7 @@ export enum PgPoolStatus {
   ERROR = "ERROR",
 }
 
-export class PgPool extends Pool {
+export class PgPool extends pg.Pool {
   protected _status: PgPoolStatus = PgPoolStatus.DOWN;
 
   constructor(config?: PoolConfig) {
@@ -63,11 +60,7 @@ export class PgPool extends Pool {
   }
 }
 
-export class PostgresConnection
-  implements
-    ConnectionInterface<PgPool>,
-    InitHookInterface,
-    DestroyHookInterface {
+export class PostgresConnection implements ConnectionInterface<PgPool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
   private database: string = "";
   protected pool: PgPool;

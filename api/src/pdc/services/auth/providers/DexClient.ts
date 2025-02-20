@@ -1,13 +1,13 @@
-import { grpc } from "@/deps.ts";
 import { ConfigInterfaceResolver, InitHookInterface, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { randomString, v4 } from "@/lib/uuid/index.ts";
 import { Dex } from "@/pdc/services/auth/dex/generated/api.ts";
 import { getDexClient } from "@/pdc/services/auth/dex/getDexClient.ts";
+import { GrpcClient } from "dep:grpc";
 
 @provider()
 export class DexClient implements InitHookInterface {
-  protected client: (grpc.GrpcClient & Dex) | undefined;
+  protected client: (GrpcClient & Dex) | undefined;
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {

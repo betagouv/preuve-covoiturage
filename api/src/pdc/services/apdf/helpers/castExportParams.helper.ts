@@ -1,5 +1,6 @@
-import { addMonths, fromZonedTime, startOfMonth, subMonths } from "@/deps.ts";
 import { get } from "@/lib/object/index.ts";
+import { addMonths, startOfMonth, subMonths } from "dep:date-fns";
+import { fromZonedTime } from "dep:date-fns-tz";
 import { ParamsInterface } from "../contracts/export.contract.ts";
 
 export function castExportParams(

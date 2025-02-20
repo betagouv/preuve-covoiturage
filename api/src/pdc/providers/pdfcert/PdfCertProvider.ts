@@ -1,6 +1,8 @@
-import { Buffer, intlFormat, pdf } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { Buffer } from "dep:buffer";
+import { intlFormat } from "dep:date-fns";
+import pdf from "dep:pdf-lib";
 import {
   CarpoolInterface,
   CarpoolTypeEnum,

@@ -1,5 +1,5 @@
 import { RPCSingleResponseType } from "@/ilos/common/index.ts";
-import { expressMung } from "@/deps.ts";
+import expressMung from "dep:express-mung";
 
 /**
  * Wrap the { results: ... } from JSON RPC

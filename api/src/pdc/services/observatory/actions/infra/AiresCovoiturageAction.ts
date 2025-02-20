@@ -1,8 +1,8 @@
-import { Feature } from "@/deps.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { AiresCovoiturage } from "@/pdc/services/observatory/dto/infra/AiresCovoiturage.ts";
+import type { Feature } from "dep:turf-helpers";
 import { InfraRepositoryInterfaceResolver } from "../../interfaces/InfraRepositoryProviderInterface.ts";
 export type ResultInterface = {
   id_lieu: string;

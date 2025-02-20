@@ -1,5 +1,5 @@
-import { readFileSync } from "@/deps.ts";
 import { env, env_or_fail } from "@/lib/env/index.ts";
+import { readFileSync } from "dep:fs";
 
 function getKey(type: string): string {
   const asVarEnvName = `APP_CEE_${type}_KEY`;

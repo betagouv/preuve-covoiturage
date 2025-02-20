@@ -1,5 +1,5 @@
-import { readdir, stat } from "@/deps.ts";
 import { extname, join } from "@/lib/path/index.ts";
+import { readdir, stat } from "dep:fs-promises";
 
 export async function getAllFiles(
   baseDirectory: string,

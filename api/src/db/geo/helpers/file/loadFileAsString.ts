@@ -1,5 +1,5 @@
-import { readFile } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { readFile } from "dep:fs-promises";
 
 export async function loadFileAsString(path: string): Promise<string> {
   logger.debug(`Loading file ${path}`);

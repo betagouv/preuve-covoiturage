@@ -1,7 +1,7 @@
-import { latLngToCell } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
+import { latLngToCell } from "dep:h3-js";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
   LocationParamsInterface,

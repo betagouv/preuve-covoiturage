@@ -1,16 +1,12 @@
-import {
-  bodyParser,
-  cors,
-  express,
-  expressSession,
-  helmet,
-  http,
-  NextFunction,
-  Redis,
-  RedisStore,
-  Request,
-  Response,
-} from "@/deps.ts";
+import bodyParser from "dep:body-parser";
+import RedisStore from "dep:connect-redis";
+import cors from "dep:cors";
+import express, { NextFunction, Request, Response } from "dep:express";
+import expressSession from "dep:express-session";
+import helmet from "dep:helmet";
+import { Server } from "dep:http";
+import { Redis } from "dep:redis";
+
 import {
   children,
   ConfigInterface,
@@ -70,7 +66,7 @@ export class HttpTransport implements TransportInterface {
   app: express.Express;
   config: ConfigInterface;
   port: string;
-  server: http.Server;
+  server: Server;
   tokenProvider: TokenProviderInterfaceResolver;
   cache: CacheMiddleware;
 
@@ -80,7 +76,7 @@ export class HttpTransport implements TransportInterface {
     return this.kernel;
   }
 
-  getInstance(): http.Server {
+  getInstance(): Server {
     return this.server;
   }
 

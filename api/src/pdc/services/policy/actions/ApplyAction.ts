@@ -1,10 +1,10 @@
 import { defaultTimezone } from "@/config/time.ts";
-import { isAfter, maxDate, minDate } from "@/deps.ts";
 import { ContextType, handler, InvalidParamsException, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { isAfter, max as maxDate, min as minDate } from "dep:date-fns";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/apply.contract.ts";
 import { alias } from "../contracts/apply.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";

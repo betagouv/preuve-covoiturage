@@ -1,7 +1,7 @@
-import { excel } from "@/deps.ts";
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
+import excel from "dep:excel";
 import { ResultInterface as Campaign } from "../../../policy/contracts/find.contract.ts";
 import { SliceStatInterface } from "../../contracts/interfaces/PolicySliceStatInterface.ts";
 import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";

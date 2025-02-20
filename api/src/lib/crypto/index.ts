@@ -1,5 +1,7 @@
-import { bcrypt, decodeBase64, encodeBase64, encodeHex, stdCrypto } from "@/deps.ts";
 import { exists, read } from "@/lib/file/index.ts";
+import * as bcrypt from "dep:bcrypt";
+import * as stdCrypto from "dep:crypto";
+import { decodeBase64, encodeBase64, encodeHex } from "dep:encoding";
 
 export async function bcrypt_hash(
   plaintext: string,

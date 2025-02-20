@@ -1,9 +1,9 @@
-import { faker } from "@/deps.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
 import type { PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { faker } from "dep:faker";
 
 interface CommandOptions {
   databaseUri: string;

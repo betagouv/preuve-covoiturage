@@ -1,9 +1,9 @@
-import { RedisKey } from "@/deps.ts";
 import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
+import { RedisKey } from "dep:redis";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/getPastSimulationOrCompute.contract.ts";
 import {
   handlerConfig as simulatePastHandler,

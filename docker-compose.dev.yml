@@ -62,7 +62,6 @@ services:
       - watch
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared:ro
 
   cms:
     build:

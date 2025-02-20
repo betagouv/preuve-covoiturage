@@ -1,10 +1,10 @@
-import { superstruct } from "@/deps.ts";
 import { assert, assertEquals, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { handler, kernel as kernelDecorator, serviceProvider } from "@/ilos/common/Decorators.ts";
 import { Exception } from "@/ilos/common/index.ts";
 import { Action as AbstractAction, ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { Kernel as AbstractKernel } from "@/ilos/framework/index.ts";
 import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
+import * as superstruct from "dep:superstruct";
 
 describe("Validator Middleware v2", async () => {
   const Test = superstruct.object({

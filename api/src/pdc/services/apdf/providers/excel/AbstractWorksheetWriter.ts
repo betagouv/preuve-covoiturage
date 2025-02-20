@@ -1,4 +1,4 @@
-import { excel } from "@/deps.ts";
+import excel from "dep:excel";
 
 export abstract class AbstractWorksheetWriter {
   protected initWorkSheet(

@@ -1,4 +1,4 @@
-import { injectable, METADATA_KEY } from "@/deps.ts";
+import { injectable, METADATA_KEY } from "dep:inversify";
 import type { ExtensionConfigurationType } from "./types/core/ExtensionInterface.ts";
 import { extensionConfigurationMetadataKey } from "./types/core/ExtensionInterface.ts";
 import type { HandlerConfigType, MiddlewareConfigType } from "./types/handler/index.ts";
@@ -129,7 +129,7 @@ export function extension(config: ExtensionConfigurationType) {
   };
 }
 
-export { inject, injectable } from "@/deps.ts";
+export { inject, injectable } from "dep:inversify";
 
 export const proxy = Symbol.for("PROXY");
 export const router = Symbol.for("ROUTER");

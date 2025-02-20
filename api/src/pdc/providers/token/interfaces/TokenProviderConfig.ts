@@ -1,9 +1,9 @@
-import { jwt } from "@/deps.ts";
+import type { SignOptions, VerifyOptions } from "dep:jsonwebtoken";
 
 export interface TokenProviderConfig {
   secret?: string | Buffer;
   ttl?: number;
   alg?: string;
-  signOptions?: jwt.SignOptions;
-  verifyOptions?: jwt.VerifyOptions;
+  signOptions?: SignOptions;
+  verifyOptions?: VerifyOptions;
 }

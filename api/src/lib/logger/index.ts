@@ -1,5 +1,5 @@
-import { log } from "@/deps.ts";
 import { env_or_default } from "@/lib/env/index.ts";
+import * as log from "dep:log";
 
 const level = env_or_default("APP_LOG_LEVEL", "DEBUG").toUpperCase() as log.LevelName;
 

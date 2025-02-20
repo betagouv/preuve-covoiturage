@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import {
   CallType,
   ContainerInterface,
@@ -14,6 +13,7 @@ import {
   SingleMiddlewareConfigType,
 } from "@/ilos/common/index.ts";
 import { handlerListIdentifier } from "@/ilos/core/constants.ts";
+import { NextFunction } from "dep:express";
 import { compose } from "../helpers/index.ts";
 import { normalizeHandlerConfig } from "../helpers/normalizeHandlerConfig.ts";
 

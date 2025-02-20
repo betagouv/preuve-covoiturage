@@ -1,4 +1,4 @@
-import type { pg } from "@/deps.ts";
+import type pg from "dep:pg";
 import { DownloadError, SqlError, ValidationError } from "../errors/index.ts";
 import { getDatasetUuid, loadFileAsString, streamData } from "../helpers/index.ts";
 import {

@@ -1,8 +1,5 @@
 import { defaultTimezone } from "@/config/time.ts";
-import {
-  FormatOptionsWithTZ,
-  toZonedTime as originalToZoneTime,
-} from "@/deps.ts";
+import { FormatOptionsWithTZ, toZonedTime as originalToZoneTime } from "dep:date-fns-tz";
 
 /**
  * @deprecated Move to dates.helper.ts

@@ -1,7 +1,7 @@
-import { semver } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
+import { parse, parseRange, satisfies } from "dep:semver";
 import { CarpoolLabel } from "../interfaces/database/label.ts";
 
 @provider()
@@ -53,7 +53,7 @@ export class CarpoolLabelRepository {
       return [];
     }
     // = "3.0.0" or "3.0" or "3"
-    if (semver.satisfies(semver.parse("3.0.0"), semver.parseRange(api_version))) {
+    if (satisfies(parse("3.0.0"), parseRange(api_version))) {
       return [{ label: "interoperator_fraud" }];
     }
     // >= "3.1" or "3.1.0"

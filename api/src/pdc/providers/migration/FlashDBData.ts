@@ -1,11 +1,13 @@
 import { writeFile } from "@/db/geo/helpers/file/writeFile.ts";
 import { un7zFile } from "@/db/geo/helpers/index.ts";
-import { mkdir, PgPool, PgPoolClient, superstruct as s } from "@/deps.ts";
 import { sha256sum } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
 import { exists, getTmpDir } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basename, join } from "@/lib/path/index.ts";
+import { mkdir } from "dep:fs-promises";
+import { Pool as PgPool, PoolClient as PgPoolClient } from "dep:postgres";
+import * as s from "dep:superstruct";
 
 type FlashDBDataConfig = {
   connectionString: string;

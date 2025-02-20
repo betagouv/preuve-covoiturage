@@ -1,9 +1,10 @@
-import { encodeBase64, jose } from "@/deps.ts";
 import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
+import { encodeBase64 } from "dep:encoding";
+import { createRemoteJWKSet, jwtVerify, KeyLike } from "dep:jose";
 
 @provider()
 export class OidcProvider implements InitHookInterface {
-  protected JWKS: jose.KeyLike | undefined;
+  protected JWKS: KeyLike | undefined;
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
@@ -15,7 +16,7 @@ export class OidcProvider implements InitHookInterface {
       return this.JWKS;
     }
     const authBaseUrl = this.config.get("oidc.base_url");
-    this.JWKS = jose.createRemoteJWKSet(new URL(`${authBaseUrl}/keys`));
+    this.JWKS = createRemoteJWKSet(new URL(`${authBaseUrl}/keys`));
     return this.JWKS;
   }
 
@@ -75,7 +76,7 @@ export class OidcProvider implements InitHookInterface {
   async verifyToken(token: string) {
     const clientId = this.config.get("oidc.client_id");
     const authBaseUrl = this.config.get("oidc.base_url");
-    const { payload } = await jose.jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
+    const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
       issuer: authBaseUrl,
       audience: clientId,
     });

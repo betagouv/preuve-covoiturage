@@ -1,5 +1,5 @@
-import { ResultWithPagination } from "@/shared//common/interfaces/ResultWithPagination.ts";
 import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
+import { ResultWithPagination } from "@/shared/common/interfaces/ResultWithPagination.ts";
 
 export interface ParamsInterface extends PaginationParamsInterface {
   search: string;

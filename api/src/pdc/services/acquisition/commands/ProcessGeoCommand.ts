@@ -1,8 +1,8 @@
-import { subDays } from "@/deps.ts";
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { subDays } from "dep:date-fns";
 
 type Options = {
   loop: boolean;

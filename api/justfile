@@ -87,6 +87,7 @@ migrate:
     --allow-sys \
     --allow-ffi \
     --allow-run \
+    --cached-only \
     src/db/cmd-migrate.ts
 
 # Migrate the schemas and seed test data
@@ -99,6 +100,7 @@ seed:
     --allow-sys \
     --allow-ffi \
     --allow-run \
+    --cached-only \
     src/db/cmd-seed.ts
 
 # Source the geo.perimeters data
@@ -112,6 +114,7 @@ source:
     --allow-ffi \
     --allow-run \
     --v8-flags=--max-old-space-size=4096 \
+    --cached-only \
     src/db/cmd-source.ts
 
 # Run external data migrations
@@ -124,6 +127,7 @@ external_data_migrate:
     --allow-sys \
     --allow-ffi \
     --allow-run \
+    --cached-only \
     src/db/external_data/index.ts
 
 # Create a new bucket
@@ -158,6 +162,7 @@ api *command:
   --allow-sys \
   --allow-run \
   --unstable-fs \
+  --cached-only \
   src/main.ts {{ command }}
 
 debug:
@@ -177,6 +182,7 @@ watch:
   --allow-run \
   --watch \
   --unstable-fs \
+  --cached-only \
   src/main.ts http \$PORT
 
 # Start the HTTP API server on port 8080
@@ -187,19 +193,24 @@ watch:
 env:
   env | grep APP_ | sort | column -t -s=
 
+# install
+install:
+  deno install --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
+
 # cache
 cache:
-  deno cache --lock=deno.lock src/deps.ts src/dev_deps.ts
+  deno cache --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/main.ts
 
 # refresh the deno.lock file
 lock:
-  deno cache --lock=deno.lock --frozen=false src/deps.ts src/dev_deps.ts
+  deno install --frozen=false --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
 # Eval and run a file
 eval *filepath:
   deno eval \
     --allow-net \
     --allow-env \
+    --cached-only \
     # --allow-read \
     # --allow-write \
     # --allow-ffi \

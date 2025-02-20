@@ -1,4 +1,3 @@
-import { access, mapshaper, mkdir } from "@/deps.ts";
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import { createHash, sha256sum } from "@/lib/crypto/index.ts";
 import { remove } from "@/lib/file/index.ts";
@@ -6,6 +5,8 @@ import { logger } from "@/lib/logger/index.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
+import { access, mkdir } from "dep:fs-promises";
+import mapshaper from "dep:mapshaper";
 import { getAllFiles, getFileExtensions, un7zFile, ungzFile, unzipFile, writeFile } from "../helpers/index.ts";
 import { FileResource } from "../interfaces/FileManagerInterface.ts";
 import {

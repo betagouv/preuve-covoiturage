@@ -2,9 +2,9 @@ import { ContextType, handler, NotFoundException } from "@/ilos/common/index.ts"
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 
-import { semver } from "@/deps.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
+import { parseRange, rangeIntersects } from "dep:semver";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/status.contract.ts";
 import { alias } from "../contracts/status.schema.ts";
 
@@ -45,9 +45,9 @@ export class StatusJourneyAction extends AbstractAction {
       ),
       anomaly_error_details: result.anomaly as any,
       terms_violation_details: result.terms.map((f) => f.label),
-      ...(semver.rangeIntersects(
-          semver.parseRange(">=3.2"),
-          semver.parseRange(context.call?.api_version_range || "3.0"),
+      ...(rangeIntersects(
+          parseRange(">=3.2"),
+          parseRange(context.call?.api_version_range || "3.0"),
         )
         ? { journey_id: result.legacy_id }
         : {}),

@@ -1,18 +1,10 @@
-import {
-  assertEquals,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-  supertest,
-} from "@/dev_deps.ts";
-import {
-  RPCSingleCallType,
-  RPCSingleResponseType,
-} from "@/ilos/common/index.ts";
+import { assertEquals, assertObjectMatch, beforeAll, describe, it, supertest } from "@/dev_deps.ts";
+import { RPCSingleCallType, RPCSingleResponseType } from "@/ilos/common/index.ts";
 import { Kernel as AbstractKernel } from "@/ilos/core/index.ts";
 
-import { bodyParser, express, expressSession } from "@/deps.ts";
+import bodyParser from "dep:body-parser";
+import express from "dep:express";
+import expressSession from "dep:express-session";
 import { routeMapping } from "./routeMapping.ts";
 
 describe.skip("routeMapping", () => {
