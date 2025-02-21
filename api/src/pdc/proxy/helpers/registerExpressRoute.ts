@@ -17,7 +17,11 @@ const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter
   },
 };
 
-export function registerExpressRoute(app: express.Express, kernel: KernelInterface, params: RouteParams) {
+export function registerExpressRoute(
+  app: express.Express,
+  kernel: KernelInterface,
+  params: Omit<RouteParams, "action"> & Required<Pick<RouteParams, "action">>,
+) {
   const tokenProvider = kernel.get<TokenProvider>(TokenProvider);
   const rateLimiterParams = params.rateLimiter || defaultParams.rateLimiter;
   const middlewares: Array<express.RequestHandler> = [

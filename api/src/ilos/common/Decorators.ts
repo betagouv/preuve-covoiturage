@@ -57,7 +57,7 @@ export function provider(config: AnyConfig = {}) {
 export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   const { service } = config;
   // eslint-disable-next-line prefer-const
-  let { method, version, local, middlewares, ...other } = config;
+  let { method, version, local, middlewares, apiRoute, ...other } = config;
 
   if (!("method" in config)) {
     method = "*";
@@ -71,12 +71,14 @@ export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   if (!("middlewares" in config)) {
     middlewares = [];
   }
+
   return function (target: any) {
     Reflect.defineMetadata(HandlerMeta.SERVICE, service, target);
     Reflect.defineMetadata(HandlerMeta.METHOD, method, target);
     Reflect.defineMetadata(HandlerMeta.VERSION, version, target);
     Reflect.defineMetadata(HandlerMeta.LOCAL, local, target);
     Reflect.defineMetadata(HandlerMeta.MIDDLEWARES, middlewares, target);
+    Reflect.defineMetadata(HandlerMeta.API_ROUTE, apiRoute, target);
     return injectable()(extensionTag(other)(target));
   };
 }

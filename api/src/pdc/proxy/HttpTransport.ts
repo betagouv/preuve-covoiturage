@@ -12,6 +12,7 @@ import {
   ConfigInterface,
   ConfigInterfaceResolver,
   ContextType,
+  HandlerConfigType,
   InvalidRequestException,
   KernelInterface,
   proxy,
@@ -23,7 +24,7 @@ import {
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { ServiceProvider } from "@/ilos/core/index.ts";
+import { handlerListIdentifier, ServiceProvider } from "@/ilos/core/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
@@ -137,6 +138,16 @@ export class HttpTransport implements TransportInterface {
       if (container.isBound(router)) {
         const routerInstance = container.resolve<RegisterHookInterface>(container.get(router));
         routerInstance.register();
+      }
+    }
+    const handlers = this.kernel.getContainer().getAll<HandlerConfigType>(handlerListIdentifier);
+    for (const handler of handlers) {
+      if (handler.apiRoute) {
+        const config = {
+          ...handler.apiRoute,
+          action: `${handler.service}:${handler.method}`,
+        };
+        registerExpressRoute(this.app, this.kernel, config);
       }
     }
   }

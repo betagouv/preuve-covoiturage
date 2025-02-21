@@ -9,7 +9,7 @@ export interface RouteParams {
     limit: number;
     key: string;
   };
-  action: string;
+  action?: string;
   successHttpCode?: number;
   actionParamsFn?: (req: Request) => Promise<ParamsType>;
   actionContextFn?: (req: Request) => Promise<ContextType>;
