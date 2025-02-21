@@ -16,6 +16,7 @@ import {
   KernelInterface,
   proxy,
   RegisterHookInterface,
+  RouteParams,
   router,
   RPCResponseType,
   RPCSingleCallType,
@@ -29,7 +30,7 @@ import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
-import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
+import { registerExpressRoute } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
 import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import {
