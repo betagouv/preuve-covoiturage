@@ -45,7 +45,7 @@ export function getSignatureByConfig(
 export function normalizeHandlerConfig(
   handlerConfig: HandlerConfigType,
 ): HandlerConfigType {
-  let { service, method, version, signature } = handlerConfig;
+  let { service, method, version, signature, apiRoute } = handlerConfig;
   const { local } = handlerConfig;
 
   if (
@@ -80,5 +80,6 @@ export function normalizeHandlerConfig(
     version,
     local,
     containerSignature,
+    apiRoute,
   };
 }

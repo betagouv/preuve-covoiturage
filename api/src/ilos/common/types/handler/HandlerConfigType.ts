@@ -1,3 +1,5 @@
+import { RouteParams } from "@/ilos/common/index.ts";
+
 export type HandlerConfigType = {
   service?: string;
   method?: string;
@@ -5,4 +7,5 @@ export type HandlerConfigType = {
   local?: boolean;
   signature?: string;
   containerSignature?: string;
+  apiRoute?: RouteParams;
 };

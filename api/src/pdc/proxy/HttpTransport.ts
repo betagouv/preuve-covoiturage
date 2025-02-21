@@ -12,24 +12,26 @@ import {
   ConfigInterface,
   ConfigInterfaceResolver,
   ContextType,
+  HandlerConfigType,
   InvalidRequestException,
   KernelInterface,
   proxy,
   RegisterHookInterface,
+  RouteParams,
   router,
   RPCResponseType,
   RPCSingleCallType,
   TransportInterface,
   UnauthorizedException,
 } from "@/ilos/common/index.ts";
-import { ServiceProvider } from "@/ilos/core/index.ts";
+import { handlerListIdentifier, ServiceProvider } from "@/ilos/core/index.ts";
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
-import { registerExpressRoute, RouteParams } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
+import { registerExpressRoute } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
 import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import {
@@ -136,6 +138,16 @@ export class HttpTransport implements TransportInterface {
       if (container.isBound(router)) {
         const routerInstance = container.resolve<RegisterHookInterface>(container.get(router));
         routerInstance.register();
+      }
+    }
+    const handlers = this.kernel.getContainer().getAll<HandlerConfigType>(handlerListIdentifier);
+    for (const handler of handlers) {
+      if (handler.apiRoute) {
+        const config = {
+          ...handler.apiRoute,
+          action: `${handler.service}:${handler.method}`,
+        };
+        registerExpressRoute(this.app, this.kernel, config);
       }
     }
   }

@@ -6,6 +6,7 @@ export * from "./container/index.ts";
 export * from "./core/index.ts";
 export * from "./handler/index.ts";
 export * from "./hooks/index.ts";
+export * from "./router/index.ts";
 export * from "./shared/index.ts";
 export * from "./transport/index.ts";
 export * from "./validator/index.ts";
