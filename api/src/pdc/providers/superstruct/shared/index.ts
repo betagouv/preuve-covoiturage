@@ -29,9 +29,16 @@ export const Uuid = pattern(
   string(),
   /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
 );
-
+export const Email = pattern(Varchar, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
 export const Phone = pattern(Varchar, /^\+[0-9]{6,20}$/);
-
+export const Role = enums([
+  "registry.admin",
+  "operator.user",
+  "operator.admin",
+  "territory.admin",
+  "territory.admin",
+  "application.admin",
+]);
 export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
 export const Direction = enums(["from", "to", "both"]);
 export const Year = CoerceNumberMinMax(integer(), 2020, new Date().getFullYear());

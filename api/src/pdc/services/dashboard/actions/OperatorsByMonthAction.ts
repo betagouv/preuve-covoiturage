@@ -4,7 +4,7 @@ import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { OperatorsByMonth } from "@/pdc/services/dashboard/dto/OperatorsByMonth.ts";
-import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryInterface.ts";
 export type ResultInterface = {
   year: number;
   month: number;
@@ -24,13 +24,18 @@ export type ResultInterface = {
     ["validate", OperatorsByMonth],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/operators/month",
+    action: "dashboard:operatorsByMonth",
+    method: "GET",
+  },
 })
 export class OperatorsByMonthAction extends AbstractAction {
   constructor(private repository: OperatorsRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: OperatorsByMonth): Promise<ResultInterface> {
+  public override async handle(params: OperatorsByMonth): Promise<ResultInterface> {
     return this.repository.getOperatorsByMonth(params);
   }
 }

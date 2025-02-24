@@ -8,12 +8,12 @@ import {
   IncentiveByMonthResultInterface,
   IncentiveRepositoryInterface,
   IncentiveRepositoryInterfaceResolver,
-} from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
+} from "../interfaces/IncentiveRepositoryInterface.ts";
 
 @provider({
   identifier: IncentiveRepositoryInterfaceResolver,
 })
-export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface {
+export class IncentiveRepository implements IncentiveRepositoryInterface {
   private readonly tableByMonth = "dashboard_stats.operators_by_month";
   private readonly tableByDay = "dashboard_stats.operators_by_day";
 
@@ -43,7 +43,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryInterface
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
-    console.debug(query);
     const response = await this.pg.getClient().query(query);
     return response.rows;
   }

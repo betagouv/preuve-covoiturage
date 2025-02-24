@@ -4,7 +4,7 @@ import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { OperatorsByDay } from "@/pdc/services/dashboard/dto/OperatorsByDay.ts";
-import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryInterface.ts";
 export type ResultInterface = {
   date: Date;
   territory_id: string;
@@ -23,13 +23,18 @@ export type ResultInterface = {
     ["validate", OperatorsByDay],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/operators/day",
+    action: "dashboard:operatorsByDay",
+    method: "GET",
+  },
 })
 export class OperatorsByDayAction extends AbstractAction {
   constructor(private repository: OperatorsRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: OperatorsByDay): Promise<ResultInterface> {
+  public override async handle(params: OperatorsByDay): Promise<ResultInterface> {
     return this.repository.getOperatorsByDay(params);
   }
 }

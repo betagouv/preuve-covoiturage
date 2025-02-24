@@ -16,12 +16,12 @@ import {
   CampaignsRepositoryInterface,
   CampaignsRepositoryInterfaceResolver,
   CampaignsResultInterface,
-} from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
+} from "../interfaces/CampaignsRepositoryInterface.ts";
 
 @provider({
   identifier: CampaignsRepositoryInterfaceResolver,
 })
-export class CampaignsRepositoryProvider implements CampaignsRepositoryInterface {
+export class CampaignsRepository implements CampaignsRepositoryInterface {
   private readonly table = "policy.policies";
   private readonly tableTerritory = "territory.territory_group";
   private bucket: BucketName = BucketName.APDF;

@@ -10,12 +10,12 @@ import {
   OperatorsRepositoryInterface,
   OperatorsRepositoryInterfaceResolver,
   OperatorsResultInterface,
-} from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+} from "../interfaces/OperatorsRepositoryInterface.ts";
 
 @provider({
   identifier: OperatorsRepositoryInterfaceResolver,
 })
-export class OperatorsRepositoryProvider implements OperatorsRepositoryInterface {
+export class OperatorsRepository implements OperatorsRepositoryInterface {
   private readonly table = "operator.operators";
   private readonly tableByMonth = "dashboard_stats.operators_by_month";
   private readonly tableByDay = "dashboard_stats.operators_by_day";

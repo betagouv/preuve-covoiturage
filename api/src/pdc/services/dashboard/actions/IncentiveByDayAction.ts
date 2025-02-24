@@ -4,7 +4,7 @@ import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { IncentiveByDay } from "@/pdc/services/dashboard/dto/IncentiveByDay.ts";
-import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
+import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryInterface.ts";
 export type ResultInterface = {
   date: Date;
   territory_id: number;
@@ -21,13 +21,18 @@ export type ResultInterface = {
     ["validate", IncentiveByDay],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/incentive/day",
+    action: "dashboard:incentiveByDay",
+    method: "GET",
+  },
 })
 export class IncentiveByDayAction extends AbstractAction {
   constructor(private repository: IncentiveRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: IncentiveByDay): Promise<ResultInterface> {
+  public override async handle(params: IncentiveByDay): Promise<ResultInterface> {
     return this.repository.getIncentiveByDay(params);
   }
 }
