@@ -50,5 +50,6 @@ export const Country = pattern(string(), /^[0-9X]{5}$/);
 export const Department = pattern(string(), /^[0-9][0-9A-B]{1}[0-9]{0,1}$/);
 export const Insee = pattern(string(), /^[0-9][0-9A-B][0-9]{3}$/);
 export const Siren = pattern(string(), /^[0-9]{9}$/);
+export const Siret = pattern(string(), /^[0-9]{14}$/);
 export const TerritoryCode = union([Country, Department, Insee, Siren]);
 export const TerritoryType = enums(["com", "epci", "aom", "dep", "reg", "country"]);

@@ -4,11 +4,17 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.
 import { Operators } from "@/pdc/services/dashboard/dto/Operators.ts";
 import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryInterface.ts";
 export type ResultInterface = {
-  id: number;
-  name: string;
-  legal_name: string;
-  siret: number;
-}[];
+  meta: {
+    page: number;
+    total: number;
+    totalPages: number;
+  };
+  data: {
+    id: string;
+    name: string;
+    siret: string;
+  }[];
+};
 
 @handler({
   service: "dashboard",

@@ -1,45 +1,43 @@
-import type { ResultInterface as OperatorsResultInterface } from "@/pdc/services/dashboard/actions/OperatorsAction.ts";
-import type { ResultInterface as OperatorsByDayResultInterface } from "@/pdc/services/dashboard/actions/OperatorsByDayAction.ts";
-import type { ResultInterface as OperatorsByMonthResultInterface } from "@/pdc/services/dashboard/actions/OperatorsByMonthAction.ts";
-import { Operators as OperatorsParamsInterface } from "@/pdc/services/dashboard/dto/Operators.ts";
-import { OperatorsByDay as OperatorsByDayParamsInterface } from "@/pdc/services/dashboard/dto/OperatorsByDay.ts";
-import { OperatorsByMonth as OperatorsByMonthParamsInterface } from "@/pdc/services/dashboard/dto/OperatorsByMonth.ts";
+import type { ResultInterface as CreateOperatorResultInterface } from "@/pdc/services/dashboard/actions/operators/CreateOperatorAction.ts";
+import type { ResultInterface as DeleteOperatorResultInterface } from "@/pdc/services/dashboard/actions/operators/DeleteOperatorAction.ts";
+import type { ResultInterface as OperatorsResultInterface } from "@/pdc/services/dashboard/actions/operators/OperatorsAction.ts";
+import type { ResultInterface as UpdateOperatorResultInterface } from "@/pdc/services/dashboard/actions/operators/UpdateOperatorAction.ts";
+import {
+  CreateOperator as CreateOperatorDataInterface,
+  DeleteOperator as DeleteOperatorParamsInterface,
+  Operators as OperatorsParamsInterface,
+  UpdateOperator as UpdateOperatorDataInterface,
+} from "@/pdc/services/dashboard/dto/Operators.ts";
 
 export type {
-  OperatorsByDayParamsInterface,
-  OperatorsByDayResultInterface,
-  OperatorsByMonthParamsInterface,
-  OperatorsByMonthResultInterface,
+  CreateOperatorDataInterface,
+  CreateOperatorResultInterface,
+  DeleteOperatorParamsInterface,
+  DeleteOperatorResultInterface,
   OperatorsParamsInterface,
   OperatorsResultInterface,
+  UpdateOperatorDataInterface,
+  UpdateOperatorResultInterface,
 };
 
 export interface OperatorsRepositoryInterface {
-  getOperators(
-    params: OperatorsParamsInterface,
-  ): Promise<OperatorsResultInterface>;
-  getOperatorsByMonth(
-    params: OperatorsByMonthParamsInterface,
-  ): Promise<OperatorsByMonthResultInterface>;
-  getOperatorsByDay(
-    params: OperatorsByDayParamsInterface,
-  ): Promise<OperatorsByDayResultInterface>;
+  getOperators(params: OperatorsParamsInterface): Promise<OperatorsResultInterface>;
+  deleteOperator(params: DeleteOperatorParamsInterface): Promise<DeleteOperatorResultInterface>;
+  updateOperator(params: UpdateOperatorDataInterface): Promise<UpdateOperatorResultInterface>;
+  createOperator(params: CreateOperatorDataInterface): Promise<CreateOperatorResultInterface>;
 }
 
 export abstract class OperatorsRepositoryInterfaceResolver implements OperatorsRepositoryInterface {
-  async getOperators(
-    params: OperatorsParamsInterface,
-  ): Promise<OperatorsResultInterface> {
+  async getOperators(params: OperatorsParamsInterface): Promise<OperatorsResultInterface> {
     throw new Error();
   }
-  async getOperatorsByMonth(
-    params: OperatorsByMonthParamsInterface,
-  ): Promise<OperatorsByMonthResultInterface> {
+  async deleteOperator(params: DeleteOperatorParamsInterface): Promise<DeleteOperatorResultInterface> {
     throw new Error();
   }
-  async getOperatorsByDay(
-    params: OperatorsByDayParamsInterface,
-  ): Promise<OperatorsByDayResultInterface> {
+  async updateOperator(params: UpdateOperatorDataInterface): Promise<UpdateOperatorResultInterface> {
+    throw new Error();
+  }
+  async createOperator(params: CreateOperatorDataInterface): Promise<CreateOperatorResultInterface> {
     throw new Error();
   }
 }

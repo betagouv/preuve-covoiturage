@@ -16,7 +16,6 @@ export type ResultInterface = {
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       registry: "registry.territory.delete",
       territory: "territory.territory.delete",
-      operator: "operator.territory.delete",
     }),
   ],
   apiRoute: {

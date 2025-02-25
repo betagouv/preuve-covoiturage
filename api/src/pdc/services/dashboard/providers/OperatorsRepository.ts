@@ -1,15 +1,17 @@
-import { provider } from "@/ilos/common/index.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
-  OperatorsByDayParamsInterface,
-  OperatorsByDayResultInterface,
-  OperatorsByMonthParamsInterface,
-  OperatorsByMonthResultInterface,
+  CreateOperatorDataInterface,
+  CreateOperatorResultInterface,
+  DeleteOperatorParamsInterface,
+  DeleteOperatorResultInterface,
   OperatorsParamsInterface,
   OperatorsRepositoryInterface,
   OperatorsRepositoryInterfaceResolver,
   OperatorsResultInterface,
+  UpdateOperatorDataInterface,
+  UpdateOperatorResultInterface,
 } from "../interfaces/OperatorsRepositoryInterface.ts";
 
 @provider({
@@ -17,8 +19,6 @@ import {
 })
 export class OperatorsRepository implements OperatorsRepositoryInterface {
   private readonly table = "operator.operators";
-  private readonly tableByMonth = "dashboard_stats.operators_by_month";
-  private readonly tableByDay = "dashboard_stats.operators_by_day";
 
   constructor(private pg: PostgresConnection) {}
 
@@ -29,75 +29,92 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
     if (params.id) {
       filters.push(sql`_id=${params.id}`);
     }
+    const limit = params.limit || 25;
+    const page = params.page || 1;
+    const offset = (page - 1) * limit;
     const query = sql`
       SELECT 
         _id as id,
         name,
-        legal_name,
         siret
       FROM ${raw(this.table)}
       WHERE ${join(filters, " AND ")}
       ORDER BY _id
+      LIMIT ${limit} OFFSET ${offset}
     `;
     const response = await this.pg.getClient().query(query);
-    return response.rows;
-  }
-  async getOperatorsByDay(
-    params: OperatorsByDayParamsInterface,
-  ): Promise<OperatorsByDayResultInterface> {
-    const date = params.date ? new Date(params.date) : new Date();
-    const direction = params.direction ? params.direction : "both";
-    const filters = [
-      sql`territory_id = ${params.territory_id}`,
-      sql`start_date <= ${date.toISOString().split("T")[0]}`,
-      sql`start_date >= ${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}`,
-      sql`direction = ${direction}`,
-    ];
-
-    const query = sql`
-      SELECT 
-        to_char(start_date, 'YYYY-MM-DD') AS start_date,
-        territory_id,
-        direction,
-        operator_id,
-        operator_name,
-        journeys::int,
-        incented_journeys::int,
-        incentive_amount::int
-      FROM ${raw(this.tableByDay)}
+    // Calcul du nombre total d'éléments
+    const countQuery = sql`
+      SELECT COUNT(*) as total
+      FROM ${raw(this.table)}
       WHERE ${join(filters, " AND ")}
-      ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const countResponse = await this.pg.getClient().query(countQuery);
+    return {
+      meta: {
+        total: parseInt(countResponse.rows[0].total, 10),
+        page: page,
+        totalPages: Math.ceil(parseInt(countResponse.rows[0].total, 10) / limit),
+      },
+      data: response.rows,
+    };
   }
 
-  async getOperatorsByMonth(
-    params: OperatorsByMonthParamsInterface,
-  ): Promise<OperatorsByMonthResultInterface> {
-    const direction = params.direction ? params.direction : "both";
-    const filters = [
-      sql`territory_id = ${params.territory_id}`,
-      sql`direction = ${direction}`,
-    ];
-    if (params.year) {
-      filters.push(sql`year = ${params.year}`);
+  async createOperator(
+    data: CreateOperatorDataInterface,
+  ): Promise<CreateOperatorResultInterface> {
+    const query = sql`
+      INSERT INTO ${raw(this.table)} (
+        name, siret
+      ) VALUES (
+        ${data.name}, ${data.siret}
+      )
+      RETURNING _id as id, created_at, name, siret
+    `;
+    const response = await this.pg.getClient().query(query);
+    if (response.rowCount !== 1) {
+      throw new Error(`Unable to create operator ${data}`);
     }
+    return {
+      success: true,
+      message: `Operator ${JSON.stringify(response.rows[0])} created`,
+    };
+  }
+
+  async deleteOperator(
+    params: DeleteOperatorParamsInterface,
+  ): Promise<DeleteOperatorResultInterface> {
     const query = sql`
-      SELECT 
-        year,
-        month,
-        territory_id,
-        direction,
-        operator_id,
-        operator_name,
-        journeys::int,
-        incented_journeys::int,
-        incentive_amount::int
-      FROM ${raw(this.tableByMonth)}
-      WHERE ${join(filters, " AND ")}
+      UPDATE ${raw(this.table)}
+      SET deleted_at = NOW()
+      WHERE _id = ${params.id}
     `;
     const response = await this.pg.getClient().query(query);
-    return response.rows;
+    if (response.rowCount !== 1) {
+      throw new NotFoundException(`operator not found: (${params.id})`);
+    }
+    return { success: true, message: `Operator ${params.id} deleted` };
+  }
+
+  async updateOperator(
+    data: UpdateOperatorDataInterface,
+  ): Promise<UpdateOperatorResultInterface> {
+    const query = sql`
+      UPDATE ${raw(this.table)}
+      SET 
+        name = ${data.name},
+        updated_at = now(),
+        siret = ${data.siret},
+      WHERE _id = ${data.id}
+      RETURNING _id, updated_at, name, siret
+    `;
+    const response = await this.pg.getClient().query(query);
+    if (response.rowCount !== 1) {
+      throw new Error(`Unable to update operator with id ${data.id}`);
+    }
+    return {
+      success: true,
+      message: `Operator ${JSON.stringify(response.rows[0])} updated`,
+    };
   }
 }

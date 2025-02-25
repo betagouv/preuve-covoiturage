@@ -28,7 +28,7 @@ export type ResultInterface = {
     method: "GET",
   },
 })
-export class TerritoriesAction extends AbstractAction {
+export class TerritoryAction extends AbstractAction {
   constructor(private repository: TerritoriesRepositoryInterfaceResolver) {
     super();
   }

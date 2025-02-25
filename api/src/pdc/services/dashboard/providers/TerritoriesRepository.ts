@@ -18,7 +18,7 @@ import {
   identifier: TerritoriesRepositoryInterfaceResolver,
 })
 export class TerritoriesRepository implements TerritoriesRepositoryInterface {
-  private readonly table = "territory.territory_group";
+  private readonly table = "territory.territories";
   private readonly tableData = "dashboard_stats.operators_by_month";
 
   constructor(private pg: PostgresConnection) {}
@@ -27,6 +27,7 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
     const filters = [
       sql`_id IN (SELECT DISTINCT territory_id FROM ${raw(this.tableData)})`,
       sql`deleted_at IS null`,
+      sql`active = true`,
     ];
     if (params.id) {
       filters.push(sql`_id = ${params.id}`);
@@ -40,7 +41,7 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
         name
       FROM ${raw(this.table)} 
       WHERE ${join(filters, " AND ")}
-      ORDER BY name
+      ORDER BY _id
       LIMIT ${limit} OFFSET ${offset}
     `;
     const response = await this.pg.getClient().query(query);
@@ -65,11 +66,12 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
   ): Promise<CreateTerritoryResultInterface> {
     const query = sql`
       INSERT INTO ${raw(this.table)} (
-        name, level
+        name, type, siret, active
       ) VALUES (
-        ${data.name}, ${data.level}
+        ${data.name}, ${data.type}, ${data.siret}, true
+      )
       RETURNING
-        _id, created_at, name, level
+        _id as id, created_at, name, type, siret
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {
@@ -86,7 +88,8 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
   ): Promise<DeleteTerritoryResultInterface> {
     const query = sql`
       UPDATE ${raw(this.table)}
-      SET deleted_at = NOW()
+      SET deleted_at = NOW(),
+        active = false
       WHERE _id = ${params.id}
     `;
     const response = await this.pg.getClient().query(query);
@@ -102,11 +105,12 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
     const query = sql`
       UPDATE ${raw(this.table)}
       SET 
-        nom = ${data.nom},
+        name = ${data.name},
         updated_at = now(),
-        level = ${data.level},
+        type = ${data.type},
+        siret = ${data.siret},
       WHERE _id = ${data.id}
-      RETURNING _id, updated_at, name, level
+      RETURNING _id, updated_at, name, type, siret
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {

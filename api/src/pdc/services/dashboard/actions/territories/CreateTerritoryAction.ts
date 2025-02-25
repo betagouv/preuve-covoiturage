@@ -16,13 +16,12 @@ export type ResultInterface = {
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       registry: "registry.territory.create",
       territory: "territory.territory.create",
-      operator: "operator.territory.create",
     }),
   ],
   apiRoute: {
     path: "/dashboard/territory",
     action: "dashboard:createTerritory",
-    method: "PUT",
+    method: "POST",
   },
 })
 export class CreateTerritoryAction extends AbstractAction {

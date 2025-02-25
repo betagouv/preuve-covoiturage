@@ -25,7 +25,8 @@ export type TerritoriesInterface = {
   data: {
     id: number;
     name: string;
-    level?: string;
+    type?: string;
+    siret: string;
   }[];
 };
 
@@ -38,5 +39,6 @@ export type OperatorsInterface = {
   data: {
     id: number;
     name: string;
+    siret: string;
   }[];
 };

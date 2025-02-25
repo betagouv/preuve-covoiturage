@@ -1,26 +1,26 @@
 import Pagination from '@/components/common/Pagination';
 import { getApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
+import { TerritoriesInterface } from '@/interfaces/dataInterface';
 import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
 import { useMemo, useState } from 'react';
-import { TerritoriesInterface } from '../../../interfaces/dataInterface';
 
 export default function TerritoriesTable(props: {title:string, id:number | null}) {
   const [currentPage, setCurrentPage] = useState(1);
   const onChangePage = (id:number) => {
     setCurrentPage(id);
   };
-   const url = useMemo(() => {
-      const urlObj = new URL(getApiUrl('v3', 'dashboard/territories'));
-      if (props.id) {
-        urlObj.searchParams.set('id', props.id.toString());
-      }
-      if (currentPage !== 1) {
-        urlObj.searchParams.set('page', currentPage.toString());
-      }
-      return urlObj.toString();
-    }, [props.id, currentPage]);
+  const url = useMemo(() => {
+    const urlObj = new URL(getApiUrl('v3', 'dashboard/territories'));
+    if (props.id) {
+      urlObj.searchParams.set('id', props.id.toString());
+    }
+    if (currentPage !== 1) {
+      urlObj.searchParams.set('page', currentPage.toString());
+    }
+    return urlObj.toString();
+  }, [props.id, currentPage]);
   const { data } = useApi<TerritoriesInterface>(url);
   const totalPages = data?.meta.totalPages || 1; 
   const headers = [
