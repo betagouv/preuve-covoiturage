@@ -116,7 +116,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSimulationRoutes();
     this.registerCeeRoutes();
     this.registerHonorRoutes();
-    this.registerDashboardRoutes();
+    //this.registerDashboardRoutes();
     this.registerObservatoryRoutes();
     this.registerContactformRoute();
     this.registerCallHandler();
@@ -900,6 +900,11 @@ export class HttpTransport implements TransportInterface {
         path: "/dashboard/users",
         action: "dashboard:users",
         method: "GET",
+      },
+      {
+        path: "/dashboard/user",
+        action: "dashboard:createUser",
+        method: "POST",
       },
       {
         path: "/dashboard/operators",

@@ -2,13 +2,19 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Operators } from "@/pdc/services/dashboard/dto/Operators.ts";
-import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryInterface.ts";
 export type ResultInterface = {
-  id: number;
-  name: string;
-  legal_name: string;
-  siret: number;
-}[];
+  meta: {
+    page: number;
+    total: number;
+    totalPages: number;
+  };
+  data: {
+    id: string;
+    name: string;
+    siret: string;
+  }[];
+};
 
 @handler({
   service: "dashboard",
@@ -17,13 +23,18 @@ export type ResultInterface = {
     ["validate", Operators],
     hasPermissionMiddleware("common.operator.list"),
   ],
+  apiRoute: {
+    path: "/dashboard/operators",
+    action: "dashboard:operators",
+    method: "GET",
+  },
 })
 export class OperatorsAction extends AbstractAction {
   constructor(private repository: OperatorsRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: Operators): Promise<ResultInterface> {
+  public override async handle(params: Operators): Promise<ResultInterface> {
     return this.repository.getOperators(params);
   }
 }

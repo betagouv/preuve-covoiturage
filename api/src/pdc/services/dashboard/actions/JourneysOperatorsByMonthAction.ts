@@ -3,8 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
-import { OperatorsByMonth } from "@/pdc/services/dashboard/dto/OperatorsByMonth.ts";
-import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+import { JourneysByMonth } from "@/pdc/services/dashboard/dto/Journeys.ts";
+import { JourneysRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/JourneysRepositoryInterface.ts";
 export type ResultInterface = {
   year: number;
   month: number;
@@ -19,18 +19,23 @@ export type ResultInterface = {
 
 @handler({
   service: "dashboard",
-  method: "operatorsByMonth",
+  method: "journeysOperatorsByMonth",
   middlewares: [
-    ["validate", OperatorsByMonth],
+    ["validate", JourneysByMonth],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/operators/month",
+    action: "dashboard:journeysOperatorsByMonth",
+    method: "GET",
+  },
 })
-export class OperatorsByMonthAction extends AbstractAction {
-  constructor(private repository: OperatorsRepositoryInterfaceResolver) {
+export class JourneysOperatorsByMonthAction extends AbstractAction {
+  constructor(private repository: JourneysRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: OperatorsByMonth): Promise<ResultInterface> {
+  public override async handle(params: JourneysByMonth): Promise<ResultInterface> {
     return this.repository.getOperatorsByMonth(params);
   }
 }
