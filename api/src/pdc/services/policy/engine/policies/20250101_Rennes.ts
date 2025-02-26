@@ -1,4 +1,5 @@
 import type { GeoJSON } from "@/pdc/services/geo/contracts/GeoJson.ts";
+import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
 import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isBefore } from "@/pdc/services/policy/engine/helpers/isBefore.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
@@ -12,6 +13,7 @@ import {
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
 import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
+import { endsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -446,6 +448,15 @@ export const Rennes2025: PolicyHandlerStaticInterface = class extends AbstractPo
     isOperatorClassOrThrow(ctx, this.operator_class);
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 60_001 });
     isStartAndEndInsideOrThrow(ctx, this.tcShape);
+    if (
+      endsAt(ctx, { aom: ["200039022"] }) || // Vitré
+      endsAt(ctx, { com: ["35069"] }) || // Châteaugiron
+      endsAt(ctx, { aom: ["243500774"] }) || // Liffré Cormier communauté
+      endsAt(ctx, { aom: ["200070662"] }) || // Bretagne Porte de Loire
+      endsAt(ctx, { aom: ["200043990"] }) //  Vallons de Haute-Bretagne Communauté
+    ) {
+      throw new NotEligibleTargetException();
+    }
   }
 
   processStateless(ctx: StatelessContextInterface): void {

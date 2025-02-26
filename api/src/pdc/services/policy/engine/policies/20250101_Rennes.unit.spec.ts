@@ -24,6 +24,61 @@ const endIn = {
   lon: -1.6588,
 };
 
+// aom
+const vitrePosition: TerritoryCodeInterface = {
+  arr: "35360",
+  com: "35360",
+  aom: "200039022",
+  epci: "200039022",
+  dep: "35",
+  reg: "53",
+  country: "XXXXX",
+};
+
+// com
+const chateaugironPosition: TerritoryCodeInterface = {
+  arr: "35069",
+  com: "35069",
+  aom: "243500659",
+  epci: "243500659",
+  dep: "35",
+  reg: "53",
+  country: "XXXXX",
+};
+
+// aom
+const liffreCormierPosition: TerritoryCodeInterface = {
+  arr: "35031",
+  com: "35031",
+  aom: "243500774",
+  epci: "243500774",
+  dep: "35",
+  reg: "53",
+  country: "XXXXX",
+};
+
+// aom
+const bretagnePorteLoirePosition: TerritoryCodeInterface = {
+  arr: "35343",
+  com: "35343",
+  aom: "200070662",
+  epci: "200070662",
+  dep: "35",
+  reg: "53",
+  country: "XXXXX",
+};
+
+// aom
+const vallonsDeHauteBretagnePosition: TerritoryCodeInterface = {
+  arr: "35155",
+  com: "35155",
+  aom: "200043990",
+  epci: "200043990",
+  dep: "35",
+  reg: "53",
+  country: "XXXXX",
+};
+
 const defaultLat = 46.313355215729146;
 const defaultLon = 6.487631441991693;
 
@@ -65,10 +120,15 @@ it("should work with exclusions", async () =>
         { operator_class: "A" },
         { distance: 60_001 },
         { start_lat: startIn.lat, start_lon: startIn.lon, end_lat: endIn.lat, end_lon: endIn.lon },
+        { end: { ...vitrePosition } },
+        { end: { ...chateaugironPosition } },
+        { end: { ...liffreCormierPosition } },
+        { end: { ...bretagnePorteLoirePosition } },
+        { end: { ...vallonsDeHauteBretagnePosition } },
       ],
       meta: [],
     },
-    { incentive: [0, 0, 0, 0, 0], meta: [] },
+    { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
   ));
 
 it("should work before first of july ", async () =>
