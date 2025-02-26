@@ -108,7 +108,7 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
         name = ${data.name},
         updated_at = now(),
         type = ${data.type},
-        siret = ${data.siret},
+        siret = ${data.siret}
       WHERE _id = ${data.id}
       RETURNING _id, updated_at, name, type, siret
     `;

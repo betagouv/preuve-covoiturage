@@ -35,7 +35,7 @@ export const Role = enums([
   "registry.admin",
   "operator.user",
   "operator.admin",
-  "territory.admin",
+  "territory.user",
   "territory.admin",
   "application.admin",
 ]);
