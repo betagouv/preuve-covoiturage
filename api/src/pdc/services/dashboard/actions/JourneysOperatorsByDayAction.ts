@@ -3,8 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
-import { OperatorsByDay } from "@/pdc/services/dashboard/dto/OperatorsByDay.ts";
-import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryProviderInterface.ts";
+import { JourneysByDay } from "@/pdc/services/dashboard/dto/Journeys.ts";
+import { JourneysRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/JourneysRepositoryInterface.ts";
 export type ResultInterface = {
   date: Date;
   territory_id: string;
@@ -18,18 +18,23 @@ export type ResultInterface = {
 
 @handler({
   service: "dashboard",
-  method: "operatorsByDay",
+  method: "journeysOperatorsByDay",
   middlewares: [
-    ["validate", OperatorsByDay],
+    ["validate", JourneysByDay],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/operators/day",
+    action: "dashboard:journeysOperatorsByDay",
+    method: "GET",
+  },
 })
-export class OperatorsByDayAction extends AbstractAction {
-  constructor(private repository: OperatorsRepositoryInterfaceResolver) {
+export class JourneysOperatorsByDayAction extends AbstractAction {
+  constructor(private repository: JourneysRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: OperatorsByDay): Promise<ResultInterface> {
+  public override async handle(params: JourneysByDay): Promise<ResultInterface> {
     return this.repository.getOperatorsByDay(params);
   }
 }

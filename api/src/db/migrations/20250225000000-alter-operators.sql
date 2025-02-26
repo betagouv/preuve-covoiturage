@@ -1,0 +1,10 @@
+ALTER TABLE operator.operators 
+  ALTER COLUMN bank DROP NOT NULL,
+  ALTER COLUMN address DROP NOT NULL,
+  ALTER COLUMN contacts DROP NOT NULL,
+  ALTER COLUMN company DROP NOT NULL,
+  ALTER COLUMN legal_name DROP NOT NULL;
+
+ALTER TABLE territory.territories
+  ADD COLUMN type VARCHAR,
+  ALTER COLUMN level DROP NOT NULL;

@@ -2,7 +2,7 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Campaigns } from "@/pdc/services/dashboard/dto/Campaigns.ts";
-import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryProviderInterface.ts";
+import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryInterface.ts";
 
 export type ResultInterface = {
   id: string;
@@ -26,13 +26,18 @@ export type ResultInterface = {
     ["validate", Campaigns],
     hasPermissionMiddleware("common.policy.list"),
   ],
+  apiRoute: {
+    path: "/dashboard/campaigns",
+    action: "dashboard:campaigns",
+    method: "GET",
+  },
 })
 export class CampaignsAction extends AbstractAction {
   constructor(private repository: CampaignsRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: Campaigns): Promise<ResultInterface> {
+  public override async handle(params: Campaigns): Promise<ResultInterface> {
     return this.repository.getCampaigns(params);
   }
 }

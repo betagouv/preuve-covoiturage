@@ -3,8 +3,8 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
-import { IncentiveByMonth } from "@/pdc/services/dashboard/dto/IncentiveByMonth.ts";
-import { IncentiveRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/IncentiveRepositoryProviderInterface.ts";
+import { JourneysByMonth } from "@/pdc/services/dashboard/dto/Journeys.ts";
+import { JourneysRepositoryInterfaceResolver } from "../interfaces/JourneysRepositoryInterface.ts";
 export type ResultInterface = {
   year: number;
   month: number;
@@ -17,18 +17,23 @@ export type ResultInterface = {
 
 @handler({
   service: "dashboard",
-  method: "incentiveByMonth",
+  method: "journeysIncentiveByMonth",
   middlewares: [
-    ["validate", IncentiveByMonth],
+    ["validate", JourneysByMonth],
     hasPermissionMiddleware("common.observatory.stats"),
   ],
+  apiRoute: {
+    path: "/dashboard/incentive/month",
+    action: "dashboard:journeysIncentiveByMonth",
+    method: "GET",
+  },
 })
-export class IncentiveByMonthAction extends AbstractAction {
-  constructor(private repository: IncentiveRepositoryInterfaceResolver) {
+export class JourneysIncentiveByMonthAction extends AbstractAction {
+  constructor(private repository: JourneysRepositoryInterfaceResolver) {
     super();
   }
 
-  public async handle(params: IncentiveByMonth): Promise<ResultInterface> {
+  public override async handle(params: JourneysByMonth): Promise<ResultInterface> {
     return this.repository.getIncentiveByMonth(params);
   }
 }
