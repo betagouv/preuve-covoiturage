@@ -1,4 +1,4 @@
-import { ErrorObject } from "@/deps.ts";
+import { ErrorObject } from "dep:ajv";
 import { ProviderInterface } from "../core/index.ts";
 import { NewableType } from "../shared/index.ts";
 

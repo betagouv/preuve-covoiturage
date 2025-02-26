@@ -1,4 +1,4 @@
-import { CsvOptions } from "@/deps.ts";
+import type { Options } from "dep:csv-parse";
 import { FileTypeEnum } from "../../interfaces/FileInterface.ts";
 import { JsonOptions, StreamDataOptions, XlsxOptions } from "../../interfaces/StreamDataOptions.ts";
 import { streamCsv } from "./streamCsv.ts";
@@ -16,7 +16,7 @@ export function streamData<T>(
     case FileTypeEnum.Xls:
       return streamXlsx<T>(filepath, sheetOptions as XlsxOptions, chunkSize);
     case FileTypeEnum.Csv:
-      return streamCsv<T>(filepath, sheetOptions as CsvOptions, chunkSize);
+      return streamCsv<T>(filepath, sheetOptions as Options, chunkSize);
     case FileTypeEnum.Geojson:
       return streamJson(filepath, sheetOptions as JsonOptions, chunkSize);
     default:

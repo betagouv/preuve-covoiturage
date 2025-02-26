@@ -3,24 +3,26 @@ import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useState } from "react";
+import { TerritoriesInterface } from '../../interfaces/dataInterface';
 
-export default function SelectTerritory(props: { defaultValue: string, onChangeTerritory:(id:string) => void }) {
-  const [ value, setValue ] = useState<string>(props.defaultValue);
+export default function SelectTerritory(props: { defaultValue: number, onChange:(id:number) => void }) {
+  const [value, setValue] = useState<number>(props.defaultValue);
   const url = `${Config.get<string>("next.public_api_url", "")}/v3/dashboard/territories`;
-  const { data } = useApi<Record<string, string>[]>(url);
+  const { data } = useApi<TerritoriesInterface>(url,true);
   return(
     <Select label='Sélectionner un territoire' 
       nativeSelectProps={{
         value: value,
         onChange: (e) => {
-          setValue(e.target.value);
-          props.onChangeTerritory(e.target.value);
+          const newValue = Number(e.target.value);
+          setValue(newValue);
+          props.onChange(newValue);
         }
       }}
       
     > 
       { data &&
-        data.map((d, i) => <option key={i} value={d.id}>{d.name}</option>)
+        data.data.map((d, i) => <option key={i} value={d.id}>{d.name}</option>)
       }
     </Select>
 

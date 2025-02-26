@@ -1,6 +1,6 @@
 // create Redis connection
-import { NextFunction, Request, Response } from "@/deps.ts";
 import { ForbiddenException } from "@/ilos/common/index.ts";
+import { NextFunction, Request, Response } from "dep:express";
 
 import { logger } from "@/lib/logger/index.ts";
 import { cacheStore } from "./cache/redis.ts";

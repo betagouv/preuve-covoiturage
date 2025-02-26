@@ -1,16 +1,17 @@
-import {
-  booleanPointInPolygon,
-  Feature,
-  MultiPolygon,
-  multiPolygon,
-  point,
-  Polygon,
-  polygon,
-  Properties,
-} from "@/deps.ts";
 import type { GeoJSON } from "@/pdc/services/geo/contracts/GeoJson.ts";
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import { StatelessContextInterface, StatelessRuleHelper } from "../../interfaces/index.ts";
+import { booleanPointInPolygon } from "dep:turf-boolean-point-in-polygon";
+import type {
+  Feature,
+  MultiPolygon,
+  Polygon,
+  Properties,
+} from "dep:turf-helpers";
+import { multiPolygon, point, polygon } from "dep:turf-helpers";
+import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from "../../interfaces/index.ts";
 
 export const isStartAndEndInside: StatelessRuleHelper<GeoJSON> = (
   ctx: StatelessContextInterface,
@@ -37,7 +38,10 @@ function getShapeFromGeoJSON(
   throw new Error("Invalid GeoJSON");
 }
 
-export const isStartAndEndInsideOrThrow = (ctx: StatelessContextInterface, params: GeoJSON) => {
+export const isStartAndEndInsideOrThrow = (
+  ctx: StatelessContextInterface,
+  params: GeoJSON,
+) => {
   if (isStartAndEndInside(ctx, params)) {
     throw new NotEligibleTargetException(
       `Trip should not be in a common transport area: ${ctx?.carpool?.start}, ${ctx?.carpool?.end}`,

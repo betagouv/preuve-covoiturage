@@ -44,7 +44,10 @@ services:
     labels:
       - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
 
-  
+  dex:
+    environment:
+      PG_DB: dex
+
   api:
     build:
       dockerfile: ./docker/api/Dockerfile
@@ -54,9 +57,11 @@ services:
       APP_RATE_LIMIT_MAX_FACTOR: '0'
       DEBUG: 'api'
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
+    command:
+      - just
+      - watch
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared:ro
 
   cms:
     build:

@@ -1,21 +1,12 @@
-import { jwt } from "@/deps.ts";
-import {
-  ConfigInterfaceResolver,
-  InitHookInterface,
-  provider,
-  ProviderInterface,
-} from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, InitHookInterface, provider, ProviderInterface } from "@/ilos/common/index.ts";
+import * as jwt from "dep:jsonwebtoken";
 
-import {
-  TokenProviderInterface,
-  TokenProviderInterfaceResolver,
-} from "./interfaces/index.ts";
+import { TokenProviderInterface, TokenProviderInterfaceResolver } from "./interfaces/index.ts";
 
 @provider({
   identifier: TokenProviderInterfaceResolver,
 })
-export class TokenProvider
-  implements ProviderInterface, TokenProviderInterface, InitHookInterface {
+export class TokenProvider implements ProviderInterface, TokenProviderInterface, InitHookInterface {
   private secret: string | Buffer;
   private ttl: number;
   private signOptions: jwt.SignOptions = {};
@@ -51,9 +42,7 @@ export class TokenProvider
     }) as T;
 
     // override config TTL when ignoreExpiration option is passed
-    const ttl = "ignoreExpiration" in options && options.ignoreExpiration
-      ? -1
-      : this.ttl;
+    const ttl = "ignoreExpiration" in options && options.ignoreExpiration ? -1 : this.ttl;
 
     if (ttl > -1 && typeof decoded === "object" && "iat" in decoded) {
       const expired = ((new Date().getTime() / 1000) | 0) -

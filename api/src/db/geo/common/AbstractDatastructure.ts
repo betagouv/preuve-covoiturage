@@ -1,4 +1,4 @@
-import type { pg } from "@/deps.ts";
+import type pg from "dep:pg";
 import { SqlError, ValidationError } from "../errors/index.ts";
 import {
   DatasetInterface,
@@ -33,9 +33,7 @@ export abstract class AbstractDatastructure implements DatasetInterface {
     if (difference.size > 0) {
       throw new ValidationError(
         this,
-        `Cant apply this dataset, element is missing (${
-          [...difference].map((d) => d.uuid).join(", ")
-        })`,
+        `Cant apply this dataset, element is missing (${[...difference].map((d) => d.uuid).join(", ")})`,
       );
     }
   }

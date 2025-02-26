@@ -1,4 +1,3 @@
-import { AdmZip, stringify } from "@/deps.ts";
 import { createHash } from "@/lib/crypto/index.ts";
 import { getTmpDir, open, OpenFileDescriptor, remove } from "@/lib/file/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -8,6 +7,8 @@ import { sanitize } from "@/pdc/helpers/string.helper.ts";
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { Timezone } from "@/pdc/providers/validator/types.ts";
 import { transformations } from "@/pdc/services/export/config/export.ts";
+import AdmZip from "dep:adm-zip";
+import { stringify } from "dep:csv-stringify";
 import { AllowedComputedFields, CarpoolRow } from "./CarpoolRow.ts";
 import { ExportTarget } from "./Export.ts";
 

@@ -1,5 +1,5 @@
-import { IFilterXSSOptions } from "@/deps.ts";
 import { assertEquals, it } from "@/dev_deps.ts";
+import { IFilterXSSOptions } from "dep:xss";
 
 import { sanitizeKeyword } from "./sanitizeKeyword.ts";
 

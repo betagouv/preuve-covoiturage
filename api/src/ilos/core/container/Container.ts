@@ -1,4 +1,3 @@
-import { Container as InversifyContainer, ContainerOptions } from "@/deps.ts";
 import {
   ContainerInterface,
   ContextType,
@@ -10,10 +9,11 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
+import type { interfaces } from "dep:inversify";
+import { Container as InversifyContainer } from "dep:inversify";
 import { HandlerRegistry } from "./HandlerRegistry.ts";
 
-export class Container extends InversifyContainer
-  implements ContainerInterface {
+export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);
   declare parent: Container | null;
 
@@ -29,7 +29,7 @@ export class Container extends InversifyContainer
    * @param {ContainerOptions} [containerOptions]
    * @memberof Container
    */
-  constructor(containerOptions?: ContainerOptions) {
+  constructor(containerOptions?: interfaces.ContainerOptions) {
     super({
       defaultScope: "Singleton",
       autoBindInjectable: true,
@@ -38,7 +38,7 @@ export class Container extends InversifyContainer
     });
   }
 
-  createChild(containerOptions: ContainerOptions = {}): Container {
+  override createChild(containerOptions: interfaces.ContainerOptions = {}): Container {
     const container = new Container(containerOptions);
     container.parent = this;
     return container;

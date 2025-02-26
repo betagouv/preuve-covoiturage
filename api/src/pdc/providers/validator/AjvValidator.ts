@@ -1,15 +1,4 @@
 import {
-  addFormats,
-  Ajv,
-  ajvErrors,
-  ajvKeywords,
-  ErrorObject,
-  Format,
-  jsonSchemaSecureJson,
-  KeywordDefinition,
-  ValidateFunction,
-} from "@/deps.ts";
-import {
   ConfigInterfaceResolver,
   InvalidParamsException,
   NewableType,
@@ -18,12 +7,15 @@ import {
 } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { uuid } from "@/pdc/providers/test/helpers.ts";
+import { Ajv, ErrorObject, Format, KeywordDefinition, ValidateFunction } from "dep:ajv";
+import ajvErrors from "dep:ajverrors";
+import addFormats from "dep:ajvformats";
+import ajvKeywords from "dep:ajvkeywords";
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
   protected ajv: Ajv | null = null;
   protected bindings: Map<any, ValidateFunction> = new Map();
-  protected isSchemaSecure: ValidateFunction | null = null;
   protected validationErrors: ErrorObject[] = [];
 
   get errors(): ErrorObject[] {
@@ -50,10 +42,6 @@ export class AjvValidator implements ValidatorInterface {
     ajvKeywords.default(this.ajv);
     addFormats.default(this.ajv);
     ajvErrors.default(this.ajv);
-
-    this.isSchemaSecure = new Ajv({ strict: false }).compile(
-      jsonSchemaSecureJson,
-    );
   }
 
   registerValidator(
@@ -85,10 +73,6 @@ export class AjvValidator implements ValidatorInterface {
   protected validateSchema(schema: { [k: string]: any }): void {
     if (!this.ajv?.validateSchema(schema)) {
       throw new Error(this.ajv?.errorsText(this.ajv.errors));
-    }
-
-    if (this.isSchemaSecure && !this.isSchemaSecure(schema)) {
-      throw new Error(this.ajv.errorsText(this.isSchemaSecure?.errors));
     }
   }
 

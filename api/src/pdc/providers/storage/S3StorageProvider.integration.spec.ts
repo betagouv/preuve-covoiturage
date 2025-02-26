@@ -1,9 +1,9 @@
-import { writeFile } from "@/deps.ts";
 import { assertObjectMatch, it } from "@/dev_deps.ts";
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
 import { join } from "@/lib/path/index.ts";
+import { writeFile } from "dep:fs-promises";
 import { S3StorageProvider } from "./S3StorageProvider.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
 

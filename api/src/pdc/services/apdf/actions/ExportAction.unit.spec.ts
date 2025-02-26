@@ -1,11 +1,13 @@
 /* eslint-disable max-len */
-import { faker, fromZonedTime, startOfMonth, subMonths } from "@/deps.ts";
 import { afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
 import { uuid } from "@/pdc/providers/test/index.ts";
 import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
 import { ResultInterface as Campaign } from "@/pdc/services/policy/contracts/find.contract.ts";
+import { startOfMonth, subMonths } from "dep:date-fns";
+import { fromZonedTime } from "dep:date-fns-tz";
+import { faker } from "dep:faker";
 import { createGetCampaignResult } from "../helpers/createGetCampaignResult.helper.ts";
 import { DataRepositoryProviderInterfaceResolver } from "../interfaces/APDFRepositoryProviderInterface.ts";
 import { CheckCampaign } from "../providers/CheckCampaign.ts";

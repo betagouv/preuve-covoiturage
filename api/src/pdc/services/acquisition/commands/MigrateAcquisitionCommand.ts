@@ -1,4 +1,3 @@
-import { addSeconds } from "@/deps.ts";
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
@@ -10,6 +9,7 @@ import {
   CarpoolStatusRepository,
 } from "@/pdc/providers/carpool/index.ts";
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
+import { addSeconds } from "dep:date-fns";
 
 @command({
   signature: "acquisition:migrate",

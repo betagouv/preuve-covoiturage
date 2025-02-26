@@ -1,5 +1,5 @@
-import { excel } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
+import excel from "dep:excel";
 import { SliceInterface } from "../../../policy/contracts/common/interfaces/Slices.ts";
 import { SliceStatInterface } from "../../contracts/interfaces/PolicySliceStatInterface.ts";
 import { AbstractWorksheetWriter } from "./AbstractWorksheetWriter.ts";

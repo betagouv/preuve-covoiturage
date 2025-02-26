@@ -1,4 +1,4 @@
-import { extractZip } from "@/deps.ts";
+import extractZip from "dep:extract-zip";
 
 export function unzipFile(
   filepath: string,

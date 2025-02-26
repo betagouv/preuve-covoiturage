@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-import { faker } from "@/deps.ts";
 import { afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
@@ -10,6 +8,7 @@ import { CertificateBaseInterface } from "@/pdc/services/certificate/contracts/c
 import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
 import { CertificateMetaInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateMetaInterface.ts";
 import { ParamsInterface, ResultInterface } from "@/pdc/services/certificate/contracts/create.contract.ts";
+import { faker } from "dep:faker";
 import { mapFromCarpools } from "../helpers/mapFromCarpools.ts";
 import { CarpoolRepositoryProviderInterfaceResolver } from "../interfaces/CarpoolRepositoryProviderInterface.ts";
 import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/CertificateRepositoryProviderInterface.ts";

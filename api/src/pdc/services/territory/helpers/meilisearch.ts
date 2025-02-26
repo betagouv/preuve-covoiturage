@@ -1,5 +1,5 @@
-import { MeiliSearch, MeiliSearchConfig } from "@/deps.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { MeiliSearch, MeiliSearchConfig } from "dep:meilisearch";
 
 export async function indexData<T>(
   config: MeiliSearchConfig,

@@ -1,22 +1,35 @@
 import Pagination from '@/components/common/Pagination';
 import { getApiUrl } from '@/helpers/api';
+import { labelRole } from '@/helpers/auth';
 import { useApi } from '@/hooks/useApi';
+import { OperatorsInterface, TerritoriesInterface, UsersInterface } from '@/interfaces/dataInterface';
 import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-export default function UsersTable(props: {title:string}) {
+export default function UsersTable(props: {title:string, territoryId:number | null, operatorId:number | null}) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [offset, setOffset] = useState([0,15]);
-  const resultByPage = 15;
   const onChangePage = (id:number) => {
     setCurrentPage(id);
   };
-  const url = getApiUrl('v3', `dashboard/users`);
-  const { data } = useApi<Record<string, string | number>[]>(url);
+  const url = useMemo(() => {
+    const urlObj = new URL(getApiUrl('v3', 'dashboard/users'));
+    if (props.territoryId) {
+      urlObj.searchParams.set('territory_id', props.territoryId.toString());
+    } else if (props.operatorId) {
+      urlObj.searchParams.set('operator_id', props.operatorId.toString());
+    }
+    if (currentPage !== 1) {
+      urlObj.searchParams.set('page', currentPage.toString());
+    }
+    return urlObj.toString();
+  }, [props.territoryId, props.operatorId, currentPage]);
+
+  const { data } = useApi<UsersInterface>(url);
+  const totalPages = data?.meta.totalPages || 1;  
+
   const headers = [
     'Rôle',
-    'Statut',
     'Prénom',
     'Nom',
     'Adresse mail',
@@ -24,27 +37,22 @@ export default function UsersTable(props: {title:string}) {
     'Territoire'
   ];
   const operatorsApiUrl = getApiUrl("v3", `dashboard/operators`);
-  const operatorsList = useApi<Record<string, string | number>[]>(operatorsApiUrl);
+  const operatorsList = useApi<OperatorsInterface>(operatorsApiUrl).data?.data;
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
-  const territoriesList = useApi<Record<string, string | number>[]>(territoriesApiUrl);
-  const dataTable = data?.map((d) => [
-    d.role,
-    d.status,
+  const territoriesList = useApi<TerritoriesInterface>(territoriesApiUrl).data?.data;
+  const dataTable = data?.data?.map((d) => [
+    labelRole(d.role as string),
     d.firstname,
     d.lastname,
     d.email,
-    operatorsList.data?.find(o => o.id === d.operator_id)?.name,
-    territoriesList.data?.find(o => o.id === d.operator_id)?.name,
+    operatorsList?.find(o => o.id === d.operator_id)?.name,
+    territoriesList?.find(t => t.id === d.territory_id)?.name,
   ]) ?? [];
-  const countPage = Math.ceil(dataTable.length/resultByPage);
-  useEffect(() => {
-    setOffset([(currentPage - 1)*resultByPage, currentPage*resultByPage])
-  }, [currentPage]);
   return(
     <>
       <h3 className={fr.cx('fr-callout__title')}>{props.title}</h3>
-      <Table data={dataTable.slice(offset[0], offset[1])}  headers={headers} colorVariant='blue-ecume'/>
-      <Pagination count={countPage} defaultPage={currentPage} onChange={onChangePage}/>
+      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume'/>
+      <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage}/>
     </>
   );
 }

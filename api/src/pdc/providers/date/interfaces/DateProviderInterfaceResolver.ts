@@ -1,5 +1,5 @@
-import { FormatOptionsWithTZ } from "@/deps.ts";
 import { ProviderInterface } from "@/ilos/common/index.ts";
+import type { FormatOptionsWithTZ } from "dep:date-fns-tz";
 
 export interface DateProviderInterface extends ProviderInterface {
   format(
@@ -9,8 +9,7 @@ export interface DateProviderInterface extends ProviderInterface {
   ): string;
 }
 
-export abstract class DateProviderInterfaceResolver
-  implements DateProviderInterface {
+export abstract class DateProviderInterfaceResolver implements DateProviderInterface {
   format(
     date: Date,
     formatStr = "PP",

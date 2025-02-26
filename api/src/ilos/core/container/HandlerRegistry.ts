@@ -1,4 +1,3 @@
-import { NextFunction } from "@/deps.ts";
 import {
   CallType,
   ContainerInterface,
@@ -14,6 +13,7 @@ import {
   SingleMiddlewareConfigType,
 } from "@/ilos/common/index.ts";
 import { handlerListIdentifier } from "@/ilos/core/constants.ts";
+import { NextFunction } from "dep:express";
 import { compose } from "../helpers/index.ts";
 import { normalizeHandlerConfig } from "../helpers/normalizeHandlerConfig.ts";
 
@@ -60,6 +60,7 @@ export class HandlerRegistry {
     const method = Reflect.getMetadata(HandlerMeta.METHOD, handler);
     const version = Reflect.getMetadata(HandlerMeta.VERSION, handler);
     const local = Reflect.getMetadata(HandlerMeta.LOCAL, handler);
+    const apiRoute = Reflect.getMetadata(HandlerMeta.API_ROUTE, handler);
 
     const middlewares = Reflect.getMetadata(HandlerMeta.MIDDLEWARES, handler) ||
       [];
@@ -68,6 +69,7 @@ export class HandlerRegistry {
       method,
       version,
       local,
+      apiRoute,
     });
 
     this.container.bind(handler).toSelf();

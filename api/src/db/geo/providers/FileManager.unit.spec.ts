@@ -1,4 +1,3 @@
-import { mkdir, readFile, rm } from "@/deps.ts";
 import {
   afterAll,
   assert,
@@ -14,6 +13,7 @@ import { createHash } from "@/lib/crypto/index.ts";
 import { exists } from "@/lib/file/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { S3StorageProvider } from "@/pdc/providers/storage/index.ts";
+import { mkdir, readFile, rm } from "dep:fs-promises";
 import { writeFile } from "../helpers/index.ts";
 import { FileManager } from "./FileManager.ts";
 
@@ -52,7 +52,7 @@ describe("File Manager", () => {
   });
 
   it("should return ressource file if available", async () => {
-    const fetchFunctionStub = stub(window, "fetch");
+    const fetchFunctionStub = stub(globalThis, "fetch");
     try {
       // Arrange
       const existingFilepath = join(fileManager.downloadPath, await createHash(RESSOURCE_URL));
@@ -70,7 +70,7 @@ describe("File Manager", () => {
   });
 
   it("should discard the file if the hash is invalid", async () => {
-    const fetchFunctionStub = stub(window, "fetch", async () => new Response(READABLE_STREAM));
+    const fetchFunctionStub = stub(globalThis, "fetch", async () => new Response(READABLE_STREAM));
 
     try {
       // Arrange
@@ -104,7 +104,7 @@ describe("File Manager", () => {
 
   it("should download from mirror if missing locally", async () => {
     // Arrange
-    const fetchFunctionStub = stub(window, "fetch", async () => new Response(READABLE_STREAM));
+    const fetchFunctionStub = stub(globalThis, "fetch", async () => new Response(READABLE_STREAM));
 
     try {
       // Act
@@ -124,7 +124,7 @@ describe("File Manager", () => {
     });
 
     let fetchFunctionCalls = 0;
-    const fetchFunctionStub = stub(window, "fetch", async () => {
+    const fetchFunctionStub = stub(globalThis, "fetch", async () => {
       if (fetchFunctionCalls === 0) {
         fetchFunctionCalls = 1;
         // first call to the mirror throws an error

@@ -13,7 +13,6 @@
  * - store: check response
  * - store: check existence in DB
  */
-import { faker } from "@/deps.ts";
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
@@ -31,6 +30,7 @@ import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportS
 import { Export, ExportStatus, ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServiceProvider.ts";
+import { faker } from "dep:faker";
 import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
 
 const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(

@@ -1,13 +1,12 @@
-import { Buffer } from "@/deps.ts";
 import { ProviderInterface } from "@/ilos/common/index.ts";
+import { Buffer } from "dep:buffer";
 import { PdfTemplateData } from "./PdfTemplateData.ts";
 
 export interface PdfCertProviderInterface extends ProviderInterface {
   pdf(data: PdfTemplateData): Promise<Buffer>;
 }
 
-export abstract class PdfCertProviderInterfaceResolver
-  implements PdfCertProviderInterface {
+export abstract class PdfCertProviderInterfaceResolver implements PdfCertProviderInterface {
   async pdf(data: PdfTemplateData): Promise<Buffer> {
     throw new Error("Not implemented");
   }

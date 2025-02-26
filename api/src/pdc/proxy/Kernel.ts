@@ -4,6 +4,7 @@ import { Kernel as BaseKernel } from "@/ilos/framework/index.ts";
 import { SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ListCommand } from "@/pdc/proxy/commands/ListCommand.ts";
+import { AuthServiceProvider } from "@/pdc/services/auth/AuthServiceProvider.ts";
 import { MonitoringServiceProvider } from "@/pdc/services/monitoring/MonitoringServiceProvider.ts";
 import { PostgresConnection } from "../../ilos/connection-postgres/index.ts";
 import { AcquisitionServiceProvider } from "../services/acquisition/AcquisitionServiceProvider.ts";
@@ -26,6 +27,7 @@ import { config } from "./config/index.ts";
 @kernel({
   config,
   children: [
+    AuthServiceProvider,
     AcquisitionServiceProvider,
     APDFServiceProvider,
     ApplicationServiceProvider,

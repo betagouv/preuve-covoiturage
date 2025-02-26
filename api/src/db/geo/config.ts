@@ -1,6 +1,6 @@
-import { readFileSync } from "@/deps.ts";
 import { env, env_or_default, env_or_int } from "@/lib/env/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
+import { readFileSync } from "dep:fs";
 import { datasets, datastructures } from "./datasets.ts";
 import { ConfigInterface, MirrorAclEnum } from "./interfaces/ConfigInterface.ts";
 

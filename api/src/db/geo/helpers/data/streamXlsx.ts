@@ -1,4 +1,4 @@
-import { xlsx } from "@/deps.ts";
+import xlsx from "dep:xlsx";
 import { XlsxOptions } from "../../interfaces/index.ts";
 
 export async function* streamXlsx<T>(

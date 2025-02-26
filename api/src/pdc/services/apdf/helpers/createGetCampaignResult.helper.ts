@@ -1,7 +1,6 @@
-/* eslint-disable max-len */
-import { faker } from "@/deps.ts";
 import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
 import { ResultInterface as GetCampaignResultInterface } from "@/pdc/services/policy/contracts/find.contract.ts";
+import { faker } from "dep:faker";
 
 export const createGetCampaignResult = (
   status: PolicyStatusEnum,

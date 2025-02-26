@@ -1,23 +1,21 @@
-import { process, Redis, RedisOptions } from "@/deps.ts";
 import {
   ConnectionConfigurationType,
   ConnectionInterface,
   DestroyHookInterface,
   InitHookInterface,
 } from "@/ilos/common/index.ts";
+import { Redis, RedisOptions } from "dep:redis";
 
 /**
  * This is a workaround to make `process` available to redisio library.
  * @fixme
  */
-type WindowProcess = Window & typeof globalThis & { process: NodeJS.Process };
-(window as WindowProcess).process = process;
+// type WindowProcess = Window & typeof globalThis & { process: NodeJS.Process };
+// if (typeof globalThis !== "undefined") {
+//   (window as WindowProcess).process = process;
+// }
 
-export class RedisConnection
-  implements
-    ConnectionInterface<Redis>,
-    DestroyHookInterface,
-    InitHookInterface {
+export class RedisConnection implements ConnectionInterface<Redis>, DestroyHookInterface, InitHookInterface {
   protected client: Redis | null = null;
 
   get connected(): boolean {

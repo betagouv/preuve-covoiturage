@@ -1,4 +1,4 @@
-import type { CsvOptions } from "@/deps.ts";
+import type { Options as CsvOptions } from "dep:csv-parse";
 export type { CsvOptions };
 
 export interface XlsxOptions {

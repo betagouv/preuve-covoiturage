@@ -1,5 +1,6 @@
-import { excel, faker } from "@/deps.ts";
 import { assertEquals, describe, it } from "@/dev_deps.ts";
+import excel from "dep:excel";
+import { faker } from "dep:faker";
 import { APDFTripInterface } from "../../interfaces/APDFTripInterface.ts";
 import { BuildExcel } from "./BuildExcel.ts";
 import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";

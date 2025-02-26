@@ -1,5 +1,6 @@
-import { readFileSync, URL } from "@/deps.ts";
 import { env, env_or_fail } from "@/lib/env/index.ts";
+import { readFileSync } from "dep:fs";
+import { URL } from "dep:url";
 
 function unnestRedisConnectionString(connectionString: string): {
   host?: string;
@@ -54,7 +55,5 @@ export const postgres = {
   connectionString: env_or_fail("APP_POSTGRES_URL"),
   // FIXME: add host is a workarround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
-  ...(Object.keys(postgresTls).length
-    ? { ssl: { ...postgresTls, host: env_or_fail("APP_POSTGRES_HOST") } }
-    : {}),
+  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env_or_fail("APP_POSTGRES_HOST") } } : {}),
 };

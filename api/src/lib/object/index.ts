@@ -1,4 +1,4 @@
-import { collections } from "@/deps.ts";
+import { omit, pick } from "dep:collections";
 
 /**
  * Get the value at the given path of object.
@@ -46,7 +46,5 @@ export function set<T>(obj: T, path: string | string[], value: any): T {
   target[lastKey] = value;
   return obj;
 }
-
-const { omit, pick } = collections;
 
 export { omit, pick };

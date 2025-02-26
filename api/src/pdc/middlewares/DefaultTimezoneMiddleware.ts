@@ -1,7 +1,7 @@
 import { defaultTimezone } from "@/config/time.ts";
-import { NextFunction } from "@/deps.ts";
 import { ContextType, middleware } from "@/ilos/common/index.ts";
 import { Timezone } from "@/pdc/providers/validator/types.ts";
+import { NextFunction } from "dep:express";
 
 /**
  * Set the params.tz property to the default time zone

@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
       - name: Run lint
         working-directory: ./api
         # FIXME
@@ -74,7 +74,7 @@ jobs:
           key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
       - uses: taiki-e/install-action@v2
         with:
           tool: just@1.24.0
@@ -128,7 +128,7 @@ jobs:
 
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - uses: taiki-e/install-action@v2
         with:
@@ -161,11 +161,11 @@ jobs:
           APP_SESSION_SECRET: null
           APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
-          KC_BOT_CLIENT: pdc-bot
-          KC_BOT_CLIENT_SECRET: so_secret_000
-          KC_ADMIN_CLIENT: pdc-manager
-          KC_ADMIN_CLIENT_SECRET: so_secret_000
           ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
           ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
+          PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
+          PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
+          APP_AUTH_CLIENT_ID: secret
+          APP_AUTH_CLIENT_SECRET: secret
         run: just ci_test_integration
         working-directory: api

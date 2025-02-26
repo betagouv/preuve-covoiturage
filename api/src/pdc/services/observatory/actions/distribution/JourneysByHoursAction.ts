@@ -1,9 +1,9 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { JourneysByHours } from "@/pdc/services/observatory/dto/distribution/JourneysByHours.ts";
-import { Infer } from "https://jsr.io/@superstruct/core/2.0.2/src/struct.ts";
 import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
 export type ResultInterface = {
   code: string;

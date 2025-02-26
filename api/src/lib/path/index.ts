@@ -1,6 +1,4 @@
-import { path } from "@/deps.ts";
-
-const { join, extname, basename, parse } = path;
+import { basename, extname, join, parse } from "dep:path";
 
 export { basename, extname, join, parse };
 

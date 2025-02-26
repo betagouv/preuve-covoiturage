@@ -1,10 +1,10 @@
-import { excel } from "@/deps.ts";
 import { afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { PolicyStatsInterface } from "@/pdc/services/apdf/contracts/interfaces/PolicySliceStatInterface.ts";
 import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
 import { SliceInterface } from "@/pdc/services/policy/contracts/common/interfaces/Slices.ts";
+import excel from "dep:excel";
 import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
 import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
 import { BuildExcel } from "./BuildExcel.ts";

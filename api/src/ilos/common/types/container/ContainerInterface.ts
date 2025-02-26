@@ -1,16 +1,8 @@
-import type {
-  ContainerInterface as InversifyContainerInterface,
-  ContainerOptions,
-  Factory,
-} from "@/deps.ts";
+import type { ContainerInterface as InversifyContainerInterface, ContainerOptions, Factory } from "dep:inversify";
 
-import { NewableType } from "../shared/index.ts";
-import {
-  FunctionalHandlerInterface,
-  HandlerConfigType,
-  HandlerInterface,
-} from "../handler/index.ts";
 import { ContextType, ParamsType, ResultType } from "../call/index.ts";
+import { FunctionalHandlerInterface, HandlerConfigType, HandlerInterface } from "../handler/index.ts";
+import { NewableType } from "../shared/index.ts";
 
 export interface ContainerInterface extends InversifyContainerInterface {
   root: ContainerInterface;

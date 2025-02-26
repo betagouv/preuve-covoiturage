@@ -1,4 +1,5 @@
-import { format, toZonedTime } from "@/deps.ts";
+import { format } from "dep:date-fns";
+import { toZonedTime } from "dep:date-fns-tz";
 import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
 export function normalize(

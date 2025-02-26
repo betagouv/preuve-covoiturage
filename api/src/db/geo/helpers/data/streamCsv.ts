@@ -1,4 +1,5 @@
-import { createReadStream, parse } from "@/deps.ts";
+import { parse } from "dep:csv-parse";
+import { createReadStream } from "dep:fs";
 import { CsvOptions } from "../../interfaces/index.ts";
 
 export async function* streamCsv<T>(

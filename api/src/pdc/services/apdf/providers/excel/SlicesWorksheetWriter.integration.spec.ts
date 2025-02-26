@@ -1,6 +1,6 @@
-import { excel } from "@/deps.ts";
 import { assertEquals, describe, it } from "@/dev_deps.ts";
 import { SliceStatInterface } from "@/pdc/services/apdf/contracts/interfaces/PolicySliceStatInterface.ts";
+import excel from "dep:excel";
 import { BuildExcel } from "./BuildExcel.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 

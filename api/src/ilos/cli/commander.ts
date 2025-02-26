@@ -1,8 +1,8 @@
-import { Command as Runner } from "@/deps.ts";
 import { ServiceContainerInterface } from "@/ilos/common/index.ts";
 import { CommandOptions } from "@/ilos/common/types/command/CommandInterface.ts";
 import { CommandInterface } from "@/ilos/common/types/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { Command as Runner } from "dep:commander";
 import { identifierCfg, identifierList } from "../cli/constants.ts";
 
 function registerCommand(

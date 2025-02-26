@@ -1,16 +1,6 @@
 import { defaultTimezone } from "@/config/time.ts";
-import {
-  addDays,
-  addMonths,
-  endOfDay as eod,
-  formatInTimeZone,
-  fromZonedTime,
-  startOfDay as sod,
-  startOfMonth,
-  subDays,
-  subMonths,
-  toZonedTime,
-} from "@/deps.ts";
+import { addDays, addMonths, endOfDay as eod, startOfDay as sod, startOfMonth, subDays, subMonths } from "dep:date-fns";
+import { formatInTimeZone, fromZonedTime, toZonedTime } from "dep:date-fns-tz";
 
 /**
  * Regular UTC toISOString.

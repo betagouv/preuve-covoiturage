@@ -1,9 +1,6 @@
-import { pg } from "@/deps.ts";
+import pg from "dep:pg";
 import { config as defaultConfig } from "../config.ts";
-import {
-  AppConfigInterface,
-  DatabaseStateManagerInterface,
-} from "../interfaces/index.ts";
+import { AppConfigInterface, DatabaseStateManagerInterface } from "../interfaces/index.ts";
 import { DatabaseStateManager } from "../providers/index.ts";
 
 export function createStateManager(

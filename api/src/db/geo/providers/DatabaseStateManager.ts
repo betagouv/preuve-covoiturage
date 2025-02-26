@@ -1,5 +1,5 @@
-import { pg } from "@/deps.ts";
 import { logger } from "@/lib/logger/index.ts";
+import pg from "dep:pg";
 import {
   AppConfigInterface,
   DatabaseStateManagerInterface,

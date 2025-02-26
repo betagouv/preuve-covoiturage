@@ -1,9 +1,7 @@
-import { datefr, format, FormatOptionsWithTZ, toZonedTime } from "@/deps.ts";
 import { provider } from "@/ilos/common/index.ts";
-import {
-  DateProviderInterface,
-  DateProviderInterfaceResolver,
-} from "./interfaces/DateProviderInterfaceResolver.ts";
+import { fr as datefr } from "dep:date-fns-locale";
+import { format, FormatOptionsWithTZ, toZonedTime } from "dep:date-fns-tz";
+import { DateProviderInterface, DateProviderInterfaceResolver } from "./interfaces/DateProviderInterfaceResolver.ts";
 
 /**
  * date-fns wrappers to handle i18n
