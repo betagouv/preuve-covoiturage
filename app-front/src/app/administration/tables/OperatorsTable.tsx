@@ -5,6 +5,7 @@ import { OperatorsInterface } from '@/interfaces/dataInterface';
 import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
 import { useMemo, useState } from 'react';
+import { Modal } from '../../../components/common/Modal';
 
 export default function OperatorsTable(props: {title:string, id:number | null}) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,16 +28,19 @@ export default function OperatorsTable(props: {title:string, id:number | null}) 
     'Identifiant',
     'Nom',
     'Siret',
+    'Actions'
   ];  
   const dataTable = data?.data.map((d) => [
     d.id,
     d.name,
     d.siret,
+    <Modal key={d.id} id={d.id} />
   ]) ?? [];
+  
   return(
     <>
       <h3 className={fr.cx('fr-callout__title')}>{props.title}</h3>
-      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume'/>
+      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume' fixed />
       <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage}/>
     </>
   );

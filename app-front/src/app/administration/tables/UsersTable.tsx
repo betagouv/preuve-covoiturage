@@ -51,7 +51,7 @@ export default function UsersTable(props: {title:string, territoryId:number | nu
   return(
     <>
       <h3 className={fr.cx('fr-callout__title')}>{props.title}</h3>
-      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume'/>
+      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume' fixed/>
       <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage}/>
     </>
   );
