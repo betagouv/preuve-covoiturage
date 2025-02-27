@@ -1,57 +1,87 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: RequestInit) => {
   const [data, setData] = useState<T>();
-  const [error, setError] = useState<Error>();
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(url, { ...init, credentials: "include" });
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res.message || "Une erreur est survenue");
+      }
+
+      if (paginate && res.meta?.totalPages > 1) {
+        const endpoints: URL[] = [];
+        for (let i = 2; i <= res.meta.totalPages; i++) {
+          const endpoint = new URL(url);
+          endpoint.searchParams.append("page", i.toString());
+          endpoints.push(endpoint);
+        }
+
+        const responses = await Promise.all(
+          endpoints.map((e) => fetch(e, { ...init, credentials: "include" })),
+        );
+        const datas = await Promise.all(responses.map((r) => r.json()));
+
+        const combinedData = [
+          ...("data" in res ? res.data : [res]),
+          ...datas.flatMap((d) => ("data" in d ? d.data : [d])),
+        ];
+
+        setData({ meta: res.meta, data: combinedData } as unknown as T);
+      } else {
+        setData(res);
+      }
+    } catch (e) {
+      setError(e as Error);
+      setData(undefined);
+    } finally {
+      setLoading(false);
+    }
+  }, [url, init, paginate]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    fetchData();
+  }, [fetchData]);
+
+  const sendRequest = useCallback(
+    async (method: "POST" | "PUT" | "DELETE", body?: unknown) => {
       try {
-        setError(undefined);
+        setError(null);
         setLoading(true);
-        // Récupération de la première page
-        const response = await fetch(url, { ...init, credentials: "include" });
+
+        const response = await fetch(url, {
+          method,
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...(init?.headers || {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+        });
+
         const res = await response.json();
         if (!response.ok) {
-          throw res;
+          throw new Error(res.message || "Une erreur est survenue");
         }
-        // Si plusieurs pages, on charge les pages suivantes
-        if (paginate && res.meta?.totalPages > 1) {
-          const endpoints: URL[] = [];
-          for (let i = 2; i <= res.meta.totalPages; i++) {
-            const endpoint = new URL(url);
-            endpoint.searchParams.append("page", i.toString());
-            endpoints.push(endpoint);
-          }
-          const responses = await Promise.all(
-            endpoints.map((e) => fetch(e, { ...init, credentials: "include" })),
-          );
-          const datas = await Promise.all(
-            responses.map(async (r) => r.json()),
-          );
-          // Fusionner les données de la première page et des pages suivantes
-          const combinedData = [
-            ...("data" in res ? res.data : [res]),
-            ...datas.flatMap((d) => ("data" in d ? d.data : [d])),
-          ];
-          setData({
-            meta: res.meta,
-            data: combinedData,
-          } as unknown as T);
-        } else {
-          setData(res);
-        }
+
+        // Mise à jour des données après une mutation
+        setData(res);
+        return res;
       } catch (e) {
         setError(e as Error);
-        setData(undefined);
+        throw e;
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [url, init],
+  );
 
-    fetchData();
-  }, [url, init]);
-
-  return { data, error, loading };
+  return { data, error, loading, refetch: fetchData, sendRequest };
 };
