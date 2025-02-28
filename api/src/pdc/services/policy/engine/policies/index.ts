@@ -35,6 +35,7 @@ import { SiouleLimagne } from "@/pdc/services/policy/engine/policies/20240901_Si
 import { HauteCorreze2025 } from "@/pdc/services/policy/engine/policies/20240902_haute_correze_2025.ts";
 import { PetrLunevillois092024032025 } from "@/pdc/services/policy/engine/policies/20240902_PetrLunevillois.ts";
 import { CCPOA202410 } from "@/pdc/services/policy/engine/policies/20241015_CCPOA_orthe_et_arrigans_2024.ts";
+import { GrandChatellerault2025 } from "@/pdc/services/policy/engine/policies/20250101_GrandChatellerault.ts";
 import { GrandPoitiers2025 } from "@/pdc/services/policy/engine/policies/20250101_GrandPoitiers2025.ts";
 import { LaRochelle2025 } from "@/pdc/services/policy/engine/policies/20250101_LaRochelle.ts";
 import { PMGFxATMB2025 } from "@/pdc/services/policy/engine/policies/20250101_PMGFxATMB.ts";
@@ -52,6 +53,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     CCVMM202405,
     Cotentin2023,
     GrandChatellerault2024,
+    GrandChatellerault2025,
     GrandPoitiers,
     GrandPoitiers2025,
     HauteCorreze2025,
