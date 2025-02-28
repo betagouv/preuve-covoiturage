@@ -46,6 +46,8 @@ models:
       +schema: "dashboard_stats"
     fraud:
       +schema: "fraud"
+    campaigns_analytics:
+      +schema: "campaigns_analytics"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:

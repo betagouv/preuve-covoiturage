@@ -21,7 +21,8 @@ SELECT
   l_arr       AS libelle,
   geom_simple AS geom
 FROM perimeters
-WHERE com IS NOT NULL
+WHERE
+  com IS NOT NULL
 {% if is_incremental() %}
     AND year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
@@ -31,9 +32,10 @@ SELECT
   'epci'                          AS type,
   epci                            AS code,
   l_epci                          AS libelle,
-  st_multi(st_union(geom_simple)) AS geom
+  ST_MULTI(ST_UNION(geom_simple)) AS geom
 FROM perimeters
-WHERE epci IS NOT NULL
+WHERE
+  epci IS NOT NULL
 {% if is_incremental() %}
     AND year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
@@ -44,9 +46,10 @@ SELECT
   'aom'                           AS type,
   aom                             AS code,
   l_aom                           AS libelle,
-  st_multi(st_union(geom_simple)) AS geom
+  ST_MULTI(ST_UNION(geom_simple)) AS geom
 FROM perimeters
-WHERE aom IS NOT NULL
+WHERE
+  aom IS NOT NULL
 {% if is_incremental() %}
     AND year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
@@ -57,9 +60,10 @@ SELECT
   'dep'                           AS type,
   dep                             AS code,
   l_dep                           AS libelle,
-  st_multi(st_union(geom_simple)) AS geom
+  ST_MULTI(ST_UNION(geom_simple)) AS geom
 FROM perimeters
-WHERE dep IS NOT NULL
+WHERE
+  dep IS NOT NULL
 {% if is_incremental() %}
     AND year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
@@ -70,9 +74,10 @@ SELECT
   'reg'                           AS type,
   reg                             AS code,
   l_reg                           AS libelle,
-  st_multi(st_union(geom_simple)) AS geom
+  ST_MULTI(ST_UNION(geom_simple)) AS geom
 FROM perimeters
-WHERE reg IS NOT NULL
+WHERE
+  reg IS NOT NULL
 {% if is_incremental() %}
     AND year > (SELECT MAX(year) FROM {{ this }})
   {% endif %}
@@ -83,9 +88,9 @@ SELECT DISTINCT ON (year, country)
   'country'                       AS type,
   country                         AS code,
   l_country                       AS libelle,
-  st_multi(st_union(geom_simple)) AS geom
+  ST_MULTI(ST_UNION(geom_simple)) AS geom
 FROM perimeters
 {% if is_incremental() %}
-    WHERE year > (SELECT MAX(year) FROM {{ this }})
-  {% endif %}
+  WHERE year > (SELECT MAX(year) FROM {{ this }})
+{% endif %}
 GROUP BY year, country, l_country

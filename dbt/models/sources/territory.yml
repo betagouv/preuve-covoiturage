@@ -48,6 +48,8 @@ sources:
             data_type: USER-DEFINED
           - name: ui_status
             data_type: json
+          - name: siret
+            data_type: character varying
       - name: territory_group
         columns:
           - name: _id
