@@ -112,11 +112,11 @@ it(
             value: 600,
           },
           {
-            key: "max_amount_restriction.0-tom.month.3-2024",
+            key: "max_amount_restriction.0-tom.month.0-2025",
             value: 450,
           },
           {
-            key: "max_amount_restriction.0-nina.month.3-2024",
+            key: "max_amount_restriction.0-nina.month.0-2025",
             value: 150,
           },
         ],
@@ -146,7 +146,7 @@ it(
             value: 2_200_000_00,
           },
           {
-            key: "max_amount_restriction.0-one.month.3-2024",
+            key: "max_amount_restriction.0-one.month.0-2025",
             value: 150,
           },
         ],
