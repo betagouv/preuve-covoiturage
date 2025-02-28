@@ -10,6 +10,8 @@ models:
         data_type: timestamp with time zone
       - name: distance_50m
         data_type: integer
+      - name: num_journeys
+        data_type: bigint
       - name: total_driver_revenue
         data_type: bigint
       - name: total_passengers_contributions
