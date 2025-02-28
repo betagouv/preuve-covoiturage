@@ -2,7 +2,7 @@ import { it } from "@/dev_deps.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { OperatorsEnum } from "../../interfaces/index.ts";
 import { makeProcessHelper } from "../tests/macro.ts";
-import { GrandChatellerault2024 as Handler } from "./20240201_GrandChatellerault.ts";
+import { GrandChatellerault2025 as Handler } from "./20250101_GrandChatellerault.ts";
 
 // Châtellerault
 const defaultPosition = {
@@ -207,7 +207,7 @@ it(
             value: 900,
           },
           {
-            key: "max_amount_restriction.0-one.month.3-2024",
+            key: "max_amount_restriction.0-one.month.0-2025",
             value: 900,
           },
         ],
@@ -231,7 +231,7 @@ it(
             value: 0,
           },
           {
-            key: "max_amount_restriction.0-one.month.3-2024",
+            key: "max_amount_restriction.0-one.month.0-2025",
             value: 118_50,
           },
         ],
@@ -244,7 +244,7 @@ it(
             value: 150,
           },
           {
-            key: "max_amount_restriction.0-one.month.3-2024",
+            key: "max_amount_restriction.0-one.month.0-2025",
             value: 120_00,
           },
         ],

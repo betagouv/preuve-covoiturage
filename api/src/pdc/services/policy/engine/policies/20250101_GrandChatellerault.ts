@@ -34,7 +34,7 @@ import { description } from "./20250101_GrandChatellerault.html.ts";
 //   'euro',
 //   'draft',
 //   'grand_chatellerault_2025',
-//   10000
+//   1000000
 // );
 /* eslint-disable-next-line */
 export const GrandChatellerault2025: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
