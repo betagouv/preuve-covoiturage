@@ -36,5 +36,11 @@ export class AuthRouter {
       }
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     });
+
+    // TODO PROXY
+    // "/auth/token" -> oidcProvider/getToken(access_key, secret_key)
+    // TODO : Add middleware to check the JWT -> ok : operator_id + role à mettre dans le context de l'appel du Kernel
+    // Spec POST /auth/token (perdu dans les PR fermées sans être mergées)
+    // https://github.com/betagouv/preuve-covoiturage/pull/2529
   }
 }

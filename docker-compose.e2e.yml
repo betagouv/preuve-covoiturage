@@ -21,7 +21,7 @@ services:
     volumes:
       - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
       - ./docker/traefik/certs:/etc/certs
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock:ro
     networks:
       back:
       front:
@@ -41,13 +41,13 @@ services:
       PG_PASSWORD: postgres
       PG_HOST: postgres
       PG_PORT: 5432
-      PDC_URL: http://app.covoiturage.test/auth/callback
+      PDC_URL: http://api.covoiturage.test/auth/callback
       PDC_CLIENT_ID: secret
       PDC_CLIENT_SECRET: secret
-      OIDC_ISSUER_URL: https://fca.integ01.dev-agentconnect.fr/api/v2
-      OIDC_CLIENT_ID: ${PRO_CONNECT_CLIENT_ID}
-      OIDC_CLIENT_SECRET: ${PRO_CONNECT_CLIENT_SECRET}
-      OIDC_REDIRECT_URL: http://auth.covoiturage.test/callback
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+      OIDC_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
+      OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://auth.covoiturage.test/callback}
     ports:
       - 5557:5557
       - 8090:8080 
@@ -140,7 +140,7 @@ services:
       ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
-      OIDC_BASE_URL: http://auth.covoiturage.test
+      OIDC_BASE_URL: http://demo.auth.covoiturage.beta.gouv.fr
       OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
     networks:
       - back
