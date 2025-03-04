@@ -7,7 +7,7 @@ import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddle
 import { express, NextFunction, Request, Response } from "dep:express";
 import { formatRange, parse, satisfies, tryParseRange } from "dep:semver";
 
-const SUPPORTED_VERSIONS = ["3.1.0", "3.2.0"].map((v) => parse(v));
+const SUPPORTED_VERSIONS = ["3.2.0"].map((v) => parse(v));
 const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
   successHttpCode: 200,
   rateLimiter: {

@@ -110,17 +110,6 @@ describe("Carpool Label Repository", () => {
     assertEquals(result, []);
   });
 
-  it("Should read carpool fraud label and returns single entry with 2 labels for api v3", async () => {
-    const result = await labelRepository.findFraudByOperatorJourneyId(
-      "v3.0",
-      insertableCarpool.operator_id,
-      insertableCarpool.operator_journey_id,
-    );
-    assertEquals(result, [{
-      label: fraud_label_1_V3,
-    }]);
-  });
-
   // fraud V3.1
   it("Should read carpool fraud label and returns 2 labels for api v3.1", async () => {
     const result = await labelRepository.findFraudByOperatorJourneyId(
