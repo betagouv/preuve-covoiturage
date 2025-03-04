@@ -1,5 +1,5 @@
 import { exists, read } from "@/lib/file/index.ts";
-import * as bcrypt from "dep:bcrypt";
+import { compare, genSalt, hash } from "dep:bcrypt";
 import * as stdCrypto from "dep:crypto";
 import { decodeBase64, encodeBase64, encodeHex } from "dep:encoding";
 
@@ -7,15 +7,15 @@ export async function bcrypt_hash(
   plaintext: string,
   round: number = 10,
 ): Promise<string> {
-  const salt = await bcrypt.genSalt(round);
-  return await bcrypt.hash(plaintext, salt);
+  const salt = await genSalt(round);
+  return await hash(plaintext, salt);
 }
 
 export async function bcrypt_compare(
   plaintext: string,
   hash: string,
 ): Promise<boolean> {
-  return await bcrypt.compare(plaintext, hash);
+  return await compare(plaintext, hash);
 }
 
 export async function createSignatory(
