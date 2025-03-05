@@ -243,7 +243,6 @@ export class CarpoolAcquisitionService {
 
   public async processGeo(params: ProcessGeoParams): Promise<ProcessGeoResults> {
     const conn = await this.connection.getClient().connect();
-
     try {
       const list = await this.geoRepository.findProcessable({
         limit: params.batchSize,
@@ -253,6 +252,7 @@ export class CarpoolAcquisitionService {
       }, conn);
 
       for (const item of list) {
+        await conn.query("BEGIN");
         try {
           const start = await this.geoService.positionToInsee(item.start);
           const end = await this.geoService.positionToInsee(item.end);
@@ -267,17 +267,18 @@ export class CarpoolAcquisitionService {
             carpool_id: item.carpool_id,
             status: CarpoolAcquisitionStatusEnum.Processed,
           }, conn);
+          await conn.query("COMMIT");
         } catch (e) {
-          await this.geoRepository.upsert({
-            carpool_id: item.carpool_id,
-            error: e.message,
-          }, conn);
-
+          await conn.query("ROLLBACK");
           await this.statusRepository.saveAcquisitionStatus({
             carpool_id: item.carpool_id,
             status: CarpoolAcquisitionStatusEnum.Failed,
           }, conn);
 
+          await this.geoRepository.upsert({
+            carpool_id: item.carpool_id,
+            error: e.message,
+          }, conn);
           logger.error(`[geo] error encoding ${item.carpool_id} : ${e.message}`);
         }
       }
