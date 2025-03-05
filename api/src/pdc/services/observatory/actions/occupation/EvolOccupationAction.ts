@@ -20,7 +20,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/evol-occupation",
-    action: "observatory:getEvolOccupation",
     method: "GET",
   },
 })

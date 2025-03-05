@@ -16,7 +16,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/location",
-    action: "observatory:getLocation",
     method: "GET",
   },
 })

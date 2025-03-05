@@ -23,7 +23,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/incentive",
-    action: "observatory:getIncentive",
     method: "GET",
   },
 })

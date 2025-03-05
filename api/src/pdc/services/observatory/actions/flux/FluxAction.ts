@@ -23,7 +23,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/flux",
-    action: "observatory:getFlux",
     method: "GET",
   },
 })

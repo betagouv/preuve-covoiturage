@@ -19,7 +19,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/best-flux",
-    action: "observatory:getBestFlux",
     method: "GET",
   },
 })

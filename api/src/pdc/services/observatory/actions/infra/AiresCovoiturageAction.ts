@@ -27,7 +27,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/aires-covoiturage",
-    action: "observatory:airesCovoiturage",
     method: "GET",
   },
 })

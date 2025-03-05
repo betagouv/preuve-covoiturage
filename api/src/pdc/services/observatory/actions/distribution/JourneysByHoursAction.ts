@@ -25,7 +25,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/journeys-by-hours",
-    action: "observatory:journeysByHours",
     method: "GET",
   },
 })

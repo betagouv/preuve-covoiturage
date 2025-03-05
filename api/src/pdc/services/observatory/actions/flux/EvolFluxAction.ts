@@ -21,7 +21,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/evol-flux",
-    action: "observatory:getEvolFlux",
     method: "GET",
   },
 })

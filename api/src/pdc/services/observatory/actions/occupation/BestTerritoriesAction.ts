@@ -17,7 +17,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/best-territories",
-    action: "observatory:getBestTerritories",
     method: "GET",
   },
 })

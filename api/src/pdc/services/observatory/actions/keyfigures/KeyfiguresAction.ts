@@ -28,7 +28,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/keyfigures",
-    action: "observatory:getKeyfigures",
     method: "GET",
   },
 })

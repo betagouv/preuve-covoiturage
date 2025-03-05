@@ -42,7 +42,6 @@ export type ResultInterface = {
   ]],
   apiRoute: {
     path: "/observatory/campaigns",
-    action: "observatory:campaigns",
     method: "GET",
   },
 })
