@@ -38,6 +38,12 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
     }),
     ["validate", aliasV3],
   ],
+  apiRoute: {
+    path: "/exports",
+    action: "export:createVersionThree",
+    method: "POST",
+    successHttpCode: 201,
+  },
 })
 export class CreateActionV3 extends AbstractAction {
   constructor(

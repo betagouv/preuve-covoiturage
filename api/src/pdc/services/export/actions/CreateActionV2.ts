@@ -27,6 +27,12 @@ import { aliasV2 } from "../contracts/create.schema.ts";
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
     copyFromContextMiddleware(`call.user.territory_id`, "territory_id", false),
   ],
+  apiRoute: {
+    path: "/v2/exports",
+    action: "export:createVersionTwo",
+    method: "POST",
+    successHttpCode: 201,
+  },
 })
 export class CreateActionV2 extends AbstractAction {
   constructor(private kernel: KernelInterfaceResolver) {

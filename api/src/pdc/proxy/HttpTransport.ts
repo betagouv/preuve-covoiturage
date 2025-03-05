@@ -308,62 +308,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerExportRoutes(): void {
-    /**
-     * Export trips from a V2 payload to a V3 output file.
-     *
-     * The V2 way to handle exports is done throught the /rpc route calling
-     * the trip:export method.
-     *
-     * @deprecated This should be removed when the dashboard is updated.
-     */
-    this.app.post(
-      "/v2/exports",
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req: Request, res: Response) => {
-        const user = get(req, "session.user", {});
-        const action = `export:createVersionTwo`;
-        const response = await this.kernel.handle(
-          createRPCPayload(action, req.body, user, { req }),
-        );
-        this.send(res, response);
-      }),
-    );
-
-    const routes: Array<RouteParams> = [
-      {
-        path: "/exports",
-        action: "export:createVersionThree",
-        method: "POST",
-        successHttpCode: 201,
-      },
-      {
-        path: "/exports",
-        action: "export:list",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid",
-        action: "export:get",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid/status",
-        action: "export:status",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid/attachment",
-        action: "export:download",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid",
-        action: "export:delete",
-        method: "DELETE",
-      },
-    ];
-    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerCeeRoutes(): void {
@@ -371,11 +316,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerSimulationRoutes(): void {
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/policies/simulate",
-      action: "campaign:simulateOnFuture",
-      method: "POST",
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
     this.app.post(
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
