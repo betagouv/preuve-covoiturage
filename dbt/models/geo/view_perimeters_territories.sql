@@ -6,7 +6,9 @@ SELECT DISTINCT
   a._id  AS territory_id,
   a.name AS l_territory
 FROM {{ source('territory','territories') }} AS a
-INNER JOIN {{ source('territory','territory_group') }} AS b ON a.company_id = b.company_id
+INNER JOIN
+  {{ source('territory','territory_group') }} AS b
+  ON a.company_id = b.company_id
 INNER JOIN
   {{ source('territory','territory_group_selector') }} AS c
   ON b._id = c.territory_group_id

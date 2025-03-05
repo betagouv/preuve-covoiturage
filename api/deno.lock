@@ -3851,6 +3851,7 @@
     "https://deno.land/x/bcrypt@v0.4.1/src/bcrypt/base64.ts": "b8266450a4f1eb6960f60f2f7986afc4dde6b45bd2d7ee7ba10789e67e17b9f7",
     "https://deno.land/x/bcrypt@v0.4.1/src/bcrypt/bcrypt.ts": "ec221648cc6453ea5e3803bc817c01157dada06aa6f7a0ba6b9f87aae32b21e2",
     "https://deno.land/x/bcrypt@v0.4.1/src/main.ts": "08d201b289c8d9c46f8839c69cd6625b213863db29775c7a200afc3b540e64f8",
+    "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts": "5a73bdfee9c9e622f47c9733d374b627dce52fb3ec1e74c8226698b3fc57ffac",
     "https://deno.land/x/grpc_basic@0.4.7/client.ts": "db2a754c42068800a95059af3272b894697725f2fcd2d3cf958cd00d37dc950a",
     "https://deno.land/x/grpc_basic@0.4.7/error.ts": "b2c4c17b2b1d3e7040db463b23a633ad6634865c8d4720e4fc7506718e87d3d6",
     "https://deno.land/x/grpc_basic@0.4.7/http2/conn.ts": "9188f139ff6fd83b79e43782f6469b0e4ca77c195814e48807216bdf86386e6b",
