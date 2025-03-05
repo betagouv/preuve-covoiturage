@@ -4,7 +4,6 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/m
 
 import { castToStatusEnum } from "@/pdc/providers/carpool/helpers/castStatus.ts";
 import { CarpoolStatusService } from "@/pdc/providers/carpool/providers/CarpoolStatusService.ts";
-import { parseRange, rangeIntersects } from "dep:semver";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/status.contract.ts";
 import { alias } from "../contracts/status.schema.ts";
 
@@ -45,12 +44,7 @@ export class StatusJourneyAction extends AbstractAction {
       ),
       anomaly_error_details: result.anomaly as any,
       terms_violation_details: result.terms.map((f) => f.label),
-      ...(rangeIntersects(
-          parseRange(">=3.2"),
-          parseRange(context.call?.api_version_range || "3.0"),
-        )
-        ? { journey_id: result.legacy_id }
-        : {}),
+      journey_id: result.legacy_id,
     };
   }
 }
