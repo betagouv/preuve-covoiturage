@@ -40,7 +40,6 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
   ],
   apiRoute: {
     path: "/exports",
-    action: "export:createVersionThree",
     method: "POST",
     successHttpCode: 201,
   },

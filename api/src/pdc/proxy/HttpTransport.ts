@@ -309,6 +309,27 @@ export class HttpTransport implements TransportInterface {
 
   private registerExportRoutes(): void {
     // Routes have been migrated to apiRoute annotations in the action handlers
+    /**
+     * Export trips from a V2 payload to a V3 output file.
+     *
+     * The V2 way to handle exports is done throught the /rpc route calling
+     * the trip:export method.
+     *
+     * @deprecated This should be removed when the dashboard is updated.
+     */
+    this.app.post(
+      "/v2/exports",
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req: Request, res: Response) => {
+        const user = get(req, "session.user", {});
+        const action = `export:createVersionTwo`;
+        const response = await this.kernel.handle(
+          createRPCPayload(action, req.body, user, { req }),
+        );
+        this.send(res, response);
+      }),
+    );
   }
 
   private registerCeeRoutes(): void {
