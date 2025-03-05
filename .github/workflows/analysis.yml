@@ -137,7 +137,7 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
 
-  e2e:
+  integration:
     needs: test
     name: Test integration
     runs-on: ubuntu-latest
