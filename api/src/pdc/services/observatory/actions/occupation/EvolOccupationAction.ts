@@ -19,6 +19,25 @@ export type ResultInterface = {
     "validate",
     EvolOccupation,
   ]],
+  apiRoute: {
+    path: "/observatory/evol-occupation",
+    action: "observatory:getEvolOccupation",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class EvolOccupationAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {

@@ -595,47 +595,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCertificateRoutes(): void {
-    /**
-     * v3 Public route for operators to generate a certificate
-     * based on params (identity, start date, end date, ...)
-     * - accessible with an application token
-     * - generate a certificate to be printed when calling /certificates/{uuid}/attachment
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates",
-      action: "certificate:create",
-      method: "POST",
-      successHttpCode: 201,
-    });
-
-    /**
-     * v3 Download PDF of the certificate
-     * - accessible with an application token
-     * - print a PDF returned back to the caller
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates/:uuid/attachment",
-      action: "certificate:download",
-      method: "POST",
-      async responseFn(response, result) {
-        const { headers, body } = result as DownloadCertificateResultInterface;
-        for (const header of Object.keys(headers)) {
-          response.set(header, headers[header]);
-        }
-        response.send(body);
-      },
-    });
-
-    /**
-     * v3 Public route to retrieve a certificate
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates/:uuid",
-      action: "certificate:find",
-      method: "GET",
-      rpcAnswerOnFailure: true,
-      rpcAnswerOnSuccess: true,
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerAfterAllHandlers(): void {
@@ -703,92 +663,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    const routes: Array<RouteParams> = [
-      {
-        path: "/observatory/keyfigures",
-        action: "observatory:getKeyfigures",
-        method: "GET",
-      },
-      {
-        path: "/observatory/flux",
-        action: "observatory:getFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/evol-flux",
-        action: "observatory:getEvolFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/best-flux",
-        action: "observatory:getBestFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/occupation",
-        action: "observatory:getOccupation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/evol-occupation",
-        action: "observatory:getEvolOccupation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/best-territories",
-        action: "observatory:getBestTerritories",
-        method: "GET",
-      },
-      {
-        path: "/observatory/journeys-by-hours",
-        action: "observatory:journeysByHours",
-        method: "GET",
-      },
-      {
-        path: "/observatory/journeys-by-distances",
-        action: "observatory:journeysByDistances",
-        method: "GET",
-      },
-      {
-        path: "/observatory/location",
-        action: "observatory:getLocation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/aires-covoiturage",
-        action: "observatory:airesCovoiturage",
-        method: "GET",
-      },
-      {
-        path: "/observatory/campaigns",
-        action: "observatory:campaigns",
-        method: "GET",
-      },
-      {
-        path: "/observatory/incentive",
-        action: "observatory:getIncentive",
-        method: "GET",
-      },
-    ];
-    routes.map((c) =>
-      registerExpressRoute(this.app, this.kernel, {
-        ...c,
-        actionContextFn: async (req) => {
-          return {
-            channel: {
-              service: "proxy",
-              transport: "http",
-            },
-            call: {
-              user: {
-                permissions: ["common.observatory.stats"],
-              },
-              api_version_range: "v3",
-            },
-          } as ContextType;
-        },
-      })
-    );
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   /**

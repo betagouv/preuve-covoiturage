@@ -41,6 +41,25 @@ export type ResultInterface = {
     "validate",
     IncentiveCampaigns,
   ]],
+  apiRoute: {
+    path: "/observatory/campaigns",
+    action: "observatory:campaigns",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class CampaignsAction extends AbstractAction {
   constructor(

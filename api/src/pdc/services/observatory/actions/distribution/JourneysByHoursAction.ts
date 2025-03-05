@@ -24,6 +24,25 @@ export type ResultInterface = {
     "validate",
     JourneysByHours,
   ]],
+  apiRoute: {
+    path: "/observatory/journeys-by-hours",
+    action: "observatory:journeysByHours",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class JourneysByHoursAction extends AbstractAction {
   constructor(private repository: DistributionRepositoryInterfaceResolver) {

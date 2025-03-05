@@ -22,6 +22,25 @@ export type ResultInterface = {
     "validate",
     JourneysByDistances,
   ]],
+  apiRoute: {
+    path: "/observatory/journeys-by-distances",
+    action: "observatory:journeysByDistances",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class JourneysByDistancesAction extends AbstractAction {
   constructor(private repository: DistributionRepositoryInterfaceResolver) {

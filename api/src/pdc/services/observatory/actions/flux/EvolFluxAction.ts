@@ -20,6 +20,25 @@ export type ResultInterface = {
     "validate",
     EvolFlux,
   ]],
+  apiRoute: {
+    path: "/observatory/evol-flux",
+    action: "observatory:getEvolFlux",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class EvolFluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {

@@ -33,6 +33,12 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
     channelServiceWhitelistMiddleware("proxy"),
     ["validate", alias],
   ],
+  apiRoute: {
+    path: "/certificates",
+    action: "certificate:create",
+    method: "POST",
+    successHttpCode: 201,
+  },
 })
 export class CreateCertificateAction extends AbstractAction {
   private findOperator: FindOperatorInterface;

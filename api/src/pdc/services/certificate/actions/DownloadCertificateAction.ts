@@ -31,6 +31,18 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
     channelServiceWhitelistMiddleware("proxy"),
     ["validate", alias],
   ],
+  apiRoute: {
+    path: "/certificates/:uuid/attachment",
+    action: "certificate:download",
+    method: "POST",
+    async responseFn(response, result) {
+      const { headers, body } = result as DownloadCertificateResultInterface;
+      for (const header of Object.keys(headers)) {
+        response.set(header, headers[header]);
+      }
+      response.send(body);
+    },
+  },
 })
 export class DownloadCertificateAction extends AbstractAction {
   constructor(

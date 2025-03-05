@@ -18,6 +18,25 @@ export type ResultInterface = {
     "validate",
     BestFlux,
   ]],
+  apiRoute: {
+    path: "/observatory/best-flux",
+    action: "observatory:getBestFlux",
+    method: "GET",
+    actionContextFn: async (req) => {
+      return {
+        channel: {
+          service: "proxy",
+          transport: "http",
+        },
+        call: {
+          user: {
+            permissions: ["common.observatory.stats"],
+          },
+          api_version_range: "v3",
+        },
+      } as ContextType;
+    },
+  },
 })
 export class BestFluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {

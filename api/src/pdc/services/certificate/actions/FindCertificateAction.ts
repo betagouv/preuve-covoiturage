@@ -12,6 +12,13 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
     channelServiceWhitelistMiddleware("proxy"),
     ["validate", alias],
   ],
+  apiRoute: {
+    path: "/certificates/:uuid",
+    action: "certificate:find",
+    method: "GET",
+    rpcAnswerOnFailure: true,
+    rpcAnswerOnSuccess: true,
+  },
 })
 export class FindCertificateAction extends AbstractAction {
   constructor(
