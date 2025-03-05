@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { EvolOccupation } from "@/pdc/services/observatory/dto/occupation/EvolOccupation.ts";
 import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
 export type ResultInterface = {
@@ -15,10 +14,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getEvolOccupation",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     EvolOccupation,
   ]],
+  apiRoute: {
+    path: "/observatory/evol-occupation",
+    method: "GET",
+  },
 })
 export class EvolOccupationAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {

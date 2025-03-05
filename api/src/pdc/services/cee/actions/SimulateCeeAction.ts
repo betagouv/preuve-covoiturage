@@ -17,6 +17,16 @@ import {
 @handler({
   ...handlerConfig,
   middlewares: [["validate", alias]],
+  apiRoute: {
+    path: "/policies/cee/simulate",
+    method: "POST",
+    successHttpCode: 200,
+    rateLimiter: {
+      key: "rl-cee",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+  },
 })
 export class SimulateCeeAction extends AbstractAction {
   constructor(

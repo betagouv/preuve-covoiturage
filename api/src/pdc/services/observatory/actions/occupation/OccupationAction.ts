@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Occupation } from "@/pdc/services/observatory/dto/occupation/Occupation.ts";
 import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
 import type { Feature } from "dep:turf-helpers";
@@ -16,10 +15,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getOccupation",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     Occupation,
   ]],
+  apiRoute: {
+    path: "/observatory/occupation",
+    method: "GET",
+  },
 })
 export class OccupationAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {

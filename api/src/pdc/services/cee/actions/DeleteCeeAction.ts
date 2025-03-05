@@ -11,6 +11,16 @@ import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 @handler({
   ...handlerConfig,
   middlewares: [["validate", alias]],
+  apiRoute: {
+    path: "/policies/cee/:uuid",
+    method: "DELETE",
+    successHttpCode: 204,
+    rateLimiter: {
+      key: "rl-cee",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+  },
 })
 export class DeleteCeeAction extends AbstractAction {
   constructor(

@@ -11,6 +11,28 @@ import { alias } from "@/pdc/services/geo/contracts/getRouteMeta.schema.ts";
     "validate",
     alias,
   ]],
+  apiRoute: {
+    path: "/geo/route",
+    method: "GET",
+    rateLimiter: {
+      key: "rl-acquisition-check",
+      limit: 2_000,
+      windowMinute: 1,
+    },
+    async actionParamsFn(req) {
+      const q = { ...req.query };
+      q.start = {
+        lat: parseFloat(q.start?.lat),
+        lon: parseFloat(q.start?.lon),
+      };
+      q.end = {
+        lat: parseFloat(q.end?.lat),
+        lon: parseFloat(q.end?.lon),
+      };
+      return q;
+    },
+    rpcAnswerOnFailure: true,
+  },
 })
 export class GetRouteMetaAction extends AbstractAction {
   constructor(private provider: GeoProviderInterfaceResolver) {

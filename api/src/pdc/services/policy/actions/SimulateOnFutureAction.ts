@@ -23,6 +23,11 @@ import {
     }),
     ["validate", alias],
   ],
+  apiRoute: {
+    path: "/policies/simulate",
+    action: "campaign:simulateOnFuture",
+    method: "POST",
+  },
 })
 export class SimulateOnFutureAction extends AbstractAction {
   constructor(

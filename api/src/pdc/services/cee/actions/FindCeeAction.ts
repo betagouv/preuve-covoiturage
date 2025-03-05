@@ -14,6 +14,16 @@ import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 @handler({
   ...handlerConfig,
   middlewares: [["validate", alias]],
+  apiRoute: {
+    path: "/policies/cee/:uuid",
+    method: "GET",
+    successHttpCode: 200,
+    rateLimiter: {
+      key: "rl-cee",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+  },
 })
 export class FindCeeAction extends AbstractAction {
   protected signatory: ((message: string) => Promise<string>) | undefined;

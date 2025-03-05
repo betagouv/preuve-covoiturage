@@ -37,6 +37,16 @@ import {
 @handler({
   ...handlerConfig,
   middlewares: [["validate", alias]],
+  apiRoute: {
+    path: "/policies/cee",
+    method: "POST",
+    successHttpCode: 201,
+    rateLimiter: {
+      key: "rl-cee",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+  },
 })
 export class RegisterCeeAction extends AbstractAction {
   readonly timeConstraint: TimeRangeConstraint;
