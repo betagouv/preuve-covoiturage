@@ -367,75 +367,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCeeRoutes(): void {
-    const routes: Array<RouteParams> = [
-      {
-        path: "/policies/cee",
-        action: registerCeeSignature,
-        method: "POST",
-        successHttpCode: 201,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/simulate",
-        action: simulateCeeSignature,
-        method: "POST",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import",
-        action: importCeeSignature,
-        method: "POST",
-        successHttpCode: 201,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import/identity",
-        action: importIdentityCeeSignature,
-        method: "POST",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/:uuid",
-        action: findCeeSignature,
-        method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/:uuid",
-        action: deleteCeeSignature,
-        method: "DELETE",
-        successHttpCode: 204,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-    ];
-    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerSimulationRoutes(): void {
@@ -476,53 +408,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/route",
-      action: "geo:getRouteMeta",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      async actionParamsFn(req) {
-        const q = { ...req.query };
-        q.start = {
-          lat: parseFloat(q.start?.lat),
-          lon: parseFloat(q.start?.lon),
-        };
-        q.end = {
-          lat: parseFloat(q.end?.lat),
-          lon: parseFloat(q.end?.lon),
-        };
-        return q;
-      },
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/point/by_address",
-      action: "geo:getPointByAddress",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/point/by_insee",
-      action: "geo:getPointByCode",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnFailure: true,
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   /**

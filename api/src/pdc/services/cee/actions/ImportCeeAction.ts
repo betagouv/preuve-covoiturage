@@ -14,6 +14,17 @@ import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 @handler({
   ...handlerConfig,
   middlewares: [["validate", alias]],
+  apiRoute: {
+    path: "/policies/cee/import",
+    action: importCeeSignature,
+    method: "POST",
+    successHttpCode: 201,
+    rateLimiter: {
+      key: "rl-cee",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+  },
 })
 export class ImportCeeAction extends AbstractAction {
   constructor(protected ceeRepository: CeeRepositoryProviderInterfaceResolver) {
