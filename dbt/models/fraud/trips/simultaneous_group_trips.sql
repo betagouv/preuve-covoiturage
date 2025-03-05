@@ -39,7 +39,7 @@ with incentives as (
           from {{ this }}
         )
       {% else %}
-              and c.start_datetime >= now() - interval '1 year'
+        and c.start_datetime >= now() - interval '1 year'
       {% endif %}
   group by 1
 ),
@@ -103,8 +103,8 @@ groups as (
       c.start_datetime
       >= (select date_trunc('week', max(start_datetime)) from {{ this }})
   {% else %}
-            where c.start_datetime >= now() - interval '1 year'
-        {% endif %}
+    where c.start_datetime >= now() - interval '1 year'
+  {% endif %}
   group by
     1,
     2,

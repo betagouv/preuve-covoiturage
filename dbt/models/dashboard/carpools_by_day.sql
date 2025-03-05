@@ -1,4 +1,5 @@
-{{ config(
+{{ 
+  config(
     materialized='incremental',
     unique_key=['from', 'to', 'start_date', 'operator_id'],
     post_hook=[
