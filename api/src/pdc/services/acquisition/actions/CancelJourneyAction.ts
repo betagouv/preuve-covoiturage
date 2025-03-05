@@ -14,6 +14,18 @@ import { alias } from "../contracts/cancel.schema.ts";
       operator: "operator.acquisition.cancel",
     }),
   ],
+  apiRoute: {
+    path: "/journeys/:operator_journey_id/cancel",
+    action: "acquisition:cancel",
+    method: "POST",
+    rateLimiter: {
+      key: "rl-acquisition",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: true,
+    rpcAnswerOnFailure: true,
+  },
 })
 export class CancelJourneyAction extends AbstractAction {
   constructor(

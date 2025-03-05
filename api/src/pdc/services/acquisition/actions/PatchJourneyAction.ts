@@ -13,6 +13,18 @@ import { alias } from "../contracts/patch.schema.ts";
     ["validate", alias],
     hasPermissionMiddleware("operator.acquisition.create"),
   ],
+  apiRoute: {
+    path: "/journeys/:operator_journey_id",
+    action: "acquisition:patch",
+    method: "PATCH",
+    rateLimiter: {
+      key: "rl-acquisition-check",
+      limit: 2_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: false,
+    rpcAnswerOnFailure: true,
+  },
 })
 export class PatchJourneyAction extends AbstractAction {
   constructor(

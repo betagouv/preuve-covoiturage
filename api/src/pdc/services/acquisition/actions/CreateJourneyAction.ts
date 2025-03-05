@@ -23,6 +23,19 @@ import { v3alias } from "../contracts/create.schema.ts";
       operator: "operator.acquisition.create",
     }),
   ],
+  apiRoute: {
+    path: "/journeys",
+    action: "acquisition:create",
+    method: "POST",
+    successHttpCode: 201,
+    rateLimiter: {
+      key: "rl-acquisition",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: true,
+    rpcAnswerOnFailure: true,
+  },
 })
 export class CreateJourneyAction extends AbstractAction {
   constructor(

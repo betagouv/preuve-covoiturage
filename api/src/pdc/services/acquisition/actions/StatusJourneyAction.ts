@@ -16,6 +16,18 @@ import { alias } from "../contracts/status.schema.ts";
       operator: "operator.acquisition.status",
     }),
   ],
+  apiRoute: {
+    path: "/journeys/:operator_journey_id",
+    action: "acquisition:status",
+    method: "GET",
+    rateLimiter: {
+      key: "rl-acquisition-check",
+      limit: 2_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: false,
+    rpcAnswerOnFailure: true,
+  },
 })
 export class StatusJourneyAction extends AbstractAction {
   constructor(
