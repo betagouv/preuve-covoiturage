@@ -16,18 +16,10 @@ staticClients:
 # @doc https://dexidp.io/docs/connectors/local/
 enablePasswordDB: true
 staticPasswords:
-  # end-to-end test user
-  # - email: $E2E_EMAIL
-    # bcrypt hash of the string "password": $(echo password | htpasswd -BinC 10 admin | cut -d: -f2)
-    # hash: "$2y$10$oT0AQhg.//9Xos6l9PiNVuMSuiCoqfTFWNyJfhiOtPgxEJM8IJ0Ba"
-    # {role: admin, username: admin, userID: admin}:{operator_id}
-    # username: $E2E_USERNAME
-    # random UUID
-    # userID: $E2E_USERID
-  - email: "admin@example.com"
-    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
-    username: "admin"
-    userID: "d3f4b3b3-0b3b-4b3b-8b3b-3b3b3b3b3b3b"
+  - email: e2e@example.com
+    hash: "$2y$10$KiXzksQl4fZ0THNe6grMAehfxMvADMWd3aaGTIR7aUFHmJD6oxuR2"
+    username: "application:1"
+    userID: "2643c251-685f-419e-8788-74f23ce1345d"
 
 storage:
   type: postgres
