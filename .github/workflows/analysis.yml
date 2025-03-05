@@ -167,5 +167,5 @@ jobs:
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
           APP_AUTH_CLIENT_ID: secret
           APP_AUTH_CLIENT_SECRET: secret
-        run: just ci_test_integration
+        run: just cache && just ci_test_integration
         working-directory: api
