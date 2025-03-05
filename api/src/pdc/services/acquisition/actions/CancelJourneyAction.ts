@@ -16,7 +16,6 @@ import { alias } from "../contracts/cancel.schema.ts";
   ],
   apiRoute: {
     path: "/journeys/:operator_journey_id/cancel",
-    action: "acquisition:cancel",
     method: "POST",
     rateLimiter: {
       key: "rl-acquisition",

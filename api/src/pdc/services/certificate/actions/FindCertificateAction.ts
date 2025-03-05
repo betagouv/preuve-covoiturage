@@ -14,7 +14,6 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
   ],
   apiRoute: {
     path: "/certificates/:uuid",
-    action: "certificate:find",
     method: "GET",
     rpcAnswerOnFailure: true,
     rpcAnswerOnSuccess: true,

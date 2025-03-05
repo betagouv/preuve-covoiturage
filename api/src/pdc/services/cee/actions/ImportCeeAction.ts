@@ -16,7 +16,6 @@ import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
   middlewares: [["validate", alias]],
   apiRoute: {
     path: "/policies/cee/import",
-    action: importCeeSignature,
     method: "POST",
     successHttpCode: 201,
     rateLimiter: {

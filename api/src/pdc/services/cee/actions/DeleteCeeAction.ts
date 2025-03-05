@@ -13,7 +13,6 @@ import { CeeRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
   middlewares: [["validate", alias]],
   apiRoute: {
     path: "/policies/cee/:uuid",
-    action: deleteCeeSignature,
     method: "DELETE",
     successHttpCode: 204,
     rateLimiter: {

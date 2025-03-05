@@ -19,7 +19,6 @@ import { alias } from "../contracts/list.schema.ts";
   ],
   apiRoute: {
     path: "/journeys",
-    action: "acquisition:list",
     method: "GET",
     rateLimiter: {
       key: "rl-acquisition-check",

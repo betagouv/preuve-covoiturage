@@ -15,7 +15,6 @@ import { alias } from "../contracts/patch.schema.ts";
   ],
   apiRoute: {
     path: "/journeys/:operator_journey_id",
-    action: "acquisition:patch",
     method: "PATCH",
     rateLimiter: {
       key: "rl-acquisition-check",

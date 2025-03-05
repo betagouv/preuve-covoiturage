@@ -13,7 +13,6 @@ import { alias } from "@/pdc/services/geo/contracts/getRouteMeta.schema.ts";
   ]],
   apiRoute: {
     path: "/geo/route",
-    action: "geo:getRouteMeta",
     method: "GET",
     rateLimiter: {
       key: "rl-acquisition-check",

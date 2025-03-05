@@ -15,11 +15,6 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
       registry: "registry.certificate.list",
     }),
   ],
-  apiRoute: {
-    path: "/certificates",
-    action: "certificate:list",
-    method: "GET",
-  },
 })
 export class ListCertificateAction extends AbstractAction {
   constructor(

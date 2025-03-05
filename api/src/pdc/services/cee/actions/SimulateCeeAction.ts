@@ -19,7 +19,6 @@ import {
   middlewares: [["validate", alias]],
   apiRoute: {
     path: "/policies/cee/simulate",
-    action: simulateCeeSignature,
     method: "POST",
     successHttpCode: 200,
     rateLimiter: {

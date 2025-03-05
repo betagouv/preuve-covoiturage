@@ -17,7 +17,6 @@ import { alias } from "@/pdc/services/geo/contracts/getPointByAddress.schema.ts"
   ]],
   apiRoute: {
     path: "/geo/point/by_address",
-    action: "geo:getPointByAddress",
     method: "GET",
     rateLimiter: {
       key: "rl-acquisition-check",

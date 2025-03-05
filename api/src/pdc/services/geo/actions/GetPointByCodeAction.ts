@@ -17,7 +17,6 @@ import { alias } from "@/pdc/services/geo/contracts/getPointByCode.schema.ts";
   ]],
   apiRoute: {
     path: "/geo/point/by_insee",
-    action: "geo:getPointByCode",
     method: "GET",
     rateLimiter: {
       key: "rl-acquisition-check",

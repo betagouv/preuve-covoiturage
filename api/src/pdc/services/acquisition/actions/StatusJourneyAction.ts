@@ -18,7 +18,6 @@ import { alias } from "../contracts/status.schema.ts";
   ],
   apiRoute: {
     path: "/journeys/:operator_journey_id",
-    action: "acquisition:status",
     method: "GET",
     rateLimiter: {
       key: "rl-acquisition-check",

@@ -33,7 +33,6 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
   ],
   apiRoute: {
     path: "/certificates/:uuid/attachment",
-    action: "certificate:download",
     method: "POST",
     async responseFn(response, result) {
       const { headers, body } = result as DownloadCertificateResultInterface;

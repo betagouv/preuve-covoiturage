@@ -39,7 +39,6 @@ import {
   middlewares: [["validate", alias]],
   apiRoute: {
     path: "/policies/cee",
-    action: registerCeeSignature,
     method: "POST",
     successHttpCode: 201,
     rateLimiter: {

@@ -35,7 +35,6 @@ import { CertificateRepositoryProviderInterfaceResolver } from "../interfaces/Ce
   ],
   apiRoute: {
     path: "/certificates",
-    action: "certificate:create",
     method: "POST",
     successHttpCode: 201,
   },

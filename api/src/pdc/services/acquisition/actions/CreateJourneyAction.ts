@@ -25,7 +25,6 @@ import { v3alias } from "../contracts/create.schema.ts";
   ],
   apiRoute: {
     path: "/journeys",
-    action: "acquisition:create",
     method: "POST",
     successHttpCode: 201,
     rateLimiter: {
