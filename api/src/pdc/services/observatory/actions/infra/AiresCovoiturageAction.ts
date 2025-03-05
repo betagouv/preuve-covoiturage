@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { AiresCovoiturage } from "@/pdc/services/observatory/dto/infra/AiresCovoiturage.ts";
 import type { Feature } from "dep:turf-helpers";
 import { InfraRepositoryInterfaceResolver } from "../../interfaces/InfraRepositoryProviderInterface.ts";
@@ -22,7 +21,7 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "airesCovoiturage",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     AiresCovoiturage,
   ]],
@@ -30,20 +29,6 @@ export type ResultInterface = {
     path: "/observatory/aires-covoiturage",
     action: "observatory:airesCovoiturage",
     method: "GET",
-    actionContextFn: async (req) => {
-      return {
-        channel: {
-          service: "proxy",
-          transport: "http",
-        },
-        call: {
-          user: {
-            permissions: ["common.observatory.stats"],
-          },
-          api_version_range: "v3",
-        },
-      } as ContextType;
-    },
   },
 })
 export class AiresCovoiturageAction extends AbstractAction {

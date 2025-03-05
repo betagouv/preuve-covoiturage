@@ -1,7 +1,6 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { JourneysByHours } from "@/pdc/services/observatory/dto/distribution/JourneysByHours.ts";
 import { DistributionRepositoryInterfaceResolver } from "../../interfaces/DistributionRepositoryProviderInterface.ts";
@@ -20,7 +19,7 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "journeysByHours",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     JourneysByHours,
   ]],
@@ -28,20 +27,6 @@ export type ResultInterface = {
     path: "/observatory/journeys-by-hours",
     action: "observatory:journeysByHours",
     method: "GET",
-    actionContextFn: async (req) => {
-      return {
-        channel: {
-          service: "proxy",
-          transport: "http",
-        },
-        call: {
-          user: {
-            permissions: ["common.observatory.stats"],
-          },
-          api_version_range: "v3",
-        },
-      } as ContextType;
-    },
   },
 })
 export class JourneysByHoursAction extends AbstractAction {

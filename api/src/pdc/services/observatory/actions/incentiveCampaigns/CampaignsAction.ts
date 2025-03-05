@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { IncentiveCampaigns } from "@/pdc/services/observatory/dto/IncentiveCampaigns.ts";
 import type { Feature } from "dep:turf-helpers";
 import { IncentiveCampaignsRepositoryInterfaceResolver } from "../../interfaces/IncentiveCampaignsRepositoryProviderInterface.ts";
@@ -37,7 +36,7 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "campaigns",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     IncentiveCampaigns,
   ]],
@@ -45,20 +44,6 @@ export type ResultInterface = {
     path: "/observatory/campaigns",
     action: "observatory:campaigns",
     method: "GET",
-    actionContextFn: async (req) => {
-      return {
-        channel: {
-          service: "proxy",
-          transport: "http",
-        },
-        call: {
-          user: {
-            permissions: ["common.observatory.stats"],
-          },
-          api_version_range: "v3",
-        },
-      } as ContextType;
-    },
   },
 })
 export class CampaignsAction extends AbstractAction {
