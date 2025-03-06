@@ -48,7 +48,6 @@ export const GrandChatellerault2025: PolicyHandlerStaticInterface = class extend
       operators: [
         OperatorsEnum.BLABLACAR_DAILY,
         OperatorsEnum.KAROS,
-        OperatorsEnum.KLAXIT,
         OperatorsEnum.MOBICOOP,
       ],
     },
