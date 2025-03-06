@@ -1,7 +1,6 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { Infer } from "@/lib/superstruct/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { KeyFigures } from "@/pdc/services/observatory/dto/KeyFigures.ts";
 import { KeyfiguresRepositoryInterfaceResolver } from "../../interfaces/KeyfiguresRepositoryProviderInterface.ts";
@@ -23,10 +22,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getKeyfigures",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     KeyFigures,
   ]],
+  apiRoute: {
+    path: "/observatory/keyfigures",
+    method: "GET",
+  },
 })
 export class KeyfiguresAction extends AbstractAction {
   constructor(private repository: KeyfiguresRepositoryInterfaceResolver) {

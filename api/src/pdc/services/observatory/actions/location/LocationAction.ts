@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Location } from "@/pdc/services/observatory/dto/Location.ts";
 import { LocationRepositoryInterfaceResolver } from "../../interfaces/LocationRepositoryProviderInterface.ts";
 export type ResultInterface = {
@@ -11,10 +10,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getLocation",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     Location,
   ]],
+  apiRoute: {
+    path: "/observatory/location",
+    method: "GET",
+  },
 })
 export class LocationAction extends AbstractAction {
   constructor(private repository: LocationRepositoryInterfaceResolver) {

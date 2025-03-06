@@ -15,6 +15,16 @@ import { alias } from "@/pdc/services/geo/contracts/getPointByCode.schema.ts";
     "validate",
     alias,
   ]],
+  apiRoute: {
+    path: "/geo/point/by_insee",
+    method: "GET",
+    rateLimiter: {
+      key: "rl-acquisition-check",
+      limit: 2_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnFailure: true,
+  },
 })
 export class GetPointByCodeAction extends AbstractAction {
   constructor(private provider: GeoProviderInterfaceResolver) {

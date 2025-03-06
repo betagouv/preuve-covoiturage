@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { BestTerritories } from "@/pdc/services/observatory/dto/occupation/BestTerritories.ts";
 import { OccupationRepositoryInterfaceResolver } from "@/pdc/services/observatory/interfaces/OccupationRepositoryProviderInterface.ts";
 export type ResultInterface = {
@@ -12,10 +11,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getBestTerritories",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     BestTerritories,
   ]],
+  apiRoute: {
+    path: "/observatory/best-territories",
+    method: "GET",
+  },
 })
 export class BestTerritoriesAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {
