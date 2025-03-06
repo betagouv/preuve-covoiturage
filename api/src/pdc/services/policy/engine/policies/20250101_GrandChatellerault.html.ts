@@ -24,7 +24,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
   
   <p>
     La campagne est éligible aux opérateurs de covoiturage
-    BlaBlaCar Daily, Klaxit, Karos et Mobicoop proposant des preuves de classe <b>C</b>
+    BlaBlaCar Daily, Karos et Mobicoop proposant des preuves de classe <b>C</b>
   </p>
 
 </div>`;
