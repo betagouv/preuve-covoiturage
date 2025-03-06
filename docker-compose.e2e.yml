@@ -48,6 +48,7 @@ services:
       OIDC_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
       OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://auth.covoiturage.test/callback}
+
     ports:
       - 5557:5557
       - 8090:8080 

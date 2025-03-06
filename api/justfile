@@ -24,14 +24,14 @@ test *pattern:
 start *services="s3 postgres redis mailer":
  just dc up -d {{ services }}
 
+# Stop docker services
+stop keep_volume="true":
+  just dc down {{ if keep_volume == "true" { "" } else { "-v" } }}
+
 # Start docker services for e2e
 [private]
 start_e2e *services="s3 postgres redis mailer dex":
  just dc_e2e up -d {{ services }}
-
-# Stop docker services
-stop keep_volume="true":
-  just dc down {{ if keep_volume == "true" { "" } else { "-v" } }}
 
 # Stop docker services for e2e
 [private]
