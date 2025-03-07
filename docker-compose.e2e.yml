@@ -127,7 +127,7 @@ services:
       APP_JWT_SECRET: thisIsASecret0000
       APP_MAIL_SMTP_URL: smtp://mailer:1025
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
+      APP_RATE_LIMIT_MAX_FACTOR: '10000'
       APP_REDIS_URL: redis://redis:6379/1
       APP_SESSION_SECRET: thisIsAlsoASecret0000
       APP_USER_REGISTRATION_ENABLED: 'false'
