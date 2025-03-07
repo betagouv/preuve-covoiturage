@@ -1,5 +1,5 @@
 /**
- * Test the CreateActionV2 and CreateActionV3 classes with proper payloads
+ * Test the CreateActionV3 classes with proper payloads
  * Middlewares:
  * - permission
  * - castToArray ?
@@ -81,6 +81,7 @@ describe("CreateAction V3", () => {
 
   type UserWithId = User & { _id: number };
   const adminUser: UserWithId = { _id: 1, ...users[0] };
+  const maxiCovoitAdmin : UserWithId = { _id: 4, ...users[3] };
 
   /**
    * - boot up postgresql connection
@@ -108,7 +109,7 @@ describe("CreateAction V3", () => {
   // TESTS
   // ---------------------------------------------------------------------------
 
-  it("should create an export with a creator as recipient", async () => {
+  it("should create an export with a creator as recipient for admin", async () => {
     const start_at = "2024-01-01T00:00:00+0100";
     const end_at = "2024-01-02T00:00:00+0100";
 
@@ -120,7 +121,6 @@ describe("CreateAction V3", () => {
       start_at,
       end_at,
       created_by: adminUser._id,
-      operator_id: [1],
     };
 
     // UUID is omitted as we have no way to predict it
@@ -154,7 +154,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should create an export with multiple recipients", async () => {
+  it("should create an export with multiple recipients for admin", async () => {
     const recipients: string[] = [
       faker.internet.email(),
       faker.internet.email(),
@@ -169,7 +169,6 @@ describe("CreateAction V3", () => {
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
       created_by: adminUser._id,
-      operator_id: [1],
       recipients,
     };
 
@@ -187,7 +186,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should fallback to created_by on empty recipients", async () => {
+  it("should fallback to created_by on empty recipients for admin", async () => {
     const recipients: string[] = [];
 
     const params: AJVParamsInterface<
@@ -198,7 +197,6 @@ describe("CreateAction V3", () => {
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
       created_by: adminUser._id,
-      operator_id: [1],
       recipients,
     };
 
@@ -214,7 +212,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should create a super-admin export (territory)", async () => {
+  it("should create a super-admin export for a territory", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -223,8 +221,9 @@ describe("CreateAction V3", () => {
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
       created_by: adminUser._id,
-      operator_id: [1],
     };
+
+    // TODO fix by inejcting all operator_id
 
     await assertHandler(
       kc,
@@ -237,7 +236,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should create a territory export", async () => {
+  it("should create a territory export for admin", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -246,7 +245,6 @@ describe("CreateAction V3", () => {
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
       created_by: adminUser._id,
-      operator_id: [1],
     };
 
     await assertHandler(
@@ -272,7 +270,7 @@ describe("CreateAction V3", () => {
     );
   });
 
-  it("should create an operator export", async () => {
+  it("should create an operator export as operator", async () => {
     const params: AJVParamsInterface<
       ParamsInterfaceV3,
       "start_at" | "end_at"
@@ -280,13 +278,12 @@ describe("CreateAction V3", () => {
       tz: "Europe/Paris",
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
-      created_by: adminUser._id,
-      operator_id: [1],
+      created_by: maxiCovoitAdmin._id,
     };
 
     await assertHandler(
       kc,
-      set(defaultContext, "call.user.operator_id", 2),
+      set(defaultContext, "call.user.operator_id", 1),
       handlerConfigV3,
       params,
       async (response: ResultInterfaceV3) => {
@@ -299,10 +296,8 @@ describe("CreateAction V3", () => {
 
         // assert that operator_id has been replaced by the operator's id
         // from the context (2).
-        assertEquals(last?.params.get().operator_id, [2]);
+        assertEquals(last?.params.get().operator_id, [1]);
       },
     );
   });
 });
-
-describe("CreateAction V2", () => {});
