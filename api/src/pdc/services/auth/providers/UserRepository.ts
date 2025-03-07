@@ -19,7 +19,8 @@ export class UserRepository {
         u.role,
         u.operator_id,
         u.territory_id,
-        COALESCE(o.siret, t.siret) as siret
+        COALESCE(o.siret, t.siret) as siret,
+        u._id
       FROM ${raw(this.table)} u
       LEFT JOIN ${raw(this.territoryTable)} t
         ON t._id = u.territory_id
