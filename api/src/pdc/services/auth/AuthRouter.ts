@@ -14,6 +14,14 @@ export class AuthRouter {
   ) {}
 
   register() {
+    this.app.use(asyncHandler(async (req: Request) => {
+      if (req.headers?.authorization) {
+        const token = req.headers?.authorization?.toString().replace("Bearer ", "");
+        const data = await this.oidcProvider.verifyToken(token);
+        req.session.user = data;
+      }
+    }));
+
     this.app.get("/auth/login", (req: Request, res: Response, _next: NextFunction) => {
       return res.redirect(this.oidcProvider.getLoginUrl());
     });
