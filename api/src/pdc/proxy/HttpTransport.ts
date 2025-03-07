@@ -101,7 +101,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCache();
     this.registerLegacyExportRoutes();
     this.registerNestedRoutes();
-    this.registerAuthRoutes();
+    this.registerLegacyAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
@@ -374,7 +374,7 @@ export class HttpTransport implements TransportInterface {
     // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
-  private registerAuthRoutes(): void {
+  private registerLegacyAuthRoutes(): void {
     /**
      * Log the user in based on email and password combination
      */
