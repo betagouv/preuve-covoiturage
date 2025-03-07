@@ -31,6 +31,7 @@ export class AuthRouter {
     );
 
     this.app.get("/auth/me", (req: express.Request, res: express.Response) => {
+      console.log(req);
       if (req.session.user) {
         return res.json(req.session.user);
       }
@@ -42,5 +43,9 @@ export class AuthRouter {
     // TODO : Add middleware to check the JWT -> ok : operator_id + role à mettre dans le context de l'appel du Kernel
     // Spec POST /auth/token (perdu dans les PR fermées sans être mergées)
     // https://github.com/betagouv/preuve-covoiturage/pull/2529
+
+    // ajouter un middleware global pour check
+    // si un token est envoyé en bearer et dans se cas
+    // on utilise le verifyToken pour remplir req.session
   }
 }
