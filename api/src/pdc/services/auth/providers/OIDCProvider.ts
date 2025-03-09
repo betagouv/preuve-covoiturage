@@ -9,11 +9,12 @@ import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
 import { encodeBase64 } from "dep:encoding";
-import { createRemoteJWKSet, jwtVerify, KeyLike } from "dep:jose";
+import { createRemoteJWKSet, jwtVerify } from "dep:jose";
 
 @provider()
-export class OidcProvider implements InitHookInterface {
-  protected JWKS: KeyLike | undefined;
+export class OIDCProvider implements InitHookInterface {
+  protected JWKS: ReturnType<typeof createRemoteJWKSet> | undefined;
+
   constructor(
     protected config: ConfigInterfaceResolver,
     // TODO : clean me after migration
@@ -138,7 +139,9 @@ export class OidcProvider implements InitHookInterface {
     try {
       const oldData = await this.verifyOldToken(token);
       return oldData;
-    } catch {}
+    } catch {
+      // noop
+    }
 
     const clientId = this.config.get("oidc.client_id");
     const authBaseUrl = this.config.get("oidc.base_url");
@@ -146,7 +149,9 @@ export class OidcProvider implements InitHookInterface {
       issuer: authBaseUrl,
       audience: clientId,
     });
+
     const [role, operator_id] = (payload.name || "").split(":");
+
     return {
       operator_id: parseInt(operator_id),
       role,
@@ -154,7 +159,7 @@ export class OidcProvider implements InitHookInterface {
     };
   }
 
-  async getToken(access_key: string, secret_key: string): Promise<string> {
+  async getToken(username: string, password: string): Promise<string> {
     const clientId = this.config.get("oidc.client_id");
     const clientSecret = this.config.get("oidc.client_secret");
     const authBaseUrl = this.config.get("oidc.base_url");
@@ -162,8 +167,8 @@ export class OidcProvider implements InitHookInterface {
     url.pathname = "/token";
     const form = new URLSearchParams();
     form.set("grant_type", "password");
-    form.set("username", access_key);
-    form.set("password", secret_key);
+    form.set("username", username);
+    form.set("password", password);
     form.set("scope", "openid email profile");
     const response = await fetch(url, {
       body: form.toString(),
