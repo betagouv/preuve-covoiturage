@@ -1,3 +1,5 @@
+import { env } from "./config.ts";
+
 export type HTTPResponse = {
   ok: boolean;
   status: number;
@@ -9,14 +11,24 @@ export type HTTPResponse = {
 };
 
 export class API {
-  private baseUrl = "http://localhost:8080"; // FIXME use env
+  private baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
   private accessToken: string | null = null;
+  private defaultUsername: string;
+  private defaultPassword: string;
 
   get token(): string | null {
     return this.accessToken;
   }
 
-  public async authenticate(username: string, password: string): Promise<void> {
+  constructor() {
+    this.defaultUsername = env("APIE2E_AUTH_USERNAME");
+    this.defaultPassword = env("APIE2E_AUTH_PASSWORD");
+  }
+
+  public async authenticate(username?: string, password?: string): Promise<void> {
+    username = username || this.defaultUsername;
+    password = password || this.defaultPassword;
+
     const response = await fetch(new URL("/auth/token", this.baseUrl), {
       method: "POST",
       headers: {

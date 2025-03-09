@@ -1,9 +1,10 @@
 import { expect } from "@std/expect";
 import { beforeEach, describe, it } from "@std/testing/bdd";
-import { API } from "../sdk/API.ts";
+import { API } from "../lib/API.ts";
+import { env } from "../lib/config.ts";
 
-const USER_EMAIL = "admin@example.com";
-const USER_PASSWORD = "password";
+const USER_EMAIL = env("APIE2E_AUTH_USERNAME");
+const USER_PASSWORD = env("APIE2E_AUTH_PASSWORD");
 
 describe("Unauthenticated smoke test", () => {
   const http = new API();

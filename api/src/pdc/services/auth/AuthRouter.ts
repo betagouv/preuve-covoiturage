@@ -63,15 +63,5 @@ export class AuthRouter {
         return res.status(201).json({ access_token });
       }),
     );
-
-    // TODO PROXY
-    // "/auth/token" -> oidcProvider/getToken(access_key, secret_key)
-    // TODO : Add middleware to check the JWT -> ok : operator_id + role à mettre dans le context de l'appel du Kernel
-    // Spec POST /auth/token (perdu dans les PR fermées sans être mergées)
-    // https://github.com/betagouv/preuve-covoiturage/pull/2529
-
-    // ajouter un middleware global pour check
-    // si un token est envoyé en bearer et dans se cas
-    // on utilise le verifyToken pour remplir req.session
   }
 }
