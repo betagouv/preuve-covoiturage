@@ -35,7 +35,7 @@ services:
 
   s3:
     image: minio/minio
-    environment: 
+    environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=admin789456123
     networks:
@@ -46,6 +46,33 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+
+  dex:
+    image: bitnami/dex:2
+    environment:
+      PG_DB: dev
+      PG_USERNAME: postgres
+      PG_PASSWORD: postgres
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PDC_URL: http://localhost:8080/auth/callback
+      PDC_CLIENT_ID: secret
+      PDC_CLIENT_SECRET: secret
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+      OIDC_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
+      OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://localhost:5557/callback}
+    ports:
+      - 5557:5557
+      - 8090:8090
+    networks:
+      - back
+    command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
+    volumes:
+      # specific config file is mapped here to /etc/dex/config.yaml
+      - ./docker/dex/config-local.yaml:/etc/dex/config.yaml:ro
+    depends_on:
+        - postgres
 
   api:
     build:

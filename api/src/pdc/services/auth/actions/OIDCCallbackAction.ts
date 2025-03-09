@@ -1,7 +1,7 @@
 import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { OidcCallback } from "../dto/OidcCallback.ts";
-import { OidcProvider } from "../providers/OidcProvider.ts";
+import { OIDCProvider } from "../providers/OIDCProvider.ts";
 import { UserRepository } from "../providers/UserRepository.ts";
 
 export type ResultInterface = {
@@ -19,16 +19,16 @@ export type ResultInterface = {
     ["validate", OidcCallback],
   ],
 })
-export class OidcCallbackAction extends AbstractAction {
+export class OIDCCallbackAction extends AbstractAction {
   constructor(
-    private oidcProvider: OidcProvider,
+    private oidcProvider: OIDCProvider,
     private userRepository: UserRepository,
     protected config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: OidcCallback): Promise<ResultInterface> {
+  public override async handle(params: OidcCallback): Promise<ResultInterface> {
     const token = await this.oidcProvider.getTokenFromCode(params.code);
     const info = await this.oidcProvider.getUserInfoFromToken(token);
     const user = await this.userRepository.findUserByEmail(info.email);
