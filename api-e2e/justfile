@@ -1,0 +1,10 @@
+test_flags := "--allow-net --allow-env"
+
+install:
+  deno install --frozen=true
+
+test:
+  deno test {{test_flags}}
+
+watch:
+  deno test {{test_flags}} --watch
