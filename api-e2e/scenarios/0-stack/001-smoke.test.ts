@@ -1,7 +1,7 @@
 import { expect } from "@std/expect";
 import { beforeEach, describe, it } from "@std/testing/bdd";
-import { API } from "../lib/API.ts";
-import { env } from "../lib/config.ts";
+import { API } from "../../lib/API.ts";
+import { env } from "../../lib/config.ts";
 
 const USER_EMAIL = env("APIE2E_AUTH_USERNAME");
 const USER_PASSWORD = env("APIE2E_AUTH_PASSWORD");
