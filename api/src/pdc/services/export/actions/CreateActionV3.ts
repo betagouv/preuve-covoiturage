@@ -53,10 +53,7 @@ export class CreateActionV3 extends AbstractAction {
     super();
   }
 
-  protected async handle(
-    params: ParamsInterfaceV3,
-    context: ContextType,
-  ): Promise<ResultInterfaceV3> {
+  protected override async handle(params: ParamsInterfaceV3, context: ContextType): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
     // make sure we have at least one recipient
     const emails = await this.recipientService.maybeAddCreator(
