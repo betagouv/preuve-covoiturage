@@ -13,7 +13,7 @@ export abstract class NameServiceInterfaceResolver {
   public get(config: Partial<Options>): string {
     throw new Error("Not implemented");
   }
-  public opendata(datetime: Date, tz?: string): string {
+  public datagouv(datetime: Date, tz?: string): string {
     throw new Error("Not implemented");
   }
 }
@@ -24,7 +24,7 @@ export abstract class NameServiceInterfaceResolver {
 export class NameService {
   protected options: Options = {
     uuid: "",
-    target: ExportTarget.OPENDATA,
+    target: ExportTarget.DATAGOUV,
     territory: null,
   };
 
@@ -52,7 +52,7 @@ export class NameService {
       .join("-");
   }
 
-  public opendata(datetime: Date, tz = defaultTimezone): string {
+  public datagouv(datetime: Date, tz = defaultTimezone): string {
     return toTzString(datetime, tz, "yyyy-MM");
   }
 }
