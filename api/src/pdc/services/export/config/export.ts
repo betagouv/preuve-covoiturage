@@ -132,7 +132,7 @@ export const fields: Fields<CarpoolListType> = [
  */
 export const filters: Array<FieldFilter<CarpoolListType>> = [
   {
-    target: ExportTarget.OPENDATA,
+    target: ExportTarget.DATAGOUV,
     exclusions: [
       "operator_trip_id",
       "operator_journey_id",
