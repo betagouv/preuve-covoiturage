@@ -37,7 +37,6 @@ jobs:
           cd app-front
           npm ci
           npm run build
-          cp -R out/_next out/dashboard_v2/_next
 
       - name: Deploy to bucket
         uses: jakejarvis/s3-sync-action@master
@@ -49,4 +48,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
           AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
           AWS_REGION: ${{ vars.BUCKET_REGION }}
-          SOURCE_DIR: public/out
+          SOURCE_DIR: app-front/out
