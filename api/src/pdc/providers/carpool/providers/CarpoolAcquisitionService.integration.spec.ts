@@ -10,8 +10,9 @@ import {
   describe,
   it,
   sinon as Sinon,
-  SinonSandbox,
+  SinonSandbox
 } from "@/dev_deps.ts";
+import { ConflictException } from '@/ilos/common/index.ts';
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
 import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
@@ -85,6 +86,46 @@ describe("CarpoolAcquisitionService", () => {
     assert(carpoolRepositoryL.register.calledOnce);
     assert(requestRepositoryL.save.calledOnce);
     assert(statusRepositoryL.saveAcquisitionStatus.calledOnce);
+
+    const r = await lookupRepository.findOne(
+      data.operator_id,
+      data.operator_journey_id,
+    );
+
+    const { _id, uuid, created_at, updated_at, ...carpool } = r || {};
+
+    assertObjectMatch(carpool, {
+      ...data,
+      fraud_status: "pending",
+      acquisition_status: "received",
+    });
+  });
+
+
+  it("Should throw conflict exception on existing carpool", async () => {
+    // Arrange
+    const carpoolRepositoryL = sinon.spy(carpoolRepository);
+    const requestRepositoryL = sinon.spy(requestRepository);
+    const statusRepositoryL = sinon.spy(statusRepository);
+
+    const service = getService({
+      carpoolRepository: carpoolRepositoryL,
+      requestRepository: requestRepositoryL,
+      statusRepository: statusRepositoryL,
+    });
+
+    const data = { ...insertableCarpool };
+
+    // Act & Assert
+    await assertRejects(
+      () => service.registerRequest({ ...data, api_version: "3" }),
+        ConflictException,
+      );
+
+    // Assert
+    assert(carpoolRepositoryL.register.calledOnce);
+    assert(requestRepositoryL.save.calledOnce);
+    assert(statusRepositoryL.saveAcquisitionStatus.notCalled);
 
     const r = await lookupRepository.findOne(
       data.operator_id,

@@ -105,7 +105,7 @@ export class CarpoolAcquisitionService {
         conn,
       );
       if (carpool.conflict) {
-        throw new ConflictException();
+        throw new ConflictException(`Carpool already registered at ${carpool.created_at}`);
       }
       let terms_violation_error_labels: TermsViolationErrorLabels = [];
       if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {

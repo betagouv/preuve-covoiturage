@@ -83,11 +83,10 @@ export class CarpoolRepository {
         ${data.passenger_over_18},
         ${data.passenger_seats},
         ${data.passenger_contribution},
-        ${JSON.stringify(data.passenger_payments)},
-        'false'::boolean as conflict
+        ${JSON.stringify(data.passenger_payments)}
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, uuid, created_at, updated_at, 'true'::boolean as conflict
+      RETURNING _id, uuid, created_at, updated_at
     `;
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
@@ -106,7 +105,7 @@ export class CarpoolRepository {
         if (!selectCarpool) {
           throw new DatabaseException();
         }
-        return selectCarpool;
+        return { ...selectCarpool, conflict: true };
       }
       await this.syncIncentives(carpool._id, data.incentives, cl);
       return carpool;
