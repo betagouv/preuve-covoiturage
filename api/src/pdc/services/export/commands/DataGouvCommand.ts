@@ -8,10 +8,11 @@ import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
+import { CarpoolRepository } from "@/pdc/services/export/repositories/CarpoolRepository.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
-import { CarpoolDataGouvListType } from "../repositories/queries/CarpoolDataGouvQuery.ts";
+import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
 import { DataGouvFileCreatorServiceInterfaceResolver } from "../services/DataGouvFileCreatorService.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
@@ -56,6 +57,7 @@ export class DataGouvCommand implements CommandInterface {
     protected config: ConfigInterfaceResolver,
     protected api: DataGouvAPIProvider,
     protected metadata: DataGouvMetadataProvider,
+    protected carpoolRepository: CarpoolRepository,
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected fileCreatorService: DataGouvFileCreatorServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
@@ -81,7 +83,7 @@ export class DataGouvCommand implements CommandInterface {
 
     const chunks = this.splitByMonth(options.start, options.end, options.tz);
     const target = ExportTarget.DATAGOUV;
-    const fields = this.fieldService.byTarget<CarpoolDataGouvListType>(target);
+    const fields = this.fieldService.byTarget<DataGouvListType>(target);
 
     for (const params of chunks) {
       const filename = this.nameService.datagouv(params.get().start_at);
@@ -90,33 +92,19 @@ export class DataGouvCommand implements CommandInterface {
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
       logger.info(`Exporting ${filename} from ${s}-01 to ${e}-01`);
 
-      console.log(this.metadata.description({
-        start_at: params.get().start_at,
-        end_at: params.get().end_at,
-        count_total: 323123,
-        count_exposed: 213123,
-        count_removed: 110000,
-        count_removed_start: 1233,
-        count_removed_end: 1231,
-        count_removed_both: 412,
-      }));
-
-      return;
       const path = await this.fileCreatorService.write(
         params,
-        new CSVWriter<CarpoolDataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
+        new CSVWriter<DataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
       );
 
-      // TODO : calculate stats to build metadata
+      // generate dataset description
+      const stats = await this.carpoolRepository.dataGouvStats(params);
+      const description = this.metadata.description(stats);
 
       // upload to storage
       const dataset = await this.api.dataset();
       const resource = await this.api.upload(path);
-      await this.api.setMetadata(resource, {
-        description: this.metadata.description({
-          start_at: params.get().start_at,
-        }),
-      });
+      await this.api.setMetadata(resource, { description });
 
       logger.info(`Resource uploaded to ${dataset.page}`);
     }
