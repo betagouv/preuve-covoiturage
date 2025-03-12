@@ -1,4 +1,31 @@
 version: 2
 models:
   - name: operators_by_month
-    columns: []
+    columns:
+      - name: year
+        description: ''
+        data_type: integer
+      - name: month
+        description: ''
+        data_type: integer
+      - name: territory_id
+        description: ''
+        data_type: integer
+      - name: direction
+        description: ''
+        data_type: text
+      - name: operator_id
+        description: ''
+        data_type: integer
+      - name: operator_name
+        description: ''
+        data_type: character varying
+      - name: journeys
+        description: ''
+        data_type: numeric
+      - name: incented_journeys
+        description: ''
+        data_type: numeric
+      - name: incentive_amount
+        description: ''
+        data_type: numeric
