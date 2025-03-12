@@ -4,10 +4,10 @@ import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
-import { CarpoolDataGouvListType } from "../repositories/queries/CarpoolDataGouvQuery.ts";
+import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
 
 export abstract class DataGouvFileCreatorServiceInterfaceResolver {
-  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
     throw new Error("Not implemented");
   }
   protected async initialize(): Promise<void> {
@@ -16,7 +16,7 @@ export abstract class DataGouvFileCreatorServiceInterfaceResolver {
   protected async data(): Promise<void> {
     throw new Error("Not implemented");
   }
-  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<string> {
     throw new Error("Not implemented");
   }
 }
@@ -25,7 +25,7 @@ export abstract class DataGouvFileCreatorServiceInterfaceResolver {
   identifier: DataGouvFileCreatorServiceInterfaceResolver,
 })
 export class DataGouvFileCreatorService {
-  protected fileWriter: CSVWriter<CarpoolDataGouvListType>;
+  protected fileWriter: CSVWriter<DataGouvListType>;
   protected params: ExportParams;
 
   constructor(
@@ -33,7 +33,7 @@ export class DataGouvFileCreatorService {
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
   }
@@ -51,7 +51,7 @@ export class DataGouvFileCreatorService {
     await this.carpoolRepository.dataGouvList(this.params, this.fileWriter);
   }
 
-  public async write(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<string> {
+  public async write(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<string> {
     try {
       await this.configure(params, fileWriter);
       await this.initialize();
