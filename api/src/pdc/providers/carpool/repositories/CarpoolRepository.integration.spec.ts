@@ -68,7 +68,7 @@ describe("Carpool Repository", () => {
     const carpool = await repository.register(data);
     const result = await getCarpool(carpool._id);
 
-    assertObjectMatch(result, { ...carpool, ...data });
+    assertObjectMatch({ ...result, conflict: false }, { ...carpool, ...data });
   });
 
   it("Should do nothing on duplicate carpool", async () => {
@@ -77,7 +77,7 @@ describe("Carpool Repository", () => {
     const carpool = await repository.register(data);
     const result = await getCarpool(carpool._id);
 
-    assertObjectMatch(result, { ...carpool, ...data });
+    assertObjectMatch({ ...result, conflict: true }, { ...carpool, ...data });
   });
 
   it("Should update acquisition", async () => {
@@ -96,6 +96,6 @@ describe("Carpool Repository", () => {
     );
 
     const result = await getCarpool(carpool._id);
-    assertObjectMatch(result, { ...carpool, ...insertData, ...updateData });
+    assertObjectMatch({ ...result, conflict: false}, { ...carpool, ...insertData, ...updateData });
   });
 });
