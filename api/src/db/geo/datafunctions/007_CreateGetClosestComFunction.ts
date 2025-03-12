@@ -53,7 +53,8 @@ export class CreateGetClosestComFunction extends AbstractDatafunction {
       WHERE
         geom IS NOT NULL
         AND arr <> 'XXXXX'
-        AND country = 'XXXXX'
+        AND arr <> '99100'
+        AND (country = 'XXXXX' OR country = '99100')
         AND
         ST_Intersects(ST_Buffer(ST_Transform(ST_SetSRID(ST_Point($1, $2),'4326'),2154),$3),ST_Transform(geom,2154))
       ORDER BY year DESC, distance ASC
