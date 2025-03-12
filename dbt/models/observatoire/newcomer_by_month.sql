@@ -1,10 +1,19 @@
 {{ config(
     materialized='incremental',
+    incremental_strategy='delete+insert',
     unique_key=['year', 'month', 'code', 'type', 'direction'],
-    post_hook=[
-      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'newcomer_by_month_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT newcomer_by_month_pkey PRIMARY KEY (year, month, code, type, direction); END IF; END $$;"
-      "CREATE INDEX IF NOT EXISTS newcomer_by_month_idx ON {{ this }} using btree(year, month, code, type, direction)",
-    ]
+    indexes = [
+    {
+      'columns':[
+        'year',
+        'month',
+        'code',
+        'type',
+        'direction'          
+      ],
+      'unique':true
+    }
+  ]
   )
 }}
 

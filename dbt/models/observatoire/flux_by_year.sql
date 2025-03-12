@@ -1,9 +1,18 @@
-{{ config(materialized='incremental',
+{{ config(
+  materialized='incremental',
+  incremental_strategy='delete+insert',
   unique_key=['year', 'type', 'territory_1', 'territory_2'],
-  post_hook=[
-    "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'flux_by_year_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT flux_by_year_pkey PRIMARY KEY (type, year, territory_1, territory_2); END IF; END $$;"
-    "CREATE INDEX IF NOT EXISTS flux_by_year_idx ON {{ this }} using btree(year, type, territory_1, territory_2)",
-  ]  
+  indexes = [
+      {
+        'columns':[
+          'year',
+          'type',
+          'territory_1',
+          'territory_2'
+        ],
+        'unique':true
+      }
+    ] 
 ) }}
 
 WITH flux AS (
