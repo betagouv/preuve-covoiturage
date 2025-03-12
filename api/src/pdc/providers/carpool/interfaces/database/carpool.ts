@@ -78,4 +78,5 @@ export interface WrittenCarpool {
   uuid: Uuid;
   created_at: Date;
   updated_at: Date;
+  conflict: boolean;
 }

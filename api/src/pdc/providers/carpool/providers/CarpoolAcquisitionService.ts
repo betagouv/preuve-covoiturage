@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
@@ -104,6 +104,9 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
+      if (carpool.conflict) {
+        throw new ConflictException(`Carpool already registered at ${carpool.created_at}`);
+      }
       let terms_violation_error_labels: TermsViolationErrorLabels = [];
       if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {
         await this.statusRepository.saveAcquisitionStatus(
