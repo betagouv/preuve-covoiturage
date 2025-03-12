@@ -1,6 +1,6 @@
 import { env } from "@/lib/env/index.ts";
 import { FieldFilter, Fields } from "@/pdc/services/export/models/CSVWriter.ts";
-import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
+import { CarpoolDataGouvListType } from "../repositories/queries/CarpoolDataGouvQuery.ts";
 
 export const datagouv = {
   enabled: env("APP_DATAGOUV_ENABLED") === "true",
@@ -14,7 +14,7 @@ export const datagouv = {
  * @required
  * used by the FieldService
  */
-export const fields: Fields<CarpoolOpenDataListType> = [
+export const fields: Fields<CarpoolDataGouvListType> = [
   "journey_id",
   "trip_id",
   "journey_start_datetime",
@@ -48,4 +48,4 @@ export const fields: Fields<CarpoolOpenDataListType> = [
  * @required
  * used by the FieldService
  */
-export const filters: Array<FieldFilter<CarpoolOpenDataListType>> = [];
+export const filters: Array<FieldFilter<CarpoolDataGouvListType>> = [];

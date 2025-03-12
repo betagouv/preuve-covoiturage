@@ -3,7 +3,7 @@ import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { IncentiveStatusEnum } from "@/pdc/services/policy/interfaces/index.ts";
 
-export type CarpoolOpenDataListType = {
+export type CarpoolDataGouvListType = {
   journey_id: number;
   trip_id: string;
 
@@ -36,7 +36,7 @@ export type CarpoolOpenDataListType = {
   has_incentive: boolean;
 };
 
-export function CarpoolOpenDataQuery(params: ExportParams): Sql {
+export function CarpoolDataGouvQuery(params: ExportParams): Sql {
   const { start_at, end_at, tz } = params.get();
   const min_occurrences = 6;
   const acquisition_status = CarpoolAcquisitionStatusEnum.Processed;
@@ -74,9 +74,12 @@ export function CarpoolOpenDataQuery(params: ExportParams): Sql {
 
     -- consolidate the carpool_id to exclude
     exclude_id AS (
-      SELECT UNNEST(_id) AS _id FROM exclude_start_full GROUP BY 1
-      UNION ALL
-      SELECT UNNEST(_id) AS _id FROM exclude_end_full GROUP BY 1
+      SELECT * FROM (
+        SELECT UNNEST(_id) AS _id FROM exclude_start_full GROUP BY 1
+        UNION ALL
+        SELECT UNNEST(_id) AS _id FROM exclude_end_full GROUP BY 1
+      ) AS e
+      GROUP BY 1
     ),
 
     -- select carpools and exclude the ones from exclude_id
@@ -156,7 +159,7 @@ export function CarpoolOpenDataQuery(params: ExportParams): Sql {
 
       -- start
       -- journey_start_datetime is exported in UTC and converted by JS to the proper format
-      ts_ceil(trips.start_datetime, 600) as journey_start_datetime,
+      ts_ceil(trips.start_datetime at time zone ${tz}, 600) as journey_start_datetime,
       to_char(ts_ceil(trips.start_datetime at time zone ${tz}, 600), 'YYYY-MM-DD') as journey_start_date,
       to_char(ts_ceil(trips.start_datetime at time zone ${tz}, 600), 'HH24:MI:SS') as journey_start_time,
       trunc(trips.start_lon::numeric, gps.precision) as journey_start_lon,
@@ -169,7 +172,7 @@ export function CarpoolOpenDataQuery(params: ExportParams): Sql {
 
       -- end
       -- journey_end_datetime is exported in UTC and converted by JS to the proper format
-      ts_ceil(trips.end_datetime, 600) as journey_end_datetime,
+      ts_ceil(trips.end_datetime at time zone ${tz}, 600) as journey_end_datetime,
       to_char(ts_ceil(trips.end_datetime at time zone ${tz}, 600), 'YYYY-MM-DD') as journey_end_date,
       to_char(ts_ceil(trips.end_datetime at time zone ${tz}, 600), 'HH24:MI:SS') as journey_end_time,
       trunc(trips.end_lon::numeric, gpe.precision) as journey_end_lon,
