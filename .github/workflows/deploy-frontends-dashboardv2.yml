@@ -1,0 +1,52 @@
+name: Deploy dashboard v2
+on:
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: Deploy dashboard v2
+    strategy:
+      matrix:
+        env: [demo]
+    environment: ${{ matrix.env }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: public/package-lock.json
+
+      - name: Install and Build 🔧
+        env:
+          NEXT_PUBLIC_PC_USER_URI: ${{ vars.NEXT_PUBLIC_PC_USER_URI}}
+          NEXT_PUBLIC_API_REDIRECT: ${{ vars.NEXT_PUBLIC_API_REDIRECT}}
+          NEXT_PUBLIC_API_URL: ${{ vars.API_ROOT_URL}}
+          NEXT_PUBLIC_SEARCH_URL: ${{ vars.API_SEARCH_URL}}
+          NEXT_PUBLIC_SEARCH_TOKEN: ${{ secrets.MEILISEARCH_API_KEY}}
+        run: |
+          cd app-front
+          npm ci
+          npm run build
+          cp -R out/_next out/dashboard_v2/_next
+
+      - name: Deploy to bucket
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: dashboard.${{ vars.PUBLIC_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          AWS_REGION: ${{ vars.BUCKET_REGION }}
+          SOURCE_DIR: public/out
