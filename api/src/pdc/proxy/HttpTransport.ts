@@ -99,6 +99,7 @@ export class HttpTransport implements TransportInterface {
     this.registerMetrics();
     this.registerGlobalMiddlewares();
     this.registerCache();
+    this.registerLegacyExportRoutes();
     this.registerNestedRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
@@ -112,7 +113,6 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
-    this.registerExportRoutes();
     this.registerStaticFolder();
   }
 
@@ -298,7 +298,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerExportRoutes(): void {
+  private registerLegacyExportRoutes(): void {
     // Routes have been migrated to apiRoute annotations in the action handlers
     /**
      * Export trips from a V2 payload to a V3 output file.

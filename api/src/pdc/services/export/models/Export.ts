@@ -11,7 +11,7 @@ export enum ExportStatus {
   FAILURE = "failure",
 }
 export enum ExportTarget {
-  OPENDATA = "opendata",
+  DATAGOUV = "datagouv",
   OPERATOR = "operator",
   TERRITORY = "territory",
 }
@@ -86,6 +86,6 @@ export class Export {
       return ExportTarget.TERRITORY;
     }
 
-    return ExportTarget.OPENDATA;
+    return ExportTarget.DATAGOUV;
   }
 }
