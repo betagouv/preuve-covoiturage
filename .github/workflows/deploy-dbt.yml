@@ -52,6 +52,5 @@ jobs:
                 ref: 'main',
                 inputs: {
                   version: process.env.TARGET_VERSION,
-                  image: 'dbt'
                 },
               })
