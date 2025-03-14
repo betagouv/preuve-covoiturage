@@ -1,7 +1,5 @@
 name: Deploy dashboard v2
 on:
-  pull_request:
-    branches: [main]
   release:
     types: [published]
   workflow_dispatch:
