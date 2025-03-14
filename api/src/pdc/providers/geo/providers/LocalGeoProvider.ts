@@ -21,7 +21,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
         text: `
         SELECT arr
         FROM ${this.fn}($1::float, $2::float)
-        WHERE arr <> 'XXXXX'
+        WHERE arr NOT IN ('XXXXX','99100')
       `,
         values: [lon, lat],
       });
