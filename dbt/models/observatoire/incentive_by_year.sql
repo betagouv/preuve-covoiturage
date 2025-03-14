@@ -1,9 +1,18 @@
-{{ config(materialized='incremental',
+{{ config(
+  materialized='incremental',
+  incremental_strategy='delete+insert',
   unique_key=['year', 'code', 'type', 'direction'],
-  post_hook=[
-      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'incentive_by_year_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT incentive_by_year_pkey PRIMARY KEY (year, type, code, direction); END IF; END $$;"
-      "CREATE INDEX IF NOT EXISTS incentive_by_year_idx ON {{ this }} using btree(year, type, code, direction)",
-    ]
+  indexes = [
+    {
+      'columns':[
+        'year',
+        'code',
+        'type',
+        'direction'          
+      ],
+      'unique':true
+    }
+  ]
 ) }}
 
 SELECT
