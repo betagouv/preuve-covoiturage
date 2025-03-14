@@ -3,14 +3,18 @@ import Pagination from '@/components/common/Pagination';
 import { getApiUrl } from '@/helpers/api';
 import { useApi } from '@/hooks/useApi';
 import { OperatorsInterface } from '@/interfaces/dataInterface';
+import { useAuth } from '@/providers/AuthProvider';
 import { fr } from '@codegouvfr/react-dsfr';
+import Button from '@codegouvfr/react-dsfr/Button';
 import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import Table from '@codegouvfr/react-dsfr/Table';
 import { useMemo, useState } from 'react';
 
 export default function OperatorsTable(props: {title:string, id:number | null, refresh: () => void}) {
+  const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentRow, setCurrentRow] = useState<OperatorsInterface['data'][0]>();
+  const [currentRow, setCurrentRow] = useState<OperatorsInterface['data'][0]>({ name: '', siret: '' });
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState<'update' | 'delete' | 'create'>('update');
   const onChangePage = (id:number) => {
@@ -26,9 +30,8 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
     }
     return urlObj.toString();
   }, [props.id, currentPage]);
-  const { data } = useApi<OperatorsInterface>(url);
-  const deleteRequest = useApi(getApiUrl('v3', `dashboard/operator/${currentRow?.id}`));
-  const otherRequest = useApi(getApiUrl('v3', `dashboard/operator`));
+  const request = useApi<OperatorsInterface>(url);
+  const { data } = request;
   const totalPages = data?.meta.totalPages || 1; 
   const headers = [
     'Identifiant',
@@ -75,42 +78,79 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
       case 'delete':
         return 'Supprimer';
       case 'create':
-        return 'Créer';
+        return 'Ajouter';
       default:
         return 'Action';
     }
   };
 
   const modalSubmit = async() => {
+    const { sendRequest } = request;
     switch (typeModal) {
       case 'update':
-        await otherRequest.sendRequest("POST",{
-          name:"totorMotor",
-          siret:"01234567891234"
-        });
+        await sendRequest(getApiUrl('v3', `dashboard/operator`), "PUT", currentRow);
         props.refresh();
         break;
       case 'delete':
-        await deleteRequest.sendRequest("DELETE");
+        await request.sendRequest(getApiUrl('v3', `dashboard/operator/${currentRow.id}`), "DELETE");
         props.refresh();
         break;
       case 'create':
-        alert('tata');
+        await request.sendRequest(getApiUrl('v3', 'dashboard/operator'), "POST", currentRow);
+        props.refresh();
         break;
-        default:
+      default:
           break;
     }
   }; 
   
   return(
     <>
-      <h3 className={fr.cx('fr-callout__title')}>{props.title}</h3>
-      <Table data={dataTable}  headers={headers} colorVariant='blue-ecume' fixed />
+      <h3 className={fr.cx('fr-callout__title')}>
+        {props.title}
+      </h3>
+      {user?.role === 'registry.admin' &&
+        <>
+          <Button 
+            iconId="fr-icon-add-circle-line"
+            onClick={() => {
+              setCurrentRow({ name: '', siret: '' });
+              setOpenModal(true);
+              setTypeModal('create');
+            }}
+            title="Ajouter un opérateur"
+            size="small"
+          >
+            Ajouter
+          </Button>
+        </>
+      }
+      <Table data={dataTable} headers={headers} colorVariant='blue-ecume' fixed />
       <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage}/>
       <Modal open={openModal} title={modalTitle()} onClose={() => setOpenModal(false)} onSubmit={modalSubmit}>
         <>
-          {typeModal ==='update' &&
-            'toto'
+          {(typeModal ==='update' || typeModal === 'create') &&
+            <>
+              <Input
+                label="Nom de l'opérateur"
+                state="default"
+                
+                nativeInputProps={{
+                  type: 'text',
+                  value: currentRow ? currentRow.name : '',
+                  onChange: (e) => setCurrentRow({...currentRow, name: e.target.value})
+                }}
+              />
+              <Input
+                label="Siret"
+                state="default"
+                nativeInputProps={{
+                  type: 'text',
+                  value: currentRow ? currentRow.siret : '',
+                  onChange: (e) => setCurrentRow({...currentRow, siret: e.target.value})
+                }}
+              />
+            </>
           }
           {typeModal ==='delete' &&
             `Êtes-vous sûr de vouloir supprimer l'opérateur ${currentRow?.name} ?`

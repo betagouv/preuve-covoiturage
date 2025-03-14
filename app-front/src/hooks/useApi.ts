@@ -50,7 +50,7 @@ export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: R
   }, [fetchData]);
 
   const sendRequest = useCallback(
-    async (method: "POST" | "PUT" | "DELETE", body?: unknown) => {
+    async (url: string, method: "POST" | "PUT" | "DELETE", body?: unknown) => {
       try {
         setError(null);
         setLoading(true);
@@ -80,7 +80,7 @@ export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: R
         setLoading(false);
       }
     },
-    [url, init],
+    [init],
   );
 
   return { data, error, loading, refetch: fetchData, sendRequest };

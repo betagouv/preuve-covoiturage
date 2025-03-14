@@ -37,7 +37,7 @@ export type OperatorsInterface = {
     totalPages: number;
   };
   data: {
-    id: number;
+    id?: number;
     name: string;
     siret: string;
   }[];

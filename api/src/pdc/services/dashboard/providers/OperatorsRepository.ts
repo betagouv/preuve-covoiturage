@@ -104,7 +104,7 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       SET 
         name = ${data.name},
         updated_at = now(),
-        siret = ${data.siret},
+        siret = ${data.siret}
       WHERE _id = ${data.id}
       RETURNING _id, updated_at, name, siret
     `;
