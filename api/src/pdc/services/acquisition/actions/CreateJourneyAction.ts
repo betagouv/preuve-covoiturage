@@ -43,7 +43,7 @@ export class CreateJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected override async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       await this.validateParams(params);
       const request = this.convertPayloadToRequest(context, params);

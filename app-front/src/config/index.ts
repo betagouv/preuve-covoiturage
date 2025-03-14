@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * 1. Import the configuration file
  * 2. add the configuration to the object in objectToMap()
@@ -5,6 +8,38 @@
 import { analytics } from "./analytics";
 import { auth } from "./auth";
 import { search } from "./search";
+
+const objectToMap = (obj: ConfigObject): Map<string, ConfigObject> => {
+  const map = new Map<string, ConfigObject>();
+  if (typeof obj === "object" && obj !== null) {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = (obj as { [key: string]: ConfigObject })[key];
+
+        if (typeof value === "object" && value !== null) {
+          map.set(key, objectToMap(value)); // Recursively convert nested objects
+        } else {
+          map.set(key, value);
+        }
+      }
+    }
+  }
+  return map;
+};
+
+const nextEnvironmentVariables = (): ConfigObject => {
+  return Object.entries(process.env)
+    .filter(([key]) => key.startsWith("NEXT_"))
+    .filter(([key]) => typeof process.env[key] !== "undefined")
+    .reduce(
+      (acc, [key]) => {
+        const k = key.replace("NEXT_", "").toLowerCase();
+        acc[k] = process.env[key];
+        return acc;
+      },
+      {} as Record<string, ConfigObject>,
+    );
+};
 
 const _configuration = objectToMap({
   analytics,
@@ -17,42 +52,23 @@ const _configuration = objectToMap({
 // Helpers and export
 // ---------------------------------------------------------------------------------------
 
-export type ConfigObject = string | number | boolean | null | { [key: string]: ConfigObject } | undefined;
-
-function nextEnvironmentVariables(): ConfigObject {
-  return Object.entries(process.env)
-    .filter(([key]) => key.startsWith("NEXT_"))
-    .filter(([key]) => typeof process.env[key] !== "undefined")
-    .reduce((acc, [key]) => {
-      const k = key.replace("NEXT_", "").toLowerCase();
-      acc[k] = process.env[key];
-      return acc;
-    }, {} as Record<string, ConfigObject>);
-}
-
-function objectToMap(obj: ConfigObject): Map<string, ConfigObject> {
-  const map = new Map();
-  if (typeof obj === "object" && obj !== null) {
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const value = obj[key];
-
-        if (typeof value === "object" && value !== null) {
-          map.set(key, objectToMap(value)); // Recursively convert nested objects
-        } else {
-          map.set(key, value);
-        }
-      }
-    }
-  }
-  return map;
-}
+export type ConfigObject =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: ConfigObject }
+  | undefined
+  | Map<string, ConfigObject>;
 
 export const Config = {
   get<T>(key: string, defaultValue?: T): T {
     let _value: unknown = _configuration;
     for (const part of key.split(".")) {
-      _value = _value instanceof Map && _value.has(part) ? _value.get(part) : undefined;
+      _value =
+        _value instanceof Map && _value.has(part)
+          ? _value.get(part)
+          : undefined;
     }
     if (typeof _value === "undefined") {
       if (typeof defaultValue === "undefined") {

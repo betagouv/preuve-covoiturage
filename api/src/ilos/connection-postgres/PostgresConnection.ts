@@ -54,7 +54,7 @@ export class PgPool extends pg.Pool {
     return this._status === PgPoolStatus.UP;
   }
 
-  async end(): Promise<void> {
+  override async end(): Promise<void> {
     this._status = PgPoolStatus.DOWN;
     await super.end();
   }

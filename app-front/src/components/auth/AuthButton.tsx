@@ -1,7 +1,7 @@
-'use client'
-import { Config } from '@/config';
-import { useAuth } from '@/providers/AuthProvider';
-import Button from '@codegouvfr/react-dsfr/Button';
+"use client";
+import { Config } from "@/config";
+import { useAuth } from "@/providers/AuthProvider";
+import Button from "@codegouvfr/react-dsfr/Button";
 
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ export function AuthButton() {
   const router = useRouter();
 
   const authClick = () => {
-    const url:string = `${Config.get('auth.domain')}/auth/login`;
+    const url = `${Config.get<string>("auth.domain")}/auth/login`;
     router.push(url);
   };
 
@@ -21,19 +21,17 @@ export function AuthButton() {
 
   return (
     <>
-      {!isAuth && 
-        <ProConnectButton onClick={() => authClick()} />
-      }
-      {isAuth && 
+      {!isAuth && <ProConnectButton onClick={() => authClick()} />}
+      {isAuth && (
         <Button
           linkProps={{
-            href: '',
-            onClick: disconnectClick
+            href: "",
+            onClick: disconnectClick,
           }}
         >
-        Déconnexion
+          Déconnexion
         </Button>
-      }
-    </> 
+      )}
+    </>
   );
-};
+}
