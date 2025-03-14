@@ -22,10 +22,6 @@ RUN chown -R deno:deno /app/
 
 USER deno
 
-COPY --chown=deno:deno ./api/justfile /app/api/justfile
-COPY --chown=deno:deno ./api/deno.lock /app/api/deno.lock
-COPY --chown=deno:deno ./api/deno.jsonc /app/api/deno.jsonc
-
 COPY --chown=deno:deno ./api /app/api
 
 RUN just cache
