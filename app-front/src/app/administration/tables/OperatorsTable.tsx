@@ -10,11 +10,13 @@ import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import Table from '@codegouvfr/react-dsfr/Table';
 import { useMemo, useState } from 'react';
+import { z } from 'zod';
 
 export default function OperatorsTable(props: {title:string, id:number | null, refresh: () => void}) {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRow, setCurrentRow] = useState<OperatorsInterface['data'][0]>({ name: '', siret: '' });
+  const [errors, setErrors] = useState<{ name?: string; siret?: string }>({});
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState<'update' | 'delete' | 'create'>('update');
   const onChangePage = (id:number) => {
@@ -52,6 +54,7 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
           priority: "secondary",
           onClick:() => {
             setCurrentRow(d);
+            setErrors({});
             setOpenModal(true);
             setTypeModal('update');
           }
@@ -83,8 +86,36 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
         return 'Action';
     }
   };
+  const formSchema = z.object({
+    name: z.string().min(3, { message: 'Le nom doit contenir au moins 3 caractères' }),
+    siret: z.string().regex(/^\d{14}$/, { message: 'Le SIRET doit contenir 14 chiffres' })
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setCurrentRow((prev) => ({ ...prev, [field]: value }));
+    const result = formSchema.safeParse({ ...currentRow, [field]: value });
+    if (!result.success) {
+      const formattedErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        name: formattedErrors.name?.[0],
+        siret: formattedErrors.siret?.[0]
+      });
+    } else {
+      setErrors({});
+    }
+  };
 
   const modalSubmit = async() => {
+    const result = formSchema.safeParse(currentRow);
+    if (!result.success && typeModal !== 'delete') {
+      const formattedErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        name: formattedErrors.name?.[0],
+        siret: formattedErrors.siret?.[0]
+      });
+      return;
+    }
+    setErrors({});
     const { sendRequest } = request;
     switch (typeModal) {
       case 'update':
@@ -116,6 +147,7 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
             onClick={() => {
               setCurrentRow({ name: '', siret: '' });
               setOpenModal(true);
+              setErrors({});
               setTypeModal('create');
             }}
             title="Ajouter un opérateur"
@@ -133,21 +165,22 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
             <>
               <Input
                 label="Nom de l'opérateur"
-                state="default"
-                
+                state={errors.name ? "error" : "default"}
+                stateRelatedMessage={errors.name}
                 nativeInputProps={{
                   type: 'text',
-                  value: currentRow ? currentRow.name : '',
-                  onChange: (e) => setCurrentRow({...currentRow, name: e.target.value})
+                  value: currentRow.name,
+                  onChange: (e) => handleInputChange('name', e.target.value)
                 }}
               />
               <Input
                 label="Siret"
-                state="default"
+                state={errors.siret ? "error" : "default"}
+                stateRelatedMessage={errors.siret}
                 nativeInputProps={{
                   type: 'text',
-                  value: currentRow ? currentRow.siret : '',
-                  onChange: (e) => setCurrentRow({...currentRow, siret: e.target.value})
+                  value: currentRow.siret,
+                  onChange: (e) => handleInputChange('siret', e.target.value)
                 }}
               />
             </>
