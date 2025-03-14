@@ -24,8 +24,8 @@ export const useDashboard = () => {
     year: year,
     month: month,
     period: "month" as PeriodType,
-    trimester: Math.floor(month / 3),
-    semester: Math.floor(month / 6),
+    trimester: Math.ceil(month / 3),
+    semester: Math.ceil(month / 6),
     map: 1,
     graph: 1,
   });
