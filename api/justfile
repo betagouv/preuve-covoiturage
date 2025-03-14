@@ -197,9 +197,13 @@ env:
 install:
   deno install --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
-# cache
+# cache all dependencies for src/mains.ts
 cache:
-  deno cache --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/main.ts
+  deno cache --frozen=true --allow-import=cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/main.ts
+
+# cache all dependencies for src/db/cmd-migrate.ts
+cache-migrator:
+  deno cache --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/db/cmd-migrate.ts
 
 # refresh the deno.lock file
 lock:
