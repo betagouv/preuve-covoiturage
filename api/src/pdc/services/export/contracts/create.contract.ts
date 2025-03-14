@@ -32,7 +32,7 @@ export type ParamsInterfaceV3 = {
   end_at: Date;
   created_by: number;
   recipients?: string[];
-  operator_id: number[];
+  operator_id?: number[];
   geo_selector?: TerritorySelectorsInterface;
   territory_id?: number[];
 };

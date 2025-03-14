@@ -5,7 +5,7 @@ import {
   castToArrayMiddleware,
   copyFromContextMiddleware,
   hasPermissionMiddleware,
-  validateDateMiddleware,
+  validateDateMiddleware
 } from "@/pdc/providers/middleware/middlewares.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
@@ -53,15 +53,20 @@ export class CreateActionV3 extends AbstractAction {
     super();
   }
 
-  protected override async handle(params: ParamsInterfaceV3, context: ContextType): Promise<ResultInterfaceV3> {
+  protected override async handle(
+    params: ParamsInterfaceV3,
+    context: ContextType,
+  ): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
+
+    console.debug(params)
     // make sure we have at least one recipient
-    const emails = await this.recipientService.maybeAddCreator(
+    const recipients = await this.recipientService.maybeAddCreator(
       (params.recipients || []).map(ExportRecipient.fromEmail),
       params.created_by,
     );
 
-    if (!emails.length) {
+    if (!recipients.length) {
       throw new InvalidParamsException(
         'No recipient found! You must set "created_by" or "recipients"',
       );
@@ -76,7 +81,7 @@ export class CreateActionV3 extends AbstractAction {
     } = await this.exportRepository.create({
       created_by: params.created_by,
       target: paramTarget,
-      recipients: emails,
+      recipients: recipients,
       params: new ExportParams({
         tz: params.tz,
         start_at: params.start_at,
