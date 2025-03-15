@@ -52,7 +52,7 @@ services:
       dockerfile: ./docker/api/Dockerfile
       context: .
     volumes:
-      - ./api:/app/api
+      - ./api:/app/api:ro
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ./docker/api/certs:/app/certs:ro
@@ -75,9 +75,6 @@ services:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
-    volumes:
-      - ./api:/app/api:ro
-    working_dir: /app/api
     command: 'just migrate'
     tty: true
     env_file: ./api/.env
