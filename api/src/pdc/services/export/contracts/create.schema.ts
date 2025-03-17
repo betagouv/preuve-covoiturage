@@ -40,7 +40,7 @@ export const schemaV2 = {
 export const schemaV3 = {
   type: "object",
   additionalProperties: false,
-  required: ["tz", "start_at", "end_at", "operator_id"],
+  required: ["tz", "start_at", "end_at"],
   properties: {
     tz: {
       macro: "tz",
