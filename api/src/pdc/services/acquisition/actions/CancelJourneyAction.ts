@@ -33,7 +33,7 @@ export class CancelJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected override async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { operator_id, operator_journey_id } = params;
     await this.acquisitionService.cancelRequest({
       api_version: context.call?.api_version_range || "3",

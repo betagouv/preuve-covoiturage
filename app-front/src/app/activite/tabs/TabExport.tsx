@@ -121,37 +121,37 @@ export default function TabExport() {
           />
         )}
 
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: "16px"
-        }}>
-        <DatePicker
-          sx={{
-            maxWidth: "200px",
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: "16px",
           }}
-          label="Début"
-          value={startDate}
-          onChange={(v) => setStartDate(v!)}
-          minDate={dayjs().subtract(2, "years")}
-          maxDate={endDate}
-        />
-  
-      
-        <DatePicker
-         sx={{
-          maxWidth: "200px",
-        }}
-          label="Fin"
-          value={endDate}
-          onChange={(v) => setEndDate(v!)}
-          minDate={startDate}
-          maxDate={dayjs().subtract(5, "days")}
-        />
+        >
+          <DatePicker
+            sx={{
+              maxWidth: "200px",
+            }}
+            label="Début"
+            value={startDate}
+            onChange={(v) => setStartDate(v!)}
+            minDate={dayjs().subtract(2, "years")}
+            maxDate={endDate}
+          />
+
+          <DatePicker
+            sx={{
+              maxWidth: "200px",
+            }}
+            label="Fin"
+            value={endDate}
+            onChange={(v) => setEndDate(v!)}
+            minDate={startDate}
+            maxDate={dayjs().subtract(5, "days")}
+          />
         </div>
 
-      
         <div>
           <Button
             disabled={loading}
