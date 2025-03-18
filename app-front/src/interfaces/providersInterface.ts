@@ -5,9 +5,9 @@ export interface AuthContextProps {
     email: string;
     role: string;
     permissions: Array<string>;
-    operator_id: number | null;
-    territory_id: number | null;
-    siret: string | null;
+    operator_id?: number;
+    territory_id?: number;
+    siret?: string;
   };
   onChangeTerritory: (id: number) => void;
   onChangeOperator: (id: number) => void;

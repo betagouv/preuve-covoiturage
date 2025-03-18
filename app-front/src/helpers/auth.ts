@@ -30,3 +30,39 @@ export const labelRole = (role: string) => {
       return role;
   }
 };
+
+export const enumRoles = [
+  "registry.admin",
+  "territory.user",
+  "territory.admin",
+  "operator.user",
+  "operator.admin",
+] as const;
+
+export const enumTypes = [
+  "com",
+  "epci",
+  "aom",
+  "dep",
+  "reg",
+  "country",
+] as const;
+
+export const labelType = (type: string) => {
+  switch (type) {
+    case "com":
+      return "Commune";
+    case "epci":
+      return "EPCI";
+    case "aom":
+      return "AOM";
+    case "dep":
+      return "Département";
+    case "reg":
+      return "Région";
+    case "country":
+      return "Pays";
+    default:
+      return type;
+  }
+};

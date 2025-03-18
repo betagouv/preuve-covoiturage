@@ -26,13 +26,13 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
 
   const onChangeTerritory = (id: number) => {
     if (user) {
-      setUser({...user, territory_id: id, operator_id: null});
+      setUser({...user, territory_id: id, operator_id: undefined});
     }
   };
 
   const onChangeOperator = (id: number) => {
     if (user) {
-      setUser({...user, operator_id: id, territory_id: null});
+      setUser({...user, operator_id: id, territory_id: undefined});
     }
   };
 

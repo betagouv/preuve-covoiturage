@@ -5,9 +5,9 @@ export type UsersInterface = {
     totalPages: number;
   };
   data: {
-    id: number;
-    firstname?: string;
-    lastname?: string;
+    id?: number;
+    firstname: string;
+    lastname: string;
     email: string;
     operator_id?: number;
     territory_id?: number;
@@ -23,7 +23,7 @@ export type TerritoriesInterface = {
     totalPages: number;
   };
   data: {
-    id: number;
+    id?: number;
     name: string;
     type?: string;
     siret: string;

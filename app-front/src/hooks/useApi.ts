@@ -49,39 +49,5 @@ export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: R
     fetchData();
   }, [fetchData]);
 
-  const sendRequest = useCallback(
-    async (url: string, method: "POST" | "PUT" | "DELETE", body?: unknown) => {
-      try {
-        setError(null);
-        setLoading(true);
-
-        const response = await fetch(url, {
-          method,
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            ...(init?.headers || {}),
-          },
-          body: body ? JSON.stringify(body) : undefined,
-        });
-
-        const res = await response.json();
-        if (!response.ok) {
-          throw new Error(res.message || "Une erreur est survenue");
-        }
-
-        // Mise à jour des données après une mutation
-        setData(res);
-        return res;
-      } catch (e) {
-        setError(e as Error);
-        throw e;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [init],
-  );
-
-  return { data, error, loading, refetch: fetchData, sendRequest };
+  return { data, error, loading, refetch: fetchData };
 };
