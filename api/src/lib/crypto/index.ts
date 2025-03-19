@@ -5,10 +5,10 @@ import { decodeBase64, encodeBase64, encodeHex } from "dep:encoding";
 
 // // This is a workaround to keep the bcrypt worker in the bundle
 // // otherwise it will not be cached by Deno.
-// import * as _bcrypt_worker from "dep:bcrypt-worker";
-// function _force_keep_bcrypt_worker() {
-//   return _bcrypt_worker;
-// }
+import * as _bcrypt_worker from "dep:bcrypt-worker";
+function _force_keep_bcrypt_worker() {
+  return _bcrypt_worker;
+}
 
 export async function bcrypt_hash(
   plaintext: string,
