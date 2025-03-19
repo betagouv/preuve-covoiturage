@@ -46,8 +46,6 @@ export class UsersRepository implements UsersRepositoryInterface {
         email,
         operator_id,
         territory_id,
-        phone,
-        status,
         role
       FROM ${raw(this.table)}
       WHERE ${join(filters, " AND ")}
@@ -77,12 +75,12 @@ export class UsersRepository implements UsersRepositoryInterface {
   ): Promise<CreateUserResultInterface> {
     const query = sql`
       INSERT INTO ${raw(this.table)} (
-        email, role,operator_id, territory_id
+        firstname, lastname, email, role, operator_id, territory_id
       ) VALUES (
-        ${data.email}, ${data.role}, ${data.operator_id}, ${data.territory_id}
+        ${data.firstname}, ${data.lastname}, ${data.email}, ${data.role}, ${data.operator_id}, ${data.territory_id}
       )
       RETURNING
-        _id, created_at, email, role, operator_id, territory_id
+        _id, created_at, firstname, lastname, email, role, operator_id, territory_id
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {
@@ -115,13 +113,15 @@ export class UsersRepository implements UsersRepositoryInterface {
     const query = sql`
       UPDATE ${raw(this.table)}
       SET 
+        firstname = ${data.firstname},
+        lastname = ${data.lastname},
         email = ${data.email},
         role = ${data.role},
         operator_id = ${data.operator_id},
         territory_id = ${data.territory_id},
         updated_at = now()
       WHERE _id = ${data.id}
-      RETURNING _id, updated_at, email, role, operator_id, territory_id
+      RETURNING _id, updated_at, firstname, lastname, email, role, operator_id, territory_id
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {

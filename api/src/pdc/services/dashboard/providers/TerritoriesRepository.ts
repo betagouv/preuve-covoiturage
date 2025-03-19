@@ -19,13 +19,13 @@ import {
 })
 export class TerritoriesRepository implements TerritoriesRepositoryInterface {
   private readonly table = "territory.territories";
-  private readonly tableData = "dashboard_stats.operators_by_month";
+  //private readonly tableData = "dashboard_stats.operators_by_month";
 
   constructor(private pg: PostgresConnection) {}
 
   async getTerritories(params: TerritoriesParamsInterface): Promise<TerritoriesResultInterface> {
     const filters = [
-      sql`_id IN (SELECT DISTINCT territory_id FROM ${raw(this.tableData)})`,
+      //sql`_id IN (SELECT DISTINCT territory_id FROM ${raw(this.tableData)})`,
       sql`deleted_at IS null`,
       sql`active = true`,
     ];
@@ -38,7 +38,9 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
     const query = sql`
       SELECT
         _id AS id,
-        name
+        name,
+        level as type,
+        siret
       FROM ${raw(this.table)} 
       WHERE ${join(filters, " AND ")}
       ORDER BY _id
@@ -66,12 +68,12 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
   ): Promise<CreateTerritoryResultInterface> {
     const query = sql`
       INSERT INTO ${raw(this.table)} (
-        name, type, siret, active
+        name, level, siret, active
       ) VALUES (
         ${data.name}, ${data.type}, ${data.siret}, true
       )
       RETURNING
-        _id as id, created_at, name, type, siret
+        _id as id, created_at, name, level as type, siret
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {
@@ -107,10 +109,10 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
       SET 
         name = ${data.name},
         updated_at = now(),
-        type = ${data.type},
+        level = ${data.type},
         siret = ${data.siret}
       WHERE _id = ${data.id}
-      RETURNING _id, updated_at, name, type, siret
+      RETURNING _id, updated_at, name, level as type, siret
     `;
     const response = await this.pg.getClient().query(query);
     if (response.rowCount !== 1) {

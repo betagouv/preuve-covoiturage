@@ -136,41 +136,41 @@ export default function UsersTable(props: {title:string, territoryId?:number, op
               <Input
                 label="Prénom"
                 state={modal.errors?.firstname ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.firstname}
+                stateRelatedMessage={modal.errors?.firstname ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.firstname as string,
+                  value: modal.currentRow.firstname as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'firstname', e.target.value)
                 }}
               />
               <Input
                 label="Nom"
-                state={modal.errors!.lastname ? "error" : "default"}
-                stateRelatedMessage={modal.errors!.lastname}
+                state={modal.errors?.lastname ? "error" : "default"}
+                stateRelatedMessage={modal.errors?.lastname ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.lastname as string,
+                  value: modal.currentRow.lastname as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'lastname', e.target.value)
                 }}
               />
               <Input
                 label="Adresse mail"
-                state={modal.errors!.email ? "error" : "default"}
-                stateRelatedMessage={modal.errors!.email}
+                state={modal.errors?.email ? "error" : "default"}
+                stateRelatedMessage={modal.errors?.email ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.email as string,
+                  value: modal.currentRow.email as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'email', e.target.value)
                 }}
               />
               <Select
                 label="Rôle"
                 nativeSelectProps={{
-                  value: modal.currentRow.role as string,
+                  value: modal.currentRow.role as string ?? '',
                   onChange:(e) => modal.validateInputChange(formSchema,'role', e.target.value),
                 }}
               >
-                <option value="" selected disabled hidden>Selectionnez un rôle</option>
+                <option value="" disabled hidden>Selectionnez un rôle</option>
                 {enumRoles?.map( (r:string,i:number) => <option key={i} value={r}>{ labelRole(r)}</option>)}
               </Select>
               <Select
@@ -180,7 +180,7 @@ export default function UsersTable(props: {title:string, territoryId?:number, op
                   onChange:(e) => modal.validateInputChange(formSchema,'operator_id', e.target.value),
                 }}
               >
-                <option value="" selected disabled hidden>Selectionnez un opérateur</option>
+                <option value="" disabled hidden>Selectionnez un opérateur</option>
                 {operatorsList?.map( o => <option key={o.id} value={o.id}>{o.name}</option>)}
               </Select>
               <Select
@@ -190,7 +190,7 @@ export default function UsersTable(props: {title:string, territoryId?:number, op
                   onChange:(e) => modal.validateInputChange(formSchema,'territory_id', e.target.value),
                 }}
               >
-                <option value="" selected disabled hidden>Selectionnez un territoire</option>
+                <option value="" disabled hidden>Selectionnez un territoire</option>
                 {territoriesList?.map( t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </Select>
             </>

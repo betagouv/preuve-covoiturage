@@ -116,20 +116,20 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
               <Input
                 label="Nom de l'opérateur"
                 state={modal.errors?.name ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.name}
+                stateRelatedMessage={modal.errors?.name ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.name as string,
+                  value: modal.currentRow.name as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'name', e.target.value)
                 }}
               />
               <Input
                 label="Siret"
-                state={modal.errors!.siret ? "error" : "default"}
-                stateRelatedMessage={modal.errors!.siret}
+                state={modal.errors?.siret ? "error" : "default"}
+                stateRelatedMessage={modal.errors?.siret ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.siret as string,
+                  value: modal.currentRow.siret as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'siret', e.target.value)
                 }}
               />

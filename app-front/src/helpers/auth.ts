@@ -40,25 +40,22 @@ export const enumRoles = [
 ] as const;
 
 export const enumTypes = [
-  "com",
-  "epci",
-  "aom",
-  "dep",
-  "reg",
+  "town",
+  "towngroup",
+  "district",
+  "region",
   "country",
 ] as const;
 
 export const labelType = (type: string) => {
   switch (type) {
-    case "com":
+    case "town":
       return "Commune";
-    case "epci":
-      return "EPCI";
-    case "aom":
+    case "towngroup":
       return "AOM";
-    case "dep":
+    case "district":
       return "Département";
-    case "reg":
+    case "region":
       return "Région";
     case "country":
       return "Pays";

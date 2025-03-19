@@ -37,12 +37,14 @@ export default function TerritoriesTable(props: {title:string, id?:number, refre
   const headers = [
     'Identifiant',
     'Nom',
+    'Type',
     'Siret',
     'Actions'
   ];  
   const dataTable = data?.data?.map((d) => [
     d.id,
     d.name,
+    labelType(d.type ?? ''),
     d.siret,
     <ButtonsGroup
       key={d.id}
@@ -114,30 +116,30 @@ export default function TerritoriesTable(props: {title:string, id?:number, refre
               <Input
                 label="Nom du territoire"
                 state={modal.errors?.name ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.name}
+                stateRelatedMessage={modal.errors?.name ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.name as string,
+                  value: modal.currentRow.name as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'name', e.target.value)
                 }}
               />
               <Select
                 label="Type"
                 nativeSelectProps={{
-                  value: modal.currentRow.type as string,
+                  value: modal.currentRow.type as string ?? '',
                   onChange:(e) => modal.validateInputChange(formSchema,'type', e.target.value),
                 }}
               >
-                <option value="" selected disabled hidden>Selectionnez un type</option>
+                <option value="" disabled hidden>Selectionnez un type</option>
                 {enumTypes?.map( (r:string,i:number) => <option key={i} value={r}>{ labelType(r)}</option>)}
               </Select>
               <Input
                 label="Siret"
-                state={modal.errors!.siret ? "error" : "default"}
-                stateRelatedMessage={modal.errors!.siret}
+                state={modal.errors?.siret ? "error" : "default"}
+                stateRelatedMessage={modal.errors?.siret ?? ''}
                 nativeInputProps={{
                   type: 'text',
-                  value: modal.currentRow.siret as string,
+                  value: modal.currentRow.siret as string ?? '',
                   onChange: (e) => modal.validateInputChange(formSchema,'siret', e.target.value)
                 }}
               />
