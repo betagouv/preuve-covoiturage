@@ -1,6 +1,7 @@
 import { provider } from "@/ilos/common/Decorators.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
@@ -12,7 +13,12 @@ import {
   CarpoolListType,
   TemplateKeys,
 } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
-import { CarpoolDataGouvListType, CarpoolDataGouvQuery } from "./queries/CarpoolDataGouvQuery.ts";
+import {
+  DataGouvStatsQuery,
+  DataGouvStatsType,
+} from "@/pdc/services/export/repositories/queries/DataGouvStatsQuery.ts";
+import { IncentiveStatusEnum } from "@/pdc/services/policy/interfaces/index.ts";
+import { DataGouvListQuery, DataGouvListType } from "./queries/DataGouvListQuery.ts";
 
 export abstract class CarpoolRepositoryInterfaceResolver {
   public async list(params: ExportParams, fileWriter: CSVWriter<CarpoolListType>): Promise<void> {
@@ -21,10 +27,19 @@ export abstract class CarpoolRepositoryInterfaceResolver {
   public async listCount(params: ExportParams): Promise<number> {
     throw new Error("Not implemented");
   }
-  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
+  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
+    throw new Error("Not implemented");
+  }
+  public async dataGouvStats(params: ExportParams): Promise<DataGouvStatsType> {
     throw new Error("Not implemented");
   }
 }
+
+export type DataGouvQueryConfig = {
+  min_occurrences: number;
+  acquisition_status: CarpoolAcquisitionStatusEnum;
+  incentive_status: IncentiveStatusEnum;
+};
 
 @provider({
   identifier: CarpoolRepositoryInterfaceResolver,
@@ -32,6 +47,11 @@ export abstract class CarpoolRepositoryInterfaceResolver {
 export class CarpoolRepository {
   public readonly table = "carpool_v2.carpools";
   private readonly batchSize = 1000;
+  private readonly datagouvConfig: DataGouvQueryConfig = {
+    min_occurrences: 6,
+    acquisition_status: CarpoolAcquisitionStatusEnum.Processed,
+    incentive_status: IncentiveStatusEnum.Validated,
+  };
 
   constructor(public connection: PostgresConnection) {}
 
@@ -72,7 +92,7 @@ export class CarpoolRepository {
       } while (count !== 0);
 
       cursor && await cursor.release();
-    } catch (e) {
+    } catch (e: Error) {
       logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
       cursor && await cursor.release();
       throw e;
@@ -110,9 +130,9 @@ export class CarpoolRepository {
   /**
    * List carpools with specific filtering for the open data requirements
    */
-  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
+  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
     let cursor: any; // FIXME type PostgresConnection['getCursor'] fails
-    const query = CarpoolDataGouvQuery(params);
+    const query = DataGouvListQuery(params, this.datagouvConfig);
 
     try {
       let count = 0;
@@ -123,15 +143,25 @@ export class CarpoolRepository {
         count = results.length;
 
         for (const row of results) {
-          await fileWriter.append(new CarpoolRow<CarpoolDataGouvListType>(row));
+          await fileWriter.append(new CarpoolRow<DataGouvListType>(row));
         }
       } while (count !== 0);
 
       cursor && await cursor.release();
-    } catch (e) {
+    } catch (e: Error) {
       logger.error(`[listOpendData] ${e.message}`);
       cursor && await cursor.release();
       throw e;
     }
+  }
+
+  /**
+   * Get the statistics for the DataGouv description
+   */
+  public async dataGouvStats(params: ExportParams): Promise<DataGouvStatsType> {
+    const query = DataGouvStatsQuery(params, this.datagouvConfig);
+    const { rows } = await this.connection.getClient().query(query);
+
+    return rows[0];
   }
 }
