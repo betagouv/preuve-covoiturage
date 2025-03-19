@@ -12,10 +12,7 @@ import {
   CarpoolListType,
   TemplateKeys,
 } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
-import {
-  CarpoolOpenDataListType,
-  CarpoolOpenDataQuery,
-} from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
+import { CarpoolDataGouvListType, CarpoolDataGouvQuery } from "./queries/CarpoolDataGouvQuery.ts";
 
 export abstract class CarpoolRepositoryInterfaceResolver {
   public async list(params: ExportParams, fileWriter: CSVWriter<CarpoolListType>): Promise<void> {
@@ -24,7 +21,7 @@ export abstract class CarpoolRepositoryInterfaceResolver {
   public async listCount(params: ExportParams): Promise<number> {
     throw new Error("Not implemented");
   }
-  public async openDataList(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
+  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
     throw new Error("Not implemented");
   }
 }
@@ -113,9 +110,9 @@ export class CarpoolRepository {
   /**
    * List carpools with specific filtering for the open data requirements
    */
-  public async openDataList(params: ExportParams, fileWriter: CSVWriter<CarpoolOpenDataListType>): Promise<void> {
+  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<CarpoolDataGouvListType>): Promise<void> {
     let cursor: any; // FIXME type PostgresConnection['getCursor'] fails
-    const query = CarpoolOpenDataQuery(params);
+    const query = CarpoolDataGouvQuery(params);
 
     try {
       let count = 0;
@@ -126,7 +123,7 @@ export class CarpoolRepository {
         count = results.length;
 
         for (const row of results) {
-          await fileWriter.append(new CarpoolRow<CarpoolOpenDataListType>(row));
+          await fileWriter.append(new CarpoolRow<CarpoolDataGouvListType>(row));
         }
       } while (count !== 0);
 

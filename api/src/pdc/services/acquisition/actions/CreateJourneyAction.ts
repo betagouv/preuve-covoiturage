@@ -12,7 +12,6 @@ import { get } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { RegisterRequest, RegisterResponse } from "@/pdc/providers/carpool/interfaces/acquisition.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
-import { parseRange, rangeIntersects } from "dep:semver";
 import { handlerConfig, ParamsInterface, PayloadV3, ResultInterface } from "../contracts/create.contract.ts";
 import { v3alias } from "../contracts/create.schema.ts";
 
@@ -23,6 +22,18 @@ import { v3alias } from "../contracts/create.schema.ts";
       operator: "operator.acquisition.create",
     }),
   ],
+  apiRoute: {
+    path: "/journeys",
+    method: "POST",
+    successHttpCode: 201,
+    rateLimiter: {
+      key: "rl-acquisition",
+      limit: 20_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: true,
+    rpcAnswerOnFailure: true,
+  },
 })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
@@ -32,7 +43,7 @@ export class CreateJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected override async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       await this.validateParams(params);
       const request = this.convertPayloadToRequest(context, params);
@@ -80,15 +91,9 @@ export class CreateJourneyAction extends AbstractAction {
 
   protected validateResults(context: ContextType, result: RegisterResponse): void {
     if (result.terms_violation_error_labels.length) {
-      if (
-        rangeIntersects(parseRange(">=3.1"), parseRange(context.call?.api_version_range || "3.0"))
-      ) {
-        throw new UnprocessableRequestException({
-          terms_violation_labels: result.terms_violation_error_labels,
-        });
-      }
-
-      throw new InvalidRequestException(result.terms_violation_error_labels);
+      throw new UnprocessableRequestException({
+        terms_violation_labels: result.terms_violation_error_labels,
+      });
     }
   }
 

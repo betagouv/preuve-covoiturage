@@ -23,12 +23,12 @@ export default function TerritoriesTable(props: {title:string, id?:number, refre
     setCurrentPage(id);
   };
   const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl('v3', 'dashboard/territories'));
+    const urlObj = new URL(getApiUrl("v3", "dashboard/territories"));
     if (props.id) {
-      urlObj.searchParams.set('id', props.id.toString());
+      urlObj.searchParams.set("id", props.id.toString());
     }
     if (currentPage !== 1) {
-      urlObj.searchParams.set('page', currentPage.toString());
+      urlObj.searchParams.set("page", currentPage.toString());
     }
     return urlObj.toString();
   }, [props.id, currentPage]);

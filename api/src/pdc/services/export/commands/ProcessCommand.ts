@@ -70,7 +70,7 @@ export class ProcessCommand implements CommandInterface {
 
       const key = await this.storage.upload(filepath);
       const url = await this.storage.getPublicUrl(key);
-      await this.storage.cleanup(filepath);
+      // await this.storage.cleanup(filepath);
 
       await this.exportRepository.status(_id, ExportStatus.UPLOADED);
 

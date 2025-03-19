@@ -21,12 +21,12 @@ export default function OperatorsTable(props: {title:string, id:number | null, r
     setCurrentPage(id);
   };
   const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl('v3', 'dashboard/operators'));
+    const urlObj = new URL(getApiUrl("v3", "dashboard/operators"));
     if (props.id) {
-      urlObj.searchParams.set('id', props.id.toString());
+      urlObj.searchParams.set("id", props.id.toString());
     }
     if (currentPage !== 1) {
-      urlObj.searchParams.set('page', currentPage.toString());
+      urlObj.searchParams.set("page", currentPage.toString());
     }
     return urlObj.toString();
   }, [props.id, currentPage]);

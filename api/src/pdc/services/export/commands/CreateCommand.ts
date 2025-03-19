@@ -45,15 +45,15 @@ export type Options = {
     },
     {
       signature: "--target <target>",
-      description: "Select which fields to export (opendata*, operator, territory)",
-      default: ExportTarget.OPENDATA,
+      description: "Select which fields to export (territory*, operator)",
+      default: ExportTarget.TERRITORY,
       coerce(value: string): ExportTarget {
         if (Object.values(ExportTarget).includes(value as ExportTarget)) {
           return value as ExportTarget;
         }
 
-        logger.warn(`Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`);
-        return ExportTarget.OPENDATA;
+        logger.warn(`Invalid target: ${value}, using default: ${ExportTarget.TERRITORY}`);
+        return ExportTarget.TERRITORY;
       },
     },
     {

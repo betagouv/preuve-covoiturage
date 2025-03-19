@@ -17,6 +17,30 @@ import { alias } from "../contracts/list.schema.ts";
       operator: "operator.acquisition.status",
     }),
   ],
+  apiRoute: {
+    path: "/journeys",
+    method: "GET",
+    rateLimiter: {
+      key: "rl-acquisition-check",
+      limit: 2_000,
+      windowMinute: 1,
+    },
+    rpcAnswerOnSuccess: false,
+    rpcAnswerOnFailure: true,
+    async actionParamsFn(req) {
+      const { query } = req;
+      const q = {
+        ...query,
+      };
+      if ("offset" in q) {
+        q.offset = parseInt(q.offset, 10);
+      }
+      if ("limit" in q) {
+        q.limit = parseInt(q.limit, 10);
+      }
+      return q;
+    },
+  },
 })
 export class ListJourneyAction extends AbstractAction {
   constructor(private status: CarpoolStatusService) {

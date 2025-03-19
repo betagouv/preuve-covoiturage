@@ -18,11 +18,11 @@ import { CarpoolRepository } from "./repositories/CarpoolRepository.ts";
 import { ExportRepository } from "./repositories/ExportRepository.ts";
 import { LogRepository } from "./repositories/LogRepository.ts";
 import { RecipientRepository } from "./repositories/RecipientRepository.ts";
+import { DataGouvFileCreatorService } from "./services/DataGouvFileCreatorService.ts";
 import { FieldService } from "./services/FieldService.ts";
 import { FileCreatorService } from "./services/FileCreatorService.ts";
 import { LogService } from "./services/LogService.ts";
 import { NameService } from "./services/NameService.ts";
-import { OpenDataFileCreatorService } from "./services/OpenDataFileCreatorService.ts";
 import { RecipientService } from "./services/RecipientService.ts";
 import { TerritoryService } from "./services/TerritoryService.ts";
 
@@ -32,7 +32,7 @@ import { TerritoryService } from "./services/TerritoryService.ts";
 const services = [
   FieldService,
   FileCreatorService,
-  OpenDataFileCreatorService,
+  DataGouvFileCreatorService,
   LogService,
   NameService,
   RecipientService,

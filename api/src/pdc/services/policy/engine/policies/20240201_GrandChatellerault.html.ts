@@ -1,5 +1,4 @@
-export const description =
-  `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description = `<div _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>Campagne d'incitation au covoiturage à partir du <b>1er février 2024</b></p>
   
@@ -25,7 +24,7 @@ export const description =
   
   <p>
     La campagne est éligible aux opérateurs de covoiturage
-    BlaBlaCar Daily, Klaxit, Karos et Mobicoop proposant des preuves de classe <b>C</b>
+    BlaBlaCar Daily, Karos et Mobicoop proposant des preuves de classe <b>C</b>
   </p>
 
 </div>`;

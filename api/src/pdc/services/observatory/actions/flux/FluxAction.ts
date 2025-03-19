@@ -1,6 +1,5 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { Flux } from "@/pdc/services/observatory/dto/flux/Flux.ts";
 import { FluxRepositoryInterfaceResolver } from "../../interfaces/FluxRepositoryProviderInterface.ts";
 export type ResultInterface = {
@@ -18,10 +17,14 @@ export type ResultInterface = {
 @handler({
   service: "observatory",
   method: "getFlux",
-  middlewares: [hasPermissionMiddleware("common.observatory.stats"), [
+  middlewares: [[
     "validate",
     Flux,
   ]],
+  apiRoute: {
+    path: "/observatory/flux",
+    method: "GET",
+  },
 })
 export class FluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {

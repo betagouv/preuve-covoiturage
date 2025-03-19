@@ -1,21 +1,28 @@
 import { exists, read } from "@/lib/file/index.ts";
-import * as bcrypt from "dep:bcrypt";
+import { compare, genSalt, hash } from "dep:bcrypt";
 import * as stdCrypto from "dep:crypto";
 import { decodeBase64, encodeBase64, encodeHex } from "dep:encoding";
+
+// // This is a workaround to keep the bcrypt worker in the bundle
+// // otherwise it will not be cached by Deno.
+// import * as _bcrypt_worker from "dep:bcrypt-worker";
+// function _force_keep_bcrypt_worker() {
+//   return _bcrypt_worker;
+// }
 
 export async function bcrypt_hash(
   plaintext: string,
   round: number = 10,
 ): Promise<string> {
-  const salt = await bcrypt.genSalt(round);
-  return await bcrypt.hash(plaintext, salt);
+  const salt = await genSalt(round);
+  return await hash(plaintext, salt);
 }
 
 export async function bcrypt_compare(
   plaintext: string,
   hash: string,
 ): Promise<boolean> {
-  return await bcrypt.compare(plaintext, hash);
+  return await compare(plaintext, hash);
 }
 
 export async function createSignatory(

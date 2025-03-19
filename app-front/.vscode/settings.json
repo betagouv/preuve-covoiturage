@@ -1,0 +1,18 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/.next": true
+    },
+    "eslint.format.enable": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    // "[javascript]": {
+    //     "editor.defaultFormatter": "numso.prettier-standard-vscode"
+    // },
+    "typescript.tsdk": "node_modules/typescript/lib"
+}

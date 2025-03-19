@@ -1,4 +1,16 @@
 version: 2
 models:
   - name: view_perimeters_territories
-    columns: []
+    columns:
+      - name: arr
+        description: ''
+        data_type: character varying
+      - name: l_arr
+        description: ''
+        data_type: character varying
+      - name: territory_id
+        description: ''
+        data_type: integer
+      - name: l_territory
+        description: ''
+        data_type: character varying

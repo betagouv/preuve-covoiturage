@@ -33,10 +33,7 @@ export class CreateActionV2 extends AbstractAction {
     super();
   }
 
-  protected async handle(
-    paramsV2: ParamsInterfaceV2,
-    context: ContextType,
-  ): Promise<ResultInterfaceV2> {
+  protected override async handle(paramsV2: ParamsInterfaceV2, context: ContextType): Promise<ResultInterfaceV2> {
     // dates are sent to the API as strings
     // override date params as string to please AJV.
     type AJVParams = Omit<ParamsInterfaceV3, "start_at" | "end_at"> & {

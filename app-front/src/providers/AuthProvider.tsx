@@ -1,18 +1,23 @@
-'use client'
-import { AuthContextProps } from '@/interfaces/providersInterface';
+"use client";
+import { type AuthContextProps } from "@/interfaces/providersInterface";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Config } from '../config';
- 
+import { Config } from "../config";
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
-export function AuthProvider({children}: { children: React.ReactNode}) {
-  
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState<AuthContextProps["user"]>();
-  
+
   const checkAuth = async () => {
-    const response = await fetch(`${Config.get('auth.domain')}/auth/me`, { credentials: "include" });
+    const response = await fetch(
+      `${Config.get<string>("auth.domain")}/auth/me`,
+      {
+        credentials: "include",
+      },
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data: AuthContextProps["user"] = await response.json();
-    if (data?.role !== 'anonymous') {
+    if (data?.role !== "anonymous") {
       setIsAuth(true);
       setUser(data);
     } else {
@@ -21,7 +26,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     }
   };
   useEffect(() => {
-    checkAuth();
+    void checkAuth();
   }, []);
 
   const onChangeTerritory = (id: number) => {
@@ -36,8 +41,10 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
     }
   };
 
-  return(
-    <AuthContext.Provider value={{isAuth,setIsAuth, user, onChangeTerritory, onChangeOperator}}>
+  return (
+    <AuthContext.Provider
+      value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -46,7 +53,7 @@ export function AuthProvider({children}: { children: React.ReactNode}) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

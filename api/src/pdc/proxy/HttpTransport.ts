@@ -11,13 +11,11 @@ import {
   children,
   ConfigInterface,
   ConfigInterfaceResolver,
-  ContextType,
   HandlerConfigType,
   InvalidRequestException,
   KernelInterface,
   proxy,
   RegisterHookInterface,
-  RouteParams,
   router,
   RPCResponseType,
   RPCSingleCallType,
@@ -39,13 +37,6 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from "@/pdc/services/territory/contracts/getAuthorizedCodes.contract.ts";
-import { signature as deleteCeeSignature } from "../services/cee/contracts/deleteApplication.contract.ts";
-import { signature as findCeeSignature } from "../services/cee/contracts/findApplication.contract.ts";
-import { signature as importCeeSignature } from "../services/cee/contracts/importApplication.contract.ts";
-import { signature as importIdentityCeeSignature } from "../services/cee/contracts/importApplicationIdentity.contract.ts";
-import { signature as registerCeeSignature } from "../services/cee/contracts/registerApplication.contract.ts";
-import { signature as simulateCeeSignature } from "../services/cee/contracts/simulateApplication.contract.ts";
-import { ResultInterface as DownloadCertificateResultInterface } from "../services/certificate/contracts/download.contract.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
@@ -108,6 +99,7 @@ export class HttpTransport implements TransportInterface {
     this.registerMetrics();
     this.registerGlobalMiddlewares();
     this.registerCache();
+    this.registerLegacyExportRoutes();
     this.registerNestedRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
@@ -121,7 +113,6 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
-    this.registerExportRoutes();
     this.registerStaticFolder();
   }
 
@@ -307,7 +298,8 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerExportRoutes(): void {
+  private registerLegacyExportRoutes(): void {
+    // Routes have been migrated to apiRoute annotations in the action handlers
     /**
      * Export trips from a V2 payload to a V3 output file.
      *
@@ -329,121 +321,14 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response);
       }),
     );
-
-    const routes: Array<RouteParams> = [
-      {
-        path: "/exports",
-        action: "export:createVersionThree",
-        method: "POST",
-        successHttpCode: 201,
-      },
-      {
-        path: "/exports",
-        action: "export:list",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid",
-        action: "export:get",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid/status",
-        action: "export:status",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid/attachment",
-        action: "export:download",
-        method: "GET",
-      },
-      {
-        path: "/exports/:uuid",
-        action: "export:delete",
-        method: "DELETE",
-      },
-    ];
-    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
   }
 
   private registerCeeRoutes(): void {
-    const routes: Array<RouteParams> = [
-      {
-        path: "/policies/cee",
-        action: registerCeeSignature,
-        method: "POST",
-        successHttpCode: 201,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/simulate",
-        action: simulateCeeSignature,
-        method: "POST",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import",
-        action: importCeeSignature,
-        method: "POST",
-        successHttpCode: 201,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/import/identity",
-        action: importIdentityCeeSignature,
-        method: "POST",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/:uuid",
-        action: findCeeSignature,
-        method: "GET",
-        successHttpCode: 200,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-      {
-        path: "/policies/cee/:uuid",
-        action: deleteCeeSignature,
-        method: "DELETE",
-        successHttpCode: 204,
-        rateLimiter: {
-          key: "rl-cee",
-          limit: 20_000,
-          windowMinute: 1,
-        },
-      },
-    ];
-    routes.map((c) => registerExpressRoute(this.app, this.kernel, c));
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerSimulationRoutes(): void {
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/policies/simulate",
-      action: "campaign:simulateOnFuture",
-      method: "POST",
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
     this.app.post(
       "/policy/simulate",
       rateLimiter({ max: 1 }, "rl-policy-simulate"),
@@ -476,53 +361,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/route",
-      action: "geo:getRouteMeta",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      async actionParamsFn(req) {
-        const q = { ...req.query };
-        q.start = {
-          lat: parseFloat(q.start?.lat),
-          lon: parseFloat(q.start?.lon),
-        };
-        q.end = {
-          lat: parseFloat(q.end?.lat),
-          lon: parseFloat(q.end?.lon),
-        };
-        return q;
-      },
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/point/by_address",
-      action: "geo:getPointByAddress",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/geo/point/by_insee",
-      action: "geo:getPointByCode",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnFailure: true,
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   /**
@@ -532,84 +371,7 @@ export class HttpTransport implements TransportInterface {
    * - save
    */
   private registerAcquisitionRoutes(): void {
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/journeys/:operator_journey_id",
-      action: "acquisition:status",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnSuccess: false,
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/journeys/:operator_journey_id",
-      action: "acquisition:patch",
-      method: "PATCH",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnSuccess: false,
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/journeys/:operator_journey_id/cancel",
-      action: "acquisition:cancel",
-      method: "POST",
-      rateLimiter: {
-        key: "rl-acquisition",
-        limit: 20_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnSuccess: true,
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/journeys",
-      action: "acquisition:create",
-      method: "POST",
-      successHttpCode: 201,
-      rateLimiter: {
-        key: "rl-acquisition",
-        limit: 20_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnSuccess: true,
-      rpcAnswerOnFailure: true,
-    });
-
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/journeys",
-      action: "acquisition:list",
-      method: "GET",
-      rateLimiter: {
-        key: "rl-acquisition-check",
-        limit: 2_000,
-        windowMinute: 1,
-      },
-      rpcAnswerOnSuccess: false,
-      rpcAnswerOnFailure: true,
-      async actionParamsFn(req) {
-        const { query } = req;
-        const q = {
-          ...query,
-        };
-        if ("offset" in q) {
-          q.offset = parseInt(q.offset, 10);
-        }
-        if ("limit" in q) {
-          q.limit = parseInt(q.limit, 10);
-        }
-        return q;
-      },
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerAuthRoutes(): void {
@@ -786,47 +548,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCertificateRoutes(): void {
-    /**
-     * v3 Public route for operators to generate a certificate
-     * based on params (identity, start date, end date, ...)
-     * - accessible with an application token
-     * - generate a certificate to be printed when calling /certificates/{uuid}/attachment
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates",
-      action: "certificate:create",
-      method: "POST",
-      successHttpCode: 201,
-    });
-
-    /**
-     * v3 Download PDF of the certificate
-     * - accessible with an application token
-     * - print a PDF returned back to the caller
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates/:uuid/attachment",
-      action: "certificate:download",
-      method: "POST",
-      async responseFn(response, result) {
-        const { headers, body } = result as DownloadCertificateResultInterface;
-        for (const header of Object.keys(headers)) {
-          response.set(header, headers[header]);
-        }
-        response.send(body);
-      },
-    });
-
-    /**
-     * v3 Public route to retrieve a certificate
-     */
-    registerExpressRoute(this.app, this.kernel, {
-      path: "/certificates/:uuid",
-      action: "certificate:find",
-      method: "GET",
-      rpcAnswerOnFailure: true,
-      rpcAnswerOnSuccess: true,
-    });
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   private registerAfterAllHandlers(): void {
@@ -894,92 +616,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    const routes: Array<RouteParams> = [
-      {
-        path: "/observatory/keyfigures",
-        action: "observatory:getKeyfigures",
-        method: "GET",
-      },
-      {
-        path: "/observatory/flux",
-        action: "observatory:getFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/evol-flux",
-        action: "observatory:getEvolFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/best-flux",
-        action: "observatory:getBestFlux",
-        method: "GET",
-      },
-      {
-        path: "/observatory/occupation",
-        action: "observatory:getOccupation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/evol-occupation",
-        action: "observatory:getEvolOccupation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/best-territories",
-        action: "observatory:getBestTerritories",
-        method: "GET",
-      },
-      {
-        path: "/observatory/journeys-by-hours",
-        action: "observatory:journeysByHours",
-        method: "GET",
-      },
-      {
-        path: "/observatory/journeys-by-distances",
-        action: "observatory:journeysByDistances",
-        method: "GET",
-      },
-      {
-        path: "/observatory/location",
-        action: "observatory:getLocation",
-        method: "GET",
-      },
-      {
-        path: "/observatory/aires-covoiturage",
-        action: "observatory:airesCovoiturage",
-        method: "GET",
-      },
-      {
-        path: "/observatory/campaigns",
-        action: "observatory:campaigns",
-        method: "GET",
-      },
-      {
-        path: "/observatory/incentive",
-        action: "observatory:getIncentive",
-        method: "GET",
-      },
-    ];
-    routes.map((c) =>
-      registerExpressRoute(this.app, this.kernel, {
-        ...c,
-        actionContextFn: async (req) => {
-          return {
-            channel: {
-              service: "proxy",
-              transport: "http",
-            },
-            call: {
-              user: {
-                permissions: ["common.observatory.stats"],
-              },
-              api_version_range: "v3",
-            },
-          } as ContextType;
-        },
-      })
-    );
+    // Routes have been migrated to apiRoute annotations in the action handlers
   }
 
   /**

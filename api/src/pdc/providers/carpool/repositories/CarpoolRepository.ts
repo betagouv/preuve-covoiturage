@@ -86,7 +86,7 @@ export class CarpoolRepository {
         ${JSON.stringify(data.passenger_payments)}
       )
       ON CONFLICT (operator_id, operator_journey_id) DO NOTHING
-      RETURNING _id, uuid, created_at, updated_at
+      RETURNING _id, uuid, created_at, updated_at, false::boolean as conflict
     `;
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
@@ -105,7 +105,7 @@ export class CarpoolRepository {
         if (!selectCarpool) {
           throw new DatabaseException();
         }
-        return selectCarpool;
+        return { ...selectCarpool, conflict: true };
       }
       await this.syncIncentives(carpool._id, data.incentives, cl);
       return carpool;

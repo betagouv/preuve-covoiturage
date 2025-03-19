@@ -9,7 +9,7 @@
     "editor.defaultFormatter": "denoland.vscode-deno",
     "editor.formatOnSave": true
   },
-  "deno.config": "./api/deno.json",
+  "deno.config": "./api/deno.jsonc",
   "deno.enable": true,
   "deno.enablePaths": [
     "./api"

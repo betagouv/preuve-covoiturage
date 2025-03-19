@@ -1,9 +1,9 @@
-import SelectOperator from '@/components/common/SelectOperator';
-import SelectTerritory from '@/components/common/SelectTerritory';
-import { Config } from '@/config';
-import { labelRole } from '@/helpers/auth';
-import { useAuth } from '@/providers/AuthProvider';
-import { fr } from '@codegouvfr/react-dsfr';
+import SelectOperator from "@/components/common/SelectOperator";
+import SelectTerritory from "@/components/common/SelectTerritory";
+import { Config } from "@/config";
+import { labelRole } from "@/helpers/auth";
+import { useAuth } from "@/providers/AuthProvider";
+import { fr } from "@codegouvfr/react-dsfr";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { useState } from "react";
@@ -11,69 +11,85 @@ import { useState } from "react";
 export default function TabProfil() {
   const { user, onChangeTerritory, onChangeOperator } = useAuth();
   const toggleDefault = () => {
-    return (user?.role === 'registry.admin' && (user?.territory_id !== null || user?.operator_id !== null)) ? true : false;
+    return user?.role === "registry.admin" &&
+      (user?.territory_id !== null || user?.operator_id !== null)
+      ? true
+      : false;
   };
-  const [ toggleValue, setToggleValue ] = useState(toggleDefault());
-  const [ radioValue, setRadioValue ] = useState<"operator" | "territory">("territory");
-  
-  return(
+  const [toggleValue, setToggleValue] = useState(toggleDefault());
+  const [radioValue, setRadioValue] = useState<"operator" | "territory">(
+    "territory",
+  );
+
+  return (
     <>
-     { user &&
-      <>
-        <h3 className={fr.cx('fr-callout__title')}>Mon profil</h3>
-        <p><b>Mail:</b> {user.email}</p>
-        <p><b>Rôle:</b> {labelRole(user.role)}</p>
-        <p>
-          <a href={`${Config.get('auth.pc_uri')}/personal-information`} 
-            target='_blank'
-            rel="noopener noreferrer"
-            aria-label="Modifier mes informations sur ProConnect (s'ouvre dans un nouvel onglet)"
-          >
-            Modifier mes informations sur ProConnect
-          </a>
-        </p>
-        { user.role === 'registry.admin' && 
+      {user && (
         <>
-          <ToggleSwitch
-            label="S'identifier en tant qu'opérateur ou territoire"
-            checked={toggleValue}
-            onChange={()=> setToggleValue(!toggleValue)}
-          />
-          { toggleValue &&
+          <h3 className={fr.cx("fr-callout__title")}>Mon profil</h3>
+          <p>
+            <b>Mail:</b> {user.email}
+          </p>
+          <p>
+            <b>Rôle:</b> {labelRole(user.role)}
+          </p>
+          <p>
+            <a
+              href={`${Config.get<string>("auth.pc_uri")}/personal-information`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Modifier mes informations sur ProConnect (s'ouvre dans un nouvel onglet)"
+            >
+              Modifier mes informations sur ProConnect
+            </a>
+          </p>
+          {user.role === "registry.admin" && (
             <>
-              <RadioButtons
-                legend="S'identifier en tant que :"
-                name="radio"
-                options={[
-                  {
-                    label: "Territoire",
-                    nativeInputProps: {
-                      checked: radioValue === "territory",
-                      onChange: ()=> setRadioValue("territory")
-                    }
-                  },
-                  {
-                    label: "opérateur",
-                    nativeInputProps: {
-                      checked: radioValue === "operator",
-                      onChange: ()=> setRadioValue("operator")
-                    }
-                  }
-              ]}
-                orientation="horizontal"
+              <ToggleSwitch
+                label="S'identifier en tant qu'opérateur ou territoire"
+                checked={toggleValue}
+                onChange={() => setToggleValue(!toggleValue)}
               />
-              { radioValue === "territory" &&
-                <SelectTerritory defaultValue={user?.territory_id ?? 1} onChange={onChangeTerritory} />
-              }
-              { radioValue === "operator" &&
-                <SelectOperator defaultValue={1} onChange={onChangeOperator} />
-              }
+              {toggleValue && (
+                <>
+                  <RadioButtons
+                    legend="S'identifier en tant que :"
+                    name="radio"
+                    options={[
+                      {
+                        label: "Territoire",
+                        nativeInputProps: {
+                          checked: radioValue === "territory",
+                          onChange: () => setRadioValue("territory"),
+                        },
+                      },
+                      {
+                        label: "opérateur",
+                        nativeInputProps: {
+                          checked: radioValue === "operator",
+                          onChange: () => setRadioValue("operator"),
+                        },
+                      },
+                    ]}
+                    orientation="horizontal"
+                  />
+                  {radioValue === "territory" && (
+                    <SelectTerritory
+                      defaultValue={user?.territory_id ?? 1}
+                      onChange={onChangeTerritory}
+                    />
+                  )}
+                  {radioValue === "operator" && (
+                    <SelectOperator
+                      defaultValue={1}
+                      onChange={onChangeOperator}
+                    />
+                  )}
+                </>
+              )}
             </>
-          }
+          )}
         </>
-        }
-      </>
-     }
-    </>    
+      )}
+    </>
   );
 }

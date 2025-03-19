@@ -79,7 +79,7 @@ jobs:
         with:
           tool: just@1.24.0
       - name: Run unit test
-        run: just ci_test_unit
+        run: just cache && just ci_test_unit
         working-directory: api
         env:
           APP_POSTGRES_URL: postgres://
@@ -167,5 +167,5 @@ jobs:
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
           APP_AUTH_CLIENT_ID: secret
           APP_AUTH_CLIENT_SECRET: secret
-        run: just ci_test_integration
+        run: just cache && just ci_test_integration
         working-directory: api

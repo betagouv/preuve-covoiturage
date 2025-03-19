@@ -23,20 +23,20 @@ export default function UsersTable(props: {title:string, territoryId?:number, op
     setCurrentPage(id);
   };
   const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl('v3', 'dashboard/users'));
+    const urlObj = new URL(getApiUrl("v3", "dashboard/users"));
     if (props.territoryId) {
-      urlObj.searchParams.set('territory_id', props.territoryId.toString());
+      urlObj.searchParams.set("territory_id", props.territoryId.toString());
     } else if (props.operatorId) {
-      urlObj.searchParams.set('operator_id', props.operatorId.toString());
+      urlObj.searchParams.set("operator_id", props.operatorId.toString());
     }
     if (currentPage !== 1) {
-      urlObj.searchParams.set('page', currentPage.toString());
+      urlObj.searchParams.set("page", currentPage.toString());
     }
     return urlObj.toString();
   }, [props.territoryId, props.operatorId, currentPage]);
 
   const { data } = useApi<UsersInterface>(url);
-  const totalPages = data?.meta.totalPages || 1;  
+  const totalPages = data?.meta.totalPages ?? 1;
 
   const headers = [
     'Identifiant',

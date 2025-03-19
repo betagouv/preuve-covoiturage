@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
@@ -104,6 +104,9 @@ export class CarpoolAcquisitionService {
         },
         conn,
       );
+      if (carpool.conflict) {
+        throw new ConflictException(`Carpool already registered at ${carpool.created_at}`);
+      }
       let terms_violation_error_labels: TermsViolationErrorLabels = [];
       if (env_or_false("APP_DISABLE_TERMS_VALIDATION")) {
         await this.statusRepository.saveAcquisitionStatus(
@@ -243,7 +246,6 @@ export class CarpoolAcquisitionService {
 
   public async processGeo(params: ProcessGeoParams): Promise<ProcessGeoResults> {
     const conn = await this.connection.getClient().connect();
-
     try {
       const list = await this.geoRepository.findProcessable({
         limit: params.batchSize,
@@ -253,6 +255,7 @@ export class CarpoolAcquisitionService {
       }, conn);
 
       for (const item of list) {
+        await conn.query("BEGIN");
         try {
           const start = await this.geoService.positionToInsee(item.start);
           const end = await this.geoService.positionToInsee(item.end);
@@ -267,17 +270,18 @@ export class CarpoolAcquisitionService {
             carpool_id: item.carpool_id,
             status: CarpoolAcquisitionStatusEnum.Processed,
           }, conn);
+          await conn.query("COMMIT");
         } catch (e) {
-          await this.geoRepository.upsert({
-            carpool_id: item.carpool_id,
-            error: e.message,
-          }, conn);
-
+          await conn.query("ROLLBACK");
           await this.statusRepository.saveAcquisitionStatus({
             carpool_id: item.carpool_id,
             status: CarpoolAcquisitionStatusEnum.Failed,
           }, conn);
 
+          await this.geoRepository.upsert({
+            carpool_id: item.carpool_id,
+            error: e.message,
+          }, conn);
           logger.error(`[geo] error encoding ${item.carpool_id} : ${e.message}`);
         }
       }

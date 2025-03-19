@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: RequestInit) => {
+export const useApi = <T>(
+  url: string | URL,
+  paginate = false,
+  init?: RequestInit,
+) => {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
   const fetchData = useCallback(async () => {
     try {
       setError(null);
@@ -44,10 +47,8 @@ export const useApi = <T>(url: string | URL, paginate: boolean = false, init?: R
       setLoading(false);
     }
   }, [url, init, paginate]);
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
   return { data, error, loading, refetch: fetchData };
 };

@@ -7,6 +7,7 @@ export const generateNonce = () => {
 export const addParamsToUrl = (url: string, params: object) => {
   const queryString = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     queryString.append(key, value);
   });
   return `${url}?${queryString.toString()}`;

@@ -32,7 +32,7 @@ export class ExportParams {
     operator_id: [],
     geo_selector: null,
     tz: this.tz,
-    target: ExportTarget.OPENDATA,
+    target: ExportTarget.DATAGOUV,
   };
 
   constructor(protected config: Config) {

@@ -5,15 +5,15 @@ import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
-import { CarpoolOpenDataListType } from "@/pdc/services/export/repositories/queries/CarpoolOpenDataQuery.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
+import { CarpoolDataGouvListType } from "../repositories/queries/CarpoolDataGouvQuery.ts";
+import { DataGouvFileCreatorServiceInterfaceResolver } from "../services/DataGouvFileCreatorService.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
 import { NameServiceInterfaceResolver } from "../services/NameService.ts";
-import { OpenDataFileCreatorServiceInterfaceResolver } from "../services/OpenDataFileCreatorService.ts";
 
 export type Options = {
   start: Date;
@@ -28,7 +28,7 @@ function defaultDate(offset = 0): Date {
 
 @command({
   signature: "export:datagouv",
-  description: "Export opendata file and upload to data.gouv.fr",
+  description: "Export file and upload to data.gouv.fr",
   options: [
     {
       signature: "-s, --start <start>",
@@ -52,7 +52,7 @@ function defaultDate(offset = 0): Date {
 export class DataGouvCommand implements CommandInterface {
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
-    protected fileCreatorService: OpenDataFileCreatorServiceInterfaceResolver,
+    protected fileCreatorService: DataGouvFileCreatorServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
     protected nameService: NameServiceInterfaceResolver,
     protected logger: LogServiceInterfaceResolver,
@@ -70,11 +70,11 @@ export class DataGouvCommand implements CommandInterface {
     // TODO notify users of the end of the process
 
     const chunks = this.splitByMonth(options.start, options.end, options.tz);
-    const target = ExportTarget.OPENDATA;
-    const fields = this.fieldService.byTarget<CarpoolOpenDataListType>(target);
+    const target = ExportTarget.DATAGOUV;
+    const fields = this.fieldService.byTarget<CarpoolDataGouvListType>(target);
 
     for (const params of chunks) {
-      const filename = this.nameService.opendata(params.get().start_at);
+      const filename = this.nameService.datagouv(params.get().start_at);
 
       const s = toTzString(params.get().start_at, "Europe/Paris", "yyyy-MM");
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
@@ -82,7 +82,7 @@ export class DataGouvCommand implements CommandInterface {
 
       await this.fileCreatorService.write(
         params,
-        new CSVWriter<CarpoolOpenDataListType>(filename, { tz: options.tz, compress: false, fields }),
+        new CSVWriter<CarpoolDataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
       );
 
       // upload to storage
