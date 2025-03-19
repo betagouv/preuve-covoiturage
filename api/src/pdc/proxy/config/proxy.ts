@@ -28,5 +28,6 @@ export const rpc = {
 };
 
 export const cors = env_or_fail("APP_CORS", appUrl);
+export const dashboardV2Cors = env_or_fail("APP_DASHBOARD_URL", "http://localhost:4200");
 export const observatoryCors = env_or_fail("APP_OBSERVATORY_CORS", appUrl)
   .split(",");

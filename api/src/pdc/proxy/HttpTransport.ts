@@ -203,7 +203,7 @@ export class HttpTransport implements TransportInterface {
     this.app.use(
       /\/((?!honor|contactform|policy\/simulate|v3\/observatory|geo\/search).)*/,
       cors({
-        origin: this.config.get("proxy.cors"),
+        origin: [this.config.get("proxy.cors"), this.config.get("proxy.dashboardV2Cors")],
         optionsSuccessStatus: 200,
         // Allow-Access-Credentials lets XHR requests send Cookies to a different URL
         credentials: true,
