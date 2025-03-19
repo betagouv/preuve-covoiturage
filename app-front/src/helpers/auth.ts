@@ -31,3 +31,36 @@ export const labelRole = (role: string) => {
       return role;
   }
 };
+
+export const enumRoles = [
+  "registry.admin",
+  "territory.user",
+  "territory.admin",
+  "operator.user",
+  "operator.admin",
+] as const;
+
+export const enumTypes = [
+  "town",
+  "towngroup",
+  "district",
+  "region",
+  "country",
+] as const;
+
+export const labelType = (type: string) => {
+  switch (type) {
+    case "town":
+      return "Commune";
+    case "towngroup":
+      return "AOM";
+    case "district":
+      return "Département";
+    case "region":
+      return "Région";
+    case "country":
+      return "Pays";
+    default:
+      return type;
+  }
+};

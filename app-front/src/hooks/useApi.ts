@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useApi = <T>(
   url: string | URL,
@@ -6,61 +6,49 @@ export const useApi = <T>(
   init?: RequestInit,
 ) => {
   const [data, setData] = useState<T>();
-  const [error, setError] = useState<Error>();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setError(undefined);
-        setLoading(true);
-        // Récupération de la première page
-        const response = await fetch(url, { ...init, credentials: "include" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const res = await response.json();
-        if (!response.ok) {
-          throw res;
-        }
-        // Si plusieurs pages, on charge les pages suivantes
-        if (paginate && res.meta?.totalPages > 1) {
-          const endpoints: URL[] = [];
-          for (let i = 2; i <= res.meta.totalPages; i++) {
-            const endpoint = new URL(url);
-            endpoint.searchParams.append("page", i.toString());
-            endpoints.push(endpoint);
-          }
-          const responses = await Promise.all(
-            endpoints.map((e) => fetch(e, { ...init, credentials: "include" })),
-          );
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          const datas = await Promise.all(responses.map(async (r) => r.json()));
-          // Fusionner les données de la première page et des pages suivantes
-          const combinedData = [
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            ...("data" in res ? res.data : [res]),
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
-            ...datas.flatMap((d) => ("data" in d ? d.data : [d])),
-          ];
-          setData({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            meta: res.meta,
-            data: combinedData,
-          } as unknown as T);
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          setData(res);
-        }
-      } catch (e) {
-        setError(e as Error);
-        setData(undefined);
-      } finally {
-        setLoading(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchData = useCallback(async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(url, { ...init, credentials: "include" });
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res.message || "Une erreur est survenue");
       }
-    };
 
-    void fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, init]);
+      if (paginate && res.meta?.totalPages > 1) {
+        const endpoints: URL[] = [];
+        for (let i = 2; i <= res.meta.totalPages; i++) {
+          const endpoint = new URL(url);
+          endpoint.searchParams.append("page", i.toString());
+          endpoints.push(endpoint);
+        }
 
-  return { data, error, loading };
+        const responses = await Promise.all(
+          endpoints.map((e) => fetch(e, { ...init, credentials: "include" })),
+        );
+        const datas = await Promise.all(responses.map((r) => r.json()));
+
+        const combinedData = [
+          ...("data" in res ? res.data : [res]),
+          ...datas.flatMap((d) => ("data" in d ? d.data : [d])),
+        ];
+
+        setData({ meta: res.meta, data: combinedData } as unknown as T);
+      } else {
+        setData(res);
+      }
+    } catch (e) {
+      setError(e as Error);
+      setData(undefined);
+    } finally {
+      setLoading(false);
+    }
+  }, [url, init, paginate]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  return { data, error, loading, refetch: fetchData };
 };
