@@ -1,14 +1,14 @@
-import { createModal } from '@codegouvfr/react-dsfr/Modal';
-import { useIsModalOpen } from '@codegouvfr/react-dsfr/Modal/useIsModalOpen';
-import { ReactNode, useEffect, useId, useState } from 'react';
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import { useIsModalOpen } from "@codegouvfr/react-dsfr/Modal/useIsModalOpen";
+import { type ReactNode, useEffect, useId, useState } from "react";
 
 export type ModalProps = {
-  open: boolean,
-  title: string,
-  children?: ReactNode,
-  onClose: () => void,
-  onSubmit:() => Promise<void>,
-}
+  open: boolean;
+  title: string;
+  children?: ReactNode;
+  onClose: () => void;
+  onSubmit: () => Promise<void>;
+};
 
 export type ModalResponse = {
   doProceed: boolean;
@@ -20,19 +20,20 @@ export function Modal(props: ModalProps) {
     createModal({
       id: `modal-${id}`,
       isOpenedByDefault: false,
-    })
+    }),
   );
 
   useEffect(() => {
-    if(props.open) { 
+    if (props.open) {
       modal.open();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.open]);
 
   useIsModalOpen(modal, {
     onConceal: () => {
       props.onClose();
-    }
+    },
   });
 
   return (
@@ -40,16 +41,16 @@ export function Modal(props: ModalProps) {
       title={props.title}
       buttons={[
         {
-          children: 'Annuler',
+          children: "Annuler",
           onClick: () => {
             props.onClose();
-        },
+          },
         },
         {
-          children: 'Ok',
+          children: "Ok",
           onClick: () => {
             props.onClose();
-            props.onSubmit();
+            void props.onSubmit();
           },
         },
       ]}

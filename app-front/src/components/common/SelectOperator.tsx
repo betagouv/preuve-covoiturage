@@ -3,7 +3,7 @@ import { Config } from "@/config";
 import { useApi } from "@/hooks/useApi";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useState } from "react";
-import { OperatorsInterface } from '../../interfaces/dataInterface';
+import { type OperatorsInterface } from "../../interfaces/dataInterface";
 
 export default function SelectOperator(props: {
   defaultValue: number;
@@ -11,9 +11,10 @@ export default function SelectOperator(props: {
 }) {
   const [value, setValue] = useState<number>(props.defaultValue);
   const url = `${Config.get<string>("next.public_api_url", "")}/v3/dashboard/operators`;
-  const { data } = useApi<OperatorsInterface>(url,true);
-  return(
-    <Select label='Sélectionner un opérateur' 
+  const { data } = useApi<OperatorsInterface>(url, true);
+  return (
+    <Select
+      label="Sélectionner un opérateur"
       nativeSelectProps={{
         value: value,
         onChange: (e) => {
@@ -21,11 +22,13 @@ export default function SelectOperator(props: {
           setValue(newValue);
           props.onChange(newValue);
         },
-      }}      
-    > 
-      { data &&
-        data.data.map((d, i) => <option key={i} value={d.id}>{d.name}</option>)
-      }
+      }}
+    >
+      {data?.data.map((d, i) => (
+        <option key={i} value={d.id}>
+          {d.name}
+        </option>
+      ))}
     </Select>
   );
 }
