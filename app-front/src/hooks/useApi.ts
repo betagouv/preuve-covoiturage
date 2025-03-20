@@ -36,28 +36,8 @@ export const useApi = <T>(
         ((res as PaginateAPIResponse<T>).meta?.totalPages ?? 0) > 1
       ) {
         const paginateResponse = res as PaginateAPIResponse<T>;
-        const endpoints: URL[] = [];
-        for (let i = 2; i <= paginateResponse.meta!.totalPages; i++) {
-          const endpoint = new URL(url);
-          endpoint.searchParams.append("page", i.toString());
-          endpoints.push(endpoint);
-        }
-
-        const responses = await Promise.all(
-          endpoints.map((e) => fetch(e, { ...init, credentials: "include" })),
-        );
-        const datas = await Promise.all(responses.map((r) => r.json()));
-
-        const combinedData = [
-          ...("data" in paginateResponse
-            ? (paginateResponse.data ?? [])
-            : [paginateResponse]),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
-          ...datas.flatMap((d) => ("data" in d ? d.data : [d])),
-        ];
-
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        setData({ meta: paginateResponse.meta, data: combinedData } as T);
+        setData({ meta: paginateResponse.meta, data: paginateResponse.data } as T);
       } else {
         setData(res as T);
       }
