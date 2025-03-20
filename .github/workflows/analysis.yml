@@ -43,7 +43,21 @@ jobs:
         run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: public
 
+  lint-dashboard:
+    name: Lint Dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run lint
+        working-directory: ./app-front
+        run: npm run lint
 
   python-code-audit:
     name: Python code audit

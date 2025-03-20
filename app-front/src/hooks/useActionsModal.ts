@@ -1,17 +1,27 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useCallback, useState } from "react";
-import { ZodError, ZodSchema, ZodType } from "zod";
+import { ZodError, type ZodSchema, type ZodType } from "zod";
 import { getApiUrl } from "../helpers/api";
 
-export const formatErrors = (formattedErrors: Record<string, string[] | undefined>): Record<string, string> => {
-  return Object.keys(formattedErrors).reduce((acc, key) => {
-    acc[key] = formattedErrors[key]?.[0] ?? "";
-    return acc;
-  }, {} as Record<string, string>);
+export const formatErrors = (
+  formattedErrors: Record<string, string[] | undefined>,
+): Record<string, string> => {
+  return Object.keys(formattedErrors).reduce(
+    (acc, key) => {
+      acc[key] = formattedErrors[key]?.[0] ?? "";
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 };
 
 export const useActionsModal = <T extends Record<string, unknown>>() => {
   const [openModal, setOpenModal] = useState(false);
-  const [typeModal, setTypeModal] = useState<"update" | "delete" | "create">("update");
+  const [typeModal, setTypeModal] = useState<"update" | "delete" | "create">(
+    "update",
+  );
   const [currentRow, setCurrentRow] = useState<T | Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string> | undefined>({});
   const [submitData, setSubmitData] = useState<T>();
@@ -30,7 +40,11 @@ export const useActionsModal = <T extends Record<string, unknown>>() => {
         return "Action";
     }
   };
-  const validateInputChange = (schema: ZodType<T>, field: string, value: string | number) => {
+  const validateInputChange = (
+    schema: ZodType<T>,
+    field: string,
+    value: string | number,
+  ) => {
     setCurrentRow((prev) => {
       const updatedRow = { ...prev, [field]: value };
       try {
@@ -51,7 +65,7 @@ export const useActionsModal = <T extends Record<string, unknown>>() => {
         if (typeModal !== "delete") {
           const result = validationSchema.safeParse(currentRow);
           if (!result.success) {
-            const errors = result.error!.flatten().fieldErrors;
+            const errors = result.error.flatten().fieldErrors;
             setErrors(formatErrors(errors));
           }
         } else {

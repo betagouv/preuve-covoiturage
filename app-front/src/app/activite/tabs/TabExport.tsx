@@ -106,7 +106,11 @@ export default function TabExport() {
         setResponse(result);
       }
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
     setLoading(false);
   };
