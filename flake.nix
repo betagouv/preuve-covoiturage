@@ -29,7 +29,7 @@
               # data stack
               dbt
               pre-commit
-              python311Packages.dbt-postgres
+              python312Packages.dbt-postgres
 
               # misc
               gh
