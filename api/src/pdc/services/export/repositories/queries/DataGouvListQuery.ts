@@ -1,9 +1,8 @@
 import sql, { Sql } from "@/lib/pg/sql.ts";
-import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
-import { IncentiveStatusEnum } from "@/pdc/services/policy/interfaces/index.ts";
+import { DataGouvQueryConfig } from "@/pdc/services/export/repositories/CarpoolRepository.ts";
 
-export type CarpoolDataGouvListType = {
+export type DataGouvListType = {
   journey_id: number;
   trip_id: string;
 
@@ -36,11 +35,9 @@ export type CarpoolDataGouvListType = {
   has_incentive: boolean;
 };
 
-export function CarpoolDataGouvQuery(params: ExportParams): Sql {
+export function DataGouvListQuery(params: ExportParams, config: DataGouvQueryConfig): Sql {
   const { start_at, end_at, tz } = params.get();
-  const min_occurrences = 6;
-  const acquisition_status = CarpoolAcquisitionStatusEnum.Processed;
-  const incentive_status = IncentiveStatusEnum.Validated;
+  const { min_occurrences, acquisition_status, incentive_status } = config;
 
   return sql`
     WITH

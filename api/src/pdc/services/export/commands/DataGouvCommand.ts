@@ -1,15 +1,18 @@
 import { coerceDate } from "@/ilos/cli/index.ts";
-import { command, CommandInterface } from "@/ilos/common/index.ts";
+import { command, CommandInterface, ConfigInterfaceResolver } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { today, toTzString } from "@/pdc/helpers/dates.helper.ts";
+import { DataGouvAPIProvider } from "@/pdc/providers/datagouv/DataGouvAPIProvider.ts";
+import { DataGouvMetadataProvider } from "@/pdc/providers/datagouv/DataGouvMetadataProvider.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
+import { ExportTarget } from "@/pdc/services/export/models/Export.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
+import { CarpoolRepository } from "@/pdc/services/export/repositories/CarpoolRepository.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
-import { ExportTarget } from "../models/Export.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
-import { CarpoolDataGouvListType } from "../repositories/queries/CarpoolDataGouvQuery.ts";
+import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
 import { DataGouvFileCreatorServiceInterfaceResolver } from "../services/DataGouvFileCreatorService.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
@@ -51,6 +54,10 @@ function defaultDate(offset = 0): Date {
 })
 export class DataGouvCommand implements CommandInterface {
   constructor(
+    protected config: ConfigInterfaceResolver,
+    protected api: DataGouvAPIProvider,
+    protected metadata: DataGouvMetadataProvider,
+    protected carpoolRepository: CarpoolRepository,
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected fileCreatorService: DataGouvFileCreatorServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
@@ -61,6 +68,11 @@ export class DataGouvCommand implements CommandInterface {
   ) {}
 
   public async call(options: Options): Promise<void> {
+    if (this.config.get("datagouv.api.enabled") === false) {
+      logger.warn("DataGouv Export is DISABLED");
+      return;
+    }
+
     // 1. Get and configure parameters
     // 2. Export the file
     // 3. FileCreator
@@ -71,21 +83,30 @@ export class DataGouvCommand implements CommandInterface {
 
     const chunks = this.splitByMonth(options.start, options.end, options.tz);
     const target = ExportTarget.DATAGOUV;
-    const fields = this.fieldService.byTarget<CarpoolDataGouvListType>(target);
+    const fields = this.fieldService.byTarget<DataGouvListType>(target);
 
     for (const params of chunks) {
       const filename = this.nameService.datagouv(params.get().start_at);
 
       const s = toTzString(params.get().start_at, "Europe/Paris", "yyyy-MM");
       const e = toTzString(params.get().end_at, "Europe/Paris", "yyyy-MM");
-      logger.info(`Exporting ${filename} from ${s} to ${e}`);
+      logger.info(`Exporting ${filename} from ${s}-01 to ${e}-01`);
 
-      await this.fileCreatorService.write(
+      const path = await this.fileCreatorService.write(
         params,
-        new CSVWriter<CarpoolDataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
+        new CSVWriter<DataGouvListType>(filename, { tz: options.tz, compress: false, fields }),
       );
 
+      // generate dataset description
+      const stats = await this.carpoolRepository.dataGouvStats(params);
+      const description = this.metadata.description(stats);
+
       // upload to storage
+      const dataset = await this.api.dataset();
+      const resource = await this.api.upload(path);
+      await this.api.setMetadata(resource, { description });
+
+      logger.info(`Resource uploaded to ${dataset.page}`);
     }
   }
 
