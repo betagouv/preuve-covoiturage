@@ -9,9 +9,7 @@ import {
   TerritoriesParamsInterface,
   TerritoriesRepositoryInterface,
   TerritoriesRepositoryInterfaceResolver,
-  TerritoriesResultInterface,
-  UpdateTerritoryDataInterface,
-  UpdateTerritoryResultInterface,
+  TerritoriesResultInterface
 } from "../interfaces/TerritoriesRepositoryInterface.ts";
 
 @provider({
@@ -99,28 +97,5 @@ export class TerritoriesRepository implements TerritoriesRepositoryInterface {
       throw new NotFoundException(`territory not found: (${params.id})`);
     }
     return { success: true, message: `Territory ${params.id} deleted` };
-  }
-
-  async updateTerritory(
-    data: UpdateTerritoryDataInterface,
-  ): Promise<UpdateTerritoryResultInterface> {
-    const query = sql`
-      UPDATE ${raw(this.table)}
-      SET 
-        name = ${data.name},
-        updated_at = now(),
-        level = ${data.type},
-        siret = ${data.siret}
-      WHERE _id = ${data.id}
-      RETURNING _id, updated_at, name, level as type, siret
-    `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
-      throw new Error(`Unable to update territory with id ${data.id}`);
-    }
-    return {
-      success: true,
-      message: `Territory ${JSON.stringify(response.rows[0])} updated`,
-    };
   }
 }

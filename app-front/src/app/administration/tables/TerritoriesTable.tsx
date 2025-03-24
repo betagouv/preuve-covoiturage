@@ -40,27 +40,15 @@ export default function TerritoriesTable(props: {
   }, [props.id, currentPage]);
   const { data } = useApi<TerritoriesInterface>(url);
   const totalPages = data?.meta.totalPages ?? 1;
-  const headers = ["Identifiant", "Nom", "Type", "Siret", "Actions"];
+  const headers = ["Identifiant", "Nom", "Siret", "Actions"];
   const dataTable =
     data?.data?.map((d) => [
-      d.id,
+      d._id,
       d.name,
-      labelType(d.type ?? ""),
       d.siret,
       <ButtonsGroup
-        key={d.id}
+        key={d._id}
         buttons={[
-          {
-            children: "modifier",
-            iconId: "fr-icon-refresh-line",
-            priority: "secondary",
-            onClick: () => {
-              modal.setCurrentRow(d);
-              modal.setErrors({});
-              modal.setOpenModal(true);
-              modal.setTypeModal("update");
-            },
-          },
           {
             children: "supprimer",
             iconId: "fr-icon-delete-bin-line",
@@ -128,42 +116,6 @@ export default function TerritoriesTable(props: {
           {(modal.typeModal === "update" || modal.typeModal === "create") && (
             <>
               <Input
-                label="Nom du territoire"
-                state={modal.errors?.name ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.name ?? ""}
-                nativeInputProps={{
-                  type: "text",
-                  value: (modal.currentRow.name as string) ?? "",
-                  onChange: (e) =>
-                    modal.validateInputChange(
-                      formSchema,
-                      "name",
-                      e.target.value,
-                    ),
-                }}
-              />
-              <Select
-                label="Type"
-                nativeSelectProps={{
-                  value: (modal.currentRow.type as string) ?? "",
-                  onChange: (e) =>
-                    modal.validateInputChange(
-                      formSchema,
-                      "type",
-                      e.target.value,
-                    ),
-                }}
-              >
-                <option value="" disabled hidden>
-                  Selectionnez un type
-                </option>
-                {enumTypes?.map((r: string, i: number) => (
-                  <option key={i} value={r}>
-                    {labelType(r)}
-                  </option>
-                ))}
-              </Select>
-              <Input
                 label="Siret"
                 state={modal.errors?.siret ? "error" : "default"}
                 stateRelatedMessage={modal.errors?.siret ?? ""}
@@ -174,6 +126,21 @@ export default function TerritoriesTable(props: {
                     modal.validateInputChange(
                       formSchema,
                       "siret",
+                      e.target.value,
+                    ),
+                }}
+              />
+              <Input
+                label="Nom du territoire"
+                state={modal.errors?.name ? "error" : "default"}
+                stateRelatedMessage={modal.errors?.name ?? ""}
+                nativeInputProps={{
+                  type: "text",
+                  value: (modal.currentRow.name as string) ?? "",
+                  onChange: (e) =>
+                    modal.validateInputChange(
+                      formSchema,
+                      "name",
                       e.target.value,
                     ),
                 }}

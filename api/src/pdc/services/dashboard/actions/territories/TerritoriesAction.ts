@@ -23,7 +23,7 @@ export type ResultInterface = {
     hasPermissionMiddleware("common.territory.list"),
   ],
   apiRoute: {
-    path: "/dashboard/territories",
+    path: "/dashboard-no/territories",
     action: "dashboard:territories",
     method: "GET",
   },

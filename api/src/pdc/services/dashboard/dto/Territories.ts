@@ -14,14 +14,7 @@ export const CreateTerritory = object({
 export const DeleteTerritory = object({
   id: Id,
 });
-export const UpdateTerritory = object({
-  id: Id,
-  name: Varchar,
-  type: TerritoryType,
-  siret: Siret,
-});
 
 export type Territories = Infer<typeof Territories>;
 export type DeleteTerritory = Infer<typeof DeleteTerritory>;
 export type CreateTerritory = Infer<typeof CreateTerritory>;
-export type UpdateTerritory = Infer<typeof UpdateTerritory>;

@@ -18,6 +18,11 @@ import { GeoRepositoryProviderInterfaceResolver } from "../../interfaces/GeoRepo
     ["validate", alias],
     contentBlacklistMiddleware(...blacklist),
   ],
+  apiRoute: {
+    path: "/dashboard/find-geo-by-siren",
+    action: "dashboard:territories",
+    method: "GET",
+  },
 })
 export class FindGeoBySirenAction extends AbstractAction {
   constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
