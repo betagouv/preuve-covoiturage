@@ -7,6 +7,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState<AuthContextProps["user"]>();
+  const [loading, setLoading] = useState(true);
 
   const checkAuth = async () => {
     const response = await fetch(
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuth(false);
       setUser(undefined);
     }
+    setLoading(false);
   };
   useEffect(() => {
     void checkAuth();
@@ -45,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator }}
     >
-      {children}
+     {!loading && children}
     </AuthContext.Provider>
   );
 }
