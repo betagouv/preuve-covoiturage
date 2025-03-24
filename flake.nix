@@ -30,6 +30,7 @@
               dbt
               pre-commit
               python312Packages.dbt-postgres
+              uv
 
               # misc
               gh
