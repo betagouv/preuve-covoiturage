@@ -48,6 +48,8 @@ models:
       +schema: "fraud"
     campaigns_analytics:
       +schema: "campaigns_analytics"
+    export:
+      +schema: "export"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:
