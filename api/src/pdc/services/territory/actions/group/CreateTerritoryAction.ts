@@ -20,7 +20,7 @@ export class CreateTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.territoryRepository.create(params);
   }
 }
