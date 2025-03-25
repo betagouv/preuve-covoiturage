@@ -1,13 +1,50 @@
-{{ config(
-  materialized='incremental',
-  unique_key=['_id'],
-) }}
+{{
+  config(
+    tags = ['export', 'cache'],
+    materialized='incremental',
+    unique_key=['_id'],
+    on_schema_change='fail',
+    pre_hook = [
+      """
+        CREATE TEMPORARY TABLE IF NOT EXISTS tmp_ordered_cc_id AS
+          SELECT _id, start_datetime
+          FROM {{ source('carpool', 'carpools') }}
+          WHERE start_datetime < now()
+          ORDER BY start_datetime ASC
+      """,
+    ],
+    post_hook = [
+      """
+        CREATE INDEX IF NOT EXISTS idx_cluster_start_at ON {{ this }} (_start_at)
+      """,
+      """
+        CLUSTER {{ this }} USING idx_cluster_start_at
+      """,
+    ],
+  )
+}}
 
 {% set tz = "'Europe/Paris'" %}
-{% set geo_year = 2023 %} -- FIXME
-{% set limit = 100000 %}
+{% set limit = 0 %}
 
-WITH trips AS (
+WITH
+
+missing AS(
+  SELECT tmp_ordered_cc_id._id
+  FROM tmp_ordered_cc_id
+  
+  {% if is_incremental() %}
+  WHERE tmp_ordered_cc_id.start_datetime > (SELECT MAX(_start_at) FROM {{ this }})
+  {% endif %}
+  
+  ORDER BY tmp_ordered_cc_id.start_datetime ASC
+  
+  {% if limit > 0 %}
+  LIMIT {{ limit }}
+  {% endif %}
+),
+
+trips AS (
   SELECT
     cc._id,
     oo._id as operator_id,
@@ -59,7 +96,10 @@ WITH trips AS (
     -- CEE application data
     cee._id IS NOT NULL as cee_application
 
-  FROM {{ source('carpool', 'carpools') }} cc
+  -- use the ordered list of carpool ids as a base
+  -- to order the carpools
+  FROM missing
+  LEFT JOIN {{ source('carpool', 'carpools') }} cc ON missing._id = cc._id
 
   -- join the carpool tables
   LEFT JOIN {{ source('carpool', 'status') }} cs ON cc._id = cs.carpool_id
@@ -101,22 +141,7 @@ WITH trips AS (
       AND pi_rpc.operator_journey_id = cc.operator_journey_id
   ) as agg_incentives_rpc ON TRUE
 
-  {% if is_incremental() %}
-  LEFT JOIN {{ this }} existing ON cc._id = existing._id
-  {% endif %}
-
-  WHERE true
-    AND cs.acquisition_status = 'processed'
-    
-    {% if is_incremental() %}
-      -- exclude already exported data
-      AND existing._id IS NULL
-    {% endif %}
-  
-  -- debug
-  {% if limit > 0 %}
-  LIMIT {{ limit }}
-  {% endif %}
+  WHERE cs.acquisition_status = 'processed'
 ),
 
 -- select latest geo data for start and end geo codes only
