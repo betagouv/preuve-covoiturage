@@ -1,13 +1,13 @@
 import { env } from "./config.ts";
 
-export type HTTPResponse = {
+export type HTTPResponse<T = string | object | null> = {
   ok: boolean;
   status: number;
   statusText: string;
   url: string;
   redirected: boolean;
   headers: Headers;
-  body: any;
+  body: T;
 };
 
 export class API {
@@ -30,26 +30,35 @@ export class API {
     username = username || this.defaultUsername;
     password = password || this.defaultPassword;
 
-    const response = await fetch(new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl), {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await fetch(new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl), {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const body = await response.json();
+      const body = await this.getBody(response) as { access_token?: string };
+      console.log(this.baseUrl, body);
 
-    if (!response.ok) {
-      throw new Error(`Failed to authenticate ${username}`);
+      if (!response.ok) {
+        throw new Error(`Failed to authenticate ${username}`);
+      }
+
+      if (!body.access_token || typeof body.access_token !== "string") {
+        throw new Error(`Invalid access token for ${username}`);
+      }
+
+      this.accessToken = body.access_token;
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
+      }
+
+      throw e;
     }
-
-    if (!body.access_token || typeof body.access_token !== "string") {
-      throw new Error(`Invalid access token for ${username}`);
-    }
-
-    this.accessToken = body.access_token;
   }
 
   public async get(url: string): Promise<HTTPResponse> {
@@ -67,16 +76,43 @@ export class API {
       };
     }
 
-    const response = await fetch(input, init);
+    try {
+      const response = await fetch(input, init);
+      const body = await this.getBody(response);
 
-    return {
-      ok: response.ok,
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-      redirected: response.redirected,
-      headers: response.headers,
-      body: await response.json(),
-    };
+      return {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+        redirected: response.redirected,
+        headers: response.headers,
+        body,
+      };
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
+      }
+
+      return {
+        ok: false,
+        status: 0,
+        statusText: "Network error",
+        url: input.toString(),
+        redirected: false,
+        headers: new Headers(),
+        body: null,
+      };
+    }
+  }
+
+  private async getBody(response: Response): Promise<string | object> {
+    const contentType = response.headers.get("content-type");
+
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    }
+
+    return await response.text();
   }
 }

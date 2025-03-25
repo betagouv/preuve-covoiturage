@@ -255,5 +255,5 @@ jobs:
           APIE2E_API_URL: http://api.covoiturage.test
           APIE2E_AUTH_USERNAME: ${{ secrets.API_E2E_AUTH_USERNAME }}
           APIE2E_AUTH_PASSWORD: ${{ secrets.API_E2E_AUTH_PASSWORD }}
-        run: deno test --allow-net --allow-env
+        run: just ci
         working-directory: api-e2e

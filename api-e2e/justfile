@@ -8,3 +8,21 @@ test:
 
 watch:
   deno test {{test_flags}} --watch
+
+ci:
+  #!/usr/bin/env bash
+  pushd ../api
+  just generate_certs
+  just generate_keys
+  just start_e2e "proxy"
+  just start_e2e
+  just wait "localhost" "5432"
+  just seed
+  just create_bucket "local-pdc-export"
+  just create_bucket "local-pdc-appels-de-fonds"
+  just create_bucket "local-pdc-public"
+  popd
+  just test
+  pushd ../api
+  just stop_e2e
+  popd

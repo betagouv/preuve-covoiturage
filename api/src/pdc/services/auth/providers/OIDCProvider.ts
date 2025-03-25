@@ -107,9 +107,9 @@ export class OIDCProvider implements InitHookInterface {
       payload.a = payload.app!;
       payload.o = payload.id!;
       payload.s = "operator";
-      delete payload.id;
-      delete payload.app;
-      delete payload.permissions;
+      payload.id = undefined;
+      payload.app = undefined;
+      payload.permissions = undefined;
     }
 
     if (!payload.a || !payload.o) {
