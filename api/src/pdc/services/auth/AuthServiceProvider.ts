@@ -3,6 +3,7 @@ import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts
 import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
+import { AccessTokenAction } from "@/pdc/services/auth/actions/AccessTokenAction.ts";
 import { OIDCCallbackAction } from "./actions/OIDCCallbackAction.ts";
 import { AuthRouter } from "./AuthRouter.ts";
 import { config } from "./config/index.ts";
@@ -22,6 +23,6 @@ import { UserRepository } from "./providers/UserRepository.ts";
   middlewares: [
     ["validate", ValidatorMiddleware],
   ],
-  handlers: [OIDCCallbackAction],
+  handlers: [OIDCCallbackAction, AccessTokenAction],
 })
 export class AuthServiceProvider extends AbstractServiceProvider {}

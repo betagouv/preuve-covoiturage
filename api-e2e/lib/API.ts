@@ -12,6 +12,7 @@ export type HTTPResponse = {
 
 export class API {
   private baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
+  private apiVersion = env("APIE2E_API_VERSION", "v3");
   private accessToken: string | null = null;
   private defaultUsername: string;
   private defaultPassword: string;
@@ -29,7 +30,7 @@ export class API {
     username = username || this.defaultUsername;
     password = password || this.defaultPassword;
 
-    const response = await fetch(new URL("/auth/token", this.baseUrl), {
+    const response = await fetch(new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl), {
       method: "POST",
       headers: {
         "Accept": "application/json",

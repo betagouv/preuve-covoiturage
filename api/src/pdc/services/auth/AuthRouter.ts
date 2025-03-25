@@ -9,7 +9,7 @@ export class AuthRouter {
   constructor(
     @inject(proxy) private app: express.Express,
     private OIDCProvider: OIDCProvider,
-    private oidcCallbackAction: OIDCCallbackAction,
+    private OIDCCallbackAction: OIDCCallbackAction,
     private config: ConfigInterfaceResolver,
   ) {}
 
@@ -40,7 +40,7 @@ export class AuthRouter {
       asyncHandler(async (req: Request, res: Response) => {
         const { code } = req.query;
         if (typeof code === "string") {
-          const user = await this.oidcCallbackAction.handle({ code });
+          const user = await this.OIDCCallbackAction.handle({ code });
           req.session.user = user;
         }
         return res.redirect(this.config.get("oidc.app_url"));
@@ -54,14 +54,5 @@ export class AuthRouter {
 
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     });
-
-    this.app.post(
-      "/auth/token",
-      asyncHandler(async (req: Request, res: Response) => {
-        const { username, password } = req.body;
-        const access_token = await this.OIDCProvider.getToken(username, password);
-        return res.status(201).json({ access_token });
-      }),
-    );
   }
 }
