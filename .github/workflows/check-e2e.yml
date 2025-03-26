@@ -42,12 +42,12 @@ jobs:
       - name: Check hosts file
         run: |
           cat /etc/hosts
-          ping -c 2 http://api.covoiturage.test
-          ping -c 2 http://auth.covoiturage.test
-          ping -c 2 http://download.covoiturage.test
-          ping -c 2 http://local-pdc-export.s3.covoiturage.test
-          ping -c 2 http://mailer.covoiturage.test
-          ping -c 2 http://s3.covoiturage.test
+          ping -c 2 api.covoiturage.test
+          ping -c 2 auth.covoiturage.test
+          ping -c 2 download.covoiturage.test
+          ping -c 2 local-pdc-export.s3.covoiturage.test
+          ping -c 2 mailer.covoiturage.test
+          ping -c 2 s3.covoiturage.test
 
       # - name: Run API e2e tests
       #   env:
