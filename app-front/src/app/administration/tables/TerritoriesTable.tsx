@@ -3,7 +3,6 @@
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
-import { enumTypes, labelType } from "@/helpers/auth";
 import { useActionsModal } from "@/hooks/useActionsModal";
 import { useApi } from "@/hooks/useApi";
 import { type TerritoriesInterface } from "@/interfaces/dataInterface";
@@ -12,10 +11,10 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
-import Select from "@codegouvfr/react-dsfr/Select";
 import Table from "@codegouvfr/react-dsfr/Table";
 import { useMemo, useState } from "react";
 import { z } from "zod";
+import { Config } from "../../../config";
 
 export default function TerritoriesTable(props: {
   title: string;
@@ -80,7 +79,7 @@ export default function TerritoriesTable(props: {
           <Button
             iconId="fr-icon-add-circle-line"
             onClick={() => {
-              modal.setCurrentRow({ name: "", type: "", siret: "" });
+              modal.setCurrentRow({ name: "", siret: "" });
               modal.setOpenModal(true);
               modal.setErrors({});
               modal.setTypeModal("create");
@@ -108,7 +107,27 @@ export default function TerritoriesTable(props: {
         title={modal.modalTitle(modal.typeModal)}
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
-          await modal.submitModal("dashboard/territory", formSchema);
+          const companyResponse: Response = await fetch(
+            `${Config.get<string>("auth.domain")}/rpc?methods=company:fetch`,
+            {
+              credentials: "include",
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                jsonrpc: "2.0",
+                method: "company:fetch",
+                params: modal.currentRow.siret,
+                id: 1,
+              }),
+            },
+          );
+          if (companyResponse.ok) {
+            const body = await companyResponse.json();
+            await modal.submitModal("dashboard/territory", formSchema);
+          }
+
           props.refresh();
         }}
       >
@@ -122,12 +141,43 @@ export default function TerritoriesTable(props: {
                 nativeInputProps={{
                   type: "text",
                   value: (modal.currentRow.siret as string) ?? "",
-                  onChange: (e) =>
+                  onChange: (e) => {
                     modal.validateInputChange(
                       formSchema,
                       "siret",
                       e.target.value,
-                    ),
+                    );
+                    if (!!modal.errors && !!!modal.errors?.siret) {
+                      void (async () => {
+                        const geoResponse: Response = await fetch(
+                          `${Config.get<string>("auth.domain")}/rpc?methods=territory:findGeoBySiren`,
+                          {
+                            credentials: "include",
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              jsonrpc: "2.0",
+                              method: "territory:findGeoBySiren",
+                              params: { siren: e.target.value.substring(0, 9) },
+                              id: 1,
+                            }),
+                          },
+                        );
+                        if (geoResponse.ok) {
+                          const body = await geoResponse.json();
+                          if (!!body.result.data.aom_siren) {
+                            modal.setCurrentRow((prev) => ({
+                              ...prev,
+                              name: body.result.data.aom_name,
+                              siret: e.target.value,
+                            }));
+                          }
+                        }
+                      })();
+                    }
+                  },
                 }}
               />
               <Input

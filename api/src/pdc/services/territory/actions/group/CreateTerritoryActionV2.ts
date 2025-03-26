@@ -17,7 +17,7 @@ const CreateTerritory = object({
   service: "dashboard",
   method: "createTerritory",
   middlewares: [
-    ["validate", CreateTerritory],
+    ["validate-superstruct", CreateTerritory],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       registry: "registry.territory.create",
       territory: "territory.territory.create",

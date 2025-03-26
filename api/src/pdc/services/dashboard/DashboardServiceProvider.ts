@@ -15,7 +15,6 @@ import { DeleteOperatorAction } from "@/pdc/services/dashboard/actions/operators
 import { OperatorAction } from "@/pdc/services/dashboard/actions/operators/OperatorAction.ts";
 import { OperatorsAction } from "@/pdc/services/dashboard/actions/operators/OperatorsAction.ts";
 import { UpdateOperatorAction } from "@/pdc/services/dashboard/actions/operators/UpdateOperatorAction.ts";
-import { CreateTerritoryAction } from "@/pdc/services/dashboard/actions/territories/CreateTerritoryAction.ts";
 import { DeleteTerritoryAction } from "@/pdc/services/dashboard/actions/territories/DeleteTerritoryAction.ts";
 import { TerritoriesAction } from "@/pdc/services/dashboard/actions/territories/TerritoriesAction.ts";
 import { TerritoryAction } from "@/pdc/services/dashboard/actions/territories/TerritoryAction.ts";
@@ -51,7 +50,6 @@ import { UsersRepository } from "@/pdc/services/dashboard/providers/UsersReposit
     TerritoryAction,
     TerritoriesAction,
     DeleteTerritoryAction,
-    CreateTerritoryAction,
     OperatorAction,
     OperatorsAction,
     CreateOperatorAction,

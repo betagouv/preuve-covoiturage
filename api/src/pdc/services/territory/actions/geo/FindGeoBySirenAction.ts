@@ -17,19 +17,14 @@ import { GeoRepositoryProviderInterfaceResolver } from "../../interfaces/GeoRepo
     hasPermissionMiddleware("common.territory.list"),
     ["validate", alias],
     contentBlacklistMiddleware(...blacklist),
-  ],
-  apiRoute: {
-    path: "/dashboard/find-geo-by-siren",
-    action: "dashboard:territories",
-    method: "GET",
-  },
+  ]
 })
 export class FindGeoBySirenAction extends AbstractAction {
   constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.geoRepository.findBySiren(params);
   }
 }

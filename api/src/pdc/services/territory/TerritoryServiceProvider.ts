@@ -1,6 +1,7 @@
 import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
+import { ValidatorMiddleware as SuperStructValidator } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
 import { CreateTerritoryActionV2 } from "@/pdc/services/territory/actions/group/CreateTerritoryActionV2.ts";
 import { ListTerritoryActionV2 } from "@/pdc/services/territory/actions/group/ListTerritoryActionV2.ts";
@@ -44,7 +45,7 @@ import { TerritoryRepositoryProvider } from "./providers/TerritoryRepositoryProv
   middlewares: [...defaultMiddlewareBindings, [
     "validate",
     ValidatorMiddleware,
-  ]],
+  ], ["validate-superstruct", SuperStructValidator]],
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
