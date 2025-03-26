@@ -36,6 +36,7 @@ trips as (
     passenger_contribution
   from
     {{ ref('users_trips') }}
+  where start_datetime between now() - interval '1 month' and now()
 ),
 
 stats as (select 
