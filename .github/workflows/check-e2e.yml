@@ -60,7 +60,4 @@ jobs:
           docker compose -f ../docker-compose.e2e.yml up -d postgres redis s3 mailer dex proxy
           sleep 20
           docker compose -f ../docker-compose.e2e.yml up -d api
-          sleep 10
-          curl -I http://api.covoiturage.test/health
-          sleep 5
-          curl -I http://api.covoiturage.test/health
+          docker compose -f ../docker-compose.e2e.yml logs -f api
