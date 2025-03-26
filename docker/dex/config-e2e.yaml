@@ -15,18 +15,29 @@ staticClients:
 # Enable local users
 # @doc https://dexidp.io/docs/connectors/local/
 enablePasswordDB: true
+staticPasswords:
+  - email: admin@example.com
+    # password
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+    username: "application:1"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+
+# storage:
+#   type: postgres
+#   config:
+#     host: postgres
+#     port: 5432
+#     database: dex
+#     user: postgres
+#     password: postgres
+#     ssl:
+#       mode: disable
+#       # caFile: /etc/dex/postgres.ca
 
 storage:
-  type: postgres
+  type: sqlite3
   config:
-    host: $PG_HOST
-    port: 5432
-    database: $PG_DB
-    user: $PG_USERNAME
-    password: $PG_PASSWORD
-    ssl:
-      mode: disable
-      # caFile: /etc/dex/postgres.ca
+    file: /tmp/dex.db
 
 connectors:
 - type: oidc
