@@ -25,6 +25,24 @@ export type Company = {
   };
 };
 
+export enum TerritoryCodeEnum {
+  Arr = "arr",
+  City = "com",
+  CityGroup = "epci",
+  Mobility = "aom",
+  Region = "reg",
+  District = "dep",
+}
+
+export interface TerritorySelectorsInterface {
+  [TerritoryCodeEnum.Arr]?: string[];
+  [TerritoryCodeEnum.City]?: string[];
+  [TerritoryCodeEnum.Mobility]?: string[];
+  [TerritoryCodeEnum.District]?: string[];
+  [TerritoryCodeEnum.CityGroup]?: string[];
+  [TerritoryCodeEnum.Region]?: string[];
+}
+
 export type Territory = {
   _id?: number;
   name: string;

@@ -3,21 +3,15 @@ import { TerritorySelectorsInterface } from "./TerritoryCodeInterface.ts";
 
 export interface TerritoryGroupInterface {
   _id: number;
-  company_id?: number;
-  name?: string;
+  company_id: number;
+  name: string;
+  selector: TerritorySelectorsInterface;
   shortname?: string;
   contacts?: ContactsInterface;
   address?: TerritoryAddress;
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  selector?: TerritorySelectorsInterface;
-}
-
-
-export interface CreateTerritoryGroupInterfaceV2 {
-  siret: string;
-  name: string;
 }
 
 export type CreateTerritoryGroupInterface = Omit<

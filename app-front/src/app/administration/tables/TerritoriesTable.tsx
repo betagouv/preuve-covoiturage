@@ -9,6 +9,7 @@ import {
   type Company,
   type TerritoriesInterface,
   type Territory,
+  type TerritorySelectorsInterface,
 } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -17,7 +18,7 @@ import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
 import Table from "@codegouvfr/react-dsfr/Table";
 import { useCallback, useMemo, useState } from "react";
-import { z, ZodError, type ZodType } from "zod";
+import { z, ZodError } from "zod";
 import { Config } from "../../../config";
 
 const formSchema = z.object({
@@ -42,6 +43,7 @@ export default function TerritoriesTable(props: {
   const [typeModal, setTypeModal] = useState<"delete" | "create">("create");
   const [currentRow, setCurrentRow] = useState<Territory>();
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selector, setSelector] = useState<TerritorySelectorsInterface>();
   const [submitData, setSubmitData] = useState<unknown>();
   const [submitError, setSubmitError] = useState<Error>();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -58,11 +60,10 @@ export default function TerritoriesTable(props: {
   };
 
   const validateInputChange = (
-    schema: ZodType<Territory>,
     value: Territory,
   ): Record<string, string> | null => {
     try {
-      schema.parse(value);
+      formSchema.parse(value);
     } catch (error) {
       if (error instanceof ZodError) {
         return formatErrors(error.flatten().fieldErrors);
@@ -127,6 +128,7 @@ export default function TerritoriesTable(props: {
               request.params.body = JSON.stringify({
                 ...currentRow,
                 company_id: companyBody.result.data._id,
+                selector: selector,
               });
             } else {
               throw new Error("Aucune entreprise trouvée pour ce siret");
@@ -247,10 +249,7 @@ export default function TerritoriesTable(props: {
                       ...currentRow,
                       siret: e.target.value,
                     } as Territory;
-                    const schemaErrors = validateInputChange(
-                      formSchema,
-                      updatedRow,
-                    );
+                    const schemaErrors = validateInputChange(updatedRow);
                     if (schemaErrors) {
                       setErrors(schemaErrors);
                     } else {
@@ -278,11 +277,12 @@ export default function TerritoriesTable(props: {
                           const body = await geoResponse.json();
                           if (!!body.result.data.aom_siren) {
                             updatedRow.name = body.result.data.aom_name;
+                            setSelector({
+                              aom: [body.result.data.aom_siren],
+                            });
                             setCurrentRow(updatedRow);
-                            const schemaErrors = validateInputChange(
-                              formSchema,
-                              updatedRow,
-                            );
+                            const schemaErrors =
+                              validateInputChange(updatedRow);
                             if (schemaErrors) {
                               setErrors(schemaErrors);
                             } else {
@@ -309,10 +309,7 @@ export default function TerritoriesTable(props: {
                       ...currentRow,
                       name: e.target.value,
                     } as Territory;
-                    const schemaErrors = validateInputChange(
-                      formSchema,
-                      updatedRow,
-                    );
+                    const schemaErrors = validateInputChange(updatedRow);
                     if (schemaErrors) {
                       setErrors(schemaErrors);
                     } else {

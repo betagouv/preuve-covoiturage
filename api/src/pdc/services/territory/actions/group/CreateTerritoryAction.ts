@@ -12,6 +12,11 @@ import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/T
     "validate",
     alias,
   ]],
+  apiRoute: {
+    path: "/dashboard/territory",
+    action: "dashboard:createTerritory",
+    method: "POST",
+  },
 })
 export class CreateTerritoryAction extends AbstractAction {
   constructor(
