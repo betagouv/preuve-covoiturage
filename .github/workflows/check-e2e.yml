@@ -42,26 +42,20 @@ jobs:
       - name: Check hosts file
         run: |
           cat /etc/hosts
-          ping -c 2 api.covoiturage.test
-          ping -c 2 auth.covoiturage.test
-          ping -c 2 download.covoiturage.test
-          ping -c 2 local-pdc-export.s3.covoiturage.test
-          ping -c 2 mailer.covoiturage.test
-          ping -c 2 s3.covoiturage.test
+          ping -c 1 api.covoiturage.test
+          ping -c 1 auth.covoiturage.test
+          ping -c 1 download.covoiturage.test
+          ping -c 1 local-pdc-export.s3.covoiturage.test
+          ping -c 1 mailer.covoiturage.test
+          ping -c 1 s3.covoiturage.test
 
-      # - name: Run API e2e tests
-      #   env:
-      #     APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
-      #     APIE2E_API_URL: http://api.covoiturage.test
-      #     APIE2E_AUTH_USERNAME: admin@example.com
-      #     APIE2E_AUTH_PASSWORD: password
-      #   run: |
-      #     just stack_down
-      #     just stack_up
-      #     ping -c 2 http://api.covoiturage.test
-      #     ping -c 2 http://auth.covoiturage.test
-      #     ping -c 2 http://s3.covoiturage.test
-      #     ping -c 2 http://mailer.covoiturage.test
-      #     docker-compose ../docker-compose.e2e.yml logs dex
-      #     docker-compose ../docker-compose.e2e.yml logs api
-      #   working-directory: api-e2e
+      - name: Run API e2e tests
+        working-directory: api-e2e
+        env:
+          APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+          APIE2E_API_URL: http://api.covoiturage.test
+          APIE2E_AUTH_USERNAME: admin@example.com
+          APIE2E_AUTH_PASSWORD: password
+        run: |
+          docker-compose ../docker-compose.e2e.yml up postgres redis s3 mailer dex
+          
