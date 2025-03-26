@@ -46,7 +46,6 @@ export default function TerritoriesTable(props: {
   const [selector, setSelector] = useState<TerritorySelectorsInterface>();
   const [submitData, setSubmitData] = useState<unknown>();
   const [submitError, setSubmitError] = useState<Error>();
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
 
   const modalTitle = (type: "delete" | "create") => {
     switch (type) {
@@ -94,14 +93,14 @@ export default function TerritoriesTable(props: {
   const submitModal = useCallback(
     async (url: string) => {
       try {
-        if (typeModal !== "delete") {
+        // check form for create
+        if (typeModal === "create") {
           const result = formSchema.safeParse(currentRow);
           if (!result.success) {
             const errors = result.error.flatten().fieldErrors;
             setErrors(formatErrors(errors));
           }
         }
-        setSubmitLoading(true);
         const request = {
           url: "",
           params: {
@@ -147,7 +146,7 @@ export default function TerritoriesTable(props: {
         setSubmitError(e as Error);
         throw e;
       } finally {
-        setSubmitLoading(false);
+        props.refresh();
       }
     },
     [currentRow, typeModal],
@@ -231,7 +230,6 @@ export default function TerritoriesTable(props: {
         onClose={() => setOpenModal(false)}
         onSubmit={async () => {
           await submitModal("dashboard/territory");
-          props.refresh();
         }}
       >
         <>
