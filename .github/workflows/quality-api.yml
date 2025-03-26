@@ -1,4 +1,4 @@
-name: "Analysis"
+name: "Quality - API"
 
 on:
   push:
@@ -23,70 +23,8 @@ jobs:
         continue-on-error: true
         run: deno lint
 
-  code-audit:
-    name: Code audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: 'Audit dashboard dependencies'
-        run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
-        working-directory: dashboard
-
-      - name: 'Audit public site dependencies'
-        run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
-        working-directory: public
-
-  lint-dashboard:
-    name: Lint Dashboard
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: app-front/node_modules
-          key: npm-cache-${{ runner.os }}-${{ hashFiles('app-front/package-lock.json') }}
-          restore-keys: |
-            npm-cache-${{ runner.os }}-
-
-      - name: Install dependencies
-        working-directory: app-front
-        run: npm ci
-
-      - name: Run lint
-        working-directory: app-front
-        run: npm run lint
-
-  python-code-audit:
-    name: Python code audit
-    runs-on: ubuntu-latest
-    env:
-      DEP_PATH: notebooks/requirements.txt
-    steps:
-      - name: Check out master
-        uses: actions/checkout@master
-
-      - name: Security vulnerabilities scan
-        uses: pyupio/safety-action@v1
-        with:
-          api-key: ${{ secrets.SAFETY_API_KEY }}
-
   test:
-    needs: [lint, code-audit]
+    needs: [lint]
     name: Test
     runs-on: ubuntu-latest
     steps:
@@ -112,7 +50,7 @@ jobs:
           APP_REDIS_URL: redis://
 
   codeql:
-    needs: test
+    needs: [test]
     name: CodeQL
     runs-on: ubuntu-latest
 
@@ -137,8 +75,8 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
 
-  e2e:
-    needs: test
+  integration:
+    needs: [test]
     name: Test integration
     runs-on: ubuntu-latest
     steps:
@@ -195,3 +133,44 @@ jobs:
           APP_AUTH_CLIENT_SECRET: secret
         run: just cache && just ci_test_integration
         working-directory: api
+
+  api-e2e:
+    needs: [test]
+    name: API e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.deno
+            ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.24.0
+
+      - name: Add host entries
+        run: |
+          echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 mailer.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+
+      - name: Run API e2e tests
+        working-directory: api-e2e
+        env:
+          APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+          APIE2E_API_URL: http://api.covoiturage.test
+          APIE2E_AUTH_USERNAME: admin@example.com
+          APIE2E_AUTH_PASSWORD: password
+        run: just ci

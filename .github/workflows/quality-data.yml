@@ -1,0 +1,23 @@
+name: "Quality - Data"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  python-code-audit:
+    name: Python code audit
+    runs-on: ubuntu-latest
+    env:
+      DEP_PATH: notebooks/requirements.txt
+    steps:
+      - name: Check out master
+        uses: actions/checkout@master
+
+      - name: Security vulnerabilities scan
+        uses: pyupio/safety-action@v1
+        with:
+          api-key: ${{ secrets.SAFETY_API_KEY }}
