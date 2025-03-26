@@ -56,8 +56,4 @@ jobs:
           APIE2E_API_URL: http://api.covoiturage.test
           APIE2E_AUTH_USERNAME: admin@example.com
           APIE2E_AUTH_PASSWORD: password
-        run: |
-          docker compose -f ../docker-compose.e2e.yml up -d postgres redis s3 mailer dex proxy
-          sleep 20
-          docker compose -f ../docker-compose.e2e.yml up -d api
-          docker compose -f ../docker-compose.e2e.yml logs -f api
+        run: just ci
