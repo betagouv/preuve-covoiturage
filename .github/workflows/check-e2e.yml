@@ -57,5 +57,4 @@ jobs:
           APIE2E_AUTH_USERNAME: admin@example.com
           APIE2E_AUTH_PASSWORD: password
         run: |
-          which docker
-          docker compose ../docker-compose.e2e.yml up postgres redis s3 mailer dex
+          docker compose -f ../docker-compose.e2e.yml up postgres redis s3 mailer dex
