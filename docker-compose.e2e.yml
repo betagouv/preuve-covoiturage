@@ -124,6 +124,7 @@ services:
       APP_REDIS_URL: redis://redis:6379/1
       APP_SESSION_SECRET: thisIsAlsoASecret0000
       APP_USER_REGISTRATION_ENABLED: 'false'
+      APP_ROUTECACHE_AUTHTOKEN: ''
       AWS_ACCESS_KEY_ID: minioadmin
       AWS_BUCKET_PREFIX: local-pdc
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
