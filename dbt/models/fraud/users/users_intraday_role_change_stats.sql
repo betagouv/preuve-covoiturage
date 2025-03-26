@@ -19,6 +19,7 @@ with roles as (
     role
   from
     {{ ref('users_trips') }}
+  where start_datetime between now() - interval '1 month' and now()
 ),
 
 lagged as (

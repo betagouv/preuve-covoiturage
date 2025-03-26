@@ -7,4 +7,5 @@ RUN addgroup --gid 1000 dbt \
 WORKDIR /data
 USER dbt
 COPY --chown=dbt:dbt . /data
+RUN pip install --no-cache-dir elementary-data==0.18.0
 RUN dbt deps
