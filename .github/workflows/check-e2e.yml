@@ -31,26 +31,37 @@ jobs:
           tool: just@1.24.0
 
       - name: Add host entries
-        run: | 
-          sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
-
-      - name: Run API e2e tests
-        env:
-          APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
-          APIE2E_API_URL: http://api.covoiturage.test
-          APIE2E_AUTH_USERNAME: admin@example.com
-          APIE2E_AUTH_PASSWORD: password
         run: |
-          just stack_down
-          just stack_up
+          echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 mailer.covoiturage.test" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+
+      - name: Check hosts file
+        run: |
+          cat /etc/hosts
           ping -c 2 http://api.covoiturage.test
           ping -c 2 http://auth.covoiturage.test
-          ping -c 2 http://s3.covoiturage.test
+          ping -c 2 http://download.covoiturage.test
+          ping -c 2 http://local-pdc-export.s3.covoiturage.test
           ping -c 2 http://mailer.covoiturage.test
-          docker-compose ../docker-compose.e2e.yml logs dex
-          docker-compose ../docker-compose.e2e.yml logs api
-        working-directory: api-e2e
+          ping -c 2 http://s3.covoiturage.test
+
+      # - name: Run API e2e tests
+      #   env:
+      #     APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+      #     APIE2E_API_URL: http://api.covoiturage.test
+      #     APIE2E_AUTH_USERNAME: admin@example.com
+      #     APIE2E_AUTH_PASSWORD: password
+      #   run: |
+      #     just stack_down
+      #     just stack_up
+      #     ping -c 2 http://api.covoiturage.test
+      #     ping -c 2 http://auth.covoiturage.test
+      #     ping -c 2 http://s3.covoiturage.test
+      #     ping -c 2 http://mailer.covoiturage.test
+      #     docker-compose ../docker-compose.e2e.yml logs dex
+      #     docker-compose ../docker-compose.e2e.yml logs api
+      #   working-directory: api-e2e
