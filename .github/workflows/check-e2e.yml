@@ -1,0 +1,53 @@
+name: "E2E Checks"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-e2e:
+    name: API e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.deno
+            ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.24.0
+
+      - name: Add host entries
+        run: | 
+          sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
+
+      - name: Run API e2e tests
+        env:
+          APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+          APIE2E_API_URL: http://api.covoiturage.test
+          APIE2E_AUTH_USERNAME: admin@example.com
+          APIE2E_AUTH_PASSWORD: password
+        run: |
+          just stack_down
+          just stack_up
+          curl -I http://api.covoiturage.test
+          curl -I -X POST http://api.covoiturage.test/v3/auth/access_token
+          curl -I http://auth.covoiturage.test
+        working-directory: api-e2e

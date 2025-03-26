@@ -17,11 +17,10 @@ stack_up:
   pushd ../api
   just generate_certs && \
   just generate_keys && \
-  just start_e2e "s3 postgres redis mailer proxy" && \
+  just start_e2e "s3 postgres redis mailer proxy dex" && \
   just wait "localhost" "5432" && \
-  sleep 10 && \
   just seed && \
-  just start_e2e "api dex" && \
+  just start_e2e "api" && \
   just create_bucket "local-pdc-export" && \
   just create_bucket "local-pdc-appels-de-fonds" && \
   just create_bucket "local-pdc-public" && \
