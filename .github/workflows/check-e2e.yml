@@ -47,7 +47,10 @@ jobs:
         run: |
           just stack_down
           just stack_up
-          curl -I http://api.covoiturage.test
-          curl -I -X POST http://api.covoiturage.test/v3/auth/access_token
-          curl -I http://auth.covoiturage.test
+          ping -c 2 http://api.covoiturage.test
+          ping -c 2 http://auth.covoiturage.test
+          ping -c 2 http://s3.covoiturage.test
+          ping -c 2 http://mailer.covoiturage.test
+          docker-compose ../docker-compose.e2e.yml logs dex
+          docker-compose ../docker-compose.e2e.yml logs api
         working-directory: api-e2e
