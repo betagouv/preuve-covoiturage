@@ -62,7 +62,7 @@ services:
       - 'traefik.http.services.dex.loadbalancer.server.port=8090'
     command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
     volumes:
-      - ./docker/dex/config.yaml:/etc/dex/config.yaml:ro
+      - ./docker/dex/config-e2e.yaml:/etc/dex/config.yaml:ro
     depends_on:
         - postgres
   mailer:

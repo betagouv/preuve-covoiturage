@@ -19,11 +19,13 @@ stack_up:
   just generate_keys && \
   just start_e2e "s3 postgres redis mailer proxy" && \
   just wait "localhost" "5432" && \
+  sleep 10 && \
   just seed && \
   just start_e2e "api dex" && \
   just create_bucket "local-pdc-export" && \
   just create_bucket "local-pdc-appels-de-fonds" && \
   just create_bucket "local-pdc-public" && \
+  sleep 10 && \
   popd
 
 [private]
