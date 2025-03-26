@@ -16,17 +16,28 @@ export type UsersInterface = {
   }[];
 };
 
+export type Company = {
+  result: {
+    data: {
+      _id: number;
+      siret: string;
+    };
+  };
+};
+
+export type Territory = {
+  _id?: number;
+  name: string;
+  siret: string;
+};
+
 export type TerritoriesInterface = {
   meta: {
     page: number;
     total: number;
     totalPages: number;
   };
-  data: {
-    _id?: number;
-    name: string;
-    siret: string;
-  }[];
+  data: Territory[];
 };
 
 export type OperatorsInterface = {

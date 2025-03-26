@@ -3,18 +3,31 @@
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
-import { useActionsModal } from "@/hooks/useActionsModal";
+import { formatErrors } from "@/hooks/useActionsModal";
 import { useApi } from "@/hooks/useApi";
-import { type TerritoriesInterface } from "@/interfaces/dataInterface";
+import {
+  type Company,
+  type TerritoriesInterface,
+  type Territory,
+} from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
 import Table from "@codegouvfr/react-dsfr/Table";
-import { useMemo, useState } from "react";
-import { z } from "zod";
+import { useCallback, useMemo, useState } from "react";
+import { z, ZodError, type ZodType } from "zod";
 import { Config } from "../../../config";
+
+const formSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: "Le nom doit contenir au moins 3 caractères" }),
+  siret: z
+    .string()
+    .regex(/^\d{14}$/, { message: "Le SIRET doit contenir 14 chiffres" }),
+});
 
 export default function TerritoriesTable(props: {
   title: string;
@@ -23,10 +36,126 @@ export default function TerritoriesTable(props: {
 }) {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const modal = useActionsModal<TerritoriesInterface["data"][0]>();
-  const onChangePage = (id: number) => {
-    setCurrentPage(id);
+
+  // useModal
+  const [openModal, setOpenModal] = useState(false);
+  const [typeModal, setTypeModal] = useState<"delete" | "create">("create");
+  const [currentRow, setCurrentRow] = useState<Territory>();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitData, setSubmitData] = useState<unknown>();
+  const [submitError, setSubmitError] = useState<Error>();
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+
+  const modalTitle = (type: "delete" | "create") => {
+    switch (type) {
+      case "delete":
+        return "Supprimer";
+      case "create":
+        return "Ajouter";
+      default:
+        return "Action";
+    }
   };
+
+  const validateInputChange = (
+    schema: ZodType<Territory>,
+    value: Territory,
+  ): Record<string, string> | null => {
+    try {
+      schema.parse(value);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return formatErrors(error.flatten().fieldErrors);
+      }
+    }
+    return null;
+  };
+
+  const fetchCompany = async (siret: string): Promise<Response> => {
+    return fetch(
+      `${Config.get<string>("auth.domain")}/rpc?methods=company:fetch`,
+      {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "company:fetch",
+          params: siret,
+          id: 1,
+        }),
+      },
+    );
+  };
+
+  const submitModal = useCallback(
+    async (url: string) => {
+      try {
+        if (typeModal !== "delete") {
+          const result = formSchema.safeParse(currentRow);
+          if (!result.success) {
+            const errors = result.error.flatten().fieldErrors;
+            setErrors(formatErrors(errors));
+          }
+        }
+        setSubmitLoading(true);
+        const request = {
+          url: "",
+          params: {
+            method: "",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          } as RequestInit,
+        };
+        switch (typeModal) {
+          case "delete":
+            request.url = getApiUrl("v3", `${url}/${currentRow?._id}`);
+            request.params.method = "DELETE";
+            break;
+          case "create":
+            const companyResponse: Response = await fetchCompany(
+              currentRow!.siret,
+            );
+            if (companyResponse.ok) {
+              const companyBody = (await companyResponse.json()) as Company;
+              request.url = getApiUrl("v3", url);
+              request.params.method = "POST";
+              request.params.body = JSON.stringify({
+                ...currentRow,
+                company_id: companyBody.result.data._id,
+              });
+            } else {
+              throw new Error("Aucune entreprise trouvée pour ce siret");
+            }
+            break;
+        }
+        const response = await fetch(request.url, request.params);
+        const res = await response.json();
+        if (!response.ok) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          throw new Error(res?.message ?? "Une erreur est survenue");
+        }
+        setSubmitData(res);
+        return;
+      } catch (e) {
+        setSubmitError(e as Error);
+        throw e;
+      } finally {
+        setSubmitLoading(false);
+      }
+    },
+    [currentRow, typeModal],
+  );
+  // useModal
+
+  const onChangePage = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const url = useMemo(() => {
     const urlObj = new URL(getApiUrl("v3", "dashboard/territories"));
     if (props.id) {
@@ -37,9 +166,10 @@ export default function TerritoriesTable(props: {
     }
     return urlObj.toString();
   }, [props.id, currentPage]);
+
   const { data } = useApi<TerritoriesInterface>(url);
+
   const totalPages = data?.meta.totalPages ?? 1;
-  const headers = ["Identifiant", "Nom", "Siret", "Actions"];
   const dataTable =
     data?.data?.map((d) => [
       d._id,
@@ -52,9 +182,9 @@ export default function TerritoriesTable(props: {
             children: "supprimer",
             iconId: "fr-icon-delete-bin-line",
             onClick: () => {
-              modal.setCurrentRow(d);
-              modal.setOpenModal(true);
-              modal.setTypeModal("delete");
+              setCurrentRow(d);
+              setOpenModal(true);
+              setTypeModal("delete");
             },
           },
         ]}
@@ -62,14 +192,6 @@ export default function TerritoriesTable(props: {
         inlineLayoutWhen="lg and up"
       />,
     ]) ?? [];
-  const formSchema = z.object({
-    name: z
-      .string()
-      .min(3, { message: "Le nom doit contenir au moins 3 caractères" }),
-    siret: z
-      .string()
-      .regex(/^\d{14}$/, { message: "Le SIRET doit contenir 14 chiffres" }),
-  });
 
   return (
     <>
@@ -79,10 +201,9 @@ export default function TerritoriesTable(props: {
           <Button
             iconId="fr-icon-add-circle-line"
             onClick={() => {
-              modal.setCurrentRow({ name: "", siret: "" });
-              modal.setOpenModal(true);
-              modal.setErrors({});
-              modal.setTypeModal("create");
+              setCurrentRow({ name: "", siret: "" });
+              setOpenModal(true);
+              setTypeModal("create");
             }}
             title="Ajouter un territoire"
             size="small"
@@ -93,7 +214,7 @@ export default function TerritoriesTable(props: {
       )}
       <Table
         data={dataTable}
-        headers={headers}
+        headers={["Identifiant", "Nom", "Siret", "Actions"]}
         colorVariant="blue-ecume"
         fixed
       />
@@ -103,51 +224,39 @@ export default function TerritoriesTable(props: {
         onChange={onChangePage}
       />
       <Modal
-        open={modal.openModal}
-        title={modal.modalTitle(modal.typeModal)}
-        onClose={() => modal.setOpenModal(false)}
+        open={openModal}
+        title={modalTitle(typeModal)}
+        onClose={() => setOpenModal(false)}
         onSubmit={async () => {
-          const companyResponse: Response = await fetch(
-            `${Config.get<string>("auth.domain")}/rpc?methods=company:fetch`,
-            {
-              credentials: "include",
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                jsonrpc: "2.0",
-                method: "company:fetch",
-                params: modal.currentRow.siret,
-                id: 1,
-              }),
-            },
-          );
-          if (companyResponse.ok) {
-            const body = await companyResponse.json();
-            await modal.submitModal("dashboard/territory", formSchema);
-          }
-
+          await submitModal("dashboard/territory");
           props.refresh();
         }}
       >
         <>
-          {(modal.typeModal === "update" || modal.typeModal === "create") && (
+          {typeModal === "create" && (
             <>
               <Input
                 label="Siret"
-                state={modal.errors?.siret ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.siret ?? ""}
+                state={errors?.siret ? "error" : "default"}
+                stateRelatedMessage={errors?.siret ?? ""}
                 nativeInputProps={{
                   type: "text",
-                  value: (modal.currentRow.siret as string) ?? "",
+                  value: currentRow?.siret ?? "",
                   onChange: (e) => {
-                    modal.validateInputChange(
+                    const updatedRow = {
+                      ...currentRow,
+                      siret: e.target.value,
+                    } as Territory;
+                    const schemaErrors = validateInputChange(
                       formSchema,
-                      "siret",
-                      e.target.value,
+                      updatedRow,
                     );
-                    if (!!modal.errors && !!!modal.errors?.siret) {
+                    if (schemaErrors) {
+                      setErrors(schemaErrors);
+                    } else {
+                      setErrors({});
+                    }
+                    if (!!schemaErrors && !!!schemaErrors?.siret) {
                       void (async () => {
                         const geoResponse: Response = await fetch(
                           `${Config.get<string>("auth.domain")}/rpc?methods=territory:findGeoBySiren`,
@@ -168,37 +277,55 @@ export default function TerritoriesTable(props: {
                         if (geoResponse.ok) {
                           const body = await geoResponse.json();
                           if (!!body.result.data.aom_siren) {
-                            modal.setCurrentRow((prev) => ({
-                              ...prev,
-                              name: body.result.data.aom_name,
-                              siret: e.target.value,
-                            }));
+                            updatedRow.name = body.result.data.aom_name;
+                            setCurrentRow(updatedRow);
+                            const schemaErrors = validateInputChange(
+                              formSchema,
+                              updatedRow,
+                            );
+                            if (schemaErrors) {
+                              setErrors(schemaErrors);
+                            } else {
+                              setErrors({});
+                            }
                           }
                         }
                       })();
+                    } else {
+                      setCurrentRow(updatedRow);
                     }
                   },
                 }}
               />
               <Input
                 label="Nom du territoire"
-                state={modal.errors?.name ? "error" : "default"}
-                stateRelatedMessage={modal.errors?.name ?? ""}
+                state={errors?.name ? "error" : "default"}
+                stateRelatedMessage={errors?.name ?? ""}
                 nativeInputProps={{
                   type: "text",
-                  value: (modal.currentRow.name as string) ?? "",
-                  onChange: (e) =>
-                    modal.validateInputChange(
+                  value: currentRow?.name ?? "",
+                  onChange: (e) => {
+                    const updatedRow = {
+                      ...currentRow,
+                      name: e.target.value,
+                    } as Territory;
+                    const schemaErrors = validateInputChange(
                       formSchema,
-                      "name",
-                      e.target.value,
-                    ),
+                      updatedRow,
+                    );
+                    if (schemaErrors) {
+                      setErrors(schemaErrors);
+                    } else {
+                      setErrors({});
+                    }
+                    setCurrentRow(updatedRow);
+                  },
                 }}
               />
             </>
           )}
-          {modal.typeModal === "delete" &&
-            `Êtes-vous sûr de vouloir supprimer le territoire ${modal.currentRow?.name} ?`}
+          {typeModal === "delete" &&
+            `Êtes-vous sûr de vouloir supprimer le territoire ${currentRow?.name} ?`}
         </>
       </Modal>
     </>
