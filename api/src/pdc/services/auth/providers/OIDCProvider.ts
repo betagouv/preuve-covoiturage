@@ -170,6 +170,8 @@ export class OIDCProvider implements InitHookInterface {
     form.set("username", username);
     form.set("password", password);
     form.set("scope", "openid email profile");
+
+    console.info(`[OIDCProvider:getToken] ${url.toString()}`);
     const response = await fetch(url, {
       body: form.toString(),
       method: "POST",
@@ -178,6 +180,12 @@ export class OIDCProvider implements InitHookInterface {
         "Authorization": `Basic ${encodeBase64(`${clientId}:${clientSecret}`)}`,
       },
     });
+
+    if (!response.ok) {
+      console.error(`[OIDCProvider:getToken] ${response.status} ${response.statusText}`);
+      throw new Error(response.statusText);
+    }
+
     const json = await response.json();
     return json.access_token;
   }

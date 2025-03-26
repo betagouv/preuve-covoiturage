@@ -5,7 +5,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      - 8080:8080 # Traefik Dashboard
     command:
       - '--log.level=DEBUG'
       - '--api.insecure=true'
@@ -33,6 +33,7 @@ services:
           - s3.covoiturage.test
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
+
   dex:
     image: bitnami/dex:2
     environment:
@@ -48,12 +49,9 @@ services:
       OIDC_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
       OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://auth.covoiturage.test/callback}
-
-    ports:
-      - 5557:5557
-      - 8090:8080 
     networks:
-      - back
+      back:
+      front:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.dex-http.rule=Host(`auth.covoiturage.test`)'
@@ -61,8 +59,8 @@ services:
       - 'traefik.http.routers.dex-https.rule=Host(`auth.covoiturage.test`)'
       - 'traefik.http.routers.dex-https.entrypoints=websecure'
       - 'traefik.http.routers.dex-https.tls=true'
-      - 'traefik.http.services.dex.loadbalancer.server.port=8080'
-    command: ["serve", "--web-http-addr", "0.0.0.0:8080", "/etc/dex/config.yaml"]
+      - 'traefik.http.services.dex.loadbalancer.server.port=8090'
+    command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
     volumes:
       - ./docker/dex/config.yaml:/etc/dex/config.yaml:ro
     depends_on:
@@ -131,7 +129,7 @@ services:
       APP_REDIS_URL: redis://redis:6379/1
       APP_SESSION_SECRET: thisIsAlsoASecret0000
       APP_USER_REGISTRATION_ENABLED: 'false'
-      AWS_ACCESS_KEY_ID: minioadmin 
+      AWS_ACCESS_KEY_ID: minioadmin
       AWS_BUCKET_PREFIX: local-pdc
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
       AWS_REGION: fr-par
@@ -160,6 +158,8 @@ services:
       - 'traefik.http.routers.api-http.entrypoints=web'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
     volumes:
+      - ./api:/app/api:ro
+      - ./shared:/app/shared:ro
       - ./docker/api/certs:/app/certs:ro
 
   s3:

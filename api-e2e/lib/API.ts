@@ -31,19 +31,23 @@ export class API {
     password = password || this.defaultPassword;
 
     try {
-      const response = await fetch(new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl), {
+      const url = new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl);
+      const payload = JSON.stringify({ username, password });
+
+      console.info(`[API:authenticate] ${url.toString()}`);
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: payload,
       });
 
       const body = await this.getBody(response) as { access_token?: string };
-      console.log(this.baseUrl, body);
 
       if (!response.ok) {
+        console.error(body);
         throw new Error(`Failed to authenticate ${username}`);
       }
 
@@ -77,6 +81,7 @@ export class API {
     }
 
     try {
+      console.info(`[API:get] ${input.toString()}`);
       const response = await fetch(input, init);
       const body = await this.getBody(response);
 

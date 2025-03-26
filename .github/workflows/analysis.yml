@@ -252,6 +252,10 @@ jobs:
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
           APP_AUTH_CLIENT_ID: secret
           APP_AUTH_CLIENT_SECRET: secret
+          OIDC_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
+          OIDC_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
+          OIDC_BASE_URL: http://auth.covoiturage.test
+          OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
           APIE2E_API_URL: http://api.covoiturage.test
           APIE2E_AUTH_USERNAME: ${{ secrets.API_E2E_AUTH_USERNAME }}
           APIE2E_AUTH_PASSWORD: ${{ secrets.API_E2E_AUTH_PASSWORD }}
