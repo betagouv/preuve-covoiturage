@@ -38,14 +38,11 @@ export default function TerritoriesTable(props: {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
 
-  // useModal
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState<"delete" | "create">("create");
   const [currentRow, setCurrentRow] = useState<Territory>();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selector, setSelector] = useState<TerritorySelectorsInterface>();
-  const [submitData, setSubmitData] = useState<unknown>();
-  const [submitError, setSubmitError] = useState<Error>();
 
   const modalTitle = (type: "delete" | "create") => {
     switch (type) {
@@ -58,16 +55,19 @@ export default function TerritoriesTable(props: {
     }
   };
 
-  const validateInputChange = (
+  const validateFormAndToggleError = (
     value: Territory,
   ): Record<string, string> | null => {
     try {
       formSchema.parse(value);
     } catch (error) {
       if (error instanceof ZodError) {
-        return formatErrors(error.flatten().fieldErrors);
+        const schemaError = formatErrors(error.flatten().fieldErrors);
+        setErrors(schemaError);
+        return schemaError;
       }
     }
+    setErrors({});
     return null;
   };
 
@@ -135,15 +135,13 @@ export default function TerritoriesTable(props: {
             break;
         }
         const response = await fetch(request.url, request.params);
-        const res = await response.json();
         if (!response.ok) {
+          const res = await response.json();
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           throw new Error(res?.message ?? "Une erreur est survenue");
         }
-        setSubmitData(res);
         return;
       } catch (e) {
-        setSubmitError(e as Error);
         throw e;
       } finally {
         props.refresh();
@@ -151,7 +149,6 @@ export default function TerritoriesTable(props: {
     },
     [currentRow, typeModal],
   );
-  // useModal
 
   const onChangePage = (page: number) => {
     setCurrentPage(page);
@@ -247,12 +244,7 @@ export default function TerritoriesTable(props: {
                       ...currentRow,
                       siret: e.target.value,
                     } as Territory;
-                    const schemaErrors = validateInputChange(updatedRow);
-                    if (schemaErrors) {
-                      setErrors(schemaErrors);
-                    } else {
-                      setErrors({});
-                    }
+                    const schemaErrors = validateFormAndToggleError(updatedRow);
                     if (!!schemaErrors && !!!schemaErrors?.siret) {
                       void (async () => {
                         const geoResponse: Response = await fetch(
@@ -279,13 +271,7 @@ export default function TerritoriesTable(props: {
                               aom: [body.result.data.aom_siren],
                             });
                             setCurrentRow(updatedRow);
-                            const schemaErrors =
-                              validateInputChange(updatedRow);
-                            if (schemaErrors) {
-                              setErrors(schemaErrors);
-                            } else {
-                              setErrors({});
-                            }
+                            validateFormAndToggleError(updatedRow);
                           }
                         }
                       })();
@@ -307,12 +293,7 @@ export default function TerritoriesTable(props: {
                       ...currentRow,
                       name: e.target.value,
                     } as Territory;
-                    const schemaErrors = validateInputChange(updatedRow);
-                    if (schemaErrors) {
-                      setErrors(schemaErrors);
-                    } else {
-                      setErrors({});
-                    }
+                    validateFormAndToggleError(updatedRow);
                     setCurrentRow(updatedRow);
                   },
                 }}
