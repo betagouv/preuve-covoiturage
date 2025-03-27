@@ -28,5 +28,5 @@ elementary:
       password: "{{ env_var('DBT_PASSWORD', 'password') }}"
       port: "{{ env_var('DBT_PORT', 5432) | int }}"
       dbname: "{{ env_var('DBT_DBNAME', 'covoiturage_production') }}" # or database instead of dbname
-      schema: "{{ env_var('DBT_SCHEMA', '') }}"
+      schema: "{{ env_var('DBT_SCHEMA_ELEMENTARY', 'elementary') }}"
       threads: 6
