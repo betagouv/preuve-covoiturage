@@ -273,7 +273,7 @@ export default function UsersTable(props: {
                   Selectionnez un territoire
                 </option>
                 {territoriesList?.map((t) => (
-                  <option key={t.id} value={t.id}>
+                  <option key={t._id} value={t._id}>
                     {t.name}
                   </option>
                 ))}

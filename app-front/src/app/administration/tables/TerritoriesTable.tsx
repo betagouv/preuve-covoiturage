@@ -1,154 +1,44 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
-import { formatErrors } from "@/hooks/useActionsModal";
 import { useApi } from "@/hooks/useApi";
 import {
-  type Company,
   type TerritoriesInterface,
   type Territory,
-  type TerritorySelectorsInterface,
 } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
-import Input from "@codegouvfr/react-dsfr/Input";
 import Table from "@codegouvfr/react-dsfr/Table";
-import { useCallback, useMemo, useState } from "react";
-import { z, ZodError } from "zod";
-import { Config } from "../../../config";
+import { useMemo, useState } from "react";
+import TerritoryModal from "./modals/TerritoryModal";
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "Le nom doit contenir au moins 3 caractères" }),
-  siret: z
-    .string()
-    .regex(/^\d{14}$/, { message: "Le SIRET doit contenir 14 chiffres" }),
-});
-
-export default function TerritoriesTable(props: {
+interface TerritoriesTableProps {
   title: string;
   id?: number;
   refresh: () => void;
-}) {
+}
+
+export interface ModalState {
+  open: boolean;
+  type: "delete" | "create";
+  territory: Territory;
+}
+
+export default function TerritoriesTable(props: TerritoriesTableProps) {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [typeModal, setTypeModal] = useState<"delete" | "create">("create");
-  const [currentRow, setCurrentRow] = useState<Territory>();
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [selector, setSelector] = useState<TerritorySelectorsInterface>();
-
-  const modalTitle = (type: "delete" | "create") => {
-    switch (type) {
-      case "delete":
-        return "Supprimer";
-      case "create":
-        return "Ajouter";
-      default:
-        return "Action";
-    }
-  };
-
-  const validateFormAndToggleError = (
-    value: Territory,
-  ): Record<string, string> | null => {
-    try {
-      formSchema.parse(value);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const schemaError = formatErrors(error.flatten().fieldErrors);
-        setErrors(schemaError);
-        return schemaError;
-      }
-    }
-    setErrors({});
-    return null;
-  };
-
-  const fetchCompany = async (siret: string): Promise<Response> => {
-    return fetch(
-      `${Config.get<string>("auth.domain")}/rpc?methods=company:fetch`,
-      {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "company:fetch",
-          params: siret,
-          id: 1,
-        }),
-      },
-    );
-  };
-
-  const submitModal = useCallback(
-    async (url: string) => {
-      try {
-        // check form for create
-        if (typeModal === "create") {
-          const result = formSchema.safeParse(currentRow);
-          if (!result.success) {
-            const errors = result.error.flatten().fieldErrors;
-            setErrors(formatErrors(errors));
-          }
-        }
-        const request = {
-          url: "",
-          params: {
-            method: "",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          } as RequestInit,
-        };
-        switch (typeModal) {
-          case "delete":
-            request.url = getApiUrl("v3", `${url}/${currentRow?._id}`);
-            request.params.method = "DELETE";
-            break;
-          case "create":
-            const companyResponse: Response = await fetchCompany(
-              currentRow!.siret,
-            );
-            if (companyResponse.ok) {
-              const companyBody = (await companyResponse.json()) as Company;
-              request.url = getApiUrl("v3", url);
-              request.params.method = "POST";
-              request.params.body = JSON.stringify({
-                ...currentRow,
-                company_id: companyBody.result.data._id,
-                selector: selector,
-              });
-            } else {
-              throw new Error("Aucune entreprise trouvée pour ce siret");
-            }
-            break;
-        }
-        const response = await fetch(request.url, request.params);
-        if (!response.ok) {
-          const res = await response.json();
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          throw new Error(res?.message ?? "Une erreur est survenue");
-        }
-        return;
-      } catch (e) {
-        throw e;
-      } finally {
-        props.refresh();
-      }
+  const [modal, setModal] = useState<ModalState>({
+    open: false,
+    type: "create",
+    territory: {
+      name: "",
+      siret: "",
     },
-    [currentRow, typeModal],
-  );
+  });
 
   const onChangePage = (page: number) => {
     setCurrentPage(page);
@@ -180,9 +70,11 @@ export default function TerritoriesTable(props: {
             children: "supprimer",
             iconId: "fr-icon-delete-bin-line",
             onClick: () => {
-              setCurrentRow(d);
-              setOpenModal(true);
-              setTypeModal("delete");
+              setModal({
+                territory: d,
+                open: true,
+                type: "delete",
+              });
             },
           },
         ]}
@@ -199,9 +91,11 @@ export default function TerritoriesTable(props: {
           <Button
             iconId="fr-icon-add-circle-line"
             onClick={() => {
-              setCurrentRow({ name: "", siret: "" });
-              setOpenModal(true);
-              setTypeModal("create");
+              setModal({
+                territory: { name: "", siret: "" },
+                open: true,
+                type: "create",
+              });
             }}
             title="Ajouter un territoire"
             size="small"
@@ -221,89 +115,13 @@ export default function TerritoriesTable(props: {
         defaultPage={currentPage}
         onChange={onChangePage}
       />
-      <Modal
-        open={openModal}
-        title={modalTitle(typeModal)}
-        onClose={() => setOpenModal(false)}
-        onSubmit={async () => {
-          await submitModal("dashboard/territory");
-        }}
-      >
-        <>
-          {typeModal === "create" && (
-            <>
-              <Input
-                label="Siret"
-                state={errors?.siret ? "error" : "default"}
-                stateRelatedMessage={errors?.siret ?? ""}
-                nativeInputProps={{
-                  type: "text",
-                  value: currentRow?.siret ?? "",
-                  onChange: (e) => {
-                    const updatedRow = {
-                      ...currentRow,
-                      siret: e.target.value,
-                    } as Territory;
-                    const schemaErrors = validateFormAndToggleError(updatedRow);
-                    if (!!schemaErrors && !!!schemaErrors?.siret) {
-                      void (async () => {
-                        const geoResponse: Response = await fetch(
-                          `${Config.get<string>("auth.domain")}/rpc?methods=territory:findGeoBySiren`,
-                          {
-                            credentials: "include",
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                              jsonrpc: "2.0",
-                              method: "territory:findGeoBySiren",
-                              params: { siren: e.target.value.substring(0, 9) },
-                              id: 1,
-                            }),
-                          },
-                        );
-                        if (geoResponse.ok) {
-                          const body = await geoResponse.json();
-                          if (!!body.result.data.aom_siren) {
-                            updatedRow.name = body.result.data.aom_name;
-                            setSelector({
-                              aom: [body.result.data.aom_siren],
-                            });
-                            setCurrentRow(updatedRow);
-                            validateFormAndToggleError(updatedRow);
-                          }
-                        }
-                      })();
-                    } else {
-                      setCurrentRow(updatedRow);
-                    }
-                  },
-                }}
-              />
-              <Input
-                label="Nom du territoire"
-                state={errors?.name ? "error" : "default"}
-                stateRelatedMessage={errors?.name ?? ""}
-                nativeInputProps={{
-                  type: "text",
-                  value: currentRow?.name ?? "",
-                  onChange: (e) => {
-                    const updatedRow = {
-                      ...currentRow,
-                      name: e.target.value,
-                    } as Territory;
-                    validateFormAndToggleError(updatedRow);
-                    setCurrentRow(updatedRow);
-                  },
-                }}
-              />
-            </>
-          )}
-          {typeModal === "delete" &&
-            `Êtes-vous sûr de vouloir supprimer le territoire ${currentRow?.name} ?`}
-        </>
-      </Modal>
+      <TerritoryModal
+        modal={modal}
+        closeModalCallback={() =>
+          setModal((prev) => ({ ...prev, open: false }))
+        }
+        refreshCallBack={() => props.refresh()}
+      />
     </>
   );
 }
