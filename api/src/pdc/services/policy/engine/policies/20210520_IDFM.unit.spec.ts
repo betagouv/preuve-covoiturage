@@ -221,7 +221,11 @@ it(
           },
           {
             key: "max_amount_restriction.0-6.month.11-2024",
-            value: 675,
+            value: 225,
+          },
+          {
+            key: "max_amount_restriction.0-6.month.2-2025",
+            value: 450,
           },
         ],
       },
