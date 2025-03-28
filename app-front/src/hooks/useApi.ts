@@ -37,7 +37,10 @@ export const useApi = <T>(
       ) {
         const paginateResponse = res as PaginateAPIResponse<T>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        setData({ meta: paginateResponse.meta, data: paginateResponse.data } as T);
+        setData({
+          meta: paginateResponse.meta,
+          data: paginateResponse.data,
+        } as T);
       } else {
         setData(res as T);
       }

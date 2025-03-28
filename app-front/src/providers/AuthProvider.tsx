@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator }}
     >
-     {!loading && children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
