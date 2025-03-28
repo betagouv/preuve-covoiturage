@@ -72,7 +72,7 @@ export default function UsersTable(props: {
       d.lastname,
       d.email,
       operatorsList?.find((o) => o.id === d.operator_id)?.name,
-      territoriesList?.find((t) => t.id === d.territory_id)?.name,
+      territoriesList?.find((t) => t._id === d.territory_id)?.name,
       <ButtonsGroup
         key={d.id}
         buttons={[
@@ -273,7 +273,7 @@ export default function UsersTable(props: {
                   Selectionnez un territoire
                 </option>
                 {territoriesList?.map((t) => (
-                  <option key={t.id} value={t.id}>
+                  <option key={t._id} value={t._id}>
                     {t.name}
                   </option>
                 ))}

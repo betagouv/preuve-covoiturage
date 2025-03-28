@@ -85,11 +85,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     if (search) {
       values.push(`%${search.toLowerCase()}%`);
-      whereClauses.push(`LOWER(name) LIKE $${values.length}`);
+      whereClauses.push(`LOWER(tg.name) LIKE $${values.length}`);
     }
 
     const client = this.connection.getClient();
-    const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
+    const countQuery = `SELECT count(*) as territory_count from ${this.table} as tg ${
       whereClauses.length ? ` WHERE ${whereClauses.join(" AND ")}` : ""
     }`;
 
@@ -106,9 +106,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     values.push(offset);
     const query = {
       text: `
-        SELECT _id, name FROM ${this.table}
-        WHERE deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""}
-        ORDER BY name ASC
+        SELECT tg._id, tg.name, cc.siret FROM ${this.table} as tg
+        JOIN company.companies cc ON cc._id = tg.company_id
+        WHERE tg.deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""}
+        ORDER BY tg.name ASC
         LIMIT $${whereClauses.length + 1}
         OFFSET $${whereClauses.length + 2}
       `,
