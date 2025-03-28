@@ -178,7 +178,7 @@ it(
           {
             distance: 30_000,
             driver_identity_key: "6",
-            datetime: new Date("2024-12-31"),
+            datetime: new Date("2025-03-15"),
             start: { ...defaultPosition, com: "95323" },
           },
         ],
