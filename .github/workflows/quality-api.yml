@@ -127,8 +127,8 @@ jobs:
           AWS_REGION: fr-par
           ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
           ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
-          PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
-          PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
+          PROCONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
+          PROCONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
           APP_AUTH_CLIENT_ID: secret
           APP_AUTH_CLIENT_SECRET: secret
         run: just cache && just ci_test_integration

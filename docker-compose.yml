@@ -50,11 +50,6 @@ services:
   dex:
     image: bitnami/dex:2
     environment:
-      PG_DB: dev
-      PG_USERNAME: postgres
-      PG_PASSWORD: postgres
-      PG_HOST: postgres
-      PG_PORT: 5432
       PDC_URL: http://localhost:8080/auth/callback
       PDC_CLIENT_ID: secret
       PDC_CLIENT_SECRET: secret
@@ -62,6 +57,14 @@ services:
       OIDC_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
       OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://localhost:5557/callback}
+      PROCONNECT_ISSUER_URL: ${PROCONNECT_ISSUER_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://auth.covoiturage.test/callback}
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-''}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-''}
+      GITHUB_REDIRECT_URL: ${GITHUB_REDIRECT_URL:-''}
+
     ports:
       - 5557:5557
       - 8090:8090
@@ -71,8 +74,6 @@ services:
     volumes:
       # specific config file is mapped here to /etc/dex/config.yaml
       - ./docker/dex/config-local.yaml:/etc/dex/config.yaml:ro
-    depends_on:
-        - postgres
 
   api:
     build:

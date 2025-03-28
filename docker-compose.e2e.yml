@@ -137,6 +137,10 @@ services:
       OIDC_CLIENT_SECRET: secret
       OIDC_BASE_URL: http://auth.covoiturage.test
       OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
+      PROCONNECT_ISSUER_URL: ${PROCONNECT_ISSUER_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://auth.covoiturage.test/callback}
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-secret}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-secret}
     networks:
       - back
       - front

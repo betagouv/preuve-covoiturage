@@ -48,15 +48,14 @@ connectors:
     # This value MUST match the value returned in the provider config discovery.
     #
     # See: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
-    issuer: $OIDC_ISSUER_URL
+    issuer: $PROCONNECT_ISSUER_URL
 
     # Connector config values starting with a "$" will read from the environment.
-    clientID: $OIDC_CLIENT_ID
-    clientSecret: $OIDC_CLIENT_SECRET
+    clientID: $PROCONNECT_CLIENT_ID
+    clientSecret: $PROCONNECT_CLIENT_SECRET
 
     # Dex's issuer URL + "/callback"
-    redirectURI: $OIDC_REDIRECT_URL
-
+    redirectURI: $PROCONNECT_REDIRECT_URL
 
     # Some providers require passing client_secret via POST parameters instead
     # of basic auth, despite the OAuth2 RFC discouraging it. Many of these
