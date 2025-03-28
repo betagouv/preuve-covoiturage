@@ -4,3 +4,26 @@ tls:
       defaultCertificate:
         certFile: /etc/certs/cert.crt
         keyFile: /etc/certs/cert.key
+http:
+  routers:
+    dex-router:
+      rule: "Host(`auth.covoiturage.test`)"
+      entryPoints:
+        - web
+      service: dex-mirroring
+  services:
+    dex-mirroring:
+      mirroring:
+        service: dex
+        mirrors:
+        - name: dex-mirror
+          percent: 100
+    dex:
+      loadBalancer:
+        servers:
+          - url: "http://dex:8090"
+
+    dex-mirror:
+      loadBalancer:
+        servers:
+          - url: "http://logout:8080"

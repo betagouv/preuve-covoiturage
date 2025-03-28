@@ -41,20 +41,14 @@ services:
       PDC_CLIENT_ID: secret
       PDC_CLIENT_SECRET: secret
       OIDC_ISSUER_URL: https://fca.integ01.dev-agentconnect.fr/api/v2
-      OIDC_CLIENT_ID: secret
-      OIDC_CLIENT_SECRET: secret
+      OIDC_CLIENT_ID: ${PRO_CONNECT_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${PRO_CONNECT_CLIENT_SECRET}
       OIDC_REDIRECT_URL: http://auth.covoiturage.test/callback
     networks:
       back:
       front:
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.dex-http.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-http.entrypoints=web'
-      - 'traefik.http.routers.dex-https.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-https.entrypoints=websecure'
-      - 'traefik.http.routers.dex-https.tls=true'
-      - 'traefik.http.services.dex.loadbalancer.server.port=8090'
     command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
     volumes:
       - ./docker/dex/config-e2e.yaml:/etc/dex/config.yaml:ro
@@ -155,8 +149,6 @@ services:
       - 'traefik.http.routers.api-http.entrypoints=web'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
     volumes:
-      - ./api:/app/api:ro
-      - ./shared:/app/shared:ro
       - ./docker/api/certs:/app/certs:ro
 
   s3:
@@ -174,6 +166,16 @@ services:
       - 'traefik.http.routers.s3.entrypoints=websecure'
       - 'traefik.http.routers.s3.tls=true'
       - 'traefik.http.services.s3.loadbalancer.server.port=9000'
+
+  logout:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./docker/logout
+    labels:
+      - 'traefik.enable=true'
+    networks:
+      - back
+
   cms:
     build:
       dockerfile: ../docker/cms/prod/Dockerfile
