@@ -1,2 +1,6 @@
 .venv
 playground
+./**/sources
+cerema/*.pdf
+cerema/sources/*
+!cerema/sources/.gitkeep
