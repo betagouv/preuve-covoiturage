@@ -178,7 +178,7 @@ it(
           {
             distance: 30_000,
             driver_identity_key: "6",
-            datetime: new Date("2024-12-31"),
+            datetime: new Date("2025-03-15"),
             start: { ...defaultPosition, com: "95323" },
           },
         ],
@@ -221,7 +221,11 @@ it(
           },
           {
             key: "max_amount_restriction.0-6.month.11-2024",
-            value: 675,
+            value: 225,
+          },
+          {
+            key: "max_amount_restriction.0-6.month.2-2025",
+            value: 450,
           },
         ],
       },

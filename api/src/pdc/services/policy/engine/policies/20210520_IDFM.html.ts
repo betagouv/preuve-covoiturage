@@ -38,7 +38,7 @@ export const description = `<p id="summary">
     <li><b>Le 11/12/2024</b></li>
     <li><b>Le 12/12/2024</b></li>
     <li><b>Le 13/12/2024</b></li>
-    <li><b>Du 06/12/2024 au 31/12/2024 inclus</b> pour les communes suivantes : Boisemont, Conflans-Sainte-Honorine, Maurecourt, Poissy, Saint-Germain-en-Laye, Achères, Neuville-sur-Oise, Éragny, Courdimanche, Puiseux-Pontoise, Vauréal, Herblay-sur-Seine, Saint-Ouen-l'Aumône, Jouy-le-Moutier, Méry-sur-Oise, Cergy, Osny, Menucourt, Pontoise</li>
+    <li><b>Du 06/12/2024 au 15/03/2025 inclus</b> pour les communes suivantes : Boisemont, Conflans-Sainte-Honorine, Maurecourt, Poissy, Saint-Germain-en-Laye, Achères, Neuville-sur-Oise, Éragny, Courdimanche, Puiseux-Pontoise, Vauréal, Herblay-sur-Seine, Saint-Ouen-l'Aumône, Jouy-le-Moutier, Méry-sur-Oise, Cergy, Osny, Menucourt, Pontoise</li>
   </ul>
   <p>
   La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Ynstant et Mobicoop proposant des preuves de classe C</b>.
