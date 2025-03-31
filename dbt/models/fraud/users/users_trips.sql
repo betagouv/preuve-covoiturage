@@ -24,4 +24,3 @@ with dataset as (
 
 select *
 from dataset
-where start_datetime between now() - interval '1 month' and now()

@@ -39,7 +39,7 @@ export const config: ConfigInterface = {
     ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
   },
   logger: {
-    level: env_or_default("LOG_LEVEL", "debug"),
+    level: env_or_default("APP_LOG_LEVEL", "debug"),
   },
   file: {
     basePath: env_or_default("CACHE_DIRECTORY", getTmpDir()),

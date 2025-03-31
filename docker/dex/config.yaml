@@ -10,6 +10,12 @@ staticClients:
   - http://api.covoiturage.test/auth/callback
   name: pdc
   secret: secret
+
+# local users for testing
+# Enable local users
+# @doc https://dexidp.io/docs/connectors/local/
+enablePasswordDB: true
+
 storage:
   type: postgres
   config:
@@ -21,6 +27,7 @@ storage:
     ssl:
       mode: disable
       # caFile: /etc/dex/postgres.ca
+
 connectors:
 - type: oidc
   id: proconnect
@@ -134,9 +141,8 @@ oauth2:
   responseTypes: [ "code" ]
   skipApprovalScreen: true
   alwaysShowLoginScreen: false
-  passwordConnector: local
+  passwordConnector: local # Allow password grants with local users
 
-enablePasswordDB: true
 expiry:
   deviceRequests: "5m"
   signingKeys: "6h"

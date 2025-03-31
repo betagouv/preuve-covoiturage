@@ -1,11 +1,26 @@
-import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
+import {
+  ConfigInterfaceResolver,
+  ForbiddenException,
+  InitHookInterface,
+  provider,
+  UnauthorizedException,
+} from "@/ilos/common/index.ts";
+import { TokenProvider } from "@/pdc/providers/token/index.ts";
+import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
+import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
 import { encodeBase64 } from "dep:encoding";
-import { createRemoteJWKSet, jwtVerify, KeyLike } from "dep:jose";
+import { createRemoteJWKSet, jwtVerify } from "dep:jose";
 
 @provider()
-export class OidcProvider implements InitHookInterface {
-  protected JWKS: KeyLike | undefined;
-  constructor(protected config: ConfigInterfaceResolver) {}
+export class OIDCProvider implements InitHookInterface {
+  protected JWKS: ReturnType<typeof createRemoteJWKSet> | undefined;
+
+  constructor(
+    protected config: ConfigInterfaceResolver,
+    // TODO : clean me after migration
+    protected oldApplicationProvider: ApplicationPgRepositoryProvider,
+    protected oldTokenProvider: TokenProvider,
+  ) {}
 
   async init(): Promise<void> {
     this.getJWKS();
@@ -73,14 +88,70 @@ export class OidcProvider implements InitHookInterface {
     };
   }
 
+  // TODO clean me after migration
+  private async verifyOldToken(token: string) {
+    const payload = await this.oldTokenProvider.verify<
+      TokenPayloadInterface & {
+        app?: string;
+        id?: number;
+        permissions?: string[];
+      }
+    >(token, {
+      ignoreExpiration: true,
+    });
+    /**
+     * Handle V1 token format conversion
+     */
+    if ("id" in payload && "app" in payload) {
+      payload.v = 1;
+      payload.a = payload.app!;
+      payload.o = payload.id!;
+      payload.s = "operator";
+      payload.id = undefined;
+      payload.app = undefined;
+      payload.permissions = undefined;
+    }
+
+    if (!payload.a || !payload.o) {
+      throw new ForbiddenException();
+    }
+    const data = await this.oldApplicationProvider.find(
+      { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
+    );
+    const app_uuid = data.uuid;
+    const owner_id = data.owner_id;
+    const matchUuid = app_uuid === payload.a;
+
+    // V1 tokens have a string owner_id. Check is done on UUID only
+    const matchOwn = typeof payload.o === "string" ? true : owner_id === payload.o;
+    if (!matchUuid || !matchOwn) {
+      throw new UnauthorizedException("Unauthorized application");
+    }
+    return {
+      operator_id: data.owner_id,
+      role: "application",
+      token_id: `deprecated:${data.owner_id}:${data._id}`,
+    };
+  }
+
   async verifyToken(token: string) {
+    // TODO clean me
+    try {
+      const oldData = await this.verifyOldToken(token);
+      return oldData;
+    } catch {
+      // noop
+    }
+
     const clientId = this.config.get("oidc.client_id");
     const authBaseUrl = this.config.get("oidc.base_url");
     const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
       issuer: authBaseUrl,
       audience: clientId,
     });
+
     const [role, operator_id] = (payload.name || "").split(":");
+
     return {
       operator_id: parseInt(operator_id),
       role,
@@ -88,7 +159,7 @@ export class OidcProvider implements InitHookInterface {
     };
   }
 
-  async getToken(access_key: string, secret_key: string): Promise<string> {
+  async getToken(username: string, password: string): Promise<string> {
     const clientId = this.config.get("oidc.client_id");
     const clientSecret = this.config.get("oidc.client_secret");
     const authBaseUrl = this.config.get("oidc.base_url");
@@ -96,9 +167,11 @@ export class OidcProvider implements InitHookInterface {
     url.pathname = "/token";
     const form = new URLSearchParams();
     form.set("grant_type", "password");
-    form.set("username", access_key);
-    form.set("password", secret_key);
+    form.set("username", username);
+    form.set("password", password);
     form.set("scope", "openid email profile");
+
+    console.info(`[OIDCProvider:getToken] ${url.toString()}`);
     const response = await fetch(url, {
       body: form.toString(),
       method: "POST",
@@ -107,6 +180,12 @@ export class OidcProvider implements InitHookInterface {
         "Authorization": `Basic ${encodeBase64(`${clientId}:${clientSecret}`)}`,
       },
     });
+
+    if (!response.ok) {
+      console.error(`[OIDCProvider:getToken] ${response.status} ${response.statusText}`);
+      throw new Error(response.statusText);
+    }
+
     const json = await response.json();
     return json.access_token;
   }

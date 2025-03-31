@@ -1,7 +1,7 @@
 import { Infer, object, string } from "@/lib/superstruct/index.ts";
 
-export const OidcCallback = object({
+export const OIDCCallback = object({
   code: string(),
 });
 
-export type OidcCallback = Infer<typeof OidcCallback>;
+export type OIDCCallback = Infer<typeof OIDCCallback>;

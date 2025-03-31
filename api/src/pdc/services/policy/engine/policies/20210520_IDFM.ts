@@ -137,7 +137,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
 
   protected boosterDatesRangesOnCom = {
     start_date: new Date("2024-12-6"),
-    end_date: new Date("2024-12-31"),
+    end_date: new Date("2025-03-15"),
     coms: [
       "95074",
       "78172",
