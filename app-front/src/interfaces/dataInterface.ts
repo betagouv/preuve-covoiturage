@@ -16,18 +16,46 @@ export type UsersInterface = {
   }[];
 };
 
+export type Company = {
+  result: {
+    data: {
+      _id: number;
+      siret: string;
+    };
+  };
+};
+
+export enum TerritoryCodeEnum {
+  Arr = "arr",
+  City = "com",
+  CityGroup = "epci",
+  Mobility = "aom",
+  Region = "reg",
+  District = "dep",
+}
+
+export interface TerritorySelectorsInterface {
+  [TerritoryCodeEnum.Arr]?: string[];
+  [TerritoryCodeEnum.City]?: string[];
+  [TerritoryCodeEnum.Mobility]?: string[];
+  [TerritoryCodeEnum.District]?: string[];
+  [TerritoryCodeEnum.CityGroup]?: string[];
+  [TerritoryCodeEnum.Region]?: string[];
+}
+
+export type Territory = {
+  _id?: number;
+  name: string;
+  siret: string;
+};
+
 export type TerritoriesInterface = {
   meta: {
     page: number;
     total: number;
     totalPages: number;
   };
-  data: {
-    id?: number;
-    name: string;
-    type?: string;
-    siret: string;
-  }[];
+  data: Territory[];
 };
 
 export type OperatorsInterface = {

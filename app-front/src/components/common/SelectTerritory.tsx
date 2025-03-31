@@ -25,7 +25,7 @@ export default function SelectTerritory(props: {
       }}
     >
       {data?.data.map((d, i) => (
-        <option key={i} value={d.id}>
+        <option key={i} value={d._id}>
           {d.name}
         </option>
       ))}

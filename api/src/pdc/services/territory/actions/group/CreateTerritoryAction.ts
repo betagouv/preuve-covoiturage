@@ -12,6 +12,11 @@ import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/T
     "validate",
     alias,
   ]],
+  apiRoute: {
+    path: "/dashboard/territory",
+    action: "dashboard:createTerritory",
+    method: "POST",
+  },
 })
 export class CreateTerritoryAction extends AbstractAction {
   constructor(
@@ -20,7 +25,7 @@ export class CreateTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.territoryRepository.create(params);
   }
 }

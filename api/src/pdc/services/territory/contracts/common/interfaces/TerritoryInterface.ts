@@ -5,13 +5,13 @@ export interface TerritoryGroupInterface {
   _id: number;
   company_id: number;
   name: string;
-  shortname: string;
-  contacts: ContactsInterface;
-  address: TerritoryAddress;
+  selector: TerritorySelectorsInterface;
+  shortname?: string;
+  contacts?: ContactsInterface;
+  address?: TerritoryAddress;
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  selector?: TerritorySelectorsInterface;
 }
 
 export type CreateTerritoryGroupInterface = Omit<

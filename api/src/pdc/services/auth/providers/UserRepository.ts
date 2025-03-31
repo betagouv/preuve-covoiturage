@@ -5,8 +5,9 @@ import sql, { raw } from "@/lib/pg/sql.ts";
 @provider()
 export class UserRepository {
   public readonly table = "auth.users";
-  public readonly territoryTable = "territory.territories";
+  public readonly territoryTable = "territory.territory_group";
   public readonly operatorTable = "operator.operators";
+  public readonly companyTable = "company.companies" 
 
   constructor(
     protected connection: PostgresConnection,
@@ -19,11 +20,12 @@ export class UserRepository {
         u.role,
         u.operator_id,
         u.territory_id,
-        COALESCE(o.siret, t.siret) as siret,
+        COALESCE(o.siret, c.siret) as siret,
         u._id
       FROM ${raw(this.table)} u
       LEFT JOIN ${raw(this.territoryTable)} t
         ON t._id = u.territory_id
+      LEFT JOIN ${raw(this.companyTable)} c on c._id = t.company_id
       LEFT JOIN ${raw(this.operatorTable)} o
         ON o._id = u.operator_id
       WHERE u.email = ${email}

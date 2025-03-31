@@ -1,7 +1,11 @@
 import { ExtensionInterface, NewableType, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
 import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
+import { ValidatorMiddleware as SuperStructValidator } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validator/index.ts";
+import { DeleteTerritoryAction } from '@/pdc/services/territory/actions/group/DeleteTerritoryAction.ts';
+import { DeleteTerritoryActionV2 } from "@/pdc/services/territory/actions/group/DeleteTerritoryActionV2.ts";
+import { ListTerritoryActionV2 } from "@/pdc/services/territory/actions/group/ListTerritoryActionV2.ts";
 import { create } from "@/pdc/services/territory/contracts/create.schema.ts";
 import { deleteTerritory } from "@/pdc/services/territory/contracts/delete.schema.ts";
 import { binding as findBinding } from "@/pdc/services/territory/contracts/find.schema.ts";
@@ -42,15 +46,18 @@ import { TerritoryRepositoryProvider } from "./providers/TerritoryRepositoryProv
   middlewares: [...defaultMiddlewareBindings, [
     "validate",
     ValidatorMiddleware,
-  ]],
+  ], ["validate-superstruct", SuperStructValidator]],
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
     ListGeoAction,
+    DeleteTerritoryAction,
+    DeleteTerritoryActionV2,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
     FindGeoBySirenAction,
+    ListTerritoryActionV2,
     GetAuthorizedCodesAction,
     IndexAllGeoAction,
   ],
