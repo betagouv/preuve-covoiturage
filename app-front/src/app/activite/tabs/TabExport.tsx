@@ -83,6 +83,7 @@ export default function TabExport() {
       tz: "Europe/Paris",
       start_at: startDate.toDate(),
       end_at: endDate.toDate(),
+      territory_id: [territoryId],
     };
 
     setLoading(true);
