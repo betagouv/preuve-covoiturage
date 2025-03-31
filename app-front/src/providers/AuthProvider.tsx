@@ -31,15 +31,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void checkAuth();
   }, []);
 
-  const onChangeTerritory = (id: number) => {
+  const onChangeTerritory = (id?: number) => {
     if (user) {
-      setUser({ ...user, territory_id: id, operator_id: undefined });
+      setUser({ ...user, territory_id: id ?? undefined, operator_id: undefined });
     }
   };
 
-  const onChangeOperator = (id: number) => {
+  const onChangeOperator = (id?: number) => {
     if (user) {
-      setUser({ ...user, operator_id: id, territory_id: undefined });
+      setUser({ ...user, operator_id: id ?? undefined, territory_id: undefined });
     }
   };
 

@@ -6,7 +6,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function TabProfil() {
   const { user, onChangeTerritory, onChangeOperator } = useAuth();
@@ -20,6 +20,11 @@ export default function TabProfil() {
   const [radioValue, setRadioValue] = useState<"operator" | "territory">(
     "territory",
   );
+  useEffect(() => {
+    if (toggleValue === false) {
+      onChangeTerritory();
+    }
+  }, [toggleValue]);
 
   return (
     <>
@@ -47,7 +52,9 @@ export default function TabProfil() {
               <ToggleSwitch
                 label="S'identifier en tant qu'opérateur ou territoire"
                 checked={toggleValue}
-                onChange={() => setToggleValue(!toggleValue)}
+                onChange={() => {
+                  setToggleValue(!toggleValue);
+                }}
               />
               {toggleValue && (
                 <>
@@ -74,13 +81,13 @@ export default function TabProfil() {
                   />
                   {radioValue === "territory" && (
                     <SelectTerritory
-                      defaultValue={user?.territory_id ?? 1}
+                      defaultValue={user?.territory_id}
                       onChange={onChangeTerritory}
                     />
                   )}
                   {radioValue === "operator" && (
                     <SelectOperator
-                      defaultValue={1}
+                      defaultValue={user?.operator_id}
                       onChange={onChangeOperator}
                     />
                   )}

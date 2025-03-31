@@ -9,6 +9,6 @@ export interface AuthContextProps {
     territory_id?: number;
     siret?: string;
   };
-  onChangeTerritory: (id: number) => void;
-  onChangeOperator: (id: number) => void;
+  onChangeTerritory: (id?: number) => void;
+  onChangeOperator: (id?: number) => void;
 }

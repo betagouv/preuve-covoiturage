@@ -6,15 +6,15 @@ import { useState } from "react";
 import { type OperatorsInterface } from "../../interfaces/dataInterface";
 
 export default function SelectOperator(props: {
-  defaultValue: number;
-  onChange: (id: number) => void;
+  defaultValue?: number;
+  onChange: (id?: number) => void;
 }) {
-  const [value, setValue] = useState<number>(props.defaultValue);
+  const [value, setValue] = useState<number | undefined>(props.defaultValue);
   const url = `${Config.get<string>("next.public_api_url", "")}/v3/dashboard/operators`;
   const { data } = useApi<OperatorsInterface>(url, true);
   return (
     <Select
-      label="Sélectionner un opérateur"
+      label=""
       nativeSelectProps={{
         value: value,
         onChange: (e) => {
@@ -24,6 +24,7 @@ export default function SelectOperator(props: {
         },
       }}
     >
+       <option value=''>Selectionner un operateur</option>
       {data?.data.map((d, i) => (
         <option key={i} value={d.id}>
           {d.name}
