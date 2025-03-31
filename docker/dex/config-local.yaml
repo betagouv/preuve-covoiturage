@@ -23,16 +23,9 @@ staticPasswords:
     userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
 
 storage:
-  type: postgres
+  type: sqlite3
   config:
-    host: postgres
-    port: 5432
-    database: dex
-    user: postgres
-    password: postgres
-    ssl:
-      mode: disable
-      # caFile: /etc/dex/postgres.ca
+    file: /tmp/dex.db
 
 connectors:
 - type: oidc
@@ -43,14 +36,14 @@ connectors:
     # This value MUST match the value returned in the provider config discovery.
     #
     # See: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
-    issuer: $OIDC_ISSUER_URL
+    issuer: $PROCONNECT_ISSUER_URL
 
     # Connector config values starting with a "$" will read from the environment.
-    clientID: $OIDC_CLIENT_ID
-    clientSecret: $OIDC_CLIENT_SECRET
+    clientID: $PROCONNECT_CLIENT_ID
+    clientSecret: $PROCONNECT_CLIENT_SECRET
 
     # Dex's issuer URL + "/callback"
-    redirectURI: $OIDC_REDIRECT_URL
+    redirectURI: $PROCONNECT_REDIRECT_URL
 
 
     # Some providers require passing client_secret via POST parameters instead

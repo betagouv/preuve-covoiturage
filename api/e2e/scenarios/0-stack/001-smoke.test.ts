@@ -1,5 +1,5 @@
-import { expect } from "@std/expect";
-import { beforeEach, describe, it } from "@std/testing/bdd";
+import { expect } from "dep:expect";
+import { beforeEach, describe, it } from "dep:testing-bdd";
 import { API } from "../../lib/API.ts";
 import { env } from "../../lib/config.ts";
 

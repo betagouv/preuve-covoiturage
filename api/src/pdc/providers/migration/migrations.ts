@@ -27,6 +27,24 @@ export async function migrateSQL(connectionString: string, path: string, verbose
         continue;
       }
 
+      // if (
+      //   [
+      //     // "/20190101000000-extensions",
+      //     // "/20190101000050-geo",
+      //     // "/20190101100100-application",
+      //     // "/20190101100200-fraud",
+      //     // "/20190101100401-observatory",
+      //     // "/20190101100500-cee",
+      //     // "/20240702100500-trip_list_drop",
+      //     // "/20250210000000-alter-users",
+      //     // "/20250225000000-alter-operators",
+      //     // "/20250312000000-alter-geo-functions",
+      //     // "/20250326000000-alter-territories",
+      //   ].indexOf(td) > -1
+      // ) {
+      //   continue;
+      // }
+
       const statements: string = await readTextFile(filepath);
       const transaction = conn.createTransaction(`migration-${td.substring(1)}`);
       await transaction.begin();
@@ -41,8 +59,19 @@ export async function migrateSQL(connectionString: string, path: string, verbose
         // There's no way to catch the database error to log it.
         // Run the file with psql to debug...
         logger.error(`Error in migration: ${td}`);
-        logger.error(e.message);
+        if (e instanceof Error) {
+          logger.error(e.message);
+        } else {
+          logger.error("An unknown error occurred");
+        }
       }
+    }
+  } catch (e) {
+    logger.error("Error in migrateSQL");
+    if (e instanceof Error) {
+      logger.error(e.message);
+    } else {
+      logger.error("An unknown error occurred");
     }
   } finally {
     conn.release();

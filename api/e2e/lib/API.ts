@@ -84,6 +84,7 @@ export class API {
       const response = await fetch(input, init);
       const body = await this.getBody(response);
 
+      console.log(body);
       return {
         ok: response.ok,
         status: response.status,
