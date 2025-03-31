@@ -1,0 +1,6 @@
+version: "1.0"
+fileignoreconfig:
+- filename: flake.nix
+  checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
+- filename: docker-compose.base.yml
+  checksum: 09452ab0fc649796e94196f4731135956f37ce3087c494267c41e6b8a7addd15

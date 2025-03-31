@@ -1,8 +1,8 @@
 import { Infer, object, string } from "@/lib/superstruct/index.ts";
 
 export const AccessTokenParams = object({
-  username: string(),
-  password: string(),
+  access_key: string(),
+  secret_key: string(),
 });
 
 export type AccessTokenParams = Infer<typeof AccessTokenParams>;

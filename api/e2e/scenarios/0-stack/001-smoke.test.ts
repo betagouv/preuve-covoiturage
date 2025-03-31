@@ -1,10 +1,10 @@
-import { expect } from "@std/expect";
-import { beforeEach, describe, it } from "@std/testing/bdd";
+import { expect } from "dep:expect";
+import { beforeEach, describe, it } from "dep:testing-bdd";
 import { API } from "../../lib/API.ts";
 import { env } from "../../lib/config.ts";
 
-const USER_EMAIL = env("APIE2E_AUTH_USERNAME");
-const USER_PASSWORD = env("APIE2E_AUTH_PASSWORD");
+const USER_ACCESSKEY = env("APIE2E_AUTH_ACCESSKEY");
+const USER_SECRETKEY = env("APIE2E_AUTH_SECRETKEY");
 
 describe("Unauthenticated smoke test", () => {
   const http = new API();
@@ -26,16 +26,18 @@ describe("Authenticated smoke test", () => {
   const http = new API();
 
   beforeEach(async () => {
-    await http.authenticate(USER_EMAIL, USER_PASSWORD);
+    await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
   });
 
   it("should be up and running", async () => {
     const response = await http.get("/auth/me");
     expect(response.status).toBe(200);
+
+    // informations must match the ones in the dex config-e2e.yaml file
     expect(response.body).toEqual({
       operator_id: 1,
       role: "application",
-      email: USER_EMAIL,
+      email: "admin@example.com",
     });
   });
 });

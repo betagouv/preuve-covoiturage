@@ -28,8 +28,8 @@ export class AccessTokenAction extends AbstractAction {
   }
 
   protected override async handle(params: AccessTokenParams): Promise<AccessTokenResult> {
-    const { username, password } = params;
-    const access_token = await this.dexOIDCProvider.getToken(username, password);
+    const { access_key, secret_key } = params;
+    const access_token = await this.dexOIDCProvider.getToken(access_key, secret_key);
     return { access_token };
   }
 }

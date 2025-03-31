@@ -1,52 +1,245 @@
 set dotenv-load
-set shell := ["bash", "-uc"] 
+set shell := ["bash", "-uc"]
 cert_dir:=join(parent_directory(justfile_directory()),"docker","traefik","certs")
 key_dir:=join(parent_directory(justfile_directory()),"docker","api","certs")
+users_file:=join(parent_directory(justfile_directory()),"docker","api", "seed-local-users.sql")
 docker_compose_dev_file:=join(parent_directory(justfile_directory()),"docker-compose.dev.yml")
 docker_compose_e2e_file:=join(parent_directory(justfile_directory()),"docker-compose.e2e.yml")
+docker_compose_base_file:=join(parent_directory(justfile_directory()),"docker-compose.base.yml")
+docker_compose_proxy_file:=join(parent_directory(justfile_directory()),"docker-compose.proxy.yml")
+deno_flags := "--allow-net --allow-env --allow-read --allow-write --allow-ffi --allow-sys --allow-run --unstable-fs --cached-only"
 
+# List available just commands
 default:
   @just --list
 
+# --------------------------------------------------------------------------------------------------
+#
+#      DOCKER STACK
+#
+# --------------------------------------------------------------------------------------------------
+
+alias start := dev
+alias up := dev
+alias down := stop
+alias l := logs
+alias dc := docker
+
+# Develop on localhost:*
+[group('docker')]
+dev *services="s3 postgres redis mailer dex proxy":
+ just dc_local up --remove-orphans -d {{ services }}
+
+# Flex on *.covoiturage.test
+[group('docker')]
+proxy *services="proxy api":
+  just dc_proxy up --remove-orphans -d {{ services }}
+
+# Display logs
+[group('docker')]
+logs *services="":
+  just dc_proxy logs {{ services }}
+
+# It's over!
+[group('docker')]
+stop keep_volume="true":
+  just dc_proxy down {{ if keep_volume == "true" { "" } else { "-v" } }}
+
+[group('docker')]
+build:
+  just dc_proxy build
+
+# Wrap docker compose
+[group('docker')]
+docker *command:
+  docker compose \
+    -f {{ docker_compose_base_file }} \
+    -f {{ docker_compose_proxy_file }} \
+    -f {{ docker_compose_e2e_file }} \
+    -f {{ docker_compose_dev_file }} \
+    {{ command }}
+
+# Run docker compose dev with a proxy
+[private]
+@dc_proxy *args:
+  docker compose \
+    -f {{ docker_compose_base_file }} \
+    -f {{ docker_compose_proxy_file }} \
+    {{ args }}
+
+# Run docker compose dev
+[private]
+@dc_local *args:
+  docker compose \
+    -f {{ docker_compose_base_file }} \
+    -f {{ docker_compose_proxy_file }} \
+    -f {{ docker_compose_e2e_file }} \
+    -f {{ docker_compose_dev_file }} \
+    {{ args }}
+
+# Run docker compose for e2e tests
+[private]
+@dc_e2e *args:
+  docker compose \
+    -f {{ docker_compose_base_file }} \
+    -f {{ docker_compose_proxy_file }} \
+    -f {{ docker_compose_e2e_file }} \
+    {{ args }}
+
+# --------------------------------------------------------------------------------------------------
+#
+#      DATABASE
+#
+#      Manage geographic data, migrations and seeding
+#
+# --------------------------------------------------------------------------------------------------
+
+pgurl := `echo $APP_POSTGRES_URL | sed 's/@postgres:/@localhost:/g'`
+
+# Run a configured pgcli
+[group('database')]
+[working-directory('.')]
+@db:
+  LESS="-SRXF" pgcli {{ pgurl }} --pgclirc .pgclirc
+
+# Seed local users (legacy auth system)
+[confirm('''
+This will seed local users:
+ - admin@example.com
+ - operator@example.com,
+ - territory@example.com
+password is: admin1234
+Do you want to continue? (y/n)
+''')]
+[group('database')]
+seed-local-users:
+  #!/usr/bin/env bash
+  if [[ "$APP_ENV" != "local" ]]; then
+    echo "Error: APP_ENV must be set to 'local' to seed local users."
+    exit 1
+  fi
+  psql {{ pgurl }} \
+    -q \
+    -f {{ users_file }} \
+    -v ON_ERROR_STOP=1 \
+    > /dev/null
+
+# Migrate the schemas and flash production data
+[group('database')]
+migrate:
+  deno run {{ deno_flags }} src/db/cmd-migrate.ts
+
+# Migrate the schemas and seed test data
+[group('database')]
+seed:
+  deno run {{ deno_flags }} src/db/cmd-seed.ts
+
+# Source the geo.perimeters data
+[group('database')]
+source:
+  deno run {{ deno_flags }} --v8-flags=--max-old-space-size=4096 src/db/cmd-source.ts
+
+# Run external data migrations
+[group('database')]
+external_data_migrate:
+  deno run {{ deno_flags }} src/db/external_data/index.ts
+
+# Drop remaining test databases
+#
+# use with the environment variable: APP_POSTGRES_KEEP_TEST_DATABASES=true
+# to keep the test databases and be able to check the data after the test has run.
+#
+# @requires: pgcli
+
+# Drop all test_* databases
+[group('database')]
+drop_test_databases:
+  pgcli -l; \
+  echo "Are you sure you want to drop all databases starting with 'test_'? (y/n)"; \
+  read -r response; \
+  if [[ $response =~ ^([yY][eE][sS]|[yY])+$ ]]; then \
+    pgcli -l | rg test_ | awk '{ print $2 }' | while read db; do psql -c "DROP DATABASE ${db};"; done; \
+  else \
+    echo "No database dropped"; \
+  fi
+
+# --------------------------------------------------------------------------------------------------
+#
+#      TESTS
+#
+#       - unit (runs on code only)
+#       - integration (requires a running stack)
+#
+# --------------------------------------------------------------------------------------------------
+
+alias t := test
+alias tu := test-unit
+alias ti := test-integration
+alias t2 := test-e2e
+
 # Run test:integration
+[group('tests')]
 test-integration:
   just test '**/*.integration.spec.ts'
 
 # Run test:unit
+[group('tests')]
 test-unit:
   just test --parallel '**/*.unit.spec.ts'
 
+# Run test:e2e
+[group('tests')]
+test-e2e:
+  deno test --allow-net --allow-env --unsafely-ignore-certificate-errors {{ join(justfile_directory(),"e2e") }}
+
 # Run test
+[group('tests')]
 test *pattern:
   deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
-# Start docker services (detached)
-start *services="s3 postgres redis mailer":
- just dc up -d {{ services }}
+# --------------------------------------------------------------------------------------------------
+#
+# CI/CD TESTS
+#
+#  - unit (runs on code only)
+#  - integration (requires a running stack)
+#
+# --------------------------------------------------------------------------------------------------
 
-# Stop docker services
-stop keep_volume="true":
-  just dc down {{ if keep_volume == "true" { "" } else { "-v" } }}
+# CI unit test
+[group('ci')]
+ci_test_unit: (test-unit)
 
-# Start docker services for e2e
+# CI integration test
+[group('ci')]
+ci_test_integration: ci_test_prehook (docker "exec api just test-integration") ci_test_posthook
+
+[group('ci')]
+ci_test_e2e: ci_test_prehook (docker "exec api just test-e2e") ci_test_posthook
+
 [private]
-start_e2e *services="s3 postgres redis mailer dex":
- just dc_e2e up -d {{ services }}
+ci_test_prehook:
+  #!/usr/bin/env bash
+  just dc_e2e down -v --remove-orphans
+  just generate_certs
+  just generate_keys 
+  just dc_e2e up -d postgres redis s3 mailer dex
+  just wait postgres 5432
+  just wait redis 6379
+  just wait s3 9000
+  just docker run api just cache-migrator
+  just docker run api just seed
+  just dc_e2e up -d proxy api
+  just create_bucket "local-pdc-export"
+  just create_bucket "local-pdc-appels-de-fonds"
+  just create_bucket "local-pdc-public"
+  just wait api 8080
+  sleep 5
 
-# Stop docker services for e2e
 [private]
-stop_e2e:
+ci_test_posthook:
+  #!/usr/bin/env bash
   just dc_e2e down -v
-
-# Run docker compose dev
-[private]
-@dc *args:
-  docker compose -f {{ docker_compose_e2e_file }} -f {{ docker_compose_dev_file }} {{ args }}
-
-# Run docker compose e2e
-[private]
-@dc_e2e *args:
-  docker compose -f {{ docker_compose_e2e_file }} {{ args }}
 
 # Generate keys
 [private]
@@ -54,13 +247,14 @@ generate_keys skip=path_exists(join(key_dir,"privateKey.pem")):
   #!/usr/bin/env bash
   echo "Generating keys"
   if {{ skip }}; then
-    echo "Already exists"
+    echo "Already exists in {{ key_dir }}"
   else
     openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -pkeyopt rsa_keygen_pubexp:3 -out "{{key_dir}}/privateKey.pem"
     openssl pkey -in "{{key_dir}}/privateKey.pem" -out "{{key_dir}}/publicKey.pem" -pubout
     chmod a+r "{{key_dir}}/privateKey.pem"
     chmod a+r "{{key_dir}}/publicKey.pem"
-  fi 
+    echo "Keys generated in {{ key_dir }}"
+  fi
 
 # Generate cert
 [private]
@@ -68,149 +262,116 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
   #!/usr/bin/env bash
   echo "Generating certs"
   if {{ skip }}; then
-    echo "Already exists"
+    echo "Already exists in {{ cert_dir }}"
   else
     openssl genrsa -out {{ cert_dir }}/localCA.key 2048
     openssl req -x509 -new -nodes -key {{ cert_dir }}/localCA.key -sha256 -days 1825 -out {{ cert_dir }}/localCA.pem -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=pdc/emailAddress=technique@covoiturage.beta.gouv.fr"
     openssl genrsa -out {{ cert_dir }}/cert.key 2048
     openssl req -new -key {{ cert_dir }}/cert.key -out {{ cert_dir }}/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
     openssl x509 -req -in {{ cert_dir }}/cert.csr -CA {{ cert_dir }}/localCA.pem -CAkey {{ cert_dir }}/localCA.key -CAcreateserial -out {{ cert_dir }}/cert.crt -days 500 -sha256
+    echo "Certs generated in {{ cert_dir }}"
   fi
-
-# Migrate the schemas and flash production data
-migrate:
-  deno run \
-    --allow-net \
-    --allow-env \
-    --allow-read \
-    --allow-write \
-    --allow-sys \
-    --allow-ffi \
-    --allow-run \
-    --cached-only \
-    src/db/cmd-migrate.ts
-
-# Migrate the schemas and seed test data
-seed:
-  deno run \
-    --allow-net \
-    --allow-env \
-    --allow-read \
-    --allow-write \
-    --allow-sys \
-    --allow-ffi \
-    --allow-run \
-    --cached-only \
-    src/db/cmd-seed.ts
-
-# Source the geo.perimeters data
-source:
-  deno run \
-    --allow-net \
-    --allow-env \
-    --allow-read \
-    --allow-write \
-    --allow-sys \
-    --allow-ffi \
-    --allow-run \
-    --v8-flags=--max-old-space-size=4096 \
-    --cached-only \
-    src/db/cmd-source.ts
-
-# Run external data migrations
-external_data_migrate:
-  deno run \
-    --allow-net \
-    --allow-env \
-    --allow-read \
-    --allow-write \
-    --allow-sys \
-    --allow-ffi \
-    --allow-run \
-    --cached-only \
-    src/db/external_data/index.ts
 
 # Create a new bucket
 [private]
 create_bucket name:
-  just dc run --rm -e BUCKET={{name}} s3-init
+  just dc_e2e run --rm -e BUCKET={{name}} s3-init
 
 # Wait for app
 [private]
 wait domain port:
-  until nc -zv {{ domain }} {{ port }} -w1; do echo "waiting"; sleep 1; done
-  sleep 10
+  WAIT_DOMAIN={{ domain }} WAIT_PORT={{ port }} just dc_e2e run wait
 
-# CI integration test
-ci_test_integration: generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
+# --------------------------------------------------------------------------------------------------
+#
+#     MISC.
+#
+# --------------------------------------------------------------------------------------------------
 
-# CI unit test
-ci_test_unit: (test-unit) 
-
-# compatibility with previous justfile using npm
-# TODO remove when fully migrated to Deno
-alias ilos := api
-
-# Run api command
+# Run api commands (just api export:create ...)
+[group('API commands')]
 api *command:
-  deno run \
-  --allow-net \
-  --allow-env \
-  --allow-read \
-  --allow-write \
-  --allow-ffi \
-  --allow-sys \
-  --allow-run \
-  --unstable-fs \
-  --cached-only \
-  --unsafely-ignore-certificate-errors \
-  src/main.ts {{ command }}
+  deno run {{ deno_flags }} src/main.ts {{ command }}
 
+# Run api commands (no TLS certificate check)
+[group('API commands')]
+api-unsafe *command:
+  deno run {{ deno_flags }} --unsafely-ignore-certificate-errors src/main.ts {{ command }}
+
+# REPL in the api environment
+[group('development')]
 debug:
   deno repl \
   -A \
   --unstable-fs \
   --eval 'import { getKernel } from "./src/debug.ts"; const kernel = await getKernel();'
 
+[group('development')]
 watch:
-  deno run \
-  --allow-net \
-  --allow-env \
-  --allow-read \
-  --allow-write \
-  --allow-ffi \
-  --allow-sys \
-  --allow-run \
-  --watch \
-  --unstable-fs \
-  --cached-only \
-  src/main.ts http \$PORT
+  deno run {{ deno_flags }} src/main.ts http \$PORT
 
-# Start the HTTP API server on port 8080
-@serve:
+# Run a deno file inside API environment (docker exec)
+[group('development')]
+deno *filepath:
+  docker compose \
+    -f {{ docker_compose_base_file }} \
+    -f {{ docker_compose_proxy_file }} \
+    run api deno run {{ deno_flags }} --unsafely-ignore-certificate-errors {{ filepath }}
+
+# Start the HTTP API server on port $PORT
+[group('development')]
+serve:
   just api http \$PORT
 
+# Start the HTTP API server without checking TLS certificates
+[group('development')]
+serve-unsafe:
+  just api-unsafe http \$PORT
+
 # List all the APP_ environment variables
-env:
+[group('development')]
+@env:
   env | grep APP_ | sort | column -t -s=
 
+# Install the domain aliases in /etc/hosts
+[confirm('''
+This will add the domain aliases to /etc/hosts. (requires sudo)
+Do you want to continue? (y/n)
+''')]
+[unix]
+[group('development')]
+add-hosts:
+  #!/usr/bin/env bash
+  HOSTS_FILE=/etc/hosts
+  DOMAINS=$(yq --output-format=tsv '.services.proxy.networks.front.aliases' {{ docker_compose_proxy_file }})
+  for domain in $DOMAINS; do
+    if ! grep -q "$domain" $HOSTS_FILE; then
+      echo "127.0.0.1 $domain" | sudo tee -a $HOSTS_FILE
+    fi
+  done
+
 # install
+[group('deno')]
 install:
   deno install --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
 # cache all dependencies for src/mains.ts
+[group('deno')]
 cache:
-  deno cache --frozen=true --allow-import=cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/main.ts
+  deno cache --quiet --frozen=true --allow-import=cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/main.ts
 
 # cache all dependencies for src/db/cmd-migrate.ts
+[group('deno')]
 cache-migrator:
-  deno cache --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/db/cmd-migrate.ts
+  deno cache --quiet --frozen=true --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443 src/db/cmd-migrate.ts
 
 # refresh the deno.lock file
+[group('deno')]
 lock:
   deno install --frozen=false --allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443
 
 # Eval and run a file
+[group('development')]
 eval *filepath:
   deno eval \
     --allow-net \
@@ -223,14 +384,3 @@ eval *filepath:
     # --allow-run \
     # --unstable-fs \
     {{ filepath }}
-
-# drop remaining test databases
-drop_test_databases:
-  pgcli -l; \
-  echo "Are you sure you want to drop all databases starting with 'test_'? (y/n)"; \
-  read -r response; \
-  if [[ $response =~ ^([yY][eE][sS]|[yY])+$ ]]; then \
-    pgcli -l | rg test_ | awk '{ print $2 }' | while read db; do psql -c "DROP DATABASE ${db};"; done; \
-  else \
-    echo "No database dropped"; \
-  fi

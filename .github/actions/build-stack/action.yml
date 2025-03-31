@@ -1,0 +1,102 @@
+name: Build stack
+description: Build the stack for testing
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.deno
+          ~/.cache/deno
+        key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+
+    - uses: denoland/setup-deno@v1
+      with:
+        deno-version: v2.x
+
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: just@1.40.0
+
+    - name: Add host entries
+      shell: bash
+      run: |
+        echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 mailer.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-appels-de-fonds.s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-public.s3.covoiturage.test" | sudo tee -a /etc/hosts
+
+    - name: Build docker images
+      working-directory: api
+      shell: bash
+      run: |
+        just generate_certs
+        just generate_keys
+
+    - name: Start Services
+      working-directory: api
+      shell: bash
+      env:
+        POSTGRES_DB: test
+      run: just dc_e2e up -d postgres redis mailer s3 dex
+
+    - name: Wait for PostgreSQL to be ready
+      working-directory: api
+      shell: bash
+      env:
+        WAIT_DOMAIN: postgres
+        WAIT_PORT: 5432
+      run: just dc_e2e run wait
+
+    - name: Run migrations and seed test data
+      working-directory: api
+      shell: bash
+      env:
+        # use localhost here (outside of docker network)
+        APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+      run: |
+        just cache-migrator
+        just seed
+
+    - name: Run the e2e stack
+      working-directory: api
+      shell: bash
+      env:
+        APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
+      run: just dc_e2e up -d proxy api
+
+    - name: Create buckets
+      working-directory: api
+      shell: bash
+      run: |
+        just create_bucket "local-pdc-export"
+        just create_bucket "local-pdc-appels-de-fonds"
+        just create_bucket "local-pdc-public"
+      
+    - name: Wait for the API to be ready
+      working-directory: api
+      shell: bash
+      env:
+        WAIT_DOMAIN: api
+        WAIT_PORT: 8080
+      run: just dc_e2e run wait
+
+    # - name: PostgreSQL logs
+    #   working-directory: api
+    #   run: |
+    #     just dc_e2e logs postgres
+
+    # - name: Traefik logs
+    #   working-directory: api
+    #   run: |
+    #     just dc_e2e logs proxy
+
+    # - name: API logs
+    #   working-directory: api
+    #   run: |
+    #     just dc_e2e logs api

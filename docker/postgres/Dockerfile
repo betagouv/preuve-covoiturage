@@ -1,1 +1,1 @@
-FROM postgis/postgis:14-3.3-alpine
+FROM postgis/postgis:16-3.5-alpine

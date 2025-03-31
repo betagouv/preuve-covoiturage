@@ -1,6 +1,6 @@
-![Registre de preuve de covoiturage](https://covoiturage.beta.gouv.fr/images/rpc-large.png)
+![Registre de preuve de covoiturage](https://rpc.s3.fr-par.scw.cloud/rpc-large.png)
 
-Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.gouv.fr) qui a pour but de certifier qu'un covoiturage a bien eu lieu. L'objectif de l'outil est d'agir en tant que tiers de confiance entre les différents acteurs du covoiturage (opérateurs, autorités organisatrices de mobilité, entreprises, régions, etc.) pour simplifier la mise en place d'incitations à destination des covoitureuses et covoitureurs. Cette Startup d'État a pour objectif d'aider à réduire l'auto-solisme et l'emprunte écologique des déplacements courts.
+Le Registre de preuve de covoiturage est un produit [beta.gouv.fr](https://beta.gouv.fr) qui a pour but de certifier qu'un covoiturage a bien eu lieu. L'objectif de l'outil est d'agir en tant que tiers de confiance entre les différents acteurs du covoiturage (opérateurs, autorités organisatrices de mobilité, entreprises, régions, etc.) pour simplifier la mise en place d'incitations à destination des covoitureuses et covoitureurs. Cette Startup d'État a pour objectif d'aider à réduire l'auto-solisme et l'emprunte écologique des déplacements courts.
 
 - Plus d'informations sur le [Registre de preuve de covoiturage](https://covoiturage.beta.gouv.fr/)
 - [Application territoire/opérateurs](https://app.covoiturage.beta.gouv.fr)
@@ -18,83 +18,66 @@ Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.g
 
 Politique de sécurité et contact : [SECURITY.md](SECURITY.md)
 
-### Services
-
-An easy way to boot the application on your local machine is by using Docker.
-You will need `docker` and `docker-compose`.
-
-| Service     | slug       | ENV               | URL                        | Folder     |
-| ----------- | ---------- | ----------------- | -------------------------- | ---------- |
-| Frontend \* | `-`        | APP_APP_URL       | http://localhost:4200      | /dashboard |
-| API         | `api`      | APP_API_URL       | http://localhost:8080      | /api       |
-| Redis       | `redis`    | APP_REDIS_URL     | redis://redis:6379         | -          |
-| Postgres    | `postgres` | APP_POSTGRES_URL  | postgresql://postgres:post | -          |
-| Mailhog     | `mailer`   | APP_MAIL_SMTP_URL | http://localhost:8025      | -          |
-| S3          | `s3`       | AWS\_\*           | http://localhost:9000      | -          |
-
-> ⚠️ `docker-compose.yml` is used in `local` environment only
-
-### Installation
+### Stack technique
 
 1. Cloner le repo et `cd` dedans
 2. `cp api/.env.example api/.env`
 3. Modifier `api/.env`
-4. `docker-compose build`
-5. `docker-compose run --rm migrator npm run migrate`
+4. `just docker build`
+
+> **Note**
+> Sur NixOS, il faut ajouter `DOCKER_SOCK=/run/user/1000/docker.sock` dans `api/.env`
+> pour faire fonctionner Traefik correctement
+
+#### Migrations
 
 ```shell
-terminal 1: docker-compose up api
-terminal 2: docker-compose up dashboard
-# nav to http://localhost:4200
+# Préfixer avec `just dc run api` pour exécuter dans le container de l'API
+just migrate    # Migrer les schemas de données
+just source     # Migrer les données géographiques
+just seed       # Remplir la base de données avec des données de test
+just seed-local-users # Ajouter des utilisateurs pour les tests (NODE_ENV=local)
 ```
 
-### Migrations
+#### Contrôle des services
 
-```shell
-// use SKIP_GEO_MIGRATIONS=true to skip geo migrations 
-// use SKIP_SQL_MIGRATIONS=true to skip sql migrations
+Les différents fichiers `docker-compose.*.yml` sont utilisés en _overlay_ pour créer la stack de dev.
 
-cd api
-npm run migrate
-// OR
-docker-compose run api npm run migrate
-```
+- `base`: définition des services sur localhost. Pas de ports exposés
+- `proxy`: ajout d'un proxy Traefik pour exposer les services sur `*.covoiturage.test`
+- `e2e`: overlay utilisé pour les tests de bout en bout
+- `dev`: ouvre les ports pour le développement local
 
-### Frontend testing
+#### Examples de commandes
 
-```shell
-# default browser is Chrome
-npm run test
-npm run test --browsers ChromeHeadless
-CHROME_BIN=$(which chrome) npm run test
-CHROME_BIN=$(which chromium) npm run test
-CHROME_BIN=$(which brave-browser) npm run test
+- Lister les commandes disponibles: `just`
+- Lancer la stack de dev en localhost (sans l'API): `just dev | just start | just up`
+- Démarrer l'API en local: `just serve`
+- Lancer la stack sur les URL `*.covoiturage.test` (avec l'API): `just proxy`
+- Utiliser Docker dans l'environnement: `just docker <docker_command>`
+- Afficher les logs des services: `just logs [<service>] [-f]`
+- Stopper les services: `just stop | just down`
 
-# requires karma-firefox-launcher (installed)
-npm run test --browsers Firefox
-```
+#### Misc.
 
-##### Notes
+- Se connecter à la DB avec pgcli: `just db`
+- Lancer un REPL avec le kernel de l'API: `just debug`
+- Ajouter la résolution des domaines `*.covoiturage.test` dans `/etc/hosts`: `just add-hosts`
+- Ajouter des utilisateurs pour les tests: `just seed-local-users`
+- Lister les variables d'environnement de l'application: `just env`
+- Lancer les tests de l'API en local: `just test`, `just test-integration`, `just test-unit`
+- Lancer la stack de tests d'intégration: `just ci_test_integration`
+- Lancer la stack de tests bout-en-bout: `just ci_test_e2e`
 
-- You can monitor your development inbox at http://localhost:8025. Emails are usually cleared in the tests.
-- Tests are not stateless yet. You might need to clean up data manually when they crash.
-
-### Configuration
-
-#### Secrets configuration
-
-For all **secrets**, use the `.env` file which is **NOT COMMITED** to Git.
-
-For none secret values configuring the system, commit the ENV vars in `docker-compose.yml`
-
-For _static_ application configuration (timeout, etc.) edit/add the `.ts` files in each service `config/` folder.
+> **Note**
+> Les stacks de tests CI sont lancées sur des volumes Docker qui sont détruits à la fin des runs.
 
 ### Versions
 
-The project follows the [semver](https://semver.org/) specification.
+Le code suit les spécifications [semver](https://semver.org/).
 
 # License
 
-DINUM / DGITM / ADEME, 2017-2024
+DINUM / DGITM / ADEME, 2017-2025
 
 The source code is published under [Apache license 2.0](./LICENSE).

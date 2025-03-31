@@ -1,6 +1,9 @@
 {
   "imports": {
     "@/": "./src/",
+    "dep:assert": "jsr:@std/assert@^1.0.12",
+    "dep:expect": "jsr:@std/expect@^1.0.14",
+    "dep:testing-bdd": "jsr:@std/testing@^1.0.9/bdd",
     "dep:reflect-metadata": "https://cdn.esm.sh/reflect-metadata?deno",
     "dep:inversify": "https://cdn.esm.sh/inversify?deno",
     "dep:https": "node:https",

@@ -3,12 +3,11 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'local'
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
+    # shm_size: 2g
+    # command: ["postgres", "-c", "log_statement=all"]
 
   redis:
     ports:
@@ -17,51 +16,16 @@ services:
   mailer:
     ports:
       - 8025:8025
-  
-  arena:
-    build:
-      dockerfile: ./Dockerfile
-      context: ./docker/arena
-    ports:
-      - 4567:4567
-    environment:
-      REDIS_HOST: 'redis'
-      REDIS_PASSWORD: ''
-      REDIS_PORT: '6379'
-      APP_QUEUE: 'trip;acquisition;policy;carpool;normalization;campaign'
-    networks:
-      - back
-    
-  dashboard:
-    build:
-      dockerfile: ./docker/dashboard/Dockerfile
-      context: .
-    volumes:
-      - ./dashboard:/app/dashboard
-      - ./docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
-      - ./shared:/app/shared:ro
-    tty: true
-    labels:
-      - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
-
-  dex:
-    environment:
-      PG_DB: dex
 
   api:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
     environment:
-      PORT: 8080
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
       DEBUG: 'api'
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
-    command:
-      - just
-      - watch
     volumes:
       - ./api:/app/api
+      - ./docker/api/certs:/app/certs:ro
 
   cms:
     build:
@@ -78,10 +42,10 @@ services:
       NODE_ENV: dev
       DATABASE_NAME: local
 
+  dashboard:
+    ports:
+      - 4200:4200
+
   s3:
     ports:
       - 9000:9000
-
-networks:
-  front:
-  back:
