@@ -171,6 +171,6 @@ jobs:
         env:
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
           APIE2E_API_URL: http://api.covoiturage.test
-          APIE2E_AUTH_USERNAME: admin@example.com
-          APIE2E_AUTH_PASSWORD: password
+          APIE2E_AUTH_ACCESSKEY: admin@example.com
+          APIE2E_AUTH_SECRETKEY: password
         run: just ci

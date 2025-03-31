@@ -14,25 +14,24 @@ export class API {
   private baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
   private apiVersion = env("APIE2E_API_VERSION", "v3");
   private accessToken: string | null = null;
-  private defaultUsername: string;
-  private defaultPassword: string;
+  private defaultAccessKey: string;
+  private defaultSecretKey: string;
 
   get token(): string | null {
     return this.accessToken;
   }
 
   constructor() {
-    this.defaultUsername = env("APIE2E_AUTH_USERNAME");
-    this.defaultPassword = env("APIE2E_AUTH_PASSWORD");
+    this.defaultAccessKey = env("APIE2E_AUTH_ACCESSKEY");
+    this.defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
   }
 
-  public async authenticate(username?: string, password?: string): Promise<void> {
-    username = username || this.defaultUsername;
-    password = password || this.defaultPassword;
+  public async authenticate(access_key?: string, secret_key?: string): Promise<void> {
+    access_key = access_key || this.defaultAccessKey;
+    secret_key = secret_key || this.defaultSecretKey;
 
     try {
       const url = new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl);
-      const payload = JSON.stringify({ username, password });
 
       console.info(`[API:authenticate] ${url.toString()}`);
       const response = await fetch(url, {
@@ -41,18 +40,18 @@ export class API {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
-        body: payload,
+        body: JSON.stringify({ access_key, secret_key }),
       });
 
       const body = await this.getBody(response) as { access_token?: string };
 
       if (!response.ok) {
         console.error(body);
-        throw new Error(`Failed to authenticate ${username}`);
+        throw new Error(`Failed to authenticate ${access_key}`);
       }
 
       if (!body.access_token || typeof body.access_token !== "string") {
-        throw new Error(`Invalid access token for ${username}`);
+        throw new Error(`Invalid access token for ${access_key}`);
       }
 
       this.accessToken = body.access_token;
