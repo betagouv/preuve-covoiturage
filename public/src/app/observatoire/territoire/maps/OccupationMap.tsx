@@ -95,10 +95,10 @@ export default function OccupationMap({ title }: { title: string }) {
     ];
    
 
-  const bounds = () => {
+  const bounds = useMemo(() => {
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
-    return bounds as LngLatBoundsLike;
-  };
+    return bounds as unknown as LngLatBoundsLike;
+  },[dashboard.params.code, geojson]);
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -143,18 +143,18 @@ export default function OccupationMap({ title }: { title: string }) {
         <AppMap 
         title={mapTitle} 
         mapStyle={mapStyle} 
-        bounds={bounds()} 
+        bounds={bounds} 
         scrollZoom={false} 
         legend={
           [
             {
-              title: mapTitle,
+              title: 'Nombre de véhicules partagés',
               type:'proportional_circles',
               classes: classes,
               order:1
             },
             {
-              title: mapTitle,
+              title: 'Taux d\'occupation',
               type:'interval',
               classes: getLegendClasses(analyse,'interval'),
               order:2
