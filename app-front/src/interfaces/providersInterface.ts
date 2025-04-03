@@ -11,4 +11,5 @@ export interface AuthContextProps {
   };
   onChangeTerritory: (id?: number) => void;
   onChangeOperator: (id?: number) => void;
+  logout: () => Promise<void>;
 }

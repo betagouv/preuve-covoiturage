@@ -7,16 +7,12 @@ import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
 
 export function AuthButton() {
-  const { isAuth, setIsAuth } = useAuth();
+  const { isAuth, setIsAuth, logout } = useAuth();
   const router = useRouter();
 
   const authClick = () => {
     const url = `${Config.get<string>("auth.domain")}/auth/login`;
     router.push(url);
-  };
-
-  const disconnectClick = () => {
-    setIsAuth(false);
   };
 
   return (
@@ -26,7 +22,7 @@ export function AuthButton() {
         <Button
           linkProps={{
             href: "",
-            onClick: disconnectClick,
+            onClick: logout,
           }}
         >
           Déconnexion

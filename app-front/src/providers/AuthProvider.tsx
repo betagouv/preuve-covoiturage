@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(false);
   };
+
   useEffect(() => {
     void checkAuth();
   }, []);
@@ -43,9 +44,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const logout = async () => {
+    const response = await fetch(
+      `${Config.get<string>("auth.domain")}/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
+    if (response.ok) {
+      setIsAuth(false);
+      setUser(undefined);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator }}
+      value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator, logout }}
     >
       {!loading && children}
     </AuthContext.Provider>
