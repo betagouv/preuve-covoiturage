@@ -2,6 +2,9 @@
   "version": "4",
   "specifiers": {
     "jsr:@bradenmacdonald/s3-lite-client@0.8": "0.8.0",
+    "jsr:@panva/jose@^6.0.10": "6.0.10",
+    "jsr:@panva/oauth4webapi@^3.3.1": "3.3.2",
+    "jsr:@panva/openid-client@6.3.4": "6.3.4",
     "jsr:@std/collections@1": "1.0.10",
     "jsr:@std/crypto@1": "1.0.4",
     "jsr:@std/encoding@1": "1.0.7",
@@ -60,6 +63,19 @@
   "jsr": {
     "@bradenmacdonald/s3-lite-client@0.8.0": {
       "integrity": "ff78a7d882717f141ab0a360878f75d7036267de9d649e7156991f515671b37d"
+    },
+    "@panva/jose@6.0.10": {
+      "integrity": "bd6e916d7b0bdb34a76752c701aaa25828326885e199714ac81741b6caef7143"
+    },
+    "@panva/oauth4webapi@3.3.2": {
+      "integrity": "af553e24fe522c44563b2a4f6576dc8199843263a2d1a61eb298fd3c29d927d5"
+    },
+    "@panva/openid-client@6.3.4": {
+      "integrity": "247d5b11ad7395dd23b2d2d9f8d672ce8b8fde2e2d0ee0b9c7aa018c56433574",
+      "dependencies": [
+        "jsr:@panva/jose",
+        "jsr:@panva/oauth4webapi"
+      ]
     },
     "@std/collections@1.0.10": {
       "integrity": "903af106a3d92970d74e20f7ebff77d9658af9bef4403f1dc42a7801c0575899"
@@ -4004,6 +4020,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@bradenmacdonald/s3-lite-client@0.8",
+      "jsr:@panva/openid-client@6.3.4",
       "jsr:@std/collections@1",
       "jsr:@std/crypto@1",
       "jsr:@std/encoding@1",

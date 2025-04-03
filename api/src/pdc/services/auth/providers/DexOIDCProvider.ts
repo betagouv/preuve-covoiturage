@@ -12,7 +12,7 @@ import { encodeBase64 } from "dep:encoding";
 import { createRemoteJWKSet, jwtVerify } from "dep:jose";
 
 @provider()
-export class OIDCProvider implements InitHookInterface {
+export class DexOIDCProvider implements InitHookInterface {
   protected JWKS: ReturnType<typeof createRemoteJWKSet> | undefined;
 
   constructor(
@@ -30,62 +30,9 @@ export class OIDCProvider implements InitHookInterface {
     if (this.JWKS) {
       return this.JWKS;
     }
-    const authBaseUrl = this.config.get("oidc.base_url");
+    const authBaseUrl = this.config.get("dex.base_url");
     this.JWKS = createRemoteJWKSet(new URL(`${authBaseUrl}/keys`));
     return this.JWKS;
-  }
-
-  getLoginUrl() {
-    const clientId = this.config.get("oidc.client_id");
-    const authBaseUrl = this.config.get("oidc.base_url");
-    const redirectUrl = this.config.get("oidc.redirect_url");
-    const url = new URL(authBaseUrl);
-    url.pathname = "/auth";
-    url.searchParams.set("client_id", clientId);
-    url.searchParams.set("scope", "openid profile email");
-    url.searchParams.set("redirect_uri", redirectUrl);
-    url.searchParams.set("response_type", "code");
-    return url.toString();
-  }
-
-  async getTokenFromCode(code: string) {
-    const clientId = this.config.get("oidc.client_id");
-    const clientSecret = this.config.get("oidc.client_secret");
-    const authBaseUrl = this.config.get("oidc.base_url");
-    const redirectUrl = this.config.get("oidc.redirect_url");
-    const url = new URL(authBaseUrl);
-    url.pathname = "/token";
-    const form = new URLSearchParams();
-    form.set("grant_type", "authorization_code");
-    form.set("client_id", clientId);
-    form.set("client_secret", clientSecret);
-    form.set("code", code);
-    form.set("redirect_uri", redirectUrl);
-    const response = await fetch(url, {
-      body: form.toString(),
-      method: "POST",
-      headers: {
-        "Content-type": "application/x-www-form-urlencoded",
-      },
-    });
-    const json = await response.json();
-    return json.access_token;
-  }
-
-  async getUserInfoFromToken(token: string) {
-    const authBaseUrl = this.config.get("oidc.base_url");
-    const url = new URL(authBaseUrl);
-    url.pathname = "/userinfo";
-    const response = await fetch(url, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-    const json = await response.json();
-    return {
-      email: json.email,
-      siret: json.preferred_username,
-    };
   }
 
   // TODO clean me after migration
@@ -143,8 +90,8 @@ export class OIDCProvider implements InitHookInterface {
       // noop
     }
 
-    const clientId = this.config.get("oidc.client_id");
-    const authBaseUrl = this.config.get("oidc.base_url");
+    const clientId = this.config.get("dex.client_id");
+    const authBaseUrl = this.config.get("dex.base_url");
     const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
       issuer: authBaseUrl,
       audience: clientId,
@@ -160,9 +107,9 @@ export class OIDCProvider implements InitHookInterface {
   }
 
   async getToken(username: string, password: string): Promise<string> {
-    const clientId = this.config.get("oidc.client_id");
-    const clientSecret = this.config.get("oidc.client_secret");
-    const authBaseUrl = this.config.get("oidc.base_url");
+    const clientId = this.config.get("dex.client_id");
+    const clientSecret = this.config.get("dex.client_secret");
+    const authBaseUrl = this.config.get("dex.base_url");
     const url = new URL(authBaseUrl);
     url.pathname = "/token";
     const form = new URLSearchParams();
@@ -171,7 +118,6 @@ export class OIDCProvider implements InitHookInterface {
     form.set("password", password);
     form.set("scope", "openid email profile");
 
-    console.info(`[OIDCProvider:getToken] ${url.toString()}`);
     const response = await fetch(url, {
       body: form.toString(),
       method: "POST",
