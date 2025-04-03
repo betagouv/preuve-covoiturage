@@ -10,8 +10,8 @@ export default function TabBref() {
   const [territoryId, setTerritoryId] = useState<number>(
     user?.territory_id ?? 1,
   );
-  const onChangeTerritory = (id: number) => {
-    setTerritoryId(id);
+  const onChangeTerritory = (id?: number) => {
+    setTerritoryId(id ?? 1);
   };
   return (
     <>
@@ -22,10 +22,13 @@ export default function TabBref() {
         />
       )}
       <JourneysGraph title="Evolution des trajets" territoryId={territoryId} />
-      <OperatorsGraph
+      
+      {(["operator.admin", "operator.user"].includes(user?.role ?? '') === false  && user?.operator_id === undefined) && 
+        <OperatorsGraph
         title="Evolution des trajets par opérateurs"
         territoryId={territoryId}
       />
+    }
     </>
   );
 }
