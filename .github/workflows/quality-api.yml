@@ -140,8 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./github/actions/build-stack
-      # - name: Checkout code
+      - uses: ./.github/actions/build-stack
       #   uses: actions/checkout@v4
 
       # - uses: actions/cache@v4
