@@ -142,7 +142,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build stack
         id: build-stack
-        uses: ../.github/actions/build-stack.yml
+        uses: ../actions/build-stack.yml
 
       # - uses: actions/cache@v4
       #   with:
