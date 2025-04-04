@@ -8,134 +8,75 @@ on:
   workflow_dispatch:
 
 jobs:
-  # lint:
-  #   name: Lint Api
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - uses: denoland/setup-deno@v1
-  #       with:
-  #         deno-version: v2.x
-  #     - name: Run lint
-  #       working-directory: ./api
-  #       # FIXME
-  #       continue-on-error: true
-  #       run: deno lint
+  lint:
+    name: Lint Api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - name: Run lint
+        working-directory: ./api
+        # FIXME
+        continue-on-error: true
+        run: deno lint
 
-  # test:
-  #   needs: [lint]
-  #   name: Test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.deno
-  #           ~/.cache/deno
-  #         key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
-  #     - uses: denoland/setup-deno@v1
-  #       with:
-  #         deno-version: v2.x
-  #     - uses: taiki-e/install-action@v2
-  #       with:
-  #         tool: just@1.40.0
-  #     - name: Run unit test
-  #       run: just cache && just ci_test_unit
-  #       working-directory: api
-  #       env:
-  #         APP_POSTGRES_URL: postgres://
-  #         APP_REDIS_URL: redis://
+  test:
+    needs: [lint]
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.deno
+            ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.40.0
+      - name: Run unit test
+        run: just cache && just ci_test_unit
+        working-directory: api
+        env:
+          APP_POSTGRES_URL: postgres://
+          APP_REDIS_URL: redis://
 
-  # codeql:
-  #   needs: [test]
-  #   name: CodeQL
-  #   runs-on: ubuntu-latest
+  codeql:
+    needs: [test]
+    name: CodeQL
+    runs-on: ubuntu-latest
 
-  #   strategy:
-  #     matrix:
-  #       language: ['javascript']
+    strategy:
+      matrix:
+        language: ['javascript']
 
-  #   steps:
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v4
-  #     with:
-  #       fetch-depth: 2
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
 
-  #   - name: Initialize CodeQL
-  #     uses: github/codeql-action/init@v3
-  #     with:
-  #       config-file: ./.github/codeql/codeql-config.yml
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        config-file: ./.github/codeql/codeql-config.yml
 
-  #   - name: Autobuild
-  #     uses: github/codeql-action/autobuild@v3
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
 
-  #   - name: Perform CodeQL Analysis
-  #     uses: github/codeql-action/analyze@v3
-
-  # integration:
-  #   needs: [test]
-  #   name: Test integration
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.deno
-  #           ~/.cache/deno
-  #         key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
-
-  #     - uses: denoland/setup-deno@v1
-  #       with:
-  #         deno-version: v2.x
-
-  #     - uses: taiki-e/install-action@v2
-  #       with:
-  #         tool: just@1.40.0
-
-  #     - name: Add host entries
-  #       run: | 
-  #         sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
-  #         sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
-  #         sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
-  #         sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
-  #         sudo echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
-
-  #     - name: Run integration tests
-  #       env:
-  #         APP_AUTH_CLIENT_ID: secret
-  #         APP_AUTH_CLIENT_SECRET: secret
-  #         APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
-  #         APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
-  #         APP_DATAGOUV_KEY: null
-  #         APP_DATAGOUV_URL: null
-  #         APP_JWT_SECRET: null
-  #         APP_MAIL_SMTP_URL: smtp://localhost:1025
-  #         APP_POSTGRES_TIMEOUT: 120000
-  #         APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
-  #         APP_REDIS_URL: redis://localhost:6379
-  #         APP_ROUTECACHE_AUTHTOKEN: null
-  #         APP_SESSION_SECRET: null
-  #         AWS_ACCESS_KEY_ID: minioadmin
-  #         AWS_BUCKET_PREFIX: local-pdc
-  #         AWS_ENDPOINT: http://localhost:9000
-  #         AWS_REGION: fr-par
-  #         AWS_SECRET_ACCESS_KEY: minioadmin
-  #         ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
-  #         ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
-  #         INTEGRATION_MAILER_SMTP_HOST: localhost
-  #         PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
-  #         PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
-  #       working-directory: api
-  #       run: just cache && just ci_test_integration
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
 
   integration:
-    # needs: [test]
+    needs: [test]
     name: API integration tests
     runs-on: ubuntu-latest
     steps:
@@ -165,19 +106,19 @@ jobs:
           PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
 
-  # e2e:
-  #   # needs: [test]
-  #   name: API e2e tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Build stack
-  #       uses: ./.github/actions/build-stack
-  #     - name: Run e2e tests
-  #       working-directory: api/e2e
-  #       run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
-  #       env:
-  #         APIE2E_API_URL: https://api.covoiturage.test
-  #         APIE2E_AUTH_ACCESSKEY: admin@example.com
-  #         APIE2E_AUTH_SECRETKEY: password
+  e2e:
+    needs: [test]
+    name: API e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build stack
+        uses: ./.github/actions/build-stack
+      - name: Run e2e tests
+        working-directory: api/e2e
+        run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+        env:
+          APIE2E_API_URL: https://api.covoiturage.test
+          APIE2E_AUTH_ACCESSKEY: admin@example.com
+          APIE2E_AUTH_SECRETKEY: password
