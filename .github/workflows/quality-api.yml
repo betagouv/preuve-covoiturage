@@ -139,10 +139,7 @@ jobs:
     name: API e2e tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Build stack
-        id: build-stack
-        uses: ../actions/build-stack.yml
+      - uses: ./.github/actions/build-stack.yml
 
       # - uses: actions/cache@v4
       #   with:
