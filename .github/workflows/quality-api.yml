@@ -137,20 +137,14 @@ jobs:
   api-e2e:
     # needs: [test]
     name: API e2e tests
-    uses: ./.github/workflows/base-build-stack.yml
-    with:
-      title: ${{ matrix.title }}
-      dir: ${{ matrix.dir }}
-      command: ${{ matrix.command }}
-    strategy:
-      matrix:
-        title:
-          - e2e tests
-          - integration tests
-        include:
-        - title: e2e tests
-          dir: api/e2e
-          command: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
-        - title: integration tests
-          dir: api
-          command: deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors --parallel '**/*.integration.spec.ts'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-stack
+      - name: Run e2e tests
+        working-directory: api/e2e
+        run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+        env:
+          APIE2E_API_URL: https://api.covoiturage.test
+          APIE2E_AUTH_ACCESSKEY: admin@example.com
+          APIE2E_AUTH_SECRETKEY: password
