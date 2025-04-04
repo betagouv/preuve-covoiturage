@@ -163,6 +163,7 @@ api *command:
   --allow-run \
   --unstable-fs \
   --cached-only \
+  --unsafely-ignore-certificate-errors \ # TODO: remove me
   src/main.ts {{ command }}
 
 debug:
