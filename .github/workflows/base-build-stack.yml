@@ -1,8 +1,21 @@
 name: Build stack
-description: Build the stack for the API
 
 on:
   workflow_call:
+    inputs:
+      title:
+        required: true
+        type: string
+      dir:
+        required: true
+        type: string
+      command:
+        required: true
+        type: string
+      apie2e_url:
+        required: false
+        type: string
+        default: http://api.covoiturage.test
 
 jobs:
   common:
@@ -96,3 +109,12 @@ jobs:
       #   working-directory: api
       #   run: |
       #     just dc_e2e logs api
+
+      - name: Run ${{ inputs.title }}
+        working-directory: ${{ inputs.dir }}
+        # run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+        run: ${{ inputs.command }}
+        env:
+          APIE2E_API_URL: ${{ inputs.apie2e_url }}
+          APIE2E_AUTH_ACCESSKEY: admin@example.com
+          APIE2E_AUTH_SECRETKEY: password

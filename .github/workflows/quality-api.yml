@@ -137,11 +137,13 @@ jobs:
   api-e2e:
     # needs: [test]
     name: API e2e tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/base-build-stack.yml
-
+    uses: ./.github/workflows/base-build-stack.yml
+    with:
+      title: e2e tests
+      dir: api/e2e
+      command: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+      apie2e_url: https://api.covoiturage.test
+    # steps:
       # - uses: actions/cache@v4
       #   with:
       #     path: |
@@ -222,10 +224,10 @@ jobs:
       # #   run: |
       # #     just dc_e2e logs api
 
-      - name: Run e2e tests
-        working-directory: api/e2e
-        run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
-        env:
-          APIE2E_API_URL: http://api.covoiturage.test
-          APIE2E_AUTH_ACCESSKEY: admin@example.com
-          APIE2E_AUTH_SECRETKEY: password
+      # - name: Run e2e tests
+      #   working-directory: api/e2e
+      #   run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+      #   env:
+      #     APIE2E_API_URL: http://api.covoiturage.test
+      #     APIE2E_AUTH_ACCESSKEY: admin@example.com
+      #     APIE2E_AUTH_SECRETKEY: password
