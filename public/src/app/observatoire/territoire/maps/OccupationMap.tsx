@@ -95,10 +95,10 @@ export default function OccupationMap({ title }: { title: string }) {
     ];
    
 
-  const bounds = () => {
+  const bounds = useMemo(() => {
     const bounds = dashboard.params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
-    return bounds as LngLatBoundsLike;
-  };
+    return bounds as unknown as LngLatBoundsLike;
+  },[dashboard.params.code, geojson]);
 
   const [hoverInfo, setHoverInfo] = useState<{
     longitude: number,
@@ -143,21 +143,21 @@ export default function OccupationMap({ title }: { title: string }) {
         <AppMap 
         title={mapTitle} 
         mapStyle={mapStyle} 
-        bounds={bounds()} 
+        bounds={bounds} 
         scrollZoom={false} 
         legend={
           [
             {
-              title: mapTitle,
+              title: 'Nombre de véhicules partagés',
               type:'proportional_circles',
               classes: classes,
-              order:1
+              order:2
             },
             {
-              title: mapTitle,
+              title: 'Taux d\'occupation',
               type:'interval',
               classes: getLegendClasses(analyse,'interval'),
-              order:2
+              order:1
             }
           ]
         }
@@ -179,8 +179,8 @@ export default function OccupationMap({ title }: { title: string }) {
             <Popup longitude={hoverInfo ? hoverInfo.longitude : 0} latitude={hoverInfo ? hoverInfo.latitude : 0} closeButton={false}>
               {hoverInfo && 
                 <div>
-                  {hoverInfo.properties.occupation_rate && <p><b>taux d&rsquo;ocupation des véhicules : </b>{hoverInfo.properties.occupation_rate}</p>}
-                  {hoverInfo.properties.journeys && <p><b>véhicules partagés : </b>{hoverInfo.properties.journeys}</p>}
+                  {hoverInfo.properties.occupation_rate && <p><b>taux d&rsquo;ocupation des véhicules : </b>{hoverInfo.properties.occupation_rate.toLocaleString()}</p>}
+                  {hoverInfo.properties.journeys && <p><b>véhicules partagés : </b>{hoverInfo.properties.journeys.toLocaleString()}</p>}
                 </div>
               }
             </Popup>
