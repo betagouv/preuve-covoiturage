@@ -26,7 +26,7 @@ export function AuthButton() {
         <Button
           linkProps={{
             href: "",
-            onClick: authLogout,
+            onClick: () => authLogout(),
           }}
         >
           Déconnexion

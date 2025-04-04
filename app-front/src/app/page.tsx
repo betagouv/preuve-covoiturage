@@ -22,42 +22,42 @@ export default function Home() {
           className={fr.cx(
             "fr-grid-row",
             "fr-grid-row--gutters",
-            "fr-grid-row--center",
+            "fr-grid-row--center"
           )}
         >
           <div className={fr.cx("fr-col-12", "fr-col-md-6")}>
-              <div className={fr.cx("fr-h2")}>Comment devenir partenaire ?</div>
-              <ButtonsGroup
-                buttons={[
-                  {
-                    children: "Collectivité, contactez-nous",
-                    linkProps: {
-                      href: "/",
-                      title: `Accueil - nouvelle fenêtre`,
-                      "aria-label": `Accueil - nouvelle fenêtre`,
-                      target: "_blank",
-                    },
-                    priority: "secondary",
+            <div className={fr.cx("fr-h2")}>Comment devenir partenaire ?</div>
+            <ButtonsGroup
+              buttons={[
+                {
+                  children: "Collectivité, contactez-nous",
+                  linkProps: {
+                    href: "/",
+                    title: `Accueil - nouvelle fenêtre`,
+                    "aria-label": `Accueil - nouvelle fenêtre`,
+                    target: "_blank",
                   },
-                  {
-                    children: "Opérateurs, découvrez les étapes",
-                    linkProps: {
-                      href: "/",
-                      title: `Accueil - nouvelle fenêtre`,
-                      "aria-label": `Accueil - nouvelle fenêtre`,
-                      target: "_blank",
-                    },
-                    priority: "secondary",
+                  priority: "secondary",
+                },
+                {
+                  children: "Opérateurs, découvrez les étapes",
+                  linkProps: {
+                    href: "/",
+                    title: `Accueil - nouvelle fenêtre`,
+                    "aria-label": `Accueil - nouvelle fenêtre`,
+                    target: "_blank",
                   },
-                ]}
-              />
-              <Image
-                src="https://static.covoiturage.beta.gouv.fr/medium_Car_driving_bro_d766ec81d5.png"
-                alt=""
-                width={450}
-                height={450}
-              />
-            </div>
+                  priority: "secondary",
+                },
+              ]}
+            />
+            <Image
+              src="https://static.covoiturage.beta.gouv.fr/medium_Car_driving_bro_d766ec81d5.png"
+              alt=""
+              width={450}
+              height={450}
+            />
+          </div>
         </div>
       </div>
     </div>

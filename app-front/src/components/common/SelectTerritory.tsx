@@ -1,21 +1,24 @@
 "use client";
 import { Config } from "@/config";
 import { useApi } from "@/hooks/useApi";
+import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useState } from "react";
-import { type TerritoriesInterface } from "../../interfaces/dataInterface";
 
 export default function SelectTerritory(props: {
   defaultValue?: number;
   onChange: (id?: number) => void;
 }) {
   const [value, setValue] = useState<number | undefined>(props.defaultValue);
-  const url = `${Config.get<string>("next.public_api_url", "")}/v3/dashboard/territories`;
+  const url = `${Config.get<string>(
+    "next.public_api_url",
+    ""
+  )}/v3/dashboard/territories`;
   const { data } = useApi<TerritoriesInterface>(url, true);
 
   return (
     <Select
-      label=''
+      label=""
       nativeSelectProps={{
         value: value,
         onChange: (e) => {
@@ -25,7 +28,7 @@ export default function SelectTerritory(props: {
         },
       }}
     >
-      <option value=''>Selectionner un territoire</option>
+      <option value="">Selectionner un territoire</option>
       {data?.data.map((d, i) => (
         <option key={i} value={d._id}>
           {d.name}

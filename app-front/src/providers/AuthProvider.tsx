@@ -14,7 +14,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       `${Config.get<string>("auth.domain")}/auth/me`,
       {
         credentials: "include",
-      },
+      }
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data: AuthContextProps["user"] = await response.json();
@@ -34,13 +34,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const onChangeTerritory = (id?: number) => {
     if (user) {
-      setUser({ ...user, territory_id: id ?? undefined, operator_id: undefined });
+      setUser({
+        ...user,
+        territory_id: id ?? undefined,
+        operator_id: undefined,
+      });
     }
   };
 
   const onChangeOperator = (id?: number) => {
     if (user) {
-      setUser({ ...user, operator_id: id ?? undefined, territory_id: undefined });
+      setUser({
+        ...user,
+        operator_id: id ?? undefined,
+        territory_id: undefined,
+      });
     }
   };
 
@@ -50,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {
         method: "POST",
         credentials: "include",
-      },
+      }
     );
     if (response.ok) {
       setIsAuth(false);
@@ -60,7 +68,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator, logout }}
+      value={{
+        isAuth,
+        setIsAuth,
+        user,
+        onChangeTerritory,
+        onChangeOperator,
+        logout,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>

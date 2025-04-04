@@ -17,7 +17,7 @@ export default function TabsNav() {
     ];
     if (
       ["registry.admin", "operator.admin", "territory.admin"].includes(
-        user?.role ?? "",
+        user?.role ?? ""
       )
     ) {
       tabs.push({
@@ -25,13 +25,21 @@ export default function TabsNav() {
         label: `Utilisateurs et accès`,
       });
     }
-    if (user?.role === "registry.admin" && user?.territory_id === undefined && user?.operator_id === undefined) {
+    if (
+      user?.role === "registry.admin" &&
+      user?.territory_id === undefined &&
+      user?.operator_id === undefined
+    ) {
       tabs.push({
         content: <TabOperators />,
         label: "Opérateurs",
       });
     }
-    if (user?.role === "registry.admin" && user?.territory_id === undefined && user?.operator_id === undefined) {
+    if (
+      user?.role === "registry.admin" &&
+      user?.territory_id === undefined &&
+      user?.operator_id === undefined
+    ) {
       tabs.push({
         content: <TabTerritories />,
         label: "Territoires",
