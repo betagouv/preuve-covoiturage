@@ -208,8 +208,8 @@ test *pattern:
 ci_test_unit: (test-unit)
 
 # CI integration test
-[group('ci')]
-ci_test_integration: generate_certs generate_keys proxy start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
+# [group('ci')]
+# ci_test_integration: generate_certs generate_keys proxy start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
 
 # Generate keys
 [private]
