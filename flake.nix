@@ -34,6 +34,7 @@
 
               # misc
               gh
+              yq-go
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"

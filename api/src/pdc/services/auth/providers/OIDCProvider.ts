@@ -88,7 +88,9 @@ export class OIDCProvider implements InitHookInterface {
     };
   }
 
-  // TODO clean me after migration
+  /**
+   * @deprecated Remove this when all operators use OIDC access tokens
+   */
   private async verifyOldToken(token: string) {
     const payload = await this.oldTokenProvider.verify<
       TokenPayloadInterface & {
@@ -159,19 +161,20 @@ export class OIDCProvider implements InitHookInterface {
     };
   }
 
-  async getToken(username: string, password: string): Promise<string> {
+  async getToken(access_key: string, secret_key: string): Promise<string> {
     const clientId = this.config.get("oidc.client_id");
     const clientSecret = this.config.get("oidc.client_secret");
     const authBaseUrl = this.config.get("oidc.base_url");
-    const url = new URL(authBaseUrl);
-    url.pathname = "/token";
+
+    const url = new URL("/token", authBaseUrl);
     const form = new URLSearchParams();
+
+    // DEX calls these "username" and "password"...
+    form.set("username", access_key);
+    form.set("password", secret_key);
     form.set("grant_type", "password");
-    form.set("username", username);
-    form.set("password", password);
     form.set("scope", "openid email profile");
 
-    console.info(`[OIDCProvider:getToken] ${url.toString()}`);
     const response = await fetch(url, {
       body: form.toString(),
       method: "POST",

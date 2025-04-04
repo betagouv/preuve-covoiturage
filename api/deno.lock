@@ -2,10 +2,16 @@
   "version": "4",
   "specifiers": {
     "jsr:@bradenmacdonald/s3-lite-client@0.8": "0.8.0",
+    "jsr:@std/assert@^1.0.10": "1.0.12",
+    "jsr:@std/assert@^1.0.12": "1.0.12",
     "jsr:@std/collections@1": "1.0.10",
     "jsr:@std/crypto@1": "1.0.4",
     "jsr:@std/encoding@1": "1.0.7",
+    "jsr:@std/expect@^1.0.14": "1.0.14",
+    "jsr:@std/internal@^1.0.5": "1.0.6",
+    "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/semver@1": "1.0.3",
+    "jsr:@std/testing@^1.0.9": "1.0.9",
     "jsr:@superstruct/core@2": "2.0.2",
     "npm:@faker-js/faker@^8.4.0": "8.4.1",
     "npm:@sentry/node@^8.2.0": "8.10.0_@opentelemetry+api@1.9.0_@opentelemetry+core@1.25.1__@opentelemetry+api@1.9.0_@opentelemetry+instrumentation@0.52.1__@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.25.1__@opentelemetry+api@1.9.0_@opentelemetry+semantic-conventions@1.25.1",
@@ -61,6 +67,12 @@
     "@bradenmacdonald/s3-lite-client@0.8.0": {
       "integrity": "ff78a7d882717f141ab0a360878f75d7036267de9d649e7156991f515671b37d"
     },
+    "@std/assert@1.0.12": {
+      "integrity": "08009f0926dda9cbd8bef3a35d3b6a4b964b0ab5c3e140a4e0351fbf34af5b9a",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.6"
+      ]
+    },
     "@std/collections@1.0.10": {
       "integrity": "903af106a3d92970d74e20f7ebff77d9658af9bef4403f1dc42a7801c0575899"
     },
@@ -70,8 +82,25 @@
     "@std/encoding@1.0.7": {
       "integrity": "f631247c1698fef289f2de9e2a33d571e46133b38d042905e3eac3715030a82d"
     },
+    "@std/expect@1.0.14": {
+      "integrity": "27b8200267c97206e38050aff18badc82e73b3072c1a6bdd59393ddea6f69183",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.12",
+        "jsr:@std/internal@^1.0.6"
+      ]
+    },
+    "@std/internal@1.0.6": {
+      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
     "@std/semver@1.0.3": {
       "integrity": "7c139c6076a080eeaa4252c78b95ca5302818d7eafab0470d34cafd9930c13c8"
+    },
+    "@std/testing@1.0.9": {
+      "integrity": "9bdd4ac07cb13e7594ac30e90f6ceef7254ac83a9aeaa089be0008f33aab5cd4",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.10",
+        "jsr:@std/internal@^1.0.5"
+      ]
     },
     "@superstruct/core@2.0.2": {
       "integrity": "b018ea1e2c89d03280a53c1b3344e98b7cad4625522dc754b4ef2d246154ea8f"
@@ -4004,10 +4033,13 @@
   "workspace": {
     "dependencies": [
       "jsr:@bradenmacdonald/s3-lite-client@0.8",
+      "jsr:@std/assert@^1.0.12",
       "jsr:@std/collections@1",
       "jsr:@std/crypto@1",
       "jsr:@std/encoding@1",
+      "jsr:@std/expect@^1.0.14",
       "jsr:@std/semver@1",
+      "jsr:@std/testing@^1.0.9",
       "jsr:@superstruct/core@2",
       "npm:@faker-js/faker@^8.4.0",
       "npm:@sentry/node@^8.2.0",
