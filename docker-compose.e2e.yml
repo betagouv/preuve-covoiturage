@@ -25,6 +25,14 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test
 
+  redis:
+    ports:
+      - 6379:6379
+
+  mailer:
+    ports:
+      - 1025:1025
+
   wait:
     image: busybox:1.33
     environment:
