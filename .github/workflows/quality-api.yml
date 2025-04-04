@@ -139,6 +139,7 @@ jobs:
     name: API e2e tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./github/actions/build-stack
       # - name: Checkout code
       #   uses: actions/checkout@v4

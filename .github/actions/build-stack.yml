@@ -3,9 +3,6 @@ description: Build the stack for the API
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
     - uses: actions/cache@v4
       with:
         path: |
