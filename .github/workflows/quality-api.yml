@@ -172,8 +172,8 @@ jobs:
         #   POSTGRES_DB: test
         #   APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
         run: |
-          just generate_certs generate_keys
-          just dc_e2e build postgres redis s3 mailer proxy api e2e wait
+          just generate_certs
+          just generate_keys
 
       - name: Start PostgreSQL
         working-directory: api
