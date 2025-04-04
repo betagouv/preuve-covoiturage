@@ -87,13 +87,14 @@ docker *command:
 # --------------------------------------------------------------------------------------------------
 
 pgurl := `echo $APP_POSTGRES_URL | sed 's/@postgres:/@localhost:/g'`
+
 # Run a configured pgcli
 [group('database')]
 [working-directory('.')]
 @db:
   LESS="-SRXF" pgcli {{ pgurl }} --pgclirc .pgclirc
 
-# Seed local users
+# Seed local users (legacy auth system)
 [confirm('''
 This will seed local users:
  - admin@example.com
@@ -207,15 +208,8 @@ test *pattern:
 ci_test_unit: (test-unit)
 
 # CI integration test
-# [group('ci')]
-# ci_test_integration: generate_certs generate_keys proxy start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
-
-# ci_test_e2e: (stop "false") build_e2e (dc_proxy "up -d postgres") generate_certs generate_keys proxy sleep (dc_proxy "up -d api") (deno "src/db/cmd-seed.ts") (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") test-e2e (stop "false")
-# [group('ci')]
-# ci_test_e2e: (stop "false") build_e2e (dc_proxy "up -d postgres") generate_certs generate_keys proxy sleep (dc_proxy "up -d api") (deno "src/db/cmd-seed.ts")(create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") test-e2e (stop "false")
-
-# build_e2e:
-#   just dc_e2e build postgres redis s3 mailer proxy api e2e
+[group('ci')]
+ci_test_integration: generate_certs generate_keys proxy start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test-integration) stop_e2e
 
 # Generate keys
 [private]

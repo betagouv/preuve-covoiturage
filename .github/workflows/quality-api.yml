@@ -88,8 +88,6 @@ jobs:
         working-directory: api
         run: deno test --quiet --no-check -A --unsafely-ignore-certificate-errors --parallel '**/*.integration.spec.ts'
         env:
-          # APP_AUTH_CLIENT_ID: secret
-          # APP_AUTH_CLIENT_SECRET: secret
           APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
           APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
           APP_JWT_SECRET: 'integration-test'
