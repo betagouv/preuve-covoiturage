@@ -21,8 +21,8 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
       const { url, token } = this.config.get("dataSource");
       const response = await fetcher.get(`${url}/siret/${siret}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
+          "X-INSEE-Api-Key-Integration": token,
+          "Accept": "application/json",
         },
       });
 
@@ -48,30 +48,12 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
           "etablissement.uniteLegale.denominationUniteLegale",
           null,
         ),
-        company_naf_code: this.cleanNaf(
-          get(
-            data,
-            "etablissement.uniteLegale.activitePrincipaleUniteLegale",
-            null,
-          ),
-        ),
+        company_naf_code: this.cleanNaf(get(data, "etablissement.uniteLegale.activitePrincipaleUniteLegale", null)),
         establishment_naf_code: this.cleanNaf(
-          get(
-            data,
-            "etablissement.uniteLegale.activitePrincipaleUniteLegale",
-            null,
-          ),
+          get(data, "etablissement.uniteLegale.activitePrincipaleUniteLegale", null),
         ),
-        legal_nature_code: get(
-          data,
-          "etablissement.uniteLegale.categorieJuridiqueUniteLegale",
-          null,
-        ),
-        legal_nature_label: get(
-          data,
-          "etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale",
-          null,
-        ),
+        legal_nature_code: get(data, "etablissement.uniteLegale.categorieJuridiqueUniteLegale", null),
+        legal_nature_label: get(data, "etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale", null),
         nonprofit_code: null,
         intra_vat: `FR${`0${((parseInt(siren, 10) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
         address: [
@@ -83,26 +65,10 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         ]
           .map((k) => get(data, k, ""))
           .join(" "),
-        address_street: get(
-          data,
-          "etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement",
-          null,
-        ),
-        address_postcode: get(
-          data,
-          "etablissement.etablissement.adresseEtablissement.codePostalEtablissement",
-          null,
-        ),
-        address_cedex: get(
-          data,
-          "etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement",
-          null,
-        ),
-        address_city: get(
-          data,
-          "etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement",
-          null,
-        ),
+        address_street: get(data, "etablissement.adresseEtablissement.libelleVoieEtablissement", null),
+        address_postcode: get(data, "etablissement.adresseEtablissement.codePostalEtablissement", null),
+        address_cedex: get(data, "etablissement.adresseEtablissement.libelleCedexEtablissement", null),
+        address_city: get(data, "etablissement.adresseEtablissement.libelleCommuneEtablissement", null),
         headquarter: get(data, "etablissement.etablissementSiege", null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };
