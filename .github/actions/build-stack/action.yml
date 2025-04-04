@@ -25,9 +25,11 @@ runs:
         echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
-        echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 mailer.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-appels-de-fonds.s3.covoiturage.test" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 local-pdc-public.s3.covoiturage.test" | sudo tee -a /etc/hosts
 
     - name: Build docker images
       working-directory: api

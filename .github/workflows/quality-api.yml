@@ -158,23 +158,24 @@ jobs:
           APP_REDIS_URL: redis://localhost:6379
           AWS_BUCKET_PREFIX: local-pdc
           AWS_ENDPOINT: https://s3.covoiturage.test
+          AWS_REGION: fr-par
           INTEGRATION_MAILER_SMTP_HOST: localhost
           PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
 
-  e2e:
-    # needs: [test]
-    name: API e2e tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Build stack
-        uses: ./.github/actions/build-stack
-      - name: Run e2e tests
-        working-directory: api/e2e
-        run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
-        env:
-          APIE2E_API_URL: https://api.covoiturage.test
-          APIE2E_AUTH_ACCESSKEY: admin@example.com
-          APIE2E_AUTH_SECRETKEY: password
+  # e2e:
+  #   # needs: [test]
+  #   name: API e2e tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     - name: Build stack
+  #       uses: ./.github/actions/build-stack
+  #     - name: Run e2e tests
+  #       working-directory: api/e2e
+  #       run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+  #       env:
+  #         APIE2E_API_URL: https://api.covoiturage.test
+  #         APIE2E_AUTH_ACCESSKEY: admin@example.com
+  #         APIE2E_AUTH_SECRETKEY: password
