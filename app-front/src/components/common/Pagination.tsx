@@ -58,7 +58,7 @@ export default function Pagination(props: PaginationProps) {
                 <p
                   className={fr.cx(
                     "fr-pagination__link",
-                    "fr-pagination__link--first"
+                    "fr-pagination__link--first",
                   )}
                 >
                   Première page
@@ -68,7 +68,7 @@ export default function Pagination(props: PaginationProps) {
                 <Link
                   className={fr.cx(
                     "fr-pagination__link",
-                    "fr-pagination__link--first"
+                    "fr-pagination__link--first",
                   )}
                   href=""
                   onClick={() => props.onChange(1)}
@@ -83,7 +83,7 @@ export default function Pagination(props: PaginationProps) {
                   className={fr.cx(
                     "fr-pagination__link",
                     "fr-pagination__link--prev",
-                    "fr-pagination__link--lg-label"
+                    "fr-pagination__link--lg-label",
                   )}
                 >
                   Page précédente
@@ -94,7 +94,7 @@ export default function Pagination(props: PaginationProps) {
                   className={fr.cx(
                     "fr-pagination__link",
                     "fr-pagination__link--prev",
-                    "fr-pagination__link--lg-label"
+                    "fr-pagination__link--lg-label",
                   )}
                   href=""
                   onClick={() => props.onChange(defaultPage - 1)}
@@ -130,7 +130,7 @@ export default function Pagination(props: PaginationProps) {
                   className={fr.cx(
                     "fr-pagination__link",
                     "fr-pagination__link--next",
-                    "fr-pagination__link--lg-label"
+                    "fr-pagination__link--lg-label",
                   )}
                 >
                   Page suivante
@@ -141,7 +141,7 @@ export default function Pagination(props: PaginationProps) {
                   className={fr.cx(
                     "fr-pagination__link",
                     "fr-pagination__link--next",
-                    "fr-pagination__link--lg-label"
+                    "fr-pagination__link--lg-label",
                   )}
                   href=""
                   onClick={() => props.onChange(defaultPage + 1)}
@@ -155,7 +155,7 @@ export default function Pagination(props: PaginationProps) {
                 <p
                   className={fr.cx(
                     "fr-pagination__link",
-                    "fr-pagination__link--last"
+                    "fr-pagination__link--last",
                   )}
                 >
                   Dernière page
@@ -165,7 +165,7 @@ export default function Pagination(props: PaginationProps) {
                 <Link
                   className={fr.cx(
                     "fr-pagination__link",
-                    "fr-pagination__link--last"
+                    "fr-pagination__link--last",
                   )}
                   href=""
                   onClick={() => props.onChange(props.count)}
