@@ -108,29 +108,29 @@ jobs:
 
   #     - name: Run integration tests
   #       env:
-  #         APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
-  #         AWS_ACCESS_KEY_ID: minioadmin
-  #         APP_POSTGRES_TIMEOUT: 120000
-  #         AWS_SECRET_ACCESS_KEY: minioadmin
-  #         AWS_ENDPOINT: http://localhost:9000
-  #         AWS_BUCKET_PREFIX: local-pdc
-  #         APP_REDIS_URL: redis://localhost:6379
-  #         INTEGRATION_MAILER_SMTP_HOST: localhost
-  #         APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
-  #         APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
-  #         APP_MAIL_SMTP_URL: smtp://localhost:1025
-  #         APP_DATAGOUV_URL: null
-  #         APP_DATAGOUV_KEY: null
-  #         APP_JWT_SECRET: null
-  #         APP_SESSION_SECRET: null
-  #         APP_ROUTECACHE_AUTHTOKEN: null
-  #         AWS_REGION: fr-par
-  #         ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
-  #         ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
-  #         PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
-  #         PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
   #         APP_AUTH_CLIENT_ID: secret
   #         APP_AUTH_CLIENT_SECRET: secret
+  #         APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
+  #         APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
+  #         APP_DATAGOUV_KEY: null
+  #         APP_DATAGOUV_URL: null
+  #         APP_JWT_SECRET: null
+  #         APP_MAIL_SMTP_URL: smtp://localhost:1025
+  #         APP_POSTGRES_TIMEOUT: 120000
+  #         APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+  #         APP_REDIS_URL: redis://localhost:6379
+  #         APP_ROUTECACHE_AUTHTOKEN: null
+  #         APP_SESSION_SECRET: null
+  #         AWS_ACCESS_KEY_ID: minioadmin
+  #         AWS_BUCKET_PREFIX: local-pdc
+  #         AWS_ENDPOINT: http://localhost:9000
+  #         AWS_REGION: fr-par
+  #         AWS_SECRET_ACCESS_KEY: minioadmin
+  #         ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
+  #         ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
+  #         INTEGRATION_MAILER_SMTP_HOST: localhost
+  #         PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
+  #         PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
   #       working-directory: api
   #       run: just cache && just ci_test_integration
 
@@ -156,6 +156,8 @@ jobs:
           APP_POSTGRES_TIMEOUT: 120000
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
           APP_REDIS_URL: redis://localhost:6379
+          AWS_SECRET_ACCESS_KEY: minioadmin
+          AWS_ACCESS_KEY_ID: minioadmin
           AWS_BUCKET_PREFIX: local-pdc
           AWS_ENDPOINT: https://s3.covoiturage.test
           AWS_REGION: fr-par
