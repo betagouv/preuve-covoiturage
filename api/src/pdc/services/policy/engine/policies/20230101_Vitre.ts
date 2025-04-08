@@ -1,8 +1,5 @@
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAfter } from "@/pdc/services/policy/engine/helpers/isAfter.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -12,15 +9,9 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
-import {
-  endsAt,
-  startsAt,
-} from "@/pdc/services/policy/engine/helpers/position.ts";
+import { endsAt, startsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
 import {
@@ -33,8 +24,7 @@ import {
 import { description } from "./20230101_Vitre.html.ts";
 
 // Politique Vitré Communauté
-export const Vitre2023: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const Vitre2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "vitre";
   private readonly policy_update_date = new Date("2023-07-17");
@@ -65,8 +55,7 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
@@ -79,8 +68,7 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
     {
       start: 10_000,
       end: 20_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
     },
     {
       start: 20_000,
@@ -145,15 +133,13 @@ export const Vitre2023: PolicyHandlerStaticInterface = class
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
     // Par kilomètre
     let amount = 0;
-    const used_slices = isAfter(ctx, { date: this.policy_update_date })
-      ? this.slices_after_policy_update
-      : this.slices;
+    const used_slices = isAfter(ctx, { date: this.policy_update_date }) ? this.slices_after_policy_update : this.slices;
     for (const { start, fn } of used_slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);

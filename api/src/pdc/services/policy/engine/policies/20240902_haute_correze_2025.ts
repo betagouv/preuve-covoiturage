@@ -82,7 +82,7 @@ export const HauteCorreze2025: PolicyHandlerStaticInterface = class extends Abst
     startsOrEndsAtOrThrow(ctx, { aom: ["200066744"] });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

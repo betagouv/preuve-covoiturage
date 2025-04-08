@@ -119,7 +119,7 @@ export const GrandChatellerault2025: PolicyHandlerStaticInterface = class extend
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

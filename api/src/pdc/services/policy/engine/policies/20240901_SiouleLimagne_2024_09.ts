@@ -75,7 +75,7 @@ export const SiouleLimagne: PolicyHandlerStaticInterface = class extends Abstrac
     isAdultOrThrow(ctx);
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -9,10 +6,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { startsAndEndsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
@@ -28,8 +22,7 @@ import { description } from "./20221102_PMGF.html.ts";
 
 // Politique du Pôle Métropolitain Genevois Français
 // eslint-disable-next-line max-len
-export const PMGF2022: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PMGF2022: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "pmgf_2022";
 
@@ -75,14 +68,12 @@ export const PMGF2022: PolicyHandlerStaticInterface = class
     {
       start: 4_000,
       end: 20_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, startsAndEndsAt(ctx, { arr: this.arr }) ? 200 : 100),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, startsAndEndsAt(ctx, { arr: this.arr }) ? 200 : 100),
     },
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
 
@@ -215,7 +206,7 @@ export const PMGF2022: PolicyHandlerStaticInterface = class
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

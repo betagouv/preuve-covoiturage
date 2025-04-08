@@ -49,11 +49,10 @@ export interface SerializedPolicyInterface {
   handler: string;
   status: PolicyStatusEnum;
   incentive_sum: number;
-  max_amount?: number;
+  max_amount: number;
 }
 
 export interface PolicyHandlerStaticInterface {
-  policy_max_amount?: number;
   readonly id: string;
   readonly tz?: Timezone;
   readonly boosterDates?: string[];
@@ -61,7 +60,7 @@ export interface PolicyHandlerStaticInterface {
   /**
    * Optional max amount to spend for the policy
    */
-  new (policy_max_amount?: number): PolicyHandlerInterface;
+  new (max_amount: number): PolicyHandlerInterface;
 }
 
 export interface PolicyHandlerParamsInterface {
@@ -73,6 +72,7 @@ export interface PolicyHandlerParamsInterface {
     glob?: number;
   };
   booster_dates?: Array<string>;
+  extras?: unknown;
 }
 
 export interface PolicyHandlerInterface {

@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -9,10 +6,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { startsAndEndsAt } from "@/pdc/services/policy/engine/helpers/position.ts";
 import { startsOrEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsOrEndsAtOrThrow.ts";
@@ -41,8 +35,7 @@ import { description } from "./20240401_PMGFxATMB.html.ts";
 //   24244600
 // );
 
-export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const PMGFxATMB2024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "pmgf_x_atmb_2024";
 
@@ -135,9 +128,7 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
 
   protected getSlices(ctx?: StatelessContextInterface): RunnableSlices {
     if (!ctx) return this.internalTripsSlices;
-    return startsAndEndsAt(ctx, this.territorySelector)
-      ? this.internalTripsSlices
-      : this.externalTripsSlices;
+    return startsAndEndsAt(ctx, this.territorySelector) ? this.internalTripsSlices : this.externalTripsSlices;
   }
 
   protected processExclusions(ctx: StatelessContextInterface) {
@@ -150,7 +141,7 @@ export const PMGFxATMB2024: PolicyHandlerStaticInterface = class
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 150_000 });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusions(ctx);
     super.processStateless(ctx);
 

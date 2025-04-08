@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -10,10 +7,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
@@ -27,8 +21,7 @@ import {
 import { description } from "./20230101_LaRochelle.html.ts";
 
 /* eslint-disable-next-line */
-export const LaRochelle20232024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const LaRochelle20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "larochelle_2023";
 
@@ -47,8 +40,7 @@ export const LaRochelle20232024: PolicyHandlerStaticInterface = class
     {
       start: 15_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
@@ -61,8 +53,7 @@ export const LaRochelle20232024: PolicyHandlerStaticInterface = class
     {
       start: 10_000,
       end: 20_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
     },
     {
       start: 20_000,
@@ -114,16 +105,14 @@ export const LaRochelle20232024: PolicyHandlerStaticInterface = class
     return ctx.carpool.datetime < this.updated_policy_date;
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
     // Calcul des incitations par tranche
     let amount = 0;
     for (
-      const { start, fn } of this.isBeforeFirstOfMay(ctx)
-        ? this.slices_before_may
-        : this.slices
+      const { start, fn } of this.isBeforeFirstOfMay(ctx) ? this.slices_before_may : this.slices
     ) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);

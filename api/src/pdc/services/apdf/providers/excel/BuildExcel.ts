@@ -1,11 +1,13 @@
+import { defaultTimezone } from "@/config/time.ts";
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
+import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.ts";
 import excel from "dep:excel";
 import { ResultInterface as Campaign } from "../../../policy/contracts/find.contract.ts";
 import { SliceStatInterface } from "../../contracts/interfaces/PolicySliceStatInterface.ts";
 import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
-import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
+import { DataRepositoryProvider } from "../DataRepositoryProvider.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
 import { wrapSlices } from "./wrapSlicesHelper.ts";
@@ -48,10 +50,7 @@ export class BuildExcel {
       total_sum: amount,
       subsidized_count: subsidized,
       slices,
-    } = await this.apdfRepoProvider.getPolicyStats(
-      params,
-      wrapSlices(campaign.params.slices),
-    );
+    } = await this.apdfRepoProvider.getPolicyStats(params, wrapSlices(campaign.params.slices));
 
     // generate the filename and filepath
     const fileParams = {
@@ -67,8 +66,7 @@ export class BuildExcel {
     const filepath: string = this.apdfNameProvider.filepath(filename);
 
     // create the Workbook and add Worksheets
-    const wbWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel
-      .initWorkbookWriter(filepath);
+    const wbWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     if (this.hasSliceTrips(slices)) await this.writeSlices(wbWriter, slices);
     await this.writeTrips(wbWriter, params);
     await wbWriter.commit();
@@ -81,28 +79,27 @@ export class BuildExcel {
     params: CampaignSearchParamsInterface,
   ): Promise<void> {
     try {
-      const booster_dates = await this.listBoosterDates(params.campaign_id);
-      const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
-      await this.TripsWsWriter.call(tripCursor, booster_dates, wkw);
+      const config = await this.getConfig(params.campaign_id);
+      const cursor = await this.apdfRepoProvider.getPolicyCursor(params);
+      await this.TripsWsWriter.call(cursor, config, wkw);
     } catch (e) {
-      logger.error(
-        `[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`,
-      );
-      logger.error(e.message);
-      logger.error(e.stack);
+      logger.error(`[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`);
+      if (e instanceof Error) {
+        logger.error(e.message);
+        logger.error(e.stack);
+      }
     }
   }
 
-  private async writeSlices(
-    wkw: excel.stream.xlsx.WorkbookWriter,
-    slices: SliceStatInterface[],
-  ): Promise<void> {
+  private async writeSlices(wkw: excel.stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
     try {
       if (!slices.length) return;
       await this.slicesWsWriter.call(wkw, slices);
     } catch (e) {
       logger.error("[apdf:buildExcel] Error while computing slices");
-      logger.error(e.message);
+      if (e instanceof Error) {
+        logger.error(e.message);
+      }
     }
   }
 
@@ -110,7 +107,13 @@ export class BuildExcel {
     return slices.reduce((acc, s) => acc + s.count, 0) > 0;
   }
 
-  private async listBoosterDates(campaign_id: number): Promise<Set<string>> {
+  private async getConfig(campaign_id: number): Promise<ExcelCampaignConfig> {
+    const defaultParams = {
+      tz: defaultTimezone,
+      booster_dates: new Set<string>(),
+      extras: {},
+    };
+
     const campaign = await this.kernel.call(
       "campaign:find",
       { _id: campaign_id },
@@ -120,6 +123,15 @@ export class BuildExcel {
       },
     );
 
-    return new Set<string>(campaign?.params?.booster_dates);
+    if (!campaign) {
+      logger.warn(`[BuildExcel] Campaign ${campaign_id} not found`);
+      return defaultParams;
+    }
+
+    return {
+      tz: campaign.params.tz,
+      booster_dates: new Set<string>([...(campaign.params?.booster_dates || [])]),
+      extras: campaign.params?.extras || {},
+    };
   }
 }

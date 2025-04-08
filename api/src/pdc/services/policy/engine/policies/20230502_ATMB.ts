@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -9,10 +6,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { startsAndEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsAndEndsAtOrThrow.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
@@ -29,8 +23,7 @@ import { description } from "./20230502_ATMB.html.ts";
 
 // Politique sur le réseau ATMB
 // eslint-disable-next-line max-len
-export const ATMB202305: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const ATMB202305: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "atmb_2023";
 
@@ -84,8 +77,7 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
 
@@ -98,13 +90,11 @@ export const ATMB202305: PolicyHandlerStaticInterface = class
     isOperatorClassOrThrow(ctx, this.operator_class);
     startsAndEndsAtOrThrow(
       ctx,
-      ctx.carpool.datetime >= this.policy_change_date
-        ? this.new_selector
-        : this.selector,
+      ctx.carpool.datetime >= this.policy_change_date ? this.new_selector : this.selector,
     );
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

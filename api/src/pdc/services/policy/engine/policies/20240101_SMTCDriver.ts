@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -11,10 +8,7 @@ import {
   watchForPersonMaxAmountByYear,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { RunnableSlices } from "@/pdc/services/policy/interfaces/engine/PolicyInterface.ts";
@@ -29,8 +23,7 @@ import { description } from "./20240101_SMTCDriver.html.ts";
 
 // Politique Syndicat Mixte des Transports en Commun de l’Agglomération Clermontoise (SMTC)
 // aom = 256300120
-export const SMTC2024Driver: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const SMTC2024Driver: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "smtc_2024_driver";
   protected operators: TimestampedOperators = [
@@ -87,7 +80,7 @@ export const SMTC2024Driver: PolicyHandlerStaticInterface = class
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

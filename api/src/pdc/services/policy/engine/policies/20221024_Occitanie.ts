@@ -1,8 +1,5 @@
 import { NotEligibleTargetException } from "@/pdc/services/policy/engine/exceptions/NotEligibleTargetException.ts";
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isAfter } from "@/pdc/services/policy/engine/helpers/isAfter.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
@@ -30,8 +27,7 @@ function getContribution(ctx: StatelessContextInterface): number {
 }
 
 // Politique de la région Occitanie
-export const Occitanie20232024: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const Occitanie20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "occitanie_2022";
 
@@ -106,7 +102,7 @@ export const Occitanie20232024: PolicyHandlerStaticInterface = class
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

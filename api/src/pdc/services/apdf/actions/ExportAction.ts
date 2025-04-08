@@ -30,58 +30,37 @@ export class ExportAction extends Action {
     super();
   }
 
-  public async handle(
-    params: ParamsInterface,
-    context: ContextType,
-  ): Promise<ResultInterface> {
+  public override async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { start_date, end_date } = castExportParams(params);
     const verbose = this.isVerbose(context);
 
     if (verbose) {
-      logger.info(
-        `$$$ Exporting APDF from ${start_date.toISOString()} to ${end_date.toISOString()}`,
-      );
+      logger.info(`$$$ Exporting APDF from ${start_date.toISOString()} to ${end_date.toISOString()}`);
     }
 
     const files: string[] = [];
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
         // Make sure the campaign is active and within the date range
-        const campaign: PolicyResultInterface | void = await this.checkCampaign
+        const campaign: string | PolicyResultInterface = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) =>
-            logger.error(
-              `[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`,
-            )
-          );
+          .catch((e) => logger.error(`[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`));
 
-        if (!campaign) return;
+        if (!campaign || typeof campaign !== "object") return;
 
         // Get declared operators
-        const operators = await getCampaignOperators(
-          this.kernel,
-          handlerConfig.service,
-          campaign._id,
-        );
+        const operators = await getCampaignOperators(this.kernel, handlerConfig.service, campaign._id);
 
         // List operators having subsidized trips and filter them by the ones declared
         // in the policy file (policy/src/engine/policies/<policy.ts>).
         // Bypass when the declared list is empty.
         const activeOperatorIds = (
           params.query.operator_id ||
-          (await this.apdfRepositoryProvider.getPolicyActiveOperators(
-            campaign._id,
-            start_date,
-            end_date,
-          ))
-        ).filter((
-          operator_id,
-        ) => (operators.length ? operators.includes(operator_id) : true));
+          (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date))
+        ).filter((operator_id) => (operators.length ? operators.includes(operator_id) : true));
 
         if (!activeOperatorIds.length) {
-          logger.info(
-            `[apdf:export] (campaign: ${campaign.name}) No active operators`,
-          );
+          logger.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
         }
 
         if (verbose) {
@@ -99,20 +78,11 @@ export class ExportAction extends Action {
         await Promise.all(
           activeOperatorIds.map(async (o_id) => {
             try {
-              logger.info(
-                `$$$ > Building APDF for campaign ${campaign.name}, operator id ${o_id}`,
-              );
-              const { filename, filepath } = await this.buildExcel.call(
-                campaign,
-                start_date,
-                end_date,
-                o_id,
-              );
+              logger.info(`$$$ > Building APDF for campaign ${campaign.name}, operator id ${o_id}`);
+              const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
 
-              if (!this.config.get("apdf.s3UploadEnabled")) {
-                logger.warn(
-                  `APDF Upload disabled! Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file\n > ${filepath}`,
-                );
+              if (this.config.get("apdf.s3UploadEnabled") === false) {
+                logger.warn(`APDF Upload disabled! Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file\n > ${filepath}`);
                 return;
               }
 
@@ -126,12 +96,12 @@ export class ExportAction extends Action {
               // maybe delete the file
               try {
                 await unlink(filepath);
-              } catch (e) {
+              } catch (_e) {
                 logger.warn(`Failed to unlink ${filepath}`);
               }
 
               files.push(file);
-            } catch (error) {
+            } catch (_e) {
               const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
               logger.error(message);
               files.push(message);
@@ -145,7 +115,6 @@ export class ExportAction extends Action {
   }
 
   private isVerbose(context: ContextType): boolean {
-    return get(context, "channel.transport") === "cli" &&
-      get(context, "call.metadata.verbose", false);
+    return Boolean(get(context, "channel.transport") === "cli" && get(context, "call.metadata.verbose", false));
   }
 }

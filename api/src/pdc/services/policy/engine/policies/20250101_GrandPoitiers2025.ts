@@ -83,7 +83,7 @@ export const GrandPoitiers2025: PolicyHandlerStaticInterface = class extends Abs
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
