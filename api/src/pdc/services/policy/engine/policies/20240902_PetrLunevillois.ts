@@ -65,7 +65,7 @@ export const PetrLunevillois092024032025: PolicyHandlerStaticInterface = class e
     startsOrEndsAtOrThrow(ctx, { aom: ["200051134"] });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

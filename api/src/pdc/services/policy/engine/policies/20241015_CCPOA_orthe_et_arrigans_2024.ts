@@ -82,7 +82,7 @@ export const CCPOA202410: PolicyHandlerStaticInterface = class extends AbstractP
     startsOrEndsAtOrThrow(ctx, { epci: ["200069417"] });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

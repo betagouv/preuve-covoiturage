@@ -4,6 +4,7 @@ import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
+import { Client } from "dep:postgres";
 import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
 import { PolicyStatsInterface } from "../contracts/interfaces/PolicySliceStatInterface.ts";
 import {
@@ -22,7 +23,8 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
   protected readonly geoPerimetersTable = "geo.perimeters";
   protected readonly operatorsTable = "operator.operators";
 
-  constructor(public connection: PostgresConnection) {}
+  constructor(public connection: PostgresConnection) {
+  }
 
   /**
    * List active operators having trips and incentives > 0
@@ -114,7 +116,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       values: [start_date, end_date, operator_id, campaign_id],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
 
     // return null results on missing data
     if (!result.rowCount) {
@@ -158,9 +160,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
   /**
    * List all carpools for CSV APDF export using a cursor
    */
-  public async getPolicyCursor(
-    params: CampaignSearchParamsInterface,
-  ): Promise<PgCursorHandler<APDFTripInterface>> {
+  public async getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     const queryText = `
@@ -212,11 +212,27 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       order by cc.start_datetime
     `;
 
-    return this.connection.getCursor(queryText, [
+    // TODO improve this
+    const client = new Client(Deno.env.get("APP_POSTGRES_URL"));
+    await client.connect();
+    await client.queryArray("BEGIN");
+    await client.queryArray("DECLARE mycursor CURSOR FOR " + queryText, [
       start_date,
       end_date,
       operator_id,
       campaign_id,
     ]);
+
+    return {
+      read: async (rowCount: number = 100) => {
+        const { rows } = await client.queryObject(`FETCH FORWARD ${rowCount} FROM mycursor`);
+        return rows;
+      },
+      release: async () => {
+        await client.queryArray("CLOSE mycursor");
+        await client.queryArray("COMMIT");
+        await client.end();
+      },
+    };
   }
 }

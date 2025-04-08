@@ -6,7 +6,7 @@ import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfa
 import { SliceInterface } from "@/pdc/services/policy/contracts/common/interfaces/Slices.ts";
 import excel from "dep:excel";
 import { CampaignSearchParamsInterface } from "../../interfaces/APDFRepositoryProviderInterface.ts";
-import { DataRepositoryProvider } from "../APDFRepositoryProvider.ts";
+import { DataRepositoryProvider } from "../DataRepositoryProvider.ts";
 import { BuildExcel } from "./BuildExcel.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
@@ -47,15 +47,15 @@ describe("BuildExcel", () => {
   const filename = "APDF-idfm.xlsx";
   const filepath = "/tmp/APDF-idfm.xlsx";
   const workbookWriterMock = { commit: () => {} };
-  const booster_dates = new Set<string>();
+  const config = { tz: "Europe/Paris", booster_dates: new Set<string>(), extras: {} };
   const kernel = new (class extends KernelInterfaceResolver {})();
   const createSlicesSheetToWorkbook = new SlicesWorksheetWriter();
-  const apdfRepositoryProvider = new DataRepositoryProvider(null as any);
+  const dataRepositoryProvider = new DataRepositoryProvider(null as any);
   const nameProvider = new APDFNameProvider();
   const streamDataToWorkbook = new TripsWorksheetWriter();
   const buildExcel = new BuildExcel(
     kernel,
-    apdfRepositoryProvider,
+    dataRepositoryProvider,
     streamDataToWorkbook,
     createSlicesSheetToWorkbook,
     nameProvider,
@@ -75,11 +75,11 @@ describe("BuildExcel", () => {
       "call",
     );
     getPolicyCursorStub = sinon.stub(
-      apdfRepositoryProvider,
+      dataRepositoryProvider,
       "getPolicyCursor",
     );
     policyStatsStub = sinon.stub(
-      apdfRepositoryProvider,
+      dataRepositoryProvider,
       "getPolicyStats",
     );
     slicesWorkbookWriterStub = sinon.stub(
@@ -106,7 +106,7 @@ describe("BuildExcel", () => {
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);
     tripsWorkbookWriterStub!.resolves();
-    kernelStub!.resolves(booster_dates);
+    kernelStub!.resolves(config);
     policyStatsStub?.resolves({
       total_count: 111,
       total_sum: 222_00,
@@ -161,7 +161,7 @@ describe("BuildExcel", () => {
     sinon.assert.calledOnceWithExactly(
       tripsWorkbookWriterStub!,
       cursorCallback,
-      booster_dates,
+      config,
       workbookWriterMock,
     );
     sinon.assert.calledOnce(policyStatsStub!);
@@ -177,7 +177,7 @@ describe("BuildExcel", () => {
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);
     slicesWorkbookWriterStub!.rejects("Error while computing slices");
-    kernelStub!.resolves(booster_dates);
+    kernelStub!.resolves(config);
     policyStatsStub?.resolves({
       total_count: 111,
       total_sum: 222_00,
@@ -232,7 +232,7 @@ describe("BuildExcel", () => {
     sinon.assert.calledOnceWithExactly(
       tripsWorkbookWriterStub!,
       cursorCallback,
-      booster_dates,
+      config,
       workbookWriterMock,
     );
     sinon.assert.calledOnce(policyStatsStub!);
@@ -250,7 +250,7 @@ describe("BuildExcel", () => {
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);
     slicesWorkbookWriterStub!.rejects("Error while computing slices");
-    kernelStub!.resolves(booster_dates);
+    kernelStub!.resolves(config);
     policyStatsStub?.resolves({
       total_count: 111,
       total_sum: 222_00,
@@ -298,7 +298,7 @@ describe("BuildExcel", () => {
     sinon.assert.calledOnceWithExactly(
       tripsWorkbookWriterStub!,
       cursorCallback,
-      booster_dates,
+      config,
       workbookWriterMock,
     );
     sinon.assert.calledOnce(policyStatsStub!);

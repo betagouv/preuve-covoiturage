@@ -141,7 +141,7 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 150_000 });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusions(ctx);
     super.processStateless(ctx);
 

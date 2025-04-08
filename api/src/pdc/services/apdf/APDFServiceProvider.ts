@@ -7,7 +7,7 @@ import { ValidatorExtension, ValidatorMiddleware } from "@/pdc/providers/validat
 import { config } from "./config/index.ts";
 import { binding as exportBinding } from "./contracts/export.schema.ts";
 import { binding as listBinding } from "./contracts/list.schema.ts";
-import { DataRepositoryProvider } from "./providers/APDFRepositoryProvider.ts";
+import { DataRepositoryProvider } from "./providers/DataRepositoryProvider.ts";
 import { StorageRepositoryProvider } from "./providers/StorageRepositoryProvider.ts";
 
 import { ExportAction } from "./actions/ExportAction.ts";

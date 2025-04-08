@@ -4,11 +4,7 @@ import {
   StatefulContextInterface,
   StatelessContextInterface,
 } from "../../interfaces/index.ts";
-import {
-  applyLimitsOnStatefulStage,
-  applyLimitsOnStatelessStage,
-  ConfiguredLimitInterface,
-} from "../helpers/index.ts";
+import { applyLimitsOnStatefulStage, applyLimitsOnStatelessStage, ConfiguredLimitInterface } from "../helpers/index.ts";
 
 export abstract class AbstractPolicyHandler implements PolicyHandlerInterface {
   public limits: Array<ConfiguredLimitInterface>;
@@ -17,7 +13,7 @@ export abstract class AbstractPolicyHandler implements PolicyHandlerInterface {
     return;
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     // Mise en place des limites
     applyLimitsOnStatelessStage(this.limits, ctx);
   }

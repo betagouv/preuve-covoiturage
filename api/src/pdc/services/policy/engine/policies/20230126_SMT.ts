@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -10,10 +7,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
 import { dateWithTz, today } from "@/pdc/services/policy/helpers/index.ts";
@@ -28,8 +22,7 @@ import {
 import { description } from "./20230126_SMT.html.ts";
 
 // Politique du Syndicat des Mobilités de Touraine
-export const SMT2023: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const SMT2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "smt_2023";
 
@@ -55,8 +48,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 40_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
 
@@ -69,8 +61,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
     {
       start: 20_000,
       end: 30_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
     },
   ];
 
@@ -106,13 +97,11 @@ export const SMT2023: PolicyHandlerStaticInterface = class
     isOperatorClassOrThrow(ctx, ["B", "C"]);
     onDistanceRangeOrThrow(
       ctx,
-      this.isAfter15April2023(ctx.carpool.datetime)
-        ? { min: 2_000, max: 30_001 }
-        : { min: 2_000 },
+      this.isAfter15April2023(ctx.carpool.datetime) ? { min: 2_000, max: 30_001 } : { min: 2_000 },
     );
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
@@ -128,9 +117,7 @@ export const SMT2023: PolicyHandlerStaticInterface = class
   }
 
   private getSlices() {
-    return this.isAfter15April2023(today())
-      ? this.slices_after_april
-      : this.slices;
+    return this.isAfter15April2023(today()) ? this.slices_after_april : this.slices;
   }
 
   private isAfter15February2024(date: Date): boolean {

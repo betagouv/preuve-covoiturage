@@ -1,7 +1,4 @@
-import {
-  getOperatorsAt,
-  TimestampedOperators,
-} from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
+import { getOperatorsAt, TimestampedOperators } from "@/pdc/services/policy/engine/helpers/getOperatorsAt.ts";
 import { isOperatorClassOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorClassOrThrow.ts";
 import { isOperatorOrThrow } from "@/pdc/services/policy/engine/helpers/isOperatorOrThrow.ts";
 import {
@@ -11,10 +8,7 @@ import {
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByDay,
 } from "@/pdc/services/policy/engine/helpers/limits.ts";
-import {
-  onDistanceRange,
-  onDistanceRangeOrThrow,
-} from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
+import { onDistanceRange, onDistanceRangeOrThrow } from "@/pdc/services/policy/engine/helpers/onDistanceRange.ts";
 import { perKm, perSeat } from "@/pdc/services/policy/engine/helpers/per.ts";
 import { startsAndEndsAtOrThrow } from "@/pdc/services/policy/engine/helpers/startsAndEndsAtOrThrow.ts";
 import { AbstractPolicyHandler } from "@/pdc/services/policy/engine/policies/AbstractPolicyHandler.ts";
@@ -29,8 +23,7 @@ import {
 import { description } from "./20211202_NantesMetropoleXP.html.ts";
 
 // Politique de Nantes Métropole
-export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
+export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "656";
   protected operators: TimestampedOperators = [
@@ -49,8 +42,7 @@ export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
     },
     {
       start: 20_000,
-      fn: (ctx: StatelessContextInterface) =>
-        perSeat(ctx, perKm(ctx, { amount: 10 })),
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })),
     },
   ];
 
@@ -98,7 +90,7 @@ export const NantesMetropoleXPCovoitan2021: PolicyHandlerStaticInterface = class
     startsAndEndsAtOrThrow(ctx, { aom: ["244400404"] });
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

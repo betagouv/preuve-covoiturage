@@ -42,7 +42,7 @@ export const PolicyTemplateTwo: PolicyHandlerStaticInterface = class extends Abs
     },
   ];
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     // Par kilomètre
     let amount = 0;

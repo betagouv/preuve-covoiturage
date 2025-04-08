@@ -459,7 +459,7 @@ export const Rennes2025: PolicyHandlerStaticInterface = class extends AbstractPo
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusions(ctx);
     super.processStateless(ctx);
 

@@ -101,7 +101,7 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends Ab
     isAdultOrThrow(ctx);
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 

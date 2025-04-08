@@ -3,6 +3,7 @@ import sinon, { SinonSandbox, SinonStub } from "npm:sinon@^18";
 import supertest from "npm:supertest@^7";
 export {
   assert,
+  assertArrayIncludes,
   assertEquals,
   assertFalse,
   assertNotEquals,

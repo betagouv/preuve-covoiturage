@@ -25,7 +25,7 @@ import {
 } from "@/pdc/services/policy/interfaces/index.ts";
 import { description } from "./20210520_IDFM.html.ts";
 
-// Politique d'Île-de-France Mobilité
+// Campagne d'Île-de-France Mobilité
 export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
   static readonly id = "459";
@@ -135,8 +135,11 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
     "2024-12-13",
   ];
 
-  protected boosterDatesRangesOnCom = {
-    start_date: new Date("2024-12-6"),
+  // Dates booster dans l'Oise sur la période
+  // du 6 décembre 2024 au 15 mars 2025 pour
+  // un mouvement de grève spécifique.
+  protected boosterDatesOise2025 = {
+    start_date: new Date("2024-12-06"),
     end_date: new Date("2025-03-15"),
     coms: [
       "95074",
@@ -162,10 +165,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
   };
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(
-      ctx,
-      getOperatorsAt(this.operators, ctx.carpool.datetime),
-    );
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
 
     // Exclure les trajet Paris-Paris
@@ -193,7 +193,7 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
     }
   }
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
@@ -210,11 +210,11 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
       amount *= 1.5;
     }
 
-    // Tarif spécial pour les communes
+    // Tarif spécial pour les communes de l'Oise en 2024/2025
     if (
-      isAfter(ctx, { date: this.boosterDatesRangesOnCom.start_date }) &&
-      isBefore(ctx, this.boosterDatesRangesOnCom.end_date) &&
-      startsOrEndsAt(ctx, { com: this.boosterDatesRangesOnCom.coms }) &&
+      isAfter(ctx, { date: this.boosterDatesOise2025.start_date }) &&
+      isBefore(ctx, this.boosterDatesOise2025.end_date) &&
+      startsOrEndsAt(ctx, { com: this.boosterDatesOise2025.coms }) &&
       !atDate(ctx, { dates: this.boosterDates })
     ) {
       amount *= 1.5;
@@ -228,13 +228,12 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
       tz: "Europe/Paris",
       slices: this.slices,
       operators: getOperatorsAt(this.operators),
-      allTimeOperators: Array.from(
-        new Set(this.operators.flatMap((entry) => entry.operators)),
-      ),
-      limits: {
-        glob: this.max_amount,
-      },
+      allTimeOperators: Array.from(new Set(this.operators.flatMap((entry) => entry.operators))),
+      limits: { glob: this.max_amount },
       booster_dates: [...this.boosterDates],
+      extras: {
+        "idfm_oise2025": this.boosterDatesOise2025,
+      },
     };
   }
 

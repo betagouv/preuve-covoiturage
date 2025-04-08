@@ -33,7 +33,7 @@ export const PolicyTemplateThree: PolicyHandlerStaticInterface = class extends A
     fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50),
   }];
 
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     // Par kilomètre
     let amount = 0;

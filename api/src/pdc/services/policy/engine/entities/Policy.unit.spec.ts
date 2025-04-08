@@ -5,19 +5,14 @@ import {
   StatefulContextInterface,
   StatelessContextInterface,
 } from "../../interfaces/index.ts";
-import {
-  applyLimitOnStatefulStage,
-  isOperatorClassOrThrow,
-  perKm,
-  watchForGlobalMaxAmount,
-} from "../helpers/index.ts";
+import { applyLimitOnStatefulStage, isOperatorClassOrThrow, perKm, watchForGlobalMaxAmount } from "../helpers/index.ts";
 import { process } from "../tests/macro.ts";
 
 class TestHandler implements PolicyHandlerInterface {
   async load(): Promise<void> {
     return;
   }
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     isOperatorClassOrThrow(ctx, ["C"]);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
     watchForGlobalMaxAmount(ctx, "max");
@@ -122,7 +117,7 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
   async load(): Promise<void> {
     return;
   }
-  processStateless(ctx: StatelessContextInterface): void {
+  override processStateless(ctx: StatelessContextInterface): void {
     isOperatorClassOrThrow(ctx, ["C"]);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
     watchForGlobalMaxAmount(ctx, "max");
