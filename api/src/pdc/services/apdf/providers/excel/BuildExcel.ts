@@ -78,11 +78,13 @@ export class BuildExcel {
     wkw: excel.stream.xlsx.WorkbookWriter,
     params: CampaignSearchParamsInterface,
   ): Promise<void> {
+    let cursor;
     try {
       const config = await this.getConfig(params.campaign_id);
-      const cursor = await this.apdfRepoProvider.getPolicyCursor(params);
+      cursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.TripsWsWriter.call(cursor, config, wkw);
     } catch (e) {
+      cursor && await cursor.release();
       logger.error(`[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`);
       if (e instanceof Error) {
         logger.error(e.message);

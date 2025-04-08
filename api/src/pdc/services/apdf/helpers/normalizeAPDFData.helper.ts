@@ -2,17 +2,13 @@ import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.t
 import { format, toZonedTime } from "dep:date-fns-tz";
 import { APDFTripInterface } from "../interfaces/APDFTripInterface.ts";
 
-export function normalize(
-  src: APDFTripInterface,
-  config: ExcelCampaignConfig,
-  timeZone: string,
-): APDFTripInterface {
-  const sd = toZonedTime(src.start_datetime, timeZone);
-  const ed = toZonedTime(src.end_datetime, timeZone);
+export function normalize(src: APDFTripInterface, config: ExcelCampaignConfig): APDFTripInterface {
+  const sd = toZonedTime(src.start_datetime, config.tz);
+  const ed = toZonedTime(src.end_datetime, config.tz);
 
   // format and convert to user timezone
-  const sdf = format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
-  const edf = format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+  const sdf = format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: config.tz });
+  const edf = format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: config.tz });
 
   // set the type of incentive depending on the date
   let type: "normale" | "booster" = "normale";
