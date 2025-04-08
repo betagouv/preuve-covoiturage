@@ -9,7 +9,7 @@ import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 export const useDashboard = () => {
   const lastDataDate = () => {
     const now = new Date();
-    const lastWeek = new Date(now.setDate(now.getDate() - 8));
+    const lastWeek = new Date(now.setDate(now.getDate() - 7));
     return new Date(lastWeek.setMonth(lastWeek.getMonth()));
   };
   const month = new Date(lastDataDate()).getMonth() > 0 ? new Date(lastDataDate()).getMonth() : 12;
