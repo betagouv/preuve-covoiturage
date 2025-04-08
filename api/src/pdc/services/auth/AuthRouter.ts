@@ -45,11 +45,10 @@ export class AuthRouter {
     );
 
     this.app.get(
-      "/callback",
-      //"/auth/login/callback",
+      "/auth/login/callback",
       asyncHandler(async (req: Request, res: Response) => {
         const url = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
-        const { state, nonce } = req.session?.auth;
+        const { state, nonce } = req.session?.auth || {};
         const tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
         req.session = req.session || {};
         req.session.auth = {};
@@ -64,7 +63,7 @@ export class AuthRouter {
     this.app.get(
       "/auth/logout",
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const { id_token } = req.session?.auth;
+        const { id_token } = req.session?.auth || {};
         const { redirectUrl, state } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
         req.session = req.session || {};
         req.session.auth = {
@@ -78,16 +77,16 @@ export class AuthRouter {
     this.app.get(
       "/auth/logout/callback",
       asyncHandler(async (req: Request, res: Response) => {
-        const { state: expectedState } = req.session?.auth;
+        const { state: expectedState } = req.session?.auth || {};
         const state = req.query?.state;
         if (state === expectedState) {
           req.session.destroy((err: Error) => {
             if (err) {
               throw err;
             }
-            return res.redirect(this.config.get("app_url"));
           });
         }
+        return res.redirect(this.config.get("app_url"));
       }),
     );
 
