@@ -10,6 +10,7 @@ it("should fetch from data source with a siret id", async () => {
     env("APP_INSEE_API_KEY") === undefined ||
     env("APP_INSEE_API_KEY") === ""
   ) {
+    console.error("⚠️ - APP_INSEE_API_KEY is not set");
     assert(true);
     return;
   }
@@ -41,6 +42,7 @@ it("should fail with a wrong siret id", async () => {
     env("APP_INSEE_API_KEY") === undefined ||
     env("APP_INSEE_API_KEY") === ""
   ) {
+    console.error("⚠️ - APP_INSEE_API_KEY is not set");
     assert(true);
     return;
   }
