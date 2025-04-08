@@ -129,7 +129,7 @@ export class BuildExcel {
     }
 
     return {
-      tz: campaign.params.tz,
+      tz: campaign.params?.tz || defaultTimezone,
       booster_dates: new Set<string>([...(campaign.params?.booster_dates || [])]),
       extras: campaign.params?.extras || {},
     };
