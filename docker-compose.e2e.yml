@@ -1,5 +1,7 @@
 services:
 
+  # exposing ports is needed for integration and e2e tests to run
+
   api:
     ports:
       - 8080:8080
@@ -28,6 +30,10 @@ services:
     ports:
       - 1025:1025
 
+  s3:
+    ports:
+      - 9000:9000
+
   wait:
     image: busybox:1.33
     environment:
@@ -37,37 +43,3 @@ services:
     command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo " Waiting for $$DOMAIN..."; sleep 1; done']
     networks:
       - back
-
-  s3:
-    image: minio/minio:edge
-    networks:
-      - back
-    command: 'server /data'
-    ports:
-      - "9000:9000"
-    environment:
-      MINIO_DOMAIN: s3.covoiturage.test
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`, `local-pdc-export.s3.covoiturage.test`, `download.covoiturage.test`, `cms.s3.covoiturage.test`)'
-      - 'traefik.http.routers.s3.entrypoints=websecure'
-      - 'traefik.http.routers.s3.tls=true'
-      - 'traefik.http.services.s3.loadbalancer.server.port=9000'
-
-  s3-init:
-    image: minio/mc:edge
-    networks:
-      - back
-    environment:
-      MINIO_URL: http://s3:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_REGION_NAME: fr-par
-    entrypoint:
-      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
-    depends_on:
-      - s3
-
-networks:
-  front:
-  back:

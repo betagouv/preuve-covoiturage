@@ -227,6 +227,7 @@ ci_test_prehook:
   just wait postgres 5432
   just wait redis 6379
   just wait s3 9000
+  just docker run api just cache
   just docker run api just cache-migrator
   just docker run api just seed
   just dc_e2e up -d proxy api

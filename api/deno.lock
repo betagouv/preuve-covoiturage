@@ -3198,15 +3198,21 @@
   },
   "redirects": {
     "https://cdn.esm.sh/inversify?deno": "https://cdn.esm.sh/inversify@7.5.0?deno",
+    "https://cdn.esm.sh/inversify@6?deno": "https://cdn.esm.sh/inversify@6.2.2?deno",
     "https://cdn.esm.sh/reflect-metadata?deno": "https://cdn.esm.sh/reflect-metadata@0.2.2?deno",
     "https://cdn.esm.sh/reflect-metadata@~0.2.2?target=denonext": "https://cdn.esm.sh/reflect-metadata@0.2.2?target=denonext"
   },
   "remote": {
+    "https://cdn.esm.sh/@inversifyjs/common@1.4.0/denonext/common.mjs": "d9560bad7ed2a975936f029ac8b0efd71f3f0822a89e2a08c5c2749448565659",
     "https://cdn.esm.sh/@inversifyjs/common@1.5.0/denonext/common.mjs": "39dae0c3a0615e15aa6d19f7b796a131a1a1384099f9291e6b6a02f5597f7c93",
     "https://cdn.esm.sh/@inversifyjs/container@1.9.0/denonext/container.mjs": "661dba8a5e95c635b6de20ebcba5c3d6f3ad512df7da7ff79e98359622aa7063",
+    "https://cdn.esm.sh/@inversifyjs/core@1.3.5/denonext/core.mjs": "565018d75c688200d28a78976d9d77346c2a91d93892f1240a03e50d0e2784ef",
     "https://cdn.esm.sh/@inversifyjs/core@5.1.0/denonext/core.mjs": "c74cd4ac2c51136de9375d9a19418a3b2973ca1099e69c895f1cb2bf30ef82a0",
     "https://cdn.esm.sh/@inversifyjs/prototype-utils@0.1.0/denonext/prototype-utils.mjs": "d975fe6b04f231c4680f81b3dfadba573f5ebf44e679b08a4f7780fda8656c01",
+    "https://cdn.esm.sh/@inversifyjs/reflect-metadata-utils@0.2.4/denonext/reflect-metadata-utils.mjs": "2b0d46621a53b9b4e4830b14e26fc80c61816a011c690de28ddbd372e9463f51",
     "https://cdn.esm.sh/@inversifyjs/reflect-metadata-utils@1.1.0/denonext/reflect-metadata-utils.mjs": "f3bad7d11230ade164246c56618c92f0cd29f90ed35589d942055fa51e2d3e55",
+    "https://cdn.esm.sh/inversify@6.2.2/denonext/inversify.mjs": "9b2ea22212f931b23e41c30823800b01146a6b239894b9fb4cc7ed6b38dd1185",
+    "https://cdn.esm.sh/inversify@6.2.2?deno": "5cde31715d75029e6322ff5328e53789036c7f3788248433d7b0edfb403a81be",
     "https://cdn.esm.sh/inversify@7.5.0/denonext/inversify.mjs": "0bc322b88d3bdd31b51fb3fedbeefa3ef6721e3105ffb1aea2bf0a4121983598",
     "https://cdn.esm.sh/inversify@7.5.0?deno": "dc94894c30b59d1d71915dc10c7929683df09716605c3f1f6ecf3c0fd028d748",
     "https://cdn.esm.sh/reflect-metadata@0.2.2/denonext/reflect-metadata.mjs": "23fc11733664e8349c31617add4a39df818bc72aff94d98a4d05d82a0d0d6739",

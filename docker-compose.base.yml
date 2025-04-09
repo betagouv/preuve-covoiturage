@@ -109,10 +109,10 @@ services:
       APP_USER_REGISTRATION_ENABLED: ${APP_USER_REGISTRATION_ENABLED:-false}
 
       # DEX configuration
-      OIDC_BASE_URL: ${OIDC_BASE_URL:-http://localhost:8090}
-      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-secret}
-      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-secret}
-      OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL:-http://localhost:8090/callback}
+      DEX_BASE_URL: ${DEX_BASE_URL:-http://localhost:8090}
+      DEX_CLIENT_ID: ${DEX_CLIENT_ID:-secret}
+      DEX_CLIENT_SECRET: ${DEX_CLIENT_SECRET:-secret}
+      DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8090/callback}
     networks:
       - back
       - front

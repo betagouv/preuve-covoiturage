@@ -2,5 +2,7 @@ version: "1.0"
 fileignoreconfig:
 - filename: flake.nix
   checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
+- filename: api/deno.lock
+  checksum: 92bf594469ffba681b41c9f3fce41d3a732300efaa0714877186dbaaa8860453
 - filename: docker-compose.base.yml
-  checksum: 09452ab0fc649796e94196f4731135956f37ce3087c494267c41e6b8a7addd15
+  checksum: 4667729fcd4b753b7bc40c5975189ea59848d2dc81c1c541ebe0c286e19b4e9c
