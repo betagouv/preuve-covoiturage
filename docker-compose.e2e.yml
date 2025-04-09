@@ -133,10 +133,12 @@ services:
       AWS_SECRET_ACCESS_KEY: minioadmin
       ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
       ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
-      OIDC_CLIENT_ID: secret
-      OIDC_CLIENT_SECRET: secret
-      OIDC_BASE_URL: http://auth.covoiturage.test
-      OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
+      DEX_CLIENT_ID: secret
+      DEX_CLIENT_SECRET: secret
+      DEX_BASE_URL: http://auth.covoiturage.test
+      PROCONNECT_BASE_URL: https://fca.integ01.dev-agentconnect.fr/api/v2 
+      PROCONNECT_REDIRECT_URL: http://api.covoiturage.test/auth/login/callback
+      PROCONNECT_LOGOUT_REDIRECT_URL: http://api.covoiturage.test/auth/logout/callback
     networks:
       - back
       - front

@@ -129,8 +129,8 @@ jobs:
           ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
           PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
           PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
-          APP_AUTH_CLIENT_ID: secret
-          APP_AUTH_CLIENT_SECRET: secret
+          DEX_CLIENT_ID: secret
+          DEX_CLIENT_SECRET: secret
         run: just cache && just ci_test_integration
         working-directory: api
 

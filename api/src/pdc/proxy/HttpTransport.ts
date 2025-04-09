@@ -177,7 +177,7 @@ export class HttpTransport implements TransportInterface {
         maxAge: this.config.get("proxy.session.maxAge"),
         // https everywhere but in local development
         secure: env_or_fail("APP_ENV", "local") !== "local",
-        sameSite: env_or_fail("APP_ENV", "local") !== "local" ? "none" : "strict",
+        sameSite: "lax",
       },
 
       name: sessionName,
