@@ -1,196 +1,50 @@
 services:
-  proxy:
-    image: traefik:v2.5
-    container_name: traefik
-    ports:
-      - 80:80
-      - 443:443
-      - 8080:8080 # Traefik Dashboard
-    command:
-      - '--log.level=DEBUG'
-      - '--api.insecure=true'
-      - '--providers.docker=true'
-      - '--providers.docker.exposedbydefault=false'
-      - '--providers.file.directory=/etc/traefik/dynamic'
-      - '--entrypoints.websecure.address=:443'
-      - '--entrypoints.web.address=:80'
-      - '--providers.docker.network=pdce2e_back'
-      # - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
-      # - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
-      # - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
-    volumes:
-      - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
-      - ./docker/traefik/certs:/etc/certs
-      - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock:ro
-    networks:
-      back:
-      front:
-        aliases:
-          - auth.covoiturage.test
-          - api.covoiturage.test
-          - app.covoiturage.test
-          - mailer.covoiturage.test
-          - s3.covoiturage.test
-          - download.covoiturage.test
-          - local-pdc-export.s3.covoiturage.test
+
+  # exposing ports is needed for integration and e2e tests to run
 
   dex:
-    image: bitnami/dex:2
-    environment:
-      PDC_URL: http://api.covoiturage.test/auth/callback
-      PDC_CLIENT_ID: secret
-      PDC_CLIENT_SECRET: secret
-      OIDC_ISSUER_URL: https://fca.integ01.dev-agentconnect.fr/api/v2
-      OIDC_CLIENT_ID: secret
-      OIDC_CLIENT_SECRET: secret
-      OIDC_REDIRECT_URL: http://auth.covoiturage.test/callback
-    networks:
-      back:
-      front:
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.dex-http.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-http.entrypoints=web'
-      - 'traefik.http.routers.dex-https.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-https.entrypoints=websecure'
-      - 'traefik.http.routers.dex-https.tls=true'
-      - 'traefik.http.services.dex.loadbalancer.server.port=8090'
-    command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
-    volumes:
-      - ./docker/dex/config-e2e.yaml:/etc/dex/config.yaml:ro
+   ports:
+    - 8090:8090
+    - 5557:5557
 
-  mailer:
-    image: mailhog/mailhog:v1.0.1
-    environment:
-      MH_CORS_ORIGIN: '*'
+  api:
     ports:
-      - 1025:1025
-    networks:
-      - back
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.mailer.rule=Host(`mailer.covoiturage.test`)'
-      - 'traefik.http.routers.mailer.entrypoints=websecure'
-      - 'traefik.http.routers.mailer.tls=true'
-      - 'traefik.http.services.mailer.loadbalancer.server.port=8025'
+      - 8080:8080
+    environment:
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
+      APP_REDIS_URL: redis://redis:6379/1
+      APIE2E_API_URL: https://api.covoiturage.test
+      APIE2E_AUTH_ACCESSKEY: admin@example.com
+      APIE2E_AUTH_SECRETKEY: password
+    volumes:
+      - ./docker/api/certs:/app/certs:ro
 
   postgres:
-    build: ./docker/postgres
     ports:
       - 5432:5432
-    networks:
-      - back
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'test'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test
 
   redis:
-    build: './docker/redis'
     ports:
       - 6379:6379
-    networks:
-      - back
+
+  mailer:
+    ports:
+      - 1025:1025
+
+  s3:
+    ports:
+      - 9000:9000
 
   wait:
     image: busybox:1.33
     environment:
-      DOMAIN: api
-      PORT: 8080
+      DOMAIN: ${WAIT_DOMAIN:-api}
+      PORT: ${WAIT_PORT:-8080}
+    working_dir: /app/api
+    command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo " Waiting for $$DOMAIN..."; sleep 1; done']
     networks:
       - back
-    command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo "waiting for app"; sleep 1; done']
-
-  api:
-    build:
-      dockerfile: ./docker/api/Dockerfile
-      context: .
-    environment:
-      PORT: 8080
-      NODE_ENV: local
-      APP_ENV: local
-      APP_LOG_LEVEL: DEBUG
-      APP_APP_URL: https://app.covoiturage.test
-      APP_DASHBOARD_URL: https://app.covoiturage.test
-      APP_CEE_PRIVATE_KEY_PATH: /app/certs/privateKey.pem
-      APP_CEE_PUBLIC_KEY_PATH: /app/certs/publicKey.pem
-      APP_DATAGOUV_KEY: thisIsASecret
-      APP_DATAGOUV_URL: http://data-gouv-url
-      APP_INSEE_API_KEY: ${APP_INSEE_API_KEY:-''}
-      APP_JWT_SECRET: thisIsASecret0000
-      APP_MAIL_SMTP_URL: smtp://mailer:1025
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
-      APP_RATE_LIMIT_MAX_FACTOR: '10000'
-      APP_REDIS_URL: redis://redis:6379/1
-      APP_SESSION_SECRET: thisIsAlsoASecret0000
-      APP_USER_REGISTRATION_ENABLED: 'false'
-      APP_ROUTECACHE_AUTHTOKEN: ''
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_BUCKET_PREFIX: local-pdc
-      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
-      AWS_REGION: fr-par
-      AWS_S3_PATH_STYLE: 'true'
-      AWS_SECRET_ACCESS_KEY: minioadmin
-      ETL_ARCHIVES_URL: https://geo-datasets-archives.s3.fr-par.scw.cloud
-      ETL_MIRROR_URL: https://geo-datasets-mirror.s3.fr-par.scw.cloud
-      DEX_CLIENT_ID: secret
-      DEX_CLIENT_SECRET: secret
-      DEX_BASE_URL: http://auth.covoiturage.test
-      PROCONNECT_BASE_URL: https://fca.integ01.dev-agentconnect.fr/api/v2 
-      PROCONNECT_REDIRECT_URL: http://api.covoiturage.test/auth/login/callback
-      PROCONNECT_LOGOUT_REDIRECT_URL: http://api.covoiturage.test/auth/logout/callback
-    networks:
-      - back
-      - front
-    depends_on:
-      - redis
-      - postgres
-      - mailer
-      - s3
-      - dex
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.api.rule=Host(`api.covoiturage.test`)'
-      - 'traefik.http.routers.api.entrypoints=websecure'
-      - 'traefik.http.routers.api.tls=true'
-      - 'traefik.http.routers.api-http.rule=Host(`api.covoiturage.test`)'
-      - 'traefik.http.routers.api-http.entrypoints=web'
-      - 'traefik.http.services.api.loadbalancer.server.port=8080'
-    volumes:
-      - ./api:/app/api:ro
-      - ./shared:/app/shared:ro
-      - ./docker/api/certs:/app/certs:ro
-
-  s3:
-    image: minio/minio:edge
-    networks:
-      - back
-    command: 'server /data'
-    ports:
-      - "9000:9000"
-    environment:
-      MINIO_DOMAIN: s3.covoiturage.test
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`, `local-pdc-export.s3.covoiturage.test`, `download.covoiturage.test`, `cms.s3.covoiturage.test`)'
-      - 'traefik.http.routers.s3.entrypoints=websecure'
-      - 'traefik.http.routers.s3.tls=true'
-      - 'traefik.http.services.s3.loadbalancer.server.port=9000'
-
-  s3-init:
-    image: minio/mc:edge
-    networks:
-      - back
-    environment:
-      MINIO_URL: http://s3:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_REGION_NAME: fr-par
-    entrypoint:
-      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
-    depends_on:
-      - s3
-
-networks:
-  front:
-  back:

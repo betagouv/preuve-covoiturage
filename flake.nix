@@ -7,11 +7,35 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
+        pkgs = import nixpkgs { inherit system; };
+
+        talisman = pkgs.stdenv.mkDerivation rec {
+          pname = "talisman";
+          version = "1.34.0";
+
+          # Binary URL from GitHub Releases
+          src = pkgs.fetchurl {
+            url = "https://github.com/thoughtworks/talisman/releases/download/v${version}/talisman_linux_amd64";
+            sha256 = "89f730cb4f1cd3143f0e4c13ec2e21842d61e758b10439ad6146d41792f865b5";
           };
-        in
-        {
+
+          dontUnpack = true;
+
+          installPhase = ''
+            mkdir -p $out/bin
+            cp $src $out/bin/talisman
+            chmod +x $out/bin/talisman
+          '';
+
+          meta = with pkgs.lib; {
+            description = "A tool to detect secrets in your codebase";
+            homepage = "https://github.com/thoughtworks/talisman";
+            license = licenses.mit;
+            platforms = [ "x86_64-linux" ];
+            maintainers = with maintainers; [ ];
+          };
+        };
+        in {
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
               # system packages
@@ -23,7 +47,7 @@
 
               # rpc infra
               nodejs_20
-              postgresql_14
+              postgresql_16
               deno
 
               # data stack
@@ -32,8 +56,13 @@
               python312Packages.dbt-postgres
               uv
 
+              # pre-commit hooks
+              pre-commit
+              talisman
+
               # misc
               gh
+              yq-go
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"
