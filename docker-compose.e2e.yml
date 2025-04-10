@@ -2,6 +2,11 @@ services:
 
   # exposing ports is needed for integration and e2e tests to run
 
+  dex:
+   ports:
+    - 8090:8090
+    - 5557:5557
+
   api:
     ports:
       - 8080:8080

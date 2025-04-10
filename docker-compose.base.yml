@@ -8,16 +8,18 @@ services:
     image: bitnami/dex:2
     environment:
       # DEX configuration calling back to the API
-      OIDC_ISSUER_URL: http://localhost:8090/
-      OIDC_REDIRECT_URL: http://localhost:8080/auth/callback
-      OIDC_CLIENT_ID: secret
-      OIDC_CLIENT_SECRET: secret
+      DEX_ISSUER_URL: http://dex:8090/
+      DEX_REDIRECT_URL: http://localhost:8080/auth/callback
+      DEX_CLIENT_ID: secret
+      DEX_CLIENT_SECRET: secret
 
-      # ProConnect configuration calling back to DEX
+      # ProConnect configuration calling back to the API
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-'http://localhost:8080/auth/login/callback'}
+      PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-'http://localhost:8080/auth/logout/callback'}
       PROCONNECT_ISSUER_URL: ${PROCONNECT_ISSUER_URL:-'https://fca.integ01.dev-agentconnect.fr/api/v2'}
-      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-'http://localhost:8090/callback'}
-      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID}
-      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET}
+      PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-'https://fca.integ01.dev-agentconnect.fr/api/v2'}
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-}
     command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
     volumes:
       - ./docker/dex/config-local.yaml:/etc/dex/config.yaml:ro
@@ -108,26 +110,36 @@ services:
       # User registration (deprecated)
       APP_USER_REGISTRATION_ENABLED: ${APP_USER_REGISTRATION_ENABLED:-false}
 
-      # DEX configuration
-      DEX_BASE_URL: ${DEX_BASE_URL:-http://localhost:8090}
+      # DEX configuration (private access only)
+      DEX_BASE_URL: ${DEX_BASE_URL:-http://dex:8090}
       DEX_CLIENT_ID: ${DEX_CLIENT_ID:-secret}
       DEX_CLIENT_SECRET: ${DEX_CLIENT_SECRET:-secret}
-      DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8090/callback}
+      DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8080/auth/callback}
+      DEX_GRPC_HOST: ${DEX_GRPC_HOST:-http://dex}
+      DEX_GRPC_PORT: ${DEX_GRPC_PORT:-5557}
+
+      # ProConnect configuration
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-secret}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-secret}
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://localhost:8080/auth/login/callback}
+      PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-http://localhost:8080/auth/logout/callback}
+      PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+    
     networks:
       - back
       - front
 
-  dashboard:
-    build:
-      dockerfile: ./docker/dashboard/Dockerfile
-      context: .
-    command: ["npx", "ng", "serve", "--disable-host-check", "--host", "0.0.0.0", "--port", "4200"]
-    volumes:
-      - ./dashboard:/app/dashboard
-      - ./docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
-      - ./shared:/app/shared:ro
-    networks:
-      - front
+  # dashboard:
+  #   build:
+  #     dockerfile: ./docker/dashboard/Dockerfile
+  #     context: .
+  #   command: ["npx", "ng", "serve", "--disable-host-check", "--host", "0.0.0.0", "--port", "4200"]
+  #   volumes:
+  #     - ./dashboard:/app/dashboard
+  #     - ./docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
+  #     - ./shared:/app/shared:ro
+  #   networks:
+  #     - front
 
   s3:
     image: minio/minio:edge

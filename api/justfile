@@ -72,8 +72,6 @@ docker *command:
 @dc_local *args:
   docker compose \
     -f {{ docker_compose_base_file }} \
-    -f {{ docker_compose_proxy_file }} \
-    -f {{ docker_compose_e2e_file }} \
     -f {{ docker_compose_dev_file }} \
     {{ args }}
 
@@ -195,7 +193,7 @@ test-e2e:
 # Run test
 [group('tests')]
 test *pattern:
-  deno test -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
+  deno test  -A --no-check --trace-leaks --unsafely-ignore-certificate-errors {{ pattern }}
 
 # --------------------------------------------------------------------------------------------------
 #
@@ -332,7 +330,7 @@ serve-unsafe:
 # List all the APP_ environment variables
 [group('development')]
 @env:
-  env | grep APP_ | sort | column -t -s=
+  env | grep -E "APP_|DEX_|PROCONNECT_|APIE2E_"  | sort | column -t -s=
 
 # Install the domain aliases in /etc/hosts
 [confirm('''

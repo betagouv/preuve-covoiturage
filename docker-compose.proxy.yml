@@ -22,30 +22,12 @@ services:
       back:
       front:
         aliases:
-          - auth.covoiturage.test
           - api.covoiturage.test
           - app.covoiturage.test
           - mailer.covoiturage.test
           - s3.covoiturage.test
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
-
-  dex:
-    environment:
-      OIDC_ISSUER_URL: http://auth.covoiturage.test/
-      OIDC_REDIRECT_URL: http://api.covoiturage.test/auth/callback
-      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-'http://auth.covoiturage.test/callback'}
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.dex-http.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-http.entrypoints=web'
-      - 'traefik.http.routers.dex-https.rule=Host(`auth.covoiturage.test`)'
-      - 'traefik.http.routers.dex-https.entrypoints=websecure'
-      - 'traefik.http.routers.dex-https.tls=true'
-      - 'traefik.http.services.dex.loadbalancer.server.port=8090'
-    command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
-    volumes:
-      - ./docker/dex/config-proxy.yaml:/etc/dex/config.yaml:ro
 
   mailer:
     labels:
@@ -61,8 +43,7 @@ services:
       APP_API_URL: https://api.covoiturage.test
       APP_APP_URL: https://app.covoiturage.test
       APP_DASHBOARD_URL: https://app.covoiturage.test
-      OIDC_BASE_URL: https://auth.covoiturage.test
-      OIDC_REDIRECT_URL: https://api.covoiturage.test/auth/callback
+      DEX_REDIRECT_URL: https://api.covoiturage.test/auth/callback
     command: ["just", "serve-unsafe"]
     labels:
       - 'traefik.enable=true'
@@ -73,15 +54,15 @@ services:
       - 'traefik.http.routers.api-http.entrypoints=web'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
 
-  dashboard:
-    expose:
-      - 4200
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.dashboard-https.tls=true'
-      - 'traefik.http.routers.dashboard-https.rule=Host(`app.covoiturage.test`)'
-      - 'traefik.http.routers.dashboard-https.entrypoints=websecure'
-      - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
+  # dashboard:
+  #   expose:
+  #     - 4200
+  #   labels:
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.dashboard-https.tls=true'
+  #     - 'traefik.http.routers.dashboard-https.rule=Host(`app.covoiturage.test`)'
+  #     - 'traefik.http.routers.dashboard-https.entrypoints=websecure'
+  #     - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
 
   s3:
     environment:

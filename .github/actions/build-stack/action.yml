@@ -23,7 +23,6 @@ runs:
       shell: bash
       run: |
         echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
-        echo "127.0.0.1 auth.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 mailer.covoiturage.test" | sudo tee -a /etc/hosts
         echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
