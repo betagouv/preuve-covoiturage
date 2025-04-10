@@ -50,6 +50,8 @@ models:
       +schema: "campaigns_analytics"
     export:
       +schema: "export"
+    metrics:
+      +schema: "metrics"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:
