@@ -1,0 +1,168 @@
+# Sets the project name (as -p option in docker-compose)
+# Warning: this is supported by "docker compose" but not by "docker-compose" command
+# Do not change it as it impacts the name of the network used by Traefik in docker-compose.proxy.yml
+name: rpc
+
+services:
+  dex:
+    image: bitnami/dex:2
+    environment:
+      # DEX configuration calling back to the API
+      DEX_ISSUER_URL: http://dex:8090/
+      DEX_REDIRECT_URL: http://localhost:8080/auth/callback
+      DEX_CLIENT_ID: secret
+      DEX_CLIENT_SECRET: secret
+
+      # ProConnect configuration calling back to the API
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-'http://localhost:8080/auth/login/callback'}
+      PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-'http://localhost:8080/auth/logout/callback'}
+      PROCONNECT_ISSUER_URL: ${PROCONNECT_ISSUER_URL:-'https://fca.integ01.dev-agentconnect.fr/api/v2'}
+      PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-'https://fca.integ01.dev-agentconnect.fr/api/v2'}
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-}
+    command: ["serve", "--web-http-addr", "0.0.0.0:8090", "/etc/dex/config.yaml"]
+    volumes:
+      - ./docker/dex/config-local.yaml:/etc/dex/config.yaml:ro
+    networks:
+      - back
+      - front
+
+  mailer:
+    image: mailhog/mailhog:v1.0.1
+    environment:
+      MH_CORS_ORIGIN: '*'
+    networks:
+      - back
+
+  postgres:
+    build: ./docker/postgres
+    networks:
+      - back
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-local}
+
+  redis:
+    build: './docker/redis'
+    networks:
+      - back
+
+  api:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    environment:
+      # Environment
+      PORT: ${PORT:-8080}
+      NODE_ENV: ${NODE_ENV:-local}
+      APP_ENV: ${APP_ENV:-local}
+      APP_LOG_LEVEL: ${APP_LOG_LEVEL:-DEBUG}
+
+      # Exposed Services URLs
+      APP_API_URL: ${APP_API_URL:-http://localhost:8080}
+      APP_APP_URL: ${APP_APP_URL:-http://localhost:4200}
+      APP_DASHBOARD_URL: ${APP_DASHBOARD_URL:-http://localhost:4200}
+
+      # Internal Services URLs
+      APP_MAIL_SMTP_URL: ${APP_MAIL_SMTP_URL:-smtp://mailer:1025}
+      APP_POSTGRES_URL: ${APP_POSTGRES_URL:-postgres://postgres:postgres@postgres:5432/local}
+      APP_REDIS_URL: ${APP_REDIS_URL:-redis://redis:6379/1}
+
+      # Signing keys
+      APP_CEE_PRIVATE_KEY_PATH: ${APP_CEE_PRIVATE_KEY_PATH:-/app/certs/privateKey.pem}
+      APP_CEE_PUBLIC_KEY_PATH: ${APP_CEE_PUBLIC_KEY_PATH:-/app/certs/publicKey.pem}
+
+      # Datagouv API
+      APP_DATAGOUV_ENABLED: ${APP_DATAGOUV_ENABLED:-false}
+      APP_DATAGOUV_KEY: ${APP_DATAGOUV_KEY:-}
+      APP_DATAGOUV_ORG: ${APP_DATAGOUV_ORG:-61937d50e54eade2bbf8e8df}
+      APP_DATAGOUV_DATASET: ${APP_DATAGOUV_DATASET:-5e8ee97c16601da4ee24ffb7}
+      APP_DATAGOUV_URL: ${APP_DATAGOUV_URL:-https://www.data.gouv.fr/api/1/}
+
+      # INSEE API
+      APP_INSEE_API_KEY: ${APP_INSEE_API_KEY:-}
+
+      # API Rate Limiting      
+      APP_RATE_LIMIT_MAX_FACTOR: ${APP_RATE_LIMIT_MAX_FACTOR:-100000}
+      
+      # Observatory API route caching
+      APP_ROUTECACHE_ENABLED: ${APP_ROUTECACHE_ENABLED:-true}
+      APP_ROUTECACHE_GZIP_ENABLED: ${APP_ROUTECACHE_GZIP_ENABLED:-true}
+      APP_ROUTECACHE_AUTHTOKEN: ${APP_ROUTECACHE_AUTHTOKEN:-}
+
+      # Object storage (S3)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
+      AWS_BUCKET_PREFIX: ${AWS_BUCKET_PREFIX:-local-pdc}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://minioadmin:minioadmin@s3:9000}
+      AWS_REGION: ${AWS_REGION:-fr-par}
+      AWS_S3_PATH_STYLE: ${AWS_S3_PATH_STYLE:-true}
+
+      # ETL
+      ETL_ARCHIVES_URL: ${ETL_ARCHIVES_URL:-https://geo-datasets-archives.s3.fr-par.scw.cloud}
+      ETL_MIRROR_URL: ${ETL_MIRROR_URL:-https://geo-datasets-mirror.s3.fr-par.scw.cloud}
+
+      # Authentication
+      APP_SESSION_SECRET: ${APP_SESSION_SECRET:-secret}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-secret} # (deprecated)
+
+      # User registration (deprecated)
+      APP_USER_REGISTRATION_ENABLED: ${APP_USER_REGISTRATION_ENABLED:-false}
+
+      # DEX configuration (private access only)
+      DEX_BASE_URL: ${DEX_BASE_URL:-http://dex:8090}
+      DEX_CLIENT_ID: ${DEX_CLIENT_ID:-secret}
+      DEX_CLIENT_SECRET: ${DEX_CLIENT_SECRET:-secret}
+      DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8080/auth/callback}
+      DEX_GRPC_HOST: ${DEX_GRPC_HOST:-http://dex}
+      DEX_GRPC_PORT: ${DEX_GRPC_PORT:-5557}
+
+      # ProConnect configuration
+      PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-secret}
+      PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-secret}
+      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://localhost:8080/auth/login/callback}
+      PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-http://localhost:8080/auth/logout/callback}
+      PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+    
+    networks:
+      - back
+      - front
+
+  # dashboard:
+  #   build:
+  #     dockerfile: ./docker/dashboard/Dockerfile
+  #     context: .
+  #   command: ["npx", "ng", "serve", "--disable-host-check", "--host", "0.0.0.0", "--port", "4200"]
+  #   volumes:
+  #     - ./dashboard:/app/dashboard
+  #     - ./docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
+  #     - ./shared:/app/shared:ro
+  #   networks:
+  #     - front
+
+  s3:
+    image: minio/minio:edge
+    environment:
+      MINIO_DOMAIN: s3
+    command: 'server /data'
+    networks:
+      - back
+
+  s3-init:
+    image: minio/mc:edge
+    environment:
+      MINIO_URL: http://s3:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_REGION_NAME: fr-par
+    entrypoint:
+      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
+    networks:
+      - back
+    depends_on:
+      - s3
+
+networks:
+  front:
+  back:

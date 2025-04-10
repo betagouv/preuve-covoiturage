@@ -41,8 +41,19 @@ export async function migrateSQL(connectionString: string, path: string, verbose
         // There's no way to catch the database error to log it.
         // Run the file with psql to debug...
         logger.error(`Error in migration: ${td}`);
-        logger.error(e.message);
+        if (e instanceof Error) {
+          logger.error(e.message);
+        } else {
+          logger.error("An unknown error occurred");
+        }
       }
+    }
+  } catch (e) {
+    logger.error("Error in migrateSQL");
+    if (e instanceof Error) {
+      logger.error(e.message);
+    } else {
+      logger.error("An unknown error occurred");
     }
   } finally {
     conn.release();

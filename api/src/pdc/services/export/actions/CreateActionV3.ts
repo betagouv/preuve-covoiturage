@@ -5,7 +5,7 @@ import {
   castToArrayMiddleware,
   copyFromContextMiddleware,
   hasPermissionMiddleware,
-  validateDateMiddleware
+  validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
@@ -59,7 +59,6 @@ export class CreateActionV3 extends AbstractAction {
   ): Promise<ResultInterfaceV3> {
     const paramTarget = Export.target(context);
 
-    console.debug(params)
     // make sure we have at least one recipient
     const recipients = await this.recipientService.maybeAddCreator(
       (params.recipients || []).map(ExportRecipient.fromEmail),

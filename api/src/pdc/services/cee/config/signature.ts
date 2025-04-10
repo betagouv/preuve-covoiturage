@@ -1,14 +1,30 @@
 import { env, env_or_fail } from "@/lib/env/index.ts";
 import { readFileSync } from "dep:fs";
 
-function getKey(type: string): string {
+type KeyType = "PRIVATE" | "PUBLIC";
+
+function normalizeKey(key: string, type: KeyType): string {
+  const k = String(key).replace(/[\r\n]+/g, "");
+
+  if (!k.startsWith(`-----BEGIN ${type} KEY-----`)) {
+    throw new Error(`Invalid key format, missing -----BEGIN ${type} KEY----`);
+  }
+
+  if (!k.endsWith(`-----END ${type} KEY-----`)) {
+    throw new Error(`Invalid key format, missing -----END ${type} KEY-----`);
+  }
+
+  return k;
+}
+
+function getKey(type: KeyType): string {
   const asVarEnvName = `APP_CEE_${type}_KEY`;
   const asPathEnvName = `APP_CEE_${type}_KEY_PATH`;
 
   if (env(asVarEnvName)) {
-    return env_or_fail(asVarEnvName).toString().replace(/\\n/g, "\n");
+    return normalizeKey(env_or_fail(asVarEnvName), type);
   } else if (env(asPathEnvName)) {
-    return readFileSync(env_or_fail(asPathEnvName), "utf-8");
+    return normalizeKey(readFileSync(env_or_fail(asPathEnvName), "utf-8"), type);
   } else {
     throw new Error(`Var ${asVarEnvName} not found`);
   }

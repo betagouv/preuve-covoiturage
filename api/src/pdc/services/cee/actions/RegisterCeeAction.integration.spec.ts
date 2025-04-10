@@ -75,6 +75,8 @@ describe("RegisterCeeAction", () => {
       .toConstantValue(db.connection);
 
     const private_key = config.signature.private_key as string;
+
+    // create the signatur
     sign = await createSignatory(private_key);
   });
 
