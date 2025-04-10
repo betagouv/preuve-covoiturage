@@ -49,7 +49,7 @@ groups as (
     g.start_geo_code,
     g.end_geo_code,
     c.start_datetime,
-    ROUND(
+    round(
       c.distance / 50
     )::int as distance_50m,
     count(

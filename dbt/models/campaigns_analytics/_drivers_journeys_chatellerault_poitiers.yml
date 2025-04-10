@@ -2,7 +2,8 @@ version: 2
 models:
   - name: drivers_journeys_chatellerault_poitiers
     description: >
-      Liste des journeys concernés par l'analyse de campagne sur les AOMs CU du Grand Poitiers et CA Grand Châtellerault.
+      Liste des journeys concernés par l'analyse de campagne sur les AOMs CU du Grand Poitiers et CA Grand
+      Châtellerault.
       https://www.notion.so/KPis-bonne-pratique-campagne-191994bec931803ea123ef96cf04a68d?pvs=4
     columns:
       - name: _id

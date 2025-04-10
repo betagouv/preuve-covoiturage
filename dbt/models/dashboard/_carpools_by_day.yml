@@ -3,26 +3,18 @@ models:
   - name: carpools_by_day
     columns:
       - name: from
-        description: ''
         data_type: integer
       - name: to
-        description: ''
         data_type: integer
       - name: start_date
-        description: ''
         data_type: date
       - name: operator_id
-        description: ''
         data_type: integer
       - name: operator_name
-        description: ''
         data_type: character varying
       - name: journeys
-        description: ''
         data_type: bigint
       - name: incented_journeys
-        description: ''
         data_type: bigint
       - name: incentive_amount
-        description: ''
         data_type: bigint

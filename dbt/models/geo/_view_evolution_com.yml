@@ -11,5 +11,4 @@ models:
       - name: arr_2023
         data_type: character varying
       - name: arr_2024
-        description: ''
         data_type: character varying
