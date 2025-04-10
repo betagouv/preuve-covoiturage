@@ -3,7 +3,9 @@ fileignoreconfig:
 - filename: flake.nix
   checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
 - filename: api/deno.lock
-  checksum: 92bf594469ffba681b41c9f3fce41d3a732300efaa0714877186dbaaa8860453
+  checksum: abec215d26eee49fcab25e0f263ae0a0c9607c0815e6ab103b3bd6040c68c17e
+- filename: api/src/pdc/services/cee/config/signature.ts
+  checksum: bc1b5afcb79fb043a259ffe7cccd6e7d805c5d43ef0430d1fc73809de9adf0fc
 - filename: docker/dex/config-local.yaml
   checksum: 49435999ee3dc46f53f2265842affd97a56e3d7d7b5bc1bd712a2e0ce10072f0
 - filename: docker/dex/config-e2e.yaml
