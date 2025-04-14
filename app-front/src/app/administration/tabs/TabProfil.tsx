@@ -17,7 +17,9 @@ export default function TabProfil() {
       : false;
   };
   const [toggleValue, setToggleValue] = useState(toggleDefault());
-  const [radioValue, setRadioValue] = useState<"operator" | "territory">("territory");
+  const [radioValue, setRadioValue] = useState<"operator" | "territory">(
+    "territory",
+  );
   useEffect(() => {
     if (toggleValue === false) {
       onChangeTerritory();

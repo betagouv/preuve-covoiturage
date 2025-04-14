@@ -14,7 +14,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       `${Config.get<string>("auth.domain")}/auth/me`,
       {
         credentials: "include",
-      }
+      },
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data: AuthContextProps["user"] = await response.json();
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {
         method: "POST",
         credentials: "include",
-      }
+      },
     );
     if (response.ok) {
       setIsAuth(false);

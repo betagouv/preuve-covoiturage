@@ -8,7 +8,7 @@ import OperatorsGraph from "../graphs/OperatorsGraph";
 export default function TabBref() {
   const { user } = useAuth();
   const [territoryId, setTerritoryId] = useState<number>(
-    user?.territory_id ?? 1
+    user?.territory_id ?? 1,
   );
   const onChangeTerritory = (id?: number) => {
     setTerritoryId(id ?? 1);

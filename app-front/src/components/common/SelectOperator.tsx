@@ -12,7 +12,7 @@ export default function SelectOperator(props: {
   const [value, setValue] = useState<number | undefined>(props.defaultValue);
   const url = `${Config.get<string>(
     "next.public_api_url",
-    ""
+    "",
   )}/v3/dashboard/operators`;
   const { data } = useApi<OperatorsInterface>(url, true);
   return (

@@ -11,10 +11,10 @@
     "prebuild": "only-include-used-icons"
   },
   "dependencies": {
-    "@codegouvfr/react-dsfr": "^1.15.0",
+    "@codegouvfr/react-dsfr": "^1.12.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
-    "@gouvfr/dsfr-chart": "^1.0.0",
+    "@gouvfr/dsfr-chart": "^2.0.3",
     "@mui/material": "^6.1.10",
     "@mui/x-date-pickers": "^7.23.2",
     "@socialgouv/matomo-next": "^1.9.2",
@@ -33,9 +33,9 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "^15.0.3",
-    "sass": "^1.80.6",
-    "typescript": "^5",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1"
+    "eslint-plugin-prettier": "^5.2.1",
+    "sass": "^1.80.6",
+    "typescript": "^5"
   }
 }

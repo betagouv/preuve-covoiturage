@@ -17,7 +17,7 @@ export default function TabsNav() {
     ];
     if (
       ["registry.admin", "operator.admin", "territory.admin"].includes(
-        user?.role ?? ""
+        user?.role ?? "",
       )
     ) {
       tabs.push({
