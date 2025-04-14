@@ -24,9 +24,11 @@ services:
       DEBUG: 'api'
       APP_POSTGRES_TIMEOUT: 0
       APP_REQUEST_TIMEOUT: 0
+      APP_APDF_S3_UPLOAD_ENABLED: false
     volumes:
       - ./api:/app/api
       - ./docker/api/certs:/app/certs:ro
+      - ./tmp:/tmp
 
   # cms:
   #   build:
