@@ -13,7 +13,7 @@ export default function TabOperators() {
       <OperatorsTable
         key={key}
         title={`Gestion des opérateurs`}
-        id={user?.operator_id ?? null}
+        id={user?.operator_id}
         refresh={refresh}
       />
     </>

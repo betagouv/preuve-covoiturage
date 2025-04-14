@@ -27,25 +27,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(false);
   };
+
   useEffect(() => {
     void checkAuth();
   }, []);
 
-  const onChangeTerritory = (id: number) => {
+  const onChangeTerritory = (id?: number) => {
     if (user) {
-      setUser({ ...user, territory_id: id, operator_id: undefined });
+      setUser({
+        ...user,
+        territory_id: id ?? undefined,
+        operator_id: undefined,
+      });
     }
   };
 
-  const onChangeOperator = (id: number) => {
+  const onChangeOperator = (id?: number) => {
     if (user) {
-      setUser({ ...user, operator_id: id, territory_id: undefined });
+      setUser({
+        ...user,
+        operator_id: id ?? undefined,
+        territory_id: undefined,
+      });
+    }
+  };
+
+  const logout = async () => {
+    const response = await fetch(
+      `${Config.get<string>("auth.domain")}/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
+    if (response.ok) {
+      setIsAuth(false);
+      setUser(undefined);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuth, setIsAuth, user, onChangeTerritory, onChangeOperator }}
+      value={{
+        isAuth,
+        setIsAuth,
+        user,
+        onChangeTerritory,
+        onChangeOperator,
+        logout,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>

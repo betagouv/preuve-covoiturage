@@ -16,7 +16,7 @@ import { z } from "zod";
 
 export default function OperatorsTable(props: {
   title: string;
-  id: number | null;
+  id?: number;
   refresh: () => void;
 }) {
   const { user } = useAuth();
