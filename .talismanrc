@@ -12,3 +12,5 @@ fileignoreconfig:
   checksum: 90e69566513c8096f271bd7a54025c8acd68cf16d0dddd2a68ee2d364ff45fce
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
+- filename: api/src/lib/crypto/index.ts
+  checksum: c677363df9c9ba323377af4a36923587213964e2a50b989e002d29d5972bd49e

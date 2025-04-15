@@ -10,30 +10,23 @@ function _force_keep_bcrypt_worker() {
   return _bcrypt_worker;
 }
 
-export async function bcrypt_hash(
-  plaintext: string,
-  round: number = 10,
-): Promise<string> {
+export async function bcrypt_hash(plaintext: string, round: number = 10): Promise<string> {
   const salt = await genSalt(round);
   return await hash(plaintext, salt);
 }
 
-export async function bcrypt_compare(
-  plaintext: string,
-  hash: string,
-): Promise<boolean> {
+export async function bcrypt_compare(plaintext: string, hash: string): Promise<boolean> {
   return await compare(plaintext, hash);
 }
 
-export async function createSignatory(
-  privateKeyPem: string,
-): Promise<(message: string) => Promise<string>> {
+export async function createSignatory(privateKeyPem: string): Promise<(message: string) => Promise<string>> {
   const pemHeader = "-----BEGIN PRIVATE KEY-----";
   const pemFooter = "-----END PRIVATE KEY-----";
-  const pemContents = privateKeyPem.substring(
-    pemHeader.length,
-    privateKeyPem.length - pemFooter.length - 1,
-  );
+  const pemContents = String(privateKeyPem)
+    .replace(pemHeader, "")
+    .replace(pemFooter, "")
+    .replace(/[\r\n]+/g, "")
+    .replace(/\s+/g, "");
   const privateKeyRaw = decodeBase64(pemContents);
 
   const privateKey = await crypto.subtle.importKey(
