@@ -1,4 +1,7 @@
 version: "1.0"
+scopeconfig:
+  - scope: node
+  - scope: python
 fileignoreconfig:
 - filename: flake.nix
   checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
@@ -13,4 +16,6 @@ fileignoreconfig:
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
 - filename: api/src/lib/crypto/index.ts
-  checksum: c677363df9c9ba323377af4a36923587213964e2a50b989e002d29d5972bd49e
+  allowed_patterns: [key]
+- filename: api/src/pdc/services/policy/providers/PolicyRepositoryProvider.ts
+  allowed_patterns: [key]

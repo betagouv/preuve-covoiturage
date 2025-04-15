@@ -1,9 +1,8 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { toISOString } from "../helpers/index.ts";
-
 import { logger } from "@/lib/logger/index.ts";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
+import { toISOString } from "../helpers/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from "../interfaces/index.ts";
 
 @provider({
@@ -15,10 +14,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(
-    id: number,
-    territoryId?: number,
-  ): Promise<SerializedPolicyInterface | undefined> {
+  async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
     const query = {
       text: `
         SELECT
@@ -45,7 +41,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [id, ...(territoryId ? [territoryId] : [])],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
 
     if (result.rowCount === 0) {
       return undefined;
@@ -54,9 +50,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     return result.rows[0];
   }
 
-  async create(
-    data: Omit<SerializedPolicyInterface, "_id">,
-  ): Promise<SerializedPolicyInterface> {
+  async create(data: Omit<SerializedPolicyInterface, "_id">): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -86,7 +80,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       ],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
@@ -94,9 +88,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     return await this.find(result.rows[0]._id);
   }
 
-  async patch(
-    data: SerializedPolicyInterface,
-  ): Promise<SerializedPolicyInterface> {
+  async patch(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -120,7 +112,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       ],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new NotFoundException(`campaign not found (${data._id})`);
     }
@@ -138,7 +130,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [id],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
       throw new NotFoundException(`Campaign not found (${id})`);
@@ -148,11 +140,12 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   }
 
   async listApplicablePoliciesId(): Promise<number[]> {
-    const results = await this.connection.getClient().query<any>({
+    const results = await this.connection.getClient().query({
       text: "SELECT _id FROM policy.policies WHERE status = $1",
       values: [PolicyStatusEnum.ACTIVE],
     });
-    return results.rows.map((r) => r._id);
+
+    return results.rows.map((r: { _id: number }) => r._id);
   }
 
   async findWhere(search: {
@@ -174,7 +167,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           values.push(search[key]);
           whereClauses.push(`pp.status = $${values.length}`);
           break;
-        case "territory_id":
+        case "territory_id": {
           const tid = search[key];
           if (tid === null) {
             whereClauses.push("pp.territory_id IS NULL");
@@ -188,6 +181,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
             whereClauses.push(`pp.territory_id = $${values.length}::int`);
           }
           break;
+        }
         case "datetime":
           values.push(search[key]);
           whereClauses.push(
@@ -223,7 +217,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       `,
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
     return result.rows;
   }
 
@@ -255,7 +249,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [policy_id],
     };
 
-    const result = await this.connection.getClient().query<any>(query);
+    const result = await this.connection.getClient().query(query);
     return result.rowCount ? result.rows.map((o: { operator_id: number }) => o.operator_id) : [];
   }
 
@@ -274,9 +268,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
     // update the campaign with the sum of validated incentives
     // get the key
-    const resKey = await this.connection.getClient().query<
-      { _id: number; datetime: Date }
-    >({
+    const res = await this.connection.getClient().query<{ _id: number; datetime: Date }>({
       text: `
           SELECT _id, datetime FROM policy.policy_metas
           WHERE policy_id = $1 AND key = $2
@@ -286,19 +278,15 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       values: [campaign_id, key_name],
     });
 
-    if (!resKey.rowCount) {
-      logger.warn(
-        `${pf} ${key_name} key not found for campaign ${campaign_id}`,
-      );
+    if (!res.rowCount) {
+      logger.warn(`${pf} ${key_name} key not found for campaign ${campaign_id}`);
       return;
     }
 
-    const { _id: key_id, datetime } = resKey.rows[0];
+    const { _id: key_id, datetime } = res.rows[0];
 
     // compute incentive_sum
-    const resSum = await this.connection.getClient().query<
-      { incentive_sum: number }
-    >({
+    const resSum = await this.connection.getClient().query<{ incentive_sum: number }>({
       text: `
           WITH latest_incentive AS (
             SELECT MAX(datetime)
@@ -316,9 +304,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     });
 
     if (!resSum.rowCount) {
-      logger.warn(
-        `${pf} Could not calculate incentive sum for campaign ${campaign_id}`,
-      );
+      logger.warn(`${pf} Could not calculate incentive sum for campaign ${campaign_id}`);
       return;
     }
 
@@ -332,17 +318,15 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         `for campaign ${campaign_id}`,
     );
 
-    await this.connection.getClient().query<any>({
+    await this.connection.getClient().query({
       text: `UPDATE policy.policy_metas SET value = $2 WHERE _id = $1`,
       values: [key_id, incentive_sum],
     });
 
     // update incentive_sum in the policy
-    logger.info(
-      `${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`,
-    );
-    await this.connection.getClient().query<any>({
-      text: `UPDATE policy.policies SET incentive_sum = $2 WHERE _id = $1`,
+    logger.info(`${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`);
+    await this.connection.getClient().query({
+      text: `UPDATE policy.policies SET incentive_sum = LEAST(max_amount, $2) WHERE _id = $1`,
       values: [campaign_id, incentive_sum],
     });
   }
@@ -353,7 +337,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
    * For each campaign, check if it is still active and update its status
    */
   async updateAllCampaignStatuses(): Promise<void> {
-    await this.connection.getClient().query<any>({
+    await this.connection.getClient().query({
       text: `
         UPDATE ${this.table} SET status = $1
         WHERE end_date < CURRENT_TIMESTAMP AND status = $2

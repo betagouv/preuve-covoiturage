@@ -18,10 +18,7 @@ export class SyncCommand implements CommandInterface {
 
     // sync incentive sum
     logger.info("Syncing campaign incentive_sum");
-    for (
-      const campaign_id of await this.policyRepository
-        .listApplicablePoliciesId()
-    ) {
+    for (const campaign_id of await this.policyRepository.listApplicablePoliciesId()) {
       await this.policyRepository.syncIncentiveSum(campaign_id);
     }
   }
