@@ -23,11 +23,12 @@ alias start := dev
 alias up := dev
 alias down := stop
 alias l := logs
-alias dc := docker
+alias dc := dc_local
+alias docker := dc_local
 
 # Develop on localhost:*
 [group('docker')]
-dev *services="s3 postgres redis mailer dex proxy":
+dev *services="s3 postgres redis mailer dex":
  just dc_local up --remove-orphans -d {{ services }}
 
 # Flex on *.covoiturage.test
@@ -48,16 +49,6 @@ stop keep_volume="true":
 [group('docker')]
 build:
   just dc_proxy build
-
-# Wrap docker compose
-[group('docker')]
-docker *command:
-  docker compose \
-    -f {{ docker_compose_base_file }} \
-    -f {{ docker_compose_proxy_file }} \
-    -f {{ docker_compose_e2e_file }} \
-    -f {{ docker_compose_dev_file }} \
-    {{ command }}
 
 # Run docker compose dev with a proxy
 [private]
@@ -210,10 +201,10 @@ ci_test_unit: (test-unit)
 
 # CI integration test
 [group('ci')]
-ci_test_integration: ci_test_prehook (docker "exec api just test-integration") ci_test_posthook
+ci_test_integration: ci_test_prehook (dc_e2e "exec api just test-integration") ci_test_posthook
 
 [group('ci')]
-ci_test_e2e: ci_test_prehook (docker "exec api just test-e2e") ci_test_posthook
+ci_test_e2e: ci_test_prehook (dc_e2e "exec api just test-e2e") ci_test_posthook
 
 [private]
 ci_test_prehook:
@@ -225,9 +216,9 @@ ci_test_prehook:
   just wait postgres 5432
   just wait redis 6379
   just wait s3 9000
-  just docker run api just cache
-  just docker run api just cache-migrator
-  just docker run api just seed
+  just dc_e2e run api just cache
+  just dc_e2e run api just cache-migrator
+  just dc_e2e run api just seed
   just dc_e2e up -d proxy api
   just create_bucket "local-pdc-export"
   just create_bucket "local-pdc-appels-de-fonds"

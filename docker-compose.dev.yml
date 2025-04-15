@@ -6,8 +6,7 @@ services:
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
-    # shm_size: 2g
-    # command: ["postgres", "-c", "log_statement=all"]
+    shm_size: 8g
 
   redis:
     ports:
@@ -23,24 +22,28 @@ services:
       context: .
     environment:
       DEBUG: 'api'
+      APP_POSTGRES_TIMEOUT: 0
+      APP_REQUEST_TIMEOUT: 0
+      APP_APDF_S3_UPLOAD_ENABLED: false
     volumes:
       - ./api:/app/api
       - ./docker/api/certs:/app/certs:ro
+      - ./tmp:/tmp
 
-  cms:
-    build:
-      dockerfile: ../docker/cms/Dockerfile
-      context: ./cms
-    volumes:
-      - ./cms/config:/opt/app/config
-      - ./cms/src:/opt/app/src
-      - ./cms/package.json:/opt/package.json
-      - ./cms/package-lock.json:/opt/package-lock.json
-    ports:
-      - "1337:1337"
-    environment:
-      NODE_ENV: dev
-      DATABASE_NAME: local
+  # cms:
+  #   build:
+  #     dockerfile: ../docker/cms/Dockerfile
+  #     context: ./cms
+  #   volumes:
+  #     - ./cms/config:/opt/app/config
+  #     - ./cms/src:/opt/app/src
+  #     - ./cms/package.json:/opt/package.json
+  #     - ./cms/package-lock.json:/opt/package-lock.json
+  #   ports:
+  #     - "1337:1337"
+  #   environment:
+  #     NODE_ENV: dev
+  #     DATABASE_NAME: local
 
   # dashboard:
   #   ports:
