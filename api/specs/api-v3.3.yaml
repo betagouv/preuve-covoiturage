@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Registre de preuve de covoiturage - Documentation technique
-  version: '3.2'
+  version: '3.3'
   termsOfService: 'https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/cgu-conditions-generales-dutilisation'
   contact:
     name: Équipe technique du RPC
@@ -319,7 +319,9 @@ paths:
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
                     type: array
                     items:
-                      $ref: '#/components/schemas/fraudcheck_label'
+                      properties:
+                        label:
+                          $ref: '#/components/schemas/fraudcheck_label'
                   anomaly_error_details:
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
                     type: array
