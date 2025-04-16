@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
+import { NativeCursor, PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
@@ -53,7 +54,7 @@ export class CarpoolRepository {
     incentive_status: IncentiveStatusEnum.Validated,
   };
 
-  constructor(public connection: PostgresConnection) {}
+  constructor(public connection: PostgresConnection, protected config: ConfigInterfaceResolver) {}
 
   /**
    * List carpools for the general exports
@@ -67,7 +68,7 @@ export class CarpoolRepository {
 
     // use a cursor to loop over the entire set of results
     // by chunks of N rows.
-    let cursor: any; // FIXME type PostgresConnection['getCursor'] fails
+    let cursor: NativeCursor<CarpoolListType> | undefined = undefined;
 
     try {
       const total = await this.listCount(params); // total number of rows
@@ -77,25 +78,30 @@ export class CarpoolRepository {
       let count = 0; // number of rows read in the current batch
 
       const text = new CarpoolListQuery().getText(templates);
-      cursor = await this.connection.getCursor<CarpoolListType>(text, values);
+      cursor = await this.connection.getNativeCursor<CarpoolListType>(text, values);
+
       do {
-        const results = await cursor.read(this.batchSize);
-        count = results.length;
+        // const { rows } = await client.queryObject<CarpoolListType>(`FETCH FORWARD ${this.batchSize} FROM mycursor`);
+        const rows = await cursor.read(this.batchSize);
+        count = rows.length;
         done += count;
 
         // pass each line to the file writer
-        for (const row of results) {
+        for (const row of rows) {
           await fileWriter.append(new CarpoolRow<CarpoolListType>(row));
         }
 
         if (progress) await progress(((done / total) * 100) | 0);
       } while (count !== 0);
-
-      cursor && await cursor.release();
-    } catch (e: Error) {
-      logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
-      cursor && await cursor.release();
+    } catch (e) {
+      if (e instanceof Error) {
+        logger.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      } else {
+        logger.error(`[export:CarpoolRepository] Unknown error`, { values });
+      }
       throw e;
+    } finally {
+      cursor && await cursor.release();
     }
   }
 
@@ -131,27 +137,29 @@ export class CarpoolRepository {
    * List carpools with specific filtering for the open data requirements
    */
   public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
-    let cursor: any; // FIXME type PostgresConnection['getCursor'] fails
+    let cursor: NativeCursor<DataGouvListType> | undefined = undefined;
     const query = DataGouvListQuery(params, this.datagouvConfig);
 
     try {
       let count = 0;
-      cursor = await this.connection.getCursor(query.text, query.values);
+      cursor = await this.connection.getNativeCursor(query.text, query.values);
 
       do {
-        const results = await cursor.read(this.batchSize);
-        count = results.length;
-
-        for (const row of results) {
+        const rows = await cursor.read(this.batchSize);
+        count = rows.length;
+        for (const row of rows) {
           await fileWriter.append(new CarpoolRow<DataGouvListType>(row));
         }
       } while (count !== 0);
-
-      cursor && await cursor.release();
-    } catch (e: Error) {
-      logger.error(`[listOpendData] ${e.message}`);
-      cursor && await cursor.release();
+    } catch (e) {
+      if (e instanceof Error) {
+        logger.error(`[dataGouvList] ${e.message}`);
+      } else {
+        logger.error(`[dataGouvList] Unknown error`);
+      }
       throw e;
+    } finally {
+      cursor && await cursor.release();
     }
   }
 

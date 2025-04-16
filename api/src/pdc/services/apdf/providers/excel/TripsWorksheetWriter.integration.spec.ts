@@ -55,11 +55,9 @@ describe.skip("TripsWorksheetWriter", () => {
         exportTripInterface,
       ]);
     });
-    const cursorEndingResult = new Promise<APDFTripInterface[]>(
-      (resolve, reject) => {
-        resolve([]);
-      },
-    );
+    const cursorEndingResult = new Promise<APDFTripInterface[]>((resolve, reject) => {
+      resolve([]);
+    });
     let counter = 20;
     const cursorCallback = (count: number): Promise<APDFTripInterface[]> => {
       if (counter <= 0) {
@@ -73,8 +71,7 @@ describe.skip("TripsWorksheetWriter", () => {
 
     // Act
     const booster_dates = new Set<string>();
-    const workbookWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel
-      .initWorkbookWriter(filepath);
+    const workbookWriter: excel.stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     await dataWorkBookWriter.call(
       { read: cursorCallback, release: async () => {} },
       booster_dates,
@@ -83,12 +80,8 @@ describe.skip("TripsWorksheetWriter", () => {
     await workbookWriter.commit();
 
     // Assert
-    const workbook = await new excel.Workbook().xlsx.readFile(
-      filepath,
-    );
-    const worksheet = workbook?.getWorksheet(
-      dataWorkBookWriter.WORKSHEET_NAME,
-    );
+    const workbook = await new excel.Workbook().xlsx.readFile(filepath);
+    const worksheet = workbook?.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME);
     assertEquals(worksheet?.actualRowCount, 21);
     assertEquals(
       sortRowValues(

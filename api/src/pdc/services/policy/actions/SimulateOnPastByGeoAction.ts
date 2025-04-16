@@ -29,7 +29,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 0 Find related com
     const geoResult: GeoResultInterface = await this.findGeoBySiren(params);
 
@@ -80,7 +80,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     const store = new MetadataStore(new MemoryMetadataRepository());
     do {
       const results = await cursor.next();
-      done = results.done;
+      done = !!results.done;
       if (results.value) {
         for (const carpool of results.value) {
           // 3. For each trip, process stateless and stateful safely

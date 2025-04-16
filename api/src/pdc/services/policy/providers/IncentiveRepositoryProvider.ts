@@ -74,6 +74,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     status?: IncentiveStatusEnum,
   ): Promise<void> {
     const idSet: Set<string> = new Set();
+    const ids: number[] = [];
 
     // get only last incentive for each carpool / policy
     const filteredData = data.reverse().filter((d) => {
@@ -87,7 +88,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     // pick values for the given keys. Override status if defined
     const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] = filteredData.reduce(
-      ([ids, amounts, statuses], i) => {
+      ([ids, amounts, statuses]: [Array<number>, Array<number>, Array<IncentiveStatusEnum>], i) => {
         ids.push(i._id);
         amounts.push(i.statefulAmount);
         statuses.push(status ?? i.status);
@@ -126,7 +127,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [...values],
     };
 
-    await this.connection.getClient().query<any>(query);
+    await this.connection.getClient().query(query);
   }
 
   async *findDraftIncentive(
@@ -134,7 +135,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     batchSize = 100,
     from?: Date,
   ): AsyncGenerator<SerializedIncentiveInterface<number>[], void, void> {
-    const resCount = await this.connection.getClient().query<any>({
+    const resCount = await this.connection.getClient().query({
       text: `
       SELECT
         count(*)
@@ -172,11 +173,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     };
 
-    const cursor = await this.connection.getCursor(query.text, query.values);
-
+    const cursor = await this.connection.getNativeCursor<any>(query.text, query.values);
     let count = 0;
-    do {
-      try {
+
+    try {
+      do {
         const rows = await cursor.read(batchSize);
         count = rows.length;
         if (count > 0) {
@@ -189,15 +190,18 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
             };
           });
         }
-      } catch (e) {
-        await cursor.release();
-        throw e;
+        logger.log({ count });
+      } while (count > 0);
+    } catch (e) {
+      if (e instanceof Error) {
+        logger.error(`[IncentiveRepositoryProvider] ${e.message}`, { from, to });
+      } else {
+        logger.error(`[IncentiveRepositoryProvider] Unknown error`, { from, to });
       }
-      logger.log({ count });
-    } while (count > 0);
-    logger.log("Start release");
-    await cursor.release();
-    logger.log("release done");
+      throw e;
+    } finally {
+      await cursor.release();
+    }
   }
 
   async createOrUpdateMany(

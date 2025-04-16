@@ -1,11 +1,4 @@
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { env } from "@/lib/env/index.ts";
 import { PostgresConnection } from "./PostgresConnection.ts";
 
@@ -24,7 +17,7 @@ describe.skip("PostgresConnection", () => {
   });
 
   it("Cursor 10 entries", async () => {
-    const cursor = await connection.getCursor(
+    const cursor = await connection.getNativeCursor(
       "SELECT * FROM generate_series(1, 20)",
       [],
     );
@@ -40,7 +33,7 @@ describe.skip("PostgresConnection", () => {
 
   it("Cursor loop through all entries", async () => {
     const rowCount = 1000;
-    const cursor = await connection.getCursor(
+    const cursor = await connection.getNativeCursor(
       `SELECT * FROM generate_series(1, ${rowCount})`,
       [],
     );

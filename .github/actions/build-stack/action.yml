@@ -60,7 +60,7 @@ runs:
         APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
       run: |
         just cache-migrator
-        just seed
+        just dc_e2e run --rm api just seed
 
     - name: Run the e2e stack
       working-directory: api

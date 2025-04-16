@@ -17,6 +17,7 @@ import {
   MetadataRepositoryProviderInterfaceResolver,
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
+  StatefulIncentiveInterface,
 } from "../interfaces/index.ts";
 
 // TOFIX ?
@@ -120,8 +121,7 @@ export class FinalizeAction extends AbstractAction {
     params: ParamsInterface,
   ): Promise<DefaultParamsInterface> {
     const tz = params.tz ?? defaultTimezone;
-    const to = castUserStringToUTC(params.to) ||
-      subDaysTz(today(tz), this.config.get("policies.finalize.to"));
+    const to = castUserStringToUTC(params.to) || subDaysTz(today(tz), this.config.get("policies.finalize.to"));
     const from = castUserStringToUTC(params.from) ||
       (await this.incentiveRepository.latestDraft()) ||
       subDaysTz(today(tz), this.config.get("policies.finalize.from"));
@@ -141,39 +141,48 @@ export class FinalizeAction extends AbstractAction {
     let done = false;
     do {
       const bench = new Date().getTime();
-      const updatedIncentives = [];
+      const updatedIncentives: StatefulIncentiveInterface[] = [];
       const results = await cursor.next();
-      done = results.done;
+      done = !!results.done;
+
       if (results.value) {
         for (const incentive of results.value) {
-          // 2. Get policy
-          const policyId = incentive.policy_id;
-          if (!policyMap.has(policyId)) {
-            policyMap.set(
-              policyId,
-              await Policy.import(await this.policyRepository.find(policyId)),
-            );
+          if (!incentive.policy_id) {
+            logger.warn(`[processStatefulPolicies] incentive missing policy_id. Skipping...`);
+            continue;
           }
-          const policy = policyMap.get(policyId);
+
+          // 2. Get policy
+          if (!policyMap.has(incentive.policy_id)) {
+            const res = await this.policyRepository.find(incentive.policy_id);
+            if (!res) {
+              logger.warn(`[processStatefulPolicies] policy ${incentive.policy_id} not found. Skipping...`);
+              continue;
+            }
+
+            policyMap.set(incentive.policy_id, await Policy.import(res));
+          }
+
+          const policy = policyMap.get(incentive.policy_id);
+
+          if (!policy) {
+            logger.warn(`[processStatefulPolicies] policy ${incentive.policy_id} not found in map. Skipping...`);
+            continue;
+          }
 
           // 3. Process stateful rule
-          updatedIncentives.push(
-            await policy.processStateful(store, incentive),
-          );
+          updatedIncentives.push(await policy.processStateful(store, incentive));
         }
       }
 
       // 4. Update incentives
-      await this.incentiveRepository.updateStatefulAmount(
-        updatedIncentives,
-        IncentiveStatusEnum.Pending,
-      );
+      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Pending);
+
       const duration = new Date().getTime() - bench;
       const len = updatedIncentives.length;
       const rate = ((len / duration) * 1000).toFixed(3);
-      logger.debug(
-        `[campaign:finalize] ${len} incentives done in ${duration}ms (${rate}/s)`,
-      );
+
+      logger.debug(`[campaign:finalize] ${len} incentives done in ${duration}ms (${rate}/s)`);
     } while (!done);
 
     // 5. Persist meta

@@ -1,5 +1,6 @@
 import { afterEach, assertEquals, beforeEach, describe, it, sinon } from "@/dev_deps.ts";
 import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { PolicyStatsInterface } from "@/pdc/services/apdf/contracts/interfaces/PolicySliceStatInterface.ts";
 import { PolicyStatusEnum } from "@/pdc/services/policy/contracts/common/interfaces/PolicyInterface.ts";
@@ -60,6 +61,12 @@ describe("BuildExcel", () => {
     createSlicesSheetToWorkbook,
     nameProvider,
   );
+  const cursorCallback: NativeCursor<unknown[]> = {
+    read: async (_rowCount?: number) => {
+      return [];
+    },
+    release: async () => {},
+  };
 
   beforeEach(() => {
     workbookWriterStub = sinon
@@ -101,7 +108,6 @@ describe("BuildExcel", () => {
 
   it("BuildExcel: should call stream data and create slice then return excel filepath", async () => {
     // Arrange
-    const cursorCallback = () => {};
     getPolicyCursorStub!.returns(cursorCallback);
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);
@@ -172,7 +178,6 @@ describe("BuildExcel", () => {
 
   it("BuildExcel: should call stream data and return filepath even if create slice error occurs", async () => {
     // Arrange
-    const cursorCallback = () => {};
     getPolicyCursorStub!.returns(cursorCallback);
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);
@@ -245,7 +250,6 @@ describe("BuildExcel", () => {
     // Arrange
     campaign = { ...campaign!, params: { slices: [] } };
 
-    const cursorCallback = () => {};
     getPolicyCursorStub!.returns(cursorCallback);
     filenameStub!.returns(filename);
     filepathStub!.returns(filepath);

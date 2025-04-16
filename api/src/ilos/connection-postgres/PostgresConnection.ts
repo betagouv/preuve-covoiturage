@@ -1,9 +1,15 @@
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "@/ilos/common/index.ts";
 import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { uuid } from "@/pdc/providers/test/helpers.ts";
 import type { PoolConfig } from "dep:pg";
 import pg from "dep:pg";
-import Cursor, { CursorQueryConfig } from "dep:pg-cursor";
+import { Client } from "dep:postgres";
+
+export type NativeCursor<T> = {
+  read: (rowCount?: number) => Promise<T[]>;
+  release: () => Promise<void>;
+};
 
 export enum PgPoolStatus {
   UP = "UP",
@@ -109,19 +115,23 @@ export class PostgresConnection implements ConnectionInterface<PgPool>, InitHook
     return this.pool;
   }
 
-  async getCursor<T = unknown>(
-    text: string,
-    values: unknown[],
-    config: CursorQueryConfig | undefined = undefined,
-  ): Promise<{ read: Cursor["read"]; release: () => Promise<void> }> {
-    const client = await this.pool.connect();
-    const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
+  async getNativeCursor<T>(text: string, values: unknown[]): Promise<NativeCursor<T>> {
+    const cursor = `cursor-${uuid()}`.replace(/[-]/g, "_");
+
+    const client = new Client(this.pgUrl);
+    await client.connect();
+    await client.queryArray("BEGIN");
+    await client.queryArray(`DECLARE ${cursor} CURSOR FOR ${text}`, values);
 
     return {
-      read: cursor.read.bind(cursor),
-      async release() {
-        await cursor.close();
-        client.release();
+      read: async (rowCount: number = 100) => {
+        const { rows } = await client.queryObject<T>(`FETCH FORWARD ${rowCount} FROM ${cursor}`);
+        return rows;
+      },
+      release: async () => {
+        await client.queryArray(`CLOSE ${cursor}`);
+        await client.queryArray("COMMIT");
+        await client.end();
       },
     };
   }
