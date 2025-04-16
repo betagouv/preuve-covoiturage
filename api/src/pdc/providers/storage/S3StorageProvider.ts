@@ -93,10 +93,8 @@ export class S3StorageProvider implements ProviderInterface {
       key = `${folder}/${key}`;
     }
 
-    const params = {
-      ...options,
-      bucketName: getBucketName(bucket, options.prefix),
-    };
+    const bucketName = getBucketName(bucket);
+    const params = { ...options, bucketName };
 
     try {
       await client.putObject(key, rs.readable, params);
@@ -104,7 +102,11 @@ export class S3StorageProvider implements ProviderInterface {
     } catch (e) {
       // rs is closed by the putObject as the stream is consumed
       // do not call rs.close() or you get a Bad Resource ID error.
-      logger.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
+      if (e instanceof Error) {
+        logger.error(`S3StorageProvider Error: ${e.message} (${bucketName}/${key})`);
+      } else {
+        logger.error(`S3StorageProvider Error: Unknown error (${filepath})`);
+      }
       throw e;
     }
   }
@@ -133,7 +135,11 @@ export class S3StorageProvider implements ProviderInterface {
       });
       return url;
     } catch (e) {
-      logger.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
+      if (e instanceof Error) {
+        logger.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
+      } else {
+        logger.error(`S3StorageProvider Error: Unknown error (${filekey})`);
+      }
 
       throw e;
     }

@@ -92,7 +92,7 @@ export class FileCreatorService {
 
       return this.fileWriter.path;
     } catch (e) {
-      logger.error("FileCreatorService", e.message);
+      logger.error("FileCreatorService", (e as Error).message);
       await this.fileWriter.close();
       throw e;
     }

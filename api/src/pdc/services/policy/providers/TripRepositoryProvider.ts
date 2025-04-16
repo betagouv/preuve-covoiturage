@@ -1,17 +1,12 @@
 import { provider } from "@/ilos/common/index.ts";
 import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import {
-  CarpoolInterface,
-  PolicyInterface,
-  TripRepositoryProviderInterfaceResolver,
-} from "../interfaces/index.ts";
+import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,
 })
-export class TripRepositoryProvider
-  implements TripRepositoryProviderInterfaceResolver {
+export class TripRepositoryProvider implements TripRepositoryProviderInterfaceResolver {
   public readonly table = "carpool_v2.carpools";
   public readonly geoTable = "carpool_v2.geo";
   public readonly statusTable = "carpool_v2.status";
@@ -125,24 +120,27 @@ export class TripRepositoryProvider
     query: { text: string; values: (number | Date | string[])[] },
     batchSize: number,
   ): AsyncGenerator<CarpoolInterface[], void, void> {
-    const cursor = await this.connection.getCursor(query.text, query.values);
+    const cursor = await this.connection.getNativeCursor<CarpoolInterface>(query.text, query.values);
     let count = 0;
-    do {
-      try {
+
+    try {
+      do {
         const rows = await cursor.read(batchSize);
         count = rows.length;
         if (count > 0) {
           yield rows;
         }
-      } catch (e) {
-        await cursor.release();
-        logger.error(e.message);
+      } while (count > 0);
+    } catch (e) {
+      if (e instanceof Error) {
+        logger.error(`[queryAndYieldRows] ${e.message}`);
         logger.debug(e.stack);
-        throw e;
+      } else {
+        logger.error("[queryAndYieldRows] An unknown error occurred");
       }
-    } while (count > 0);
-
-    // done
-    await cursor.release();
+      throw e;
+    } finally {
+      await cursor.release();
+    }
   }
 }

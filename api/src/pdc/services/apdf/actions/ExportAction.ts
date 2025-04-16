@@ -101,8 +101,12 @@ export class ExportAction extends Action {
               }
 
               files.push(file);
-            } catch (_e) {
+            } catch (e) {
               const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
+              if (e instanceof Error) {
+                logger.error(e.message);
+              }
+
               logger.error(message);
               files.push(message);
             }

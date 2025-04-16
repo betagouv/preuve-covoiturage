@@ -1,7 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.ts";
-import { PgCursorHandler } from "@/shared/common/PromisifiedPgCursor.ts";
 import excel from "dep:excel";
 import { normalize } from "../../helpers/normalizeAPDFData.helper.ts";
 import { APDFTripInterface } from "../../interfaces/APDFTripInterface.ts";
@@ -35,7 +35,7 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   ].map((header) => ({ header, key: header }));
 
   async call(
-    cursor: PgCursorHandler<APDFTripInterface>,
+    cursor: NativeCursor<APDFTripInterface>,
     config: ExcelCampaignConfig,
     workbookWriter: excel.stream.xlsx.WorkbookWriter,
   ): Promise<void> {
@@ -84,17 +84,15 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     };
 
     const b1 = new Date();
-    let results: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);
-    while (results.length > 0) {
-      results.forEach((t) => t && worksheet.addRow(normalize(t, config)).commit());
-      results = await cursor.read(this.CURSOR_BATCH_SIZE);
+
+    let rows: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);
+    while (rows.length > 0) {
+      rows.forEach((t) => t && worksheet.addRow(normalize(t, config)).commit());
+      rows = await cursor.read(this.CURSOR_BATCH_SIZE);
     }
 
     const b2 = new Date();
-    await cursor.release();
     logger.debug(`[apdf:export] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
-
     worksheet.commit();
-    return;
   }
 }
