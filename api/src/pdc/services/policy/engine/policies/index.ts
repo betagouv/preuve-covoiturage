@@ -38,6 +38,7 @@ import { CCPOA202410 } from "@/pdc/services/policy/engine/policies/20241015_CCPO
 import { GrandChatellerault2025 } from "@/pdc/services/policy/engine/policies/20250101_GrandChatellerault.ts";
 import { GrandPoitiers2025 } from "@/pdc/services/policy/engine/policies/20250101_GrandPoitiers2025.ts";
 import { LaRochelle2025 } from "@/pdc/services/policy/engine/policies/20250101_LaRochelle.ts";
+import { PaysBasque2025 } from "@/pdc/services/policy/engine/policies/20250101_PaysBasqueAdour.ts";
 import { PMGFxATMB2025 } from "@/pdc/services/policy/engine/policies/20250101_PMGFxATMB.ts";
 import { PolicyTemplateOne } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateOne.ts";
 import { PolicyTemplateThree } from "@/pdc/services/policy/engine/policies/unbound/PolicyTemplateThree.ts";
@@ -71,6 +72,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     NantesMetropoleXPCovoitan2021,
     Occitanie20232024,
     PaysBasque20232024,
+    PaysBasque2025,
     PaysDeLaLoire2021,
     PaysDeLaLoire2023,
     PaysDeLaLoire2024,
@@ -84,6 +86,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PolicyTemplateOne,
     PolicyTemplateThree,
     PolicyTemplateTwo,
+    Rennes2025,
     SiouleLimagne,
     SMT2022,
     SMT2023,
@@ -91,6 +94,5 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     SMTC2024Passenger,
     TerresTouloises2024,
     Vitre2023,
-    Rennes2025,
   ].map((h) => [h.id, h]),
 );
