@@ -45,6 +45,9 @@ services:
       APP_DASHBOARD_URL: https://app.covoiturage.test
       DEX_REDIRECT_URL: https://api.covoiturage.test/auth/callback
     command: ["just", "serve-unsafe"]
+    volumes:
+      - ./api:/app/api
+      - ./tmp:/tmp
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`api.covoiturage.test`)'

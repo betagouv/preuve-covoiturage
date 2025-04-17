@@ -27,7 +27,6 @@ services:
       APP_APDF_S3_UPLOAD_ENABLED: false
     volumes:
       - ./api:/app/api
-      - ./docker/api/certs:/app/certs:ro
       - ./tmp:/tmp
 
   # cms:
