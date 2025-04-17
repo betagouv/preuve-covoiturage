@@ -19,29 +19,18 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from "@/pdc/services/policy/interfaces/index.ts";
-import { description } from "./20230401_PaysBasqueAdour.html.ts";
+import { description } from "./20250101_PaysBasqueAdour.html.ts";
 
 // Pays Basque Adour
-export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
+export const PaysBasque2025: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler
   implements PolicyHandlerInterface {
-  static readonly id = "pays_basque_2023";
+  static readonly id = "pays_basque_2025";
 
   protected operators: TimestampedOperators = [
     {
-      date: new Date("2023-04-01T00:00:00+0200"),
+      date: new Date("2025-01-01T00:00:00+0100"),
       operators: [
-        OperatorsEnum.KLAXIT,
-        OperatorsEnum.MOBICOOP,
         OperatorsEnum.BLABLACAR_DAILY,
-        OperatorsEnum.KAROS,
-      ],
-    },
-    {
-      date: new Date("2024-01-01T00:00:00+0100"),
-      operators: [
-        OperatorsEnum.KLAXIT,
-        OperatorsEnum.BLABLACAR_DAILY,
-        OperatorsEnum.KAROS,
       ],
     },
   ];
@@ -63,19 +52,19 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends Ab
     super();
     this.limits = [
       [
-        "A34719E4-DCA0-78E6-38E4-701631B106C2",
+        "EFC711F0-AE64-42EB-AE54-A5E0A12455A9",
         6,
         watchForPersonMaxTripByDay,
         LimitTargetEnum.Driver,
       ],
       [
-        "ECDE3CD4-96FF-C9D2-BA88-45754205A798",
+        "143876F7-24D1-4573-8A08-C3B1500D1E4E",
         100_00,
         watchForPersonMaxAmountByMonth,
         LimitTargetEnum.Driver,
       ],
       [
-        "B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F",
+        "42CAE6A4-48C7-4D37-AC67-A7C967888BF6",
         this.max_amount,
         watchForGlobalMaxAmount,
       ],
@@ -89,7 +78,7 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends Ab
     );
     onDistanceRangeOrThrow(ctx, {
       min: 5_000,
-      max: this.applyRuleChangeFor2024(ctx) ? 80_000 : 100_000,
+      max: 80_000,
     });
     isOperatorClassOrThrow(ctx, ["C"]);
     isAdultOrThrow(ctx);
@@ -123,9 +112,5 @@ export const PaysBasque20232024: PolicyHandlerStaticInterface = class extends Ab
 
   describe(): string {
     return description;
-  }
-
-  private applyRuleChangeFor2024(ctx: StatelessContextInterface) {
-    return ctx.carpool.datetime >= this.operators[1].date;
   }
 };

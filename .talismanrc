@@ -15,7 +15,11 @@ fileignoreconfig:
   checksum: 90e69566513c8096f271bd7a54025c8acd68cf16d0dddd2a68ee2d364ff45fce
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
+- filename: api/src/pdc/services/policy/engine/policies/20250101_PaysBasqueAdour.html.ts
+  checksum: c0319e0f776970063c353fc54d7d526f10eccecfb684e23dbd0b08d7e3d423e1
 - filename: api/src/lib/crypto/index.ts
   allowed_patterns: [key]
 - filename: api/src/pdc/services/policy/providers/PolicyRepositoryProvider.ts
   allowed_patterns: [key]
+- filename: api/src/pdc/services/policy/engine/policies/*.ts
+  allowed_patterns: [key,uuid,driver,passenger]
