@@ -15,6 +15,11 @@ services:
   mailer:
     ports:
       - 8025:8025
+      - 1025:1025
+
+  dex:
+    ports:
+      - 8090:8090
 
   api:
     build:
