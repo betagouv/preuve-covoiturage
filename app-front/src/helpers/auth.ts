@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import { Config } from "../config";
+import { AuthContextProps } from "../interfaces/providersInterface";
 
 export const generateNonce = () => {
   return crypto.randomBytes(16).toString("hex");
@@ -63,4 +65,11 @@ export const labelType = (type: string) => {
     default:
       return type;
   }
+};
+
+export const getUserSession = async () => {
+  const response = await fetch(`${Config.get<string>("auth.domain")}/auth/me`, {
+    credentials: "include",
+  });
+  return (await response.json()) as AuthContextProps["user"];
 };

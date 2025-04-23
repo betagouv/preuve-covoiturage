@@ -16,7 +16,7 @@ export function AuthButton() {
   };
   const authLogout = async () => {
     await logout();
-    router.push("/");
+    router.push(`${Config.get<string>("auth.domain")}/auth/logout`);
   };
 
   return (
