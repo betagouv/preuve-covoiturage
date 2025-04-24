@@ -308,6 +308,10 @@ deno *filepath:
     -f {{ docker_compose_proxy_file }} \
     run api deno run {{ deno_flags }} --unsafely-ignore-certificate-errors {{ filepath }}
 
+[group('development')]
+serve-debug:
+  just api --inspect http \$PORT
+
 # Start the HTTP API server on port $PORT
 [group('development')]
 serve:
