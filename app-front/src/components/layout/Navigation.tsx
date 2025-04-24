@@ -15,7 +15,7 @@ export default function Navigation() {
             "aria-label": "Activité",
           },
           text: "Activité",
-          isActive: pathname === "/activite",
+          isActive: pathname.startsWith("/activite"),
         },
         {
           linkProps: {
@@ -24,7 +24,7 @@ export default function Navigation() {
             "aria-label": "Administration",
           },
           text: "Administration",
-          isActive: pathname === "/administration",
+          isActive: pathname.startsWith("/administration"),
         },
       ]
     : [];
