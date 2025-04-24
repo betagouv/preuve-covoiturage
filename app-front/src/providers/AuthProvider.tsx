@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data: AuthContextProps["user"] = await response.json();
-    if (data?.role !== "anonymous") {
+    if (data?.role && data?.role !== "anonymous") {
       setIsAuth(true);
       setUser(data);
     } else {
@@ -53,17 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    const response = await fetch(
-      `${Config.get<string>("auth.domain")}/logout`,
-      {
-        method: "POST",
-        credentials: "include",
-      },
-    );
-    if (response.ok) {
-      setIsAuth(false);
-      setUser(undefined);
-    }
+    setIsAuth(false);
+    setUser(undefined);
   };
 
   return (
