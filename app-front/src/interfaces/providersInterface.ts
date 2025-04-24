@@ -3,6 +3,7 @@ export interface AuthContextProps {
   setIsAuth: (newIsAuth: boolean) => void;
   user?: {
     email: string;
+    name?: string;
     role: string;
     permissions: Array<string>;
     operator_id?: number;

@@ -33,7 +33,7 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       await this.getConfig();
     }
     const redirect_uri = this.config.get("proconnect.redirect_url");
-    const scope = "openid email siret";
+    const scope = "openid email siret given_name usual_name";
 
     let state = client.randomState();
     const nonce = client.randomNonce();
@@ -71,20 +71,22 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       await this.getConfig();
     }
     const userInfo = await client.fetchUserInfo(this.clientConfig!, accessToken, sub);
-    return await this.getLocalUser(userInfo.email!, userInfo.siret! as string);
+    return await this.getLocalUser(userInfo.email!, userInfo.siret! as string, userInfo.given_name, userInfo.usual_name as string);
   }
 
-  protected async getLocalUser(email: string, siret: string) {
+  protected async getLocalUser(email: string, siret: string, given_name?: string, family_name?: string) {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user || (user.siret !== siret && user.role !== "registry.admin")) {
       return {
         email: email,
         role: "anonymous",
         permissions: [],
+        ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
       };
     }
     return {
       ...user,
+      ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
       permissions: this.config.get(`permissions.${user.role}.permissions`, []),
     };
   }
