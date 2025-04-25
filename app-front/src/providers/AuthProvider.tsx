@@ -2,12 +2,14 @@
 import { type AuthContextProps } from "@/interfaces/providersInterface";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from "../config";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState<AuthContextProps["user"]>();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const checkAuth = async () => {
     const response = await fetch(
@@ -31,6 +33,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (!loading && isAuth) {
+      router.push("/activite");
+    }
+  }, [loading, isAuth]);
 
   const onChangeTerritory = (id?: number) => {
     if (user) {
