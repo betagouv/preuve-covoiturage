@@ -1,8 +1,8 @@
 "use client";
 import { type AuthContextProps } from "@/interfaces/providersInterface";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Config } from "../config";
-import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -34,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void checkAuth();
   }, []);
 
+  // Redirect to default /activite page after login
   useEffect(() => {
     if (!loading && isAuth) {
       router.push("/activite");
