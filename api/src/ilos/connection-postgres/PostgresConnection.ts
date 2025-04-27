@@ -1,7 +1,7 @@
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "@/ilos/common/index.ts";
 import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { uuid } from "@/pdc/providers/test/helpers.ts";
+import { v4 } from "@/lib/uuid/index.ts";
 import type { PoolConfig } from "dep:pg";
 import pg from "dep:pg";
 import { Client } from "dep:postgres";
@@ -116,7 +116,7 @@ export class PostgresConnection implements ConnectionInterface<PgPool>, InitHook
   }
 
   async getNativeCursor<T>(text: string, values: unknown[]): Promise<NativeCursor<T>> {
-    const cursor = `cursor-${uuid()}`.replace(/[-]/g, "_");
+    const cursor = `cursor-${v4()}`.replace(/[-]/g, "_");
 
     const client = new Client(this.pgUrl);
     await client.connect();
