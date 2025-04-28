@@ -82,10 +82,15 @@ export class ExportParams {
     const { geo_selector } = this.params;
     if (!geo_selector) return "";
     const start = Object.keys(geo_selector)
-      .reduce((p, type) => {
+      .filter((key) => {
+        const type = key as keyof TerritorySelectorsInterface;
+        return geo_selector[type] && geo_selector[type].length > 0;
+      })
+      .reduce((p, key) => {
         // join all codes per type
+        const type = key as keyof TerritorySelectorsInterface;
         const local: string[] = [];
-        geo_selector[type].forEach((code: string) => {
+        (geo_selector[type] || []).forEach((code: string) => {
           local.push(`gps.${type} = '${code}'`);
         });
 
@@ -96,7 +101,7 @@ export class ExportParams {
         return p;
       }, [] as string[]).join(" OR ");
 
-    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))`;
+    return start.length ? `AND ((${start}) ${mode} (${start.replace(/gps\./g, "gpe.")}))` : "";
   }
 
   /**
