@@ -3,7 +3,7 @@ import { env } from "@/lib/env/index.ts";
 import { PostgresConnection } from "./PostgresConnection.ts";
 
 // FIXME : failing because missing clearTimer in Cursor lib
-describe.skip("PostgresConnection", () => {
+describe("PostgresConnection", () => {
   const connection = new PostgresConnection({
     connectionString: env("APP_POSTGRES_URL"),
   });
