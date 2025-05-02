@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { CarpoolLabel } from "../interfaces/database/label.ts";
 
@@ -10,7 +10,7 @@ export class CarpoolLabelRepository {
   readonly anomalyTable = "anomaly.labels";
   readonly termsTable = "carpool_v2.terms_violation_error_labels";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async findTermsByOperatorJourneyId(
     operator_id: number,

@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, handler } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -16,7 +16,7 @@ import { MatviewItem } from "../interfaces/StatsRefreshInterfaces.ts";
 })
 export class StatsRefreshAction extends AbstractAction {
   constructor(
-    protected pg: PostgresConnection,
+    protected pg: LegacyPostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {
     super();

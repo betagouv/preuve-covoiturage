@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { toISOString } from "../helpers/index.ts";
@@ -12,7 +12,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   public readonly table = "policy.policies";
   public readonly getTerritorySelectorFn = "territory.get_selector_by_territory_id";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
     const query = {

@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { get } from "@/lib/object/index.ts";
 import { PaginationParamsInterface } from "@/shared/common/interfaces/PaginationParamsInterface.ts";
@@ -52,7 +52,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     END as group`;
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {
     this.defaultLimit = config.get("pagination.defaultLimit", 10);

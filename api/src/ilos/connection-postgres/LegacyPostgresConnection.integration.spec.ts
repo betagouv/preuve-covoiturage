@@ -1,10 +1,10 @@
 import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { env } from "@/lib/env/index.ts";
-import { PostgresConnection } from "./PostgresConnection.ts";
+import { LegacyPostgresConnection } from "./LegacyPostgresConnection.ts";
 
 // FIXME : failing because missing clearTimer in Cursor lib
-describe("PostgresConnection", () => {
-  const connection = new PostgresConnection({
+describe("LegacyPostgresConnection", () => {
+  const connection = new LegacyPostgresConnection({
     connectionString: env("APP_POSTGRES_URL"),
   });
 

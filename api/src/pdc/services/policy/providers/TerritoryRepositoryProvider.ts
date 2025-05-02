@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
   TerritoryCodeEnum,
@@ -12,20 +12,16 @@ import {
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
-export class TerritoryRepositoryProvider
-  implements TerritoryRepositoryProviderInterface {
-  protected readonly getTerritorySelectorFn =
-    "territory.get_selector_by_territory_id";
+export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
+  protected readonly getTerritorySelectorFn = "territory.get_selector_by_territory_id";
   protected readonly getByPointFunction = "geo.get_latest_by_point";
-  protected readonly getBySelectorFunction =
-    "policy.get_territory_id_by_selector";
+  protected readonly getBySelectorFunction = "policy.get_territory_id_by_selector";
   protected readonly territoryGroupTable = "territory.territory_group";
-  protected readonly territorySelectorTable =
-    "territory.territory_group_selector";
+  protected readonly territorySelectorTable = "territory.territory_group_selector";
   protected readonly operatorTable = "operator.operators";
   protected readonly companyTable = "company.companies";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async findByPoint(
     { lon, lat }: { lon: number; lat: number },
@@ -91,8 +87,7 @@ export class TerritoryRepositoryProvider
     data: Partial<TerritoryCodeInterface>,
   ): Promise<number[]> {
     const result = await this.connection.getClient().query<any>({
-      text:
-        `SELECT _id FROM ${this.getBySelectorFunction}($1::varchar, $2::varchar)`,
+      text: `SELECT _id FROM ${this.getBySelectorFunction}($1::varchar, $2::varchar)`,
       values: [
         data[TerritoryCodeEnum.Arr] || data[TerritoryCodeEnum.City],
         data[TerritoryCodeEnum.Mobility],

@@ -7,7 +7,7 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { ConfiguredMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import { NextFunction } from "dep:express";
@@ -24,7 +24,7 @@ interface ParamsInterface extends ParamsType {
 
 @middleware()
 export class ScopeToGroupMiddleware implements MiddlewareInterface {
-  constructor(public connection: PostgresConnection) {}
+  constructor(public connection: LegacyPostgresConnection) {}
 
   async process(
     initialParams: Partial<ParamsInterface>,

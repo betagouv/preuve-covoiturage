@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkIndicParam, checkTerritoryParam } from "@/pdc/services/observatory/helpers/checkParams.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
@@ -28,7 +28,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   };
   private readonly perim_table = "geo.perimeters";
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async getOccupation(
     params: OccupationParamsInterface,

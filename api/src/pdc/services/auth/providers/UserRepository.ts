@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 
 @provider()
@@ -7,10 +7,10 @@ export class UserRepository {
   public readonly table = "auth.users";
   public readonly territoryTable = "territory.territory_group";
   public readonly operatorTable = "operator.operators";
-  public readonly companyTable = "company.companies" 
+  public readonly companyTable = "company.companies";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
   ) {}
 
   async findUserByEmail(email: string) {

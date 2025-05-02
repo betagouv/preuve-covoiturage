@@ -1,6 +1,6 @@
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import {
   CarpoolGeoRepository,
@@ -44,7 +44,7 @@ export class AcquisitionMigrateCommand implements CommandInterface {
     protected geo: CarpoolGeoRepository,
     protected carpool: CarpoolRepository,
     protected request: CarpoolRequestRepository,
-    protected pg: PostgresConnection,
+    protected pg: LegacyPostgresConnection,
   ) {}
 
   public async call(options): Promise<string> {

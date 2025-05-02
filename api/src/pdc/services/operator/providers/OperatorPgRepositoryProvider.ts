@@ -1,5 +1,5 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { Buffer } from "dep:buffer";
 import { signature as companyFetchSignature } from "../../company/contracts/fetch.contract.ts";
 import {
@@ -22,7 +22,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   public readonly table = "operator.operators";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected kernel: KernelInterfaceResolver,
   ) {}
 

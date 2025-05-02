@@ -1,4 +1,4 @@
-import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
 import { PolicyStatsInterface } from "../contracts/interfaces/PolicySliceStatInterface.ts";
 import { APDFTripInterface } from "./APDFTripInterface.ts";

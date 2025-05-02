@@ -1,22 +1,15 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 
-import {
-  MetadataRepositoryProviderInterfaceResolver,
-  SerializedStoredMetadataInterface,
-} from "../interfaces/index.ts";
+import { MetadataRepositoryProviderInterfaceResolver, SerializedStoredMetadataInterface } from "../interfaces/index.ts";
 
 @provider({
   identifier: MetadataRepositoryProviderInterfaceResolver,
 })
-export class MetadataRepositoryProvider
-  implements MetadataRepositoryProviderInterfaceResolver {
+export class MetadataRepositoryProvider implements MetadataRepositoryProviderInterfaceResolver {
   public readonly table = "policy.policy_metas";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   protected async getSingle(
     client: PoolClient,
@@ -27,9 +20,7 @@ export class MetadataRepositoryProvider
     const res = await client.query<any>({
       text: `
         SELECT datetime, policy_id, key, value FROM ${this.table}
-        WHERE policy_id = $1 AND key = $2 ${
-        datetime ? "AND datetime <= $3" : ""
-      }
+        WHERE policy_id = $1 AND key = $2 ${datetime ? "AND datetime <= $3" : ""}
         ORDER BY datetime DESC, updated_at DESC
         LIMIT 1
       `,
@@ -59,17 +50,16 @@ export class MetadataRepositoryProvider
   }
 
   async set(data: SerializedStoredMetadataInterface[]): Promise<void> {
-    const values: [Array<number>, Array<string>, Array<number>, Array<Date>] =
-      data.reduce(
-        ([policyIds, keys, values, dates], i) => {
-          policyIds.push(i.policy_id);
-          keys.push(i.key);
-          values.push(i.value);
-          dates.push(i.datetime);
-          return [policyIds, keys, values, dates];
-        },
-        [[], [], [], []],
-      );
+    const values: [Array<number>, Array<string>, Array<number>, Array<Date>] = data.reduce(
+      ([policyIds, keys, values, dates], i) => {
+        policyIds.push(i.policy_id);
+        keys.push(i.key);
+        values.push(i.value);
+        dates.push(i.datetime);
+        return [policyIds, keys, values, dates];
+      },
+      [[], [], [], []],
+    );
 
     const query = {
       text: `

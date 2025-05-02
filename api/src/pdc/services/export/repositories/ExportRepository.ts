@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
@@ -176,7 +176,7 @@ export class ExportRepository {
   protected readonly recipientsTable = "export.recipients";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected logger: LogServiceInterfaceResolver,
   ) {}
 

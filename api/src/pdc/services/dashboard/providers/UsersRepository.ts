@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   CreateUserDataInterface,
@@ -20,7 +20,7 @@ import {
 export class UsersRepository implements UsersRepositoryInterface {
   private readonly table = "auth.users";
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async getUsers(
     params: UsersParamsInterface,

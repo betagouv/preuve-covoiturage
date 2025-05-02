@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.ts";
 import excel from "dep:excel";

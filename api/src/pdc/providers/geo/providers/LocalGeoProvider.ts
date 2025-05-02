@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
 
@@ -9,7 +9,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
   protected fb = "geo.get_closest_country";
   protected fbclose = "geo.get_closest_com";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lat, lon } = geo;

@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
@@ -16,7 +16,7 @@ export class IncentiveCampaignsRepositoryProvider implements IncentiveCampaignsR
   private readonly table = "observatoire_stats.incentive_campaigns";
   private readonly perim_table = "geo_stats.perimeters_aggregate";
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async getCampaigns(
     params: CampaignsParamsInterface,

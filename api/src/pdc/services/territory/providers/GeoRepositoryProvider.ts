@@ -1,5 +1,5 @@
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   ResultInterface as AllGeoResultInterface,
   SingleResultInterface as GeoResultInterface,
@@ -30,7 +30,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   public readonly getMillesimeFunction = "geo.get_latest_millesime";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected kernel: KernelInterfaceResolver,
   ) {}
 

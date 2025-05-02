@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
 import {
@@ -15,7 +15,7 @@ import {
 export class InfraRepositoryProvider implements InfraRepositoryInterface {
   private readonly table = "observatory.aires_covoiturage";
   private readonly perim_table = "geo.perimeters";
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async getAiresCovoiturage(
     params: AiresCovoiturageParamsInterface,

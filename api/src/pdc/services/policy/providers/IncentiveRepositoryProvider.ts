@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { logger } from "@/lib/logger/index.ts";
 import {
@@ -18,7 +18,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   public readonly carpoolTable = "carpool_v2.carpools";
   public readonly carpoolStatusTable = "carpool_v2.status";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async disableOnExcludedCarpool(from: Date, to: Date): Promise<void> {
     const query = {

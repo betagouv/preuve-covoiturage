@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { SelectableCarpool, SelectableCarpoolStatus } from "../interfaces/database/lookup.ts";
 import { Id, Uuid } from "../interfaces/index.ts";
@@ -10,7 +10,7 @@ export class CarpoolLookupRepository {
   readonly statusTable = "carpool_v2.status";
   readonly incentiveTable = "carpool_v2.operator_incentives";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   public async countJourneyBy(selectors: {
     identity_key: string[];

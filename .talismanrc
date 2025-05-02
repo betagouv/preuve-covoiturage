@@ -19,7 +19,7 @@ fileignoreconfig:
   allowed_patterns: [pass]
 - filename: api/src/lib/crypto/index.ts
   allowed_patterns: [key]
-- filename: api/src/pdc/services/policy/providers/PolicyRepositoryProvider.ts
+- filename: api/src/pdc/services/policy/providers/*.ts
   allowed_patterns: [key]
 - filename: api/src/pdc/services/policy/engine/policies/*.ts
   allowed_patterns: [key,uuid,driver,passenger]

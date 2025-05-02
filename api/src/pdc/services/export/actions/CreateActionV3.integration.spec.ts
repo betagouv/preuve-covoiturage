@@ -15,7 +15,7 @@
  */
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
 import { User, users } from "@/pdc/providers/migration/seeds/users.ts";
 import {
@@ -81,7 +81,7 @@ describe("CreateAction V3", () => {
 
   type UserWithId = User & { _id: number };
   const adminUser: UserWithId = { _id: 1, ...users[0] };
-  const maxiCovoitAdmin : UserWithId = { _id: 4, ...users[3] };
+  const maxiCovoitAdmin: UserWithId = { _id: 4, ...users[3] };
 
   /**
    * - boot up postgresql connection
@@ -92,10 +92,10 @@ describe("CreateAction V3", () => {
   beforeAll(async () => {
     db = await dbBefore();
     kc = await kernelBefore();
-    await kc.kernel.getContainer().get(PostgresConnection).down();
+    await kc.kernel.getContainer().get(LegacyPostgresConnection).down();
     kc.kernel
       .getContainer()
-      .rebind(PostgresConnection)
+      .rebind(LegacyPostgresConnection)
       .toConstantValue(db.connection);
     fetchExports = fetcher(db);
   });

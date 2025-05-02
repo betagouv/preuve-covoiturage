@@ -5,7 +5,7 @@ import {
   NewableType,
   ServiceContainerInterface,
 } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Kernel as AbstractKernel } from "@/ilos/framework/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
@@ -43,7 +43,7 @@ export function makeKernelCtor(
     children: [...serviceProviderCtor],
     providers: [
       [RedisConnection, new RedisConnection(connections.redis)],
-      [PostgresConnection, new PostgresConnection(connections.postgres)],
+      [LegacyPostgresConnection, new LegacyPostgresConnection(connections.postgres)],
     ],
   })
   class Kernel extends AbstractKernel {}
