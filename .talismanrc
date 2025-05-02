@@ -6,7 +6,7 @@ fileignoreconfig:
 - filename: flake.nix
   checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
 - filename: api/deno.lock
-  checksum: abec215d26eee49fcab25e0f263ae0a0c9607c0815e6ab103b3bd6040c68c17e
+  checksum: a206360877a4d1a865563a3089a8b40d0f7377c5019c5b5a320708dd9b991ba1
 - filename: api/src/pdc/services/cee/config/signature.ts
   checksum: bc1b5afcb79fb043a259ffe7cccd6e7d805c5d43ef0430d1fc73809de9adf0fc
 - filename: docker/dex/config-local.yaml
@@ -31,3 +31,5 @@ fileignoreconfig:
     - "\"rev\": \"[0-9a-f]{40}\""
 - filename: notebooks/cerema/pdll2025.ipynb
   checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
+- filename: api/src/ilos/connection-postgres/DenoPostgresConnection.ts
+  allowed_patterns: [username,password]
