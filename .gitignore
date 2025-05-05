@@ -17,6 +17,7 @@ tmp
 
 # notebooks
 notebooks/scripts/playground
+.ipynb_checkpoints/
 
 # python
 *.pyc

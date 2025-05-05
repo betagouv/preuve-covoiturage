@@ -23,3 +23,11 @@ fileignoreconfig:
   allowed_patterns: [key]
 - filename: api/src/pdc/services/policy/engine/policies/*.ts
   allowed_patterns: [key,uuid,driver,passenger]
+- filename: notebooks/cerema/*.sql
+  ignore_detectors: [filename]
+- filename: notebooks/cerema/flake.lock
+  allowed_patterns:
+    - "sha256-.*"
+    - "\"rev\": \"[0-9a-f]{40}\""
+- filename: notebooks/cerema/pdll2025.ipynb
+  checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
