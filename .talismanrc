@@ -33,3 +33,5 @@ fileignoreconfig:
   checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
 - filename: api/src/ilos/connection-postgres/DenoPostgresConnection.ts
   allowed_patterns: [username,password]
+- filename: api/src/config/connections.ts
+  checksum: 99684b0d35a2e1b670f72f259b468c1996da9a9df00f2f3123f70982a95f7ab7

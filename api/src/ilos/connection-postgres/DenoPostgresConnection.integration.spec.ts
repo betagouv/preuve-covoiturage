@@ -5,6 +5,14 @@ import { ClientOptions, PostgresError, TransactionError } from "dep:postgres";
 import { DenoPostgresConnection } from "./DenoPostgresConnection.ts";
 
 describe("DenoPostgresConnection - connection", () => {
+  // Restore the original CA when done
+  // as manipulating the env variables impacts the whole process.
+  const originalCA = Deno.env.get("APP_POSTGRES_CA");
+  afterAll(() => {
+    if (originalCA) Deno.env.set("APP_POSTGRES_CA", originalCA);
+    else Deno.env.delete("APP_POSTGRES_CA");
+  });
+
   async function testConnection(params?: string | ClientOptions | undefined) {
     const connection = new DenoPostgresConnection(params);
     await connection.up();

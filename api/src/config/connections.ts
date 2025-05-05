@@ -51,9 +51,12 @@ const postgresTls = {
   ...tlsSetup("key", "APP_POSTGRES_KEY"),
 };
 
+const connectionString = env_or_fail("APP_POSTGRES_URL");
+const { hostname } = new URL(env_or_fail("APP_POSTGRES_URL"));
+
 export const postgres = {
-  connectionString: env_or_fail("APP_POSTGRES_URL"),
+  connectionString,
   // FIXME: add host is a workarround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
-  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env_or_fail("APP_POSTGRES_HOST") } } : {}),
+  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: hostname } } : {}),
 };
