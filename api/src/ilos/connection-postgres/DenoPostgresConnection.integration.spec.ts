@@ -98,43 +98,43 @@ describe("DenoPostgresConnection - debug levels", () => {
     Deno.env.set("APP_POSTGRES_DEBUG", "queries");
     let connection = new DenoPostgresConnection();
     assert(typeof connection.poolConfig.controls!.debug === "object");
-    assert(connection.poolConfig.controls!.debug!.queries === true);
-    assert(connection.poolConfig.controls!.debug!.notices === false);
-    assert(connection.poolConfig.controls!.debug!.results === false);
-    assert(connection.poolConfig.controls!.debug!.queryInError === false);
+    assert(connection.poolConfig.controls!.debug!.queries as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.notices as boolean === false);
+    assert(connection.poolConfig.controls!.debug!.results as boolean === false);
+    assert(connection.poolConfig.controls!.debug!.queryInError as boolean === false);
 
     // Set the debug level to notices
     Deno.env.set("APP_POSTGRES_DEBUG", "notices");
     connection = new DenoPostgresConnection();
     assert(typeof connection.poolConfig.controls!.debug === "object");
-    assert(connection.poolConfig.controls!.debug!.queries === false);
-    assert(connection.poolConfig.controls!.debug!.notices === true);
-    assert(connection.poolConfig.controls!.debug!.results === false);
-    assert(connection.poolConfig.controls!.debug!.queryInError === false);
+    assert(connection.poolConfig.controls!.debug!.queries as boolean === false);
+    assert(connection.poolConfig.controls!.debug!.notices as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.results as boolean === false);
+    assert(connection.poolConfig.controls!.debug!.queryInError as boolean === false);
 
     // Set the debug level to notices and results
     Deno.env.set("APP_POSTGRES_DEBUG", "notices,results");
     connection = new DenoPostgresConnection();
     assert(typeof connection.poolConfig.controls!.debug === "object");
-    assert(connection.poolConfig.controls!.debug!.queries === false);
-    assert(connection.poolConfig.controls!.debug!.notices === true);
-    assert(connection.poolConfig.controls!.debug!.results === true);
-    assert(connection.poolConfig.controls!.debug!.queryInError === false);
-
-    // Set the debug level to all
-    Deno.env.set("APP_POSTGRES_DEBUG", "all");
-    connection = new DenoPostgresConnection();
-    assert(typeof connection.poolConfig.controls!.debug === "boolean");
-    assert(connection.poolConfig.controls!.debug);
+    assert(connection.poolConfig.controls!.debug!.queries as boolean === false);
+    assert(connection.poolConfig.controls!.debug!.notices as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.results as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.queryInError as boolean === false);
 
     // Set the debug level to queries,notices,results,queryInError in uppercase with pipe separator
     Deno.env.set("APP_POSTGRES_DEBUG", "QUERIES|NOTICES|RESULTS|QUERYINERROR");
     connection = new DenoPostgresConnection();
     assert(typeof connection.poolConfig.controls!.debug === "object");
-    assert(connection.poolConfig.controls!.debug!.queries === true);
-    assert(connection.poolConfig.controls!.debug!.notices === true);
-    assert(connection.poolConfig.controls!.debug!.results === true);
-    assert(connection.poolConfig.controls!.debug!.queryInError === true);
+    assert(connection.poolConfig.controls!.debug!.queries as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.notices as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.results as boolean === true);
+    assert(connection.poolConfig.controls!.debug!.queryInError as boolean === true);
+
+    // Set the debug level to all
+    Deno.env.set("APP_POSTGRES_DEBUG", "all");
+    connection = new DenoPostgresConnection();
+    assert(typeof connection.poolConfig.controls!.debug === "boolean");
+    assert(connection.poolConfig.controls!.debug as boolean === true);
   });
 });
 
