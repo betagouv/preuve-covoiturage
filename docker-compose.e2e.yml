@@ -11,6 +11,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      APP_POSTGRES_HOST: postgres
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
       APIE2E_API_URL: https://api.covoiturage.test
