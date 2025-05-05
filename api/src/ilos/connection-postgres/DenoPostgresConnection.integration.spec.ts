@@ -1,7 +1,7 @@
 import { afterAll, assert, beforeAll, describe, it } from "@/dev_deps.ts";
 import { env } from "@/lib/env/index.ts";
 import sql from "@/lib/pg/sql.ts";
-import { ClientOptions, TransactionError } from "dep:postgres";
+import { ClientOptions, PostgresError, TransactionError } from "dep:postgres";
 import { DenoPostgresConnection } from "./DenoPostgresConnection.ts";
 
 describe("DenoPostgresConnection - connection", () => {
@@ -129,12 +129,14 @@ describe("DenoPostgresConnection - debug levels", () => {
 });
 
 describe("DenoPostgresConnection - query helpers", () => {
+  // Force insecure connection to bypass the missing certificate
+  Deno.env.set("APP_POSTGRES_INSECURE", "true");
+  Deno.env.delete("APP_POSTGRES_DEBUG");
+
   const connection = new DenoPostgresConnection();
   const query = sql`SELECT * FROM generate_series(1, 10)`;
 
   beforeAll(async () => {
-    Deno.env.set("APP_POSTGRES_INSECURE", "true");
-    Deno.env.delete("APP_POSTGRES_DEBUG");
     await connection.up();
   });
 
@@ -150,7 +152,7 @@ describe("DenoPostgresConnection - query helpers", () => {
   });
 
   it("should use queryArray", async () => {
-    const results = await connection.queryArray<{ generate_series: number }>(query);
+    const results = await connection.queryArray<[number]>(query);
     assert(results.length === 10);
     assert(results[0][0] === 1);
     assert(results[9][0] === 10);
@@ -165,12 +167,13 @@ describe("DenoPostgresConnection - query helpers", () => {
 });
 
 describe("DenoPostgresConnection - transaction", () => {
+  // Force insecure connection to bypass the missing certificate
+  Deno.env.set("APP_POSTGRES_INSECURE", "true");
+  Deno.env.delete("APP_POSTGRES_DEBUG");
+
   const connection = new DenoPostgresConnection();
-  const query = sql`SELECT 'yes' AS answer`;
 
   beforeAll(async () => {
-    Deno.env.set("APP_POSTGRES_INSECURE", "true");
-    Deno.env.delete("APP_POSTGRES_DEBUG");
     await connection.up();
     await connection.query(sql`CREATE TABLE IF NOT EXISTS test_transaction (id SERIAL PRIMARY KEY)`);
   });
@@ -203,7 +206,7 @@ describe("DenoPostgresConnection - transaction", () => {
     assert(rows.length === 0);
   });
 
-  it("should use a read_only transaction by default", async () => {
+  it("should crash on insert if read_only", async () => {
     using client = await connection.pool.connect();
     const id = DenoPostgresConnection.id();
 
@@ -215,6 +218,48 @@ describe("DenoPostgresConnection - transaction", () => {
     } catch (e) {
       assert(e instanceof TransactionError);
       assert(e.message.includes(`The transaction "${id}" has been aborted`));
+    }
+  });
+});
+
+describe("DenoPostgresConnection - cursor", () => {
+  // Force insecure connection to bypass the missing certificate
+  Deno.env.set("APP_POSTGRES_INSECURE", "true");
+  const connection = new DenoPostgresConnection();
+
+  beforeAll(async () => {
+    await connection.up();
+    await connection.query(sql`CREATE TABLE IF NOT EXISTS test_cursor (id SERIAL PRIMARY KEY)`);
+    await connection.query(sql`TRUNCATE TABLE test_cursor`);
+    await connection.query(sql`INSERT INTO test_cursor (id) SELECT generate_series AS id FROM generate_series(1, 100)`);
+  });
+
+  afterAll(async () => {
+    await connection.query(sql`DROP TABLE IF EXISTS test_cursor`);
+    await connection.down();
+  });
+
+  it("should use cursor AsyncIterator", async () => {
+    await using cursor = await connection.cursor<{ id: number }>(sql`SELECT * FROM test_cursor ORDER BY id`);
+
+    // concat all rows in a big array
+    const results = [] as { id: number }[];
+    for await (const rows of cursor.read(10)) {
+      assert(rows.length === 10);
+      results.push(...rows);
+    }
+
+    assert(results.length === 100);
+    assert(results[0].id === 1);
+    assert(results[99].id === 100);
+  });
+
+  it("should handle SQL errors in cursor", async () => {
+    try {
+      await using _cursor = await connection.cursor<{ id: number }>(sql`SELECT blop`);
+    } catch (e) {
+      assert(e instanceof PostgresError);
+      assert(e.message.includes('"blop" does not exist'));
     }
   });
 });

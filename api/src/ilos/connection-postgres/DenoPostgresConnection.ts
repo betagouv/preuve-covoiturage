@@ -2,10 +2,11 @@ import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "@/
 import { env_or_default, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { Sql } from "@/lib/pg/sql.ts";
-import { ClientOptions, Pool, TransactionOptions } from "dep:postgres";
+import { ClientOptions, Pool } from "dep:postgres";
 import { array, assert, boolean, number, object, pattern, refine, string, union } from "dep:superstruct";
 
 export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
+  #id = DenoPostgresConnection.id("pool");
   #pool: Pool | null = null;
   #poolSize = 3;
   #poolLazy = false;
@@ -14,8 +15,8 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
   /**
    * Generate a unique transaction name
    */
-  static id(prefix: "transaction" | "cursor" = "transaction"): string {
-    return `${prefix}-${new Date().getTime()}-${Math.random().toString(36).slice(2)}`.toLowerCase();
+  static id(prefix: "transaction" | "cursor" | "pool" = "transaction"): string {
+    return `${prefix}_${new Date().getTime()}_${Math.random().toString(36).slice(2)}`.toLowerCase();
   }
 
   constructor(params?: string | ClientOptions | undefined) {
@@ -33,7 +34,7 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
     }
 
     if (forceInsecure) {
-      console.warn("APP_POSTGRES_INSECURE is set, using insecure connection");
+      logger.warn("APP_POSTGRES_INSECURE is set, using insecure connection");
     }
 
     /**
@@ -80,6 +81,10 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
       },
       ...config,
     });
+  }
+
+  get id(): string {
+    return this.#id;
   }
 
   get pool(): Pool {
@@ -172,36 +177,40 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
     return this.#wrap<TResult>(sql, "object");
   }
 
-  async cursor<TResult>(sql: Sql, transactionConfig: TransactionOptions = {}): Promise<{
-    read: (rowCount?: number) => Promise<TResult[]>;
+  async cursor<TResult>(sql: Sql): Promise<{
+    read: (rowCount?: number) => AsyncGenerator<TResult[]>;
     [Symbol.asyncDispose]: () => Promise<void>;
   }> {
+    const transactionName = DenoPostgresConnection.id("transaction");
     using client = await this.#pool!.connect();
 
-    // Create a transaction
-    const transaction = client.createTransaction(DenoPostgresConnection.id(), {
-      isolation_level: "read_committed",
-      read_only: true,
-      ...transactionConfig,
-    });
-    await transaction.begin();
+    try {
+      // Create a transaction manually as client.createTransaction() fails with cursors
+      await client.queryArray(`BEGIN`);
+      await client.queryArray(`SAVEPOINT ${transactionName}`);
 
-    // Create a cursor
-    const cursorName = DenoPostgresConnection.id("cursor");
-    await transaction.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.sql}`, sql.values);
+      // Create a cursor
+      const cursorName = DenoPostgresConnection.id("cursor");
+      await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.sql}`, sql.values);
 
-    return {
-      read: async (rowCount: number = 100): Promise<TResult[]> => {
-        const { rows } = await transaction.queryObject<TResult>(`FETCH FORWARD ${rowCount} FROM ${cursorName}`);
-        return rows;
-      },
-      [Symbol.asyncDispose]: async () => {
-        await transaction.queryArray(`CLOSE ${cursorName}`);
-
-        // The transaction has been rolled back on SQL errors, we can safely commit
-        await transaction.commit();
-      },
-    };
+      return {
+        read: async function* (rowCount: number = 100): AsyncGenerator<TResult[]> {
+          let rows: TResult[] = [];
+          do {
+            ({ rows } = await client.queryObject<TResult>(`FETCH FORWARD ${rowCount} FROM ${cursorName}`));
+            if (rows.length) yield rows;
+          } while (rows.length);
+        },
+        [Symbol.asyncDispose]: async () => {
+          await client.queryArray(`CLOSE ${cursorName}`);
+          await client.queryArray(`COMMIT`);
+        },
+      };
+    } catch (e) {
+      e instanceof Error && logger.error(`[pg] cursor error ${e.message}`);
+      await client.queryArray(`ROLLBACK TO ${transactionName}`);
+      throw e;
+    }
   }
 
   async #wrap<TResult>(sql: Sql, format: "array" | "object"): Promise<TResult[]> {
@@ -209,19 +218,20 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
     using client = await this.#pool!.connect();
 
     // Create a transaction
-    // The transaction is rolled back on SQL errors but stays open on JS errors
-    // hence the need to use a try/catch block
-    const transaction = client.createTransaction(DenoPostgresConnection.id());
+    const transactionName = DenoPostgresConnection.id();
 
     try {
-      await transaction.begin();
+      await client.queryArray(`BEGIN`);
+      await client.queryArray(`SAVEPOINT ${transactionName}`);
+
       const result = format === "object"
-        ? await transaction.queryObject<TResult>({ text: sql.sql, args: sql.values })
-        : await transaction.queryArray({ text: sql.sql, args: sql.values }); // FIXME type queryArray !
-      await transaction.commit();
+        ? await client.queryObject<TResult>({ text: sql.sql, args: sql.values })
+        : await client.queryArray({ text: sql.sql, args: sql.values }); // FIXME type queryArray !
+
+      await client.queryArray(`COMMIT`);
       return result.rows as TResult[];
     } catch (e) {
-      transaction && await transaction.rollback();
+      await client.queryArray(`ROLLBACK TO ${transactionName}`);
       e instanceof Error && logger.error("[pg] transaction error", e.message);
       throw e;
     }
