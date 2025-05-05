@@ -63,6 +63,8 @@ describe("DenoPostgresConnection - connection", () => {
         await connection.up();
         assert(false, "Should have thrown an error");
       } catch (_e) {
+        assert(_e instanceof Error);
+      } finally {
         connection && await connection.down();
       }
     } catch (e) {
