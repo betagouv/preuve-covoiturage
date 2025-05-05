@@ -9,22 +9,22 @@ import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { useEffect, useState } from "react";
 
 export default function TabProfil() {
-  const { user, onChangeTerritory, onChangeOperator } = useAuth();
-  const toggleDefault = () => {
-    return user?.role === "registry.admin" &&
-      (user?.territory_id !== null || user?.operator_id !== null)
-      ? true
-      : false;
-  };
-  const [toggleValue, setToggleValue] = useState(toggleDefault());
+  const {
+    user,
+    simulatedRole,
+    onChangeSimulatedRole,
+    onChangeTerritory,
+    onChangeOperator,
+  } = useAuth();
   const [radioValue, setRadioValue] = useState<"operator" | "territory">(
     "territory",
   );
+
   useEffect(() => {
-    if (toggleValue === false) {
+    if (simulatedRole === false) {
       onChangeTerritory();
     }
-  }, [toggleValue]);
+  }, [simulatedRole]);
 
   return (
     <>
@@ -51,12 +51,12 @@ export default function TabProfil() {
             <>
               <ToggleSwitch
                 label="S'identifier en tant qu'opérateur ou territoire"
-                checked={toggleValue}
+                checked={simulatedRole}
                 onChange={() => {
-                  setToggleValue(!toggleValue);
+                  onChangeSimulatedRole();
                 }}
               />
-              {toggleValue && (
+              {simulatedRole && (
                 <>
                   <RadioButtons
                     legend="S'identifier en tant que :"

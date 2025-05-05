@@ -35,12 +35,27 @@ export const labelRole = (role: string) => {
 };
 
 export const enumRoles = [
+  "anonymous",
   "registry.admin",
   "territory.user",
   "territory.admin",
   "operator.user",
   "operator.admin",
 ] as const;
+
+export const getRolesList = (role: (typeof enumRoles)[number]) => {
+  const group = role.split(".")[0];
+  switch (group) {
+    case "registry":
+      return enumRoles;
+    case "territory":
+      return enumRoles.filter((r) => r.startsWith("territory"));
+    case "operator":
+      return enumRoles.filter((r) => r.startsWith("operator"));
+    default:
+      return [];
+  }
+};
 
 export const enumTypes = [
   "town",

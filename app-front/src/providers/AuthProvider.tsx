@@ -8,6 +8,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState<AuthContextProps["user"]>();
+  const [simulatedRole, setSimulatedRole] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -60,6 +61,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     }
   };
+  const onChangeSimulatedRole = () => {
+    setSimulatedRole((prev) => !prev);
+  };
 
   const logout = async () => {
     setIsAuth(false);
@@ -72,8 +76,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuth,
         setIsAuth,
         user,
+        simulatedRole,
         onChangeTerritory,
         onChangeOperator,
+        onChangeSimulatedRole,
         logout,
       }}
     >

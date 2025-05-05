@@ -3,7 +3,7 @@
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
-import { enumRoles, labelRole } from "@/helpers/auth";
+import { enumRoles, getRolesList, labelRole } from "@/helpers/auth";
 import { useActionsModal } from "@/hooks/useActionsModal";
 import { useApi } from "@/hooks/useApi";
 import {
@@ -227,57 +227,63 @@ export default function UsersTable(props: {
                     ),
                 }}
               >
-                <option value="" disabled hidden>
-                  Selectionnez un rôle
-                </option>
-                {enumRoles?.map((r: string, i: number) => (
+                {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
+                {getRolesList(user?.role!).map((r: string, i: number) => (
                   <option key={i} value={r}>
                     {labelRole(r)}
                   </option>
                 ))}
               </Select>
-              <Select
-                label="Opérateur"
-                nativeSelectProps={{
-                  value: (modal.currentRow.operator_id as number) ?? undefined,
-                  onChange: (e) =>
-                    modal.validateInputChange(
-                      formSchema,
-                      "operator_id",
-                      e.target.value,
-                    ),
-                }}
-              >
-                <option value="" disabled hidden>
-                  Selectionnez un opérateur
-                </option>
-                {operatorsList?.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.name}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                label="Territoire"
-                nativeSelectProps={{
-                  value: (modal.currentRow.territory_id as number) ?? undefined,
-                  onChange: (e) =>
-                    modal.validateInputChange(
-                      formSchema,
-                      "territory_id",
-                      e.target.value,
-                    ),
-                }}
-              >
-                <option value="" disabled hidden>
-                  Selectionnez un territoire
-                </option>
-                {territoriesList?.map((t) => (
-                  <option key={t._id} value={t._id}>
-                    {t.name}
-                  </option>
-                ))}
-              </Select>
+              {((user?.role === "registry.admin" &&
+                !user?.operator_id &&
+                !user?.territory_id) ||
+                user?.operator_id) && (
+                <Select
+                  label="Opérateur"
+                  nativeSelectProps={{
+                    value:
+                      (modal.currentRow.operator_id as number) ?? undefined,
+                    onChange: (e) =>
+                      modal.validateInputChange(
+                        formSchema,
+                        "operator_id",
+                        e.target.value,
+                      ),
+                  }}
+                >
+                  <option value={undefined}>aucun</option>
+                  {operatorsList?.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name}
+                    </option>
+                  ))}
+                </Select>
+              )}
+              {((user?.role === "registry.admin" &&
+                !user?.operator_id &&
+                !user?.territory_id) ||
+                user?.territory_id) && (
+                <Select
+                  label="Territoire"
+                  nativeSelectProps={{
+                    value:
+                      (modal.currentRow.territory_id as number) ?? undefined,
+                    onChange: (e) =>
+                      modal.validateInputChange(
+                        formSchema,
+                        "territory_id",
+                        e.target.value,
+                      ),
+                  }}
+                >
+                  <option value={undefined}>aucun</option>
+                  {territoriesList?.map((t) => (
+                    <option key={t._id} value={t._id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Select>
+              )}
             </>
           )}
           {modal.typeModal === "delete" &&
