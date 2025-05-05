@@ -86,7 +86,7 @@ jobs:
         uses: ./.github/actions/build-stack
       - name: Run integration tests
         working-directory: api
-        run: deno test --quiet --no-check -A --unsafely-ignore-certificate-errors --parallel '**/*.integration.spec.ts'
+        run: deno test --quiet --no-check -A --unsafely-ignore-certificate-errors '**/*.integration.spec.ts'
         env:
           APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
           APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
