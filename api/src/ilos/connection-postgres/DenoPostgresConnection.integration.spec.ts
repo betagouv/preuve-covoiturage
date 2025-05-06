@@ -1,4 +1,5 @@
 import { afterAll, assert, beforeAll, describe, it } from "@/dev_deps.ts";
+import { env } from "@/lib/env/index.ts";
 import sql from "@/lib/pg/sql.ts";
 import { ClientOptions, PostgresError, TransactionError } from "dep:postgres";
 import { DenoPostgresConnection } from "./DenoPostgresConnection.ts";
@@ -39,23 +40,23 @@ describe("DenoPostgresConnection - connection", () => {
     await testConnection(env("APP_POSTGRES_URL"));
   });
 
-  // it("should crash on missing certificate without forcing insecure", async () => {
-  //   // Remove the insecure connection
-  //   Deno.env.delete("APP_POSTGRES_CA");
-  //   Deno.env.delete("APP_POSTGRES_INSECURE");
+  it("should crash on missing certificate without forcing insecure", async () => {
+    // Remove the insecure connection
+    Deno.env.delete("APP_POSTGRES_CA");
+    Deno.env.delete("APP_POSTGRES_INSECURE");
 
-  //   let connection: DenoPostgresConnection | null = null;
-  //   try {
-  //     connection = new DenoPostgresConnection();
-  //     await connection.up();
-  //     assert(false, "Should have thrown an error");
-  //   } catch (e) {
-  //     assert(e instanceof Error);
-  //     assert(e.message.includes("APP_POSTGRES_CA or APP_POSTGRES_INSECURE must be set"));
-  //   } finally {
-  //     connection && await connection.down();
-  //   }
-  // });
+    let connection: DenoPostgresConnection | null = null;
+    try {
+      connection = new DenoPostgresConnection();
+      await connection.up();
+      assert(false, "Should have thrown an error");
+    } catch (e) {
+      assert(e instanceof Error);
+      assert(e.message.includes("APP_POSTGRES_CA or APP_POSTGRES_INSECURE must be set"));
+    } finally {
+      connection && await connection.down();
+    }
+  });
 
   // it("should crash on rogue certificate", async () => {
   //   try {
