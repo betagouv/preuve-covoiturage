@@ -30,10 +30,10 @@ export function AuthButton() {
               href: "/administration",
             }}
           >
-            <>
+            <div style={{ display: "block" }}>
               <div>{user?.name}</div>
               <div>{labelRole(user?.role ?? "")}</div>
-            </>
+            </div>
           </Button>
           <Button
             priority="primary"
