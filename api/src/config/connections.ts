@@ -54,9 +54,12 @@ const postgresTls = {
 const connectionString = env_or_fail("APP_POSTGRES_URL");
 const { hostname } = new URL(env_or_fail("APP_POSTGRES_URL"));
 
+// wrap the hostname in brackets if it contains a port for IPV6 support
+const sslHost = hostname.includes(":") ? `[${hostname}]` : hostname;
+
 export const postgres = {
   connectionString,
-  // FIXME: add host is a workarround to fix this issue
+  // FIXME: add host is a workaround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
-  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: hostname } } : {}),
+  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: sslHost } } : {}),
 };
