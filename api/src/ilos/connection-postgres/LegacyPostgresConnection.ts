@@ -66,7 +66,7 @@ export class PgPool extends pg.Pool {
   }
 }
 
-export class PostgresConnection implements ConnectionInterface<PgPool>, InitHookInterface, DestroyHookInterface {
+export class LegacyPostgresConnection implements ConnectionInterface<PgPool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
   private database: string = "";
   protected pool: PgPool;

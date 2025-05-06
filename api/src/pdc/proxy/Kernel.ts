@@ -6,7 +6,7 @@ import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ListCommand } from "@/pdc/proxy/commands/ListCommand.ts";
 import { AuthServiceProvider } from "@/pdc/services/auth/AuthServiceProvider.ts";
 import { MonitoringServiceProvider } from "@/pdc/services/monitoring/MonitoringServiceProvider.ts";
-import { PostgresConnection } from "../../ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "../../ilos/connection-postgres/index.ts";
 import { AcquisitionServiceProvider } from "../services/acquisition/AcquisitionServiceProvider.ts";
 import { APDFServiceProvider } from "../services/apdf/APDFServiceProvider.ts";
 import { ApplicationServiceProvider } from "../services/application/ApplicationServiceProvider.ts";
@@ -50,7 +50,7 @@ import { config } from "./config/index.ts";
     SentryProvider,
     TokenProvider,
     [RedisConnection, new RedisConnection(config.connections.redis)],
-    [PostgresConnection, new PostgresConnection(config.connections.postgres)],
+    [LegacyPostgresConnection, new LegacyPostgresConnection(config.connections.postgres)],
   ],
 })
 export class Kernel extends BaseKernel {}

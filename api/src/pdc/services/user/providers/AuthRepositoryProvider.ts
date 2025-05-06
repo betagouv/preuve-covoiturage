@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { bcrypt_compare, bcrypt_hash } from "@/lib/crypto/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
@@ -23,7 +23,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   public readonly INVITED_STATUS = "invited";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     private config: ConfigInterfaceResolver,
   ) {}
 

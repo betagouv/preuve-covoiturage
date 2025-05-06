@@ -1,5 +1,5 @@
 import { command, CommandInterface } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
@@ -60,7 +60,7 @@ export class SeedUsersCommand implements CommandInterface {
       throw new Error("Cannot seed users in this environment");
     }
 
-    const pgConnection = new PostgresConnection({
+    const pgConnection = new LegacyPostgresConnection({
       connectionString: options.databaseUri,
     });
     await pgConnection.up();

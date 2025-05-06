@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { OperatorJourneyId } from "../../../services/cee/contracts/common/CeeApplicationInterface.ts";
@@ -12,7 +12,7 @@ export class CarpoolStatusRepository {
   readonly carpoolTable = "carpool_v2.carpools";
   readonly termsViolationErrorLabelTable = "carpool_v2.terms_violation_error_labels";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   public async saveAcquisitionStatus(data: InsertableCarpoolAcquisitionStatus, client?: PoolClient): Promise<void> {
     await this.setStatus(data.carpool_id, "acquisition", data.status, client);

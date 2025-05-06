@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
   CompanyRepositoryProviderInterface,
@@ -11,11 +11,10 @@ import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.t
 @provider({
   identifier: CompanyRepositoryProviderInterfaceResolver,
 })
-export class CompanyRepositoryProvider
-  implements CompanyRepositoryProviderInterface {
+export class CompanyRepositoryProvider implements CompanyRepositoryProviderInterface {
   public readonly table = "company.companies";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async findById(id: number): Promise<CompanyInterface> {
     const query = {

@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/Decorators.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CarpoolLabel, CarpoolStatus } from "../interfaces/database/label.ts";
 import { CarpoolLabelRepository } from "../repositories/CarpoolLabelRepository.ts";
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
@@ -7,7 +7,7 @@ import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository
 @provider()
 export class CarpoolStatusService {
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected statusRepository: CarpoolStatusRepository,
     protected labelRepository: CarpoolLabelRepository,
   ) {}

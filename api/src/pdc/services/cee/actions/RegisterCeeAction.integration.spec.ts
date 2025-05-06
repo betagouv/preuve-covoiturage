@@ -1,6 +1,6 @@
 import { afterAll, assertEquals, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { createSignatory } from "@/lib/crypto/index.ts";
 import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import {
@@ -66,12 +66,12 @@ describe("RegisterCeeAction", () => {
 
     // close the existing Postgres connection as the rebind does
     // not call the destroy hook.
-    await kernel.kernel.getContainer().get(PostgresConnection).down();
+    await kernel.kernel.getContainer().get(LegacyPostgresConnection).down();
 
     // set the test connection to let it access seeded data
     kernel.kernel
       .getContainer()
-      .rebind(PostgresConnection)
+      .rebind(LegacyPostgresConnection)
       .toConstantValue(db.connection);
 
     const private_key = config.signature.private_key as string;

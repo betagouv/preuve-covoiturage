@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
 
@@ -15,7 +15,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
   public readonly getComFunction = "territory.get_com_by_territory_id";
   public readonly getMillesimeFunction = "geo.get_latest_millesime";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async *findTripByGeo(
     coms: string[],

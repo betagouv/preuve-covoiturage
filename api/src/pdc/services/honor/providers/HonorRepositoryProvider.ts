@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import {
   DataSetInterface,
@@ -34,7 +34,7 @@ export abstract class HonorRepositoryInterfaceResolver implements HonorRepositor
 export class HonorRepositoryProvider implements HonorRepositoryInterface {
   private readonly table = "honor.tracking";
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async stats(params: StatsParamsInterface): Promise<StatsResultInterface> {
     // substring from 11 for days

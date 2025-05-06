@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql from "@/lib/pg/sql.ts";
 import {
   CarpoolInterface,
@@ -18,7 +18,7 @@ import {
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   /**
    * Find all carpools for an identity on a given period of time

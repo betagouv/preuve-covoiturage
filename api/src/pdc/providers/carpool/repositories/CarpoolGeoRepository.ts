@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
@@ -10,7 +10,7 @@ export class CarpoolGeoRepository {
   readonly table = "carpool_v2.geo";
   readonly carpoolTable = "carpool_v2.carpools";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async findOne(carpool_id: Id, client?: PoolClient): Promise<CarpoolGeo | null> {
     const cl = client ?? (await this.connection.getClient().connect());

@@ -1,5 +1,5 @@
 import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   CarpoolAcquisitionService,
   CarpoolGeoRepository,
@@ -66,10 +66,10 @@ describe("Operator patches a journey", () => {
   beforeAll(async () => {
     db = await dbBefore();
     kc = await kernelBefore();
-    await kc.kernel.getContainer().get(PostgresConnection).down();
+    await kc.kernel.getContainer().get(LegacyPostgresConnection).down();
     kc.kernel
       .getContainer()
-      .rebind(PostgresConnection)
+      .rebind(LegacyPostgresConnection)
       .toConstantValue(db.connection);
 
     geoProvider = new GeoProvider(

@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 export type Recipient = {
   _id: number;
@@ -30,7 +30,7 @@ export abstract class RecipientRepositoryInterfaceResolver {
 export class RecipientRepository {
   protected readonly table = "export.recipients";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   public async create(data: CreateRecipientData): Promise<number> {
     const { rows } = await this.connection.getClient().query<any>({

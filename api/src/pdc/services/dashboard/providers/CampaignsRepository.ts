@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
@@ -27,7 +27,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
   private bucket: BucketName = BucketName.APDF;
 
   constructor(
-    private pg: PostgresConnection,
+    private pg: LegacyPostgresConnection,
     private s3StorageProvider: S3StorageProvider,
     private APDFNameProvider: APDFNameProvider,
   ) {}

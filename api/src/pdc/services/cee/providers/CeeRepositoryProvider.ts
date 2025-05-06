@@ -1,5 +1,5 @@
 import { ConflictException, InvalidRequestException, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { Uuid } from "@/pdc/providers/carpool/interfaces/index.ts";
 import {
@@ -31,7 +31,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   public readonly identityTable = "carpool.identities";
   public readonly operatorTable = "operator.operators";
 
-  constructor(protected connection: PostgresConnection) {
+  constructor(protected connection: LegacyPostgresConnection) {
     super();
   }
 

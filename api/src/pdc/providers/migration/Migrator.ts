@@ -1,4 +1,4 @@
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { basePath, join } from "@/lib/path/index.ts";
 import { Options as ParseOptions, parse } from "dep:csv-parse";
@@ -26,11 +26,11 @@ export type MigratorMigrateParams = {
 
 export class Migrator {
   // base connection to handle the creation of a specific database
-  public baseConn: PostgresConnection;
+  public baseConn: LegacyPostgresConnection;
   public rootConnectionString: string;
 
   // specific connection to a test database
-  public testConn: PostgresConnection;
+  public testConn: LegacyPostgresConnection;
   public currentConnectionString: string;
 
   public readonly dbName: string;
@@ -51,12 +51,12 @@ export class Migrator {
     }
 
     this.currentConnectionString = currentConnection.toString();
-    this.testConn = new PostgresConnection({
+    this.testConn = new LegacyPostgresConnection({
       connectionString: this.currentConnectionString,
     });
 
     this.baseConn = createTmpDb
-      ? new PostgresConnection({ connectionString: this.rootConnectionString })
+      ? new LegacyPostgresConnection({ connectionString: this.rootConnectionString })
       : this.testConn;
   }
 

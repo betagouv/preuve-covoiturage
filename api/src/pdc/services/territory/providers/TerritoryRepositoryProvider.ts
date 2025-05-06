@@ -1,5 +1,5 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import {
   CreateParamsInterface,
@@ -25,7 +25,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   public readonly GROUP_DEFAULT_SHORT_NAME = "";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected kernel: KernelInterfaceResolver,
   ) {}
 

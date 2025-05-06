@@ -1,11 +1,11 @@
 import { assertEquals, describe, it } from "@/dev_deps.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import { TerritoryService } from "@/pdc/services/export/services/TerritoryService.ts";
 import { TerritoryCodeEnum } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 
 describe("TerritoryService: geoStringToObject", () => {
-  const connection = new PostgresConnection({});
+  const connection = new LegacyPostgresConnection({});
   const repository = new TerritoryRepository(connection);
   const service = new TerritoryService(repository);
 
@@ -44,7 +44,7 @@ describe("TerritoryService: geoStringToObject", () => {
 });
 
 describe("TerritoryService: mergeSelectors", () => {
-  const connection = new PostgresConnection({});
+  const connection = new LegacyPostgresConnection({});
   const repository = new TerritoryRepository(connection);
   const service = new TerritoryService(repository);
 

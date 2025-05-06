@@ -1,20 +1,14 @@
 import { provider } from "@/ilos/common/index.ts";
-import {
-  PoolClient,
-  PostgresConnection,
-} from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "../exceptions/DatabaseException.ts";
-import {
-  InsertableCarpoolRequest,
-  WrittenCarpoolRequest,
-} from "../interfaces/index.ts";
+import { InsertableCarpoolRequest, WrittenCarpoolRequest } from "../interfaces/index.ts";
 
 @provider()
 export class CarpoolRequestRepository {
   readonly table = "carpool_v2.requests";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   public async save(
     data: InsertableCarpoolRequest,

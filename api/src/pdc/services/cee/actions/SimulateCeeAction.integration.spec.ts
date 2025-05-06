@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   assertErrorHandler,
   assertSuccessHandler,
@@ -30,11 +30,11 @@ describe("SimulateCeeAction", () => {
     db = await dbBefore();
     config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
     kernel = await before();
-    await kernel.kernel.getContainer().get(PostgresConnection).down();
+    await kernel.kernel.getContainer().get(LegacyPostgresConnection).down();
     kernel
       .kernel
       .getContainer()
-      .rebind(PostgresConnection)
+      .rebind(LegacyPostgresConnection)
       .toConstantValue(db.connection);
     await kernel.kernel.call(
       signature,

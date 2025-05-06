@@ -1,5 +1,5 @@
 import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { addMinutes, differenceInHours } from "@/lib/date/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
@@ -26,7 +26,7 @@ import { CarpoolAcquisitionStatus } from "../status/index.ts";
 @provider()
 export class CarpoolAcquisitionService {
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected statusRepository: CarpoolStatusRepository,
     protected requestRepository: CarpoolRequestRepository,
     protected lookupRepository: CarpoolLookupRepository,

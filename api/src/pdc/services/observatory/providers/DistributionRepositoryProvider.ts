@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import {
@@ -23,7 +23,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
     return getTableName(params, "observatoire_stats", "distribution");
   };
 
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   async getJourneysByHours(
     params: JourneysByHoursParamsInterface,

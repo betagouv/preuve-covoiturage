@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { CertificateBaseInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateBaseInterface.ts";
 import { CertificateInterface } from "@/pdc/services/certificate/contracts/common/interfaces/CertificateInterface.ts";
 import { Pagination } from "@/pdc/services/certificate/contracts/list.contract.ts";
@@ -17,7 +17,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   public readonly table = "certificate.certificates";
   public readonly accessLogTable = "certificate.access_log";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   /**
    * Set the limit and offset for a query

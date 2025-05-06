@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 
 import { ApplicationInterface } from "../contracts/common/interfaces/ApplicationInterface.ts";
 import { RepositoryInterface as CreateInterface } from "../contracts/create.contract.ts";
@@ -18,7 +18,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   public readonly table = "application.applications";
 
   constructor(
-    protected connection: PostgresConnection,
+    protected connection: LegacyPostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {}
 

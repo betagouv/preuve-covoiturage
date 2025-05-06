@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/Decorators.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
@@ -27,7 +27,7 @@ export class TerritoryRepository {
   public readonly pivotTable = "territory.territory_group_selector";
   public readonly geoTable = "geo.perimeters";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   /**
    * Get the territory selectors for a given territory

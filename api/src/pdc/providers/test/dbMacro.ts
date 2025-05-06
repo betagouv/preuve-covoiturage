@@ -1,4 +1,4 @@
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { Migrator } from "../migration/index.ts";
@@ -9,7 +9,7 @@ interface Config {
 
 export interface DbContext {
   db: Migrator;
-  connection: PostgresConnection;
+  connection: LegacyPostgresConnection;
 }
 
 export interface DbBeforeAfter {

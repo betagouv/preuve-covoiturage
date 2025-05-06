@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe } from "@/dev_deps.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { DbContext, KernelContext, makeDbBeforeAfter, makeKernelBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportServiceProvider.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
@@ -31,10 +31,10 @@ describe("territory service", () => {
   beforeAll(async () => {
     db = await dbBefore();
     kc = await kernelBefore();
-    await kc.kernel.getContainer().get(PostgresConnection).down();
+    await kc.kernel.getContainer().get(LegacyPostgresConnection).down();
     kc.kernel
       .getContainer()
-      .rebind(PostgresConnection)
+      .rebind(LegacyPostgresConnection)
       .toConstantValue(db.connection);
 
     repository = new TerritoryRepository(db.connection);

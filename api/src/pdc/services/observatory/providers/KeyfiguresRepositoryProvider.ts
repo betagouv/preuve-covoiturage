@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { getTableName } from "@/pdc/services/observatory/helpers/tableName.ts";
 import { checkTerritoryParam } from "../helpers/checkParams.ts";
@@ -20,7 +20,7 @@ export class KeyfiguresRepositoryProvider implements KeyfiguresRepositoryInterfa
   ) => {
     return getTableName(params, "observatoire_stats", table);
   };
-  constructor(private pg: PostgresConnection) {}
+  constructor(private pg: LegacyPostgresConnection) {}
 
   // Retourne les données de la table observatory.monthly_flux pour le mois et l'année
   // et le type de territoire en paramètres

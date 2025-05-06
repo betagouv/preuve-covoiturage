@@ -69,7 +69,7 @@
     "dep:datetime": "https://deno.land/std@0.224.0/datetime/mod.ts",
     "dep:log": "https://deno.land/std@0.224.0/log/mod.ts",
     "dep:s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.8.0",
-    "dep:postgres": "https://deno.land/x/postgres@v0.19.3/mod.ts",
+    "dep:postgres": "jsr:@db/postgres@0.19.5",
     "dep:jose": "https://deno.land/x/jose@v5.6.3/index.ts",
     "dep:xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs",
     "dep:path": "https://deno.land/std@0.224.0/path/posix/mod.ts",

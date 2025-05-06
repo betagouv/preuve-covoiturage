@@ -1,12 +1,12 @@
 import { afterAll, assertEquals, assertRejects, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType, ForbiddenException } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env_or_default } from "@/lib/env/index.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import { ScopeToGroupMiddleware } from "./ScopeToGroupMiddleware.ts";
 
 describe("ScopeToGroupMiddleware", () => {
-  let connection: PostgresConnection;
+  let connection: LegacyPostgresConnection;
   let middleware: ScopeToGroupMiddleware;
 
   const connectionString = env_or_default(
@@ -51,7 +51,7 @@ describe("ScopeToGroupMiddleware", () => {
   };
 
   beforeAll(async () => {
-    connection = new PostgresConnection({ connectionString });
+    connection = new LegacyPostgresConnection({ connectionString });
     await connection.up();
     middleware = new ScopeToGroupMiddleware(connection);
   });

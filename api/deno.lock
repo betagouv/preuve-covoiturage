@@ -2,17 +2,23 @@
   "version": "4",
   "specifiers": {
     "jsr:@bradenmacdonald/s3-lite-client@0.8": "0.8.0",
+    "jsr:@db/postgres@0.19.5": "0.19.5",
     "jsr:@panva/jose@^6.0.10": "6.0.10",
     "jsr:@panva/oauth4webapi@^3.3.1": "3.4.0",
     "jsr:@panva/openid-client@6.3.4": "6.3.4",
     "jsr:@std/assert@^1.0.10": "1.0.12",
     "jsr:@std/assert@^1.0.12": "1.0.12",
+    "jsr:@std/bytes@^1.0.5": "1.0.5",
     "jsr:@std/collections@1": "1.0.10",
     "jsr:@std/crypto@1": "1.0.4",
+    "jsr:@std/crypto@^1.0.4": "1.0.4",
     "jsr:@std/encoding@1": "1.0.8",
+    "jsr:@std/encoding@^1.0.9": "1.0.10",
     "jsr:@std/expect@^1.0.14": "1.0.14",
+    "jsr:@std/fmt@^1.0.6": "1.0.7",
     "jsr:@std/internal@^1.0.5": "1.0.6",
     "jsr:@std/internal@^1.0.6": "1.0.6",
+    "jsr:@std/path@^1.0.8": "1.0.9",
     "jsr:@std/semver@1": "1.0.4",
     "jsr:@std/testing@^1.0.9": "1.0.9",
     "jsr:@superstruct/core@2": "2.0.2",
@@ -69,6 +75,16 @@
     "@bradenmacdonald/s3-lite-client@0.8.0": {
       "integrity": "ff78a7d882717f141ab0a360878f75d7036267de9d649e7156991f515671b37d"
     },
+    "@db/postgres@0.19.5": {
+      "integrity": "afdbe608bd066cda2ee5dba37c416d332098b9238c51aec223331108e281954c",
+      "dependencies": [
+        "jsr:@std/bytes",
+        "jsr:@std/crypto@^1.0.4",
+        "jsr:@std/encoding@^1.0.9",
+        "jsr:@std/fmt",
+        "jsr:@std/path"
+      ]
+    },
     "@panva/jose@6.0.10": {
       "integrity": "bd6e916d7b0bdb34a76752c701aaa25828326885e199714ac81741b6caef7143"
     },
@@ -88,6 +104,9 @@
         "jsr:@std/internal@^1.0.6"
       ]
     },
+    "@std/bytes@1.0.5": {
+      "integrity": "4465dd739d7963d964c809202ebea6d5c6b8e3829ef25c6a224290fbb8a1021e"
+    },
     "@std/collections@1.0.10": {
       "integrity": "903af106a3d92970d74e20f7ebff77d9658af9bef4403f1dc42a7801c0575899"
     },
@@ -97,6 +116,9 @@
     "@std/encoding@1.0.8": {
       "integrity": "a6c8f3f933ab1bed66244f435d1dc0fd23a888e07195532122ddc3d5f8f0e6b4"
     },
+    "@std/encoding@1.0.10": {
+      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
+    },
     "@std/expect@1.0.14": {
       "integrity": "27b8200267c97206e38050aff18badc82e73b3072c1a6bdd59393ddea6f69183",
       "dependencies": [
@@ -104,8 +126,14 @@
         "jsr:@std/internal@^1.0.6"
       ]
     },
+    "@std/fmt@1.0.7": {
+      "integrity": "2a727c043d8df62cd0b819b3fb709b64dd622e42c3b1bb817ea7e6cc606360fb"
+    },
     "@std/internal@1.0.6": {
       "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
+    "@std/path@1.0.9": {
+      "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
     },
     "@std/semver@1.0.4": {
       "integrity": "a62af791917d8fd6c48d6ebbb872f83fad3fc6671ffadbbd39ea229c2d34d175"
@@ -3755,6 +3783,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@bradenmacdonald/s3-lite-client@0.8",
+      "jsr:@db/postgres@0.19.5",
       "jsr:@panva/openid-client@6.3.4",
       "jsr:@std/assert@^1.0.12",
       "jsr:@std/collections@1",

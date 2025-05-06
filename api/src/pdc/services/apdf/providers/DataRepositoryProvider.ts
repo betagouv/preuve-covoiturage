@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from "@/ilos/common/index.ts";
-import { PostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { set } from "@/lib/object/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { UnboundedSlices } from "../../policy/contracts/common/interfaces/Slices.ts";
@@ -22,7 +22,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
   protected readonly geoPerimetersTable = "geo.perimeters";
   protected readonly operatorsTable = "operator.operators";
 
-  constructor(public connection: PostgresConnection) {
+  constructor(public connection: LegacyPostgresConnection) {
   }
 
   /**

@@ -1,5 +1,5 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { PoolClient, PostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { bulk, join, raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "../exceptions/DatabaseException.ts";
 import {
@@ -16,7 +16,7 @@ export class CarpoolRepository {
   readonly table = "carpool_v2.carpools";
   readonly incentiveTable = "carpool_v2.operator_incentives";
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   public async register(
     data: InsertableCarpool,

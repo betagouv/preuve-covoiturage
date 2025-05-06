@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
 import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
-import { NativeCursor, PostgresConnection } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { LegacyPostgresConnection, NativeCursor } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
@@ -54,7 +54,7 @@ export class CarpoolRepository {
     incentive_status: IncentiveStatusEnum.Validated,
   };
 
-  constructor(public connection: PostgresConnection, protected config: ConfigInterfaceResolver) {}
+  constructor(public connection: LegacyPostgresConnection, protected config: ConfigInterfaceResolver) {}
 
   /**
    * List carpools for the general exports

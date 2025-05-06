@@ -1,6 +1,6 @@
 import { defaultTimezone } from "@/config/time.ts";
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { NativeCursor } from "@/ilos/connection-postgres/PostgresConnection.ts";
+import { NativeCursor } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { APDFTripInterface } from "@/pdc/services/apdf/interfaces/APDFTripInterface.ts";
