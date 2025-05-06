@@ -33,11 +33,11 @@ describe("DenoPostgresConnection - connection", () => {
     await testConnection();
   });
 
-  // it("should connect with a connection string", async () => {
-  //   // Force insecure connection to bypass the missing certificate
-  //   Deno.env.set("APP_POSTGRES_INSECURE", "true");
-  //   await testConnection(env("APP_POSTGRES_URL"));
-  // });
+  it("should connect with a connection string", async () => {
+    // Force insecure connection to bypass the missing certificate
+    Deno.env.set("APP_POSTGRES_INSECURE", "true");
+    await testConnection(env("APP_POSTGRES_URL"));
+  });
 
   // it("should crash on missing certificate without forcing insecure", async () => {
   //   // Remove the insecure connection
