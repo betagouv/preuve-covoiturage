@@ -31,6 +31,11 @@ export default function TabProfil() {
       {user && (
         <>
           <h3 className={fr.cx("fr-callout__title")}>Mon profil</h3>
+          {user.name && (
+            <p>
+              <b>Nom:</b> {user.name}
+            </p>
+          )}
           <p>
             <b>Mail:</b> {user.email}
           </p>

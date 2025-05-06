@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { Config } from "../config";
-import { AuthContextProps } from "../interfaces/providersInterface";
+import { type AuthContextProps } from "../interfaces/providersInterface";
 
 export const generateNonce = () => {
   return crypto.randomBytes(16).toString("hex");

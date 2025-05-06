@@ -27,7 +27,7 @@ export default function UsersTable(props: {
   operatorId?: number;
   refresh: () => void;
 }) {
-  const { user } = useAuth();
+  const { user, simulatedRole } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const modal = useActionsModal<UsersInterface["data"][0]>();
   const onChangePage = (id: number) => {
@@ -60,10 +60,28 @@ export default function UsersTable(props: {
     "Actions",
   ];
   const operatorsApiUrl = getApiUrl("v3", `dashboard/operators`);
-  const operatorsList = useApi<OperatorsInterface>(operatorsApiUrl).data?.data;
+  const operators = useApi<OperatorsInterface>(operatorsApiUrl);
+  const operatorsList = () => {
+    if (user?.operator_id) {
+      return [
+        operators.data?.data.find((t) => t.id === user?.operator_id),
+      ] as OperatorsInterface["data"];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    return operators.data?.data!;
+  };
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
-  const territoriesList =
-    useApi<TerritoriesInterface>(territoriesApiUrl).data?.data;
+  const territories = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const territoriesList = () => {
+    if (user?.territory_id) {
+      return [
+        territories.data?.data.find((t) => t._id === user?.territory_id),
+      ] as TerritoriesInterface["data"];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    return territories.data?.data!;
+  };
+
   const dataTable =
     data?.data?.map((d) => [
       d.id,
@@ -71,8 +89,8 @@ export default function UsersTable(props: {
       d.firstname,
       d.lastname,
       d.email,
-      operatorsList?.find((o) => o.id === d.operator_id)?.name,
-      territoriesList?.find((t) => t._id === d.territory_id)?.name,
+      operatorsList().find((o) => o?.id === d.operator_id)?.name,
+      territoriesList().find((t) => t?._id === d.territory_id)?.name,
       <ButtonsGroup
         key={d.id}
         buttons={[
@@ -118,6 +136,18 @@ export default function UsersTable(props: {
       .optional(),
     role: z.enum(enumRoles, { message: "Le rôle n'est pas valide" }),
   });
+  const roleList = () => {
+    if (simulatedRole) {
+      if (user?.territory_id) {
+        return getRolesList("territory.admin");
+      }
+      if (user?.operator_id) {
+        return getRolesList("operator.admin");
+      }
+    }
+    return getRolesList(user?.role ?? "anonymous");
+  };
+
   return (
     <>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
@@ -227,8 +257,7 @@ export default function UsersTable(props: {
                     ),
                 }}
               >
-                {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
-                {getRolesList(user?.role!).map((r: string, i: number) => (
+                {roleList().map((r: string, i: number) => (
                   <option key={i} value={r}>
                     {labelRole(r)}
                   </option>
@@ -252,7 +281,7 @@ export default function UsersTable(props: {
                   }}
                 >
                   <option value={undefined}>aucun</option>
-                  {operatorsList?.map((o) => (
+                  {operatorsList()?.map((o) => (
                     <option key={o.id} value={o.id}>
                       {o.name}
                     </option>
@@ -277,7 +306,7 @@ export default function UsersTable(props: {
                   }}
                 >
                   <option value={undefined}>aucun</option>
-                  {territoriesList?.map((t) => (
+                  {territoriesList()?.map((t) => (
                     <option key={t._id} value={t._id}>
                       {t.name}
                     </option>
