@@ -16,7 +16,7 @@ export const api = {
   notify: env("APP_DATAGOUV_NOTIFY") === "true",
   contact: env("APP_DATAGOUV_CONTACT") || null,
   key: env("APP_DATAGOUV_KEY"),
-  url: env("APP_DATAGOUV_URL") || "https://api.gouv.fr/api/1/datasets/",
+  url: env("APP_DATAGOUV_URL") || "https://www.data.gouv.fr/api/1/",
   dataset: env("APP_DATAGOUV_DATASET"),
 };
 

@@ -63,7 +63,7 @@ export class DataGouvFileCreatorService {
 
       return this.fileWriter.path;
     } catch (e) {
-      logger.error("OpenDataFileCreatorService", e.message);
+      e instanceof Error && logger.error("OpenDataFileCreatorService", e.message);
       await this.fileWriter.close();
       throw e;
     }

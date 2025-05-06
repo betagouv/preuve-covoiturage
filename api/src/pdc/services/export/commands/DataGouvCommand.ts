@@ -98,10 +98,12 @@ export class DataGouvCommand implements CommandInterface {
       );
 
       // generate dataset description
+      logger.info(`Generating metadata for ${filename}`);
       const stats = await this.carpoolRepository.dataGouvStats(params);
       const description = this.metadata.description(stats);
 
       // upload to storage
+      logger.info(`Uploading ${filename} to storage`);
       const dataset = await this.api.dataset();
       const resource = await this.api.upload(path);
       await this.api.setMetadata(resource, { description });
