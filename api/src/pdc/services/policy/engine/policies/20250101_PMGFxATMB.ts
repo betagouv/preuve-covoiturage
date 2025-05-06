@@ -31,7 +31,7 @@ import { description } from "./20250101_PMGFxATMB.html.ts";
 //   'PMGFxATMB 2025',
 //   'euro',
 //   'draft',
-//   'pmgf_x_atmb_2025',
+//   'pmgf_atmb_2025',
 //   24244600
 // );
 
