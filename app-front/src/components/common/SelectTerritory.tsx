@@ -13,7 +13,7 @@ export default function SelectTerritory(props: {
   const url = `${Config.get<string>(
     "next.public_api_url",
     "",
-  )}/v3/dashboard/territories`;
+  )}/v3/dashboard/territories?limit=200`;
   const { data } = useApi<TerritoriesInterface>(url, true);
 
   return (

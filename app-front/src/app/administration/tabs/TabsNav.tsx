@@ -7,7 +7,7 @@ import TabTerritories from "./TabTerritories";
 import TabUsers from "./TabUsers";
 
 export default function TabsNav() {
-  const { user } = useAuth();
+  const { user, simulatedRole } = useAuth();
   const getTabs = () => {
     const tabs = [
       {
@@ -26,9 +26,8 @@ export default function TabsNav() {
       });
     }
     if (
-      user?.role === "registry.admin" &&
-      user?.territory_id === undefined &&
-      user?.operator_id === undefined
+      (user?.role === "registry.admin" && !simulatedRole) ||
+      user?.operator_id !== undefined
     ) {
       tabs.push({
         content: <TabOperators />,
@@ -36,9 +35,8 @@ export default function TabsNav() {
       });
     }
     if (
-      user?.role === "registry.admin" &&
-      user?.territory_id === undefined &&
-      user?.operator_id === undefined
+      (user?.role === "registry.admin" && !simulatedRole) ||
+      user?.territory_id !== undefined
     ) {
       tabs.push({
         content: <TabTerritories />,

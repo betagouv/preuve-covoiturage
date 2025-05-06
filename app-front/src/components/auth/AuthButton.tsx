@@ -1,8 +1,8 @@
 "use client";
 import { Config } from "@/config";
+import { labelRole } from "@/helpers/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import Button from "@codegouvfr/react-dsfr/Button";
-
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
 
@@ -27,6 +27,17 @@ export function AuthButton() {
           <Button
             priority="primary"
             linkProps={{
+              href: "/administration",
+            }}
+          >
+            <>
+              <div>{user?.name}</div>
+              <div>{labelRole(user?.role ?? "")}</div>
+            </>
+          </Button>
+          <Button
+            priority="primary"
+            linkProps={{
               href: "",
               onClick: () => {
                 authLogout().catch(console.error);
@@ -35,22 +46,6 @@ export function AuthButton() {
           >
             Déconnexion
           </Button>
-          <span>
-            {user?.name && (
-              <p style={{ fontSize: "0.9em", lineHeight: "0.9em" }}>
-                {user.name}
-              </p>
-            )}
-            {user?.role && (
-              <p style={{ fontSize: "0.9em" }}>
-                {{
-                  "registry.admin": "Admin Registre",
-                  "operator.admin": "Admin Opérateur",
-                  "territory.admin": "Admin Territoire",
-                }[user.role] ?? user.role}
-              </p>
-            )}
-          </span>
         </>
       )}
     </>
