@@ -23,6 +23,7 @@ describe("DenoPostgresConnection - connection", () => {
       assert(await connection.isReady() === false);
     } catch (e) {
       e instanceof Error && console.error(e.message);
+      throw e;
     } finally {
       connection && await connection.isReady() && await connection.down();
     }
