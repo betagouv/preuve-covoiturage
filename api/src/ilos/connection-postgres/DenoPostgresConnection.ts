@@ -187,13 +187,11 @@ export class DenoPostgresConnection
     read: (rowCount?: number) => AsyncGenerator<TResult[]>;
     [Symbol.asyncDispose]: () => Promise<void>;
   }> {
-    const transactionName = DenoPostgresConnection.id("transaction");
     using client = await this.#pool!.connect();
 
     try {
       // Create a transaction manually as client.createTransaction() fails with cursors
       await client.queryArray(`BEGIN`);
-      await client.queryArray(`SAVEPOINT ${transactionName}`);
 
       // Create a cursor
       const cursorName = DenoPostgresConnection.id("cursor");
@@ -214,7 +212,7 @@ export class DenoPostgresConnection
       };
     } catch (e) {
       e instanceof Error && logger.error(`[pg] cursor error ${e.message}`);
-      await client.queryArray(`ROLLBACK TO ${transactionName}`);
+      await client.queryArray(`ROLLBACK`);
       throw e;
     }
   }
@@ -223,12 +221,8 @@ export class DenoPostgresConnection
     // Explicit Resource Management handles the disposal of the client
     using client = await this.#pool!.connect();
 
-    // Create a transaction
-    const transactionName = DenoPostgresConnection.id();
-
     try {
       await client.queryArray(`BEGIN`);
-      await client.queryArray(`SAVEPOINT ${transactionName}`);
 
       const result = format === "object"
         ? await client.queryObject<TResult>({ text: sql.sql, args: sql.values })
@@ -237,7 +231,7 @@ export class DenoPostgresConnection
       await client.queryArray(`COMMIT`);
       return result.rows as TResult[];
     } catch (e) {
-      await client.queryArray(`ROLLBACK TO ${transactionName}`);
+      await client.queryArray(`ROLLBACK`);
       e instanceof Error && logger.error("[pg] transaction error", e.message);
       throw e;
     }
