@@ -58,27 +58,27 @@ describe("DenoPostgresConnection - connection", () => {
     }
   });
 
-  // it("should crash on rogue certificate", async () => {
-  //   try {
-  //     // Remove the insecure connection
-  //     Deno.env.set("APP_POSTGRES_CA", "rogue-certificate");
-  //     Deno.env.delete("APP_POSTGRES_INSECURE");
+  it("should crash on rogue certificate", async () => {
+    try {
+      // Remove the insecure connection
+      Deno.env.set("APP_POSTGRES_CA", "rogue-certificate");
+      Deno.env.delete("APP_POSTGRES_INSECURE");
 
-  //     let connection: DenoPostgresConnection | null = null;
-  //     try {
-  //       connection = new DenoPostgresConnection();
-  //       await connection.up();
-  //       assert(false, "Should have thrown an error");
-  //     } catch (_e) {
-  //       assert(_e instanceof Error);
-  //     } finally {
-  //       connection && await connection.down();
-  //     }
-  //   } catch (e) {
-  //     assert(e instanceof Error);
-  //     assert(e.message.includes("The server isn't accepting TLS connections"));
-  //   }
-  // });
+      let connection: DenoPostgresConnection | null = null;
+      try {
+        connection = new DenoPostgresConnection();
+        await connection.up();
+        assert(false, "Should have thrown an error");
+      } catch (_e) {
+        assert(_e instanceof Error);
+      } finally {
+        connection && await connection.down();
+      }
+    } catch (e) {
+      assert(e instanceof Error);
+      assert(e.message.includes("The server isn't accepting TLS connections"));
+    }
+  });
 });
 
 describe("DenoPostgresConnection - poolSize", () => {
