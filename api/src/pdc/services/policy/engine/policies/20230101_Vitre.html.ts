@@ -2,7 +2,7 @@ export const description = `
 <div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
   <p>
-    Campagne d’incitation au covoiturage du
+    Campagne d'incitation au covoiturage du
     <b> 01 janvier 2023 au 31 décembre 2025</b>,
     toute la semaine
   </p>
@@ -22,8 +22,8 @@ export const description = `
   </p>
 
   <ul>
-    <li><b>De 2 à 15 km : 1.5 euros par trajet par passager </b></li>
-    <li><b>De 15 à 30 km : 0.1 euro par trajet par km par passager </b></li>
+    <li><b>De 2 à 15 km : 1,50 € par trajet par passager </b></li>
+    <li><b>De 15 à 30 km : 0,10 € par trajet par km par passager </b></li>
   </ul>
 
   <p>
@@ -32,8 +32,8 @@ export const description = `
   </p>
 
   <ul>
-    <li><b>De 2 à 10 km : 1 euro par trajet par passager </b></li>
-    <li><b>De 10 à 20 km : 0.1 euro par trajet par km par passager </b></li>
+    <li><b>De 2 à 10 km : 1,00 € par trajet par passager </b></li>
+    <li><b>De 10 à 20 km : 0,10 € par trajet par km par passager </b></li>
   </ul>
 
   <p>Les restrictions suivantes seront appliquées :</p>
@@ -41,7 +41,7 @@ export const description = `
   <ul>
     <li><b>2 trajets maximum pour le passager par jour.</b></li>
     <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
-    <li><b>120 euros maximum pour le conducteur par mois.</b></li>
+    <li><b>120,00 € maximum pour le conducteur par mois.</b></li>
     <li><b>Les trajets de plus de 60 km sont exclus après le 17 Juillet.</b></li>
     <li><b>La commune de Vitré n'est plus prise en compte dans le dispositif après le 17 Juillet (inclus).</b></li>
   </ul>
