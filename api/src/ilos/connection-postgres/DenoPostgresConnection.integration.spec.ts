@@ -79,6 +79,21 @@ describe("DenoPostgresConnection - connection", () => {
       assert(e.message.includes("The server isn't accepting TLS connections"));
     }
   });
+
+  it("should dispose the connection when leaving scope", async () => {
+    // Force insecure connection to bypass the missing certificate
+    Deno.env.set("APP_POSTGRES_INSECURE", "true");
+
+    await (async () => {
+      await using connection = new DenoPostgresConnection();
+      await connection.up();
+      assert(await connection.isReady());
+    })();
+
+    // @ts-expect-error connection is out of scope
+    assert(typeof connection === "undefined");
+    // test should not leak as the connection is disposed
+  });
 });
 
 describe("DenoPostgresConnection - poolSize", () => {

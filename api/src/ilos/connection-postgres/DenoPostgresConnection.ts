@@ -5,7 +5,8 @@ import sql, { Sql } from "@/lib/pg/sql.ts";
 import { ClientOptions, Pool } from "dep:postgres";
 import { array, assert, boolean, number, object, pattern, refine, string, union } from "dep:superstruct";
 
-export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
+export class DenoPostgresConnection
+  implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface, AsyncDisposable {
   #id = DenoPostgresConnection.id("pool");
   #pool: Pool | null = null;
   #poolSize = 3;
@@ -138,6 +139,11 @@ export class DenoPostgresConnection implements ConnectionInterface<Pool>, InitHo
   // DestroyHookInterface mapping
   async destroy(): Promise<void> {
     await this.down();
+  }
+
+  // AsyncDisposable interface mapping
+  [Symbol.asyncDispose](): Promise<void> {
+    return this.down();
   }
 
   async up(): Promise<void> {
