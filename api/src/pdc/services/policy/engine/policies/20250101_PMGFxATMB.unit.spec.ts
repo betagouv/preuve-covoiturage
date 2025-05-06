@@ -12,7 +12,7 @@ const defaultPosition = {
   dep: "74",
   reg: "84",
   country: "XXXXX",
-  reseau: null,
+  reseau: 1,
 };
 
 const defaultLat = 46.313355215729146;
@@ -97,7 +97,7 @@ it("should work with exclusions", async () =>
     { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
   ));
 
-it("trips inside AOM", async () =>
+it("trips inside AOM before 21/04/2025", async () =>
   await process(
     {
       policy: { handler: Handler.id },
@@ -133,7 +133,63 @@ it("trips inside AOM", async () =>
     },
   ));
 
-it("trips outside AOM", async () =>
+it("trips inside AOM after 21/04/2025", async () =>
+  await process(
+    {
+      policy: { handler: Handler.id },
+      carpool: [
+        { distance: 5_000, driver_identity_key: "one", datetime: new Date("2025-04-22") },
+        { distance: 5_000, seats: 2, driver_identity_key: "one", datetime: new Date("2025-04-22") },
+        {
+          distance: 20_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 21_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 30_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 31_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 40_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "three",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 40_000,
+          seats: 2,
+          driver_identity_key: "one",
+          passenger_identity_key: "three",
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 70_000,
+          driver_identity_key: "one",
+          datetime: new Date("2025-04-22"),
+        },
+      ],
+    },
+    {
+      incentive: [150, 300, 150, 165, 300, 310, 400, 800, 400],
+    },
+  ));
+
+it("trips outside AOM before 21/04/2025", async () =>
   await process(
     {
       policy: { handler: Handler.id },
@@ -183,6 +239,80 @@ it("trips outside AOM", async () =>
     },
     {
       incentive: [50, 100, 50, 175, 300, 600, 300],
+    },
+  ));
+
+it("trips outside AOM after 21/04/2025", async () =>
+  await process(
+    {
+      policy: { handler: Handler.id },
+      carpool: [
+        {
+          distance: 5_000,
+          driver_identity_key: "one",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 5_000,
+          seats: 2,
+          driver_identity_key: "one",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 20_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 21_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 22_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 30_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "two",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 40_000,
+          driver_identity_key: "one",
+          passenger_identity_key: "three",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 40_000,
+          seats: 2,
+          driver_identity_key: "one",
+          passenger_identity_key: "three",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+        {
+          distance: 70_000,
+          driver_identity_key: "one",
+          start: { ...defaultPosition, epci: "200070852", aom: "200070852" },
+          datetime: new Date("2025-04-22"),
+        },
+      ],
+    },
+    {
+      incentive: [50, 100, 50, 100, 100, 100, 100, 200, 100],
     },
   ));
 

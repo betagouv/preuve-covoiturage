@@ -71,7 +71,7 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
    * - 1,50€ par passager + 0,125€ pour les km > 20 km
    * - limite d'incitation à 40 km
    */
-  protected internalTripsSlices: RunnableSlices = [
+  protected internalTripsSlicesBefore21April2025: RunnableSlices = [
     {
       start: 5_000,
       end: 20_000,
@@ -89,12 +89,45 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
   ];
 
   /**
+   * Trajets intra-AOM (origine ET destination dans l'AOM)
+   * - 1,50€ par passager de 5 à 20 km
+   * - + 0,15 € pour les km >= 20 km et < 30 km
+   * - + 0,10 € pour les km >= 30 km et < 40 km
+   * - limite d'incitation à 40 km
+   */
+  protected internalTripsSlicesAfter21April2025: RunnableSlices = [
+    {
+      start: 5_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
+    },
+    {
+      start: 20_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(
+          ctx,
+          perKm(ctx, { amount: 15, offset: 20_000, limit: 30_000 }),
+        ),
+    },
+    {
+      start: 30_000,
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) =>
+        perSeat(
+          ctx,
+          perKm(ctx, { amount: 10, offset: 30_000, limit: 40_000 }),
+        ),
+    },
+  ];
+
+  /**
    * Trajets extra-AOM (origine OU destination dans l'AOM)
    * - 0,50€ par passager de 5 à 20 km
    * - 0,50€ par passager + 0,125€ pour les km > 20 km
    * - limite d'incitation à 40 km
    */
-  protected externalTripsSlices: RunnableSlices = [
+  protected externalTripsSlicesBefore21April2025: RunnableSlices = [
     {
       start: 5_000,
       end: 20_000,
@@ -108,6 +141,25 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
           ctx,
           perKm(ctx, { amount: 12.5, offset: 20_000, limit: 40_000 }),
         ),
+    },
+  ];
+
+  /**
+   * Trajets extra-AOM (origine OU destination dans l'AOM)
+   * - 0,50€ par passager de 5 à 21 km
+   * - 0,50€ par passager > 21 km
+   * - limite d'incitation à 40 km
+   */
+  protected externalTripsSlicesAfter21April2025: RunnableSlices = [
+    {
+      start: 5_000,
+      end: 21_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50),
+    },
+    {
+      start: 21_000,
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50),
     },
   ];
 
@@ -127,15 +179,21 @@ export const PMGFxATMB2025: PolicyHandlerStaticInterface = class extends Abstrac
   };
 
   protected getSlices(ctx?: StatelessContextInterface): RunnableSlices {
-    if (!ctx) return this.internalTripsSlices;
-    return startsAndEndsAt(ctx, this.territorySelector) ? this.internalTripsSlices : this.externalTripsSlices;
+    if (!ctx) return this.internalTripsSlicesBefore21April2025;
+
+    if (ctx.carpool.datetime >= new Date("2025-04-21T00:00:00+0200")) {
+      return startsAndEndsAt(ctx, this.territorySelector)
+        ? this.internalTripsSlicesAfter21April2025
+        : this.externalTripsSlicesAfter21April2025;
+    }
+
+    return startsAndEndsAt(ctx, this.territorySelector)
+      ? this.internalTripsSlicesBefore21April2025
+      : this.externalTripsSlicesBefore21April2025;
   }
 
   protected processExclusions(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(
-      ctx,
-      getOperatorsAt(this.operators, ctx.carpool.datetime),
-    );
+    isOperatorOrThrow(ctx, getOperatorsAt(this.operators, ctx.carpool.datetime));
     isOperatorClassOrThrow(ctx, this.operator_class);
     startsOrEndsAtOrThrow(ctx, this.territorySelector);
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 150_000 });
