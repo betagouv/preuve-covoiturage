@@ -2,7 +2,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
 
   <p>Campagne d'incitation au covoiturage à partir du <b>1er janvier 2025</b></p>
   
-  <p>Cette campagne est limitée à <b>10 000euros</b>.</p>
+  <p>Cette campagne est limitée à <b>10 000,00 €</b>.</p>
 
   <p>
     Les <b> conducteurs </b> effectuant un trajet entre 5 et 80 km

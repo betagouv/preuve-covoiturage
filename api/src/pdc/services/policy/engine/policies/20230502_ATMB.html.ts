@@ -1,7 +1,7 @@
 export const description = `
 <div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
   <p>Campagne d'incitation au covoiturage du <b>2 mai 2023 au 31 décembre 2025</b>, toute la semaine</p>
-  <p>Cette campagne est limitée à <b>68 400 euros</b>.</p>
+  <p>Cette campagne est limitée à <b>100 000,00 €</b>.</p>
   <p>Le périmètre géographique de la campagne comprend les zones suivantes :</p>
   <ul>
     <li>Communauté de communes Cluses Arve et Montagnes</li>
@@ -14,12 +14,12 @@ export const description = `
   </ul>
   <p>Les <b>conducteurs</b> effectuant un trajet d'au moins 2 km, avec pour origine et destination le périmètre ci-dessus, sont incités selon les règles suivantes :</p>
   <ul>
-    <li><b>De 4 à 20 km : 2 euros par trajet par passager transporté.</b></li>
-    <li><b>De 20 à 40 km : 0.1 euros (10 centimes d'euro) par km par passager</b></li>
+    <li><b>De 4 à 20 km : 2,00 € par trajet par passager transporté.</b></li>
+    <li><b>De 20 à 40 km : 0,10 € par km par passager</b></li>
   </ul>
   <p>Les restrictions suivantes seront appliquées :</p>
   <ul>
-    <li><b>120 € maximum pour le conducteur par mois.</b> (50€ à partir du 1 décembre 2023)</li>
+    <li><b>120,00 € maximum pour le conducteur par mois.</b> (50,00 € à partir du 1 décembre 2023)</li>
   </ul>
   <p>La campagne est limitée aux opérateurs <b>Karos et BlablaCar Daily</b> proposant des preuves de classe <b>B ou C</b>.</p>
 </div>
