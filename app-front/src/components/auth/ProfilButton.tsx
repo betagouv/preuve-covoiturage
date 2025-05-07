@@ -11,7 +11,6 @@ export function ProfilButton() {
       {isAuth && (
         <>
           <Button
-            iconId="fr-icon-account-fill"
             priority="primary"
             linkProps={{
               href: "/administration",
