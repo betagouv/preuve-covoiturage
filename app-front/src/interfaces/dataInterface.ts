@@ -51,9 +51,11 @@ export type Territory = {
 
 export type TerritoriesInterface = {
   meta: {
-    page: number;
-    total: number;
-    totalPages: number;
+    pagination: {
+      limit: number;
+      offset: number;
+      total: number;
+    };
   };
   data: Territory[];
 };

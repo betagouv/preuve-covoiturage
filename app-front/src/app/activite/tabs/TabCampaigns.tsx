@@ -16,7 +16,7 @@ export default function TabCampaigns() {
       )}
       <CampaignsTable
         title={`Campagnes d'incitation`}
-        territoryId={user?.territory_id ?? 1}
+        territoryId={territoryId}
       />
     </>
   );

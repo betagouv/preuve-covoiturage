@@ -3,7 +3,7 @@ import { Config } from "@/config";
 import { useApi } from "@/hooks/useApi";
 import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SelectTerritory(props: {
   defaultValue?: number;
@@ -15,6 +15,9 @@ export default function SelectTerritory(props: {
     "",
   )}/v3/dashboard/territories?limit=200`;
   const { data } = useApi<TerritoriesInterface>(url, true);
+  useEffect(() => {
+    setValue(props.defaultValue);
+  }, [props.defaultValue]);
 
   return (
     <Select

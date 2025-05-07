@@ -1,4 +1,5 @@
 import { AuthButton } from "@/components/auth/AuthButton";
+import { ProfilButton } from "@/components/auth/ProfilButton";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import Navigation from "./Navigation";
 
@@ -19,7 +20,7 @@ export function AppHeader() {
         </>
       }
       homeLinkProps={{
-        href: "/",
+        href: "/activite",
         title: "Accueil | Espace partenaire Covoiturage.beta.gouv.fr",
         "aria-label": "Accueil | Espace partenaire Covoiturage.beta.gouv.fr",
       }}
@@ -27,14 +28,7 @@ export function AppHeader() {
       serviceTagline="Ensemble, accélérons le covoiturage quotidien"
       navigation={<Navigation />}
       quickAccessItems={[
-        {
-          iconId: "fr-icon-add-circle-line",
-          linkProps: {
-            href: "https://doc.covoiturage.beta.gouv.fr/",
-            target: "_blank",
-          },
-          text: "Documentation",
-        },
+        <ProfilButton key="profil-button" />,
         <AuthButton key="auth-button" />,
       ]}
     />

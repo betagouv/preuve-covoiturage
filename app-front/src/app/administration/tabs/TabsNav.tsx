@@ -25,19 +25,13 @@ export default function TabsNav() {
         label: `Utilisateurs et accès`,
       });
     }
-    if (
-      (user?.role === "registry.admin" && !simulatedRole) ||
-      user?.operator_id !== undefined
-    ) {
+    if (user?.role === "registry.admin" && !simulatedRole) {
       tabs.push({
         content: <TabOperators />,
         label: "Opérateurs",
       });
     }
-    if (
-      (user?.role === "registry.admin" && !simulatedRole) ||
-      user?.territory_id !== undefined
-    ) {
+    if (user?.role === "registry.admin" && !simulatedRole) {
       tabs.push({
         content: <TabTerritories />,
         label: "Territoires",

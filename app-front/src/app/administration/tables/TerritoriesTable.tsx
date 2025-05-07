@@ -32,17 +32,22 @@ export default function TerritoriesTable(props: {
     setCurrentPage(page);
   };
   const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl("v3", "dashboard/territories"));
+    const urlObj = new URL(getApiUrl("v3", "dashboard/territories?limit=25"));
     if (props.id) {
       urlObj.searchParams.set("id", props.id.toString());
     }
     if (currentPage !== 1) {
-      urlObj.searchParams.set("page", currentPage.toString());
+      urlObj.searchParams.set("offset", ((currentPage - 1) * 25).toString());
     }
     return urlObj.toString();
   }, [props.id, currentPage]);
   const { data } = useApi<TerritoriesInterface>(url);
-  const totalPages = data?.meta.totalPages ?? 1;
+  const totalPages = () => {
+    if (data) {
+      return Math.ceil(data.meta.pagination.total / data.meta.pagination.limit);
+    }
+    return 1;
+  };
   const headers = ["Identifiant", "Nom", "Siret", "Actions"];
   const dataTable =
     data?.data.map((d) => [
@@ -236,7 +241,7 @@ export default function TerritoriesTable(props: {
         fixed
       />
       <Pagination
-        count={totalPages}
+        count={totalPages()}
         defaultPage={currentPage}
         onChange={onChangePage}
       />
