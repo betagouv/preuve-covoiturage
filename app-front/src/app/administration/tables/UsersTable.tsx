@@ -312,7 +312,7 @@ export default function UsersTable(props: {
                   }}
                 >
                   <option value={undefined}>aucun</option>
-                  {territoriesList().map((t) => (
+                  {territoriesList()?.map((t) => (
                     <option key={t._id} value={t._id}>
                       {t.name}
                     </option>
