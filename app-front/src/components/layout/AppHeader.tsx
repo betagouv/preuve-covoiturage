@@ -1,4 +1,5 @@
 import { AuthButton } from "@/components/auth/AuthButton";
+import { ProfilButton } from "@/components/auth/ProfilButton";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import Navigation from "./Navigation";
 
@@ -35,6 +36,7 @@ export function AppHeader() {
           },
           text: "Documentation",
         },
+        <ProfilButton key="profil-button" />,
         <AuthButton key="auth-button" />,
       ]}
     />

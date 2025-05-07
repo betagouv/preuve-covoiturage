@@ -67,8 +67,7 @@ export default function UsersTable(props: {
         operators.data?.data.find((t) => t.id === user?.operator_id),
       ] as OperatorsInterface["data"];
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    return operators.data?.data!;
+    return operators.data?.data ?? [];
   };
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
   const territories = useApi<TerritoriesInterface>(territoriesApiUrl);
@@ -78,8 +77,7 @@ export default function UsersTable(props: {
         territories.data?.data.find((t) => t._id === user?.territory_id),
       ] as TerritoriesInterface["data"];
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    return territories.data?.data!;
+    return territories.data?.data ?? [];
   };
 
   const dataTable =
@@ -306,7 +304,7 @@ export default function UsersTable(props: {
                   }}
                 >
                   <option value={undefined}>aucun</option>
-                  {territoriesList()?.map((t) => (
+                  {territoriesList().map((t) => (
                     <option key={t._id} value={t._id}>
                       {t.name}
                     </option>
