@@ -1,6 +1,6 @@
 import { env } from "@/lib/env/index.ts";
 import { FieldFilter, Fields } from "@/pdc/services/export/models/CSVWriter.ts";
-import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
+import { DataGouvListType } from "../repositories/queries/datagouvListQuery.ts";
 
 export type DataGouvAPIConfig = {
   enabled: boolean;

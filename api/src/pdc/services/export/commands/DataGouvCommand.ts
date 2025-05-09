@@ -12,7 +12,7 @@ import { CarpoolRepository } from "@/pdc/services/export/repositories/CarpoolRep
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
-import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
+import { DataGouvListType } from "../repositories/queries/datagouvListQuery.ts";
 import { DataGouvFileCreatorServiceInterfaceResolver } from "../services/DataGouvFileCreatorService.ts";
 import { FieldServiceInterfaceResolver } from "../services/FieldService.ts";
 import { LogServiceInterfaceResolver } from "../services/LogService.ts";
@@ -99,7 +99,7 @@ export class DataGouvCommand implements CommandInterface {
 
       // generate dataset description
       logger.info(`Generating metadata for ${filename}`);
-      const stats = await this.carpoolRepository.dataGouvStats(params);
+      const stats = await this.carpoolRepository.datagouvStats(params);
       const description = this.metadata.description(stats);
 
       // upload to storage

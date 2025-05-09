@@ -1,6 +1,6 @@
 import { assertEquals, describe, it } from "@/dev_deps.ts";
 import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
-import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/carpoolListQuery.ts";
 
 describe("CarpoolRow", () => {
   const columns = [
