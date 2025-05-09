@@ -195,7 +195,7 @@ export class DenoPostgresConnection
 
       // Create a cursor
       const cursorName = DenoPostgresConnection.id("cursor");
-      await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.sql}`, sql.values);
+      await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.text}`, sql.values);
 
       return {
         read: async function* (rowCount: number = 100): AsyncGenerator<TResult[]> {
@@ -225,8 +225,8 @@ export class DenoPostgresConnection
       await client.queryArray(`BEGIN`);
 
       const result = format === "object"
-        ? await client.queryObject<TResult>({ text: sql.sql, args: sql.values })
-        : await client.queryArray({ text: sql.sql, args: sql.values }); // FIXME type queryArray !
+        ? await client.queryObject<TResult>({ text: sql.text, args: sql.values })
+        : await client.queryArray({ text: sql.text, args: sql.values }); // FIXME type queryArray !
 
       await client.queryArray(`COMMIT`);
       return result.rows as TResult[];
