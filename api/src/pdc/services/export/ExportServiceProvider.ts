@@ -81,7 +81,7 @@ const validators = [createBindingV2, createBindingV3];
   ],
 })
 export class ExportServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
+  override readonly extensions: NewableType<ExtensionInterface>[] = [
     CommandExtension,
     ValidatorExtension,
   ];
