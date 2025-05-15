@@ -142,15 +142,13 @@ external_data_migrate:
 
 # Drop all test_* databases
 [group('database')]
-drop_test_databases:
-  pgcli -l; \
-  echo "Are you sure you want to drop all databases starting with 'test_'? (y/n)"; \
-  read -r response; \
-  if [[ $response =~ ^([yY][eE][sS]|[yY])+$ ]]; then \
-    pgcli -l | rg test_ | awk '{ print $2 }' | while read db; do psql -c "DROP DATABASE ${db};"; done; \
-  else \
-    echo "No database dropped"; \
-  fi
+[confirm('''
+This will drop all databases starting with 'test_'.
+Are you sure you want to continue? (y/n)
+''')]
+[unix]
+@drop_test_databases:
+  deno run --allow-env --allow-net ./src/db/just-dropdb.ts {{ pgurl }}
 
 # --------------------------------------------------------------------------------------------------
 #
