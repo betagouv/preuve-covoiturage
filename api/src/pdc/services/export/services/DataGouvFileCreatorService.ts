@@ -48,7 +48,7 @@ export class DataGouvFileCreatorService {
     this.fileWriter.addDatasource("campaigns", campaigns);
 
     // loop through the carpool data and append rows to the file
-    await this.carpoolRepository.dataGouvList(this.params, this.fileWriter);
+    await this.carpoolRepository.datagouvList(this.params, this.fileWriter);
   }
 
   public async write(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<string> {

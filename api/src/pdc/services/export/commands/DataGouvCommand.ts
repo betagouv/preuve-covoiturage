@@ -68,7 +68,7 @@ export class DataGouvCommand implements CommandInterface {
   ) {}
 
   public async call(options: Options): Promise<void> {
-    if (this.config.get("datagouv.api.enabled") === false) {
+    if (!this.config.get("datagouv.api.enabled")) {
       logger.warn("DataGouv Export is DISABLED");
       return;
     }
@@ -103,12 +103,15 @@ export class DataGouvCommand implements CommandInterface {
       const description = this.metadata.description(stats);
 
       // upload to storage
-      logger.info(`Uploading ${filename} to storage`);
-      const dataset = await this.api.dataset();
-      const resource = await this.api.upload(path);
-      await this.api.setMetadata(resource, { description });
-
-      logger.info(`Resource uploaded to ${dataset.page}`);
+      if (this.config.get("datagouv.api.upload")) {
+        logger.info(`Uploading ${filename} to storage`);
+        const dataset = await this.api.dataset();
+        const resource = await this.api.upload(path);
+        await this.api.setMetadata(resource, { description });
+        logger.info(`Resource uploaded to ${dataset.page}`);
+      } else {
+        logger.warn("Datagouv upload is disabled");
+      }
     }
   }
 

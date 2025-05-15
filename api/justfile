@@ -83,7 +83,7 @@ build:
 #
 # --------------------------------------------------------------------------------------------------
 
-pgurl := `echo $APP_POSTGRES_URL | sed 's/@postgres:/@localhost:/g'`
+pgurl := `echo $APP_POSTGRES_URL | sed 's/@postgres:/@127.0.0.1:/g'`
 
 # Run a configured pgcli
 [group('database')]
@@ -203,6 +203,7 @@ ci_test_unit: (test-unit)
 [group('ci')]
 ci_test_integration: ci_test_prehook (dc_e2e "exec api just test-integration") ci_test_posthook
 
+# CI e2e test
 [group('ci')]
 ci_test_e2e: ci_test_prehook (dc_e2e "exec api just test-e2e") ci_test_posthook
 

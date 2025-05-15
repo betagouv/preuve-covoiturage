@@ -1,4 +1,4 @@
-import { env } from "@/lib/env/index.ts";
+import { env, env_or_false } from "@/lib/env/index.ts";
 import { FieldFilter, Fields } from "@/pdc/services/export/models/CSVWriter.ts";
 import { DataGouvListType } from "../repositories/queries/datagouvListQuery.ts";
 
@@ -12,8 +12,9 @@ export type DataGouvAPIConfig = {
 };
 
 export const api = {
-  enabled: env("APP_DATAGOUV_ENABLED") === "true",
-  notify: env("APP_DATAGOUV_NOTIFY") === "true",
+  enabled: env_or_false("APP_DATAGOUV_ENABLED"),
+  upload: env_or_false("APP_DATAGOUV_UPLOAD"),
+  notify: env_or_false("APP_DATAGOUV_NOTIFY"),
   contact: env("APP_DATAGOUV_CONTACT") || null,
   key: env("APP_DATAGOUV_KEY"),
   url: env("APP_DATAGOUV_URL") || "https://www.data.gouv.fr/api/1/",
