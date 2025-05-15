@@ -1,13 +1,12 @@
 "use client";
 import { Config } from "@/config";
-import { labelRole } from "@/helpers/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { useRouter } from "next/navigation";
 
 export function AuthButton() {
-  const { isAuth, logout, user } = useAuth();
+  const { isAuth, logout } = useAuth();
   const router = useRouter();
 
   const authClick = () => {
@@ -25,17 +24,7 @@ export function AuthButton() {
       {isAuth && (
         <>
           <Button
-            priority="primary"
-            linkProps={{
-              href: "/administration",
-            }}
-          >
-            <>
-              <div>{user?.name}</div>
-              <div>{labelRole(user?.role ?? "")}</div>
-            </>
-          </Button>
-          <Button
+            iconId="fr-icon-logout-box-r-line"
             priority="primary"
             linkProps={{
               href: "",

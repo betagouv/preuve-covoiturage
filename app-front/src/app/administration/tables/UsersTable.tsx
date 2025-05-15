@@ -60,26 +60,26 @@ export default function UsersTable(props: {
     "Actions",
   ];
   const operatorsApiUrl = getApiUrl("v3", `dashboard/operators`);
-  const operators = useApi<OperatorsInterface>(operatorsApiUrl);
+  const { data: operatorsData, refetch: refetchOperators } =
+    useApi<OperatorsInterface>(operatorsApiUrl);
   const operatorsList = () => {
     if (user?.operator_id) {
       return [
-        operators.data?.data.find((t) => t.id === user?.operator_id),
+        operatorsData?.data.find((t) => t.id === user?.operator_id),
       ] as OperatorsInterface["data"];
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    return operators.data?.data!;
+    return operatorsData?.data ?? [];
   };
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
-  const territories = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const { data: territoriesData, refetch: refetchTerritories } =
+    useApi<TerritoriesInterface>(territoriesApiUrl);
   const territoriesList = () => {
     if (user?.territory_id) {
       return [
-        territories.data?.data.find((t) => t._id === user?.territory_id),
+        territoriesData?.data.find((t) => t._id === user?.territory_id),
       ] as TerritoriesInterface["data"];
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    return territories.data?.data!;
+    return territoriesData?.data ?? [];
   };
 
   const dataTable =
@@ -191,6 +191,12 @@ export default function UsersTable(props: {
       <Modal
         open={modal.openModal}
         title={modal.modalTitle(modal.typeModal)}
+        onOpen={async () => {
+          if (modal.typeModal === "update" || modal.typeModal === "create") {
+            await refetchOperators();
+            await refetchTerritories();
+          }
+        }}
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
           await modal.submitModal("dashboard/user", formSchema);

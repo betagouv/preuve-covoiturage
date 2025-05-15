@@ -7,6 +7,7 @@ export type ModalProps = {
   title: string;
   children?: ReactNode;
   onClose: () => void;
+  onOpen?: () => Promise<void>;
   onSubmit: () => Promise<void>;
 };
 
@@ -26,6 +27,9 @@ export function Modal(props: ModalProps) {
   useEffect(() => {
     if (props.open) {
       modal.open();
+      if (props.onOpen) {
+        void props.onOpen();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.open]);

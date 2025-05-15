@@ -1,26 +1,23 @@
 {{ config(materialized='view') }}
 
 SELECT DISTINCT
-  d.arr,
-  d.l_arr,
+   c.arr,
+  c.l_arr,
   a._id  AS territory_id,
   a.name AS l_territory
-FROM {{ source('territory','territories') }} AS a
+FROM {{ source('territory','territory_group') }} AS a
 INNER JOIN
-  {{ source('territory','territory_group') }} AS b
-  ON a.company_id = b.company_id
+  {{ source('territory','territory_group_selector') }} AS b
+  ON a._id = b.territory_group_id
 INNER JOIN
-  {{ source('territory','territory_group_selector') }} AS c
-  ON b._id = c.territory_group_id
-INNER JOIN
-  {{ source('geo','perimeters') }} AS d
+  {{ source('geo','perimeters') }} AS c
   ON
     (
-      c.selector_value = d.arr
-      OR c.selector_value = d.epci
-      OR c.selector_value = d.aom
-      OR c.selector_value = d.dep
-      OR c.selector_value = d.reg
+      b.selector_value = c.arr
+      OR b.selector_value = c.epci
+      OR b.selector_value = c.aom
+      OR b.selector_value = c.dep
+      OR b.selector_value = c.reg
     )
-    AND d.year = 2024
-ORDER BY d.arr
+    AND c.year = 2024
+ORDER BY c.arr
