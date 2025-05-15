@@ -1,4 +1,5 @@
-import { env_or_fail } from "@/lib/env/index.ts";
+import { env_or_fail, env_or_true } from "@/lib/env/index.ts";
+export const enabled = env_or_true("PROCONNECT_ENABLED");
 export const client_id = env_or_fail("PROCONNECT_CLIENT_ID");
 export const client_secret = env_or_fail("PROCONNECT_CLIENT_SECRET");
 export const base_url = new URL(env_or_fail("PROCONNECT_BASE_URL"));

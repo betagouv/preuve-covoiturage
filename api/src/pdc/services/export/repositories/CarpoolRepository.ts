@@ -3,15 +3,19 @@ import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/DenoPostgresConnection.ts";
 import { LegacyPostgresConnection } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
-import sql from "@/lib/pg/sql.ts";
 import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
+import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
 import { CSVWriter } from "@/pdc/services/export/models/CSVWriter.ts";
 import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 import { ExportProgress } from "@/pdc/services/export/repositories/ExportRepository.ts";
+import { carpoolCountQuery } from "@/pdc/services/export/repositories/queries/carpoolCountQuery.ts";
 import { carpoolListQuery, CarpoolListType } from "@/pdc/services/export/repositories/queries/carpoolListQuery.ts";
+import {
+  datagouvStatsQuery,
+  DataGouvStatsType,
+} from "@/pdc/services/export/repositories/queries/datagouvStatsQuery.ts";
 import { IncentiveStatusEnum } from "@/pdc/services/policy/interfaces/index.ts";
-import { dataGouvListQuery, DataGouvListType } from "./queries/datagouvListQuery.ts";
-import { datagouvStatsQuery, DataGouvStatsType } from "./queries/datagouvStatsQuery.ts";
+import { datagouvListQuery, DataGouvListType } from "./queries/datagouvListQuery.ts";
 
 export abstract class CarpoolRepositoryInterfaceResolver {
   public async list(params: ExportParams, fileWriter: CSVWriter<CarpoolListType>): Promise<void> {
@@ -61,41 +65,26 @@ export class CarpoolRepository {
     progress?: ExportProgress,
   ): Promise<void> {
     try {
-      // use a cursor to loop over the entire set of results
-      // by chunks of N rows.
-
       const total = await this.listCount(params); // total number of rows
       logger.info(`[export:CarpoolRepository] Exporting ${total} rows`);
 
-      let done = 0; // track the number of rows read
-      let count = 0; // number of rows read in the current batch
-
       await using cursor = await this.pgConnection.cursor<CarpoolListType>(carpoolListQuery(params));
-
+      let done = 0; // track the number of rows read
       for await (const rows of cursor.read(this.batchSize)) {
-        console.log(`[export:CarpoolRepository] Fetching ${this.batchSize} rows`);
-        // const { rows } = await client.queryObject<CarpoolListType>(`FETCH FORWARD ${this.batchSize} FROM mycursor`);
-        // const rows = await cursor.read(this.batchSize);
-        count = rows.length;
-        done += count;
-        console.log(`[export:CarpoolRepository] Read ${done} rows`);
+        for (const row of rows) {
+          await fileWriter.append(new CarpoolRow<CarpoolListType>(row));
+        }
 
-        // pass each line to the file writer
-        // for (const row of rows) {
-        //   await fileWriter.append(new CarpoolRow<CarpoolListType>(row));
-        // }
-
+        done += rows.length;
         if (progress) await progress(((done / total) * 100) | 0);
       }
     } catch (e) {
       if (e instanceof Error) {
         logger.error(`[export:CarpoolRepository] ${e.message}`);
       } else {
-        logger.error(`[export:CarpoolRepository] Unknown error`);
+        logger.error(`[export:CarpoolRepository]`, e);
       }
       throw e;
-      // } finally {
-      //   cursor && await cursor.release();
     }
   }
 
@@ -103,36 +92,29 @@ export class CarpoolRepository {
    * Count the number of carpools for the general exports
    */
   public async listCount(params: ExportParams): Promise<number> {
-    const rows = await this.pgConnection.query<{ count: string }>(sql`SELECT 1 AS count`);
-    return Number.parseInt(rows[0].count, 10);
+    const rows = await this.pgConnection.query<{ count: string }>(carpoolCountQuery(params));
+    return Number(rows[0].count);
   }
 
   /**
    * List carpools with specific filtering for the open data requirements
    */
-  public async dataGouvList(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
+  public async datagouvList(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
     try {
-      // let count = 0;
-      const query = dataGouvListQuery(params, this.datagouvConfig);
-      await using cursor = await this.pgConnection.cursor(query);
-
+      const query = datagouvListQuery(params, this.datagouvConfig);
+      await using cursor = await this.pgConnection.cursor<DataGouvListType>(query);
       for await (const rows of cursor.read(this.batchSize)) {
-        // const rows = await cursor.read(this.batchSize);
-        // count = rows.length;
-        // for (const row of rows) {
-        //   await fileWriter.append(new CarpoolRow<DataGouvListType>(row));
-        // }
-        console.log(`[export:CarpoolRepository] Read ${rows.length} rows`);
+        for (const row of rows) {
+          await fileWriter.append(new CarpoolRow<DataGouvListType>(row));
+        }
       }
     } catch (e) {
       if (e instanceof Error) {
         logger.error(`[dataGouvList] ${e.message}`);
       } else {
-        logger.error(`[dataGouvList] Unknown error`);
+        logger.error(`[dataGouvList]`, e);
       }
       throw e;
-      // } finally {
-      //   cursor && await cursor.release();
     }
   }
 
