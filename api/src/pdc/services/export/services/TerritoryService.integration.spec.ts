@@ -1,5 +1,5 @@
 import { assertEquals, describe, it } from "@/dev_deps.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import { TerritoryCodeEnum } from "@/pdc/services/policy/interfaces/index.ts";
 import { TerritoryService } from "./TerritoryService.ts";
@@ -32,10 +32,10 @@ import { TerritoryService } from "./TerritoryService.ts";
 //   beforeAll(async () => {
 //     db = await dbBefore();
 //     kc = await kernelBefore();
-//     await kc.kernel.getContainer().get(LegacyPostgresConnection).down();
+//     await kc.kernel.getContainer().get(DenoPostgresConnection).down();
 //     kc.kernel
 //       .getContainer()
-//       .rebind(LegacyPostgresConnection)
+//       .rebind(DenoPostgresConnection)
 //       .toConstantValue(db.connection);
 
 //     repository = new TerritoryRepository(db.connection);
@@ -55,7 +55,7 @@ import { TerritoryService } from "./TerritoryService.ts";
 // });
 
 describe("TerritoryService: geoStringToObject", () => {
-  const connection = new LegacyPostgresConnection({});
+  const connection = new DenoPostgresConnection();
   const repository = new TerritoryRepository(connection);
   const service = new TerritoryService(repository);
 
@@ -94,7 +94,7 @@ describe("TerritoryService: geoStringToObject", () => {
 });
 
 describe("TerritoryService: mergeSelectors", () => {
-  const connection = new LegacyPostgresConnection({});
+  const connection = new DenoPostgresConnection();
   const repository = new TerritoryRepository(connection);
   const service = new TerritoryService(repository);
 
