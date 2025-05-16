@@ -12,6 +12,7 @@ export class DenoPostgresConnection
   #poolSize = 3;
   #poolLazy = false;
   #poolConfig: ClientOptions = {};
+  #connectionString = "";
 
   /**
    * Generate a unique transaction name
@@ -104,6 +105,9 @@ export class DenoPostgresConnection
     return this.#poolConfig;
   }
 
+  get connectionString(): string {
+    return this.#connectionString;
+  }
   /**
    * Get the pool instance (and not the client)
    *
@@ -244,6 +248,7 @@ export class DenoPostgresConnection
   #configure(config: string | ClientOptions | undefined): { connectionString: string; config: ClientOptions } {
     switch (typeof config) {
       case "string":
+        this.#connectionString = config;
         return { connectionString: config, config: {} };
       case "object":
       case "undefined": {
@@ -251,6 +256,7 @@ export class DenoPostgresConnection
         if (!connectionString.length) {
           throw new Error("APP_POSTGRES_URL is not set");
         }
+        this.#connectionString = connectionString;
         return { connectionString, config: config || {} };
       }
       default:
