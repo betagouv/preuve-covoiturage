@@ -26,10 +26,7 @@ export abstract class RecipientServiceInterfaceResolver {
 export class RecipientService {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async maybeAddCreator(
-    recipients: ExportRecipient[],
-    created_by: number,
-  ): Promise<ExportRecipient[]> {
+  public async maybeAddCreator(recipients: ExportRecipient[], created_by: number): Promise<ExportRecipient[]> {
     if (recipients.length) return recipients;
 
     try {
@@ -42,17 +39,13 @@ export class RecipientService {
         },
       );
 
-      return creator
-        ? [
-          ExportRecipient.fromEmail(
-            `${creator.firstname} ${creator.lastname} <${creator.email}>`,
-          ),
-        ]
-        : [];
+      return creator ? [ExportRecipient.fromEmail(`${creator.firstname} ${creator.lastname} <${creator.email}>`)] : [];
     } catch (e) {
-      logger.error(
-        `[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}: ${e.message}`,
-      );
+      if (Error.isError(e)) {
+        logger.error(`[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}: ${e.message}`);
+      } else {
+        logger.error(`[RecipientService:maybeAddCreator] Error while fetching creator_id ${created_by}:`, e);
+      }
       return [];
     }
   }
