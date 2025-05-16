@@ -1,14 +1,14 @@
 import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { env, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { Migrator } from "../migration/index.ts";
+import { LegacyMigrator } from "../migration/index.ts";
 
 interface Config {
   connectionString: string;
 }
 
 export interface DbContext {
-  db: Migrator;
+  db: LegacyMigrator;
   connection: LegacyPostgresConnection;
 }
 
@@ -45,7 +45,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
       const connectionString = cfg?.connectionString ||
         env("APP_POSTGRES_URL") ||
         "postgresql://postgres:postgres@localhost:5432/local";
-      const db = new Migrator(connectionString);
+      const db = new LegacyMigrator(connectionString);
       await db.create();
       await db.migrate({ flash: false, verbose: false });
       await db.seed();

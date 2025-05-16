@@ -1,1 +1,2 @@
-export { Migrator } from "./Migrator.ts";
+export { DenoMigrator } from "./DenoMigrator.ts";
+export { LegacyMigrator } from "./LegacyMigrator.ts";
