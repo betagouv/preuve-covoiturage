@@ -24,6 +24,9 @@ export type MigratorMigrateParams = {
   };
 };
 
+/**
+ * @deprecated replaced by DenoMigrator
+ */
 export class LegacyMigrator {
   // base connection to handle the creation of a specific database
   public baseConn: LegacyPostgresConnection;
