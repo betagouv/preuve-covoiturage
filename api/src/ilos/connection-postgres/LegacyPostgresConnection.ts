@@ -66,6 +66,9 @@ export class PgPool extends pg.Pool {
   }
 }
 
+/**
+ * @deprecated replaced by DenoPostgresConnection
+ */
 export class LegacyPostgresConnection implements ConnectionInterface<PgPool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
   private database: string = "";
