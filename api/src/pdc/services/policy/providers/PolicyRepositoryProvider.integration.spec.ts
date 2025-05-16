@@ -1,5 +1,5 @@
 import { afterAll, assert, assertEquals, assertNotEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { SerializedPolicyInterface } from "../interfaces/index.ts";
@@ -9,7 +9,7 @@ describe("PolicyRepositoryProvider", () => {
   let repository: PolicyRepositoryProvider;
   let territory_id: number;
   let policy: SerializedPolicyInterface;
-  let db: DbContext;
+  let db: LegacyDbContext;
 
   function makePolicy(
     data: Partial<SerializedPolicyInterface> = {},
@@ -33,7 +33,7 @@ describe("PolicyRepositoryProvider", () => {
       ...data,
     };
   }
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     territory_id = 1;

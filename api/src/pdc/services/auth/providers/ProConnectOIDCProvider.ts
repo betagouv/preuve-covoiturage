@@ -1,26 +1,46 @@
 import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { createRemoteJWKSet } from "dep:jose";
 import * as client from "dep:openid-client";
 
 @provider()
 export class ProConnectOIDCProvider implements InitHookInterface {
+  #enabled = false;
   protected JWKS: ReturnType<typeof createRemoteJWKSet> | undefined;
   protected clientConfig: client.Configuration | undefined;
 
   constructor(
     protected config: ConfigInterfaceResolver,
     private userRepository: UserRepository,
-  ) {}
+  ) {
+    this.#enabled = this.config.get("proconnect.enabled");
+  }
+
+  async #configure(fail = true): Promise<void> {
+    if (!this.#enabled) {
+      const msg = "[proconnect] is disabled! Use PROCONNECT_ENABLED=true to enable";
+
+      if (fail) {
+        throw new Error(msg);
+      }
+
+      logger.warn(msg);
+      return;
+    }
+
+    await this.getConfig();
+  }
 
   async init(): Promise<void> {
-    await this.getConfig();
+    await this.#configure(false);
   }
 
   protected async getConfig() {
     const clientId = this.config.get("proconnect.client_id");
     const clientSecret = this.config.get("proconnect.client_secret");
     const server = this.config.get("proconnect.base_url");
+
     this.clientConfig = await client.discovery(
       server,
       clientId,
@@ -29,9 +49,8 @@ export class ProConnectOIDCProvider implements InitHookInterface {
   }
 
   async getLoginUrl() {
-    if (!this.clientConfig) {
-      await this.getConfig();
-    }
+    await this.#configure();
+
     const redirect_uri = this.config.get("proconnect.redirect_url");
     const scope = "openid email siret given_name usual_name";
 
@@ -55,9 +74,8 @@ export class ProConnectOIDCProvider implements InitHookInterface {
   }
 
   async getToken(url: URL, expectedNonce: string, expectedState: string) {
-    if (!this.clientConfig) {
-      await this.getConfig();
-    }
+    await this.#configure();
+
     const tokens = await client.authorizationCodeGrant(this.clientConfig!, url, {
       expectedNonce,
       expectedState,
@@ -67,11 +85,15 @@ export class ProConnectOIDCProvider implements InitHookInterface {
   }
 
   async getUserInfo(accessToken: string, sub: string) {
-    if (!this.clientConfig) {
-      await this.getConfig();
-    }
+    await this.#configure();
+
     const userInfo = await client.fetchUserInfo(this.clientConfig!, accessToken, sub);
-    return await this.getLocalUser(userInfo.email!, userInfo.siret! as string, userInfo.given_name, userInfo.usual_name as string);
+    return await this.getLocalUser(
+      userInfo.email!,
+      userInfo.siret! as string,
+      userInfo.given_name,
+      userInfo.usual_name as string,
+    );
   }
 
   protected async getLocalUser(email: string, siret: string, given_name?: string, family_name?: string) {
@@ -92,9 +114,8 @@ export class ProConnectOIDCProvider implements InitHookInterface {
   }
 
   async getLogoutUrl(idToken: string) {
-    if (!this.clientConfig) {
-      await this.getConfig();
-    }
+    await this.#configure();
+
     const state = client.randomState();
     const redirect = this.config.get("proconnect.logout_redirect_url");
     const redirectUrl = client.buildEndSessionUrl(this.clientConfig!, {

@@ -1,6 +1,6 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
 import { CarpoolLabelRepository } from "./CarpoolLabelRepository.ts";
 import { CarpoolRepository } from "./CarpoolRepository.ts";
@@ -8,7 +8,7 @@ import { CarpoolRepository } from "./CarpoolRepository.ts";
 describe("Carpool Label Repository", () => {
   let repository: CarpoolRepository;
   let labelRepository: CarpoolLabelRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let carpool_id: number;
 
   // anomaly
@@ -23,7 +23,7 @@ describe("Carpool Label Repository", () => {
   const fraud_label_1_V3_1 = "interoperator_overlap_trip";
   const fraud_label_2_V3_1 = "interoperator_too_many_trips_by_day";
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   const insertTermLabels = async (carpool_id: number) => {
     await db.connection.getClient().query(

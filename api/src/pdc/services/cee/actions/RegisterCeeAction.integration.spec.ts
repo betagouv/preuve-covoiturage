@@ -6,10 +6,10 @@ import { CarpoolStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts"
 import {
   assertErrorHandler,
   assertHandler,
-  DbContext,
   KernelContext,
-  makeDbBeforeAfter,
+  LegacyDbContext,
   makeKernelBeforeAfter,
+  makeLegacyDbBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
@@ -21,7 +21,7 @@ import {
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/registerApplication.contract.ts";
 
 describe("RegisterCeeAction", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let kernel: KernelContext;
   config.rules.validJourneyConstraint.start_date = new Date("2022-01-01");
 
@@ -58,7 +58,7 @@ describe("RegisterCeeAction", () => {
   // ---------------------------------------------------------------------------
 
   const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
-  const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+  const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await dbBefore();

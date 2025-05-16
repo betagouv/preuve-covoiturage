@@ -12,6 +12,8 @@ export class DenoPostgresConnection
   #poolSize = 3;
   #poolLazy = false;
   #poolConfig: ClientOptions = {};
+  #connectionAttempts = 0;
+  #connectionString = "";
 
   /**
    * Generate a unique transaction name
@@ -79,6 +81,11 @@ export class DenoPostgresConnection
           results: debugString.includes("results"),
           queryInError: debugString.includes("queryinerror"),
         },
+        decoders: {
+          // BigInt are kept as strings for compatibility with node-postgres
+          // TODO: migrate the code to BigInt (remove the custom decoder)
+          20: (value: string): string => value,
+        },
       },
       ...config,
     });
@@ -104,6 +111,9 @@ export class DenoPostgresConnection
     return this.#poolConfig;
   }
 
+  get connectionString(): string {
+    return this.#connectionString;
+  }
   /**
    * Get the pool instance (and not the client)
    *
@@ -147,6 +157,12 @@ export class DenoPostgresConnection
   }
 
   async up(): Promise<void> {
+    if (++this.#connectionAttempts > 5) {
+      throw new Error("Connection attempts exceeded");
+    }
+
+    logger.debug(`[pg] connecting to ${this.#poolConfig.database}`);
+
     if (await this.isReady()) {
       logger.debug(`[pg] already connected to ${this.#poolConfig.database}`);
       return;
@@ -154,6 +170,8 @@ export class DenoPostgresConnection
 
     this.#pool = new Pool(this.#poolConfig, this.#poolSize, this.#poolLazy);
     await this.query(sql`SELECT 1`);
+
+    this.#connectionAttempts = 0;
     logger.debug(`[pg] connected to ${this.#poolConfig.database}`);
   }
 
@@ -183,6 +201,10 @@ export class DenoPostgresConnection
     return this.#wrap<TResult>(sql, "object");
   }
 
+  async raw<TResult>(sql: Sql): Promise<TResult[]> {
+    return this.#wrap<TResult>(sql, "object", false);
+  }
+
   async cursor<TResult>(sql: Sql): Promise<{
     read: (rowCount?: number) => AsyncGenerator<TResult[]>;
     [Symbol.asyncDispose]: () => Promise<void>;
@@ -195,7 +217,7 @@ export class DenoPostgresConnection
 
       // Create a cursor
       const cursorName = DenoPostgresConnection.id("cursor");
-      await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.sql}`, sql.values);
+      await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.text}`, sql.values);
 
       return {
         read: async function* (rowCount: number = 100): AsyncGenerator<TResult[]> {
@@ -217,21 +239,21 @@ export class DenoPostgresConnection
     }
   }
 
-  async #wrap<TResult>(sql: Sql, format: "array" | "object"): Promise<TResult[]> {
+  async #wrap<TResult>(sql: Sql, format: "array" | "object", transaction = true): Promise<TResult[]> {
     // Explicit Resource Management handles the disposal of the client
     using client = await this.#pool!.connect();
 
     try {
-      await client.queryArray(`BEGIN`);
+      transaction && await client.queryArray(`BEGIN`);
 
       const result = format === "object"
-        ? await client.queryObject<TResult>({ text: sql.sql, args: sql.values })
-        : await client.queryArray({ text: sql.sql, args: sql.values }); // FIXME type queryArray !
+        ? await client.queryObject<TResult>({ text: sql.text, args: sql.values })
+        : await client.queryArray({ text: sql.text, args: sql.values }); // FIXME type queryArray !
 
-      await client.queryArray(`COMMIT`);
+      transaction && await client.queryArray(`COMMIT`);
       return result.rows as TResult[];
     } catch (e) {
-      await client.queryArray(`ROLLBACK`);
+      transaction && await client.queryArray(`ROLLBACK`);
       e instanceof Error && logger.error("[pg] transaction error", e.message);
       throw e;
     }
@@ -244,6 +266,7 @@ export class DenoPostgresConnection
   #configure(config: string | ClientOptions | undefined): { connectionString: string; config: ClientOptions } {
     switch (typeof config) {
       case "string":
+        this.#connectionString = config;
         return { connectionString: config, config: {} };
       case "object":
       case "undefined": {
@@ -251,6 +274,7 @@ export class DenoPostgresConnection
         if (!connectionString.length) {
           throw new Error("APP_POSTGRES_URL is not set");
         }
+        this.#connectionString = connectionString;
         return { connectionString, config: config || {} };
       }
       default:
@@ -290,6 +314,7 @@ export class DenoPostgresConnection
             queryInError: boolean(),
           }),
         ]),
+        decoders: object(),
       }),
     });
 

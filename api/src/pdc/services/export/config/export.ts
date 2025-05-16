@@ -1,5 +1,5 @@
 import { env_or_default, env_or_int } from "@/lib/env/index.ts";
-import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/carpoolListQuery.ts";
 import { FieldFilter, Fields } from "../models/CSVWriter.ts";
 import { ExportTarget } from "../models/Export.ts";
 
