@@ -1,7 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
 import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/DenoPostgresConnection.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/LegacyPostgresConnection.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { CarpoolAcquisitionStatusEnum } from "@/pdc/providers/carpool/interfaces/common.ts";
 import { CarpoolRow } from "@/pdc/services/export/models/CarpoolRow.ts";
@@ -51,7 +50,6 @@ export class CarpoolRepository {
   };
 
   constructor(
-    public legacyConnection: LegacyPostgresConnection,
     protected pgConnection: DenoPostgresConnection,
     protected config: ConfigInterfaceResolver,
   ) {}
