@@ -196,6 +196,10 @@ export class DenoPostgresConnection
     return this.#wrap<TResult>(sql, "object");
   }
 
+  async raw<TResult>(sql: Sql): Promise<TResult[]> {
+    return this.#wrap<TResult>(sql, "object", false);
+  }
+
   async cursor<TResult>(sql: Sql): Promise<{
     read: (rowCount?: number) => AsyncGenerator<TResult[]>;
     [Symbol.asyncDispose]: () => Promise<void>;
@@ -230,21 +234,21 @@ export class DenoPostgresConnection
     }
   }
 
-  async #wrap<TResult>(sql: Sql, format: "array" | "object"): Promise<TResult[]> {
+  async #wrap<TResult>(sql: Sql, format: "array" | "object", transaction = true): Promise<TResult[]> {
     // Explicit Resource Management handles the disposal of the client
     using client = await this.#pool!.connect();
 
     try {
-      await client.queryArray(`BEGIN`);
+      transaction && await client.queryArray(`BEGIN`);
 
       const result = format === "object"
         ? await client.queryObject<TResult>({ text: sql.text, args: sql.values })
         : await client.queryArray({ text: sql.text, args: sql.values }); // FIXME type queryArray !
 
-      await client.queryArray(`COMMIT`);
+      transaction && await client.queryArray(`COMMIT`);
       return result.rows as TResult[];
     } catch (e) {
-      await client.queryArray(`ROLLBACK`);
+      transaction && await client.queryArray(`ROLLBACK`);
       e instanceof Error && logger.error("[pg] transaction error", e.message);
       throw e;
     }
