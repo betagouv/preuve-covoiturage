@@ -7,14 +7,14 @@ interface Config {
   connectionString: string;
 }
 
-export interface DbContext {
+export interface LegacyDbContext {
   db: LegacyMigrator;
   connection: LegacyPostgresConnection;
 }
 
-export interface DbBeforeAfter {
-  before(): Promise<DbContext>;
-  after(cfg: DbContext): Promise<void>;
+export interface LegacyDbBeforeAfter {
+  before(): Promise<LegacyDbContext>;
+  after(cfg: LegacyDbContext): Promise<void>;
 }
 
 /**
@@ -24,9 +24,9 @@ export interface DbBeforeAfter {
  * APP_POSTGRES_URL environment variable.
  *
  * @example
- * import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
+ * import { DbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
  *
- * const { before, after } = makeDbBeforeAfter();
+ * const { before, after } = makeLegacyDbBeforeAfter();
  * let db: DbContext;
  *
  * beforeAll(async () => {
@@ -39,9 +39,9 @@ export interface DbBeforeAfter {
  * @param {Config} cfg
  * @returns
  */
-export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
+export function makeLegacyDbBeforeAfter(cfg?: Config): LegacyDbBeforeAfter {
   return {
-    before: async (): Promise<DbContext> => {
+    before: async (): Promise<LegacyDbContext> => {
       const connectionString = cfg?.connectionString ||
         env("APP_POSTGRES_URL") ||
         "postgresql://postgres:postgres@localhost:5432/local";
@@ -52,7 +52,7 @@ export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
 
       return { db, connection: db.testConn };
     },
-    after: async (ctx: DbContext): Promise<void> => {
+    after: async (ctx: LegacyDbContext): Promise<void> => {
       // Test databases can be kept for inspection by setting the env var
       // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
       // use `just drop_test_databases` in your shell to clear them.

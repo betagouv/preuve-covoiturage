@@ -1,27 +1,18 @@
-import {
-  afterAll,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
+import { afterAll, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
-import {
-  insertableCarpoolCancelRequest,
-  insertableCarpoolCreateRequest,
-} from "../mocks/database/request.ts";
+import { insertableCarpoolCancelRequest, insertableCarpoolCreateRequest } from "../mocks/database/request.ts";
 import { CarpoolRepository } from "./CarpoolRepository.ts";
 import { CarpoolRequestRepository } from "./CarpoolRequestRepository.ts";
 
 describe("CarpoolRequestRepository", () => {
   let repository: CarpoolRequestRepository;
   let carpoolRepository: CarpoolRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let carpool_id: Id;
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();
@@ -43,9 +34,7 @@ describe("CarpoolRequestRepository", () => {
 
     await repository.save(data);
     const result = await db.connection.getClient().query(sql`
-    SELECT carpool_id, operator_id, operator_journey_id, api_version, payload FROM ${
-      raw(repository.table)
-    }
+    SELECT carpool_id, operator_id, operator_journey_id, api_version, payload FROM ${raw(repository.table)}
     WHERE carpool_id = ${carpool_id}
   `);
 
