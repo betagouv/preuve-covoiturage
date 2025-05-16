@@ -3,7 +3,7 @@ import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { TerritoryRepository } from "@/pdc/services/export/repositories/TerritoryRepository.ts";
 import { TerritoryCodeEnum } from "@/pdc/services/policy/interfaces/index.ts";
 import { TerritoryService } from "./TerritoryService.ts";
-// import { DbContext, KernelContext, makeDbBeforeAfter, makeKernelBeforeAfter } from "@/pdc/providers/test/index.ts";
+// import { DbContext, KernelContext, makeLegacyDbBeforeAfter, makeKernelBeforeAfter } from "@/pdc/providers/test/index.ts";
 // import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportServiceProvider.ts";
 // import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServiceProvider.ts";
 
@@ -11,7 +11,7 @@ import { TerritoryService } from "./TerritoryService.ts";
 //   UserSP,
 //   ExportSP,
 // );
-// const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+// const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
 
 // describe("TerritoryService", () => {
 //   // ---------------------------------------------------------------------------

@@ -1,13 +1,13 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 
 import { MetadataRepositoryProvider } from "./MetadataRepositoryProvider.ts";
 
 describe("MetadataRepositoryProvider", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let repository: MetadataRepositoryProvider;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();

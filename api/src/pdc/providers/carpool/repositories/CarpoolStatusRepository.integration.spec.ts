@@ -5,7 +5,7 @@ import {
   CarpoolAnomalyStatusEnum,
   CarpoolFraudStatusEnum,
 } from "@/pdc/providers/carpool/interfaces/common.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
 import { insertableAcquisitionStatus } from "../mocks/database/status.ts";
@@ -15,10 +15,10 @@ import { CarpoolStatusRepository } from "./CarpoolStatusRepository.ts";
 describe("CarpoolStatusRepository", () => {
   let repository: CarpoolStatusRepository;
   let carpoolRepository: CarpoolRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let carpool_id: Id;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();

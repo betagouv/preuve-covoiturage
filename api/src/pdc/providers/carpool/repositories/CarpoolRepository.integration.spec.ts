@@ -1,23 +1,14 @@
-import {
-  afterAll,
-  assertObjectMatch,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { afterAll, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
-import {
-  insertableCarpool,
-  updatableCarpool,
-} from "../mocks/database/carpool.ts";
+import { insertableCarpool, updatableCarpool } from "../mocks/database/carpool.ts";
 import { CarpoolRepository } from "./CarpoolRepository.ts";
 
 describe("Carpool Repository", () => {
   let repository: CarpoolRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();
@@ -47,8 +38,7 @@ describe("Carpool Repository", () => {
     });
 
     const incentiveResult = await db.connection.getClient().query({
-      text:
-        `SELECT idx, siret, amount FROM ${repository.incentiveTable} WHERE carpool_id = $1`,
+      text: `SELECT idx, siret, amount FROM ${repository.incentiveTable} WHERE carpool_id = $1`,
       values: [id],
     });
 
@@ -96,6 +86,6 @@ describe("Carpool Repository", () => {
     );
 
     const result = await getCarpool(carpool._id);
-    assertObjectMatch({ ...result, conflict: false}, { ...carpool, ...insertData, ...updateData });
+    assertObjectMatch({ ...result, conflict: false }, { ...carpool, ...insertData, ...updateData });
   });
 });

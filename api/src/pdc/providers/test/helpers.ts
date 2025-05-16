@@ -78,7 +78,7 @@ export function uuid(): string {
  *
  * @example
  * // with a test database connection
- * const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+ * const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
  * const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(ServiceProvider);
  * let db: DbContext;
  * let kc: KernelContext;

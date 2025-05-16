@@ -10,24 +10,21 @@ import {
 } from "@/dev_deps.ts";
 import { PoolClient } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
-import {
-  upsertableGeoError,
-  upsertableGeoSuccess,
-} from "../mocks/database/geo.ts";
+import { upsertableGeoError, upsertableGeoSuccess } from "../mocks/database/geo.ts";
 import { CarpoolGeoRepository } from "./CarpoolGeoRepository.ts";
 import { CarpoolRepository } from "./CarpoolRepository.ts";
 
 describe("CarpoolGeoRepository", () => {
   let repository: CarpoolGeoRepository;
   let carpoolRepository: CarpoolRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let carpool_id: Id;
   let conn: PoolClient;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
   beforeAll(async () => {
     db = await before();
     repository = new CarpoolGeoRepository(db.connection);
@@ -67,9 +64,7 @@ describe("CarpoolGeoRepository", () => {
     };
     await repository.upsert(data, conn);
     const result = await conn.query(sql`
-    SELECT carpool_id, start_geo_code, end_geo_code FROM ${
-      raw(repository.table)
-    }
+    SELECT carpool_id, start_geo_code, end_geo_code FROM ${raw(repository.table)}
     WHERE carpool_id = ${carpool_id}
   `);
     assertObjectMatch(result.rows.pop(), data);

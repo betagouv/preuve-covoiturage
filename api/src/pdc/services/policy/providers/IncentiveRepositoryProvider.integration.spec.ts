@@ -1,23 +1,13 @@
-import {
-  afterAll,
-  assert,
-  assertEquals,
-  beforeAll,
-  describe,
-  it,
-} from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 
-import {
-  IncentiveStateEnum,
-  IncentiveStatusEnum,
-} from "../interfaces/index.ts";
+import { IncentiveStateEnum, IncentiveStatusEnum } from "../interfaces/index.ts";
 import { IncentiveRepositoryProvider } from "./IncentiveRepositoryProvider.ts";
 
 describe("IncentiveRepositoryProvider", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let repository: IncentiveRepositoryProvider | undefined;
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
   beforeAll(async () => {
     db = await before();
     repository = new IncentiveRepositoryProvider(
@@ -85,15 +75,11 @@ describe("IncentiveRepositoryProvider", () => {
     });
     assertEquals(incentiveResults.rowCount, 2);
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-1"
-      ).result,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-1").result,
       100,
     );
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-2"
-      ).result,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-2").result,
       200,
     );
   });
@@ -157,27 +143,19 @@ describe("IncentiveRepositoryProvider", () => {
 
     assertEquals(incentiveResults.rowCount, 3);
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-1"
-      ).result,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-1").result,
       0,
     );
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-1"
-      ).state,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-1").state,
       "null",
     );
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-2"
-      ).result,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-2").result,
       500,
     );
     assertEquals(
-      incentiveResults.rows.find((i) =>
-        i.operator_journey_id === "operator_journey_id-3"
-      ).result,
+      incentiveResults.rows.find((i) => i.operator_journey_id === "operator_journey_id-3").result,
       100,
     );
   });

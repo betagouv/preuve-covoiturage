@@ -11,7 +11,7 @@ import {
 } from "@/dev_deps.ts";
 import { ConflictException } from "@/ilos/common/index.ts";
 import { CarpoolAcquisitionStatusEnum, CarpoolFraudStatusEnum } from "@/pdc/providers/carpool/interfaces/index.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { config } from "../config/index.ts";
 import {
   CeeApplicationErrorEnum,
@@ -25,11 +25,11 @@ import {
 import { CeeRepositoryProvider } from "./CeeRepositoryProvider.ts";
 
 describe("CeeRepositoryProvider", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let repository: CeeRepositoryProvider;
   let applicationUuid: string;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();
