@@ -12,6 +12,7 @@ export class DenoPostgresConnection
   #poolSize = 3;
   #poolLazy = false;
   #poolConfig: ClientOptions = {};
+  #connectionAttempts = 0;
   #connectionString = "";
 
   /**
@@ -151,6 +152,12 @@ export class DenoPostgresConnection
   }
 
   async up(): Promise<void> {
+    if (++this.#connectionAttempts > 5) {
+      throw new Error("Connection attempts exceeded");
+    }
+
+    logger.debug(`[pg] connecting to ${this.#poolConfig.database}`);
+
     if (await this.isReady()) {
       logger.debug(`[pg] already connected to ${this.#poolConfig.database}`);
       return;
@@ -158,6 +165,8 @@ export class DenoPostgresConnection
 
     this.#pool = new Pool(this.#poolConfig, this.#poolSize, this.#poolLazy);
     await this.query(sql`SELECT 1`);
+
+    this.#connectionAttempts = 0;
     logger.debug(`[pg] connected to ${this.#poolConfig.database}`);
   }
 
