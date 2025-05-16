@@ -81,6 +81,11 @@ export class DenoPostgresConnection
           results: debugString.includes("results"),
           queryInError: debugString.includes("queryinerror"),
         },
+        decoders: {
+          // BigInt are kept as strings for compatibility with node-postgres
+          // TODO: migrate the code to BigInt (remove the custom decoder)
+          20: (value: string): string => value,
+        },
       },
       ...config,
     });
@@ -309,6 +314,7 @@ export class DenoPostgresConnection
             queryInError: boolean(),
           }),
         ]),
+        decoders: object(),
       }),
     });
 
