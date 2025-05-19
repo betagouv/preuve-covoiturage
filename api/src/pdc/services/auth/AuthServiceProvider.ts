@@ -4,6 +4,7 @@ import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddle
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
 import { AccessTokenAction } from "@/pdc/services/auth/actions/AccessTokenAction.ts";
+import { CreateAccessTokenAction } from "@/pdc/services/auth/actions/CreateAccessTokenAction.ts";
 import { ListAccessTokenAction } from "@/pdc/services/auth/actions/ListAccessTokenAction.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import { AuthRouter } from "./AuthRouter.ts";
@@ -25,6 +26,6 @@ import { UserRepository } from "./providers/UserRepository.ts";
   middlewares: [
     ["validate", ValidatorMiddleware],
   ],
-  handlers: [AccessTokenAction, ListAccessTokenAction],
+  handlers: [AccessTokenAction, ListAccessTokenAction, CreateAccessTokenAction],
 })
 export class AuthServiceProvider extends AbstractServiceProvider {}

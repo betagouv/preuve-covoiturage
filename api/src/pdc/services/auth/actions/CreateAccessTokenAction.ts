@@ -1,28 +1,28 @@
 import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { AccessToken, CreateAccessTokenParams } from "@/pdc/services/auth/dto/AccessToken.ts";
+import { CreateAccessTokenParams } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
 
 @handler({
   service: "auth",
-  method: "accessTokenList",
+  method: "accessTokenCreate",
   middlewares: [
     ["validate", CreateAccessTokenParams],
   ],
   apiRoute: {
-    path: "/auth/access_tokens",
+    path: "/auth/access_token",
     method: "GET",
     successHttpCode: 200,
   },
 })
-export class ListAccessTokenAction extends AbstractAction {
+export class CreateAccessTokenAction extends AbstractAction {
   constructor(
     private dexClient: DexClient,
   ) {
     super();
   }
 
-  protected override async handle(params: {operator_id: string}): Promise<AccessToken[]> {
-    return this.dexClient.listByOperator(parseInt(params.operator_id)) 
+  protected override async handle(params: { operator_id: string}): Promise<{uuid: string, password: string}> {
+    return this.dexClient.createForOperator(parseInt(params.operator_id))
   }
 }

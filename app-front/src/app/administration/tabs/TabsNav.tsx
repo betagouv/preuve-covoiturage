@@ -39,9 +39,7 @@ export default function TabsNav() {
       });
     }
     if (
-      ["operator.admin"].includes(
-        user?.role ?? "",
-      ) || (user?.role === "registry.admin" && simulatedRole)
+      user?.operator_id
     ) {
       tabs.push({
         content: <TabOperatorTokens />,

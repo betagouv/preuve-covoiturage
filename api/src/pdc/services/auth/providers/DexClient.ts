@@ -44,7 +44,7 @@ export class DexClient implements InitHookInterface {
     }).filter((p) => p.operator_id === id);
   }
 
-  async createForOperator(operator_id: number, role?: "application") {
+  async createForOperator(operator_id: number, role = "application") {
     const uuid = v4();
     const password = randomString();
     const hash = new TextEncoder().encode(await bcrypt_hash(password));
