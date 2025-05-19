@@ -1,6 +1,6 @@
 import { useAuth } from "@/providers/AuthProvider";
 import { useState } from "react";
-import OperatorTokensTable from '../tables/OperatorTokensTabs';
+import OperatorTokensTable from "../tables/OperatorTokensTabs";
 
 export default function TabOperatorTokens() {
   const { user } = useAuth();
@@ -12,7 +12,6 @@ export default function TabOperatorTokens() {
     <>
       <OperatorTokensTable
         key={key}
-        title={`Token d'API`}
         operatorId={user?.operator_id}
         refresh={refresh}
       />

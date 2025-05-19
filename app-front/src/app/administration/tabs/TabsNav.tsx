@@ -41,7 +41,7 @@ export default function TabsNav() {
     if (user?.operator_id) {
       tabs.push({
         content: <TabOperatorTokens />,
-        label: `API Tokens`,
+        label: `Tokens d'API`,
       });
     }
     return tabs;

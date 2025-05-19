@@ -1,5 +1,6 @@
 import { router, serviceProvider } from "@/ilos/common/index.ts";
 import { ServiceProvider as AbstractServiceProvider } from "@/ilos/core/index.ts";
+import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
@@ -26,6 +27,7 @@ import { UserRepository } from "./providers/UserRepository.ts";
   ],
   middlewares: [
     ["validate", ValidatorMiddleware],
+    ...defaultMiddlewareBindings
   ],
   handlers: [AccessTokenAction, ListAccessTokenAction, CreateAccessTokenAction, DeleteAccessTokenAction],
 })

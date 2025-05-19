@@ -1,4 +1,5 @@
 import { Infer, object, string } from "@/lib/superstruct/index.ts";
+import { number } from 'dep:superstruct';
 
 export const AccessTokenParams = object({
   access_key: string(),
@@ -19,7 +20,7 @@ export type AccessToken = {
 }
 
 export const CrudAccessTokenParams = object({
-  operator_id: string(),
+  operator_id: number(),
 })
 
 export const DeleteAccessTokenBody = object({

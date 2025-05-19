@@ -1,5 +1,6 @@
 import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { AccessTokenParams, AccessTokenResult } from "../dto/AccessToken.ts";
 import { DexOIDCProvider } from "../providers/DexOIDCProvider.ts";
 
@@ -7,6 +8,7 @@ import { DexOIDCProvider } from "../providers/DexOIDCProvider.ts";
   service: "auth",
   method: "accessToken",
   middlewares: [
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
     ["validate", AccessTokenParams],
   ],
   apiRoute: {

@@ -287,11 +287,14 @@ export default function UsersTable(props: {
                   }}
                 >
                   <option value={undefined}>aucun</option>
+
+                  {/* TODO: fix that code not working with identified operator
+                  
                   {operatorsList()?.map((o) => (
                     <option key={o.id} value={o.id}>
                       {o.name}
                     </option>
-                  ))}
+                  ))} */}
                 </Select>
               )}
               {((user?.role === "registry.admin" &&

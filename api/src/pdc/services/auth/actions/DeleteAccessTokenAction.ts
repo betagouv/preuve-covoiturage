@@ -1,5 +1,6 @@
 import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { DeleteAccessTokenBody } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
 
@@ -7,6 +8,7 @@ import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
   service: "auth",
   method: "accessTokenDelete",
   middlewares: [
+    copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
     ["validate", DeleteAccessTokenBody],
   ],
   apiRoute: {

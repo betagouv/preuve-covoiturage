@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
 import { type OperatorTokenInterface } from "@/interfaces/dataInterface";
@@ -9,13 +8,21 @@ import Table from "@codegouvfr/react-dsfr/Table";
 import { useMemo } from "react";
 
 export default function OperatorTokensTable(props: {
-  title: string;
-  operatorId: number;
+  operatorId?: number;
   refresh: () => void;
 }) {
+  const addOperatorIdQueryParamIfPresent = (
+    urlObj: URL,
+    operatorId?: number,
+  ) => {
+    if (operatorId) {
+      urlObj.searchParams.set("operator_id", operatorId.toString());
+    }
+  };
+
   const url = useMemo(() => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_tokens"));
-    urlObj.searchParams.set("operator_id", props.operatorId.toString());
+    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
     return urlObj.toString();
   }, [props.operatorId]);
 
@@ -42,27 +49,31 @@ export default function OperatorTokensTable(props: {
 
   const handleGenerateToken = async () => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
-    urlObj.searchParams.set("operator_id", props.operatorId.toString());
+    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
     const response = await fetch(urlObj.toString(), { credentials: "include" });
     // TODO : add pop in to show password a single time
+    // TODO : refactor using data refresh only
     props.refresh();
   };
 
   const handleDeleteToken = async (tokenId: string) => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
-    urlObj.searchParams.set("operator_id", props.operatorId.toString());
+    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
     urlObj.searchParams.set("token_id", tokenId);
     const response = await fetch(urlObj.toString(), {
       credentials: "include",
       method: "DELETE",
     });
     // TODO: add pop in to confirm success / error
+    // TODO : refactor using data refresh only
     props.refresh();
   };
 
   return (
     <>
-      <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
+      <h3 className={fr.cx("fr-callout__title")}>
+        Administration des tokens de l&apos;API
+      </h3>
       <>
         <Button
           iconId="fr-icon-add-circle-line"
