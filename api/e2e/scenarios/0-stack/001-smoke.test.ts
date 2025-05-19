@@ -26,10 +26,16 @@ describe("Authenticated smoke test", () => {
   const http = new API();
 
   beforeEach(async () => {
-    await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
+    if (!http.token) await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
   });
 
-  it("should be up and running", async () => {
+  it("should get a JWT token", async () => {
+    expect(http.token).toBeDefined();
+    expect(http.token).toMatch(/^ey[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+$/);
+    expect(http.token!.split(".").length).toBe(3);
+  });
+
+  it("should get the user's profile", async () => {
     const response = await http.get("/auth/me");
     expect(response.status).toBe(200);
 

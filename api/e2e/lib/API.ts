@@ -33,7 +33,7 @@ export class API {
     try {
       const url = new URL(`/${this.#apiVersion}/auth/access_token`, this.#baseUrl);
 
-      console.info(`[API:authenticate] ${url.toString()}`);
+      // console.debug(`[API:authenticate] ${url.toString()}`);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -80,7 +80,7 @@ export class API {
     }
 
     try {
-      console.info(`[API:get] ${input.toString()}`);
+      // console.debug(`[API:get] ${input.toString()}`);
       const response = await fetch(input, init);
       const body = await this.getBody(response);
 
