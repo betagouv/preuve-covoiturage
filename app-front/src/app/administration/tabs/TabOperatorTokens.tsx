@@ -3,7 +3,7 @@ import { useState } from "react";
 import OperatorTokensTable from "../tables/OperatorTokensTabs";
 
 export default function TabOperatorTokens() {
-  const { user } = useAuth();
+  const { user, simulatedRole } = useAuth();
   const [key, setKey] = useState(0);
   const refresh = () => {
     setKey((prev) => prev + 1);
@@ -12,7 +12,7 @@ export default function TabOperatorTokens() {
     <>
       <OperatorTokensTable
         key={key}
-        operatorId={user?.operator_id}
+        operatorId={simulatedRole ? user?.operator_id : undefined}
         refresh={refresh}
       />
     </>
