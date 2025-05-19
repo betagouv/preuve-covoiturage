@@ -35,7 +35,7 @@ export type DataGouvListType = {
   has_incentive: boolean;
 };
 
-export function DataGouvListQuery(params: ExportParams, config: DataGouvQueryConfig): Sql {
+export function datagouvListQuery(params: ExportParams, config: DataGouvQueryConfig): Sql {
   const { start_at, end_at, tz } = params.get();
   const { min_occurrences, acquisition_status, incentive_status } = config;
 

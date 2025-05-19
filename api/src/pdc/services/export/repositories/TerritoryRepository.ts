@@ -1,5 +1,6 @@
 import { provider } from "@/ilos/common/Decorators.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
@@ -12,9 +13,7 @@ interface PivotTerritorySelector {
 }
 
 export abstract class TerritoryRepositoryInterfaceResolver {
-  public async getTerritorySelectors(
-    territoryId: number,
-  ): Promise<TerritorySelectorsInterface> {
+  public async getTerritorySelectors(_territoryId: number): Promise<TerritorySelectorsInterface> {
     throw new Error("Not implemented");
   }
 }
@@ -27,7 +26,7 @@ export class TerritoryRepository {
   public readonly pivotTable = "territory.territory_group_selector";
   public readonly geoTable = "geo.perimeters";
 
-  constructor(protected connection: LegacyPostgresConnection) {}
+  constructor(protected connection: DenoPostgresConnection) {}
 
   /**
    * Get the territory selectors for a given territory
@@ -35,17 +34,11 @@ export class TerritoryRepository {
    * @param territoryId
    * @returns
    */
-  public async getTerritorySelectors(
-    territoryId: number,
-  ): Promise<TerritorySelectorsInterface> {
-    const query = {
-      text: `SELECT * FROM ${this.pivotTable} WHERE territory_group_id = $1`,
-      values: [territoryId],
-    };
+  public async getTerritorySelectors(territoryId: number): Promise<TerritorySelectorsInterface> {
+    const q = sql`SELECT * FROM ${raw(this.pivotTable)} WHERE territory_group_id = ${territoryId}`;
+    const rows = await this.connection.query<PivotTerritorySelector>(q);
 
-    const { rows, rowCount } = await this.connection.getClient().query(query);
-
-    return rowCount ? this.formatSelectors(rows) : {};
+    return rows.length ? this.formatSelectors(rows) : {};
   }
 
   /**
@@ -53,12 +46,10 @@ export class TerritoryRepository {
    *
    * @param rows
    */
-  private formatSelectors(
-    rows: PivotTerritorySelector[],
-  ): TerritorySelectorsInterface {
+  private formatSelectors(rows: PivotTerritorySelector[]): TerritorySelectorsInterface {
     return rows.reduce((acc, row) => {
-      acc[row.selector_type] = [
-        ...(acc[row.selector_type] || []),
+      acc[row.selector_type as keyof TerritorySelectorsInterface] = [
+        ...(acc[row.selector_type as keyof TerritorySelectorsInterface] || []),
         row.selector_value,
       ];
       return acc;

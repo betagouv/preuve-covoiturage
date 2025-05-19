@@ -1,23 +1,23 @@
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
-import { Migrator } from "./Migrator.ts";
+import { LegacyMigrator } from "./LegacyMigrator.ts";
 
 describe("seed", () => {
-  const db = new Migrator(env_or_fail("APP_POSTGRES_URL"));
+  const mig = new LegacyMigrator(env_or_fail("APP_POSTGRES_URL"));
   beforeAll(async () => {
-    await db.create();
-    await db.up();
-    await db.migrate({ flash: false, verbose: false });
-    await db.seed();
+    await mig.create();
+    await mig.up();
+    await mig.migrate({ flash: false, verbose: false });
+    await mig.seed();
   });
 
   afterAll(async () => {
-    await db.drop();
-    await db.down();
+    await mig.drop();
+    await mig.down();
   });
 
   it("should seed territories", async () => {
-    const result = await db.testConn.getClient().query({
+    const result = await mig.testConn.getClient().query({
       text: "SELECT count(*) FROM geo.perimeters",
     });
     assertEquals(result.rows[0].count, "17");

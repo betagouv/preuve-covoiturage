@@ -20,19 +20,19 @@ import { EtalabAPIGeoProvider } from "@/pdc/providers/geo/providers/EtalabAPIGeo
 import { EtalabBaseAdresseNationaleProvider } from "@/pdc/providers/geo/providers/EtalabBaseAdresseNationaleProvider.ts";
 import { LocalGeoProvider } from "@/pdc/providers/geo/providers/LocalGeoProvider.ts";
 import { OSRMProvider } from "@/pdc/providers/geo/providers/OSRMProvider.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
 import { KernelContext, makeKernelBeforeAfter } from "@/pdc/providers/test/helpers.ts";
 import { AcquisitionServiceProvider } from "@/pdc/services/acquisition/AcquisitionServiceProvider.ts";
 
 const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(AcquisitionServiceProvider);
-const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
 
 describe("Operator patches a journey", () => {
   // ---------------------------------------------------------------------------
   // SETUP
   // ---------------------------------------------------------------------------
 
-  let db: DbContext;
+  let db: LegacyDbContext;
   let kc: KernelContext;
   let carpoolRepository: CarpoolRepository;
   let statusRepository: CarpoolStatusRepository;

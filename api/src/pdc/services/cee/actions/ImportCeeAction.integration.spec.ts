@@ -4,16 +4,16 @@ import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   assertErrorHandler,
   assertSuccessHandler,
-  DbContext,
   KernelContext,
-  makeDbBeforeAfter,
+  LegacyDbContext,
   makeKernelBeforeAfter,
+  makeLegacyDbBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { handlerConfig } from "../contracts/importApplication.contract.ts";
 
 describe("ImportCeeAction", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let kernel: KernelContext;
 
   const defaultContext: ContextType = {
@@ -40,7 +40,7 @@ describe("ImportCeeAction", () => {
   // ---------------------------------------------------------------------------
 
   const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
-  const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+  const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await dbBefore();

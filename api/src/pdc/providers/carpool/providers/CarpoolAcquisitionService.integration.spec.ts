@@ -10,12 +10,12 @@ import {
   describe,
   it,
   sinon as Sinon,
-  SinonSandbox
+  SinonSandbox,
 } from "@/dev_deps.ts";
-import { ConflictException } from '@/ilos/common/index.ts';
+import { ConflictException } from "@/ilos/common/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { GeoProvider } from "@/pdc/providers/geo/index.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { insertableCarpool, updatableCarpool } from "../mocks/database/carpool.ts";
 import { CarpoolGeoRepository } from "../repositories/CarpoolGeoRepository.ts";
 import { CarpoolLookupRepository } from "../repositories/CarpoolLookupRepository.ts";
@@ -31,10 +31,10 @@ describe("CarpoolAcquisitionService", () => {
   let lookupRepository: CarpoolLookupRepository;
   let geoRepository: CarpoolGeoRepository;
   let geoService: GeoProvider;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let sinon: SinonSandbox;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
   beforeAll(async () => {
     db = await before();
     geoService = Sinon.createStubInstance(GeoProvider);
@@ -101,7 +101,6 @@ describe("CarpoolAcquisitionService", () => {
     });
   });
 
-
   it("Should throw conflict exception on existing carpool", async () => {
     // Arrange
     const carpoolRepositoryL = sinon.spy(carpoolRepository);
@@ -119,8 +118,8 @@ describe("CarpoolAcquisitionService", () => {
     // Act & Assert
     await assertRejects(
       () => service.registerRequest({ ...data, api_version: "3" }),
-        ConflictException,
-      );
+      ConflictException,
+    );
 
     // Assert
     assert(carpoolRepositoryL.register.calledOnce);

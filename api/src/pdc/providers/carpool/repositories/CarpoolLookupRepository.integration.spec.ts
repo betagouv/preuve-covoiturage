@@ -1,5 +1,5 @@
 import { afterAll, assertEquals, assertObjectMatch, beforeAll, describe, it } from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { Id } from "../interfaces/index.ts";
 import { insertableCarpool } from "../mocks/database/carpool.ts";
 import { insertableAcquisitionStatus } from "../mocks/database/status.ts";
@@ -11,10 +11,10 @@ describe("CarpoolGeoRepository", () => {
   let repository: CarpoolLookupRepository;
   let statusRepository: CarpoolStatusRepository;
   let carpoolRepository: CarpoolRepository;
-  let db: DbContext;
+  let db: LegacyDbContext;
   let carpool_id: Id;
 
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
   beforeAll(async () => {
     db = await before();
     repository = new CarpoolLookupRepository(db.connection);

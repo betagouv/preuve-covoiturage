@@ -4,10 +4,10 @@ import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import {
   assertErrorHandler,
   assertSuccessHandler,
-  DbContext,
   KernelContext,
-  makeDbBeforeAfter,
+  LegacyDbContext,
   makeKernelBeforeAfter,
+  makeLegacyDbBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
 import { CeeServiceProvider } from "../CeeServiceProvider.ts";
 import { config } from "../config/index.ts";
@@ -15,7 +15,7 @@ import { signature } from "../contracts/registerApplication.contract.ts";
 import { handlerConfig } from "../contracts/simulateApplication.contract.ts";
 
 const { before, after } = makeKernelBeforeAfter(CeeServiceProvider);
-const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+const { before: dbBefore, after: dbAfter } = makeLegacyDbBeforeAfter();
 
 const defaultContext: ContextType = {
   call: { user: { permissions: ["test.run"], operator_id: 1 } },
@@ -24,7 +24,7 @@ const defaultContext: ContextType = {
 
 describe("SimulateCeeAction", () => {
   let kernel: KernelContext;
-  let db: DbContext;
+  let db: LegacyDbContext;
 
   beforeAll(async () => {
     db = await dbBefore();

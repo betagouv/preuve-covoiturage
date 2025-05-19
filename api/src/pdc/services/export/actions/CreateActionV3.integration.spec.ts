@@ -15,15 +15,16 @@
  */
 import { afterAll, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
 import { ContextType } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection, LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { set } from "@/lib/object/index.ts";
+import sql from "@/lib/pg/sql.ts";
 import { User, users } from "@/pdc/providers/migration/seeds/users.ts";
 import {
   AJVParamsInterface,
   assertHandler,
-  DbContext,
+  DenoDbContext,
   KernelContext,
-  makeDbBeforeAfter,
+  makeDenoDbBeforeAfter,
   makeKernelBeforeAfter,
 } from "@/pdc/providers/test/index.ts";
 import { ExportServiceProvider as ExportSP } from "@/pdc/services/export/ExportServiceProvider.ts";
@@ -33,11 +34,8 @@ import { UserServiceProvider as UserSP } from "@/pdc/services/user/UserServicePr
 import { faker } from "dep:faker";
 import { handlerConfigV3, ParamsInterfaceV3, ResultInterfaceV3 } from "../contracts/create.contract.ts";
 
-const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(
-  UserSP,
-  ExportSP,
-);
-const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
+const { before: kernelBefore, after: kernelAfter } = makeKernelBeforeAfter(UserSP, ExportSP);
+const { before: denoDbBefore, after: denoDbAfter } = makeDenoDbBeforeAfter();
 
 /**
  * Simple Export fetcher to get all records and cast their values
@@ -45,9 +43,9 @@ const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 type FullExport = Export & {
   recipients: Array<{ email: string; fullname: string; message: string }>;
 };
-function fetcher(db: DbContext) {
+function fetcher(db: DenoDbContext) {
   return async (): Promise<FullExport[]> => {
-    const res = await db.connection.getClient().query(`
+    const rows = await db.connection.query<any>(sql`
       SELECT
         ee.*,
         array_agg(json_build_object(
@@ -61,7 +59,7 @@ function fetcher(db: DbContext) {
       ORDER BY ee._id ASC
     `);
 
-    return res.rowCount ? res.rows.map((r) => ({ ...r, params: ExportParams.fromJSON(r.params) })) : [];
+    return rows.length ? rows.map((r) => ({ ...r, params: ExportParams.fromJSON(r.params) })) : [];
   };
 }
 
@@ -70,7 +68,7 @@ describe("CreateAction V3", () => {
   // SETUP
   // ---------------------------------------------------------------------------
 
-  let db: DbContext;
+  let db: DenoDbContext;
   let kc: KernelContext;
   let fetchExports: () => Promise<FullExport[]>;
 
@@ -90,19 +88,30 @@ describe("CreateAction V3", () => {
    * - setup the db macro with the connection
    */
   beforeAll(async () => {
-    db = await dbBefore();
+    // Native Deno connection
+    db = await denoDbBefore();
     kc = await kernelBefore();
+    await kc.kernel.getContainer().get(DenoPostgresConnection).down();
+    kc.kernel
+      .getContainer()
+      .rebind(DenoPostgresConnection)
+      .toConstantValue(db.connection);
+
+    // @deprecated
+    // replace the legacy connection with the test one for non-migrated repositories
+    const { connectionString } = db.connection;
     await kc.kernel.getContainer().get(LegacyPostgresConnection).down();
     kc.kernel
       .getContainer()
       .rebind(LegacyPostgresConnection)
-      .toConstantValue(db.connection);
+      .toConstantValue(new LegacyPostgresConnection({ connectionString }));
+
     fetchExports = fetcher(db);
   });
 
   afterAll(async () => {
     await kernelAfter(kc);
-    await dbAfter(db);
+    await denoDbAfter(db);
   });
 
   // ---------------------------------------------------------------------------
@@ -113,10 +122,7 @@ describe("CreateAction V3", () => {
     const start_at = "2024-01-01T00:00:00+0100";
     const end_at = "2024-01-02T00:00:00+0100";
 
-    const params: AJVParamsInterface<
-      ParamsInterfaceV3,
-      "start_at" | "end_at"
-    > = {
+    const params: AJVParamsInterface<ParamsInterfaceV3, "start_at" | "end_at"> = {
       tz: "Europe/Paris",
       start_at,
       end_at,
@@ -237,10 +243,7 @@ describe("CreateAction V3", () => {
   });
 
   it("should create a territory export for admin", async () => {
-    const params: AJVParamsInterface<
-      ParamsInterfaceV3,
-      "start_at" | "end_at"
-    > = {
+    const params: AJVParamsInterface<ParamsInterfaceV3, "start_at" | "end_at"> = {
       tz: "Europe/Paris",
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",
@@ -271,10 +274,7 @@ describe("CreateAction V3", () => {
   });
 
   it("should create an operator export as operator", async () => {
-    const params: AJVParamsInterface<
-      ParamsInterfaceV3,
-      "start_at" | "end_at"
-    > = {
+    const params: AJVParamsInterface<ParamsInterfaceV3, "start_at" | "end_at"> = {
       tz: "Europe/Paris",
       start_at: "2024-01-01T00:00:00+0100",
       end_at: "2024-01-02T00:00:00+0100",

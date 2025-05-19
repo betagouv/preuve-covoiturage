@@ -1,12 +1,11 @@
-/* eslint-disable max-len */
+import sql, { raw, Sql } from "@/lib/pg/sql.ts";
 import {
   CarpoolAcquisitionStatusEnum,
   CarpoolAnomalyStatusEnum,
   CarpoolFraudStatusEnum,
 } from "@/pdc/providers/carpool/interfaces/common.ts";
-import { AbstractQuery } from "./AbstractQuery.ts";
+import { ExportParams } from "@/pdc/services/export/models/ExportParams.ts";
 
-// List the {{template}} used in the query for string replacement
 export type TemplateKeys = "geo_selectors" | "operator_id";
 
 export type CarpoolListType = {
@@ -97,27 +96,13 @@ export type CarpoolListType = {
   offer_accepted_at: Date;
 };
 
-export class CarpoolListQuery extends AbstractQuery {
-  protected countQuery = `
-    SELECT count(cc.*) as count
-    FROM carpool_v2.carpools cc
+export function carpoolListQuery(params: ExportParams): Sql {
+  const { start_at, end_at, tz } = params.get();
+  const geo_selectors = params.geoToSQL();
+  const operator_id = params.operatorToSQL();
+  const year = 2023;
 
-    LEFT JOIN carpool_v2.status cs ON cc._id = cs.carpool_id
-
-    -- geo selection
-    LEFT JOIN carpool_v2.geo cg ON cc._id = cg.carpool_id
-    LEFT JOIN geo.perimeters gps ON cg.start_geo_code = gps.arr AND gps.year = $3::smallint
-    LEFT JOIN geo.perimeters gpe ON cg.end_geo_code = gpe.arr AND gpe.year = $3::smallint
-
-    WHERE true
-      AND cc.start_datetime >= $1
-      AND cc.start_datetime <  $2
-      AND cs.acquisition_status = 'processed'
-      {{geo_selectors}}
-      {{operator_id}}
-  `;
-
-  protected query = `
+  return sql`
     WITH trips AS (
       SELECT
         cc._id,
@@ -211,15 +196,15 @@ export class CarpoolListQuery extends AbstractQuery {
       ) as agg_incentives_rpc ON TRUE
 
       -- geo selection
-      LEFT JOIN geo.perimeters gps ON cg.start_geo_code = gps.arr AND gps.year = $3::smallint
-      LEFT JOIN geo.perimeters gpe ON cg.end_geo_code = gpe.arr AND gpe.year = $3::smallint
+      LEFT JOIN geo.perimeters gps ON cg.start_geo_code = gps.arr AND gps.year = ${year}::smallint
+      LEFT JOIN geo.perimeters gpe ON cg.end_geo_code = gpe.arr AND gpe.year = ${year}::smallint
 
       WHERE true
-        AND cc.start_datetime >= $1
-        AND cc.start_datetime <  $2
+        AND cc.start_datetime >= ${start_at}
+        AND cc.start_datetime <  ${end_at}
         AND cs.acquisition_status = 'processed'
-        {{geo_selectors}}
-        {{operator_id}}
+        ${raw(geo_selectors)}
+        ${raw(operator_id)}
     ),
 
     -- select latest geo data for start and end geo codes only
@@ -256,12 +241,12 @@ export class CarpoolListQuery extends AbstractQuery {
 
       -- dates and times are in UTC
       -- ceil times to 10 minutes and format for user's convenience
-      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'YYYY-MM-DD HH24:MI:SS') as start_datetime,
-      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'YYYY-MM-DD') as start_date,
-      to_char(ts_ceil(trips.start_at at time zone $4, 600), 'HH24:MI:SS') as start_time,
-      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'YYYY-MM-DD HH24:MI:SS') as end_datetime,
-      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'YYYY-MM-DD') as end_date,
-      to_char(ts_ceil(trips.end_at at time zone $4, 600), 'HH24:MI:SS') as end_time,
+      to_char(ts_ceil(trips.start_at at time zone ${tz}, 600), 'YYYY-MM-DD HH24:MI:SS') as start_datetime,
+      to_char(ts_ceil(trips.start_at at time zone ${tz}, 600), 'YYYY-MM-DD') as start_date,
+      to_char(ts_ceil(trips.start_at at time zone ${tz}, 600), 'HH24:MI:SS') as start_time,
+      to_char(ts_ceil(trips.end_at at time zone ${tz}, 600), 'YYYY-MM-DD HH24:MI:SS') as end_datetime,
+      to_char(ts_ceil(trips.end_at at time zone ${tz}, 600), 'YYYY-MM-DD') as end_date,
+      to_char(ts_ceil(trips.end_at at time zone ${tz}, 600), 'HH24:MI:SS') as end_time,
       to_char(trips.duration, 'HH24:MI:SS') as duration,
 
       -- distance in km with meter precision (float)

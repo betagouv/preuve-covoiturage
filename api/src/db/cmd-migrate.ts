@@ -1,5 +1,5 @@
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
-import { Migrator } from "@/pdc/providers/migration/Migrator.ts";
+import { LegacyMigrator } from "../pdc/providers/migration/LegacyMigrator.ts";
 
 /**
  * Migrate command.
@@ -7,7 +7,7 @@ import { Migrator } from "@/pdc/providers/migration/Migrator.ts";
  * Run SQL migrations from the migrations folder.
  * Flash data from remote cache.
  */
-const migrator = new Migrator(env_or_fail("APP_POSTGRES_URL"), false);
+const migrator = new LegacyMigrator(env_or_fail("APP_POSTGRES_URL"), false);
 await migrator.up();
 await migrator.migrate({
   skip: env_or_false("MIGRATIONS_SKIP_ALL"),

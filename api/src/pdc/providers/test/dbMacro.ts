@@ -1,20 +1,26 @@
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { env, env_or_false } from "@/lib/env/index.ts";
+import { DenoPostgresConnection, LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { Migrator } from "../migration/index.ts";
+import { DenoMigrator, LegacyMigrator } from "../migration/index.ts";
 
 interface Config {
   connectionString: string;
 }
 
-export interface DbContext {
-  db: Migrator;
+/**
+ * @deprecated replaced by DenoDbContext
+ */
+export interface LegacyDbContext {
+  db: LegacyMigrator;
   connection: LegacyPostgresConnection;
 }
 
-export interface DbBeforeAfter {
-  before(): Promise<DbContext>;
-  after(cfg: DbContext): Promise<void>;
+/**
+ * @deprecated replaced by DenoDbBeforeAfter
+ */
+export interface LegacyDbBeforeAfter {
+  before(): Promise<LegacyDbContext>;
+  after(cfg: LegacyDbContext): Promise<void>;
 }
 
 /**
@@ -24,9 +30,9 @@ export interface DbBeforeAfter {
  * APP_POSTGRES_URL environment variable.
  *
  * @example
- * import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
+ * import { DbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
  *
- * const { before, after } = makeDbBeforeAfter();
+ * const { before, after } = makeLegacyDbBeforeAfter();
  * let db: DbContext;
  *
  * beforeAll(async () => {
@@ -37,22 +43,62 @@ export interface DbBeforeAfter {
  * });
  *
  * @param {Config} cfg
- * @returns
+ * @deprecated replaced by makeDenoDbBeforeAfter
  */
-export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
+export function makeLegacyDbBeforeAfter(cfg?: Config): LegacyDbBeforeAfter {
   return {
-    before: async (): Promise<DbContext> => {
-      const connectionString = cfg?.connectionString ||
-        env("APP_POSTGRES_URL") ||
-        "postgresql://postgres:postgres@localhost:5432/local";
-      const db = new Migrator(connectionString);
+    before: async (): Promise<LegacyDbContext> => {
+      const connectionString = cfg?.connectionString || env_or_fail("APP_POSTGRES_URL");
+      const db = new LegacyMigrator(connectionString);
       await db.create();
       await db.migrate({ flash: false, verbose: false });
       await db.seed();
 
       return { db, connection: db.testConn };
     },
-    after: async (ctx: DbContext): Promise<void> => {
+    after: async (ctx: LegacyDbContext): Promise<void> => {
+      // Test databases can be kept for inspection by setting the env var
+      // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
+      // use `just drop_test_databases` in your shell to clear them.
+      if (
+        env_or_false("APP_POSTGRES_KEEP_TEST_DATABASES")
+      ) {
+        logger.info(
+          `[db-macro] Keeping the test database: ${
+            ctx?.db?.dbName || "undefined"
+          } run 'just drop_test_databases to clear'`,
+        );
+      } else {
+        await ctx.db.drop();
+      }
+
+      ctx && ctx.db && await ctx.db.down();
+    },
+  };
+}
+
+export interface DenoDbContext {
+  db: DenoMigrator;
+  connection: DenoPostgresConnection;
+}
+
+export interface DenoDbBeforeAfter {
+  before(): Promise<DenoDbContext>;
+  after(cfg: DenoDbContext): Promise<void>;
+}
+
+export function makeDenoDbBeforeAfter(cfg?: Config): DenoDbBeforeAfter {
+  return {
+    before: async (): Promise<DenoDbContext> => {
+      const connectionString = cfg?.connectionString || env_or_fail("APP_POSTGRES_URL");
+      const mig = new DenoMigrator(connectionString);
+      await mig.create();
+      await mig.migrate({ flash: false, verbose: false });
+      await mig.seed();
+
+      return { db: mig, connection: mig.testConn };
+    },
+    after: async (ctx: DenoDbContext): Promise<void> => {
       // Test databases can be kept for inspection by setting the env var
       // APP_POSTGRES_KEEP_TEST_DATABASES to 'true'
       // use `just drop_test_databases` in your shell to clear them.

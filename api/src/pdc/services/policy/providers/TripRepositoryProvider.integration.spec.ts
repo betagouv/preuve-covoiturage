@@ -1,5 +1,5 @@
 import { afterAll, assert, assertEquals, beforeAll, describe, it } from "@/dev_deps.ts";
-import { DbContext, makeDbBeforeAfter } from "@/pdc/providers/test/index.ts";
+import { LegacyDbContext, makeLegacyDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import { IDFMPeriodeNormale2021 } from "../engine/policies/20210520_IDFM.ts";
@@ -8,9 +8,9 @@ import { TripRepositoryProvider } from "./TripRepositoryProvider.ts";
 // FIXME
 // Leak on cursor
 describe.skip("TripRepositoryProvider", () => {
-  let db: DbContext;
+  let db: LegacyDbContext;
   let repository: TripRepositoryProvider;
-  const { before, after } = makeDbBeforeAfter();
+  const { before, after } = makeLegacyDbBeforeAfter();
 
   beforeAll(async () => {
     db = await before();

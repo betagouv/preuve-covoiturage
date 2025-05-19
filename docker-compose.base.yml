@@ -67,6 +67,7 @@ services:
       # Internal Services URLs
       APP_MAIL_SMTP_URL: ${APP_MAIL_SMTP_URL:-smtp://mailer:1025}
       APP_POSTGRES_URL: ${APP_POSTGRES_URL:-postgres://postgres:postgres@postgres:5432/local}
+      APP_POSTGRES_INSECURE: ${APP_POSTGRES_INSECURE:-true}
       APP_REDIS_URL: ${APP_REDIS_URL:-redis://redis:6379/1}
 
       # Signing keys
@@ -75,6 +76,7 @@ services:
 
       # Datagouv API
       APP_DATAGOUV_ENABLED: ${APP_DATAGOUV_ENABLED:-false}
+      APP_DATAGOUV_UPLOAD: ${APP_DATAGOUV_UPLOAD:-false}
       APP_DATAGOUV_KEY: ${APP_DATAGOUV_KEY:-}
       APP_DATAGOUV_ORG: ${APP_DATAGOUV_ORG:-61937d50e54eade2bbf8e8df}
       APP_DATAGOUV_DATASET: ${APP_DATAGOUV_DATASET:-5e8ee97c16601da4ee24ffb7}
@@ -119,6 +121,7 @@ services:
       DEX_GRPC_PORT: ${DEX_GRPC_PORT:-5557}
 
       # ProConnect configuration
+      PROCONNECT_ENABLED: ${PROCONNECT_ENABLED:-true}
       PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-secret}
       PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-secret}
       PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://localhost:8080/auth/login/callback}

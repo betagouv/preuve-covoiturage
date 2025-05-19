@@ -4,7 +4,7 @@ import { CSVWriter } from "../models/CSVWriter.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { CampaignRepository } from "../repositories/CampaignRepository.ts";
 import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
-import { DataGouvListType } from "../repositories/queries/DataGouvListQuery.ts";
+import { DataGouvListType } from "../repositories/queries/datagouvListQuery.ts";
 
 export abstract class DataGouvFileCreatorServiceInterfaceResolver {
   protected async configure(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<void> {
@@ -48,7 +48,7 @@ export class DataGouvFileCreatorService {
     this.fileWriter.addDatasource("campaigns", campaigns);
 
     // loop through the carpool data and append rows to the file
-    await this.carpoolRepository.dataGouvList(this.params, this.fileWriter);
+    await this.carpoolRepository.datagouvList(this.params, this.fileWriter);
   }
 
   public async write(params: ExportParams, fileWriter: CSVWriter<DataGouvListType>): Promise<string> {

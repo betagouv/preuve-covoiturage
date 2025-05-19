@@ -1,7 +1,7 @@
 import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
 import { staleDelay } from "@/pdc/services/export/config/export.ts";
-import { CarpoolListType } from "@/pdc/services/export/repositories/queries/CarpoolListQuery.ts";
+import { CarpoolListType } from "@/pdc/services/export/repositories/queries/carpoolListQuery.ts";
 import { NotificationService } from "@/pdc/services/export/services/NotificationService.ts";
 import { StorageService } from "@/pdc/services/export/services/StorageService.ts";
 import { CSVWriter } from "../models/CSVWriter.ts";
