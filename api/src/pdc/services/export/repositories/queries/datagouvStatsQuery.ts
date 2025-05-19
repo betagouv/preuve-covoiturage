@@ -21,8 +21,8 @@ export type DataGouvStatsType = {
   count_removed_both: number;
 };
 
-export function DataGouvStatsQuery(params: ExportParams, config: DataGouvQueryConfig): Sql {
-  const { start_at, end_at, tz } = params.get();
+export function datagouvStatsQuery(params: ExportParams, config: DataGouvQueryConfig): Sql {
+  const { start_at, end_at } = params.get();
   const { min_occurrences, acquisition_status } = config;
 
   return sql`

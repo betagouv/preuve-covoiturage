@@ -24,7 +24,10 @@ export type MigratorMigrateParams = {
   };
 };
 
-export class Migrator {
+/**
+ * @deprecated replaced by DenoMigrator
+ */
+export class LegacyMigrator {
   // base connection to handle the creation of a specific database
   public baseConn: LegacyPostgresConnection;
   public rootConnectionString: string;
@@ -35,7 +38,7 @@ export class Migrator {
 
   public readonly dbName: string;
   public readonly hasTmpDb: boolean;
-  public readonly verbose = false;
+  public verbose = false;
 
   constructor(dbUrlString: string, createTmpDb = true) {
     const dbUrl = new URL(dbUrlString);
@@ -129,8 +132,7 @@ export class Migrator {
     await this.testConn.getClient().query(`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
-      this.verbose &&
-        logger.debug(`Seeding company ${company.legal_name}`);
+      this.verbose && logger.debug(`Seeding company ${company.legal_name}`);
       await this.seedCompany(company);
     }
 
@@ -148,14 +150,12 @@ export class Migrator {
     }
 
     for (const territory_group of territory_groups) {
-      this.verbose &&
-        logger.debug(`Seeding territory group ${territory_group.name}`);
+      this.verbose && logger.debug(`Seeding territory group ${territory_group.name}`);
       await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpoolsV2) {
-      this.verbose &&
-        logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+      this.verbose && logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
       await this.seedCarpoolV2(carpool);
     }
 
@@ -164,7 +164,7 @@ export class Migrator {
   }
 
   protected async *dataFromCsv<P>(filename: string, options: ParseOptions = {}): AsyncIterator<P> {
-    const filepath = join(import.meta.dirname!, filename);
+    const filepath = join(new URL(".", import.meta.url).pathname, filename);
     const parser = createReadStream(filepath).pipe(
       parse({
         cast: (v: any) => (v === "" ? null : v),
@@ -484,22 +484,15 @@ export class Migrator {
     groupId: number,
     selector: TerritorySelectorsInterface,
   ): Promise<void> {
-    const values: [number[], string[], string[]] = Object.keys(selector)
-      .map((type) =>
-        selector[type].map((
-          value: string | number,
-        ) => [groupId, type, value.toString()])
-      )
-      .reduce((arr, v) => [...arr, ...v], [])
-      .reduce(
-        (arr, v) => {
-          arr[0].push(v[0]);
-          arr[1].push(v[1]);
-          arr[2].push(v[2]);
-          return arr;
-        },
-        [[], [], []],
-      );
+    const values: [number[], string[], string[]] = [[], [], []];
+    for (const [type, list] of Object.entries(selector)) {
+      for (const value of list ?? []) { // optional chain + nullish coalesce
+        values[0].push(groupId);
+        values[1].push(type);
+        values[2].push(String(value));
+      }
+    }
+
     await this.testConn.getClient().query({
       text: `
         DELETE FROM territory.territory_group_selector
