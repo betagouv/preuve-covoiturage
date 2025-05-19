@@ -66,6 +66,11 @@ export type OperatorTokenInterface = {
   role: string;
 };
 
+export type CreateTokenResponseInterface = {
+  uuid: string;
+  password: string;
+};
+
 export type OperatorsInterface = {
   meta: {
     page: number;

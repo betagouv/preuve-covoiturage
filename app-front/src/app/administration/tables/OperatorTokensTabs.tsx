@@ -1,24 +1,26 @@
 import { getApiUrl } from "@/helpers/api";
-import { useApi } from "@/hooks/useApi";
-import { type OperatorTokenInterface } from "@/interfaces/dataInterface";
+import { useApiWithDependency } from "@/hooks/useApi";
+import {
+  type CreateTokenResponseInterface,
+  type OperatorTokenInterface,
+} from "@/interfaces/dataInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Table from "@codegouvfr/react-dsfr/Table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { ConfirmModal } from "../../../components/common/ConfirmModal";
 
-export default function OperatorTokensTable(props: {
-  operatorId?: number;
-  refresh: () => void;
-}) {
-  const addOperatorIdQueryParamIfPresent = (
-    urlObj: URL,
-    operatorId?: number,
-  ) => {
-    if (operatorId) {
-      urlObj.searchParams.set("operator_id", operatorId.toString());
-    }
-  };
+const addOperatorIdQueryParamIfPresent = (urlObj: URL, operatorId?: number) => {
+  if (operatorId) {
+    urlObj.searchParams.set("operator_id", operatorId.toString());
+  }
+};
+
+export default function OperatorTokensTable(props: { operatorId?: number }) {
+  const [createdToken, setCreatedToken] =
+    useState<CreateTokenResponseInterface>();
+  const [reload, setReload] = useState(0);
 
   const url = useMemo(() => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_tokens"));
@@ -26,8 +28,8 @@ export default function OperatorTokensTable(props: {
     return urlObj.toString();
   }, [props.operatorId]);
 
-  const { data } = useApi<OperatorTokenInterface[]>(url);
-  const headers = ["Token", "Actions"];
+  const { data } = useApiWithDependency<OperatorTokenInterface[]>(url, reload);
+  const headers = ["Token Id", "Actions"];
   const dataTable =
     data?.map((d) => [
       d.token_id,
@@ -50,23 +52,25 @@ export default function OperatorTokensTable(props: {
   const handleGenerateToken = async () => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
     addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
-    const response = await fetch(urlObj.toString(), { credentials: "include" });
-    // TODO : add pop in to show password a single time
-    // TODO : refactor using data refresh only
-    props.refresh();
+    const response = await fetch(urlObj, { credentials: "include" });
+    if (response.status == 200) {
+      const createTokenResponse =
+        (await response.json()) as CreateTokenResponseInterface;
+      setCreatedToken(createTokenResponse);
+    }
+    // TODO : add error handling
   };
 
   const handleDeleteToken = async (tokenId: string) => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
     addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
     urlObj.searchParams.set("token_id", tokenId);
-    const response = await fetch(urlObj.toString(), {
+    const response = await fetch(urlObj, {
       credentials: "include",
       method: "DELETE",
     });
-    // TODO: add pop in to confirm success / error
-    // TODO : refactor using data refresh only
-    props.refresh();
+    // TODO : add pop in to confirm success / error
+    setReload((prev) => prev + 1);
   };
 
   return (
@@ -90,6 +94,23 @@ export default function OperatorTokensTable(props: {
         colorVariant="blue-ecume"
         fixed
       />
+      <ConfirmModal
+        open={!!createdToken}
+        title={"Clé secrete"}
+        onClose={() => {
+          setCreatedToken(undefined);
+          setReload((prev) => prev + 1);
+        }}
+      >
+        <p>
+          Voici les informations de votre nouvelle clée d&apos;API, sauvegardez
+          en lieu sur car elle ne pourra plus jamais être consultée :
+        </p>
+        <div> Token Id : {createdToken?.uuid}</div>
+        <div>
+          Clé d&apos;API <strong>{createdToken?.password}</strong>
+        </div>
+      </ConfirmModal>
     </>
   );
 }

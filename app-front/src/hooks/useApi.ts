@@ -15,6 +15,7 @@ export const useApi = <T>(
   url: string | URL,
   paginate = false,
   init?: RequestInit,
+  reloadDependency?: unknown,
 ) => {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<Error | null>(null);
@@ -53,6 +54,39 @@ export const useApi = <T>(
   }, [url, init, paginate]);
   useEffect(() => {
     void fetchData();
-  }, [fetchData]);
+  }, [fetchData, reloadDependency]);
+  return { data, error, loading, refetch: fetchData };
+};
+
+export const useApiWithDependency = <T>(
+  url: string | URL,
+  reloadDependency?: unknown,
+) => {
+  const [data, setData] = useState<T>();
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchData = useCallback(async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(url, { credentials: "include" });
+      const res = (await response.json()) as ApiResponse<T>;
+      if (!response.ok) {
+        throw new Error(
+          (res as ErrorResponse).message ?? "Une erreur est survenue",
+        );
+      }
+
+      setData(res as T);
+    } catch (e) {
+      setError(e as Error);
+      setData(undefined);
+    } finally {
+      setLoading(false);
+    }
+  }, [url]);
+  useEffect(() => {
+    void fetchData();
+  }, [fetchData, reloadDependency]);
   return { data, error, loading, refetch: fetchData };
 };
