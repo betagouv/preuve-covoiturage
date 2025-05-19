@@ -30,7 +30,7 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
   }, [props.operatorId]);
 
   const { data } = useApiWithDependency<OperatorTokenInterface[]>(url, reload);
-  const headers = ["Identifiant de la clé", "Actions"];
+  const headers = ["Identifiant clé", "Actions"];
   const dataTable =
     data?.map((d) => [
       d.token_id,

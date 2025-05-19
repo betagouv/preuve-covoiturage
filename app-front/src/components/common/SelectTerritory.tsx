@@ -23,7 +23,7 @@ export default function SelectTerritory(props: {
     <Select
       label=""
       nativeSelectProps={{
-        value: value,
+        value: value ?? "",
         onChange: (e) => {
           const newValue = Number(e.target.value);
           setValue(newValue);
