@@ -23,8 +23,10 @@ export const CrudAccessTokenParams = object({
   operator_id: number(),
 })
 
+export type CrudAccessTokenParams = Infer<typeof CrudAccessTokenParams>;
+
 export const DeleteAccessTokenBody = object({
-  operator_id: string(),
+  operator_id: number(),
   token_id: string()
 })
 

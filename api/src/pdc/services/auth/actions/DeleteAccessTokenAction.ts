@@ -3,6 +3,7 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { DeleteAccessTokenBody } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
+import { castOperatorIdActionParam } from "@/pdc/services/auth/route/OperatorIdCastingActionParam.ts";
 
 @handler({
   service: "auth",
@@ -15,6 +16,7 @@ import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
     path: "/auth/access_token",
     method: "DELETE",
     successHttpCode: 200,
+    actionParamsFn: castOperatorIdActionParam
   },
 })
 export class DeleteAccessTokenAction extends AbstractAction {
