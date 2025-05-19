@@ -47,3 +47,5 @@ fileignoreconfig:
   allowed_patterns: [pass]
 - filename: api/e2e/lib/API.ts
   allowed_patterns: [key,"(?i)secretkey","(?i)accesskey"]
+- filename: api/e2e/scenarios/**/*.test.ts
+  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey"]
