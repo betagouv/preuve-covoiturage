@@ -35,3 +35,5 @@ fileignoreconfig:
   allowed_patterns: [username,password]
 - filename: api/src/config/connections.ts
   checksum: 243b7f3ec0caaedd588841b5310b9de50fdbe6a81aaf66737bacd57d724f3aa7
+- filename: dbt/models/export/dbt_trips.sql
+  checksum: 484baa24d66833f4c2ee45a86e7e62c8a677e519a8b5ef6a40b13185721804f2

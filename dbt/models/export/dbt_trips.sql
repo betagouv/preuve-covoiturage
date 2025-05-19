@@ -173,6 +173,8 @@ trips AS (
   ) AS agg_incentives_rpc ON TRUE
 
   WHERE cs.acquisition_status = 'processed'
+    AND cs.fraud_status <> 'pending'
+    AND cs.anomaly_status <> 'pending'
 ),
 
 -- select latest geo data for start and end geo codes only
