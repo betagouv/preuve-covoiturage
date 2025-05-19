@@ -61,10 +61,10 @@ export type TerritoriesInterface = {
 };
 
 export type OperatorTokenInterface = {
-  token_id?: string,
-  operator_id: number,
-  role: string,
-}
+  token_id: string;
+  operator_id: number;
+  role: string;
+};
 
 export type OperatorsInterface = {
   meta: {

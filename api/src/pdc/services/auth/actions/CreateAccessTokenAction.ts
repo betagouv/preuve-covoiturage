@@ -1,13 +1,13 @@
 import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { CreateAccessTokenParams } from "@/pdc/services/auth/dto/AccessToken.ts";
+import { CrudAccessTokenParams } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
 
 @handler({
   service: "auth",
   method: "accessTokenCreate",
   middlewares: [
-    ["validate", CreateAccessTokenParams],
+    ["validate", CrudAccessTokenParams],
   ],
   apiRoute: {
     path: "/auth/access_token",

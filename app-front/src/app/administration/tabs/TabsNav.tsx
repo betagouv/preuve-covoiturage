@@ -5,7 +5,7 @@ import TabOperators from "./TabOperators";
 import TabProfil from "./TabProfil";
 import TabTerritories from "./TabTerritories";
 import TabUsers from "./TabUsers";
-import TabOperatorTokens from './TabOperatorTokens';
+import TabOperatorTokens from "./TabOperatorTokens";
 
 export default function TabsNav() {
   const { user, simulatedRole } = useAuth();
@@ -38,9 +38,7 @@ export default function TabsNav() {
         label: "Territoires",
       });
     }
-    if (
-      user?.operator_id
-    ) {
+    if (user?.operator_id) {
       tabs.push({
         content: <TabOperatorTokens />,
         label: `API Tokens`,

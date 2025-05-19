@@ -18,6 +18,13 @@ export type AccessToken = {
   role: string,
 }
 
-export const CreateAccessTokenParams = object({
+export const CrudAccessTokenParams = object({
   operator_id: string(),
 })
+
+export const DeleteAccessTokenBody = object({
+  operator_id: string(),
+  token_id: string()
+})
+
+export type DeleteAccessTokenBody = Infer<typeof DeleteAccessTokenBody>;
