@@ -11,27 +11,27 @@ export type HTTPResponse<T = string | object | null> = {
 };
 
 export class API {
-  private baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
-  private apiVersion = env("APIE2E_API_VERSION", "v3");
-  private accessToken: string | null = null;
-  private defaultAccessKey: string;
-  private defaultSecretKey: string;
+  #baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
+  #apiVersion = env("APIE2E_API_VERSION", "v3");
+  #defaultAccessKey: string;
+  #defaultSecretKey: string;
+  #accessToken: string | null = null;
 
   get token(): string | null {
-    return this.accessToken;
+    return this.#accessToken;
   }
 
   constructor() {
-    this.defaultAccessKey = env("APIE2E_AUTH_ACCESSKEY");
-    this.defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
+    this.#defaultAccessKey = env("APIE2E_AUTH_ACCESSKEY");
+    this.#defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
   }
 
   public async authenticate(access_key?: string, secret_key?: string): Promise<void> {
-    access_key = access_key || this.defaultAccessKey;
-    secret_key = secret_key || this.defaultSecretKey;
+    access_key = access_key || this.#defaultAccessKey;
+    secret_key = secret_key || this.#defaultSecretKey;
 
     try {
-      const url = new URL(`/${this.apiVersion}/auth/access_token`, this.baseUrl);
+      const url = new URL(`/${this.#apiVersion}/auth/access_token`, this.#baseUrl);
 
       console.info(`[API:authenticate] ${url.toString()}`);
       const response = await fetch(url, {
@@ -54,7 +54,7 @@ export class API {
         throw new Error(`Invalid access token for ${access_key}`);
       }
 
-      this.accessToken = body.access_token;
+      this.#accessToken = body.access_token;
     } catch (e) {
       if (e instanceof Error) {
         console.error(e.message);
@@ -65,17 +65,17 @@ export class API {
   }
 
   public async get(url: string): Promise<HTTPResponse> {
-    const input = new URL(url, this.baseUrl);
+    const input = new URL(url, this.#baseUrl);
     const init: RequestInit = {
       headers: {
         ContentType: "application/json",
       },
     };
 
-    if (this.accessToken) {
+    if (this.#accessToken) {
       init.headers = {
         ...init.headers,
-        Authorization: `Bearer ${this.accessToken}`,
+        Authorization: `Bearer ${this.#accessToken}`,
       };
     }
 
