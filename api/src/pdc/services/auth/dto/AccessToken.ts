@@ -11,3 +11,10 @@ export const AccessTokenResult = object({
   access_token: string(),
 });
 export type AccessTokenResult = Infer<typeof AccessTokenResult>;
+
+
+export type AccessToken = {
+  token_id?: string,
+  operator_id: number,
+  role: string,
+}

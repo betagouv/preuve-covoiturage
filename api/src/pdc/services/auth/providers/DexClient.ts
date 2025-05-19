@@ -3,6 +3,7 @@ import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { randomString, v4 } from "@/lib/uuid/index.ts";
 import { Dex } from "@/pdc/services/auth/dex/generated/api.ts";
 import { getDexClient } from "@/pdc/services/auth/dex/getDexClient.ts";
+import { AccessToken } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { GrpcClient } from "dep:grpc";
 
 @provider()
@@ -28,7 +29,7 @@ export class DexClient implements InitHookInterface {
     return this.client;
   }
 
-  async listByOperator(id: number) {
+  async listByOperator(id: number): Promise<AccessToken[]> {
     const result = await (await this.getClient()).ListPasswords({});
     if (!result.passwords) {
       return [];

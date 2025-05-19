@@ -5,6 +5,7 @@ import TabOperators from "./TabOperators";
 import TabProfil from "./TabProfil";
 import TabTerritories from "./TabTerritories";
 import TabUsers from "./TabUsers";
+import TabOperatorTokens from './TabOperatorTokens';
 
 export default function TabsNav() {
   const { user, simulatedRole } = useAuth();
@@ -35,6 +36,16 @@ export default function TabsNav() {
       tabs.push({
         content: <TabTerritories />,
         label: "Territoires",
+      });
+    }
+    if (
+      ["operator.admin"].includes(
+        user?.role ?? "",
+      ) || (user?.role === "registry.admin" && simulatedRole)
+    ) {
+      tabs.push({
+        content: <TabOperatorTokens />,
+        label: `API Tokens`,
       });
     }
     return tabs;
