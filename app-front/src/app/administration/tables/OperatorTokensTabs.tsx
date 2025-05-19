@@ -10,6 +10,7 @@ import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Table from "@codegouvfr/react-dsfr/Table";
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "../../../components/common/ConfirmModal";
+import Link from "next/link";
 
 const addOperatorIdQueryParamIfPresent = (urlObj: URL, operatorId?: number) => {
   if (operatorId) {
@@ -29,7 +30,7 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
   }, [props.operatorId]);
 
   const { data } = useApiWithDependency<OperatorTokenInterface[]>(url, reload);
-  const headers = ["Token Id", "Actions"];
+  const headers = ["Identifiant de la clé", "Actions"];
   const dataTable =
     data?.map((d) => [
       d.token_id,
@@ -78,14 +79,24 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
       <h3 className={fr.cx("fr-callout__title")}>
         Administration des tokens de l&apos;API
       </h3>
+      <p>
+        Consulter la documentation de{" "}
+        <Link
+          href="https://tech.covoiturage.beta.gouv.fr/#topic-connexion-a-l-api"
+          target="_blank"
+          aria-label={`Ouvrir une nouvelle fenêtre vers la page documentation de l'API du RPC`}
+        >
+          l&apos;API du RPC
+        </Link>
+      </p>
       <>
         <Button
           iconId="fr-icon-add-circle-line"
           onClick={handleGenerateToken}
-          title="Ajouter un opérateur"
+          title="Générer une nouvelle clé d'API"
           size="small"
         >
-          Ajouter
+          Générer
         </Button>
       </>
       <Table
@@ -103,10 +114,10 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
         }}
       >
         <p>
-          Voici les informations de votre nouvelle clée d&apos;API, sauvegardez
-          en lieu sur car elle ne pourra plus jamais être consultée :
+          Voici les informations de votre nouvelle clé d&apos;API. Sauvegardez
+          la en lieu sur car elle ne pourra plus jamais être consultée :
         </p>
-        <div> Token Id : {createdToken?.uuid}</div>
+        <div> Identificant : {createdToken?.uuid}</div>
         <div>
           Clé d&apos;API <strong>{createdToken?.password}</strong>
         </div>
