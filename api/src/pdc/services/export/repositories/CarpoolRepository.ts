@@ -63,7 +63,7 @@ export class CarpoolRepository {
     progress?: ExportProgress,
   ): Promise<void> {
     try {
-      const total = await this.listCount(params); // total number of rows
+      const total = progress ? await this.listCount(params) : 1; // total number of rows
       logger.info(`[export:CarpoolRepository] Exporting ${total} rows`);
 
       await using cursor = await this.pgConnection.cursor<CarpoolListType>(carpoolListQuery(params));
@@ -74,7 +74,7 @@ export class CarpoolRepository {
         }
 
         done += rows.length;
-        if (progress) await progress(((done / total) * 100) | 0);
+        if (progress && total) await progress(((done / total) * 100) | 0);
       }
     } catch (e) {
       if (e instanceof Error) {

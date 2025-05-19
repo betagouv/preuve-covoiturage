@@ -36,7 +36,7 @@ export class DenoMigrator {
 
   public readonly dbName: string;
   public readonly hasTmpDb: boolean;
-  public readonly verbose = false;
+  public verbose = false;
 
   constructor(dbUrlString: string, createTmpDb = true) {
     const dbUrl = new URL(dbUrlString);
@@ -124,8 +124,7 @@ export class DenoMigrator {
     await this.testConn.query(sql`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
-      this.verbose &&
-        logger.debug(`Seeding company ${company.legal_name}`);
+      this.verbose && logger.debug(`Seeding company ${company.legal_name}`);
       await this.seedCompany(company);
     }
 
@@ -143,14 +142,12 @@ export class DenoMigrator {
     }
 
     for (const territory_group of territory_groups) {
-      this.verbose &&
-        logger.debug(`Seeding territory group ${territory_group.name}`);
+      this.verbose && logger.debug(`Seeding territory group ${territory_group.name}`);
       await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpoolsV2) {
-      this.verbose &&
-        logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+      this.verbose && logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
       await this.seedCarpoolV2(carpool);
     }
 
@@ -160,7 +157,7 @@ export class DenoMigrator {
 
   protected async seedFromCSV(filename: string, tablename: string, _csvOptions: ParseOptions = {}) {
     const cursor = (async function* <P>(f: string, options: ParseOptions = {}) {
-      const filepath = join(import.meta.dirname!, f);
+      const filepath = join(new URL(".", import.meta.url).pathname, f);
       const parser = createReadStream(filepath).pipe(
         parse({ cast: (v: unknown) => (v === "" ? null : v), ...options }),
       );
@@ -373,22 +370,15 @@ export class DenoMigrator {
   }
 
   async syncSelector(groupId: number, selector: TerritorySelectorsInterface): Promise<void> {
-    const values: [number[], string[], string[]] = Object.keys(selector)
-      .filter((type) => selector && selector[type as keyof TerritorySelectorsInterface])
-      .map((type) =>
-        selector[type as keyof TerritorySelectorsInterface]!
-          .map((value: string | number) => [groupId, type, value.toString()])
-      )
-      .reduce((arr, v) => [...arr, ...v], [])
-      .reduce(
-        (arr, v) => {
-          arr[0].push(v[0] as number);
-          arr[1].push(v[1] as string);
-          arr[2].push(v[2] as string);
-          return arr;
-        },
-        [[], [], []] as [number[], string[], string[]],
-      );
+    const values: [number[], string[], string[]] = [[], [], []];
+    for (const [type, list] of Object.entries(selector)) {
+      for (const value of list ?? []) { // optional chain + nullish coalesce
+        values[0].push(groupId);
+        values[1].push(type);
+        values[2].push(String(value));
+      }
+    }
+
     await this.testConn.query(sql`
       DELETE FROM territory.territory_group_selector
       WHERE territory_group_id = ${groupId}
