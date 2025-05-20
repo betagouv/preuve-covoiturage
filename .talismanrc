@@ -10,7 +10,9 @@ fileignoreconfig:
 - filename: flake.nix
   checksum: 35591837abd86ad13d74e7628be053f7c5d18b60e0acc463a93c7e69cced02e3
 - filename: api/deno.lock
-  checksum: a206360877a4d1a865563a3089a8b40d0f7377c5019c5b5a320708dd9b991ba1
+  allowed_patterns:
+    - "sha512-.*"
+    - "\"[0-9a-f]{64}\""
 - filename: api/src/pdc/services/cee/config/signature.ts
   checksum: bc1b5afcb79fb043a259ffe7cccd6e7d805c5d43ef0430d1fc73809de9adf0fc
 - filename: docker/dex/config-local.yaml
@@ -49,3 +51,5 @@ fileignoreconfig:
   allowed_patterns: [key,"(?i)secretkey","(?i)accesskey"]
 - filename: api/e2e/scenarios/**/*.test.ts
   allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey"]
+- filename: api/e2e/lib/*.ts
+  allowed_patterns: ["(?i)key","(?i)pass"]

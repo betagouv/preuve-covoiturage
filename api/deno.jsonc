@@ -18,7 +18,7 @@
     "dep:fs": "node:fs",
     "dep:fs-promises": "node:fs/promises",
     "dep:net": "node:net",
-    "dep:faker": "npm:@faker-js/faker@^8.4",
+    "dep:faker": "npm:@faker-js/faker@^9.8",
     "dep:commander": "npm:commander@^12.1",
     "dep:csv-parse": "npm:csv-parse@^5.5",
     "dep:redis": "npm:ioredis@^5.3",
