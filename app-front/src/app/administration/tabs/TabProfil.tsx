@@ -20,12 +20,11 @@ export default function TabProfil() {
     "territory",
   );
 
-  // TODO : fix bug when authenticated as operator (operator is set to undefined)
-  // useEffect(() => {
-  //   if (simulatedRole === false) {
-  //     onChangeTerritory();
-  //   }
-  // }, [simulatedRole]);
+  useEffect(() => {
+    if (simulatedRole === false) {
+      onChangeTerritory();
+    }
+  }, [simulatedRole]);
 
   return (
     <>

@@ -1,5 +1,7 @@
+import { Modal } from "@/components/common/Modal";
 import { getApiUrl } from "@/helpers/api";
-import { useApiWithDependency } from "@/hooks/useApi";
+import { useActionsModal } from "@/hooks/useActionsModal";
+import { useApi } from "@/hooks/useApi";
 import {
   type CreateTokenResponseInterface,
   type OperatorTokenInterface,
@@ -8,9 +10,8 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Table from "@codegouvfr/react-dsfr/Table";
-import { useMemo, useState } from "react";
-import { ConfirmModal } from "../../../components/common/ConfirmModal";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 
 const addOperatorIdQueryParamIfPresent = (urlObj: URL, operatorId?: number) => {
   if (operatorId) {
@@ -18,10 +19,13 @@ const addOperatorIdQueryParamIfPresent = (urlObj: URL, operatorId?: number) => {
   }
 };
 
-export default function OperatorTokensTable(props: { operatorId?: number }) {
+export default function OperatorTokensTable(props: {
+  title: string;
+  operatorId?: number;
+  refresh: () => void;
+}) {
   const [createdToken, setCreatedToken] =
     useState<CreateTokenResponseInterface>();
-  const [reload, setReload] = useState(0);
 
   const url = useMemo(() => {
     const urlObj = new URL(getApiUrl("v3", "auth/access_tokens"));
@@ -29,7 +33,8 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
     return urlObj.toString();
   }, [props.operatorId]);
 
-  const { data } = useApiWithDependency<OperatorTokenInterface[]>(url, reload);
+  const { data } = useApi<OperatorTokenInterface[]>(url);
+  const modal = useActionsModal<OperatorTokenInterface>();
   const headers = ["Identifiant clé", "Actions"];
   const dataTable =
     data?.map((d) => [
@@ -41,7 +46,9 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
             children: "supprimer",
             iconId: "fr-icon-delete-bin-line",
             onClick: () => {
-              void handleDeleteToken(d.token_id);
+              modal.setCurrentRow(d);
+              modal.setOpenModal(true);
+              modal.setTypeModal("delete");
             },
           },
         ]}
@@ -58,8 +65,9 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
       const createTokenResponse =
         (await response.json()) as CreateTokenResponseInterface;
       setCreatedToken(createTokenResponse);
+    } else {
+      console.error("Failed to generate token:", response.status);
     }
-    // TODO : add error handling
   };
 
   const handleDeleteToken = async (tokenId: string) => {
@@ -70,16 +78,17 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
       credentials: "include",
       method: "DELETE",
     });
-    // TODO : add pop in to confirm success / error
-    setReload((prev) => prev + 1);
+    if (response.status == 200) {
+      setCreatedToken(undefined);
+    } else {
+      console.error("Failed to delete token:", response.status);
+    }
   };
 
   return (
     <>
-      <h3 className={fr.cx("fr-callout__title")}>
-        Administration des tokens de l&apos;API
-      </h3>
-      <p>
+      <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
+      <div className={fr.cx("fr-text--md")}>
         Consulter la documentation de{" "}
         <Link
           href="https://tech.covoiturage.beta.gouv.fr/#topic-connexion-a-l-api"
@@ -88,11 +97,15 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
         >
           l&apos;API du RPC
         </Link>
-      </p>
+      </div>
       <>
         <Button
           iconId="fr-icon-add-circle-line"
-          onClick={handleGenerateToken}
+          onClick={() => {
+            modal.setOpenModal(true);
+            modal.setErrors({});
+            modal.setTypeModal("create");
+          }}
           title="Générer une nouvelle clé d'API"
           size="small"
         >
@@ -105,23 +118,46 @@ export default function OperatorTokensTable(props: { operatorId?: number }) {
         colorVariant="blue-ecume"
         fixed
       />
-      <ConfirmModal
-        open={!!createdToken}
-        title={"Clé secrete"}
+      <Modal
+        open={modal.openModal}
+        title={`${modal.modalTitle(modal.typeModal)} une clé secrete`}
+        cancelButton={false}
+        onOpen={async () => {
+          if (modal.typeModal === "create") {
+            await handleGenerateToken();
+          }
+        }}
         onClose={() => {
+          modal.setOpenModal(false);
           setCreatedToken(undefined);
-          setReload((prev) => prev + 1);
+          props.refresh();
+        }}
+        onSubmit={async () => {
+          if (modal.typeModal === "delete") {
+            await handleDeleteToken(modal.currentRow.token_id as string);
+          }
+          setCreatedToken(undefined);
+          props.refresh();
         }}
       >
-        <p>
-          Voici les informations de votre nouvelle clé d&apos;API. Sauvegardez
-          la en lieu sur car elle ne pourra plus jamais être consultée :
-        </p>
-        <div> Identificant : {createdToken?.uuid}</div>
-        <div>
-          Clé d&apos;API <strong>{createdToken?.password}</strong>
-        </div>
-      </ConfirmModal>
+        {modal.typeModal === "create" && createdToken && (
+          <>
+            <div className={fr.cx("fr-text--lead")}>
+              Voici les informations de votre nouvelle clé d&apos;API.
+              Sauvegardez la en la en lieu sur car elle ne pourra plus jamais
+              être consultée :
+            </div>
+            <div className={fr.cx("fr-text--md")}>
+              Identifiant : {createdToken?.uuid}
+            </div>
+            <div className={fr.cx("fr-text--md")}>
+              Clé d&apos;API : <strong>{createdToken?.password}</strong>
+            </div>
+          </>
+        )}
+        {modal.typeModal === "delete" &&
+          `Êtes-vous sûr de vouloir supprimer la clé ${modal.currentRow.token_id as string} ?`}
+      </Modal>
     </>
   );
 }
