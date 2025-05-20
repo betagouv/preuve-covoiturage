@@ -1,4 +1,5 @@
 import { env } from "./config.ts";
+import { faker } from "./faker.ts";
 
 export type HTTPResponse<T = string | object | null> = {
   ok: boolean;
@@ -16,6 +17,7 @@ export class API {
   #defaultAccessKey: string;
   #defaultSecretKey: string;
   #accessToken: string | null = null;
+  #sessionCookie: string | null = null;
 
   get token(): string | null {
     return this.#accessToken;
@@ -64,13 +66,56 @@ export class API {
     }
   }
 
+  public async legacyAuthenticate(email: string, password: string): Promise<void> {
+    // Login
+    const loginResponse = await this.post("/login", { email, password });
+    const cookie = loginResponse.headers.get("set-cookie");
+    if (!cookie) {
+      throw new Error("Failed to get session cookie");
+    }
+    this.#sessionCookie = cookie.split(";")[0];
+
+    // Create a new application and get the access token
+    const appResponse = await this.post("/applications", {
+      name: `APIE2E Application ${faker.string.nanoid()}`,
+    });
+
+    if (!appResponse.ok) {
+      throw new Error(`Failed to create application: ${appResponse.statusText}`);
+    }
+
+    const { application, token } = appResponse.body as {
+      application: any;
+      token: string;
+    };
+
+    this.#accessToken = token;
+  }
+
   public async get(url: string): Promise<HTTPResponse> {
+    return await this.request("GET", url);
+  }
+
+  public async post(url: string, body: object | BodyInit): Promise<HTTPResponse> {
+    return await this.request("POST", url, body);
+  }
+
+  public async request(method: "GET" | "POST", url: string, body?: object | BodyInit): Promise<HTTPResponse> {
     const input = new URL(url, this.#baseUrl);
     const init: RequestInit = {
+      method,
       headers: {
-        ContentType: "application/json",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
       },
     };
+
+    if (this.#sessionCookie) {
+      init.headers = {
+        ...init.headers,
+        Cookie: this.#sessionCookie,
+      };
+    }
 
     if (this.#accessToken) {
       init.headers = {
@@ -79,8 +124,12 @@ export class API {
       };
     }
 
+    if (method === "POST") {
+      init.body = typeof body === "object" ? JSON.stringify(body) : body;
+    }
+
     try {
-      // console.debug(`[API:get] ${input.toString()}`);
+      // console.debug(`[API:${method}] ${input.toString()}`);
       const response = await fetch(input, init);
       const body = await this.getBody(response);
 
@@ -110,7 +159,9 @@ export class API {
     }
   }
 
-  private async getBody(response: Response): Promise<string | object> {
+  private async getBody(response: Response): Promise<string | object | null> {
+    if (response.status === 204) return null;
+
     const contentType = response.headers.get("content-type");
 
     if (contentType && contentType.includes("application/json")) {

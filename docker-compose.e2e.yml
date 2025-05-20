@@ -16,8 +16,13 @@ services:
       APIE2E_API_URL: https://api.covoiturage.test
       APIE2E_AUTH_ACCESSKEY: admin@example.com
       APIE2E_AUTH_SECRETKEY: password
+      APIE2E_AUTH_OPERATOR_EMAIL: operator@example.com
+      APIE2E_AUTH_OPERATOR_PASSWORD: admin1234
+      APIE2E_AUTH_TERRITORY_EMAIL: territory@example.com
+      APIE2E_AUTH_TERRITORY_PASSWORD: admin1234
     volumes:
       - ./docker/api/certs:/app/certs:ro
+      - ./api:/app/api
 
   postgres:
     ports:

@@ -83,7 +83,7 @@ export async function remove(filepath: string): Promise<void> {
     await Deno.remove(filepath);
   } catch (error) {
     if (!(error instanceof Deno.errors.NotFound)) {
-      throw new Error(`Failed to remove file ${filepath}: ${error.message}`);
+      throw new Error(`Failed to remove file ${filepath}: ${(error as Error).message}`);
     }
     // File doesn't exist, which is fine for a remove operation
   }
