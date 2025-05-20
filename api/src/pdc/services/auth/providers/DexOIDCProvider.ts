@@ -83,6 +83,15 @@ export class DexOIDCProvider implements InitHookInterface {
     };
   }
 
+  /**
+   * Wrapper for compatibility with old token provider
+   *
+   * @deprecated Remove this when all operators use OIDC access tokens
+   */
+  public async verify<T>(token: string, options: { ignoreExpiration?: boolean } = {}): Promise<T> {
+    const data = await this.verifyToken(token);
+  }
+
   async verifyToken(token: string) {
     // TODO clean me
     try {

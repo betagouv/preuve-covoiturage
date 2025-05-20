@@ -3,6 +3,9 @@ import * as jwt from "dep:jsonwebtoken";
 
 import { TokenProviderInterface, TokenProviderInterfaceResolver } from "./interfaces/index.ts";
 
+/**
+ * @deprecated Remove this when all operators use OIDC access tokens
+ */
 @provider({
   identifier: TokenProviderInterfaceResolver,
 })

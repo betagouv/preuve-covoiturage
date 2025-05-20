@@ -21,6 +21,8 @@ fileignoreconfig:
   checksum: 90e69566513c8096f271bd7a54025c8acd68cf16d0dddd2a68ee2d364ff45fce
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
+- filename: docker-compose.e2e.yml
+  allowed_patterns: ["(?i)pass"]
 - filename: notebooks/cerema/pdll2025.ipynb
   checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
 - filename: api/src/config/connections.ts
@@ -52,4 +54,8 @@ fileignoreconfig:
 - filename: api/e2e/scenarios/**/*.test.ts
   allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey"]
 - filename: api/e2e/lib/*.ts
+  allowed_patterns: ["(?i)key","(?i)pass"]
+- filename: api/src/pdc/proxy/config/dex.ts
+  allowed_patterns: ["(?i)key","(?i)secret"]
+- filename: api/e2e/scenarios/0-stack/002-legacy-authn.test.ts
   allowed_patterns: ["(?i)key","(?i)pass"]
