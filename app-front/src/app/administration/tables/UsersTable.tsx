@@ -147,13 +147,10 @@ export default function UsersTable(props: {
     }
     return getRolesList(user?.role ?? "anonymous");
   };
-
   return (
     <>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
-      {(user?.role === "registry.admin" ||
-        user?.role === "territory.admin" ||
-        user?.role === "operator.admin") && (
+      {user?.role.split(".")[1] === "admin" && (
         <>
           <Button
             iconId="fr-icon-add-circle-line"
@@ -162,9 +159,9 @@ export default function UsersTable(props: {
                 firstname: "",
                 lastname: "",
                 email: "",
-                operator_id: undefined,
-                territory_id: undefined,
-                role: "",
+                operator_id: user?.operator_id ?? undefined,
+                territory_id: user?.territory_id ?? undefined,
+                role: `${user?.role.split(".")[0]}.user`,
               });
               modal.setOpenModal(true);
               modal.setErrors({});
@@ -254,7 +251,9 @@ export default function UsersTable(props: {
               <Select
                 label="Rôle"
                 nativeSelectProps={{
-                  value: (modal.currentRow.role as string) ?? "",
+                  value: (modal.typeModal === "update"
+                    ? modal.currentRow.role
+                    : (user?.role ?? "")) as string,
                   onChange: (e) =>
                     modal.validateInputChange(
                       formSchema,
@@ -286,10 +285,12 @@ export default function UsersTable(props: {
                       ),
                   }}
                 >
-                  <option value={undefined}>aucun</option>
-                  {operatorsList()?.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.name}
+                  {user?.role === "registry.admin" && (
+                    <option value={undefined}>aucun</option>
+                  )}
+                  {operatorsList().map((o, i) => (
+                    <option key={i} value={o?.id}>
+                      {o?.name}
                     </option>
                   ))}
                 </Select>
@@ -311,10 +312,12 @@ export default function UsersTable(props: {
                       ),
                   }}
                 >
-                  <option value={undefined}>aucun</option>
-                  {territoriesList()?.map((t) => (
-                    <option key={t._id} value={t._id}>
-                      {t.name}
+                  {user?.role === "registry.admin" && (
+                    <option value={undefined}>aucun</option>
+                  )}
+                  {territoriesList().map((t, i) => (
+                    <option key={i} value={t?._id}>
+                      {t?.name}
                     </option>
                   ))}
                 </Select>
