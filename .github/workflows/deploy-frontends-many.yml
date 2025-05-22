@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         env: [demo, production]
-        project_name: [attestation, dashboard]
+        project_name: [attestation]
         include:
           - project_name: attestation
             build_directory: attestation
