@@ -39,12 +39,6 @@ describe("Legacy Authentication", () => {
   for (const version of SUPPORTED_VERSIONS) {
     it(`should be authenticated with ${version} API`, async () => {
       const journey = await createOperatorJourney();
-      console.log({
-        driver: journey.driver.identity.identity_key,
-        passenger: journey.passenger.identity.identity_key,
-        start: journey.start.datetime,
-        end: journey.end.datetime,
-      });
       const response = await http.post<CreateJourneyResponse>(`/${version}/journeys`, journey);
       expect(response.body).toBeDefined();
 
@@ -54,7 +48,7 @@ describe("Legacy Authentication", () => {
         expect(response.body.result.data.operator_journey_id).toMatch(rx_uuidV4);
         expect(response.body.result.data.created_at).toMatch(rx_datetime);
       } else if ("error" in response.body) {
-        console.error(response.body);
+        console.error(response.body.error);
         throw new Error(response.body.error?.message || "Unknown error");
       }
     });

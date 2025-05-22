@@ -59,7 +59,7 @@ const Journey = object({
   licence_plate: optional(defaulted(string(), () => opt(faker.extra.immatriculation()))),
   start: defaulted(TimestampedLocation, () => ({})),
   end: defaulted(TimestampedLocation, () => ({})),
-  distance: defaulted(number(), () => faker.number.int({ min: 0, max: 100_000 })),
+  distance: defaulted(number(), () => faker.number.int({ min: 2_000, max: 100_000 })),
   driver: defaulted(Driver, () => ({})),
   passenger: defaulted(Passenger, () => ({})),
 });
@@ -69,7 +69,7 @@ export type JourneyType = Infer<typeof Journey>;
 
 async function identityFactory(override: Partial<Infer<typeof Identity>> = {}): Promise<Infer<typeof Identity>> {
   const phone = override.phone ?? faker.phone.number({ style: "international" });
-  const identity_key = await faker.extra.identity_key(faker.person.fullName(), override.phone);
+  const identity_key = await faker.extra.identity_key(faker.person.fullName(), phone);
   set(override, "identity_key", identity_key);
   set(override, "phone_trunc", phone?.slice(0, 10));
 
