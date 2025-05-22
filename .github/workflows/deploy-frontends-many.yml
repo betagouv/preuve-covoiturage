@@ -31,11 +31,3 @@ jobs:
             dist_directory: attestation/dist/attestation
             bucket_name_var: ATTESTATION_BUCKET_NAME
             cache_dependency_path: attestation/package-lock.json
-          - project_name: dashboard
-            build_directory: dashboard
-            build_command: |
-              cat "src/environments/environment.$DEPLOY_ENV.ts" | sed 's/export const /window./' > src/assets/env.js
-              NODE_OPTIONS=--openssl-legacy-provider npm run build -c production
-            dist_directory: dashboard/dist/dashboard
-            bucket_name_var: DASHBOARD_BUCKET_NAME
-            cache_dependency_path: dashboard/package-lock.json
