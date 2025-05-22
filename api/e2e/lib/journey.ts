@@ -17,7 +17,7 @@ const Payment = object({
 });
 
 const TravelPass = object({
-  name: defaulted(string(), () => faker.commerce.productName()),
+  name: defaulted(string(), () => faker.helpers.arrayElement(["navigo"])),
   user_id: defaulted(string(), () => faker.string.uuid()),
 });
 
@@ -31,7 +31,7 @@ const Identity = object({
   identity_key: defaulted(string(), () => faker.string.uuid()),
   phone: optional(string()),
   phone_trunc: defaulted(string(), () => faker.phone.number({ style: "international" }).slice(0, 10)),
-  application_timestamp: optional(defaulted(string(), () => opt(faker.date.recent().toISOString()))),
+  // application_timestamp: optional(defaulted(string(), () => opt(faker.date.recent().toISOString()))),
   operator_user_id: defaulted(string(), () => faker.string.uuid()),
   travel_pass: optional(defaulted(TravelPass, () => opt({}))),
 });
@@ -56,7 +56,7 @@ const Journey = object({
     array(Incentive),
     () => Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, (...args) => ({ index: args[1] })),
   ),
-  license_plate: optional(defaulted(string(), () => opt(faker.extra.immatriculation()))),
+  licence_plate: optional(defaulted(string(), () => opt(faker.extra.immatriculation()))),
   start: defaulted(TimestampedLocation, () => ({})),
   end: defaulted(TimestampedLocation, () => ({})),
   distance: defaulted(number(), () => faker.number.int({ min: 0, max: 100_000 })),
@@ -78,7 +78,7 @@ async function identityFactory(override: Partial<Infer<typeof Identity>> = {}): 
 
 export const factory = async (override: Partial<JourneyType> = {}): Promise<JourneyType> => {
   // Start and end times
-  const start_datetime = new Date(override.start?.datetime ?? new Date());
+  const start_datetime = new Date(override.start?.datetime ?? new Date().getTime() - 3600000);
   const duration = faker.number.int({ min: 1, max: 60 }) * 60 * 1000;
   const end_datetime = new Date(start_datetime.getTime() + duration);
   set(override, "start.datetime", start_datetime.toISOString());

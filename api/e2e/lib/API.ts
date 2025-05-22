@@ -84,23 +84,24 @@ export class API {
       throw new Error(`Failed to create application: ${appResponse.statusText}`);
     }
 
-    const { application, token } = appResponse.body as {
-      application: any;
-      token: string;
-    };
+    const { token } = appResponse.body as { application: unknown; token: string };
 
     this.#accessToken = token;
   }
 
-  public async get(url: string): Promise<HTTPResponse> {
-    return await this.request("GET", url);
+  public async get<T extends string | object | null>(url: string): Promise<HTTPResponse<T>> {
+    return await this.request<T>("GET", url);
   }
 
-  public async post(url: string, body: object | BodyInit): Promise<HTTPResponse> {
+  public async post<T extends string | object | null>(url: string, body: object | BodyInit): Promise<HTTPResponse<T>> {
     return await this.request("POST", url, body);
   }
 
-  public async request(method: "GET" | "POST", url: string, body?: object | BodyInit): Promise<HTTPResponse> {
+  public async request<T extends string | object | null>(
+    method: "GET" | "POST",
+    url: string,
+    body?: object | BodyInit,
+  ): Promise<HTTPResponse<T>> {
     const input = new URL(url, this.#baseUrl);
     const init: RequestInit = {
       method,
@@ -131,7 +132,7 @@ export class API {
     try {
       // console.debug(`[API:${method}] ${input.toString()}`);
       const response = await fetch(input, init);
-      const body = await this.getBody(response);
+      const body = await this.getBody<T>(response);
 
       return {
         ok: response.ok,
@@ -154,20 +155,20 @@ export class API {
         url: input.toString(),
         redirected: false,
         headers: new Headers(),
-        body: null,
+        body: null as T,
       };
     }
   }
 
-  private async getBody(response: Response): Promise<string | object | null> {
-    if (response.status === 204) return null;
+  private async getBody<T extends string | object | null>(response: Response): Promise<T> {
+    if (response.status === 204) return null as T;
 
     const contentType = response.headers.get("content-type");
 
     if (contentType && contentType.includes("application/json")) {
-      return await response.json();
+      return await response.json() as T;
     }
 
-    return await response.text();
+    return await response.text() as T;
   }
 }
