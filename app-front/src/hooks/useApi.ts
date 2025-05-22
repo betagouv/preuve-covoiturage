@@ -15,6 +15,7 @@ export const useApi = <T>(
   url: string | URL,
   paginate = false,
   init?: RequestInit,
+  reloadDependency?: unknown,
 ) => {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<Error | null>(null);
@@ -53,6 +54,6 @@ export const useApi = <T>(
   }, [url, init, paginate]);
   useEffect(() => {
     void fetchData();
-  }, [fetchData]);
+  }, [fetchData, reloadDependency]);
   return { data, error, loading, refetch: fetchData };
 };

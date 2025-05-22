@@ -60,6 +60,17 @@ export type TerritoriesInterface = {
   data: Territory[];
 };
 
+export type OperatorTokenInterface = {
+  token_id: string;
+  operator_id: number;
+  role: string;
+};
+
+export type CreateTokenResponseInterface = {
+  uuid: string;
+  password: string;
+};
+
 export type OperatorsInterface = {
   meta: {
     page: number;

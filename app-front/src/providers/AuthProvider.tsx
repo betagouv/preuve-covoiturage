@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loading, isAuth]);
 
   const onChangeTerritory = (id?: number) => {
-    if (user) {
+    if (user?.role === "registry.admin") {
       setUser({
         ...user,
         territory_id: id ?? undefined,

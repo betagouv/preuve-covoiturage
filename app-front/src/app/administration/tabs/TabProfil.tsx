@@ -21,7 +21,7 @@ export default function TabProfil() {
   );
 
   useEffect(() => {
-    if (simulatedRole === false) {
+    if (user?.role === "registry.admin" && simulatedRole === false) {
       onChangeTerritory();
     }
   }, [simulatedRole]);
@@ -42,6 +42,16 @@ export default function TabProfil() {
           <p>
             <b>Rôle:</b> {labelRole(user.role)}
           </p>
+          {user.operator_id && (
+            <p>
+              <b>Identifiant de l&apos;opérateur:</b> {user.operator_id}
+            </p>
+          )}
+          {user.territory_id && (
+            <p>
+              <b>Identifiant du territoire:</b> {user.territory_id}
+            </p>
+          )}
           <p>
             <a
               href={`${Config.get<string>("auth.pc_uri")}/personal-information`}

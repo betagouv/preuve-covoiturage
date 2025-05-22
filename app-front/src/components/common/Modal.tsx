@@ -6,6 +6,7 @@ export type ModalProps = {
   open: boolean;
   title: string;
   children?: ReactNode;
+  cancelButton?: boolean;
   onClose: () => void;
   onOpen?: () => Promise<void>;
   onSubmit: () => Promise<void>;
@@ -40,24 +41,30 @@ export function Modal(props: ModalProps) {
     },
   });
 
+  const okButton = {
+    children: "Ok",
+    onClick: () => {
+      props.onClose();
+      void props.onSubmit();
+    },
+  };
+
   return (
     <modal.Component
       title={props.title}
-      buttons={[
-        {
-          children: "Annuler",
-          onClick: () => {
-            props.onClose();
-          },
-        },
-        {
-          children: "Ok",
-          onClick: () => {
-            props.onClose();
-            void props.onSubmit();
-          },
-        },
-      ]}
+      buttons={
+        props.cancelButton !== false
+          ? [
+              {
+                children: "Annuler",
+                onClick: () => {
+                  props.onClose();
+                },
+              },
+              okButton,
+            ]
+          : [okButton]
+      }
       concealingBackdrop={true}
     >
       {props.children}

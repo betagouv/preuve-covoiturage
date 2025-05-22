@@ -1,4 +1,15 @@
-import { coerce, date, enums, integer, pattern, size, string, Struct, union } from "@/lib/superstruct/index.ts";
+import {
+  coerce,
+  date,
+  enums,
+  integer,
+  nullable,
+  pattern,
+  size,
+  string,
+  Struct,
+  union,
+} from "@/lib/superstruct/index.ts";
 export const CoerceNumberMinMax = (type: Struct<number, null>, min: number, max: number) => {
   return coerce(size(type, min, max), string(), (v) => {
     const parsed = parseInt(v, 10);
@@ -43,6 +54,7 @@ export const IdentityKey = pattern(string(), /^[a-f0-9]{64}$/);
 export const Direction = enums(["from", "to", "both"]);
 export const Year = CoerceNumberMinMax(integer(), 2020, new Date().getFullYear());
 export const Id = CoerceNumberMinMax(integer(), 0, 2147483647);
+export const NullableId = nullable(Id);
 export const Month = CoerceNumberMinMax(integer(), 1, 12);
 export const Trimester = CoerceNumberMinMax(integer(), 1, 4);
 export const Semester = CoerceNumberMinMax(integer(), 1, 2);
