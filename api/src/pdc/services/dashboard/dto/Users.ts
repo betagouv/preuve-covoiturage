@@ -1,5 +1,5 @@
 import { Infer, object, optional } from "@/lib/superstruct/index.ts";
-import { Email, Id, Role, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Email, Id, NullableId, Role, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
 
 export const Users = object({
   id: optional(Id),
@@ -14,8 +14,8 @@ export const CreateUser = object({
   lastname: Varchar,
   email: Email,
   role: Role,
-  operator_id: optional(Id),
-  territory_id: optional(Id),
+  operator_id: optional(NullableId),
+  territory_id: optional(NullableId),
 });
 
 export const DeleteUser = object({
@@ -28,8 +28,8 @@ export const UpdateUser = object({
   lastname: Varchar,
   email: Email,
   role: Role,
-  operator_id: optional(Id),
-  territory_id: optional(Id),
+  operator_id: optional(NullableId),
+  territory_id: optional(NullableId),
 });
 
 export type Users = Infer<typeof Users>;

@@ -93,28 +93,44 @@ export default function UsersTable(props: {
       territoriesList().find((t) => t?._id === d.territory_id)?.name,
       <ButtonsGroup
         key={d.id}
-        buttons={[
-          {
-            children: "modifier",
-            iconId: "fr-icon-refresh-line",
-            priority: "secondary",
-            onClick: () => {
-              modal.setCurrentRow(d);
-              modal.setErrors({});
-              modal.setOpenModal(true);
-              modal.setTypeModal("update");
-            },
-          },
-          {
-            children: "supprimer",
-            iconId: "fr-icon-delete-bin-line",
-            onClick: () => {
-              modal.setCurrentRow(d);
-              modal.setOpenModal(true);
-              modal.setTypeModal("delete");
-            },
-          },
-        ]}
+        buttons={
+          d.email !== user?.email
+            ? [
+                {
+                  children: "modifier",
+                  iconId: "fr-icon-refresh-line",
+                  priority: "secondary",
+                  onClick: () => {
+                    modal.setCurrentRow(d);
+                    modal.setErrors({});
+                    modal.setOpenModal(true);
+                    modal.setTypeModal("update");
+                  },
+                },
+                {
+                  children: "supprimer",
+                  iconId: "fr-icon-delete-bin-line",
+                  onClick: () => {
+                    modal.setCurrentRow(d);
+                    modal.setOpenModal(true);
+                    modal.setTypeModal("delete");
+                  },
+                },
+              ]
+            : [
+                {
+                  children: "modifier",
+                  iconId: "fr-icon-refresh-line",
+                  priority: "secondary",
+                  onClick: () => {
+                    modal.setCurrentRow(d);
+                    modal.setErrors({});
+                    modal.setOpenModal(true);
+                    modal.setTypeModal("update");
+                  },
+                },
+              ]
+        }
         buttonsSize="small"
         inlineLayoutWhen="lg and up"
       />,
