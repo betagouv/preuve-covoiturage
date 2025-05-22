@@ -8,7 +8,7 @@ jobs:
     name: Deploy dashboard v2
     strategy:
       matrix:
-        env: [demo]
+        env: [demo, production]
     environment: ${{ matrix.env }}
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +26,7 @@ jobs:
 
       - name: Install and Build 🔧
         env:
+          DEPLOY_ENV: ${{ matrix.env }}
           NEXT_PUBLIC_PC_USER_URI: ${{ vars.NEXT_PUBLIC_PC_USER_URI}}
           NEXT_PUBLIC_API_REDIRECT: ${{ vars.NEXT_PUBLIC_API_REDIRECT}}
           NEXT_PUBLIC_API_URL: ${{ vars.API_ROOT_URL}}
