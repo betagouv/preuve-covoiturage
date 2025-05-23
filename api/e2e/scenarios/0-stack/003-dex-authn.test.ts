@@ -1,16 +1,16 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
-import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
+import { SUPPORTED_VERSIONS, USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { rx_datetime, rx_uuidV4 } from "../../lib/regex.ts";
 import { CreateJourneyResponse } from "../../lib/types.ts";
 
-describe("Legacy Authentication", () => {
+describe("DEX Authentication", () => {
   const http = new API();
 
   beforeEach(async () => {
-    if (!http.token) await http.legacyAuthenticate(OPERATOR_EMAIL, OPERATOR_PASSWORD);
+    if (!http.token) await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
   });
 
   it("should be authenticated", async () => {
@@ -22,16 +22,6 @@ describe("Legacy Authentication", () => {
       role: "application",
     });
   });
-
-  /**
-   * Test for legacy authentication with different API versions.
-   * @doc https://tech.covoiturage.beta.gouv.fr/
-   *
-   * UPDATE the list of supported versions if needed.
-   * - 2025-05-22: v3, v3.2
-   */
-  const SUPPORTED_VERSIONS = ["v3", "v3.2"];
-  const UNSUPPORTED_VERSIONS = ["v3.1", "v4"];
 
   for (const version of SUPPORTED_VERSIONS) {
     it(`should be authenticated with ${version} API`, async () => {
@@ -51,7 +41,7 @@ describe("Legacy Authentication", () => {
     });
   }
 
-  for (const version of UNSUPPORTED_VERSIONS) {
+  for (const version of SUPPORTED_VERSIONS) {
     it(`should not be authenticated with ${version} API`, async () => {
       const response = await http.post(`/${version}/journeys`, await createOperatorJourney());
       expect(response.ok).toBe(false);

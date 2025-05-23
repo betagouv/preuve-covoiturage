@@ -57,5 +57,5 @@ fileignoreconfig:
   allowed_patterns: ["(?i)key","(?i)pass"]
 - filename: api/src/pdc/proxy/config/dex.ts
   allowed_patterns: ["(?i)key","(?i)secret"]
-- filename: api/e2e/scenarios/0-stack/002-legacy-authn.test.ts
-  allowed_patterns: ["(?i)key","(?i)pass"]
+- filename: api/e2e/config.ts
+  allowed_patterns: ["(?i)key","(?i)pass","(?i)secretkey","(?i)accesskey","(?i)password","(?i)secret"]

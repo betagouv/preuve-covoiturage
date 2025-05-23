@@ -1,10 +1,7 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
+import { USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
 import { API } from "../../lib/API.ts";
-import { env } from "../../lib/config.ts";
-
-const USER_ACCESSKEY = env("APIE2E_AUTH_ACCESSKEY");
-const USER_SECRETKEY = env("APIE2E_AUTH_SECRETKEY");
 
 describe("Unauthenticated smoke test", () => {
   const http = new API();
