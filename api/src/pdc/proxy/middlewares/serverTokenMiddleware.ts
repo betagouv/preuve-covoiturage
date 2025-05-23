@@ -2,7 +2,6 @@ import { ForbiddenException, KernelInterface, UnauthorizedException } from "@/il
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { Request as ExpressRequest, Response } from "dep:express";
 
-import { env, env_or_true } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
@@ -32,8 +31,8 @@ async function checkApplication(
     ),
   );
 
-  const app_uuid = get(app, "result.uuid", "");
-  const owner_id = get(app, "result.owner_id", null);
+  const app_uuid = get(app, "result.uuid", "") as string;
+  const owner_id = get(app, "result.owner_id", null) as number | null;
   const matchUuid = app_uuid === payload.a;
 
   // V1 tokens have a string owner_id. Check is done on UUID only
@@ -45,42 +44,11 @@ async function checkApplication(
   return (app as any).result as ApplicationInterface;
 }
 
-async function logRequest(
-  kernel: KernelInterface,
-  request: Request,
-  payload: TokenPayloadInterface,
-): Promise<void> {
-  if (env("ENV") !== "local" || env_or_true("APP_DEBUG_REQUEST")) {
-    return;
-  }
-
-  await kernel.handle(
-    createRPCPayload(
-      "acquisition:logrequest",
-      {
-        operator_id: parseInt(payload.o as any, 10) || 0,
-        source: "serverTokenMiddleware",
-        error_message: null,
-        error_code: null,
-        error_line: null,
-        auth: {},
-        headers: request.headers || {},
-        body: request.body,
-      },
-      { permissions: ["acquisition.logrequest"] },
-    ),
-  );
-
-  logger.debug(
-    `logRequest [${get(request, "headers.x-request-id", "")}] ${get(request, "body.journey_id", "")}`,
-  );
-}
-
 export function serverTokenMiddleware(
   kernel: KernelInterface,
   tokenProvider: TokenProviderInterfaceResolver,
 ) {
-  return async (req: Request, res: Response, next: Function): Promise<void> => {
+  return async (req: Request, _res: Response, next: Function): Promise<void> => {
     try {
       const token = get(req, "headers.authorization", null);
       if (!token) {
@@ -88,28 +56,23 @@ export function serverTokenMiddleware(
       }
 
       const payload = await tokenProvider.verify<
-        TokenPayloadInterface & {
+        & TokenPayloadInterface
+        & Partial<{
           app: string;
           id: number;
           permissions: string[];
-        }
-      >(token.toString().replace("Bearer ", ""), {
+        }>
+      >(String(token).replace("Bearer ", ""), {
         ignoreExpiration: true,
       });
-
-      try {
-        await logRequest(kernel, req, payload);
-      } catch (e) {
-        logger.error(`logRequest ERROR ${e.message}`);
-      }
 
       /**
        * Handle V1 token format conversion
        */
       if ("id" in payload && "app" in payload) {
         payload.v = 1;
-        payload.a = payload.app;
-        payload.o = payload.id;
+        payload.a = payload.app as string;
+        payload.o = payload.id as number;
         payload.s = "operator";
         delete payload.id;
         delete payload.app;
@@ -132,7 +95,7 @@ export function serverTokenMiddleware(
 
       next();
     } catch (e) {
-      logger.error(`[acquisition:create] ${e.message}`, e);
+      logger.error(`[acquisition:create] ${(e as Error).message}`, e);
       next(e);
     }
   };
