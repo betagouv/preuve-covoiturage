@@ -3,7 +3,7 @@
     materialized = 'incremental',
     unique_key = ['month',"operator_id","siret"],
     incremental_strategy = "delete+insert",
-    indexes = [{"columns":['month',"operator_id","siret"],"unique":true}]
+    indexes = [{"columns":['month',"operator_id","siret"],"unique":True}]
     )
 }}
 with trips as (
