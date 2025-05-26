@@ -20,12 +20,13 @@ with trips as (
   left join carpool_v2.operator_incentives as oi
     on
       c._id = oi.carpool_id
-      {% if is_incremental() %}
-        and c.start_datetime
-        >= coalesce((select max(month) from {{ this }}), '1900-01-01')
-      {% else %}
-  where c.start_datetime >= '2022-01-01'
-{% endif %}
+  {% if is_incremental() %}
+    where
+      c.start_datetime
+      >= coalesce((select max(month) from {{ this }}), '1900-01-01')
+  {% else %}
+    where c.start_datetime >= '2022-01-01'
+  {% endif %}
   -- account for multiple incentives amounts for the same siret on the same trip
   group by 1, 2
 ),
