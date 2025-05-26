@@ -68,7 +68,7 @@ export class DenoPostgresConnection
       port: Number(port),
       database: pathname.slice(1),
       user: username,
-      password,
+      password: decodeURIComponent(password),
       tls: {
         enabled: true,
         enforce: forceInsecure ? false : true,
