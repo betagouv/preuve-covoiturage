@@ -2,11 +2,13 @@ version: 2
 models:
   - name: monthly_stats_interoperator_rules
     description: >
-      Estimation du nombre de journeys ne respectant pas les règles antifraudes interopérateurs et du montant d'incitation estimé associé.
-      Les paramètres pris pour l'estimation sont 7% des trajets ne respectant pas les règles ce qui conerne également 7% des incitations.
+      Estimation du nombre de journeys ne respectant pas les règles antifraudes interopérateurs et du
+      montant d'incitation estimé associé.
+      Les paramètres pris pour l'estimation sont 7% des trajets ne respectant pas les règles ce qui conerne
+      également 7% des incitations.
       Voir https://www.notion.so/Calculer-le-montant-de-Fraude-inter-op-rateur-vit-1ca994bec93180ae817bee35f00a847c?pvs=4.
     columns:
-      - name: mois
+      - name: month
         data_type: timestamp with time zone
       - name: journeys_count
         data_type: numeric
