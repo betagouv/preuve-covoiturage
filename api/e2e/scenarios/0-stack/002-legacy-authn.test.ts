@@ -4,7 +4,7 @@ import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { rx_datetime, rx_uuidV4 } from "../../lib/regex.ts";
-import { CreateJourneyResponse } from "../../lib/types.ts";
+import { CreateJourneyResponse, ProfileResponse } from "../../lib/types.ts";
 
 describe("Legacy Authentication", () => {
   const http = new API();
@@ -14,13 +14,13 @@ describe("Legacy Authentication", () => {
   });
 
   it("should be authenticated", async () => {
-    const response = await http.get("/profile");
+    const response = await http.get<ProfileResponse>("/profile");
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
-    expect(response.body).toMatchObject({
-      operator_id: 1,
-      role: "application",
-    });
+    expect(response.body.operator_id).toStrictEqual(1);
+    expect(response.body.application_id).toBeGreaterThan(0);
+    expect(response.body.permissions).toBeDefined();
+    expect(response.body.permissions.length).toBeGreaterThan(0);
   });
 
   /**

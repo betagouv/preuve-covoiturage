@@ -37,6 +37,7 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from "@/pdc/services/territory/contracts/getAuthorizedCodes.contract.ts";
+import { UserInterface } from "@/pdc/services/user/contracts/common/interfaces/UserInterface.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
@@ -311,9 +312,9 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/v2/exports",
       rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      serverTokenMiddleware(this.kernel),
       asyncHandler(async (req: Request, res: Response) => {
-        const user = get(req, "session.user", {});
+        const user = get(req, "session.user", {}) as Partial<UserInterface>;
         const action = `export:createVersionTwo`;
         const response = await this.kernel.handle(
           createRPCPayload(action, req.body, user, { req }),
@@ -408,6 +409,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/profile",
       authRateLimiter(),
+      serverTokenMiddleware(this.kernel),
       (req: Request, res: Response, _next: NextFunction) => {
         if (!("user" in req.session)) {
           throw new UnauthorizedException();

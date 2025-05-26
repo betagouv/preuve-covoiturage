@@ -1,17 +1,11 @@
 import { ForbiddenException, KernelInterface, UnauthorizedException } from "@/ilos/common/index.ts";
-import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
-import { Request as ExpressRequest, Response } from "dep:express";
-
 import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
+import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
-
-interface Request extends ExpressRequest {
-  operator: string;
-  permissions: string[];
-}
 
 /**
  * Make sure the application exists, belongs the right operator
@@ -44,17 +38,16 @@ async function checkApplication(
   return (app as any).result as ApplicationInterface;
 }
 
-export function serverTokenMiddleware(
-  kernel: KernelInterface,
-  tokenProvider: TokenProviderInterfaceResolver,
-) {
-  return async (req: Request, _res: Response, next: Function): Promise<void> => {
+export function serverTokenMiddleware(kernel: KernelInterface) {
+  return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      const token = get(req, "headers.authorization", null);
-      if (!token) {
+      // Get the token from the request headers
+      const token = String(get(req, "headers.authorization", "")).replace("Bearer ", "");
+      if (!token.length) {
         return next();
       }
 
+      const tokenProvider = kernel.get(TokenProviderInterfaceResolver);
       const payload = await tokenProvider.verify<
         & TokenPayloadInterface
         & Partial<{
@@ -95,8 +88,9 @@ export function serverTokenMiddleware(
 
       next();
     } catch (e) {
-      logger.error(`[acquisition:create] ${(e as Error).message}`, e);
-      next(e);
+      logger.warn(`[serverTokenMiddleware] ${(e as Error).message}`);
+    } finally {
+      next();
     }
   };
 }

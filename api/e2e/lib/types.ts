@@ -23,3 +23,9 @@ export type CreateJourneyResponse = RPCResponse<{
   operator_journey_id: string;
   created_at: string;
 }>;
+
+export type ProfileResponse = {
+  operator_id: number;
+  application_id: number;
+  permissions: string[];
+};
