@@ -1,5 +1,4 @@
 import { ContextType, KernelInterface, RouteParams } from "@/ilos/common/index.ts";
-import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
@@ -22,10 +21,9 @@ export function registerExpressRoute(
   kernel: KernelInterface,
   params: Omit<RouteParams, "action"> & Required<Pick<RouteParams, "action">>,
 ) {
-  const tokenProvider = kernel.get<TokenProvider>(TokenProvider);
   const rateLimiterParams = params.rateLimiter || defaultParams.rateLimiter;
   const middlewares: Array<express.RequestHandler> = [
-    serverTokenMiddleware(kernel, tokenProvider),
+    serverTokenMiddleware(kernel),
     rateLimiter({
       windowMs: rateLimiterParams.windowMinute * 60_000,
       max: rateLimiterParams.limit,

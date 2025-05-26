@@ -14,22 +14,44 @@ export class AuthRouter {
     private config: ConfigInterfaceResolver,
   ) {}
 
+  dexMiddleware() {
+    return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        if (req.headers?.authorization) {
+          const token = (req.headers?.authorization || "").toString().replace("Bearer ", "");
+          const data = await this.dexOIDCProvider.verifyToken(token);
+          req.session = req.session || {};
+          req.session.user = {
+            operator_id: data.operator_id,
+            role: data.role,
+            email: data.token_id,
+          };
+        }
+      } catch (e) {
+        if (Error.isError(e)) console.warn(`[DexMiddleware] ${e.message}`);
+      } finally {
+        next();
+      }
+    });
+  }
+
   register() {
     // inject a global middleware to check on Authorization header
-    this.app.use(asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-      if (req.headers?.authorization) {
-        const token = (req.headers?.authorization || "").toString().replace("Bearer ", "");
-        const data = await this.dexOIDCProvider.verifyToken(token);
-        req.session = req.session || {};
-        req.session.user = {
-          operator_id: data.operator_id,
-          role: data.role,
-          email: data.token_id,
-        };
-      }
+    this.app.use(this.dexMiddleware());
+    // this.app.use(asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    //   if (req.headers?.authorization) {
+    //     const token = (req.headers?.authorization || "").toString().replace("Bearer ", "");
+    //     const data = await this.dexOIDCProvider.verifyToken(token);
+    //     req.session = req.session || {};
+    //     req.session.user = {
+    //       operator_id: data.operator_id,
+    //       role: data.role,
+    //       email: data.token_id,
+    //     };
+    //   }
 
-      next();
-    }));
+    //   next();
+    // }));
 
     this.app.get(
       "/auth/login",
