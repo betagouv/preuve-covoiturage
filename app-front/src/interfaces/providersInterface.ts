@@ -10,6 +10,7 @@ export interface AuthContextProps {
     permissions: Array<string>;
     operator_id?: number;
     territory_id?: number;
+    selected_terrritory_id?: number;
     siret?: string;
   };
   simulatedRole: boolean;

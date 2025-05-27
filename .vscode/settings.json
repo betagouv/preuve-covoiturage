@@ -25,7 +25,6 @@
   "files.exclude": {
     "**/*.d.ts": true,
     "**/*.postman_collection.json": true,
-    "**/dist": true,
     "**/node_modules": true,
     "db": true
   },
@@ -52,5 +51,8 @@
   },
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.quoteStyle": "single",
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
 }

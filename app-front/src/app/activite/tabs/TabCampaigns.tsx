@@ -5,19 +5,22 @@ import CampaignsTable from "../tables/CampaignsTable";
 
 export default function TabCampaigns() {
   const { user, onChangeTerritory } = useAuth();
-  const territoryId = user?.territory_id ?? 1;
+  const territoryId = user?.territory_id ?? user?.selected_terrritory_id;
   return (
     <>
-      {user?.role === "registry.admin" && (
-        <SelectTerritory
-          defaultValue={territoryId}
-          onChange={onChangeTerritory}
+      {user?.role === "registry.admin" ||
+        (user?.role === "operator.admin" && (
+          <SelectTerritory
+            defaultValue={territoryId}
+            onChange={onChangeTerritory}
+          />
+        ))}
+      {territoryId && (
+        <CampaignsTable
+          title={`Campagnes d'incitation`}
+          territoryId={territoryId}
         />
       )}
-      <CampaignsTable
-        title={`Campagnes d'incitation`}
-        territoryId={territoryId}
-      />
     </>
   );
 }

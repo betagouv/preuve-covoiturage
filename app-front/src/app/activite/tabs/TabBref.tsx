@@ -6,7 +6,7 @@ import OperatorsGraph from "../graphs/OperatorsGraph";
 
 export default function TabBref() {
   const { user, onChangeTerritory } = useAuth();
-  const territoryId = user?.territory_id ?? 1;
+  const territoryId = user?.territory_id;
   return (
     <>
       {user?.role === "registry.admin" && (
@@ -15,11 +15,17 @@ export default function TabBref() {
           onChange={onChangeTerritory}
         />
       )}
-      <JourneysGraph title="Evolution des trajets" territoryId={territoryId} />
+      {territoryId && (
+        <JourneysGraph
+          title="Evolution des trajets"
+          territoryId={territoryId}
+        />
+      )}
 
       {["operator.admin", "operator.user"].includes(user?.role ?? "") ===
         false &&
-        user?.operator_id === undefined && (
+        user?.operator_id === undefined &&
+        territoryId && (
           <OperatorsGraph
             title="Evolution des trajets par opérateurs"
             territoryId={territoryId}
