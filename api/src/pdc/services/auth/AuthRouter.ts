@@ -1,4 +1,5 @@
 import { ConfigInterfaceResolver, inject, injectable, proxy } from "@/ilos/common/index.ts";
+import { session } from "@/pdc/proxy/config/proxy.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
@@ -65,12 +66,15 @@ export class AuthRouter {
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { id_token } = req.session?.auth || {};
         const { redirectUrl, state } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
-        req.session = req.session || {};
-        req.session.auth = {
-          state,
-        };
+        
+        req.session.destroy((err: Error) => {
+          if(err) {
+            console.log(err)
+          }
+          res.clearCookie(session.name);
+          return res.redirect(redirectUrl);
+        })
 
-        return res.redirect(redirectUrl);
       }),
     );
 
