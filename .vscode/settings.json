@@ -25,6 +25,7 @@
   "files.exclude": {
     "**/*.d.ts": true,
     "**/*.postman_collection.json": true,
+    "**/dist": true,
     "**/node_modules": true,
     "db": true
   },
