@@ -49,6 +49,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         territory_id: id ?? undefined,
         operator_id: undefined,
       });
+    } else if (user?.role === "operator.admin") {
+      setUser({
+        ...user,
+        selected_terrritory_id: id ?? undefined,
+      });
     }
   };
 

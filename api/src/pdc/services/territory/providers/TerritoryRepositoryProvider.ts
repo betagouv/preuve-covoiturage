@@ -1,12 +1,12 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
+import { TerritoryParams } from "@/pdc/services/territory/actions/group/ListTerritoryActionV2.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import {
   CreateParamsInterface,
   CreateResultInterface,
   FindParamsInterface,
   FindResultInterface,
-  ListParamsInterface,
   ListResultInterface,
   PatchContactsParamsInterface,
   PatchContactsResultInterface,
@@ -78,8 +78,8 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return result.rows[0];
   }
 
-  async list(params: ListParamsInterface): Promise<ListResultInterface> {
-    const { search, offset, limit } = { limit: 100, offset: 0, ...params };
+  async list(params: TerritoryParams): Promise<ListResultInterface> {
+    const { search, offset, limit, operator_id } = { limit: 100, offset: 0, ...params };
     const values = [];
     const whereClauses: string[] = [];
 
@@ -89,6 +89,32 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     }
 
     const client = this.connection.getClient();
+
+    if (operator_id) {
+      const opeatorQuery = {
+        text: `
+      with operator_incentives as (SELECT DISTINCT(policy_id) FROM policy.incentives where operator_id = $1)
+      SELECT DISTINCT(tg._id) from policy.policies pp 
+      JOIN territory.territory_group tg on tg._id = pp.territory_id
+      where pp._id in (SELECT * from operator_incentives)`,
+        values: [operator_id],
+      };
+
+      const territoriesForOperatorResults = await client.query<any>(opeatorQuery);
+
+      if (territoriesForOperatorResults.rowCount === 0) {
+        return {
+          data: [],
+          meta: { pagination: { offset, limit, total: 0 } },
+        };
+      }
+
+      values.push(territoriesForOperatorResults.rows.map((r: { _id: number }) => r._id));
+      whereClauses.push(
+        `tg._id = ANY ($1::int[])`,
+      );
+    }
+
     const countQuery = `SELECT count(*) as territory_count from ${this.table} as tg ${
       whereClauses.length ? ` WHERE ${whereClauses.join(" AND ")}` : ""
     }`;
