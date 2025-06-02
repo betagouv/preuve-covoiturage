@@ -2,6 +2,7 @@ import { ForbiddenException, KernelInterface, UnauthorizedException } from "@/il
 import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { DexOIDCProvider } from "@/pdc/services/auth/providers/DexOIDCProvider.ts";
 import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
@@ -38,15 +39,77 @@ async function checkApplication(
   return (app as any).result as ApplicationInterface;
 }
 
-export function serverTokenMiddleware(kernel: KernelInterface) {
+function getTokenFromRequest(req: ExpressRequest): string {
+  const authHeader = get(req, "headers.authorization", "");
+  if (!authHeader) {
+    throw new UnauthorizedException("No token provided");
+  }
+  const token = String(authHeader).replace("Bearer ", "");
+  if (!token.length) {
+    throw new UnauthorizedException("Empty token provided");
+  }
+  return token;
+}
+
+/**
+ * Returns an Express middleware that checks the token using DexOIDCProvider.
+ * Accepts either a KernelInterface or a DexOIDCProvider instance as argument.
+ */
+export function dexMiddleware(kernelOrProvider: KernelInterface | DexOIDCProvider) {
+  return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const token = getTokenFromRequest(req);
+
+      let dexProvider: DexOIDCProvider;
+      if (kernelOrProvider instanceof DexOIDCProvider) {
+        dexProvider = kernelOrProvider;
+      } else {
+        dexProvider = kernelOrProvider.get(DexOIDCProvider);
+      }
+
+      const data = await dexProvider.verifyToken(token);
+      req.session = req.session || {};
+      console.log("[dexMiddleware] User authenticated", data);
+
+      req.session.user = {
+        operator_id: data.operator_id,
+        role: data.role,
+        email: data.token_id,
+      };
+
+      next();
+    } catch (e) {
+      logger.warn(`[dexMiddleware] ${(e as Error).message}`);
+      next(e);
+    }
+  };
+}
+
+/**
+ * Check the token using DexOIDCProvider and
+ * fallback to legacy serverTokenMiddleware if it fails.
+ */
+export function accessTokenMiddleware(kernel: KernelInterface) {
+  return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
+    dexMiddleware(kernel)(req, _res, async (err: Error | null) => {
+      if (err) {
+        // If dexMiddleware fails, fallback to serverTokenMiddleware
+        await legacyTokenMiddleware(kernel)(req, _res, next);
+      } else {
+        next();
+      }
+    });
+  };
+}
+
+/**
+ * @deprecated application token to remove when all clients are migrated to DexOIDCProvider
+ */
+export function legacyTokenMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     try {
       // Get the token from the request headers
-      const token = String(get(req, "headers.authorization", "")).replace("Bearer ", "");
-      if (!token.length) {
-        return next();
-      }
-
+      const token = getTokenFromRequest(req);
       const tokenProvider = kernel.get(TokenProviderInterfaceResolver);
       const payload = await tokenProvider.verify<
         & TokenPayloadInterface
@@ -88,9 +151,8 @@ export function serverTokenMiddleware(kernel: KernelInterface) {
 
       next();
     } catch (e) {
-      logger.warn(`[serverTokenMiddleware] ${(e as Error).message}`);
-    } finally {
-      next();
+      logger.warn(`[legacyTokenMiddleware] ${(e as Error).message}`);
+      return next(e);
     }
   };
 }

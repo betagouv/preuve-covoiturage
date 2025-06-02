@@ -28,9 +28,8 @@ import { logger } from "@/lib/logger/index.ts";
 import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
-import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
+import { TokenProvider, TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { registerExpressRoute } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
-import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import {
   ParamsInterface as GetAuthorizedCodesParams,
@@ -44,6 +43,7 @@ import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
+import { accessTokenMiddleware } from "./middlewares/accessTokenMiddleware.ts";
 import { CacheMiddleware, cacheMiddleware } from "./middlewares/cacheMiddleware.ts";
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
@@ -145,9 +145,7 @@ export class HttpTransport implements TransportInterface {
 
   private async getProviders(): Promise<void> {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
-    this.tokenProvider = this.kernel.getContainer().get(
-      TokenProviderInterfaceResolver,
-    );
+    this.tokenProvider = this.kernel.get(TokenProvider);
   }
 
   private registerBeforeAllHandlers(): void {
@@ -312,7 +310,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/v2/exports",
       rateLimiter(),
-      serverTokenMiddleware(this.kernel),
+      accessTokenMiddleware(this.kernel),
       asyncHandler(async (req: Request, res: Response) => {
         const user = get(req, "session.user", {}) as Partial<UserInterface>;
         const action = `export:createVersionTwo`;
@@ -409,7 +407,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/profile",
       authRateLimiter(),
-      serverTokenMiddleware(this.kernel),
+      accessTokenMiddleware(this.kernel),
       (req: Request, res: Response, _next: NextFunction) => {
         if (!("user" in req.session)) {
           throw new UnauthorizedException();

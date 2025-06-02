@@ -2,9 +2,9 @@ import { ContextType, KernelInterface, RouteParams } from "@/ilos/common/index.t
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
-import { serverTokenMiddleware } from "@/pdc/proxy/middlewares/serverTokenMiddleware.ts";
 import { express, NextFunction, Request, Response } from "dep:express";
 import { formatRange, parse, satisfies, tryParseRange } from "dep:semver";
+import { accessTokenMiddleware } from "../middlewares/accessTokenMiddleware.ts";
 
 const SUPPORTED_VERSIONS = ["3.2.0"].map((v) => parse(v));
 const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
@@ -22,18 +22,21 @@ export function registerExpressRoute(
   params: Omit<RouteParams, "action"> & Required<Pick<RouteParams, "action">>,
 ) {
   const rateLimiterParams = params.rateLimiter || defaultParams.rateLimiter;
-  const middlewares: Array<express.RequestHandler> = [
-    serverTokenMiddleware(kernel),
+  let middlewares: Array<express.RequestHandler> = [
     rateLimiter({
       windowMs: rateLimiterParams.windowMinute * 60_000,
       max: rateLimiterParams.limit,
     }, rateLimiterParams.key),
   ];
 
+  if (!params.public) {
+    middlewares = [accessTokenMiddleware(kernel), ...middlewares];
+  }
+
   const path = `/:api_version/${params.path}`.replaceAll("//", "/");
   app[params.method.toLocaleLowerCase()](path, [
     ...middlewares,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
       const user = req.session?.user || {};
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;

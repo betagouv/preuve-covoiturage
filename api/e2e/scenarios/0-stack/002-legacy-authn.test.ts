@@ -38,6 +38,7 @@ describe("Legacy Authentication", () => {
       const journey = await createOperatorJourney();
       const response = await http.post<CreateJourneyResponse>(`/${version}/journeys`, journey);
       expect(response.body).toBeDefined();
+      expect(typeof response.body).toBe("object");
 
       if ("result" in response.body) {
         expect(response.body.result).toBeDefined();

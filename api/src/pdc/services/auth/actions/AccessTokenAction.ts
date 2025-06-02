@@ -14,12 +14,14 @@ import { DexOIDCProvider } from "../providers/DexOIDCProvider.ts";
   apiRoute: {
     path: "/auth/access_token",
     method: "POST",
+    public: true,
     rateLimiter: {
       key: "rl-auth",
       limit: 20,
       windowMinute: 1,
     },
     successHttpCode: 201,
+    rpcAnswerOnFailure: true,
   },
 })
 export class AccessTokenAction extends AbstractAction {

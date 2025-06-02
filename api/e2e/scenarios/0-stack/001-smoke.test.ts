@@ -13,9 +13,18 @@ describe("Unauthenticated smoke test", () => {
   });
 
   it("should return 401 for unauthenticated user", async () => {
-    const response = await http.get("/auth/me");
+    const response = await http.get<{ error: { message: string } }>("/auth/me");
     expect(response.status).toBe(401);
-    expect(response.body).toEqual({ error: "Utilisateur non authentifié" });
+    expect(response.body).toBeDefined();
+    expect(response.body).toEqual({
+      id: 1,
+      jsonrpc: "2.0",
+      error: {
+        code: 401,
+        data: "Error",
+        message: "Unauthorized Error",
+      },
+    });
   });
 });
 

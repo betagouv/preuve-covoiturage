@@ -3,6 +3,7 @@ import { session } from "@/pdc/proxy/config/proxy.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
+import { dexMiddleware } from "../../proxy/middlewares/accessTokenMiddleware.ts";
 import { DexOIDCProvider } from "./providers/DexOIDCProvider.ts";
 
 @injectable()
@@ -14,45 +15,7 @@ export class AuthRouter {
     private config: ConfigInterfaceResolver,
   ) {}
 
-  dexMiddleware() {
-    return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        if (req.headers?.authorization) {
-          const token = (req.headers?.authorization || "").toString().replace("Bearer ", "");
-          const data = await this.dexOIDCProvider.verifyToken(token);
-          req.session = req.session || {};
-          req.session.user = {
-            operator_id: data.operator_id,
-            role: data.role,
-            email: data.token_id,
-          };
-        }
-      } catch (e) {
-        if (Error.isError(e)) console.warn(`[DexMiddleware] ${e.message}`);
-      } finally {
-        next();
-      }
-    });
-  }
-
   register() {
-    // inject a global middleware to check on Authorization header
-    this.app.use(this.dexMiddleware());
-    // this.app.use(asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    //   if (req.headers?.authorization) {
-    //     const token = (req.headers?.authorization || "").toString().replace("Bearer ", "");
-    //     const data = await this.dexOIDCProvider.verifyToken(token);
-    //     req.session = req.session || {};
-    //     req.session.user = {
-    //       operator_id: data.operator_id,
-    //       role: data.role,
-    //       email: data.token_id,
-    //     };
-    //   }
-
-    //   next();
-    // }));
-
     this.app.get(
       "/auth/login",
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
@@ -85,6 +48,7 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/logout",
+      dexMiddleware(this.dexOIDCProvider),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { id_token } = req.session?.auth || {};
         const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
@@ -101,6 +65,7 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/logout/callback",
+      dexMiddleware(this.dexOIDCProvider),
       asyncHandler(async (req: Request, res: Response) => {
         const { state: expectedState } = req.session?.auth || {};
         const state = req.query?.state;
@@ -115,12 +80,8 @@ export class AuthRouter {
       }),
     );
 
-    this.app.get("/auth/me", (req: express.Request, res: express.Response) => {
-      if (req.session?.user) {
-        return res.json(req.session.user);
-      }
-
-      return res.status(401).json({ error: "Utilisateur non authentifié" });
+    this.app.get("/auth/me", dexMiddleware(this.dexOIDCProvider), (req: express.Request, res: express.Response) => {
+      return res.json(req.session.user);
     });
   }
 }
