@@ -71,6 +71,8 @@ paths:
       operationId: 'auth:access_token'
       summary: Créer un access_token à partir de clés d'accès
       description: |
+        Attention: l'URL est préfixée par le n° de version de l'API.
+
         Créer un access_token pour permettre les échanges entre votre
         serveur et l'API RPC.
 
