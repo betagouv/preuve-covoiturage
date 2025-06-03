@@ -25,7 +25,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
 
   async getIncentiveByDay(
     params: JourneysIncentiveByDayParamsInterface,
-  ): Promise<JourneysIncentiveByDayResultInterface> {
+  ): Promise<JourneysIncentiveByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
@@ -48,12 +48,12 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       ORDER BY start_date
     `;
     const rows = await this.pgConnection.query<JourneysIncentiveByDayResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 
   async getIncentiveByMonth(
     params: JourneysIncentiveByMonthParamsInterface,
-  ): Promise<JourneysIncentiveByMonthResultInterface> {
+  ): Promise<JourneysIncentiveByMonthResultInterface[]> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
@@ -77,12 +77,12 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       GROUP BY 1,2,3,4
     `;
     const rows = await this.pgConnection.query<JourneysIncentiveByMonthResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 
   async getOperatorsByDay(
     params: JourneysOperatorsByDayParamsInterface,
-  ): Promise<JourneysOperatorsByDayResultInterface> {
+  ): Promise<JourneysOperatorsByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
@@ -107,12 +107,12 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       ORDER BY start_date
     `;
     const rows = await this.pgConnection.query<JourneysOperatorsByDayResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 
   async getOperatorsByMonth(
     params: JourneysOperatorsByMonthParamsInterface,
-  ): Promise<JourneysOperatorsByMonthResultInterface> {
+  ): Promise<JourneysOperatorsByMonthResultInterface[]> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
@@ -136,6 +136,6 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       WHERE ${join(filters, " AND ")}
     `;
     const rows = await this.pgConnection.query<JourneysOperatorsByMonthResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 }

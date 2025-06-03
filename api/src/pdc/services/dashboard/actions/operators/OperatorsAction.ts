@@ -3,17 +3,18 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { Operators } from "@/pdc/services/dashboard/dto/Operators.ts";
 import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/OperatorsRepositoryInterface.ts";
+export type OperatorResult = {
+  id: string;
+  name: string;
+  siret: string;
+};
 export type ResultInterface = {
   meta: {
     page: number;
     total: number;
     totalPages: number;
   };
-  data: {
-    id: string;
-    name: string;
-    siret: string;
-  }[];
+  data: OperatorResult[];
 };
 
 @handler({

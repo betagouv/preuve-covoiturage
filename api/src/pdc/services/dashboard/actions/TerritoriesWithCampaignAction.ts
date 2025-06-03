@@ -7,7 +7,7 @@ import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/i
 export type ResultInterface = {
   id: string;
   name: string;
-}[];
+};
 
 @handler({
   service: "dashboard",
@@ -27,7 +27,7 @@ export class TerritoriesWithCampaignAction extends AbstractAction {
     super();
   }
 
-  public override async handle(params: TerritoriesWithCampaign): Promise<ResultInterface> {
+  public override async handle(params: TerritoriesWithCampaign): Promise<ResultInterface[]> {
     return this.repository.getTerritoriesWithCampaign(params);
   }
 }

@@ -3,22 +3,14 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { Users } from "@/pdc/services/dashboard/dto/Users.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
+import { UserResult } from "@/pdc/services/dashboard/actions/users/UsersAction.ts";
 export type ResultInterface = {
   meta: {
     page: number;
     total: number;
     totalPages: number;
   };
-  data: {
-    id: number;
-    firstname?: string;
-    lastname?: string;
-    email: string;
-    operator_id?: number;
-    territory_id?: number;
-    phone?: string;
-    role: string;
-  }[];
+  data: UserResult[];
 };
 
 @handler({

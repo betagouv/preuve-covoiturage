@@ -17,7 +17,7 @@ export type ResultInterface = {
   handler: string;
   incentive_sum: number;
   max_amount: number;
-}[];
+};
 
 @handler({
   service: "dashboard",
@@ -37,7 +37,7 @@ export class CampaignsAction extends AbstractAction {
     super();
   }
 
-  public override async handle(params: Campaigns): Promise<ResultInterface> {
+  public override async handle(params: Campaigns): Promise<ResultInterface[]> {
     return this.repository.getCampaigns(params);
   }
 }

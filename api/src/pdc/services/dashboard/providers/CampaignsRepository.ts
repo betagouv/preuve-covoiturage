@@ -37,7 +37,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
 
   async getCampaigns(
     params: CampaignsParamsInterface,
-  ): Promise<CampaignsResultInterface> {
+  ): Promise<CampaignsResultInterface[]> {
     const filters = [
       sql`a.territory_id = ${params.territory_id}`,
     ];
@@ -65,12 +65,12 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       ORDER BY 9, 2 desc 
     `;
     const rows = await this.pgConnection.query<CampaignsResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 
   async getTerritoriesWithCampaign(
     params: TerritoriesWithCampaignParamsInterface,
-  ): Promise<TerritoriesWithCampaignResultInterface> {
+  ): Promise<TerritoriesWithCampaignResultInterface[]> {
     const filters = [];
     if (params.operator_id) {
       filters.push(sql`c.operator_id = ${params.operator_id}`);
@@ -86,7 +86,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       ORDER BY 2 
     `;
     const rows = await this.pgConnection.query<TerritoriesWithCampaignResultInterface>(query);
-    return rows[0];
+    return rows;
   }
 
   async getCampaignApdf(

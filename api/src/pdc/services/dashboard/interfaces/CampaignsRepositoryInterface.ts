@@ -21,10 +21,10 @@ export type {
 export interface CampaignsRepositoryInterface {
   getCampaigns(
     params: CampaignsParamsInterface,
-  ): Promise<CampaignsResultInterface>;
+  ): Promise<CampaignsResultInterface[]>;
   getTerritoriesWithCampaign(
     params: TerritoriesWithCampaignParamsInterface,
-  ): Promise<TerritoriesWithCampaignResultInterface>;
+  ): Promise<TerritoriesWithCampaignResultInterface[]>;
   getCampaignApdf(
     params: CampaignApdfParamsInterface,
   ): Promise<CampaignApdfResultInterface>;
@@ -33,13 +33,13 @@ export interface CampaignsRepositoryInterface {
 export abstract class CampaignsRepositoryInterfaceResolver implements CampaignsRepositoryInterface {
   async getCampaigns(
     params: CampaignsParamsInterface,
-  ): Promise<CampaignsResultInterface> {
+  ): Promise<CampaignsResultInterface[]> {
     throw new Error();
   }
 
   async getTerritoriesWithCampaign(
     params: TerritoriesWithCampaignParamsInterface,
-  ): Promise<TerritoriesWithCampaignResultInterface> {
+  ): Promise<TerritoriesWithCampaignResultInterface[]> {
     throw new Error();
   }
 

@@ -1,6 +1,7 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
+import { OperatorResult } from "@/pdc/services/dashboard/actions/operators/OperatorsAction.ts";
 import {
   CreateOperatorDataInterface,
   CreateOperatorResultInterface,
@@ -42,7 +43,7 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       ORDER BY _id
       LIMIT ${limit} OFFSET ${offset}
     `;
-    const rows = await this.pgConnection.query<OperatorsResultInterface["data"]>(query);
+    const rows = await this.pgConnection.query<OperatorResult>(query);
     // Calcul du nombre total d'éléments
     const countQuery = sql`
       SELECT COUNT(*) as total
@@ -56,7 +57,7 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
         page: page,
         totalPages: Math.ceil(parseInt(countResponse[0].total, 10) / limit),
       },
-      data: rows[0],
+      data: rows,
     };
   }
 

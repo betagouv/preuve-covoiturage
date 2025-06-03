@@ -12,7 +12,7 @@ export type ResultInterface = {
   journeys: number;
   incented_journeys: number;
   incentive_amount: number;
-}[];
+};
 
 @handler({
   service: "dashboard",
@@ -32,7 +32,7 @@ export class JourneysIncentiveByDayAction extends AbstractAction {
     super();
   }
 
-  public override async handle(params: JourneysByDay): Promise<ResultInterface> {
+  public override async handle(params: JourneysByDay): Promise<ResultInterface[]> {
     return this.repository.getIncentiveByDay(params);
   }
 }
