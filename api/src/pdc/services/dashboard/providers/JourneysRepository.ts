@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   JourneysIncentiveByDayParamsInterface,
@@ -21,7 +21,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
   private readonly tableByMonth = "dashboard_stats.operators_by_month";
   private readonly tableByDay = "dashboard_stats.operators_by_day";
 
-  constructor(private pg: LegacyPostgresConnection) {}
+  constructor(private pgConnection: DenoPostgresConnection) {}
 
   async getIncentiveByDay(
     params: JourneysIncentiveByDayParamsInterface,
@@ -47,8 +47,8 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysIncentiveByDayResultInterface>(query);
+    return rows[0];
   }
 
   async getIncentiveByMonth(
@@ -76,8 +76,8 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3,4
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysIncentiveByMonthResultInterface>(query);
+    return rows[0];
   }
 
   async getOperatorsByDay(
@@ -106,8 +106,8 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       WHERE ${join(filters, " AND ")}
       ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysOperatorsByDayResultInterface>(query);
+    return rows[0];
   }
 
   async getOperatorsByMonth(
@@ -135,7 +135,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       FROM ${raw(this.tableByMonth)}
       WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysOperatorsByMonthResultInterface>(query);
+    return rows[0];
   }
 }

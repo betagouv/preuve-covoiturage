@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
@@ -30,7 +30,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
   private bucket: BucketName = BucketName.APDF;
 
   constructor(
-    private pg: LegacyPostgresConnection,
+    private pgConnection: DenoPostgresConnection,
     private s3StorageProvider: S3StorageProvider,
     private APDFNameProvider: APDFNameProvider,
   ) {}
@@ -64,8 +64,8 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
       ORDER BY 9, 2 desc 
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<CampaignsResultInterface>(query);
+    return rows[0];
   }
 
   async getTerritoriesWithCampaign(
@@ -85,8 +85,8 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
       ORDER BY 2 
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<TerritoriesWithCampaignResultInterface>(query);
+    return rows[0];
   }
 
   async getCampaignApdf(
@@ -99,8 +99,11 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       );
       return await this.enrichApdf(list.filter((obj) => obj.size > 0));
     } catch (e) {
-      logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
-      logger.debug(e.stack);
+      if (e instanceof Error) {
+        logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
+      } else {
+        logger.error(`[Apdf:StorageRepo:findByCampaign]`, e);
+      }
       throw e;
     }
   }
