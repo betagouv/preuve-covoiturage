@@ -10,13 +10,11 @@ export function AppHeader() {
         <>
           Ministère
           <br />
-          de la transition
+          de l&apos;aménagement
           <br />
-          écologique
+          du territoire et de
           <br />
-          et de la cohésion
-          <br />
-          des territoires
+          la décentralisation
         </>
       }
       homeLinkProps={{
