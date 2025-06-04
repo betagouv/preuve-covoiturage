@@ -8,7 +8,10 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState<AuthContextProps["user"]>();
-  const [simulatedRole, setSimulatedRole] = useState(false);
+  const [simulate, setSimulate] = useState(false);
+  const [simulatedRole, setSimulatedRole] = useState<
+    "operator" | "territory"
+  >();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -47,7 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         ...user,
         territory_id: id ?? undefined,
-        operator_id: undefined,
       });
     }
   };
@@ -57,12 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         ...user,
         operator_id: id ?? undefined,
-        territory_id: undefined,
       });
     }
   };
-  const onChangeSimulatedRole = () => {
-    setSimulatedRole((prev) => !prev);
+  const onChangeSimulate = () => {
+    setSimulate((prev) => !prev);
+  };
+  const onChangeSimulatedRole = (value?: "operator" | "territory") => {
+    setSimulatedRole(value);
   };
 
   const logout = async () => {
@@ -76,9 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuth,
         setIsAuth,
         user,
+        simulate,
         simulatedRole,
         onChangeTerritory,
         onChangeOperator,
+        onChangeSimulate,
         onChangeSimulatedRole,
         logout,
       }}

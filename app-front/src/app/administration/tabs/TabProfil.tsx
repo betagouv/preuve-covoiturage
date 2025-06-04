@@ -6,25 +6,25 @@ import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function TabProfil() {
   const {
     user,
+    simulate,
     simulatedRole,
+    onChangeSimulate,
     onChangeSimulatedRole,
     onChangeTerritory,
     onChangeOperator,
   } = useAuth();
-  const [radioValue, setRadioValue] = useState<"operator" | "territory">(
-    "territory",
-  );
 
   useEffect(() => {
-    if (user?.role === "registry.admin" && simulatedRole === false) {
+    if (user?.role === "registry.admin" && simulate === false) {
       onChangeTerritory();
+      onChangeSimulatedRole();
     }
-  }, [simulatedRole]);
+  }, [simulate]);
 
   return (
     <>
@@ -66,12 +66,12 @@ export default function TabProfil() {
             <>
               <ToggleSwitch
                 label="S'identifier en tant qu'opérateur ou territoire"
-                checked={simulatedRole}
+                checked={simulate}
                 onChange={() => {
-                  onChangeSimulatedRole();
+                  onChangeSimulate();
                 }}
               />
-              {simulatedRole && (
+              {simulate && (
                 <>
                   <RadioButtons
                     legend="S'identifier en tant que :"
@@ -80,29 +80,29 @@ export default function TabProfil() {
                       {
                         label: "Territoire",
                         nativeInputProps: {
-                          checked: radioValue === "territory",
-                          onChange: () => setRadioValue("territory"),
+                          checked: simulatedRole === "territory",
+                          onChange: () => onChangeSimulatedRole("territory"),
                         },
                       },
                       {
                         label: "opérateur",
                         nativeInputProps: {
-                          checked: radioValue === "operator",
-                          onChange: () => setRadioValue("operator"),
+                          checked: simulatedRole === "operator",
+                          onChange: () => onChangeSimulatedRole("operator"),
                         },
                       },
                     ]}
                     orientation="horizontal"
                   />
-                  {radioValue === "territory" && (
+                  {simulatedRole === "territory" && (
                     <SelectTerritory
-                      defaultValue={user?.territory_id}
+                      defaultValue={user.territory_id}
                       onChange={onChangeTerritory}
                     />
                   )}
-                  {radioValue === "operator" && (
+                  {simulatedRole === "operator" && (
                     <SelectOperator
-                      defaultValue={user?.operator_id}
+                      defaultValue={user.operator_id}
                       onChange={onChangeOperator}
                     />
                   )}

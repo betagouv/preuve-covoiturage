@@ -1,12 +1,9 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { Tile } from "@codegouvfr/react-dsfr/Tile";
 import { type Metadata } from "next";
 import Image from "next/image";
-import TabBref from "./tabs/TabBref";
-import TabCampaigns from "./tabs/TabCampaigns";
-import TabExport from "./tabs/TabExport";
+import TabsNav from "./tabs/TabNav";
 
 export const metadata: Metadata = {
   title: "Activité | app.covoiturage.gouv.fr",
@@ -18,22 +15,7 @@ export default function Activite() {
     <div className={fr.cx("fr-container")}>
       <div id="content">
         <PageTitle title={`Suivez votre activité`} />
-        <Tabs
-          tabs={[
-            {
-              content: <TabBref />,
-              label: "Activité en bref",
-            },
-            {
-              content: <TabCampaigns />,
-              label: `Suivi des campagnes`,
-            },
-            {
-              content: <TabExport />,
-              label: "Export des données",
-            },
-          ]}
-        />
+        <TabsNav />
         <Tile
           enlargeLinkOrButton
           linkProps={{

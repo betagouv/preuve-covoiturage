@@ -95,7 +95,7 @@ export default function CampaignsTable(props: {
               />
             </>
           ) : (
-            <p>Pas de campagne pour ce territoire</p>
+            <p>Pas de campagnes ...</p>
           )}
         </>
       )}

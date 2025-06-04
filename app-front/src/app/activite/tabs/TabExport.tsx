@@ -1,5 +1,6 @@
 "use client";
 import SelectTerritory from "@/components/common/SelectTerritory";
+import SelectTerritoryByOperator from "@/components/common/SelectTerritoryByOperator";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
@@ -67,7 +68,7 @@ type ResultInterfaceV3 = {
 };
 
 export default function TabExport() {
-  const { user, onChangeTerritory } = useAuth();
+  const { user, simulate, onChangeTerritory } = useAuth();
   const territoryId = user?.territory_id ?? 1;
   const [startDate, setStartDate] = useState(dayjs().subtract(1, "month"));
   const [endDate, setEndDate] = useState(dayjs().subtract(5, "days"));
@@ -118,83 +119,96 @@ export default function TabExport() {
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-        {user?.role === "registry.admin" && (
-          <SelectTerritory
-            defaultValue={territoryId}
-            onChange={onChangeTerritory}
-          />
-        )}
+      {user && (
+        <>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
+            {user.role === "registry.admin" && simulate === false && (
+              <SelectTerritory
+                defaultValue={user.territory_id}
+                onChange={onChangeTerritory}
+              />
+            )}
+            {user.operator_id && (
+              <SelectTerritoryByOperator
+                defaultValue={user.territory_id}
+                onChange={onChangeTerritory}
+              />
+            )}
+            {user.territory_id && (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: "16px",
+                  }}
+                >
+                  <DatePicker
+                    sx={{
+                      maxWidth: "200px",
+                    }}
+                    label="Début"
+                    value={startDate}
+                    onChange={(v) => setStartDate(v!)}
+                    minDate={dayjs().subtract(2, "years")}
+                    maxDate={endDate}
+                  />
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: "16px",
-          }}
-        >
-          <DatePicker
-            sx={{
-              maxWidth: "200px",
-            }}
-            label="Début"
-            value={startDate}
-            onChange={(v) => setStartDate(v!)}
-            minDate={dayjs().subtract(2, "years")}
-            maxDate={endDate}
-          />
+                  <DatePicker
+                    sx={{
+                      maxWidth: "200px",
+                    }}
+                    label="Fin"
+                    value={endDate}
+                    onChange={(v) => setEndDate(v!)}
+                    minDate={startDate}
+                    maxDate={dayjs().subtract(5, "days")}
+                  />
+                </div>
 
-          <DatePicker
-            sx={{
-              maxWidth: "200px",
-            }}
-            label="Fin"
-            value={endDate}
-            onChange={(v) => setEndDate(v!)}
-            minDate={startDate}
-            maxDate={dayjs().subtract(5, "days")}
-          />
-        </div>
-
-        <div>
-          <Button
-            disabled={loading}
-            style={{
-              marginTop: fr.spacing("5v"),
-            }}
-            className="fr-btn"
-            size="large"
-            onClick={() => handleExport()}
-          >
-            Exporter
-          </Button>
-          {error && (
-            <Alert
-              style={{
-                marginTop: fr.spacing("5v"),
-              }}
-              closable
-              onClose={() => setError(null)}
-              severity="warning"
-              title="Une erreur est survenue"
-              description={error}
-            />
-          )}
-          {response && (
-            <Alert
-              style={{
-                marginTop: fr.spacing("5v"),
-              }}
-              severity="success"
-              title="Succès"
-              description="Vous allez recevoir un email avec le lien de téléchargement prochainement"
-              closable
-              onClose={() => setResponse(null)}
-            />
-          )}
-        </div>
-      </LocalizationProvider>
+                <div>
+                  <Button
+                    disabled={loading}
+                    style={{
+                      marginTop: fr.spacing("5v"),
+                    }}
+                    className="fr-btn"
+                    size="large"
+                    onClick={() => handleExport()}
+                  >
+                    Exporter
+                  </Button>
+                  {error && (
+                    <Alert
+                      style={{
+                        marginTop: fr.spacing("5v"),
+                      }}
+                      closable
+                      onClose={() => setError(null)}
+                      severity="warning"
+                      title="Une erreur est survenue"
+                      description={error}
+                    />
+                  )}
+                  {response && (
+                    <Alert
+                      style={{
+                        marginTop: fr.spacing("5v"),
+                      }}
+                      severity="success"
+                      title="Succès"
+                      description="Vous allez recevoir un email avec le lien de téléchargement prochainement"
+                      closable
+                      onClose={() => setResponse(null)}
+                    />
+                  )}
+                </div>
+              </>
+            )}
+          </LocalizationProvider>
+        </>
+      )}
     </>
   );
 }
