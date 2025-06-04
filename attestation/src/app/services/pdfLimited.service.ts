@@ -1,15 +1,15 @@
-import { saveAs } from 'file-saver';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { from, ObservableInput, Observer } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ProfileLimitedFormInterface } from '../shared/interfaces/ProfileLimitedForm.interface';
-import { certFilename } from '../shared/helpers/certFilename.helper';
-import { format } from '../shared/helpers/date.helper';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { saveAs } from "file-saver";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { from, ObservableInput, Observer } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { certFilename } from "../shared/helpers/certFilename.helper";
+import { format } from "../shared/helpers/date.helper";
+import { ProfileLimitedFormInterface } from "../shared/interfaces/ProfileLimitedForm.interface";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PdfLimitedGeneratorService {
   constructor(private http: HttpClient) {}
@@ -17,23 +17,21 @@ export class PdfLimitedGeneratorService {
   generate(data: ProfileLimitedFormInterface, obs?: { onComplete?: Function; onError?: Function }) {
     const observer: Observer<ArrayBuffer> = {
       next: (pdfBytes: ArrayBuffer) => {
-        saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), certFilename(data.name));
+        saveAs(new Blob([pdfBytes], { type: "application/pdf" }), certFilename(data.name));
       },
       error: () => {},
       complete: () => {},
     };
 
-    if (obs?.onError) observer['error'] = obs.onError as (err: any) => void;
-    if (obs?.onComplete) observer['complete'] = obs.onComplete as () => void;
+    if (obs?.onError) observer["error"] = obs.onError as (err: any) => void;
+    if (obs?.onComplete) observer["complete"] = obs.onComplete as () => void;
 
     this.http
-      .get('/assets/certificate_ltd.pdf', { responseType: 'arraybuffer' })
+      .get("/assets/certificate_ltd.pdf", { responseType: "arraybuffer" })
       .pipe(
         catchError(this.handleError),
-
         // convert the PDF load document to an observable
         switchMap((pdfBuffer: ArrayBuffer) => from(PDFDocument.load(pdfBuffer))),
-
         // embed the font (Promise) and draw all text boxes
         // doc.save returns a Promise with a ArrayBuffer
         switchMap(async (doc: PDFDocument) => {
@@ -57,7 +55,7 @@ export class PdfLimitedGeneratorService {
           // tick checkbox and set value
           // or mask the whole line
           if (data.distance) {
-            draw('x', 128, 401.5);
+            draw("x", 128, 401.5);
             draw(data.distance.toString(), 418, 402);
           } else {
             page.drawRectangle({
@@ -73,7 +71,7 @@ export class PdfLimitedGeneratorService {
           // or mask the whole line
           if (data.days) {
             draw(data.days.toString(), 225, 381);
-            draw('x', 128, 381);
+            draw("x", 128, 381);
           } else {
             page.drawRectangle({
               x: 125,
@@ -103,10 +101,10 @@ export class PdfLimitedGeneratorService {
           // set metadata
           doc.setTitle("Attestation sur l'honneur de covoiturage");
           doc.setSubject("Attestation sur l'honneur de covoiturage");
-          doc.setKeywords(['attestation', 'covoiturage']);
-          doc.setProducer('beta.gouv');
-          doc.setCreator('');
-          doc.setAuthor('Ministère de la Transition écologique');
+          doc.setKeywords(["attestation", "covoiturage"]);
+          doc.setProducer("beta.gouv");
+          doc.setCreator("");
+          doc.setAuthor("Ministère de l'aménagement du territoire et de la décentralisation");
 
           return doc.save();
         }),

@@ -1,15 +1,15 @@
-import { saveAs } from 'file-saver';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { from, ObservableInput, Observer } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ProfilePublicFormInterface } from '../shared/interfaces/ProfilePublicForm.interface';
-import { certFilename } from '../shared/helpers/certFilename.helper';
-import { format } from '../shared/helpers/date.helper';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { saveAs } from "file-saver";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { from, ObservableInput, Observer } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { certFilename } from "../shared/helpers/certFilename.helper";
+import { format } from "../shared/helpers/date.helper";
+import { ProfilePublicFormInterface } from "../shared/interfaces/ProfilePublicForm.interface";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PdfPublicGeneratorService {
   constructor(private http: HttpClient) {}
@@ -17,31 +17,28 @@ export class PdfPublicGeneratorService {
   generate(data: ProfilePublicFormInterface, obs?: { onComplete?: Function; onError?: Function }) {
     const observer: Observer<ArrayBuffer> = {
       next: (pdfBytes: ArrayBuffer) => {
-        saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), certFilename(data.name));
+        saveAs(new Blob([pdfBytes], { type: "application/pdf" }), certFilename(data.name));
       },
       error: () => {},
       complete: () => {},
     };
 
-    if (obs?.onError) observer['error'] = obs.onError as (err: any) => void;
-    if (obs?.onComplete) observer['complete'] = obs.onComplete as () => void;
+    if (obs?.onError) observer["error"] = obs.onError as (err: any) => void;
+    if (obs?.onComplete) observer["complete"] = obs.onComplete as () => void;
 
     this.http
-      .get('/assets/certificate_public.pdf', { responseType: 'arraybuffer' })
+      .get("/assets/certificate_public.pdf", { responseType: "arraybuffer" })
       .pipe(
         catchError(this.handleError),
-
         // convert the PDF load document to an observable
         switchMap((pdfBuffer: ArrayBuffer) => from(PDFDocument.load(pdfBuffer))),
-
         // embed the font (Promise) and draw all text boxes
         // doc.save returns a Promise with a ArrayBuffer
         switchMap(async (doc: PDFDocument) => {
           const font = await doc.embedFont(StandardFonts.HelveticaBold);
           const page = doc.getPage(0);
           const draw = (
-            (p, f) =>
-            (text: string, x: number, y: number, size = 11) => {
+            (p, f) => (text: string, x: number, y: number, size = 11) => {
               p.drawText(text, {
                 x,
                 y,
@@ -103,18 +100,18 @@ export class PdfPublicGeneratorService {
           });
 
           // yes / no check
-          if (data.mobility !== 'no') {
-            draw('x', 94, 286);
+          if (data.mobility !== "no") {
+            draw("x", 94, 286);
             draw(data.mobility_date, 230, 286, 10);
-          } else draw('x', 94, 273);
+          } else draw("x", 94, 273);
 
           // set metadata
           doc.setTitle("Attestation sur l'honneur de covoiturage");
           doc.setSubject("Attestation sur l'honneur de covoiturage");
-          doc.setKeywords(['attestation', 'covoiturage']);
-          doc.setProducer('beta.gouv');
-          doc.setCreator('');
-          doc.setAuthor('Ministère de la Transition écologique');
+          doc.setKeywords(["attestation", "covoiturage"]);
+          doc.setProducer("beta.gouv");
+          doc.setCreator("");
+          doc.setAuthor("Ministère de l'aménagement du territoire et de la décentralisation");
 
           return doc.save();
         }),

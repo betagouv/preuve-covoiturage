@@ -16,7 +16,7 @@ with filtered_carpools as (
     where
       c.start_datetime between (select max(month) from {{ this }}) and now()
   {% else %}
-  where c.start_datetime between '2024-07-01' and now()
+  where c.start_datetime between '2024-01-01' and now()
 {% endif %}
 )
 
