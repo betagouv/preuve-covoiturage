@@ -297,7 +297,7 @@ debug:
 
 [group('development')]
 watch:
-  deno run {{ deno_flags }} src/main.ts http \$PORT
+  deno run {{ deno_flags }} --watch src/main.ts http \$PORT
 
 # Run a deno file inside API environment (docker exec)
 [group('development')]

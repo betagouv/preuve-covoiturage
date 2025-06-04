@@ -2,11 +2,11 @@ import type {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
 } from "@/pdc/services/territory/contracts/create.contract.ts";
-
 import type {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
 } from "@/pdc/services/territory/contracts/list.contract.ts";
+import { TerritoryParams } from "./../actions/group/ListTerritoryActionV2.ts";
 
 import type {
   ParamsInterface as FindParamsInterface,
@@ -54,7 +54,7 @@ export interface TerritoryRepositoryProviderInterface {
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
-  async list(params: ListParamsInterface): Promise<ListResultInterface> {
+  async list(params: TerritoryParams): Promise<ListResultInterface> {
     throw new Error();
   }
 
