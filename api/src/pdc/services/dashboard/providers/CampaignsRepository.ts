@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
@@ -16,6 +16,8 @@ import {
   CampaignsRepositoryInterface,
   CampaignsRepositoryInterfaceResolver,
   CampaignsResultInterface,
+  TerritoriesWithCampaignParamsInterface,
+  TerritoriesWithCampaignResultInterface,
 } from "../interfaces/CampaignsRepositoryInterface.ts";
 
 @provider({
@@ -23,24 +25,27 @@ import {
 })
 export class CampaignsRepository implements CampaignsRepositoryInterface {
   private readonly table = "policy.policies";
+  private readonly tableIncentives = "policy.incentives";
   private readonly tableTerritory = "territory.territory_group";
   private bucket: BucketName = BucketName.APDF;
 
   constructor(
-    private pg: LegacyPostgresConnection,
+    private pgConnection: DenoPostgresConnection,
     private s3StorageProvider: S3StorageProvider,
     private APDFNameProvider: APDFNameProvider,
   ) {}
 
   async getCampaigns(
     params: CampaignsParamsInterface,
-  ): Promise<CampaignsResultInterface> {
-    const filters = [];
-    if (params.territory_id) {
-      filters.push(sql`territory_id = ${params.territory_id}`);
+  ): Promise<CampaignsResultInterface[]> {
+    const filters = [
+      sql`a.territory_id = ${params.territory_id}`,
+    ];
+    if (params.operator_id) {
+      filters.push(sql`c.operator_id = ${params.operator_id}`);
     }
     const query = sql`
-      SELECT 
+      SELECT ${params.operator_id ? sql`DISTINCT` : sql``}
         a._id AS id,
         to_char(a.start_date, 'YYYY-MM-DD') AS start_date,
         to_char(a.end_date, 'YYYY-MM-DD') AS end_date,
@@ -55,11 +60,33 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
         a.max_amount 
       FROM ${raw(this.table)} a
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
+      ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
       ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
-      ORDER BY status, a.start_date desc 
+      ORDER BY 9, 2 desc 
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<CampaignsResultInterface>(query);
+    return rows;
+  }
+
+  async getTerritoriesWithCampaign(
+    params: TerritoriesWithCampaignParamsInterface,
+  ): Promise<TerritoriesWithCampaignResultInterface[]> {
+    const filters = [];
+    if (params.operator_id) {
+      filters.push(sql`c.operator_id = ${params.operator_id}`);
+    }
+    const query = sql`
+      SELECT DISTINCT
+        a.territory_id as id,
+        b.name as name 
+      FROM ${raw(this.table)} a
+      LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
+      ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
+      ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
+      ORDER BY 2 
+    `;
+    const rows = await this.pgConnection.query<TerritoriesWithCampaignResultInterface>(query);
+    return rows;
   }
 
   async getCampaignApdf(
@@ -72,8 +99,11 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       );
       return await this.enrichApdf(list.filter((obj) => obj.size > 0));
     } catch (e) {
-      logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
-      logger.debug(e.stack);
+      if (e instanceof Error) {
+        logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
+      } else {
+        logger.error(`[Apdf:StorageRepo:findByCampaign]`, e);
+      }
       throw e;
     }
   }

@@ -1,6 +1,7 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
+import { OperatorResult } from "@/pdc/services/dashboard/actions/operators/OperatorsAction.ts";
 import {
   CreateOperatorDataInterface,
   CreateOperatorResultInterface,
@@ -20,7 +21,7 @@ import {
 export class OperatorsRepository implements OperatorsRepositoryInterface {
   private readonly table = "operator.operators";
 
-  constructor(private pg: LegacyPostgresConnection) {}
+  constructor(private pgConnection: DenoPostgresConnection) {}
 
   async getOperators(
     params: OperatorsParamsInterface,
@@ -42,21 +43,21 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       ORDER BY _id
       LIMIT ${limit} OFFSET ${offset}
     `;
-    const response = await this.pg.getClient().query(query);
+    const rows = await this.pgConnection.query<OperatorResult>(query);
     // Calcul du nombre total d'éléments
     const countQuery = sql`
       SELECT COUNT(*) as total
       FROM ${raw(this.table)}
       WHERE ${join(filters, " AND ")}
     `;
-    const countResponse = await this.pg.getClient().query(countQuery);
+    const countResponse = await this.pgConnection.query<{ total: string }>(countQuery);
     return {
       meta: {
-        total: parseInt(countResponse.rows[0].total, 10),
+        total: parseInt(countResponse[0].total, 10),
         page: page,
-        totalPages: Math.ceil(parseInt(countResponse.rows[0].total, 10) / limit),
+        totalPages: Math.ceil(parseInt(countResponse[0].total, 10) / limit),
       },
-      data: response.rows,
+      data: rows,
     };
   }
 
@@ -71,13 +72,13 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       )
       RETURNING _id as id, created_at, name, siret
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query(query);
+    if (rows.length !== 1) {
       throw new Error(`Unable to create operator ${data}`);
     }
     return {
       success: true,
-      message: `Operator ${JSON.stringify(response.rows[0])} created`,
+      message: `Operator ${JSON.stringify(rows[0])} created`,
     };
   }
 
@@ -89,8 +90,8 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       SET deleted_at = NOW()
       WHERE _id = ${params.id}
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query(query);
+    if (rows.length !== 1) {
       throw new NotFoundException(`operator not found: (${params.id})`);
     }
     return { success: true, message: `Operator ${params.id} deleted` };
@@ -108,13 +109,13 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       WHERE _id = ${data.id}
       RETURNING _id, updated_at, name, siret
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query(query);
+    if (rows.length !== 1) {
       throw new Error(`Unable to update operator with id ${data.id}`);
     }
     return {
       success: true,
-      message: `Operator ${JSON.stringify(response.rows[0])} updated`,
+      message: `Operator ${JSON.stringify(rows[0])} updated`,
     };
   }
 }

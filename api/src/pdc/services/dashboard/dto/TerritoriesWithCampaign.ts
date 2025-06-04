@@ -1,9 +1,8 @@
 import { Infer, object, optional } from "@/lib/superstruct/index.ts";
 import { Id } from "@/pdc/providers/superstruct/shared/index.ts";
 
-export const Campaigns = object({
-  territory_id: Id,
+export const TerritoriesWithCampaign = object({
   operator_id: optional(Id),
 });
 
-export type Campaigns = Infer<typeof Campaigns>;
+export type TerritoriesWithCampaign = Infer<typeof TerritoriesWithCampaign>;

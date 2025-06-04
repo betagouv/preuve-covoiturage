@@ -1,30 +1,46 @@
 "use client";
 import SelectTerritory from "@/components/common/SelectTerritory";
+import SelectTerritoryByOperator from "@/components/common/SelectTerritoryByOperator";
 import { useAuth } from "@/providers/AuthProvider";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 
 export default function TabBref() {
-  const { user, onChangeTerritory } = useAuth();
-  const territoryId = user?.territory_id ?? 1;
+  const { user, simulate, onChangeTerritory } = useAuth();
   return (
     <>
-      {user?.role === "registry.admin" && (
-        <SelectTerritory
-          defaultValue={territoryId}
-          onChange={onChangeTerritory}
-        />
+      {user && (
+        <>
+          {user.role === "registry.admin" && simulate === false && (
+            <SelectTerritory
+              defaultValue={user.territory_id}
+              onChange={onChangeTerritory}
+            />
+          )}
+          {user.operator_id && (
+            <SelectTerritoryByOperator
+              defaultValue={user?.territory_id}
+              onChange={onChangeTerritory}
+            />
+          )}
+          {user.territory_id && (
+            <>
+              <JourneysGraph
+                title="Evolution des trajets"
+                territoryId={user.territory_id}
+              />
+              {["operator.admin", "operator.user"].includes(user.role ?? "") ===
+                false &&
+                user.operator_id === undefined && (
+                  <OperatorsGraph
+                    title="Evolution des trajets par opérateurs"
+                    territoryId={user.territory_id}
+                  />
+                )}
+            </>
+          )}
+        </>
       )}
-      <JourneysGraph title="Evolution des trajets" territoryId={territoryId} />
-
-      {["operator.admin", "operator.user"].includes(user?.role ?? "") ===
-        false &&
-        user?.operator_id === undefined && (
-          <OperatorsGraph
-            title="Evolution des trajets par opérateurs"
-            territoryId={territoryId}
-          />
-        )}
     </>
   );
 }

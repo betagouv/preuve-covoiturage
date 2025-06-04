@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   JourneysIncentiveByDayParamsInterface,
@@ -21,11 +21,11 @@ export class JourneysRepository implements JourneysRepositoryInterface {
   private readonly tableByMonth = "dashboard_stats.operators_by_month";
   private readonly tableByDay = "dashboard_stats.operators_by_day";
 
-  constructor(private pg: LegacyPostgresConnection) {}
+  constructor(private pgConnection: DenoPostgresConnection) {}
 
   async getIncentiveByDay(
     params: JourneysIncentiveByDayParamsInterface,
-  ): Promise<JourneysIncentiveByDayResultInterface> {
+  ): Promise<JourneysIncentiveByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
@@ -47,13 +47,13 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       GROUP BY 1,2,3
       ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysIncentiveByDayResultInterface>(query);
+    return rows;
   }
 
   async getIncentiveByMonth(
     params: JourneysIncentiveByMonthParamsInterface,
-  ): Promise<JourneysIncentiveByMonthResultInterface> {
+  ): Promise<JourneysIncentiveByMonthResultInterface[]> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
@@ -76,13 +76,13 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3,4
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysIncentiveByMonthResultInterface>(query);
+    return rows;
   }
 
   async getOperatorsByDay(
     params: JourneysOperatorsByDayParamsInterface,
-  ): Promise<JourneysOperatorsByDayResultInterface> {
+  ): Promise<JourneysOperatorsByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const direction = params.direction ? params.direction : "both";
     const filters = [
@@ -106,13 +106,13 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       WHERE ${join(filters, " AND ")}
       ORDER BY start_date
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysOperatorsByDayResultInterface>(query);
+    return rows;
   }
 
   async getOperatorsByMonth(
     params: JourneysOperatorsByMonthParamsInterface,
-  ): Promise<JourneysOperatorsByMonthResultInterface> {
+  ): Promise<JourneysOperatorsByMonthResultInterface[]> {
     const direction = params.direction ? params.direction : "both";
     const filters = [
       sql`territory_id = ${params.territory_id}`,
@@ -135,7 +135,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       FROM ${raw(this.tableByMonth)}
       WHERE ${join(filters, " AND ")}
     `;
-    const response = await this.pg.getClient().query(query);
-    return response.rows;
+    const rows = await this.pgConnection.query<JourneysOperatorsByMonthResultInterface>(query);
+    return rows;
   }
 }

@@ -1,6 +1,7 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
+import { UserResult } from "@/pdc/services/dashboard/actions/users/UsersAction.ts";
 import {
   CreateUserDataInterface,
   CreateUserResultInterface,
@@ -20,7 +21,7 @@ import {
 export class UsersRepository implements UsersRepositoryInterface {
   private readonly table = "auth.users";
 
-  constructor(private pg: LegacyPostgresConnection) {}
+  constructor(private pgConnection: DenoPostgresConnection) {}
 
   async getUsers(
     params: UsersParamsInterface,
@@ -52,21 +53,21 @@ export class UsersRepository implements UsersRepositoryInterface {
       ORDER BY _id
       LIMIT ${limit} OFFSET ${offset}
     `;
-    const response = await this.pg.getClient().query(query);
+    const rows = await this.pgConnection.query<UserResult>(query);
     // Calcul du nombre total d'éléments
     const countQuery = sql`
       SELECT COUNT(*) as total
       FROM ${raw(this.table)}
       WHERE ${join(filters, " AND ")}
     `;
-    const countResponse = await this.pg.getClient().query(countQuery);
+    const countResponse = await this.pgConnection.query<{ total: string }>(countQuery);
     return {
       meta: {
-        total: parseInt(countResponse.rows[0].total, 10),
+        total: parseInt(countResponse[0].total, 10),
         page: page,
-        totalPages: Math.ceil(parseInt(countResponse.rows[0].total, 10) / limit),
+        totalPages: Math.ceil(parseInt(countResponse[0].total, 10) / limit),
       },
-      data: response.rows,
+      data: rows,
     };
   }
 
@@ -82,13 +83,13 @@ export class UsersRepository implements UsersRepositoryInterface {
       RETURNING
         _id, created_at, firstname, lastname, email, role, operator_id, territory_id
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query(query);
+    if (rows.length !== 1) {
       throw new Error(`Unable to create user ${data}`);
     }
     return {
       success: true,
-      message: `user ${JSON.stringify(response.rows[0])} created`,
+      message: `user ${JSON.stringify(rows[0])} created`,
     };
   }
 
@@ -100,8 +101,8 @@ export class UsersRepository implements UsersRepositoryInterface {
       SET hidden = true
       WHERE _id = ${params.id}
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query(query);
+    if (rows.length !== 1) {
       throw new NotFoundException(`user not found: (${params.id})`);
     }
     return { success: true, message: `user ${params.id} deleted` };
@@ -123,13 +124,13 @@ export class UsersRepository implements UsersRepositoryInterface {
       WHERE _id = ${data.id}
       RETURNING _id, updated_at, firstname, lastname, email, role, operator_id, territory_id
     `;
-    const response = await this.pg.getClient().query(query);
-    if (response.rowCount !== 1) {
+    const rows = await this.pgConnection.query<UpdateUserResultInterface>(query);
+    if (rows.length !== 1) {
       throw new Error(`Unable to update user with id ${data.id}`);
     }
     return {
       success: true,
-      message: `User ${JSON.stringify(response.rows[0])} updated`,
+      message: `User ${JSON.stringify(rows[0])} updated`,
     };
   }
 }

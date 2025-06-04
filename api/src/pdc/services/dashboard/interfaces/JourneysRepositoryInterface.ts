@@ -23,37 +23,37 @@ export type {
 export interface JourneysRepositoryInterface {
   getOperatorsByMonth(
     params: JourneysOperatorsByMonthParamsInterface,
-  ): Promise<JourneysOperatorsByMonthResultInterface>;
+  ): Promise<JourneysOperatorsByMonthResultInterface[]>;
   getOperatorsByDay(
     params: JourneysOperatorsByDayParamsInterface,
-  ): Promise<JourneysOperatorsByDayResultInterface>;
+  ): Promise<JourneysOperatorsByDayResultInterface[]>;
   getIncentiveByMonth(
     params: JourneysIncentiveByMonthParamsInterface,
-  ): Promise<JourneysIncentiveByMonthResultInterface>;
+  ): Promise<JourneysIncentiveByMonthResultInterface[]>;
   getIncentiveByDay(
     params: JourneysIncentiveByDayParamsInterface,
-  ): Promise<JourneysIncentiveByDayResultInterface>;
+  ): Promise<JourneysIncentiveByDayResultInterface[]>;
 }
 
 export abstract class JourneysRepositoryInterfaceResolver implements JourneysRepositoryInterface {
   async getOperatorsByMonth(
     params: JourneysOperatorsByMonthParamsInterface,
-  ): Promise<JourneysOperatorsByMonthResultInterface> {
+  ): Promise<JourneysOperatorsByMonthResultInterface[]> {
     throw new Error();
   }
   async getOperatorsByDay(
     params: JourneysOperatorsByDayParamsInterface,
-  ): Promise<JourneysOperatorsByDayResultInterface> {
+  ): Promise<JourneysOperatorsByDayResultInterface[]> {
     throw new Error();
   }
   async getIncentiveByMonth(
     params: JourneysIncentiveByMonthParamsInterface,
-  ): Promise<JourneysIncentiveByMonthResultInterface> {
+  ): Promise<JourneysIncentiveByMonthResultInterface[]> {
     throw new Error();
   }
   async getIncentiveByDay(
     params: JourneysIncentiveByDayParamsInterface,
-  ): Promise<JourneysIncentiveByDayResultInterface> {
+  ): Promise<JourneysIncentiveByDayResultInterface[]> {
     throw new Error();
   }
 }

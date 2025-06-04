@@ -12,9 +12,11 @@ export interface AuthContextProps {
     territory_id?: number;
     siret?: string;
   };
-  simulatedRole: boolean;
+  simulate: boolean;
+  simulatedRole?: "operator" | "territory";
   onChangeTerritory: (id?: number) => void;
   onChangeOperator: (id?: number) => void;
-  onChangeSimulatedRole: () => void;
+  onChangeSimulate: () => void;
+  onChangeSimulatedRole: (value?: "operator" | "territory") => void;
   logout: () => Promise<void>;
 }

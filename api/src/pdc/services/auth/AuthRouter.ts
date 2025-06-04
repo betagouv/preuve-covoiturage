@@ -65,8 +65,7 @@ export class AuthRouter {
       "/auth/logout",
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { id_token } = req.session?.auth || {};
-        const { redirectUrl, state } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
-
+        const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
         req.session.destroy((err: Error) => {
           if (err) {
             console.error("Failed to destroy session during logout:", err);
@@ -74,6 +73,7 @@ export class AuthRouter {
           res.clearCookie(session.name);
           return res.redirect(redirectUrl);
         });
+        return res.redirect(redirectUrl);
       }),
     );
 
