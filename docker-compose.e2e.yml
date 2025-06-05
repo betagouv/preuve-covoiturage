@@ -3,10 +3,12 @@ services:
   # exposing ports is needed for integration and e2e tests to run
 
   dex:
-   ports:
-    - 8090:8090
-    - 5557:5557
-
+    ports:
+     - 8090:8090
+     - 5557:5557
+    volumes:
+     - ./docker/dex/config-e2e.yaml:/etc/dex/config.yaml:ro
+  
   api:
     ports:
       - 8080:8080
@@ -14,7 +16,7 @@ services:
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
       APIE2E_API_URL: https://api.covoiturage.test
-      APIE2E_AUTH_ACCESSKEY: admin@example.com
+      APIE2E_AUTH_ACCESSKEY: operator@example.com
       APIE2E_AUTH_SECRETKEY: password
       APIE2E_AUTH_OPERATOR_EMAIL: operator@example.com
       APIE2E_AUTH_OPERATOR_PASSWORD: admin1234

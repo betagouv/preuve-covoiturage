@@ -22,7 +22,7 @@ fileignoreconfig:
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
 - filename: docker-compose.e2e.yml
-  allowed_patterns: ["(?i)pass"]
+  allowed_patterns: ["(?i)pass","(?i)key"]
 - filename: notebooks/cerema/pdll2025.ipynb
   checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
 - filename: api/src/config/connections.ts

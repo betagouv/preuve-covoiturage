@@ -19,7 +19,7 @@ describe("DEX Authentication", () => {
     expect(response.body).toBeDefined();
     expect(response.body).toMatchObject({
       operator_id: 1,
-      role: "application",
+      role: "operator.admin",
     });
   });
 

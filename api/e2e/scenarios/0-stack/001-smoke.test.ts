@@ -46,10 +46,10 @@ describe("Authenticated smoke test", () => {
     expect(response.status).toBe(200);
 
     // informations must match the ones in the dex config-e2e.yaml file
-    expect(response.body).toEqual({
+    expect(response.body).toMatchObject({
       operator_id: 1,
-      role: "application",
-      email: "admin@example.com",
+      role: "operator.admin",
+      email: "operator@example.com",
     });
   });
 });

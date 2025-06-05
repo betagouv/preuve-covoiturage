@@ -6,6 +6,8 @@ import { DexOIDCProvider } from "@/pdc/services/auth/providers/DexOIDCProvider.t
 import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
+import { getPermissions } from "../../services/auth/config/permissions.ts";
+import { UserRepository } from "../../services/auth/providers/UserRepository.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 /**
@@ -55,26 +57,26 @@ function getTokenFromRequest(req: ExpressRequest): string {
  * Returns an Express middleware that checks the token using DexOIDCProvider.
  * Accepts either a KernelInterface or a DexOIDCProvider instance as argument.
  */
-export function dexMiddleware(kernelOrProvider: KernelInterface | DexOIDCProvider) {
+export function dexMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = getTokenFromRequest(req);
-
-      let dexProvider: DexOIDCProvider;
-      if (kernelOrProvider instanceof DexOIDCProvider) {
-        dexProvider = kernelOrProvider;
-      } else {
-        dexProvider = kernelOrProvider.get(DexOIDCProvider);
-      }
+      const dexProvider = kernel.get(DexOIDCProvider);
 
       const data = await dexProvider.verifyToken(token);
       req.session = req.session || {};
-      console.log("[dexMiddleware] User authenticated", data);
+
+      const repo = kernel.get(UserRepository);
+      const user = await repo.findUserByEmail(data.token_id);
+      if (!user) {
+        throw new UnauthorizedException("User not found");
+      }
 
       req.session.user = {
         operator_id: data.operator_id,
         role: data.role,
         email: data.token_id,
+        permissions: getPermissions(data.role),
       };
 
       next();
