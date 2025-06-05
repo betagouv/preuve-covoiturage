@@ -3,6 +3,8 @@ scopeconfig:
   - scope: node
   - scope: python
 fileignoreconfig:
+- filename: .github/workflows/quality-api.yml
+  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email"]
 - filename: attestation/src/app/services/pdfLimited.service.ts
   checksum: b26661547756ef686b92ff195f1a9d2ebe4348d3b09264f80a1a28adcbd168d9
 - filename: attestation/src/app/services/pdfPublic.service.ts
