@@ -2,7 +2,15 @@ import { createHash } from "@/lib/crypto/index.ts";
 import { removeAccents } from "@/lib/str/accents.ts";
 import { Faker, fr } from "dep:faker";
 
-const faker = new Faker({ locale: fr }) as Faker & { extra: any };
+interface FakerExtra {
+  siren(): string;
+  siret(): string;
+  immatriculation(): string;
+  phonetrunc(): string;
+  identity_key(name: string, phone: string): Promise<string>;
+}
+
+const faker = new Faker({ locale: fr }) as Faker & { extra: FakerExtra };
 faker.extra = {
   siren(): string {
     return `1${faker.string.numeric(8)}`;
