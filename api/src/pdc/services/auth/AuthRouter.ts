@@ -3,7 +3,7 @@ import { session } from "@/pdc/proxy/config/proxy.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
-import { dexMiddleware } from "../../proxy/middlewares/accessTokenMiddleware.ts";
+import { authGuard } from "../../proxy/middlewares/authGuard.ts";
 
 @injectable()
 export class AuthRouter {
@@ -47,7 +47,7 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/logout",
-      dexMiddleware(this.kernel),
+      authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { id_token } = req.session?.auth || {};
         const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
@@ -64,7 +64,7 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/logout/callback",
-      dexMiddleware(this.kernel),
+      authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response) => {
         const { state: expectedState } = req.session?.auth || {};
         const state = req.query?.state;
@@ -79,7 +79,7 @@ export class AuthRouter {
       }),
     );
 
-    this.app.get("/auth/me", dexMiddleware(this.kernel), (req: express.Request, res: express.Response) => {
+    this.app.get("/auth/me", authGuard(this.kernel), (req: express.Request, res: express.Response) => {
       return res.json(req.session.user);
     });
   }

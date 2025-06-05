@@ -120,9 +120,7 @@ export function legacyTokenMiddleware(kernel: KernelInterface) {
           id: number;
           permissions: string[];
         }>
-      >(String(token).replace("Bearer ", ""), {
-        ignoreExpiration: true,
-      });
+      >(token, { ignoreExpiration: true });
 
       /**
        * Handle V1 token format conversion

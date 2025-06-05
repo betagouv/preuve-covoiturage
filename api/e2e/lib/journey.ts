@@ -1,7 +1,7 @@
 import { set } from "@/lib/object/index.ts";
 import { array } from "@/lib/superstruct/index.ts";
 import { create, defaulted, enums, Infer, number, object, optional, string } from "dep:superstruct";
-import { faker, opt } from "../lib/faker.ts";
+import { faker, opt, phonetrunc } from "../lib/faker.ts";
 
 const Incentive = object({
   index: defaulted(number(), () => faker.number.int({ min: 0, max: 2 })),
@@ -30,7 +30,7 @@ const TimestampedLocation = object({
 const Identity = object({
   identity_key: defaulted(string(), () => faker.string.uuid()),
   phone: optional(string()),
-  phone_trunc: defaulted(string(), () => faker.phone.number({ style: "international" }).slice(0, 10)),
+  phone_trunc: defaulted(string(), () => faker.extra.phonetrunc()),
   // application_timestamp: optional(defaulted(string(), () => opt(faker.date.recent().toISOString()))),
   operator_user_id: defaulted(string(), () => faker.string.uuid()),
   travel_pass: optional(defaulted(TravelPass, () => opt({}))),
@@ -71,7 +71,7 @@ async function identityFactory(override: Partial<Infer<typeof Identity>> = {}): 
   const phone = override.phone ?? faker.phone.number({ style: "international" });
   const identity_key = await faker.extra.identity_key(faker.person.fullName(), phone);
   set(override, "identity_key", identity_key);
-  set(override, "phone_trunc", phone?.slice(0, 10));
+  set(override, "phone_trunc", phonetrunc(phone));
 
   return create(override, Identity);
 }
@@ -83,7 +83,6 @@ export const factory = async (override: Partial<JourneyType> = {}): Promise<Jour
   const end_datetime = new Date(start_datetime.getTime() + duration);
   set(override, "start.datetime", start_datetime.toISOString());
   set(override, "end.datetime", end_datetime.toISOString());
-
   set(override, "driver.identity", await identityFactory(override.driver?.identity));
   set(override, "passenger.identity", await identityFactory(override.passenger?.identity));
 

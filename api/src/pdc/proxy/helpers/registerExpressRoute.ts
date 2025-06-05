@@ -4,9 +4,11 @@ import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
 import { express, NextFunction, Request, Response } from "dep:express";
 import { formatRange, parse, satisfies, tryParseRange } from "dep:semver";
-import { accessTokenMiddleware } from "../middlewares/accessTokenMiddleware.ts";
+import { versions } from "../config/API_VERSION.ts";
+import { authGuard } from "../middlewares/authGuard.ts";
 
-const SUPPORTED_VERSIONS = ["3.2.0"].map((v) => parse(v));
+// Configure this here: ../config/API_VERSION.ts
+const SUPPORTED_VERSIONS = versions.map((v) => parse(v));
 const defaultParams: Required<Pick<RouteParams, "successHttpCode" | "rateLimiter">> = {
   successHttpCode: 200,
   rateLimiter: {
@@ -30,7 +32,7 @@ export function registerExpressRoute(
   ];
 
   if (!params.public) {
-    middlewares = [accessTokenMiddleware(kernel), ...middlewares];
+    middlewares = [authGuard(kernel), ...middlewares];
   }
 
   const path = `/:api_version/${params.path}`.replaceAll("//", "/");

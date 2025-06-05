@@ -1,6 +1,6 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
-import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
+import { OPERATOR_EMAIL, OPERATOR_PASSWORD, SUPPORTED_VERSIONS, UNSUPPORTED_VERSIONS } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { rx_datetime, rx_uuidV4 } from "../../lib/regex.ts";
@@ -22,16 +22,6 @@ describe("Legacy Authentication", () => {
     expect(response.body.permissions).toBeDefined();
     expect(response.body.permissions.length).toBeGreaterThan(0);
   });
-
-  /**
-   * Test for legacy authentication with different API versions.
-   * @doc https://tech.covoiturage.beta.gouv.fr/
-   *
-   * UPDATE the list of supported versions if needed.
-   * - 2025-05-22: v3, v3.2
-   */
-  const SUPPORTED_VERSIONS = ["v3", "v3.2"];
-  const UNSUPPORTED_VERSIONS = ["v3.1", "v4"];
 
   for (const version of SUPPORTED_VERSIONS) {
     it(`should be authenticated with ${version} API`, async () => {

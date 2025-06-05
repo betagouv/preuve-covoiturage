@@ -52,7 +52,7 @@ fileignoreconfig:
 - filename: api/e2e/lib/API.ts
   allowed_patterns: [key,"(?i)secretkey","(?i)accesskey"]
 - filename: api/e2e/scenarios/**/*.test.ts
-  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey"]
+  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email"]
 - filename: api/e2e/lib/*.ts
   allowed_patterns: ["(?i)key","(?i)pass"]
 - filename: api/src/pdc/proxy/config/dex.ts

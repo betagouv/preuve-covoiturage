@@ -1,6 +1,6 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
-import { SUPPORTED_VERSIONS, USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
+import { SUPPORTED_VERSIONS, UNSUPPORTED_VERSIONS, USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { rx_datetime, rx_uuidV4 } from "../../lib/regex.ts";
@@ -39,14 +39,13 @@ describe("DEX Authentication", () => {
         throw new Error(response.body.error?.message || "Unknown error");
       }
     });
-    break;
   }
 
-  // for (const version of SUPPORTED_VERSIONS) {
-  //   it(`should not be authenticated with ${version} API`, async () => {
-  //     const response = await http.post(`/${version}/journeys`, await createOperatorJourney());
-  //     expect(response.ok).toBe(false);
-  //     expect(response.status).toEqual(404);
-  //   });
-  // }
+  for (const version of UNSUPPORTED_VERSIONS) {
+    it(`should not be authenticated with ${version} API`, async () => {
+      const response = await http.post(`/${version}/journeys`, await createOperatorJourney());
+      expect(response.ok).toBe(false);
+      expect(response.status).toEqual(404);
+    });
+  }
 });

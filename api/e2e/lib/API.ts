@@ -85,6 +85,9 @@ export class API {
     }
 
     const { token } = appResponse.body as { application: unknown; token: string };
+    if (!token || typeof token !== "string") {
+      throw new Error("Invalid access token received from application creation");
+    }
 
     this.#accessToken = token;
   }
