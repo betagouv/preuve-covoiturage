@@ -61,3 +61,5 @@ fileignoreconfig:
   allowed_patterns: ["(?i)key","(?i)secret"]
 - filename: api/e2e/config.ts
   allowed_patterns: ["(?i)key","(?i)pass","(?i)secretkey","(?i)accesskey","(?i)password","(?i)secret"]
+- filename: app-front/.env.example
+  checksum: 36c5d64bf21daf6fb29fe15a98ece709414d3c7c3b0d350c150aee16354fae0d

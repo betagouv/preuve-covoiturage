@@ -10,6 +10,7 @@ import ApdfTable from "./ApdfTable";
 export default function CampaignsTable(props: {
   title: string;
   territoryId: number | null;
+  operatorId: number | null;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState([0, 15]);
@@ -134,6 +135,7 @@ export default function CampaignsTable(props: {
           <ApdfTable
             title="Fichiers d’appels de fonds recalculés par covoiturage.beta.gouv"
             campaignId={campaignId}
+            operatorId={props.operatorId}
           />
         </>
       )}

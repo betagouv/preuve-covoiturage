@@ -26,6 +26,7 @@ export default function TabCampaigns() {
             <CampaignsTable
               title={`Campagnes d'incitation`}
               territoryId={user.territory_id}
+              operatorId={user.operator_id ?? null}
             />
           )}
         </>
