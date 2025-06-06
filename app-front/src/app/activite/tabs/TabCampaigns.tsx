@@ -10,18 +10,17 @@ export default function TabCampaigns() {
     <>
       {user && (
         <>
-          {user.role === "registry.admin" && simulate === false && (
+          {user.role === "registry.admin" && simulate === false ? (
             <SelectTerritory
               defaultValue={user.territory_id}
               onChange={onChangeTerritory}
             />
-          )}
-          {user.operator_id && (
+          ) : user.operator_id ? (
             <SelectTerritoryByOperator
               defaultValue={user.territory_id}
               onChange={onChangeTerritory}
             />
-          )}
+          ) : null}
           {user.territory_id && (
             <CampaignsTable
               title={`Campagnes d'incitation`}
