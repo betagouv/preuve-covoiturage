@@ -4,7 +4,7 @@ import * as jwt from "./jwt.ts";
 import * as permissions from "./permissions.ts";
 import * as proconnect from "./proconnect.ts";
 
-export const app_url = env_or_fail("APP_DASHBOARD_URL");
+export const app_url = env_or_fail("APP_DASHBOARD_V2_URL");
 export const config = {
   app_url,
   dex,

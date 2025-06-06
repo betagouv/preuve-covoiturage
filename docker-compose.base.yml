@@ -63,6 +63,7 @@ services:
       APP_API_URL: ${APP_API_URL:-http://localhost:8080}
       APP_APP_URL: ${APP_APP_URL:-http://localhost:4200}
       APP_DASHBOARD_URL: ${APP_DASHBOARD_URL:-http://localhost:4200}
+      APP_DASHBOARD_V2_URL: ${APP_DASHBOARD_V2_URL:-http://localhost:4200}
 
       # Internal Services URLs
       APP_MAIL_SMTP_URL: ${APP_MAIL_SMTP_URL:-smtp://mailer:1025}
