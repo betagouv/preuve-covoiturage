@@ -45,3 +45,5 @@ fileignoreconfig:
   checksum: 484baa24d66833f4c2ee45a86e7e62c8a677e519a8b5ef6a40b13185721804f2
 - filename: api/src/pdc/providers/migration/*Migrator.ts
   allowed_patterns: [pass]
+- filename: app-front/.env.example
+  checksum: 36c5d64bf21daf6fb29fe15a98ece709414d3c7c3b0d350c150aee16354fae0d
