@@ -57,7 +57,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
         a.status,
         a.handler,
         a.incentive_sum::int,
-        a.max_amount 
+        a.max_amount::int 
       FROM ${raw(this.table)} a
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
       ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
