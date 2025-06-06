@@ -59,8 +59,8 @@ export default function ApdfTable(props: {
             (d.datetime as string).slice(0, 7),
             (operatorsList.data?.data ?? []).find((o) => o.id === d.operator_id)
               ?.name ?? "inconnu",
-            d.trips,
-            d.subsidized,
+            d.trips.toLocaleString(),
+            d.subsidized.toLocaleString(),
             `${(Number(d.amount) / 100).toLocaleString()} €`,
             <Download
               key={i}
