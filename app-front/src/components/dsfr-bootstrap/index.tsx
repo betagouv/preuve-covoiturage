@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import {
   DsfrProviderBase,
   type DsfrProviderProps,
@@ -24,3 +24,4 @@ export function DsfrProvider(props: DsfrProviderProps) {
 }
 
 export { StartDsfrOnHydration };
+*/

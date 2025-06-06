@@ -1,4 +1,4 @@
-import {
+/*import {
   DsfrHeadBase,
   type DsfrHeadProps,
   createGetHtmlAttributes,
@@ -13,3 +13,4 @@ export const { getHtmlAttributes } = createGetHtmlAttributes({
 export function DsfrHead(props: DsfrHeadProps) {
   return <DsfrHeadBase Link={Link} {...props} />;
 }
+*/
