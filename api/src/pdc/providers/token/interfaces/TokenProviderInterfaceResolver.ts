@@ -1,4 +1,5 @@
 import { ProviderInterface } from "@/ilos/common/index.ts";
+import { Buffer } from "dep:buffer";
 import type { SignOptions, VerifyOptions } from "dep:jsonwebtoken";
 
 export interface TokenProviderInterface extends ProviderInterface {
@@ -12,6 +13,9 @@ export interface TokenProviderInterface extends ProviderInterface {
   ): Promise<T>;
 }
 
+/**
+ * @deprecated replace by DexOIDCProvider
+ */
 export abstract class TokenProviderInterfaceResolver implements TokenProviderInterface {
   async sign<T extends string | Buffer | object>(
     payload: T,
