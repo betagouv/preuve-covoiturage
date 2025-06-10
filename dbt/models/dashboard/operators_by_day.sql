@@ -39,17 +39,11 @@ with directions as (
     operator_id,
     operator_name,
     sum(journeys)          as journeys,
-    coalesce(
-      sum(journeys) filter (where "from" = "to"), 0
-    )                      as intra_journeys,
+    0                      as intra_journeys,
     sum(incented_journeys) as incented_journeys,
-    coalesce(
-      sum(incented_journeys) filter (where "from" = "to"), 0
-    )                      as intra_incented_journeys,
+    0                      as intra_incented_journeys,
     sum(incentive_amount)  as incentive_amount,
-    coalesce(
-      sum(incentive_amount) filter (where "from" = "to"), 0
-    )                      as intra_incentive_amount
+    0                      as intra_incentive_amount
   from {{ ref('carpools_by_day') }}
   {% if is_incremental() %}
     where start_date >= (select max(start_date) from {{ this }})
