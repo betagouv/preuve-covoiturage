@@ -32,19 +32,18 @@ export default function Home() {
                 {
                   children: "Collectivité, contactez-nous",
                   linkProps: {
-                    href: "/",
-                    title: `Accueil - nouvelle fenêtre`,
-                    "aria-label": `Accueil - nouvelle fenêtre`,
-                    target: "_blank",
+                    href: "mailto:contact@covoiturage.beta.gouv.fr",
+                    title: `Collectivité, contactez-nous`,
+                    "aria-label": `Collectivité, contactez-nous`,
                   },
                   priority: "secondary",
                 },
                 {
                   children: "Opérateurs, découvrez les étapes",
                   linkProps: {
-                    href: "/",
-                    title: `Accueil - nouvelle fenêtre`,
-                    "aria-label": `Accueil - nouvelle fenêtre`,
+                    href: "https://covoiturage.beta.gouv.fr/devenir-partenaire",
+                    title: `Devenir partenaire - nouvelle fenêtre`,
+                    "aria-label": `Devenir partenaire  - nouvelle fenêtre`,
                     target: "_blank",
                   },
                   priority: "secondary",

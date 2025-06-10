@@ -26,8 +26,8 @@ export default async function Vitrine() {
   };
   const response  = await fetchAPI('/page-vitrines',query);
   const data = response.data[0];
-  const hero = data.attributes.Hero;
-  const rows = data.attributes.Rows;
+  const hero = data?.attributes?.Hero;
+  const rows = data?.attributes?.Rows;
 
   
   return(
