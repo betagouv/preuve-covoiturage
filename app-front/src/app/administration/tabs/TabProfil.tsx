@@ -1,6 +1,5 @@
 import SelectOperator from "@/components/common/SelectOperator";
 import SelectTerritory from "@/components/common/SelectTerritory";
-import { Config } from "@/config";
 import { labelRole } from "@/helpers/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -54,7 +53,7 @@ export default function TabProfil() {
           )}
           <p>
             <a
-              href={`${Config.get<string>("auth.pc_uri")}/personal-information`}
+              href={`https://identite.proconnect.gouv.fr/personal-information`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Modifier mes informations sur ProConnect (s'ouvre dans un nouvel onglet)"

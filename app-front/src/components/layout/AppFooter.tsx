@@ -20,7 +20,7 @@ export function AppFooter() {
             },
             {
               linkProps: {
-                href: "https://doc.covoiturage.beta.gouv.fr/",
+                href: "https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage",
                 target: "_blank",
                 title: "Documentation | nouvelle fenêtre",
                 "aria-label": "Documentation | nouvelle fenêtre",
@@ -66,12 +66,12 @@ export function AppFooter() {
       ]}
       accessibility="partially compliant"
       termsLinkProps={{
-        href: "/mentions-legales",
+        href: "https://observatoire.covoiturage.gouv.fr/mentions-legales",
         title: "mentions légales | Observatoire.covoiturage.gouv.fr",
         "aria-label": "mentions légales",
       }}
       accessibilityLinkProps={{
-        href: "/accessibilite",
+        href: "https://observatoire.covoiturage.gouv.fr/accessibilite",
         title: "Accessibilité | Observatoire.covoiturage.gouv.fr",
         "aria-label": "Accessibilité",
       }}
