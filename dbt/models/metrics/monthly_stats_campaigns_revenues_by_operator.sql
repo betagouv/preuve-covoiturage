@@ -41,6 +41,24 @@ agg_data as (
     count(
       distinct _id
     ) as journeys_count,
+    count(
+      distinct _id
+    ) filter (
+      where distance between 18000 and 30000
+    )
+    as journeys_count_18_30,
+    count(
+      distinct _id
+    ) filter (
+      where amount > 0
+    )
+    as journeys_count_filtered,
+    count(
+      distinct _id
+    ) filter (
+      where (distance between 18000 and 30000) and amount > 0
+    )
+    as journeys_count_filtered_18_30,
     avg(
       driver_revenue / 100
     ) as avg_driver_revenue,
@@ -111,6 +129,9 @@ select
   a.siret,
   c.legal_name,
   a.journeys_count,
+  a.journeys_count_18_30,
+  a.journeys_count_filtered,
+  a.journeys_count_filtered_18_30,
   a.avg_driver_revenue,
   a.avg_distance,
   a.min_revenue,
