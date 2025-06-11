@@ -89,6 +89,7 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
       UPDATE ${raw(this.table)}
       SET deleted_at = NOW()
       WHERE _id = ${params.id}
+      RETURNING _id
     `;
     const rows = await this.pgConnection.query(query);
     if (rows.length !== 1) {
