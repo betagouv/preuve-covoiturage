@@ -39,9 +39,9 @@ export class JourneysRepository implements JourneysRepositoryInterface {
         to_char(start_date, 'YYYY-MM-DD') AS start_date,
         territory_id,
         direction,
-        sum(journeys)::int as journeys,
-        sum(incented_journeys)::int as incented_journeys,
-        sum(incentive_amount)::int as incentive_amount
+        sum(journeys) as journeys,
+        sum(incented_journeys) as incented_journeys,
+        sum(incentive_amount) as incentive_amount
       FROM ${raw(this.tableByDay)}
       WHERE ${join(filters, ` AND `)}
       GROUP BY 1,2,3
@@ -69,9 +69,9 @@ export class JourneysRepository implements JourneysRepositoryInterface {
         month,
         territory_id,
         direction,
-        sum(journeys)::int as journeys,
-        sum(incented_journeys)::int as incented_journeys,
-        sum(incentive_amount)::int as incentive_amount
+        sum(journeys) as journeys,
+        sum(incented_journeys) as incented_journeys,
+        sum(incentive_amount) as incentive_amount
       FROM ${raw(this.tableByMonth)}
       WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3,4
@@ -99,9 +99,9 @@ export class JourneysRepository implements JourneysRepositoryInterface {
         direction,
         operator_id,
         operator_name,
-        journeys::int,
-        incented_journeys::int,
-        incentive_amount::int
+        journeys,
+        incented_journeys,
+        incentive_amount
       FROM ${raw(this.tableByDay)}
       WHERE ${join(filters, " AND ")}
       ORDER BY start_date
@@ -129,9 +129,9 @@ export class JourneysRepository implements JourneysRepositoryInterface {
         direction,
         operator_id,
         operator_name,
-        journeys::int,
-        incented_journeys::int,
-        incentive_amount::int
+        journeys,
+        incented_journeys,
+        incentive_amount
       FROM ${raw(this.tableByMonth)}
       WHERE ${join(filters, " AND ")}
     `;

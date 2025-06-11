@@ -100,6 +100,7 @@ export class UsersRepository implements UsersRepositoryInterface {
       UPDATE ${raw(this.table)}
       SET hidden = true
       WHERE _id = ${params.id}
+      RETURNING _id
     `;
     const rows = await this.pgConnection.query(query);
     if (rows.length !== 1) {

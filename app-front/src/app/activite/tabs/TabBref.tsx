@@ -28,14 +28,12 @@ export default function TabBref() {
                 title="Evolution des trajets"
                 territoryId={user.territory_id}
               />
-              {["operator.admin", "operator.user"].includes(user.role ?? "") ===
-                false &&
-                user.operator_id === undefined && (
-                  <OperatorsGraph
-                    title="Evolution des trajets par opérateurs"
-                    territoryId={user.territory_id}
-                  />
-                )}
+              {["registry", "territory"].includes(user.role.split(".")[0]) && (
+                <OperatorsGraph
+                  title="Evolution des trajets par opérateurs"
+                  territoryId={user.territory_id}
+                />
+              )}
             </>
           )}
         </>

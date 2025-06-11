@@ -47,8 +47,8 @@ export default function CampaignsTable(props: {
       d.end_date,
       d.territory_name,
       d.name,
-      `${d.incentive_sum.toLocaleString()} €`,
-      `${d.max_amount.toLocaleString()} €`,
+      `${Number(d.incentive_sum).toLocaleString()} €`,
+      `${Number(d.max_amount).toLocaleString()} €`,
       <Button
         key={i}
         size="small"
@@ -124,7 +124,7 @@ export default function CampaignsTable(props: {
             </div>
             <div>
               <b>Estimation de la consommation du budget* :</b>{" "}
-              {`${currentCampaign.incentive_sum.toLocaleString()} € sur ${currentCampaign.max_amount.toLocaleString()} €`}
+              {`${Number(currentCampaign.incentive_sum).toLocaleString()} € sur ${Number(currentCampaign.max_amount).toLocaleString()} €`}
             </div>
             <i>
               * A noter que le budget est le montant dédié aux incitations

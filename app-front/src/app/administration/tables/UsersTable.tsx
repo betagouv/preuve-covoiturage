@@ -177,7 +177,7 @@ export default function UsersTable(props: {
                 email: "",
                 operator_id: user?.operator_id ?? undefined,
                 territory_id: user?.territory_id ?? undefined,
-                role: `${user?.role.split(".")[0]}.user`,
+                role: `${user?.role === "registry.admin" ? user?.role : `${user?.role.split(".")[0]}.user`}`,
               });
               modal.setOpenModal(true);
               modal.setErrors({});
