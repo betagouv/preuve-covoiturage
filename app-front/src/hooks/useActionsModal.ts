@@ -40,10 +40,10 @@ export const useActionsModal = <T extends Record<string, unknown>>() => {
         return "Action";
     }
   };
-  const validateInputChange = (
+  const validateInputChange = <T extends Record<string, unknown>>(
     schema: ZodType<T>,
-    field: string,
-    value: string | number,
+    field: keyof T,
+    value: T[typeof field],
   ) => {
     setCurrentRow((prev) => {
       const updatedRow = { ...prev, [field]: value };
