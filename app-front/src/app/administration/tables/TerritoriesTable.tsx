@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { Config } from "@/config";
@@ -22,12 +23,14 @@ import { z } from "zod";
 export default function TerritoriesTable(props: {
   title: string;
   id?: number;
-  refresh: () => void;
 }) {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [selector, setSelector] = useState<TerritorySelectorsInterface>();
   const modal = useActionsModal<TerritoriesInterface["data"][0]>();
+  const [alert, setAlert] = useState<
+    "create" | "update" | "delete" | "error"
+  >();
   const onChangePage = (page: number) => {
     setCurrentPage(page);
   };
@@ -41,7 +44,8 @@ export default function TerritoriesTable(props: {
     }
     return urlObj.toString();
   }, [props.id, currentPage]);
-  const { data } = useApi<TerritoriesInterface>(url);
+  const { data, refetch: refetchTerritories } =
+    useApi<TerritoriesInterface>(url);
   const totalPages = () => {
     if (data) {
       return Math.ceil(data.meta.pagination.total / data.meta.pagination.limit);
@@ -216,6 +220,38 @@ export default function TerritoriesTable(props: {
 
   return (
     <>
+      {alert === "delete" && (
+        <AlertMessage
+          title="Suppression réussie"
+          message="Le territoire a été supprimé."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "create" && (
+        <AlertMessage
+          title="Territoire ajouté avec succès"
+          message="Le territoire a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "update" && (
+        <AlertMessage
+          title="Territoire modifié avec succès"
+          message="Le territoire a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "error" && (
+        <AlertMessage
+          title="Une erreur s'est produite"
+          message={Object.values(modal.errors!).join(" | ")}
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       {user?.role === "registry.admin" && (
         <>
@@ -251,7 +287,12 @@ export default function TerritoriesTable(props: {
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
           await submitModal("dashboard/territory");
-          props.refresh();
+          setAlert(
+            Object.keys(modal.errors ?? {}).length > 0
+              ? "error"
+              : modal.typeModal,
+          );
+          await refetchTerritories();
         }}
       >
         <>

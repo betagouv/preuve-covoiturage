@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
@@ -25,11 +26,13 @@ export default function UsersTable(props: {
   title: string;
   territoryId?: number;
   operatorId?: number;
-  refresh: () => void;
 }) {
   const { user, simulatedRole } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const modal = useActionsModal<UsersInterface["data"][0]>();
+  const [alert, setAlert] = useState<
+    "create" | "update" | "delete" | "error"
+  >();
   const onChangePage = (id: number) => {
     setCurrentPage(id);
   };
@@ -46,7 +49,7 @@ export default function UsersTable(props: {
     return urlObj.toString();
   }, [props.territoryId, props.operatorId, currentPage]);
 
-  const { data } = useApi<UsersInterface>(url);
+  const { data, refetch: refetchUsers } = useApi<UsersInterface>(url);
   const totalPages = data?.meta.totalPages ?? 1;
 
   const headers = [
@@ -146,10 +149,10 @@ export default function UsersTable(props: {
     email: z.string().email({ message: `L'adresse mail n'est pas valide` }),
     operator_id: z
       .number({ message: "L'identifiant n'est pas un nombre" })
-      .optional(),
+      .nullable(),
     territory_id: z
       .number({ message: "L'identifiant n'est pas un nombre" })
-      .optional(),
+      .nullable(),
     role: z.enum(enumRoles, { message: "Le rôle n'est pas valide" }),
   });
   const roleList = () => {
@@ -165,6 +168,39 @@ export default function UsersTable(props: {
   };
   return (
     <>
+      {alert === "delete" && (
+        <AlertMessage
+          title="Suppression réussie"
+          message="L'utilisateur a été supprimé."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "create" && (
+        <AlertMessage
+          title="Utilisateur ajouté avec succès"
+          message="L'utilisateur a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "update" && (
+        <AlertMessage
+          title="Utilisateur modifié avec succès"
+          message="L'utilisateur a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "error" && (
+        <AlertMessage
+          title="Une erreur s'est produite"
+          message={Object.values(modal.errors!).join(" | ")}
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       {user?.role.split(".")[1] === "admin" && (
         <>
@@ -213,7 +249,12 @@ export default function UsersTable(props: {
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
           await modal.submitModal("dashboard/user", formSchema);
-          props.refresh();
+          setAlert(
+            Object.keys(modal.errors ?? {}).length > 0
+              ? "error"
+              : modal.typeModal,
+          );
+          await refetchUsers();
         }}
       >
         <>

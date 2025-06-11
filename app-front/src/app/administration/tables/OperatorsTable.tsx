@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
 import { getApiUrl } from "@/helpers/api";
@@ -14,14 +15,13 @@ import Table from "@codegouvfr/react-dsfr/Table";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 
-export default function OperatorsTable(props: {
-  title: string;
-  id?: number;
-  refresh: () => void;
-}) {
+export default function OperatorsTable(props: { title: string; id?: number }) {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const modal = useActionsModal<OperatorsInterface["data"][0]>();
+  const [alert, setAlert] = useState<
+    "create" | "update" | "delete" | "error"
+  >();
   const onChangePage = (id: number) => {
     setCurrentPage(id);
   };
@@ -35,7 +35,7 @@ export default function OperatorsTable(props: {
     }
     return urlObj.toString();
   }, [props.id, currentPage]);
-  const { data } = useApi<OperatorsInterface>(url);
+  const { data, refetch: refetchOperators } = useApi<OperatorsInterface>(url);
   const totalPages = data?.meta.totalPages ?? 1;
   const headers = ["Identifiant", "Nom", "Siret", "Actions"];
   const dataTable =
@@ -83,6 +83,38 @@ export default function OperatorsTable(props: {
 
   return (
     <>
+      {alert === "delete" && (
+        <AlertMessage
+          title="Suppression réussie"
+          message="L'opérateur a été supprimé."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "create" && (
+        <AlertMessage
+          title="Opérateur ajouté avec succès"
+          message="L'opérateur a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "update" && (
+        <AlertMessage
+          title="Opérateur modifié avec succès"
+          message="L'opérateur a été enregistré dans la base de données."
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
+      {alert === "error" && (
+        <AlertMessage
+          title="Une erreur s'est produite"
+          message={Object.values(modal.errors!).join(" | ")}
+          typeAlert={alert}
+          onClose={() => setAlert(undefined)}
+        />
+      )}
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       {user?.role === "registry.admin" && (
         <>
@@ -118,7 +150,12 @@ export default function OperatorsTable(props: {
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
           await modal.submitModal("dashboard/operator", formSchema);
-          props.refresh();
+          setAlert(
+            Object.keys(modal.errors ?? {}).length > 0
+              ? "error"
+              : modal.typeModal,
+          );
+          await refetchOperators();
         }}
       >
         <>
