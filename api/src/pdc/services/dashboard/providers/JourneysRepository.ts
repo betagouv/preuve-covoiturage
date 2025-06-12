@@ -75,6 +75,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       FROM ${raw(this.tableByMonth)}
       WHERE ${join(filters, " AND ")}
       GROUP BY 1,2,3,4
+      ORDER BY year, month
     `;
     const rows = await this.pgConnection.query<JourneysIncentiveByMonthResultInterface>(query);
     return rows;

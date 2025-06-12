@@ -1,11 +1,12 @@
 {{ config(materialized='view') }}
 
 SELECT
-  a._id                 AS carpool_id,
+  a.uuid                 AS carpool_id,
   c.start_geo_code,
   c.end_geo_code,
   a.operator_id,
   d.name                AS operator_name,
+  e.policy_id,
   coalesce(e.amount, 0) AS incentive_amount,
   CASE
     WHEN
@@ -26,7 +27,7 @@ FROM {{ source('carpool', 'carpools') }} AS a
 LEFT JOIN {{ source('carpool', 'status') }} AS b ON a._id = b.carpool_id
 LEFT JOIN {{ source('carpool','geo') }} AS c ON a._id = c.carpool_id
 LEFT JOIN {{ source('operator','operators') }} AS d ON a.operator_id = d._id
-LEFT JOIN {{ source('policy','incentives') }} AS e ON a._id = e.carpool_id
+LEFT JOIN {{ source('policy','incentives') }} AS e ON a.operator_id = e.operator_id AND a.operator_journey_id = e.operator_journey_id
 WHERE
   date_part('year', a.start_datetime) >= 2020
   AND a.start_datetime < now() - INTERVAL '2' DAY
