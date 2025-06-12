@@ -1,9 +1,17 @@
 {{ config(materialized='incremental',
   unique_key=['year', 'month', 'territory_id', 'direction', 'operator_id'],
-  post_hook=[
-      "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'operators_by_month_pkey') THEN ALTER TABLE {{ this }} ADD CONSTRAINT operators_by_month_pkey PRIMARY KEY (year, month, territory_id, direction, operator_id); END IF; END $$;"
-      "CREATE INDEX IF NOT EXISTS operators_by_month_idx ON {{ this }} using btree(year, month, territory_id, direction, operator_id)",
-    ]
+  indexes = [
+    {
+      'columns':[
+        'year',
+        'month',
+        'territory_id',
+        'direction',
+        'operator_id',
+      ],
+      'unique':true
+    }
+  ]
 ) }}
 
 SELECT

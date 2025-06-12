@@ -1,6 +1,6 @@
 {{ config(materialized='view') }}
 
-SELECT DISTINCT
+SELECT
    c.arr,
   c.l_arr,
   a._id  AS territory_id,
@@ -13,11 +13,12 @@ INNER JOIN
   {{ source('geo','perimeters') }} AS c
   ON
     (
-      b.selector_value = c.arr
-      OR b.selector_value = c.epci
-      OR b.selector_value = c.aom
-      OR b.selector_value = c.dep
-      OR b.selector_value = c.reg
+      case when b.selector_type = 'arr' then b.selector_value = c.arr
+        when b.selector_type = 'epci' then b.selector_value = c.epci
+        when b.selector_type = 'aom' then b.selector_value = c.aom
+        when b.selector_type = 'dep' then b.selector_value = c.dep
+        when b.selector_type = 'reg' then b.selector_value = c.reg
+	    end
     )
     AND c.year = 2024
 ORDER BY c.arr

@@ -33,3 +33,4 @@ WHERE
   AND b.acquisition_status = 'processed'
   AND b.fraud_status = 'passed'
   AND b.anomaly_status = 'passed'
+  AND e.status = 'validated'

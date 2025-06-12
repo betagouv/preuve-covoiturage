@@ -1,56 +1,78 @@
-{{ config(
+{{ 
+  config(
     materialized='incremental',
     unique_key=['territory_id', 'direction', 'start_date', 'operator_id'],
-    post_hook=[
-      'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '"'operators_by_day_pkey'"') THEN ALTER TABLE {{ this }} ADD CONSTRAINT operators_by_day_pkey PRIMARY KEY (territory_id, direction, start_date, operator_id); END IF; END $$;'
-      'CREATE INDEX IF NOT EXISTS operators_by_day_idx ON {{ this }} using btree(territory_id, direction, start_date, operator_id)',
+    indexes = [
+      {
+        'columns':[
+          'territory_id',
+          'direction',
+          'start_date',
+          'operator_id',
+        ],
+        'unique':true
+      }
     ]
   )
 }}
 with directions as (
-  select
-    "from"                 as territory_id,
-    'from'                 as direction,
-    start_date,
-    operator_id,
-    operator_name,
-    sum(journeys)          as journeys,
-    coalesce(
-      sum(journeys) filter (where "from" = "to"), 0
-    )                      as intra_journeys,
-    sum(incented_journeys) as incented_journeys,
-    coalesce(
-      sum(incented_journeys) filter (where "from" = "to"), 0
-    )                      as intra_incented_journeys,
-    sum(incentive_amount)  as incentive_amount,
-    coalesce(
-      sum(incentive_amount) filter (where "from" = "to"), 0
-    )                      as intra_incentive_amount
-  from {{ ref('carpools_by_day') }}
-  {% if is_incremental() %}
-    where start_date >= (select max(start_date) from {{ this }})
-  {% endif %}
-  group by 1, 3, 4, 5
-  union
-  select
-    "to"                   as territory_id,
-    'to'                   as direction,
-    start_date,
-    operator_id,
-    operator_name,
-    sum(journeys)          as journeys,
-    0                      as intra_journeys,
-    sum(incented_journeys) as incented_journeys,
-    0                      as intra_incented_journeys,
-    sum(incentive_amount)  as incentive_amount,
-    0                      as intra_incentive_amount
-  from {{ ref('carpools_by_day') }}
-  {% if is_incremental() %}
-    where start_date >= (select max(start_date) from {{ this }})
-  {% endif %}
-  group by 1, 3, 4, 5
+SELECT
+  b.territory_id AS territory_id,
+  'from' AS direction,
+  a.start_datetime::date AS start_date,
+  a.operator_id,
+  a.operator_name,
+  count(distinct a.carpool_id) filter (where a.start_geo_code <> a.end_geo_code) AS journeys,
+  count(distinct a.carpool_id) filter (where coalesce(a.incentive_amount,0) > 0 AND a.start_geo_code <> a.end_geo_code) AS incented_journeys,
+  sum(coalesce(a.incentive_amount,0)) filter (where a.start_geo_code <> a.end_geo_code) as incentive_amount
+FROM {{ ref('view_dashboard_carpools') }} a
+LEFT JOIN {{ ref('view_perimeters_territories') }} b ON a.start_geo_code = b.arr
+WHERE
+b.territory_id IS NOT NULL 
+{% if is_incremental() %}
+  AND a.start_datetime::date >= (SELECT MAX(start_date) FROM {{ this }})::date
+{% endif %}
+GROUP BY
+  1, 2, 3, 4, 5
+UNION
+SELECT
+  b.territory_id AS territory_id,
+  'to' AS direction,
+  a.start_datetime::date AS start_date,
+  a.operator_id,
+  a.operator_name,
+  count(distinct a.carpool_id) filter (where a.start_geo_code <> a.end_geo_code) AS journeys,
+  count(distinct a.carpool_id) filter (where coalesce(a.incentive_amount,0) > 0 AND a.start_geo_code <> a.end_geo_code) AS incented_journeys,
+  sum(coalesce(a.incentive_amount,0)) filter (where a.start_geo_code <> a.end_geo_code) as incentive_amount
+FROM {{ ref('view_dashboard_carpools') }} a
+LEFT JOIN {{ ref('view_perimeters_territories') }} b ON a.start_geo_code = b.arr
+WHERE
+b.territory_id IS NOT NULL 
+{% if is_incremental() %}
+  AND a.start_datetime::date >= (SELECT MAX(start_date) FROM {{ this }})::date
+{% endif %}
+GROUP BY
+  1, 2, 3, 4, 5
+UNION
+SELECT
+  b.territory_id AS territory_id,
+  'intra' AS direction,
+  a.start_datetime::date AS start_date,
+  a.operator_id,
+  a.operator_name,
+  count(distinct a.carpool_id) filter (where a.start_geo_code = a.end_geo_code) AS journeys,
+  count(distinct a.carpool_id) filter (where coalesce(a.incentive_amount,0) > 0 AND a.start_geo_code = a.end_geo_code) AS incented_journeys,
+  sum(coalesce(a.incentive_amount,0)) filter (where a.start_geo_code = a.end_geo_code) as incentive_amount
+FROM {{ ref('view_dashboard_carpools') }} a
+LEFT JOIN {{ ref('view_perimeters_territories') }} b ON a.start_geo_code = b.arr
+WHERE
+b.territory_id IS NOT NULL 
+{% if is_incremental() %}
+  AND a.start_datetime::date >= (SELECT MAX(start_date) FROM {{ this }})::date
+{% endif %}
+GROUP BY
+  1, 2, 3, 4, 5
 )
-
 select
   territory_id,
   start_date,
@@ -63,16 +85,15 @@ select
 from directions
 where territory_id is not null
 group by 1, 2, 3, 4, 5
-union
-select
-  territory_id,
+UNION
+select 
+territory_id,
   start_date,
-  'both'                                                as direction,
+  'both' AS direction,
   operator_id,
   operator_name,
-  sum(journeys) - sum(intra_journeys)                   as journeys,
-  sum(incented_journeys) - sum(intra_incented_journeys) as incented_journeys,
-  sum(incentive_amount) - sum(intra_incentive_amount)   as incentive_amount
+  sum(journeys)          as journeys,
+  sum(incented_journeys) as incented_journeys,
+  sum(incentive_amount)  as incentive_amount
 from directions
-where territory_id is not null
 group by 1, 2, 3, 4, 5
