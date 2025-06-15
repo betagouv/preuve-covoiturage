@@ -79,7 +79,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async list(params: TerritoryParams): Promise<ListResultInterface> {
-    const { search, offset, limit, operator_id } = { limit: 100, offset: 0, ...params };
+    const { search, offset, limit, operator_id, policy } = { limit: 100, offset: 0, ...params };
     const values = [];
     const whereClauses: string[] = [];
 
@@ -89,17 +89,37 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     }
 
     const client = this.connection.getClient();
-    if (operator_id) {
-      const opeatorQuery = {
+    if (policy === true) {
+      const policyQuery = {
         text: `
-        with operator_incentives as (SELECT DISTINCT(policy_id) FROM policy.incentives where operator_id = $1)
-        SELECT DISTINCT(tg._id) from policy.policies pp 
-        JOIN territory.territory_group tg on tg._id = pp.territory_id
-        where pp._id in (SELECT * from operator_incentives)`,
+        SELECT DISTINCT(territory_id) as _id
+        FROM policy.policies
+        WHERE deleted_at IS NULL AND status = 'active'`,
+      };
+      const policiesResults = await client.query<any>(policyQuery);
+
+      if (policiesResults.rowCount === 0) {
+        return {
+          data: [],
+          meta: { pagination: { offset, limit, total: 0 } },
+        };
+      }
+      values.push(policiesResults.rows.map((r: { _id: number }) => r._id));
+      whereClauses.push(
+        `tg._id = ANY ($1::int[])`,
+      );
+    }
+    if (operator_id) {
+      const operatorQuery = {
+        text: `
+        WITH operator_incentives AS (SELECT DISTINCT(policy_id) FROM policy.incentives WHERE operator_id = $1)
+        SELECT DISTINCT(tg._id) FROM policy.policies pp 
+        JOIN territory.territory_group tg ON tg._id = pp.territory_id
+        WHERE pp._id IN (SELECT * FROM operator_incentives)`,
         values: [operator_id],
       };
 
-      const territoriesForOperatorResults = await client.query<any>(opeatorQuery);
+      const territoriesForOperatorResults = await client.query<any>(operatorQuery);
 
       if (territoriesForOperatorResults.rowCount === 0) {
         return {
@@ -140,7 +160,6 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values,
     };
     const result = await client.query<any>(query);
-
     return {
       data: result.rows,
       meta: { pagination: { offset, limit, total } },
