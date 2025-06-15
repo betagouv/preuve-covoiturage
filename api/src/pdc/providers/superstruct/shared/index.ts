@@ -1,4 +1,5 @@
 import {
+  boolean,
   coerce,
   date,
   enums,
@@ -65,3 +66,11 @@ export const Siren = pattern(string(), /^[0-9]{9}$/);
 export const Siret = pattern(string(), /^[0-9]{14}$/);
 export const TerritoryCode = union([Country, Department, Insee, Siren]);
 export const TerritoryType = enums(["com", "epci", "aom", "dep", "reg", "country"]);
+export const Boolean = coerce(boolean(), string(), (v) => {
+  if (v === "true" || v === "1") {
+    return true;
+  } else if (v === "false" || v === "0") {
+    return false;
+  }
+  throw new Error(`Invalid boolean value: "${v}"`);
+});
