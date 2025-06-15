@@ -1,8 +1,7 @@
 import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
-import { type Directions, type Periods } from "@/interfaces/vizInterface";
+import { type Periods } from "@/interfaces/vizInterface";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import {
   CategoryScale,
@@ -34,12 +33,14 @@ export default function OperatorsGraph(props: {
   territoryId: number;
 }) {
   const [period, setPeriod] = useState<Periods>("month");
-  const [direction, setDirection] = useState<Directions>("both");
   const url = getApiUrl(
     "v3",
-    `dashboard/operators/${period}/?direction=${direction}&territory_id=${props.territoryId}`,
+    `dashboard/operators/${period}/?territory_id=${props.territoryId}`,
   );
   const { data } = useApi<Record<string, string | number>[]>(url);
+  if (!data || data.length === 0) {
+    return <></>;
+  }
   const name = [...new Set(data?.map((d) => d.operator_name))] as string[];
   const colors = [
     "#8dd3c7",
@@ -97,18 +98,6 @@ export default function OperatorsGraph(props: {
     <>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <ul className={fr.cx("fr-tags-group")}>
-        <li>
-          <Select
-            label=""
-            nativeSelectProps={{
-              onChange: (e) => setDirection(e.target.value as Directions),
-            }}
-          >
-            <option value="both">Tout sens confondus</option>
-            <option value="from">Origine</option>
-            <option value="to">Destination</option>
-          </Select>
-        </li>
         <li>
           <Tag
             nativeButtonProps={{
