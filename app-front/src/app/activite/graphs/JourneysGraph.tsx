@@ -1,7 +1,6 @@
+import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
-import { type Directions } from "@/interfaces/vizInterface";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import {
   CategoryScale,
@@ -16,7 +15,6 @@ import {
 } from "chart.js";
 import { useState } from "react";
 import { Line } from "react-chartjs-2";
-import { getApiUrl } from "../../../helpers/api";
 
 ChartJS.register(
   CategoryScale,
@@ -34,12 +32,14 @@ export default function JourneysGraph(props: {
   territoryId: number;
 }) {
   const [period, setPeriod] = useState<"month" | "day">("month");
-  const [direction, setDirection] = useState<Directions>("both");
   const url = getApiUrl(
     "v3",
-    `dashboard/incentive/${period}/?direction=${direction}&territory_id=${props.territoryId}`,
+    `dashboard/incentive/${period}/?territory_id=${props.territoryId}`,
   );
   const { data } = useApi<Record<string, string | number>[]>(url);
+  if (!data || data.length === 0) {
+    return <p>Pas de campagnes pour ce territoire...</p>;
+  }
   const name = ["Tous les trajets", "Trajets incités dans une campagne RPC"];
   const colors = ["#6a6af4", "#000091"];
   const labels =
@@ -95,18 +95,6 @@ export default function JourneysGraph(props: {
     <>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <ul className={fr.cx("fr-tags-group")}>
-        <li>
-          <Select
-            label=""
-            nativeSelectProps={{
-              onChange: (e) => setDirection(e.target.value as Directions),
-            }}
-          >
-            <option value="both">Tout sens confondus</option>
-            <option value="from">Origine</option>
-            <option value="to">Destination</option>
-          </Select>
-        </li>
         <li>
           <Tag
             nativeButtonProps={{
