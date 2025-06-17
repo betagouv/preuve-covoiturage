@@ -81,7 +81,12 @@ export function dexMiddleware(kernel: KernelInterface) {
 
       next();
     } catch (e) {
-      logger.warn(`[dexMiddleware] ${(e as Error).message}`);
+      // skip the unsupported algorithm message falling back to legacy token middleware
+      // to avoid bloating the logs.
+      if (Error.isError(e) && !e.message.includes("value for a JSON Web Key Set")) {
+        logger.warn(`[dexMiddleware] ${e.message}`);
+      }
+
       next(e);
     }
   };
