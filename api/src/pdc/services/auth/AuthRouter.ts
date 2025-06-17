@@ -25,6 +25,8 @@ export class AuthRouter {
   }
 
   register() {
+    this.app.use("/auth", cors(this.#corsOptions));
+
     this.app.get(
       "/auth/login",
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
@@ -91,7 +93,6 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/me",
-      cors(this.#corsOptions),
       authGuard(this.kernel),
       (req: express.Request, res: express.Response) => {
         return res.json(req.session.user);
