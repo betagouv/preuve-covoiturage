@@ -1,5 +1,5 @@
 import { provider } from "@/ilos/common/index.ts";
-import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
+import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 
 @provider()
@@ -10,11 +10,11 @@ export class UserRepository {
   public readonly companyTable = "company.companies";
 
   constructor(
-    protected connection: LegacyPostgresConnection,
+    protected denoConnection: DenoPostgresConnection,
   ) {}
 
   async findUserByEmail(email: string) {
-    const query = sql`
+    const rows = await this.denoConnection.query(sql`
       SELECT
         u.email,
         u.role,
@@ -30,13 +30,16 @@ export class UserRepository {
         ON o._id = u.operator_id
       WHERE u.email = ${email}
       LIMIT 1
-    `;
-    const results = await this.connection.getClient().query(query);
-    return results.rows[0];
+    `);
+
+    return rows[0] || null;
   }
 
   async touchLastLogin(_id: number) {
-    const query = sql`UPDATE ${raw(this.table)} SET last_login_at = NOW() WHERE _id = ${_id}`;
-    await this.connection.getClient().query(query);
+    await this.denoConnection.query(sql`
+      UPDATE ${raw(this.table)}
+      SET last_login_at = NOW()
+      WHERE _id = ${_id}
+    `);
   }
 }

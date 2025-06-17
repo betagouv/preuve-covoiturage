@@ -1,13 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  ForbiddenException,
-  InitHookInterface,
-  provider,
-  UnauthorizedException,
-} from "@/ilos/common/index.ts";
-import { TokenProvider } from "@/pdc/providers/token/index.ts";
-import { TokenPayloadInterface } from "@/pdc/services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
-import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
+import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
 import { encodeBase64 } from "dep:encoding";
 import { createRemoteJWKSet, jwtVerify } from "dep:jose";
 
@@ -15,12 +6,7 @@ import { createRemoteJWKSet, jwtVerify } from "dep:jose";
 export class DexOIDCProvider implements InitHookInterface {
   protected JWKS: ReturnType<typeof createRemoteJWKSet> | undefined;
 
-  constructor(
-    protected config: ConfigInterfaceResolver,
-    // TODO : clean me after migration
-    protected oldApplicationProvider: ApplicationPgRepositoryProvider,
-    protected oldTokenProvider: TokenProvider,
-  ) {}
+  constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
     this.getJWKS();
@@ -35,63 +21,7 @@ export class DexOIDCProvider implements InitHookInterface {
     return this.JWKS;
   }
 
-  /**
-   * @deprecated Remove this when all operators use OIDC access tokens
-   */
-  private async verifyOldToken(token: string) {
-    const payload = await this.oldTokenProvider.verify<
-      TokenPayloadInterface & {
-        app?: string;
-        id?: number;
-        permissions?: string[];
-      }
-    >(token, {
-      ignoreExpiration: true,
-    });
-    /**
-     * Handle V1 token format conversion
-     */
-    if ("id" in payload && "app" in payload) {
-      payload.v = 1;
-      payload.a = payload.app!;
-      payload.o = payload.id!;
-      payload.s = "operator";
-      payload.id = undefined;
-      payload.app = undefined;
-      payload.permissions = undefined;
-    }
-
-    if (!payload.a || !payload.o) {
-      throw new ForbiddenException();
-    }
-    const data = await this.oldApplicationProvider.find(
-      { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
-    );
-    const app_uuid = data.uuid;
-    const owner_id = data.owner_id;
-    const matchUuid = app_uuid === payload.a;
-
-    // V1 tokens have a string owner_id. Check is done on UUID only
-    const matchOwn = typeof payload.o === "string" ? true : owner_id === payload.o;
-    if (!matchUuid || !matchOwn) {
-      throw new UnauthorizedException("Unauthorized application");
-    }
-    return {
-      operator_id: data.owner_id,
-      role: "application",
-      token_id: `deprecated:${data.owner_id}:${data._id}`,
-    };
-  }
-
   async verifyToken(token: string) {
-    // TODO clean me
-    try {
-      const oldData = await this.verifyOldToken(token);
-      return oldData;
-    } catch {
-      // noop
-    }
-
     const clientId = this.config.get("dex.client_id");
     const authBaseUrl = this.config.get("dex.base_url");
     const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {

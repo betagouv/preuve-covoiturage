@@ -200,6 +200,10 @@ function dispatchPermissionsFromMatrix(
 
 const permissionsByRoles = dispatchPermissionsFromMatrix(permissions);
 
+export function getPermissions(role: string): string[] {
+  return permissionsByRoles[role] || [];
+}
+
 export const territory = {
   admin: {
     slug: "admin",
