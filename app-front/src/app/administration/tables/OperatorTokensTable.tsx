@@ -93,7 +93,7 @@ export default function OperatorTokensTable(props: {
         <Link
           href="https://tech.covoiturage.beta.gouv.fr/#topic-connexion-a-l-api"
           target="_blank"
-          aria-label={`Ouvrir une nouvelle fenêtre vers la page documentation de l'API du RPC`}
+          aria-label={`Ouvrir une nouvelle fenêtre vers la documentation technique`}
         >
           l&apos;API du RPC
         </Link>
@@ -120,7 +120,7 @@ export default function OperatorTokensTable(props: {
       />
       <Modal
         open={modal.openModal}
-        title={`${modal.modalTitle(modal.typeModal)} une clé secrete`}
+        title={`${modal.modalTitle(modal.typeModal)} une clé secrète`}
         cancelButton={false}
         onOpen={async () => {
           if (modal.typeModal === "create") {
@@ -144,8 +144,7 @@ export default function OperatorTokensTable(props: {
           <>
             <div className={fr.cx("fr-text--lead")}>
               Voici les informations de votre nouvelle clé d&apos;API.
-              Sauvegardez la en la en lieu sur car elle ne pourra plus jamais
-              être consultée :
+              Attention, elle ne sera affichée qu&apos;une seule fois&nbsp;!
             </div>
             <div className={fr.cx("fr-text--md")}>
               Identifiant : {createdToken?.uuid}
