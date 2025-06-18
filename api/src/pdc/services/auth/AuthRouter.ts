@@ -2,31 +2,20 @@ import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, p
 import { session } from "@/pdc/proxy/config/proxy.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
-import cors from "dep:cors";
 import express, { NextFunction, Request, Response } from "dep:express";
 import { authGuard } from "../../proxy/middlewares/authGuard.ts";
 
 @injectable()
 export class AuthRouter {
-  #corsOptions: unknown;
-
   constructor(
     @inject(proxy) private app: express.Express,
     private kernel: KernelInterfaceResolver,
     private proConnectOIDCProvider: ProConnectOIDCProvider,
     private config: ConfigInterfaceResolver,
   ) {
-    this.#corsOptions = {
-      origin: [this.config.get("proxy.cors"), this.config.get("proxy.dashboardV2Cors")],
-      optionsSuccessStatus: 200,
-      // Allow-Access-Credentials lets XHR requests send Cookies to a different URL
-      credentials: true,
-    };
   }
 
   register() {
-    this.app.use("/auth", cors(this.#corsOptions));
-
     this.app.get(
       "/auth/login",
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
