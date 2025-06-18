@@ -26,6 +26,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/journeys-by-hours",
     method: "GET",
+    public: true,
   },
 })
 export class JourneysByHoursAction extends AbstractAction {

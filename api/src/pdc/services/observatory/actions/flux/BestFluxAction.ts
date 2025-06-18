@@ -20,6 +20,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/best-flux",
     method: "GET",
+    public: true,
   },
 })
 export class BestFluxAction extends AbstractAction {

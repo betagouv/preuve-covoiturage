@@ -17,6 +17,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/location",
     method: "GET",
+    public: true,
   },
 })
 export class LocationAction extends AbstractAction {

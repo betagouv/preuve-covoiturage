@@ -28,6 +28,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/aires-covoiturage",
     method: "GET",
+    public: true,
   },
 })
 export class AiresCovoiturageAction extends AbstractAction {

@@ -43,6 +43,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/campaigns",
     method: "GET",
+    public: true,
   },
 })
 export class CampaignsAction extends AbstractAction {

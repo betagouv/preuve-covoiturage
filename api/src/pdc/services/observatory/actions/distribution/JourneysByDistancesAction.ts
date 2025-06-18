@@ -24,6 +24,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/journeys-by-distances",
     method: "GET",
+    public: true,
   },
 })
 export class JourneysByDistancesAction extends AbstractAction {

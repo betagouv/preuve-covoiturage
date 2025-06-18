@@ -22,6 +22,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/evol-flux",
     method: "GET",
+    public: true,
   },
 })
 export class EvolFluxAction extends AbstractAction {

@@ -21,6 +21,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/evol-occupation",
     method: "GET",
+    public: true,
   },
 })
 export class EvolOccupationAction extends AbstractAction {

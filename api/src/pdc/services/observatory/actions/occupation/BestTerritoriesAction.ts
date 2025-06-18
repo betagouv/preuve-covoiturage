@@ -18,6 +18,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/best-territories",
     method: "GET",
+    public: true,
   },
 })
 export class BestTerritoriesAction extends AbstractAction {

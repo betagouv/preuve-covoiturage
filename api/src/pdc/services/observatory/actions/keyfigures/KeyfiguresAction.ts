@@ -29,6 +29,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/keyfigures",
     method: "GET",
+    public: true,
   },
 })
 export class KeyfiguresAction extends AbstractAction {

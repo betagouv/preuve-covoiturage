@@ -22,6 +22,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/occupation",
     method: "GET",
+    public: true,
   },
 })
 export class OccupationAction extends AbstractAction {

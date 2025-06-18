@@ -24,6 +24,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/flux",
     method: "GET",
+    public: true,
   },
 })
 export class FluxAction extends AbstractAction {

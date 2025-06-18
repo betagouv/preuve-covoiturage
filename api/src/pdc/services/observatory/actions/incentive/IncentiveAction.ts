@@ -24,6 +24,7 @@ export type ResultInterface = {
   apiRoute: {
     path: "/observatory/incentive",
     method: "GET",
+    public: true,
   },
 })
 export class IncentiveAction extends AbstractAction {
