@@ -29,18 +29,21 @@ ChartJS.register(
 
 export default function JourneysGraph(props: {
   title: string;
-  territoryId: number;
+  campaignId: number;
 }) {
   const [period, setPeriod] = useState<"month" | "day">("month");
   const url = getApiUrl(
     "v3",
-    `dashboard/incentive/${period}/?territory_id=${props.territoryId}`,
+    `dashboard/incentive/${period}/?campaign_id=${props.campaignId}`,
   );
   const { data } = useApi<Record<string, string | number>[]>(url);
   if (!data || data.length === 0) {
     return <p>Pas de campagnes pour ce territoire...</p>;
   }
-  const name = ["Tous les trajets", "Trajets incités dans une campagne RPC"];
+  const name = [
+    "Tous les trajets éligibles à la campagne",
+    "Trajets incités dans la campagne RPC",
+  ];
   const colors = ["#6a6af4", "#000091"];
   const labels =
     period === "month"

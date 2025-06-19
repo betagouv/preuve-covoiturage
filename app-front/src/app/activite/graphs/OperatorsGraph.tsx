@@ -30,12 +30,12 @@ ChartJS.register(
 
 export default function OperatorsGraph(props: {
   title: string;
-  territoryId: number;
+  campaignId: number;
 }) {
   const [period, setPeriod] = useState<Periods>("month");
   const url = getApiUrl(
     "v3",
-    `dashboard/operators/${period}/?territory_id=${props.territoryId}`,
+    `dashboard/operators/${period}/?campaign_id=${props.campaignId}`,
   );
   const { data } = useApi<Record<string, string | number>[]>(url);
   if (!data || data.length === 0) {

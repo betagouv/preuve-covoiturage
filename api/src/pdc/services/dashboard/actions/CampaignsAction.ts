@@ -4,7 +4,7 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.
 import { Campaigns } from "@/pdc/services/dashboard/dto/Campaigns.ts";
 import { CampaignsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/CampaignsRepositoryInterface.ts";
 
-export type ResultInterface = {
+export type CampaignResult = {
   id: string;
   start_date: Date;
   end_date: Date;
@@ -17,6 +17,14 @@ export type ResultInterface = {
   handler: string;
   incentive_sum: number;
   max_amount: number;
+};
+export type ResultInterface = {
+  meta: {
+    page: number;
+    total: number;
+    totalPages: number;
+  };
+  data: CampaignResult[];
 };
 
 @handler({

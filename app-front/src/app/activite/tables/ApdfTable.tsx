@@ -9,7 +9,7 @@ import { useMemo } from "react";
 export default function ApdfTable(props: {
   title: string;
   campaignId: number;
-  operatorId: number | null;
+  operatorId?: number;
 }) {
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=apdf:list`;
   const init = useMemo(() => {

@@ -38,12 +38,16 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
   async getCampaigns(
     params: CampaignsParamsInterface,
   ): Promise<CampaignsResultInterface[]> {
-    const filters = [
-      sql`a.territory_id = ${params.territory_id}`,
-    ];
+    const filters = [];
+    if (params.territory_id) {
+      filters.push(sql`a.territory_id = ${params.territory_id}`);
+    }
     if (params.operator_id) {
       filters.push(sql`c.operator_id = ${params.operator_id}`);
     }
+    const limit = params.limit || 25;
+    const page = params.page || 1;
+    const offset = (page - 1) * limit;
     const query = sql`
       SELECT ${params.operator_id ? sql`DISTINCT` : sql``}
         a._id AS id,
@@ -62,10 +66,27 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
       ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
       ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
-      ORDER BY 9, 2 desc 
+      ORDER BY 9, 2 desc
+      LIMIT ${limit} OFFSET ${offset} 
     `;
     const rows = await this.pgConnection.query<CampaignsResultInterface>(query);
-    return rows;
+    const countQuery = sql`
+      SELECT ${params.operator_id ? sql`DISTINCT` : sql``}
+      COUNT(*) as total
+      FROM ${raw(this.table)} a
+      LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
+      ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
+      ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
+    `;
+    const countResponse = await this.pgConnection.query<{ total: string }>(countQuery);
+    return {
+      meta: {
+        total: parseInt(countResponse[0].total, 10),
+        page: page,
+        totalPages: Math.ceil(parseInt(countResponse[0].total, 10) / limit),
+      },
+      data: rows,
+    };
   }
 
   async getTerritoriesWithCampaign(
