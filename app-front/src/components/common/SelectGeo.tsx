@@ -74,7 +74,7 @@ export default function SelectGeo(props: {
         }}
         noOptionsText={"Pas de résultats"}
         renderInput={(params) => (
-          <TextField {...params} label="Chercher mon territoire" />
+          <TextField {...params} label="Chercher un territoire" />
         )}
         filterOptions={(options) => options}
         onInputChange={async (e, v) => {

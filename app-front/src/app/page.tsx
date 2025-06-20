@@ -3,6 +3,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { type Metadata } from "next";
 import Image from "next/image";
+import Anonymous from "../components/common/Anonymous";
 
 export const metadata: Metadata = {
   title: "Accueil | app.covoiturage.gouv.fr",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className={fr.cx("fr-container")}>
+      <Anonymous />
       <div id="content" className="text-center">
         <PageTitle title={`Espace partenaire de Covoiturage.beta.gouv.fr`} />
         <div>

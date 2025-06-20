@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data);
     } else {
       setIsAuth(false);
-      setUser(undefined);
+      setUser(data);
     }
     setLoading(false);
   };
@@ -40,8 +40,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Redirect to default /activite page after login
   useEffect(() => {
-    if (!loading && isAuth) {
-      router.push("/activite");
+    if (!loading) {
+      if (!isAuth) {
+        router.push("/");
+      } else {
+        router.push("/activite");
+      }
     }
   }, [loading, isAuth]);
 
