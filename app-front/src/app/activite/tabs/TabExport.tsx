@@ -1,16 +1,19 @@
 "use client";
+import SelectGeo from "@/components/common/SelectGeo";
 import SelectTerritory from "@/components/common/SelectTerritory";
 import SelectTerritoryByOperator from "@/components/common/SelectTerritoryByOperator";
+import { getApiUrl } from "@/helpers/api";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
+import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
-import { getApiUrl } from "../../../helpers/api";
+import { PerimeterType } from "../../../interfaces/searchInterface";
 
 interface ParamsInterfaceV3 {
   tz: string;
@@ -68,10 +71,15 @@ type ResultInterfaceV3 = {
 };
 
 export default function TabExport() {
-  const { user, simulate, onChangeTerritory } = useAuth();
+  const { user, simulate, simulatedRole, onChangeTerritory } = useAuth();
   const territoryId = user?.territory_id ?? 1;
   const [startDate, setStartDate] = useState(dayjs().subtract(1, "month"));
   const [endDate, setEndDate] = useState(dayjs().subtract(5, "days"));
+  const [territorySelectors, setTerritorySelectors] =
+    useState<TerritorySelectorsInterface>();
+  const [geoSelector, setGeoSelector] = useState<"geo" | "campaign">(
+    "campaign",
+  );
   const export_endpoint = getApiUrl("v3", `exports`);
 
   // Call related states
@@ -84,7 +92,8 @@ export default function TabExport() {
       tz: "Europe/Paris",
       start_at: startDate.toDate(),
       end_at: endDate.toDate(),
-      territory_id: [territoryId],
+      territory_id: territorySelectors ? [] : [territoryId],
+      geo_selector: territorySelectors,
     };
 
     setLoading(true);
@@ -116,13 +125,82 @@ export default function TabExport() {
     }
     setLoading(false);
   };
-
+  const onChangeGeo = (
+    option: {
+      id: string;
+      territory: string;
+      l_territory: string;
+      type: PerimeterType;
+    } | null,
+  ) => {
+    if (option) {
+      setTerritorySelectors({
+        [option.type]: [option.territory],
+      });
+    } else {
+      setTerritorySelectors({});
+    }
+  };
   return (
     <>
+      <Alert
+        title={"Important"}
+        severity="info"
+        description={
+          <ul>
+            Les exports sont réalisés sur l’ensemble des trajets respectant les
+            conditions générales d’utilisation de covoiturage.beta.gouv et ayant
+            une origine OU destination sur le territoire sélectionné. A noter
+            que :
+            <li>
+              la colonne “statut” permet d’identifier les trajets validés par le
+              RPC suite à différentes analyses.
+            </li>
+            <li>
+              la définition de chacune des données de l’export est accessible
+              dans notre{" "}
+              <a href="https://tech.covoiturage.beta.gouv.fr/topic/topic-demandes-cee#topic-comparatif-v2-0-v3-x">
+                documentation technique
+              </a>
+            </li>
+            <li>
+              enfin, pour les collectivités, le périmètre de l’export est celui
+              de son territoire géographique
+            </li>
+          </ul>
+        }
+      />
       {user && (
-        <>
+        <div className={fr.cx("fr-mt-4w")}>
+          {!["territory.admin", "territory.user"].includes(user.role) &&
+            simulatedRole !== "territory" && (
+              <RadioButtons
+                legend="Périmètre de l'export"
+                name="radio"
+                options={[
+                  {
+                    label: "Périmètre géographique",
+                    nativeInputProps: {
+                      checked: geoSelector === "geo",
+                      onChange: () => setGeoSelector("geo"),
+                    },
+                  },
+                  {
+                    label: "Périmètre campagne",
+                    nativeInputProps: {
+                      checked: geoSelector === "campaign",
+                      onChange: () => setGeoSelector("campaign"),
+                    },
+                  },
+                ]}
+                orientation="horizontal"
+              />
+            )}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-            {user.role === "registry.admin" && simulate === false ? (
+            {geoSelector === "geo" && <SelectGeo onChange={onChangeGeo} />}
+            {geoSelector === "campaign" &&
+            user.role === "registry.admin" &&
+            simulate === false ? (
               <SelectTerritory
                 defaultValue={user.territory_id}
                 onChange={onChangeTerritory}
@@ -133,8 +211,8 @@ export default function TabExport() {
                 onChange={onChangeTerritory}
               />
             ) : null}
-            {user.territory_id && (
-              <>
+            {(!!user.territory_id || !!territorySelectors) && (
+              <div className="fr-mt-4w">
                 <div
                   style={{
                     display: "flex",
@@ -203,10 +281,10 @@ export default function TabExport() {
                     />
                   )}
                 </div>
-              </>
+              </div>
             )}
           </LocalizationProvider>
-        </>
+        </div>
       )}
     </>
   );
