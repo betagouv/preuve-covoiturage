@@ -3,28 +3,28 @@ import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
 import { castOperatorIdActionParam } from "@/pdc/services/auth/route/OperatorIdCastingActionParam.ts";
-import { DeleteCredentialsParams, DeleteCredentialsResult } from "../dto/Credentials.ts";
+import { CreateCredentialsParams, CreateCredentialsResult } from "../dto/Credentials.ts";
 
 @handler({
   service: "auth",
-  method: "deleteCredentials",
+  method: "createCredentials",
   middlewares: [
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
-    ["validate", DeleteCredentialsParams],
+    ["validate", CreateCredentialsParams],
   ],
   apiRoute: {
     path: "/auth/credentials",
-    method: "DELETE",
-    successHttpCode: 204,
+    method: "POST",
+    successHttpCode: 201,
     actionParamsFn: castOperatorIdActionParam,
   },
 })
-export class DeleteCredentialsAction extends AbstractAction {
+export class CreateCredentialsAction extends AbstractAction {
   constructor(private dexClient: DexClient) {
     super();
   }
 
-  protected override async handle(params: DeleteCredentialsParams): Promise<DeleteCredentialsResult> {
-    return this.dexClient.deleteByOperator(params.operator_id, params.token_id);
+  protected override async handle(params: CreateCredentialsParams): Promise<CreateCredentialsResult> {
+    return this.dexClient.createForOperator(params.operator_id);
   }
 }

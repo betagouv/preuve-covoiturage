@@ -1,5 +1,8 @@
+import { UnauthorizedException } from "@/ilos/common/index.ts";
+import { CreateCredentialsResult } from "@/pdc/services/auth/dto/Credentials.ts";
 import { env } from "./config.ts";
 import { faker } from "./faker.ts";
+import { RPCResponse } from "./types.ts";
 
 export type HTTPResponse<T = string | object | null> = {
   ok: boolean;
@@ -66,14 +69,32 @@ export class API {
     }
   }
 
-  public async legacyAuthenticate(email: string, password: string): Promise<void> {
-    // Login
-    const loginResponse = await this.post("/login", { email, password });
+  public async logout(): Promise<void> {
+    this.#sessionCookie = null;
+    this.#accessToken = null;
+  }
+
+  public async login<T = unknown>(email: string, password: string): Promise<T> {
+    await this.logout();
+
+    const loginResponse = await this.post<RPCResponse<T>>("/login", { email, password });
+    if (!("result" in loginResponse.body)) {
+      throw new UnauthorizedException();
+    }
+
     const cookie = loginResponse.headers.get("set-cookie");
     if (!cookie) {
       throw new Error("Failed to get session cookie");
     }
+
     this.#sessionCookie = cookie.split(";")[0];
+
+    return loginResponse.body.result.data as T;
+  }
+
+  public async legacyAuthenticate(email: string, password: string): Promise<void> {
+    // Login
+    await this.login(email, password);
 
     // Create a new application and get the access token
     const appResponse = await this.post("/applications", {
@@ -90,6 +111,19 @@ export class API {
     }
 
     this.#accessToken = token;
+  }
+
+  public async createCredentials(operator_id: number, role: string): Promise<CreateCredentialsResult> {
+    const response = await this.post<CreateCredentialsResult>(
+      `/${this.#apiVersion}/auth/credentials`,
+      { operator_id, role },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to create credentials: ${response.statusText}`);
+    }
+
+    return response.body;
   }
 
   public async get<T extends string | object | null>(url: string): Promise<HTTPResponse<T>> {
