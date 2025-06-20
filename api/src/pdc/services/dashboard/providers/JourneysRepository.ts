@@ -18,8 +18,8 @@ import {
   identifier: JourneysRepositoryInterfaceResolver,
 })
 export class JourneysRepository implements JourneysRepositoryInterface {
-  private readonly tableByMonth = "dashboard_stats.territories_by_month";
-  private readonly tableByDay = "dashboard_stats.territories_by_day";
+  private readonly tableByMonth = "dashboard_stats.campaigns_by_month";
+  private readonly tableByDay = "dashboard_stats.campaigns_by_day";
   private readonly tableOperators = "operator.operators";
 
   constructor(private pgConnection: DenoPostgresConnection) {}
@@ -29,14 +29,14 @@ export class JourneysRepository implements JourneysRepositoryInterface {
   ): Promise<JourneysIncentiveByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const filters = [
-      sql`territory_id = ${params.territory_id}`,
+      sql`campaign_id = ${params.campaign_id}`,
       sql`start_date <= ${date.toISOString().split("T")[0]}`,
       sql`start_date >= ${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}`,
     ];
     const query = sql`
       SELECT 
         to_char(start_date, 'YYYY-MM-DD') AS start_date,
-        territory_id,
+        campaign_id,
         sum(journeys) as journeys,
         sum(incented_journeys) as incented_journeys,
         sum(incentive_amount) as incentive_amount
@@ -53,7 +53,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
     params: JourneysIncentiveByMonthParamsInterface,
   ): Promise<JourneysIncentiveByMonthResultInterface[]> {
     const filters = [
-      sql`territory_id = ${params.territory_id}`,
+      sql`campaign_id = ${params.campaign_id}`,
     ];
     if (params.year) {
       filters.push(sql`year = ${params.year}`);
@@ -63,7 +63,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       SELECT 
         year,
         month,
-        territory_id,
+        campaign_id,
         sum(journeys) as journeys,
         sum(incented_journeys) as incented_journeys,
         sum(incentive_amount) as incentive_amount
@@ -81,7 +81,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
   ): Promise<JourneysOperatorsByDayResultInterface[]> {
     const date = params.date ? new Date(params.date) : new Date();
     const filters = [
-      sql`territory_id = ${params.territory_id}`,
+      sql`campaign_id = ${params.campaign_id}`,
       sql`start_date <= ${date.toISOString().split("T")[0]}`,
       sql`start_date >= ${new Date(date.setMonth(date.getMonth() - 2)).toISOString().split("T")[0]}`,
     ];
@@ -89,7 +89,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
     const query = sql`
       SELECT 
         to_char(a.start_date, 'YYYY-MM-DD') AS start_date,
-        territory_id,
+        a.campaign_id,
         a.operator_id,
         b.name as operator_name,
         a.journeys,
@@ -108,7 +108,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
     params: JourneysOperatorsByMonthParamsInterface,
   ): Promise<JourneysOperatorsByMonthResultInterface[]> {
     const filters = [
-      sql`territory_id = ${params.territory_id}`,
+      sql`campaign_id = ${params.campaign_id}`,
     ];
     if (params.year) {
       filters.push(sql`year = ${params.year}`);
@@ -117,7 +117,7 @@ export class JourneysRepository implements JourneysRepositoryInterface {
       SELECT 
         a.year,
         a.month,
-        a.territory_id,
+        a.campaign_id,
         a.operator_id,
         b.name as operator_name,
         a.journeys,

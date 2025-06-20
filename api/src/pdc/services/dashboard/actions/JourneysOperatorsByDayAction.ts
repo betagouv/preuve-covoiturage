@@ -1,14 +1,11 @@
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { Infer } from "@/lib/superstruct/index.ts";
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
-import { Direction } from "@/pdc/providers/superstruct/shared/index.ts";
 import { JourneysByDay } from "@/pdc/services/dashboard/dto/Journeys.ts";
 import { JourneysRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/JourneysRepositoryInterface.ts";
 export type ResultInterface = {
   date: Date;
-  territory_id: string;
-  direction: Infer<typeof Direction>;
+  campaign_id: string;
   operator_id: number;
   operator_name: string;
   journeys: number;

@@ -1,13 +1,13 @@
 {{ 
   config(
     materialized='incremental',
-    unique_key=['year', 'month','territory_id', 'operator_id'],
+    unique_key=['year', 'month','campaign_id', 'operator_id'],
     indexes = [
       {
         'columns':[
           'year',
           'month',
-          'territory_id',
+          'campaign_id',
           'operator_id',
         ],
         'unique':true
@@ -19,12 +19,12 @@
 SELECT
   extract('year' FROM start_date)::int  AS year,
   extract('month' FROM start_date)::int AS month,
-  territory_id,
+  campaign_id,
   operator_id,
   sum(journeys)                         AS journeys,
   sum(incented_journeys)                AS incented_journeys,
   sum(incentive_amount)                 AS incentive_amount
-FROM {{ ref('territories_by_day') }}
+FROM {{ ref('campaigns_by_day') }}
 {% if is_incremental() %}
   WHERE
     (extract('year' FROM start_date) * 100 + extract('month' FROM start_date))

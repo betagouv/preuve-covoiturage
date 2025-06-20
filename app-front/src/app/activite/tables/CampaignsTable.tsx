@@ -1,30 +1,43 @@
 import Pagination from "@/components/common/Pagination";
+import Loading from "@/components/layout/Loading";
 import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
+import type { CampaignsInterface } from "@/interfaces/dataInterface";
+import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { useEffect, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
+import JourneysGraph from "../graphs/JourneysGraph";
+import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
 
 export default function CampaignsTable(props: {
   title: string;
-  territoryId: number | null;
-  operatorId: number | null;
+  territoryId?: number;
+  operatorId?: number;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [offset, setOffset] = useState([0, 15]);
   const [campaignId, setCampaignId] = useState<number>();
-  const resultByPage = 15;
-
+  const { user } = useAuth();
   const onChangePage = (id: number) => {
     setCurrentPage(id);
   };
+  const url = useMemo(() => {
+    const urlObj = new URL(getApiUrl("v3", "dashboard/campaigns"));
+    if (props.territoryId) {
+      urlObj.searchParams.set("territory_id", props.territoryId.toString());
+    } else if (props.operatorId) {
+      urlObj.searchParams.set("operator_id", props.operatorId.toString());
+    }
+    if (currentPage !== 1) {
+      urlObj.searchParams.set("page", currentPage.toString());
+    }
+    return urlObj.toString();
+  }, [props.territoryId, props.operatorId, currentPage]);
 
-  const url = getApiUrl("v3", "dashboard/campaigns");
-  const { data } = useApi<Record<string, string | number>[]>(
-    props.territoryId ? `${url}?territory_id=${props.territoryId}` : url,
-  );
+  const { data, loading } = useApi<CampaignsInterface>(url);
+  const totalPages = data?.meta.totalPages ?? 1;
   const getIcon = (value: string) => {
     return value === "finished" ? (
       <span
@@ -41,24 +54,18 @@ export default function CampaignsTable(props: {
     );
   };
   const dataTable =
-    data?.map((d, i) => [
-      getIcon(d.status as string),
+    (data?.data?.map((d, i) => [
+      getIcon(d.status),
       d.start_date,
       d.end_date,
       d.territory_name,
       d.name,
       `${Number(d.incentive_sum).toLocaleString()} €`,
       `${Number(d.max_amount).toLocaleString()} €`,
-      <Button
-        key={i}
-        size="small"
-        onClick={() => setCampaignId(d.id as number)}
-      >
+      <Button key={i} size="small" onClick={() => setCampaignId(Number(d.id))}>
         Détails
       </Button>,
-    ]) ?? [];
-
-  const countPage = Math.ceil(dataTable.length / resultByPage);
+    ]) as ReactNode[][]) ?? [];
 
   const headers = [
     "Statut",
@@ -71,12 +78,8 @@ export default function CampaignsTable(props: {
     "",
   ];
 
-  const currentCampaign = data?.find((d) => d.id === campaignId);
-
-  useEffect(() => {
-    setOffset([(currentPage - 1) * resultByPage, currentPage * resultByPage]);
-  }, [currentPage]);
-
+  const currentCampaign = data?.data.find((d) => Number(d.id) === campaignId);
+  if (loading) return <Loading />;
   return (
     <>
       {!campaignId && (
@@ -85,12 +88,13 @@ export default function CampaignsTable(props: {
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
               <Table
-                data={dataTable.slice(offset[0], offset[1])}
+                data={dataTable}
                 headers={headers}
                 colorVariant="blue-ecume"
+                fixed
               />
               <Pagination
-                count={countPage}
+                count={totalPages}
                 defaultPage={currentPage}
                 onChange={onChangePage}
               />
@@ -102,13 +106,20 @@ export default function CampaignsTable(props: {
       )}
       {campaignId && currentCampaign && (
         <>
-          <h3 className={fr.cx("fr-callout__title")}>
-            <a href="#" target="_self" onClick={() => setCampaignId(undefined)}>
-              {props.title}
-            </a>
-            <span className={fr.cx("fr-pl-2v")}>
-              &gt; Campagne {currentCampaign.name}
-            </span>
+          <a
+            href="#"
+            className={fr.cx(
+              "fr-link",
+              "fr-icon-arrow-right-line",
+              "fr-link--icon-right",
+            )}
+            target="_self"
+            onClick={() => setCampaignId(undefined)}
+          >
+            Revenir à toutes les campagnes
+          </a>
+          <h3 className={fr.cx("fr-callout__title", "fr-mt-2w")}>
+            Campagne {currentCampaign.name}
           </h3>
           <div className={fr.cx("fr-callout")}>
             <div className={fr.cx("fr-callout__title")}>
@@ -132,6 +143,18 @@ export default function CampaignsTable(props: {
               en quasi temps réel.{" "}
             </i>
           </div>
+          <JourneysGraph
+            title="Evolution des trajets"
+            campaignId={campaignId}
+          />
+          {["registry", "territory"].includes(
+            user?.role.split(".")[0] ?? "",
+          ) && (
+            <OperatorsGraph
+              title="Evolution des trajets par opérateurs"
+              campaignId={campaignId}
+            />
+          )}
           <ApdfTable
             title="Fichiers d’appels de fonds recalculés par covoiturage.beta.gouv"
             campaignId={campaignId}

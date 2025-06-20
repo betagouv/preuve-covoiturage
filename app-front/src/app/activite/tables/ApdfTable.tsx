@@ -9,7 +9,7 @@ import { useMemo } from "react";
 export default function ApdfTable(props: {
   title: string;
   campaignId: number;
-  operatorId: number | null;
+  operatorId?: number;
 }) {
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=apdf:list`;
   const init = useMemo(() => {
@@ -51,9 +51,10 @@ export default function ApdfTable(props: {
   if (!data) return <>Pas d&apos;APDF...</>;
 
   return (
-    <>
+    <div className={fr.cx("fr-my-4w")}>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <Table
+        fixed
         data={data.result.data
           .map((d, i) => [
             (d.datetime as string).slice(0, 7),
@@ -75,6 +76,6 @@ export default function ApdfTable(props: {
         headers={headers}
         colorVariant="blue-ecume"
       />
-    </>
+    </div>
   );
 }

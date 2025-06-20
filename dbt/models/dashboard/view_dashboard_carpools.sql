@@ -1,7 +1,7 @@
 {{ config(materialized='view') }}
 
 SELECT
-  a._id                 AS carpool_id,
+  a.uuid                 AS carpool_id,
   a.operator_id,
   d.policy_id,
   d.status AS policy_status,
