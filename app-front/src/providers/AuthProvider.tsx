@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data);
     } else {
       setIsAuth(false);
-      setUser(undefined);
+      setUser(data);
     }
     setLoading(false);
   };

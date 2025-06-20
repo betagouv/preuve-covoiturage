@@ -13,7 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
-import { PerimeterType } from "../../../interfaces/searchInterface";
+import { type PerimeterType } from "../../../interfaces/searchInterface";
 
 interface ParamsInterfaceV3 {
   tz: string;
@@ -198,19 +198,23 @@ export default function TabExport() {
             )}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
             {geoSelector === "geo" && <SelectGeo onChange={onChangeGeo} />}
-            {geoSelector === "campaign" &&
-            user.role === "registry.admin" &&
-            simulate === false ? (
-              <SelectTerritory
-                defaultValue={user.territory_id}
-                onChange={onChangeTerritory}
-              />
-            ) : user.operator_id ? (
-              <SelectTerritoryByOperator
-                defaultValue={user.territory_id}
-                onChange={onChangeTerritory}
-              />
-            ) : null}
+            {geoSelector === "campaign" && (
+              <>
+                {user.role === "registry.admin" && simulate === false && (
+                  <SelectTerritory
+                    defaultValue={user.territory_id}
+                    onChange={onChangeTerritory}
+                  />
+                )}
+                {(simulatedRole === "operator" ||
+                  user.role.split(".")[0] === "operator") && (
+                  <SelectTerritoryByOperator
+                    defaultValue={user.territory_id}
+                    onChange={onChangeTerritory}
+                  />
+                )}
+              </>
+            )}
             {(!!user.territory_id || !!territorySelectors) && (
               <div className="fr-mt-4w">
                 <div
