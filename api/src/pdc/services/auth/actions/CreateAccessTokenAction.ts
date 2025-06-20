@@ -1,32 +1,37 @@
 import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
-import { CrudAccessTokenParams } from "@/pdc/services/auth/dto/AccessToken.ts";
-import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
-import { castOperatorIdActionParam } from "@/pdc/services/auth/route/OperatorIdCastingActionParam.ts";
+import { CreateAccessTokenParams, CreateAccessTokenResult } from "../dto/Credentials.ts";
+import { DexOIDCProvider } from "../providers/DexOIDCProvider.ts";
 
 @handler({
   service: "auth",
-  method: "accessTokenCreate",
+  method: "accessToken",
   middlewares: [
     copyFromContextMiddleware(`call.user.operator_id`, "operator_id", false),
-    ["validate", CrudAccessTokenParams],
+    ["validate", CreateAccessTokenParams],
   ],
   apiRoute: {
     path: "/auth/access_token",
-    method: "GET",
-    successHttpCode: 200,
-    actionParamsFn: castOperatorIdActionParam
+    method: "POST",
+    public: true,
+    rateLimiter: {
+      key: "rl-auth",
+      limit: 20,
+      windowMinute: 1,
+    },
+    successHttpCode: 201,
+    rpcAnswerOnFailure: true,
   },
 })
-export class CreateAccessTokenAction extends AbstractAction {
-  constructor(
-    private dexClient: DexClient,
-  ) {
+export class AccessTokenAction extends AbstractAction {
+  constructor(private dexOIDCProvider: DexOIDCProvider) {
     super();
   }
 
-  protected override async handle(params: CrudAccessTokenParams): Promise<{uuid: string, password: string}> {
-    return this.dexClient.createForOperator(params.operator_id)
+  protected override async handle(params: CreateAccessTokenParams): Promise<CreateAccessTokenResult> {
+    const { access_key, secret_key } = params;
+    const access_token = await this.dexOIDCProvider.getToken(access_key, secret_key);
+    return { access_token };
   }
 }
