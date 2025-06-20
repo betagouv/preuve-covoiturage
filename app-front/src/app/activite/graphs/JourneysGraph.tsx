@@ -95,7 +95,7 @@ export default function JourneysGraph(props: {
   };
 
   return (
-    <>
+    <div className={fr.cx("fr-my-4w")}>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <ul className={fr.cx("fr-tags-group")}>
         <li>
@@ -124,6 +124,6 @@ export default function JourneysGraph(props: {
         </li>
       </ul>
       <Line options={options} data={chartData} aria-hidden />
-    </>
+    </div>
   );
 }

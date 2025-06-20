@@ -7,7 +7,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -54,7 +54,7 @@ export default function CampaignsTable(props: {
     );
   };
   const dataTable =
-    data?.data?.map((d, i) => [
+    (data?.data?.map((d, i) => [
       getIcon(d.status),
       d.start_date,
       d.end_date,
@@ -65,7 +65,7 @@ export default function CampaignsTable(props: {
       <Button key={i} size="small" onClick={() => setCampaignId(Number(d.id))}>
         Détails
       </Button>,
-    ]) ?? [];
+    ]) as ReactNode[][]) ?? [];
 
   const headers = [
     "Statut",
@@ -106,13 +106,20 @@ export default function CampaignsTable(props: {
       )}
       {campaignId && currentCampaign && (
         <>
-          <h3 className={fr.cx("fr-callout__title")}>
-            <a href="#" target="_self" onClick={() => setCampaignId(undefined)}>
-              {props.title}
-            </a>
-            <span className={fr.cx("fr-pl-2v")}>
-              &gt; Campagne {currentCampaign.name}
-            </span>
+          <a
+            href="#"
+            className={fr.cx(
+              "fr-link",
+              "fr-icon-arrow-right-line",
+              "fr-link--icon-right",
+            )}
+            target="_self"
+            onClick={() => setCampaignId(undefined)}
+          >
+            Revenir à toutes les campagnes
+          </a>
+          <h3 className={fr.cx("fr-callout__title", "fr-mt-2w")}>
+            Campagne {currentCampaign.name}
           </h3>
           <div className={fr.cx("fr-callout")}>
             <div className={fr.cx("fr-callout__title")}>

@@ -44,7 +44,6 @@ export default function OperatorsGraph(props: {
   const name = [...new Set(data?.map((d) => d.operator_name))] as string[];
   const colors = [
     "#8dd3c7",
-    "#ffffb3",
     "#bebada",
     "#fb8072",
     "#80b1d3",
@@ -95,7 +94,7 @@ export default function OperatorsGraph(props: {
   };
 
   return (
-    <>
+    <div className={fr.cx("fr-my-4w")}>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <ul className={fr.cx("fr-tags-group")}>
         <li>
@@ -124,6 +123,6 @@ export default function OperatorsGraph(props: {
         </li>
       </ul>
       <Line options={options} data={chartData} aria-hidden />
-    </>
+    </div>
   );
 }
