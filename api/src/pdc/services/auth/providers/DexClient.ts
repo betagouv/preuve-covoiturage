@@ -3,12 +3,18 @@ import { bcrypt_hash } from "@/lib/crypto/index.ts";
 import { randomString, v4 } from "@/lib/uuid/index.ts";
 import { Dex } from "@/pdc/services/auth/dex/generated/api.ts";
 import { getDexClient } from "@/pdc/services/auth/dex/getDexClient.ts";
-import { AccessToken } from "@/pdc/services/auth/dto/AccessToken.ts";
 import { GrpcClient } from "dep:grpc";
+import {
+  CredentialsRole,
+  DexClientCreateResult,
+  DexClientDeleteResult,
+  DexClientReadResult,
+} from "../dto/Credentials.ts";
 
 @provider()
 export class DexClient implements InitHookInterface {
-  protected client: (GrpcClient & Dex) | undefined;
+  #client: (GrpcClient & Dex) | undefined;
+
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
@@ -16,60 +22,58 @@ export class DexClient implements InitHookInterface {
   }
 
   protected async getClient() {
-    if (this.client) {
-      return this.client;
+    if (this.#client) {
+      return this.#client;
     }
 
     const host = this.config.get("dex.grpc_host");
     const port = this.config.get("dex.grpc_port");
-    this.client = await getDexClient({
-      host,
-      port,
-    });
-    return this.client;
+    this.#client = await getDexClient({ host, port });
+
+    return this.#client;
   }
 
-  async listByOperator(id: number): Promise<AccessToken[]> {
+  async readByOperator(id: number): Promise<DexClientReadResult> {
     const result = await (await this.getClient()).ListPasswords({});
     if (!result.passwords) {
       return [];
     }
+
     return result.passwords.map((p) => {
       const [role, operator_id] = p.username?.split(":") || [];
       return {
         token_id: p.email,
         operator_id: parseInt(operator_id),
-        role,
+        role: role as CredentialsRole,
       };
     }).filter((p) => p.operator_id === id);
   }
 
-  async createForOperator(operator_id: number, role = "application") {
-    const uuid = v4();
-    const password = randomString();
-    const hash = new TextEncoder().encode(await bcrypt_hash(password));
+  async createForOperator(operator_id: number, role = "application"): Promise<DexClientCreateResult> {
+    const access_key = v4();
+    const secret_key = randomString();
+    const hash = new TextEncoder().encode(await bcrypt_hash(secret_key));
+
     await (await this.getClient()).CreatePassword({
       password: {
-        email: uuid,
+        email: access_key,
         username: `${role}:${operator_id}`,
         hash,
-        userId: uuid,
+        userId: access_key,
       },
     });
-    return {
-      uuid,
-      password,
-    };
+
+    return { access_key, secret_key };
   }
 
-  async deleteByOperator(operator_id: number, token_id: string) {
-    const tokens = await this.listByOperator(operator_id);
+  async deleteByOperator(operator_id: number, token_id: string): Promise<DexClientDeleteResult> {
+    const tokens = await this.readByOperator(operator_id);
+
     const exists = tokens.find((t) => t.operator_id === operator_id && t.token_id === token_id);
     if (!exists) {
-      throw new NotFoundException();
+      throw new NotFoundException(`[DexClient] Token with id ${token_id} not found for operator ${operator_id}`);
     }
-    await (await this.getClient()).DeletePassword({
-      email: token_id,
-    });
+
+    await (await this.getClient()).DeletePassword({ email: token_id });
   }
 }
