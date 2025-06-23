@@ -12,14 +12,10 @@ import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
 
-export default function CampaignsTable(props: {
-  title: string;
-  territoryId?: number;
-  operatorId?: number;
-}) {
+export default function CampaignsTable(props: { title: string; territoryId?: number; operatorId?: number }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [campaignId, setCampaignId] = useState<number>();
-  const { user } = useAuth();
+  const { user, simulatedRole } = useAuth();
   const onChangePage = (id: number) => {
     setCurrentPage(id);
   };
@@ -40,15 +36,9 @@ export default function CampaignsTable(props: {
   const totalPages = data?.meta.totalPages ?? 1;
   const getIcon = (value: string) => {
     return value === "finished" ? (
-      <span
-        className={fr.cx("ri-close-circle-fill", "fr-badge--error")}
-        aria-hidden="true"
-      ></span>
+      <span className={fr.cx("ri-close-circle-fill", "fr-badge--error")} aria-hidden="true"></span>
     ) : value === "active" ? (
-      <span
-        className={fr.cx("ri-verified-badge-fill", "fr-badge--success")}
-        aria-hidden="true"
-      ></span>
+      <span className={fr.cx("ri-verified-badge-fill", "fr-badge--success")} aria-hidden="true"></span>
     ) : (
       value
     );
@@ -87,16 +77,8 @@ export default function CampaignsTable(props: {
           {dataTable.length > 0 ? (
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
-              <Table
-                data={dataTable}
-                headers={headers}
-                colorVariant="blue-ecume"
-              />
-              <Pagination
-                count={totalPages}
-                defaultPage={currentPage}
-                onChange={onChangePage}
-              />
+              <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+              <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage} />
             </>
           ) : (
             <p>Pas de campagnes ...</p>
@@ -107,29 +89,20 @@ export default function CampaignsTable(props: {
         <>
           <a
             href="#"
-            className={fr.cx(
-              "fr-link",
-              "fr-icon-arrow-right-line",
-              "fr-link--icon-right",
-            )}
+            className={fr.cx("fr-link", "fr-icon-arrow-right-line", "fr-link--icon-right")}
             target="_self"
             onClick={() => setCampaignId(undefined)}
           >
             Revenir à toutes les campagnes
           </a>
-          <h3 className={fr.cx("fr-callout__title", "fr-mt-2w")}>
-            Campagne {currentCampaign.name}
-          </h3>
+          <h3 className={fr.cx("fr-callout__title", "fr-mt-2w")}>Campagne {currentCampaign.name}</h3>
           <div className={fr.cx("fr-callout")}>
-            <div className={fr.cx("fr-callout__title")}>
-              {currentCampaign.territory_name}
-            </div>
+            <div className={fr.cx("fr-callout__title")}>{currentCampaign.territory_name}</div>
             <div>
               <b>Nom de la campagne :</b> {currentCampaign.name}
             </div>
             <div>
-              <b>Durée de la campagne :</b> Du{" "}
-              {new Date(currentCampaign.start_date).toLocaleDateString()} au{" "}
+              <b>Durée de la campagne :</b> Du {new Date(currentCampaign.start_date).toLocaleDateString()} au{" "}
               {new Date(currentCampaign.end_date).toLocaleDateString()}
             </div>
             <div>
@@ -137,22 +110,13 @@ export default function CampaignsTable(props: {
               {`${(Number(currentCampaign.incentive_sum) / 100).toLocaleString()} € sur ${(Number(currentCampaign.max_amount) / 100).toLocaleString()} €`}
             </div>
             <i>
-              * A noter que le budget est le montant dédié aux incitations
-              uniquement et qu’il s’agit ici d’une estimation de la consommation
-              en quasi temps réel.{" "}
+              * A noter que le budget est le montant dédié aux incitations uniquement et qu’il s’agit ici d’une
+              estimation de la consommation en quasi temps réel.{" "}
             </i>
           </div>
-          <JourneysGraph
-            title="Evolution des trajets"
-            campaignId={campaignId}
-          />
-          {["registry", "territory"].includes(
-            user?.role.split(".")[0] ?? "",
-          ) && (
-            <OperatorsGraph
-              title="Evolution des trajets par opérateurs"
-              campaignId={campaignId}
-            />
+          <JourneysGraph title="Evolution des trajets" campaignId={campaignId} />
+          {(["registry", "territory"].includes(user?.role.split(".")[0] ?? "") && simulatedRole !== "operator") && (
+            <OperatorsGraph title="Evolution des trajets par opérateurs" campaignId={campaignId} />
           )}
           <ApdfTable
             title="Fichiers d’appels de fonds recalculés par covoiturage.beta.gouv"

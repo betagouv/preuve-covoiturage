@@ -71,8 +71,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
     `;
     const rows = await this.pgConnection.query<CampaignsResultInterface>(query);
     const countQuery = sql`
-      SELECT ${params.operator_id ? sql`DISTINCT` : sql``}
-      COUNT(*) as total
+      SELECT ${params.operator_id ? sql`COUNT(DISTINCT a._id) as total` : sql`COUNT(*) as total`}
       FROM ${raw(this.table)} a
       LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
       ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
