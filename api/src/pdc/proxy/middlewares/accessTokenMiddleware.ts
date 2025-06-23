@@ -11,10 +11,7 @@ import { UserRepository } from "../../services/auth/providers/UserRepository.ts"
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 /**
- * Make sure the application exists, belongs the right operator
- * and is not soft deleted
- *
- * TODO use Redis for a faster lookup
+ * Make sure the application exists, belongs to the right operator and is not soft deleted
  */
 async function checkApplication(
   kernel: KernelInterface,
@@ -67,7 +64,7 @@ export function dexMiddleware(kernel: KernelInterface) {
       req.session = req.session || {};
 
       const repo = kernel.get(UserRepository);
-      const user = await repo.findUserByEmail(data.token_id);
+      const user = await repo.authenticateByEmail(data.token_id);
       if (!user) {
         throw new UnauthorizedException("User not found");
       }

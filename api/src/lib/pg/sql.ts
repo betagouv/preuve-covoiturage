@@ -2,20 +2,43 @@
  * From : https://github.com/blakeembrey/sql-template-tag/blob/v5.1.0/src/index.ts
  * By : Blake Embrey
  * Under : MIT
+ *
+ * Don't overwrite the additions by @author RPC, please.
  */
 
 /**
+ * Create a SQL object from an object of key-value pairs.
+ * @author RPC
+ */
+export function fromObject(object: Record<string, RawValue>): Sql {
+  const items: Sql[] = [];
+
+  for (const [key, value] of Object.entries(object)) {
+    items.push(sql`${raw(key)} = ${value}`);
+  }
+
+  return join(items);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// UPDATE THE LIBRARY BELOW, NOT ABOVE THE LINE
+// ---------------------------------------------------------------------------------------------------------------------
+
+/**
  * Values supported by SQL engine.
+ * @author Blake Embrey
  */
 export type Value = unknown;
 
 /**
  * Supported value or SQL instance.
+ * @author Blake Embrey
  */
 export type RawValue = Value | Sql;
 
 /**
  * A SQL instance can be nested within each other to build SQL strings.
+ * @author Blake Embrey
  */
 export class Sql {
   readonly values: Value[];
@@ -28,9 +51,7 @@ export class Sql {
       }
 
       throw new TypeError(
-        `Expected ${rawStrings.length} strings to have ${
-          rawStrings.length - 1
-        } values`,
+        `Expected ${rawStrings.length} strings to have ${rawStrings.length - 1} values`,
       );
     }
 
@@ -97,6 +118,7 @@ export class Sql {
 
 /**
  * Create a SQL query for a list of values.
+ * @author Blake Embrey
  */
 export function join(
   values: readonly RawValue[],
@@ -118,6 +140,7 @@ export function join(
 
 /**
  * Create a SQL query for a list of structured values.
+ * @author Blake Embrey
  */
 export function bulk(
   data: ReadonlyArray<ReadonlyArray<RawValue>>,
@@ -151,6 +174,7 @@ export function bulk(
 
 /**
  * Create raw SQL statement.
+ * @author Blake Embrey
  */
 export function raw(value: string) {
   return new Sql([value], []);
@@ -158,11 +182,13 @@ export function raw(value: string) {
 
 /**
  * Placeholder value for "no text".
+ * @author Blake Embrey
  */
 export const empty = raw("");
 
 /**
  * Create a SQL object from a template string.
+ * @author Blake Embrey
  */
 export default function sql(
   strings: readonly string[],

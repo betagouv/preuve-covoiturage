@@ -1,8 +1,9 @@
 import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
+import { LocalSiretUser, UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { createRemoteJWKSet } from "dep:jose";
 import * as client from "dep:openid-client";
+import { getPermissions } from "../config/permissions.ts";
 
 @provider()
 export class ProConnectOIDCProvider implements InitHookInterface {
@@ -88,17 +89,20 @@ export class ProConnectOIDCProvider implements InitHookInterface {
     await this.#configure();
 
     const userInfo = await client.fetchUserInfo(this.clientConfig!, accessToken, sub);
-    return await this.getLocalUser(
+    const user = await this.getLocalUser(
       userInfo.email!,
       userInfo.siret! as string,
       userInfo.given_name,
       userInfo.usual_name as string,
     );
+
+    return user;
   }
 
   protected async getLocalUser(email: string, siret: string, given_name?: string, family_name?: string) {
-    const user = await this.userRepository.findUserByEmail(email);
-    if (!user || (user.siret !== siret && user.role !== "registry.admin")) {
+    const user = await this.userRepository.authenticateByEmail(email);
+
+    if (!user || this.failsSiretCheck(user, siret)) {
       return {
         email: email,
         role: "anonymous",
@@ -106,10 +110,11 @@ export class ProConnectOIDCProvider implements InitHookInterface {
         ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
       };
     }
+
     return {
       ...user,
       ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
-      permissions: this.config.get(`permissions.${user.role}.permissions`, []),
+      permissions: getPermissions(user.role),
     };
   }
 
@@ -124,5 +129,15 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       state,
     });
     return { state, redirectUrl };
+  }
+
+  private failsSiretCheck(user: LocalSiretUser, siret: string): boolean {
+    const fails = user.siret !== siret && user.role !== "registry.admin";
+
+    if (fails) {
+      console.warn(`[ProConnectOIDCProvider] SIRET mismatch ${user.email}: expected ${siret}, got ${user.siret}`);
+    }
+
+    return fails;
   }
 }

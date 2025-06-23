@@ -1,6 +1,15 @@
 import { provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import sql, { raw } from "@/lib/pg/sql.ts";
+import sql, { fromObject, raw, RawValue } from "@/lib/pg/sql.ts";
+
+export type LocalSiretUser = {
+  email: string;
+  role: string;
+  operator_id: number | null;
+  territory_id: number | null;
+  siret: string | null;
+  _id: number;
+};
 
 @provider()
 export class UserRepository {
@@ -9,12 +18,11 @@ export class UserRepository {
   public readonly operatorTable = "operator.operators";
   public readonly companyTable = "company.companies";
 
-  constructor(
-    protected denoConnection: DenoPostgresConnection,
-  ) {}
+  constructor(protected denoConnection: DenoPostgresConnection) {}
 
-  async findUserByEmail(email: string) {
-    const rows = await this.denoConnection.query(sql`
+  async authenticateByEmail(email: string, data: Record<string, RawValue> = {}): Promise<LocalSiretUser | null> {
+    if (!email) return null;
+    const rows = await this.denoConnection.query<LocalSiretUser>(sql`
       SELECT
         u.email,
         u.role,
@@ -32,14 +40,16 @@ export class UserRepository {
       LIMIT 1
     `);
 
-    return rows[0] || null;
-  }
+    if (!rows.length) return null;
 
-  async touchLastLogin(_id: number) {
-    await this.denoConnection.query(sql`
+    // Update last_login_at and other data if provided
+    const fields = fromObject({ ...data, last_login_at: "NOW()" });
+    await this.denoConnection.query<{ role: string }>(sql`
       UPDATE ${raw(this.table)}
-      SET last_login_at = NOW()
-      WHERE _id = ${_id}
+      SET ${fields}
+      WHERE email = ${email}
     `);
+
+    return rows[0];
   }
 }

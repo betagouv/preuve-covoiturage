@@ -4,6 +4,7 @@ import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
 import { authGuard } from "../../proxy/middlewares/authGuard.ts";
+import { UserRepository } from "./providers/UserRepository.ts";
 
 @injectable()
 export class AuthRouter {
@@ -12,6 +13,7 @@ export class AuthRouter {
     private kernel: KernelInterfaceResolver,
     private proConnectOIDCProvider: ProConnectOIDCProvider,
     private config: ConfigInterfaceResolver,
+    private userRepository: UserRepository,
   ) {
   }
 
@@ -35,13 +37,18 @@ export class AuthRouter {
       asyncHandler(async (req: Request, res: Response) => {
         const url = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
         const { state, nonce } = req.session?.auth || {};
+
+        // Fetch tokens and user info from ProConnect OIDC Provider
         const tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
+        const claims = tokens.claims();
+        const user = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
+
+        // Store user and token information in the session
         req.session = req.session || {};
         req.session.auth = {};
         req.session.auth.id_token = tokens.id_token;
-        const claims = tokens.claims();
-        const user = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
         req.session.user = user;
+
         return res.redirect(this.config.get("app_url"));
       }),
     );
