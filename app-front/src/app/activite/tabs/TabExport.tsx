@@ -159,7 +159,10 @@ export default function TabExport() {
             <li>
               la définition de chacune des données de l’export est accessible
               dans notre{" "}
-              <a href="https://tech.covoiturage.beta.gouv.fr/topic/topic-demandes-cee#topic-comparatif-v2-0-v3-x">
+              <a
+                target="_blank"
+                href="https://tech.covoiturage.beta.gouv.fr/topic/topic-demandes-cee#topic-comparatif-v2-0-v3-x"
+              >
                 documentation technique
               </a>
             </li>

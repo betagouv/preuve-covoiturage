@@ -27,7 +27,6 @@ export default function Activite() {
           titleAs="h3"
           start={
             <Image
-              className={fr.cx("fr-responsive-img")}
               src="https://static.covoiturage.beta.gouv.fr/Obs_021e3f4a41.svg"
               alt=""
               width={70}

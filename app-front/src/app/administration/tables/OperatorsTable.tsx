@@ -133,12 +133,7 @@ export default function OperatorsTable(props: { title: string; id?: number }) {
           </Button>
         </>
       )}
-      <Table
-        data={dataTable}
-        headers={headers}
-        colorVariant="blue-ecume"
-        fixed
-      />
+      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
       <Pagination
         count={totalPages}
         defaultPage={currentPage}

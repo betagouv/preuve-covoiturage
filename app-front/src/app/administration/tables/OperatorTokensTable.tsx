@@ -112,12 +112,7 @@ export default function OperatorTokensTable(props: {
           Générer
         </Button>
       </>
-      <Table
-        data={dataTable}
-        headers={headers}
-        colorVariant="blue-ecume"
-        fixed
-      />
+      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
       <Modal
         open={modal.openModal}
         title={`${modal.modalTitle(modal.typeModal)} une clé secrète`}

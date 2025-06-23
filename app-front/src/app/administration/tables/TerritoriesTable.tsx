@@ -270,12 +270,7 @@ export default function TerritoriesTable(props: {
           </Button>
         </>
       )}
-      <Table
-        data={dataTable}
-        headers={headers}
-        colorVariant="blue-ecume"
-        fixed
-      />
+      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
       <Pagination
         count={totalPages()}
         defaultPage={currentPage}
