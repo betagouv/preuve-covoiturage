@@ -59,7 +59,6 @@ runs:
         # use localhost here (outside of docker network)
         APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
       run: |
-        just cache
         just cache-migrator
         just dc_e2e run --rm api just seed
 
