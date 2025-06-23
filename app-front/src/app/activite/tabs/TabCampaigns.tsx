@@ -13,8 +13,8 @@ export default function TabCampaigns() {
         severity="info"
         description={
           <p>
-            Les données présentées ci-dessous sont limitées au périmètre
-            géographique des campagnes d’incitations financières.
+            Les données présentées ci-dessous sont limitées au périmètre géographique des campagnes d’incitations
+            financières.
           </p>
         }
       />

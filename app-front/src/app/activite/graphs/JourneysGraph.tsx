@@ -41,8 +41,8 @@ export default function JourneysGraph(props: {
     return <p>Pas de campagnes pour ce territoire...</p>;
   }
   const name = [
-    "Tous les trajets éligibles à la campagne",
-    "Trajets incités dans la campagne RPC",
+    "Tous les trajets éligibles sur le périmètre de la campagne",
+    "Trajets incités et validés par le RPC",
   ];
   const colors = ["#6a6af4", "#000091"];
   const labels =

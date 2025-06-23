@@ -50,24 +50,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loading, isAuth]);
 
   const onChangeTerritory = (id?: number) => {
-    if (user?.role === "registry.admin") {
-      setUser({
-        ...user,
-        territory_id: id ?? undefined,
-      });
+    if (user) {
+      if (simulatedRole === "territory") {
+        setUser({
+          ...user,
+          territory_id: id ?? undefined,
+          operator_id: undefined,
+        });
+      } else {
+        setUser({
+          ...user,
+          territory_id: id ?? undefined,
+        });
+      }
     }
   };
 
   const onChangeOperator = (id?: number) => {
     if (user) {
-      setUser({
-        ...user,
-        operator_id: id ?? undefined,
-      });
+      if (simulatedRole === "operator") {
+        setUser({
+          ...user,
+          territory_id: undefined,
+          operator_id: id ?? undefined,
+        });
+      } else {
+        setUser({
+          ...user,
+          operator_id: id ?? undefined,
+        });
+      }
     }
   };
   const onChangeSimulate = () => {
     setSimulate((prev) => !prev);
+    if (simulate === false) {
+      setSimulatedRole(undefined);
+    }
   };
   const onChangeSimulatedRole = (value?: "operator" | "territory") => {
     setSimulatedRole(value);
