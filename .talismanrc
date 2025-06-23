@@ -56,7 +56,7 @@ fileignoreconfig:
 - filename: api/e2e/scenarios/0-stack/004-credentials.test.ts
   checksum: 6b59470986719df9b04032fb0861d52d0091129c35715b0c5838ad42f280ddab
 - filename: api/e2e/scenarios/**/*.test.ts
-  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email"]
+  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email", "(?i)secret_"]
 - filename: api/e2e/lib/*.ts
   allowed_patterns: ["(?i)key","(?i)pass"]
 - filename: api/src/pdc/proxy/config/dex.ts

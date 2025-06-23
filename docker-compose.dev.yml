@@ -32,7 +32,7 @@ services:
       APP_REQUEST_TIMEOUT: 0
       APP_APDF_S3_UPLOAD_ENABLED: false
     ports:
-      - 3000:${PORT:-8080}
+      - ${PORT:-8080}:${PORT:-8080}
     volumes:
       - ./api:/app/api
       - ./tmp:/tmp

@@ -99,12 +99,26 @@ export function dexMiddleware(kernel: KernelInterface) {
 export function accessTokenMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     dexMiddleware(kernel)(req, _res, async (err: Error | null) => {
-      if (err) {
-        // If dexMiddleware fails, fallback to serverTokenMiddleware
-        await legacyTokenMiddleware(kernel)(req, _res, next);
-      } else {
-        next();
+      if (typeof err === "undefined" || err === null) {
+        // If no error, continue to the next middleware
+        return next();
       }
+
+      // If dexMiddleware fails specificaly on the token format
+      // fallback to legacyTokenMiddleware
+      if (err && "code" in err && err.code === "ERR_JOSE_NOT_SUPPORTED") {
+        return await legacyTokenMiddleware(kernel)(req, _res, next);
+      }
+
+      // @ts-ignore for rpcError property
+      console.error(err.rpcError?.data);
+
+      if (Error.isError(err)) return next(err);
+      if (typeof err === "string") {
+        return next(new Error(err));
+      }
+
+      next();
     });
   };
 }

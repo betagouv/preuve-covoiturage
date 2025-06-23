@@ -4,10 +4,10 @@ import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
-import { DeleteCredentialsAction } from "@/pdc/services/auth/actions/DeleteAccessTokenAction.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
-import { AccessTokenAction } from "./actions/CreateAccessTokenAction.ts";
+import { CreateAccessTokenAction } from "./actions/CreateAccessTokenAction.ts";
 import { CreateCredentialsAction } from "./actions/CreateCredentialsAction.ts";
+import { DeleteCredentialsAction } from "./actions/DeleteCredentialsAction.ts";
 import { ReadCredentialsAction } from "./actions/ReadCredentialsAction.ts";
 import { AuthRouter } from "./AuthRouter.ts";
 import { config } from "./config/index.ts";
@@ -29,6 +29,6 @@ import { UserRepository } from "./providers/UserRepository.ts";
     ["validate", ValidatorMiddleware],
     ...defaultMiddlewareBindings,
   ],
-  handlers: [AccessTokenAction, ReadCredentialsAction, CreateCredentialsAction, DeleteCredentialsAction],
+  handlers: [CreateAccessTokenAction, ReadCredentialsAction, CreateCredentialsAction, DeleteCredentialsAction],
 })
 export class AuthServiceProvider extends AbstractServiceProvider {}

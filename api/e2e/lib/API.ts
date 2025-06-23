@@ -1,5 +1,9 @@
 import { UnauthorizedException } from "@/ilos/common/index.ts";
-import { CreateCredentialsResult } from "@/pdc/services/auth/dto/Credentials.ts";
+import {
+  CreateCredentialsResult,
+  DeleteCredentialsResult,
+  ReadCredentialsResult,
+} from "@/pdc/services/auth/dto/Credentials.ts";
 import { env } from "./config.ts";
 import { faker } from "./faker.ts";
 import { RPCResponse } from "./types.ts";
@@ -31,6 +35,13 @@ export class API {
     this.#defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
   }
 
+  /**
+   * -------------------------------------------------------------------------------------------------------------------
+   * AUTHENTICATION
+   * -------------------------------------------------------------------------------------------------------------------
+   */
+
+  // Get a temporary access token using the default access key and secret key.
   public async authenticate(access_key?: string, secret_key?: string): Promise<void> {
     access_key = access_key || this.#defaultAccessKey;
     secret_key = secret_key || this.#defaultSecretKey;
@@ -69,11 +80,13 @@ export class API {
     }
   }
 
+  // Logout and clear the session cookie and access token.
   public async logout(): Promise<void> {
-    this.#sessionCookie = null;
-    this.#accessToken = null;
+    this.clearSessionCookie();
+    this.clearAccessToken();
   }
 
+  // Connect to the API using email and password, and retrieve a session cookie.
   public async login<T = unknown>(email: string, password: string): Promise<T> {
     await this.logout();
 
@@ -90,6 +103,14 @@ export class API {
     this.#sessionCookie = cookie.split(";")[0];
 
     return loginResponse.body.result.data as T;
+  }
+
+  public clearSessionCookie(): void {
+    this.#sessionCookie = null;
+  }
+
+  public clearAccessToken(): void {
+    this.#accessToken = null;
   }
 
   public async legacyAuthenticate(email: string, password: string): Promise<void> {
@@ -113,6 +134,23 @@ export class API {
     this.#accessToken = token;
   }
 
+  /**
+   * -------------------------------------------------------------------------------------------------------------------
+   * CREDENTIALS MANAGEMENT
+   * -------------------------------------------------------------------------------------------------------------------
+   */
+
+  public async readCredentials(operator_id: number): Promise<ReadCredentialsResult> {
+    const params = new URLSearchParams({ operator_id: String(operator_id) });
+    const response = await this.get<ReadCredentialsResult>(`/${this.#apiVersion}/auth/credentials`, params);
+
+    if (!response.ok) {
+      throw new Error(`Failed to read credentials: ${response.statusText}`);
+    }
+
+    return response.body;
+  }
+
   public async createCredentials(operator_id: number, role: string): Promise<CreateCredentialsResult> {
     const response = await this.post<CreateCredentialsResult>(
       `/${this.#apiVersion}/auth/credentials`,
@@ -126,20 +164,57 @@ export class API {
     return response.body;
   }
 
-  public async get<T extends string | object | null>(url: string): Promise<HTTPResponse<T>> {
-    return await this.request<T>("GET", url);
+  public async deleteCredentials(operator_id: number, token_id: string): Promise<DeleteCredentialsResult> {
+    const params = new URLSearchParams({ operator_id: String(operator_id), token_id });
+    const response = await this.delete<DeleteCredentialsResult>(`/${this.#apiVersion}/auth/credentials`, params);
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete credentials: ${response.statusText}`);
+    }
+
+    return;
   }
 
-  public async post<T extends string | object | null>(url: string, body: object | BodyInit): Promise<HTTPResponse<T>> {
-    return await this.request("POST", url, body);
-  }
+  /**
+   * -------------------------------------------------------------------------------------------------------------------
+   * HTTP REQUESTS METHODS
+   * -------------------------------------------------------------------------------------------------------------------
+   */
 
-  public async request<T extends string | object | null>(
-    method: "GET" | "POST",
-    url: string,
-    body?: object | BodyInit,
+  public async get<T extends string | object | null>(
+    url: string | URL,
+    searchParams?: URLSearchParams,
   ): Promise<HTTPResponse<T>> {
-    const input = new URL(url, this.#baseUrl);
+    return await this.request<T>("GET", url, undefined, searchParams);
+  }
+
+  public async post<T extends string | object | null>(
+    url: string | URL,
+    body: object | BodyInit,
+    searchParams?: URLSearchParams,
+  ): Promise<HTTPResponse<T>> {
+    return await this.request("POST", url, body, searchParams);
+  }
+
+  public async delete<T extends string | object | null | void>(
+    url: string | URL,
+    searchParams?: URLSearchParams,
+  ): Promise<HTTPResponse<T>> {
+    return await this.request<T>("DELETE", url, undefined, searchParams);
+  }
+
+  public async request<T extends string | object | null | void>(
+    method: "GET" | "POST" | "DELETE",
+    url: string | URL,
+    body?: object | BodyInit,
+    searchParams?: URLSearchParams,
+  ): Promise<HTTPResponse<T>> {
+    const input = url instanceof URL ? url : new URL(url, this.#baseUrl);
+
+    if (searchParams) {
+      input.search = searchParams.toString();
+    }
+
     const init: RequestInit = {
       method,
       headers: {
@@ -167,7 +242,6 @@ export class API {
     }
 
     try {
-      // console.debug(`[API:${method}] ${input.toString()}`);
       const response = await fetch(input, init);
       const body = await this.getBody<T>(response);
 
@@ -197,7 +271,7 @@ export class API {
     }
   }
 
-  private async getBody<T extends string | object | null>(response: Response): Promise<T> {
+  private async getBody<T extends string | object | null | void>(response: Response): Promise<T> {
     if (response.status === 204) return null as T;
 
     const contentType = response.headers.get("content-type");

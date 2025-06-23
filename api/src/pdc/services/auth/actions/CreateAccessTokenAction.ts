@@ -24,7 +24,7 @@ import { DexOIDCProvider } from "../providers/DexOIDCProvider.ts";
     rpcAnswerOnFailure: true,
   },
 })
-export class AccessTokenAction extends AbstractAction {
+export class CreateAccessTokenAction extends AbstractAction {
   constructor(private dexOIDCProvider: DexOIDCProvider) {
     super();
   }

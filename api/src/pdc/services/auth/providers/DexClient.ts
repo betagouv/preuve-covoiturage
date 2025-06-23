@@ -26,9 +26,9 @@ export class DexClient implements InitHookInterface {
       return this.#client;
     }
 
-    const host = this.config.get("dex.grpc_host");
+    const hostname = this.config.get("dex.grpc_host");
     const port = this.config.get("dex.grpc_port");
-    this.#client = await getDexClient({ host, port });
+    this.#client = await getDexClient({ hostname, port });
 
     return this.#client;
   }
@@ -39,7 +39,7 @@ export class DexClient implements InitHookInterface {
       return [];
     }
 
-    return result.passwords.map((p) => {
+    const filtered = result.passwords.map((p) => {
       const [role, operator_id] = p.username?.split(":") || [];
       return {
         token_id: p.email,
@@ -47,6 +47,8 @@ export class DexClient implements InitHookInterface {
         role: role as CredentialsRole,
       };
     }).filter((p) => p.operator_id === id);
+
+    return filtered;
   }
 
   async createForOperator(operator_id: number, role = "application"): Promise<DexClientCreateResult> {
