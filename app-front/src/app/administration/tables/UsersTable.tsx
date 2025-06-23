@@ -53,11 +53,10 @@ export default function UsersTable(props: {
   const totalPages = data?.meta.totalPages ?? 1;
 
   const headers = [
-    "Identifiant",
-    "Rôle",
     "Prénom",
     "Nom",
     "Adresse mail",
+    "Rôle",
     "Opérateur",
     "Territoire",
     "Actions",
@@ -87,11 +86,10 @@ export default function UsersTable(props: {
 
   const dataTable =
     data?.data?.map((d) => [
-      d.id,
-      labelRole(d.role),
       d.firstname,
       d.lastname,
       d.email,
+      labelRole(d.role),
       operatorsList().find((o) => o?.id === d.operator_id)?.name,
       territoriesList().find((t) => t?._id === d.territory_id)?.name,
       <ButtonsGroup
