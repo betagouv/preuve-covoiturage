@@ -27,7 +27,7 @@ export default function UsersTable(props: {
   territoryId?: number;
   operatorId?: number;
 }) {
-  const { user, simulatedRole } = useAuth();
+  const { user, simulate, simulatedRole } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const modal = useActionsModal<UsersInterface["data"][0]>();
   const [alert, setAlert] = useState<
@@ -53,11 +53,10 @@ export default function UsersTable(props: {
   const totalPages = data?.meta.totalPages ?? 1;
 
   const headers = [
-    "Identifiant",
-    "Rôle",
     "Prénom",
     "Nom",
     "Adresse mail",
+    "Rôle",
     "Opérateur",
     "Territoire",
     "Actions",
@@ -87,11 +86,10 @@ export default function UsersTable(props: {
 
   const dataTable =
     data?.data?.map((d) => [
-      d.id,
-      labelRole(d.role),
       d.firstname,
       d.lastname,
       d.email,
+      labelRole(d.role),
       operatorsList().find((o) => o?.id === d.operator_id)?.name,
       territoriesList().find((t) => t?._id === d.territory_id)?.name,
       <ButtonsGroup
@@ -226,12 +224,7 @@ export default function UsersTable(props: {
           </Button>
         </>
       )}
-      <Table
-        data={dataTable}
-        headers={headers}
-        colorVariant="blue-ecume"
-        fixed
-      />
+      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
       <Pagination
         count={totalPages}
         defaultPage={currentPage}
@@ -308,9 +301,7 @@ export default function UsersTable(props: {
               <Select
                 label="Rôle"
                 nativeSelectProps={{
-                  value: (modal.typeModal === "update"
-                    ? modal.currentRow.role
-                    : (user?.role ?? "")) as string,
+                  value: (modal.currentRow.role ?? "") as string,
                   onChange: (e) =>
                     modal.validateInputChange(
                       formSchema,
@@ -325,9 +316,9 @@ export default function UsersTable(props: {
                   </option>
                 ))}
               </Select>
-              {((user?.role === "registry.admin" &&
-                !user?.operator_id &&
-                !user?.territory_id) ||
+              {((modal.currentRow.role &&
+                (modal.currentRow.role as string).split(".")[0] ===
+                  "operator") ||
                 user?.operator_id) && (
                 <Select
                   label="Opérateur"
@@ -352,9 +343,9 @@ export default function UsersTable(props: {
                   ))}
                 </Select>
               )}
-              {((user?.role === "registry.admin" &&
-                !user?.operator_id &&
-                !user?.territory_id) ||
+              {((modal.currentRow.role &&
+                (modal.currentRow.role as string).split(".")[0] ===
+                  "territory") ||
                 user?.territory_id) && (
                 <Select
                   label="Territoire"

@@ -54,7 +54,6 @@ export default function ApdfTable(props: {
     <div className={fr.cx("fr-my-4w")}>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <Table
-        fixed
         data={data.result.data
           .map((d, i) => [
             (d.datetime as string).slice(0, 7),
