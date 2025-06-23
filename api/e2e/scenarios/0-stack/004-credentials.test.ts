@@ -27,7 +27,7 @@ describe("Credentials Authentication", () => {
   it("should create credentials and authenticate with them", async () => {
     const http = new API();
     const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
-    const credentials = await http.createCredentials(operator.operator_id, "application");
+    const credentials = await http.createCredentials(operator.operator_id, "operator.application");
     expect(credentials).toMatchObject({
       access_key: expect.any(String),
       secret_key: expect.any(String),
@@ -45,7 +45,7 @@ describe("Credentials Authentication", () => {
     expect(readCredentials.length).toBeGreaterThan(0);
     expect(readCredentials[0]).toMatchObject({
       operator_id: operator.operator_id,
-      role: "application",
+      role: "operator.application",
       token_id: expect.any(String),
     });
   });
@@ -53,7 +53,7 @@ describe("Credentials Authentication", () => {
   it("should create, read and delete credentials", async () => {
     const http = new API();
     const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
-    const credentials = await http.createCredentials(operator.operator_id, "application");
+    const credentials = await http.createCredentials(operator.operator_id, "operator.application");
     expect(credentials).toMatchObject({
       access_key: expect.any(String),
       secret_key: expect.any(String),
@@ -66,7 +66,7 @@ describe("Credentials Authentication", () => {
     expect(list[0]).toMatchObject({
       token_id: expect.any(String),
       operator_id: operator.operator_id,
-      role: "application",
+      role: "operator.application",
     });
 
     // Delete credentials
