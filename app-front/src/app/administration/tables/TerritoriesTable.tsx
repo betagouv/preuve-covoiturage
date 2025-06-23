@@ -310,7 +310,7 @@ export default function TerritoriesTable(props: {
                 }}
               />
               <Input
-                label="Nom de l'opérateur"
+                label="Nom du territoire"
                 state={modal.errors?.name ? "error" : "default"}
                 stateRelatedMessage={modal.errors?.name ?? ""}
                 nativeInputProps={{
