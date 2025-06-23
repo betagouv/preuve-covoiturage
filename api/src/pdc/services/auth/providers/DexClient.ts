@@ -51,7 +51,7 @@ export class DexClient implements InitHookInterface {
     return filtered;
   }
 
-  async createForOperator(operator_id: number, role = "application"): Promise<DexClientCreateResult> {
+  async createForOperator(operator_id: number, role = "operator.application"): Promise<DexClientCreateResult> {
     const access_key = v4();
     const secret_key = randomString();
     const hash = new TextEncoder().encode(await bcrypt_hash(secret_key));

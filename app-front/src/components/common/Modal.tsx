@@ -42,7 +42,7 @@ export function Modal(props: ModalProps) {
   });
 
   const okButton = {
-    children: "Ok",
+    children: "OK",
     onClick: () => {
       props.onClose();
       void props.onSubmit();

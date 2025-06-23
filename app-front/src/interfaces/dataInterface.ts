@@ -67,8 +67,8 @@ export type OperatorTokenInterface = {
 };
 
 export type CreateTokenResponseInterface = {
-  uuid: string;
-  password: string;
+  access_key: string;
+  secret_key: string;
 };
 
 export type OperatorsInterface = {

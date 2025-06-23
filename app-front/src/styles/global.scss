@@ -1,6 +1,12 @@
 @import 'remixicon/fonts/remixicon.css';
 
-.text-center{
+.text-center {
   text-align: center;
 }
 
+.codeblock {
+  display: block;
+  border: 1px solid rgba($color: #999999, $alpha: 0.5);
+  padding: 10px;
+  overflow-x: auto;
+}
