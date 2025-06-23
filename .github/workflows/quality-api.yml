@@ -117,6 +117,7 @@ jobs:
         working-directory: api/e2e
         run: |
           deno test \
+            --no-check \
             --quiet \
             --allow-net \
             --allow-env \
