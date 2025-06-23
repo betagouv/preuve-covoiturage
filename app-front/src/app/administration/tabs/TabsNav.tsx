@@ -3,7 +3,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { useState } from "react";
 import TabOperators from "./TabOperators";
-import TabOperatorTokens from "./TabOperatorTokens";
+import TabOperatorCredentials from "./TabOperatorTokens";
 import TabProfil from "./TabProfil";
 import TabTerritories from "./TabTerritories";
 import TabUsers from "./TabUsers";
@@ -43,7 +43,7 @@ export default function TabsNav() {
     if (user?.operator_id) {
       tabs.push({
         tabId: "5",
-        label: `Tokens d'API`,
+        label: `Clés d'API`,
       });
     }
     return tabs;
@@ -59,7 +59,7 @@ export default function TabsNav() {
       case "4":
         return <TabTerritories />;
       case "5":
-        return <TabOperatorTokens />;
+        return <TabOperatorCredentials />;
     }
   };
 

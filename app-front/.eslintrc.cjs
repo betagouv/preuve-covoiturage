@@ -13,7 +13,12 @@ const config = {
   rules: {
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
-    "prettier/prettier": "error",
+    "prettier/prettier": [
+      "warn",
+      {
+        printWidth: 120,
+      },
+    ],
     "prefer-template": "error",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",

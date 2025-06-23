@@ -118,7 +118,7 @@ services:
       DEX_CLIENT_ID: ${DEX_CLIENT_ID:-secret}
       DEX_CLIENT_SECRET: ${DEX_CLIENT_SECRET:-secret}
       DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8080/auth/callback}
-      DEX_GRPC_HOST: ${DEX_GRPC_HOST:-http://dex}
+      DEX_GRPC_HOST: ${DEX_GRPC_HOST:-dex}
       DEX_GRPC_PORT: ${DEX_GRPC_PORT:-5557}
 
       # ProConnect configuration

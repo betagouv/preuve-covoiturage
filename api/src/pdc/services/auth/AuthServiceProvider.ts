@@ -4,11 +4,11 @@ import { defaultMiddlewareBindings } from "@/pdc/providers/middleware/index.ts";
 import { ValidatorMiddleware } from "@/pdc/providers/superstruct/ValidatorMiddleware.ts";
 import { TokenProvider } from "@/pdc/providers/token/index.ts";
 import { ApplicationPgRepositoryProvider } from "@/pdc/services/application/providers/ApplicationPgRepositoryProvider.ts";
-import { AccessTokenAction } from "@/pdc/services/auth/actions/AccessTokenAction.ts";
-import { CreateAccessTokenAction } from "@/pdc/services/auth/actions/CreateAccessTokenAction.ts";
-import { DeleteAccessTokenAction } from "@/pdc/services/auth/actions/DeleteAccessTokenAction.ts";
-import { ListAccessTokenAction } from "@/pdc/services/auth/actions/ListAccessTokenAction.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { CreateAccessTokenAction } from "./actions/CreateAccessTokenAction.ts";
+import { CreateCredentialsAction } from "./actions/CreateCredentialsAction.ts";
+import { DeleteCredentialsAction } from "./actions/DeleteCredentialsAction.ts";
+import { ReadCredentialsAction } from "./actions/ReadCredentialsAction.ts";
 import { AuthRouter } from "./AuthRouter.ts";
 import { config } from "./config/index.ts";
 import { DexOIDCProvider } from "./providers/DexOIDCProvider.ts";
@@ -27,8 +27,8 @@ import { UserRepository } from "./providers/UserRepository.ts";
   ],
   middlewares: [
     ["validate", ValidatorMiddleware],
-    ...defaultMiddlewareBindings
+    ...defaultMiddlewareBindings,
   ],
-  handlers: [AccessTokenAction, ListAccessTokenAction, CreateAccessTokenAction, DeleteAccessTokenAction],
+  handlers: [CreateAccessTokenAction, ReadCredentialsAction, CreateCredentialsAction, DeleteCredentialsAction],
 })
 export class AuthServiceProvider extends AbstractServiceProvider {}

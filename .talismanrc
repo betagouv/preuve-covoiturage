@@ -3,6 +3,8 @@ scopeconfig:
   - scope: node
   - scope: python
 fileignoreconfig:
+- filename: api/src/lib/pg/sql.ts
+  checksum: 34a1d26889326c6bd576b22b2b4de9ef2a10dcc6d36ee915b3c99028d378bd39
 - filename: .github/workflows/quality-api.yml
   allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email"]
 - filename: attestation/src/app/services/pdfLimited.service.ts
@@ -53,8 +55,10 @@ fileignoreconfig:
   allowed_patterns: [pass]
 - filename: api/e2e/lib/API.ts
   allowed_patterns: [key,"(?i)secretkey","(?i)accesskey"]
+- filename: api/e2e/scenarios/0-stack/004-credentials.test.ts
+  checksum: 6b59470986719df9b04032fb0861d52d0091129c35715b0c5838ad42f280ddab
 - filename: api/e2e/scenarios/**/*.test.ts
-  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email"]
+  allowed_patterns: [key,pass,"(?i)secretkey","(?i)accesskey","(?i)password","(?i)email", "(?i)secret_"]
 - filename: api/e2e/lib/*.ts
   allowed_patterns: ["(?i)key","(?i)pass"]
 - filename: api/src/pdc/proxy/config/dex.ts
@@ -63,3 +67,9 @@ fileignoreconfig:
   allowed_patterns: ["(?i)key","(?i)pass","(?i)secretkey","(?i)accesskey","(?i)password","(?i)secret"]
 - filename: app-front/.env.example
   checksum: 36c5d64bf21daf6fb29fe15a98ece709414d3c7c3b0d350c150aee16354fae0d
+- filename: api/src/pdc/services/auth/actions/CreateAccessTokenAction.ts
+  checksum: a22c5bbce013d19eb5ee58b3403dce9fa7aee71c6a19193c07f9a32a23d547f1
+- filename: api/src/pdc/services/auth/providers/DexClient.ts
+  checksum: dc93dad663156e6b9924148218a02e909a59194e18a3f9c0793ac9ace711e9de
+- filename: api/src/pdc/services/auth/dto/Credentials.ts
+  checksum: 91a64650019bf028b007d007f60dd5aea509dc45da3abcfdb3a00195367f55bc

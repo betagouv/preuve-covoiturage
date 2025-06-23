@@ -11,10 +11,7 @@ import { UserRepository } from "../../services/auth/providers/UserRepository.ts"
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 /**
- * Make sure the application exists, belongs the right operator
- * and is not soft deleted
- *
- * TODO use Redis for a faster lookup
+ * Make sure the application exists, belongs to the right operator and is not soft deleted
  */
 async function checkApplication(
   kernel: KernelInterface,
@@ -67,7 +64,7 @@ export function dexMiddleware(kernel: KernelInterface) {
       req.session = req.session || {};
 
       const repo = kernel.get(UserRepository);
-      const user = await repo.findUserByEmail(data.token_id);
+      const user = await repo.authenticateByEmail(data.token_id);
       if (!user) {
         throw new UnauthorizedException("User not found");
       }
@@ -99,12 +96,26 @@ export function dexMiddleware(kernel: KernelInterface) {
 export function accessTokenMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     dexMiddleware(kernel)(req, _res, async (err: Error | null) => {
-      if (err) {
-        // If dexMiddleware fails, fallback to serverTokenMiddleware
-        await legacyTokenMiddleware(kernel)(req, _res, next);
-      } else {
-        next();
+      if (typeof err === "undefined" || err === null) {
+        // If no error, continue to the next middleware
+        return next();
       }
+
+      // If dexMiddleware fails specificaly on the token format
+      // fallback to legacyTokenMiddleware
+      if (err && "code" in err && err.code === "ERR_JOSE_NOT_SUPPORTED") {
+        return await legacyTokenMiddleware(kernel)(req, _res, next);
+      }
+
+      // @ts-ignore for rpcError property
+      console.error(err.rpcError?.data);
+
+      if (Error.isError(err)) return next(err);
+      if (typeof err === "string") {
+        return next(new Error(err));
+      }
+
+      next();
     });
   };
 }

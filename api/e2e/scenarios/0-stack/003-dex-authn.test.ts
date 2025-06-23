@@ -3,7 +3,7 @@ import { beforeEach, describe, it } from "dep:testing-bdd";
 import { SUPPORTED_VERSIONS, UNSUPPORTED_VERSIONS, USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
-import { rx_datetime, rx_uuidV4 } from "../../lib/regex.ts";
+import { regex_datetime, regex_uuidV4 } from "../../lib/regex.ts";
 import { CreateJourneyResponse } from "../../lib/types.ts";
 
 describe("DEX Authentication", () => {
@@ -32,8 +32,8 @@ describe("DEX Authentication", () => {
       if ("result" in response.body) {
         expect(response.body.result).toBeDefined();
         expect(response.body.result.data).toBeDefined();
-        expect(response.body.result.data.operator_journey_id).toMatch(rx_uuidV4);
-        expect(response.body.result.data.created_at).toMatch(rx_datetime);
+        expect(response.body.result.data.operator_journey_id).toMatch(regex_uuidV4);
+        expect(response.body.result.data.created_at).toMatch(regex_datetime);
       } else if ("error" in response.body) {
         console.error(response.body.error);
         throw new Error(response.body.error?.message || "Unknown error");

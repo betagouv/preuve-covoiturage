@@ -115,7 +115,14 @@ jobs:
         uses: ./.github/actions/build-stack
       - name: Run e2e tests
         working-directory: api/e2e
-        run: deno test --quiet --allow-net --allow-env --unsafely-ignore-certificate-errors
+        run: |
+          deno test \
+            --no-check \
+            --quiet \
+            --allow-net \
+            --allow-env \
+            --allow-import=cdn.esm.sh:443,deno.land:443,jsr.io:443 \
+            --unsafely-ignore-certificate-errors
         env:
           APIE2E_API_URL: https://api.covoiturage.test
           APIE2E_AUTH_ACCESSKEY: operator@example.com

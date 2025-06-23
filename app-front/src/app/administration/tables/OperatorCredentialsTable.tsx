@@ -3,7 +3,7 @@ import { getApiUrl } from "@/helpers/api";
 import { useActionsModal } from "@/hooks/useActionsModal";
 import { useApi } from "@/hooks/useApi";
 import {
-  type CreateTokenResponseInterface,
+  type CreateTokenResponseInterface as Credentials,
   type OperatorTokenInterface,
 } from "@/interfaces/dataInterface";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -13,23 +13,15 @@ import Table from "@codegouvfr/react-dsfr/Table";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-const addOperatorIdQueryParamIfPresent = (urlObj: URL, operatorId?: number) => {
-  if (operatorId) {
-    urlObj.searchParams.set("operator_id", operatorId.toString());
-  }
-};
-
-export default function OperatorTokensTable(props: {
-  title: string;
-  operatorId?: number;
-  refresh: () => void;
-}) {
-  const [createdToken, setCreatedToken] =
-    useState<CreateTokenResponseInterface>();
+export default function OperatorCredentialsTable(props: { title: string; operatorId?: number; refresh: () => void }) {
+  const [credentials, setCredentials] = useState<Credentials>();
 
   const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl("v3", "auth/access_tokens"));
-    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
+    const urlObj = new URL(getApiUrl("v3", "auth/credentials"));
+    if (props.operatorId) {
+      urlObj.searchParams.set("operator_id", props.operatorId.toString());
+    }
+
     return urlObj.toString();
   }, [props.operatorId]);
 
@@ -57,31 +49,48 @@ export default function OperatorTokensTable(props: {
       />,
     ]) ?? [];
 
-  const handleGenerateToken = async () => {
-    const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
-    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
-    const response = await fetch(urlObj, { credentials: "include" });
-    if (response.status == 200) {
-      const createTokenResponse =
-        (await response.json()) as CreateTokenResponseInterface;
-      setCreatedToken(createTokenResponse);
+  const handleCreateCredentials = async () => {
+    const url = new URL(getApiUrl("v3", "auth/credentials"));
+    const init: RequestInit = {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (props.operatorId) {
+      init.body = JSON.stringify({ operator_id: props.operatorId });
+    }
+
+    const response = await fetch(url, init);
+
+    if (response.status == 201) {
+      setCredentials((await response.json()) as Credentials);
     } else {
-      console.error("Failed to generate token:", response.status);
+      console.error("Failed to generate credentials:", response.status);
     }
   };
 
-  const handleDeleteToken = async (tokenId: string) => {
-    const urlObj = new URL(getApiUrl("v3", "auth/access_token"));
-    addOperatorIdQueryParamIfPresent(urlObj, props.operatorId);
-    urlObj.searchParams.set("token_id", tokenId);
-    const response = await fetch(urlObj, {
+  const handleDeleteCredentials = async (tokenId: string) => {
+    const url = new URL(getApiUrl("v3", "auth/credentials"));
+    url.searchParams.set("token_id", tokenId);
+    if (props.operatorId) url.searchParams.set("operator_id", props.operatorId?.toString());
+
+    const response = await fetch(url, {
       credentials: "include",
       method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
     });
-    if (response.status == 200) {
-      setCreatedToken(undefined);
+
+    if (response.status == 204) {
+      setCredentials(undefined);
     } else {
-      console.error("Failed to delete token:", response.status);
+      console.error("Failed to delete credentials:", response.status);
     }
   };
 
@@ -89,13 +98,12 @@ export default function OperatorTokensTable(props: {
     <>
       <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
       <div className={fr.cx("fr-text--md")}>
-        Consulter la documentation de{" "}
         <Link
           href="https://tech.covoiturage.beta.gouv.fr/#topic-connexion-a-l-api"
           target="_blank"
           aria-label={`Ouvrir une nouvelle fenêtre vers la documentation technique`}
         >
-          l&apos;API du RPC
+          Consulter la documentation technique
         </Link>
       </div>
       <>
@@ -112,45 +120,50 @@ export default function OperatorTokensTable(props: {
           Générer
         </Button>
       </>
-      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" fixed />
       <Modal
         open={modal.openModal}
-        title={`${modal.modalTitle(modal.typeModal)} une clé secrète`}
+        title={`Clé d'API`}
         cancelButton={false}
         onOpen={async () => {
           if (modal.typeModal === "create") {
-            await handleGenerateToken();
+            await handleCreateCredentials();
           }
         }}
         onClose={() => {
           modal.setOpenModal(false);
-          setCreatedToken(undefined);
+          setCredentials(undefined);
           props.refresh();
         }}
         onSubmit={async () => {
           if (modal.typeModal === "delete") {
-            await handleDeleteToken(modal.currentRow.token_id as string);
+            await handleDeleteCredentials(modal.currentRow.token_id as string);
           }
-          setCreatedToken(undefined);
+          setCredentials(undefined);
           props.refresh();
         }}
       >
-        {modal.typeModal === "create" && createdToken && (
+        {modal.typeModal === "create" && credentials && (
           <>
-            <div className={fr.cx("fr-text--lead")}>
-              Voici les informations de votre nouvelle clé d&apos;API.
-              Attention, elle ne sera affichée qu&apos;une seule fois&nbsp;!
+            <div className={fr.cx("fr-text--md")}>
+              <p>access_key</p>
+              <code className="codeblock">{credentials.access_key}</code>
             </div>
             <div className={fr.cx("fr-text--md")}>
-              Identifiant : {createdToken?.uuid}
+              <p>secret_key</p>
+              <code className="codeblock">{credentials.secret_key}</code>
             </div>
-            <div className={fr.cx("fr-text--md")}>
-              Clé d&apos;API : <strong>{createdToken?.password}</strong>
-            </div>
+            <blockquote className={fr.cx("fr-callout", "fr-callout--green-tilleul-verveine")}>
+              Attention, la clé n&apos;est affichée qu&apos;une seule fois.
+            </blockquote>
           </>
         )}
-        {modal.typeModal === "delete" &&
-          `Êtes-vous sûr de vouloir supprimer la clé ${modal.currentRow.token_id as string} ?`}
+        {modal.typeModal === "delete" && (
+          <>
+            <p>Êtes-vous sûr de vouloir supprimer la clé&nbsp;?</p>
+            <code className="codeblock">{modal.currentRow.token_id as string}</code>
+          </>
+        )}
       </Modal>
     </>
   );

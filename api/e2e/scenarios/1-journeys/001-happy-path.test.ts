@@ -3,7 +3,7 @@ import { beforeEach, describe, it } from "dep:testing-bdd";
 import { USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
-import { rx_datetime } from "../../lib/regex.ts";
+import { regex_datetime } from "../../lib/regex.ts";
 import { CreateJourneyResponse } from "../../lib/types.ts";
 
 describe("Journey creation", () => {
@@ -42,7 +42,7 @@ describe("Journey creation", () => {
       expect(response.body.result).toBeDefined();
       expect(response.body.result.data).toBeDefined();
       expect(response.body.result.data.operator_journey_id).toEqual(journey.operator_journey_id);
-      expect(response.body.result.data.created_at).toMatch(rx_datetime);
+      expect(response.body.result.data.created_at).toMatch(regex_datetime);
     } else if ("error" in response.body) {
       console.error(response.body.error);
       throw new Error(response.body.error?.message || "Unknown error");

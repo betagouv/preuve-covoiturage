@@ -1,6 +1,7 @@
-import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, InitHookInterface, provider, UnauthorizedException } from "@/ilos/common/index.ts";
 import { encodeBase64 } from "dep:encoding";
 import { createRemoteJWKSet, jwtVerify } from "dep:jose";
+import { JWTExpired } from "https://deno.land/x/jose@v5.6.3/util/errors.ts";
 
 @provider()
 export class DexOIDCProvider implements InitHookInterface {
@@ -22,20 +23,28 @@ export class DexOIDCProvider implements InitHookInterface {
   }
 
   async verifyToken(token: string) {
-    const clientId = this.config.get("dex.client_id");
-    const authBaseUrl = this.config.get("dex.base_url");
-    const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
-      issuer: authBaseUrl,
-      audience: clientId,
-    });
+    try {
+      const clientId = this.config.get("dex.client_id");
+      const authBaseUrl = this.config.get("dex.base_url");
+      const { payload } = await jwtVerify<{ name: string; email: string }>(token, this.getJWKS(), {
+        issuer: authBaseUrl,
+        audience: clientId,
+      });
 
-    const [role, operator_id] = (payload.name || "").split(":");
+      const [role, operator_id] = (payload.name || "").split(":");
 
-    return {
-      operator_id: parseInt(operator_id),
-      role,
-      token_id: payload.email,
-    };
+      return {
+        operator_id: parseInt(operator_id),
+        role,
+        token_id: payload.email,
+      };
+    } catch (err: unknown) {
+      if (err instanceof JWTExpired) {
+        throw new UnauthorizedException(err.message);
+      }
+
+      throw err;
+    }
   }
 
   async getToken(access_key: string, secret_key: string): Promise<string> {
