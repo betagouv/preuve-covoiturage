@@ -72,7 +72,6 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/logout/callback",
-      authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response) => {
         const { state: expectedState } = req.session?.auth || {};
         const state = req.query?.state;

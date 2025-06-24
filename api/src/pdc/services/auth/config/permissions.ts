@@ -201,7 +201,10 @@ function dispatchPermissionsFromMatrix(
 const permissionsByRoles = dispatchPermissionsFromMatrix(permissions);
 
 export function getPermissions(role: string): string[] {
-  return permissionsByRoles[role] || [];
+  return [
+    ...permissionsByRoles["common"],
+    ...permissionsByRoles[role],
+  ];
 }
 
 export const territory = {
