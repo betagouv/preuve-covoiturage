@@ -151,10 +151,10 @@ export class API {
     return response.body;
   }
 
-  public async createCredentials(operator_id: number, role: string): Promise<CreateCredentialsResult> {
+  public async createCredentials(operator_id: number): Promise<CreateCredentialsResult> {
     const response = await this.post<CreateCredentialsResult>(
       `/${this.#apiVersion}/auth/credentials`,
-      { operator_id, role },
+      { operator_id },
     );
 
     if (!response.ok) {

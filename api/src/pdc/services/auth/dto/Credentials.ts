@@ -1,5 +1,5 @@
-import { array, enums, Infer, number, object, optional, string } from "@/lib/superstruct/index.ts";
-
+import { array, enums, Infer, object, optional, string } from "@/lib/superstruct/index.ts";
+import { Id } from "@/pdc/providers/superstruct/shared/index.ts";
 /**
  * Definitions:
  *
@@ -22,7 +22,7 @@ export type CredentialsRole = Infer<typeof CredentialsRole>;
 
 export const Credentials = object({
   token_id: optional(string()),
-  operator_id: number(),
+  operator_id: Id,
   role: CredentialsRole,
 });
 export type Credentials = Infer<typeof Credentials>;
@@ -38,7 +38,7 @@ export type DexClientDeleteResult = void;
 
 // Create
 export const CreateCredentialsParams = object({
-  operator_id: number(),
+  operator_id: Id,
 });
 export type CreateCredentialsParams = Infer<typeof CreateCredentialsParams>;
 
@@ -47,7 +47,7 @@ export type CreateCredentialsResult = Infer<typeof CreateCredentialsResult>;
 
 // Read
 export const ReadCredentialsParams = object({
-  operator_id: number(),
+  operator_id: Id,
 });
 export type ReadCredentialsParams = Infer<typeof ReadCredentialsParams>;
 
@@ -56,7 +56,7 @@ export type ReadCredentialsResult = Infer<typeof ReadCredentialsResult>;
 
 //  Delete
 export const DeleteCredentialsParams = object({
-  operator_id: number(),
+  operator_id: Id,
   token_id: string(),
 });
 export type DeleteCredentialsParams = Infer<typeof DeleteCredentialsParams>;

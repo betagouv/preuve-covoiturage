@@ -2,7 +2,6 @@ import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
-import { castOperatorIdActionParam } from "@/pdc/services/auth/route/OperatorIdCastingActionParam.ts";
 import { CreateCredentialsParams, CreateCredentialsResult } from "../dto/Credentials.ts";
 
 @handler({
@@ -16,7 +15,6 @@ import { CreateCredentialsParams, CreateCredentialsResult } from "../dto/Credent
     path: "/auth/credentials",
     method: "POST",
     successHttpCode: 201,
-    actionParamsFn: castOperatorIdActionParam,
   },
 })
 export class CreateCredentialsAction extends AbstractAction {
