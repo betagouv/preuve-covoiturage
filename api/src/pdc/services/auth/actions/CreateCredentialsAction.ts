@@ -15,7 +15,6 @@ import { CreateCredentialsParams, CreateCredentialsResult } from "../dto/Credent
     path: "/auth/credentials",
     method: "POST",
     successHttpCode: 201,
-    //actionParamsFn: castOperatorIdActionParam,
   },
 })
 export class CreateCredentialsAction extends AbstractAction {

@@ -2,7 +2,6 @@ import { handler } from "@/ilos/common/Decorators.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
 import { DexClient } from "@/pdc/services/auth/providers/DexClient.ts";
-import { castOperatorIdActionParam } from "@/pdc/services/auth/route/OperatorIdCastingActionParam.ts";
 import { DeleteCredentialsParams, DeleteCredentialsResult } from "../dto/Credentials.ts";
 
 @handler({
@@ -16,7 +15,6 @@ import { DeleteCredentialsParams, DeleteCredentialsResult } from "../dto/Credent
     path: "/auth/credentials",
     method: "DELETE",
     successHttpCode: 204,
-    actionParamsFn: castOperatorIdActionParam,
   },
 })
 export class DeleteCredentialsAction extends AbstractAction {
