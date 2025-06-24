@@ -27,7 +27,7 @@ describe("Credentials Authentication", () => {
   it("should create credentials and authenticate with them", async () => {
     const http = new API();
     const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
-    const credentials = await http.createCredentials(operator.operator_id, "operator.application");
+    const credentials = await http.createCredentials(operator.operator_id);
     expect(credentials).toMatchObject({
       access_key: expect.any(String),
       secret_key: expect.any(String),
@@ -53,7 +53,7 @@ describe("Credentials Authentication", () => {
   it("should create, read and delete credentials", async () => {
     const http = new API();
     const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
-    const credentials = await http.createCredentials(operator.operator_id, "operator.application");
+    const credentials = await http.createCredentials(operator.operator_id);
     expect(credentials).toMatchObject({
       access_key: expect.any(String),
       secret_key: expect.any(String),
