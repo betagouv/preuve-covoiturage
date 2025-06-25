@@ -91,6 +91,7 @@ export default function TabExport() {
       end_at: endDate.toDate(),
       territory_id: territorySelectors ? [] : territoryId ? [territoryId] : [],
       geo_selector: territorySelectors,
+      operator_id: user?.operator_id ? [user.operator_id] : [],
     };
 
     setLoading(true);
