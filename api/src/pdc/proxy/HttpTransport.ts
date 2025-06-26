@@ -1,5 +1,5 @@
 import bodyParser from "dep:body-parser";
-import RedisStore from "dep:connect-redis";
+import { RedisStore } from "dep:connect-redis";
 import cors from "dep:cors";
 import express, { NextFunction, Request, Response } from "dep:express";
 import expressSession from "dep:express-session";
