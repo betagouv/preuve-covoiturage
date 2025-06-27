@@ -5,8 +5,7 @@
       'month',
       'label',
       'operator_name',
-    ],
-    schema = 'metabase'
+    ]
     )
 }}
 

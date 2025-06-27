@@ -53,7 +53,7 @@ models:
     metrics:
       +schema: "metrics"
     metabase:
-      +schema: "metabase"
+      +schema: "stats"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:
