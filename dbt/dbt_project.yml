@@ -52,6 +52,8 @@ models:
       +schema: "export"
     metrics:
       +schema: "metrics"
+    metabase:
+      +schema: "stats"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:
