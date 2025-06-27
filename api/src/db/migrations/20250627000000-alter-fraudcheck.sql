@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS fraudcheck.labels DROP COLUMN geo;
