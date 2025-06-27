@@ -43,7 +43,7 @@ import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
 import { injectContext } from "./helpers/injectContext.ts";
 import { mapStatusCode } from "./helpers/mapStatusCode.ts";
 import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts";
-import { accessTokenMiddleware } from "./middlewares/accessTokenMiddleware.ts";
+import { authGuard } from "./middlewares/authGuard.ts";
 import { CacheMiddleware, cacheMiddleware } from "./middlewares/cacheMiddleware.ts";
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
@@ -310,7 +310,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       "/v2/exports",
       rateLimiter(),
-      accessTokenMiddleware(this.kernel),
+      authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response) => {
         const user = get(req, "session.user", {}) as Partial<UserInterface>;
         const action = `export:createVersionTwo`;
@@ -407,12 +407,8 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/profile",
       authRateLimiter(),
-      accessTokenMiddleware(this.kernel),
+      authGuard(this.kernel),
       (req: Request, res: Response, _next: NextFunction) => {
-        if (!("user" in req.session)) {
-          throw new UnauthorizedException();
-        }
-
         res.json(get(req.session, "user"));
       },
     );
