@@ -10,7 +10,7 @@ import Button from "@codegouvfr/react-dsfr/Button";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
 import { type PerimeterType } from "../../../interfaces/searchInterface";
@@ -73,6 +73,14 @@ type ResultInterfaceV3 = {
 export default function TabExport() {
   const { user, simulate, simulatedRole } = useAuth();
   const [territoryId, setTerritoryId] = useState(user?.territory_id);
+  const forceHour = (input: Date | Dayjs, range: "start" | "end"): Date => {
+    const d = dayjs(input);
+    const date =
+      range === "start"
+        ? new Date(Date.UTC(d.year(), d.month(), d.date() - 1, 22, 0, 0, 0))
+        : new Date(Date.UTC(d.year(), d.month(), d.date(), 21, 59, 59, 999));
+    return date;
+  };
   const [startDate, setStartDate] = useState(dayjs().subtract(1, "month"));
   const [endDate, setEndDate] = useState(dayjs().subtract(5, "days"));
   const [territorySelectors, setTerritorySelectors] = useState<TerritorySelectorsInterface>();
@@ -87,8 +95,8 @@ export default function TabExport() {
   const handleExport = async () => {
     const body: ParamsInterfaceV3 = {
       tz: "Europe/Paris",
-      start_at: startDate.toDate(),
-      end_at: endDate.toDate(),
+      start_at: forceHour(startDate, "start"),
+      end_at: forceHour(endDate, "end"),
       territory_id: territorySelectors ? [] : territoryId ? [territoryId] : [],
       geo_selector: territorySelectors,
       operator_id: user?.operator_id ? [user.operator_id] : [],
