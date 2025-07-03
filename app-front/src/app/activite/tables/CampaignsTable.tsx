@@ -1,8 +1,6 @@
-import Pagination from "@/components/common/Pagination";
 import Loading from "@/components/layout/Loading";
-import { getApiUrl } from "@/helpers/api";
+import { Config } from "@/config";
 import { useApi } from "@/hooks/useApi";
-import type { CampaignsInterface } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
@@ -13,27 +11,33 @@ import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
 
 export default function CampaignsTable(props: { title: string; territoryId?: number; operatorId?: number }) {
-  const [currentPage, setCurrentPage] = useState(1);
   const [campaignId, setCampaignId] = useState<number>();
   const { user, simulatedRole } = useAuth();
-  const onChangePage = (id: number) => {
-    setCurrentPage(id);
-  };
-  const url = useMemo(() => {
-    const urlObj = new URL(getApiUrl("v3", "dashboard/campaigns"));
-    if (props.territoryId) {
-      urlObj.searchParams.set("territory_id", props.territoryId.toString());
-    } else if (props.operatorId) {
-      urlObj.searchParams.set("operator_id", props.operatorId.toString());
-    }
-    if (currentPage !== 1) {
-      urlObj.searchParams.set("page", currentPage.toString());
-    }
-    return urlObj.toString();
-  }, [props.territoryId, props.operatorId, currentPage]);
+  const url = `${Config.get<string>("auth.domain")}/rpc?methods=campaign:list`;
+  const init = useMemo(() => {
+    const params = {
+      ...(props.territoryId && { territory_id: props.territoryId }),
+      ...(props.operatorId && { operator_id: props.operatorId }),
+    };
+    return {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "campaign:list",
+        params: params,
+        id: 1,
+      }),
+    };
+  }, [props.territoryId, props.operatorId]);
+  const { data, loading } = useApi<{
+    id: number;
+    result: { meta: null; data: Record<string, string | number>[] };
+    jsonrpc: string;
+  }>(url, false, init);
 
-  const { data, loading } = useApi<CampaignsInterface>(url);
-  const totalPages = data?.meta.totalPages ?? 1;
   const getIcon = (value: string) => {
     return value === "finished" ? (
       <span className={fr.cx("ri-close-circle-fill", "fr-badge--error")} aria-hidden="true"></span>
@@ -44,8 +48,8 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     );
   };
   const dataTable =
-    (data?.data?.map((d, i) => [
-      getIcon(d.status),
+    (data?.result.data.map((d, i) => [
+      getIcon(d.status as string),
       d.start_date,
       d.end_date,
       d.territory_name,
@@ -68,7 +72,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     "",
   ];
 
-  const currentCampaign = data?.data.find((d) => Number(d.id) === campaignId);
+  const currentCampaign = data?.result.data.find((d) => Number(d.id) === campaignId);
   if (loading) return <Loading />;
   return (
     <>
@@ -78,7 +82,6 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
               <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
-              <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage} />
             </>
           ) : (
             <p>Pas de campagnes ...</p>
@@ -115,7 +118,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
             </i>
           </div>
           <JourneysGraph title="Evolution des trajets" campaignId={campaignId} />
-          {(["registry", "territory"].includes(user?.role.split(".")[0] ?? "") && simulatedRole !== "operator") && (
+          {["registry", "territory"].includes(user?.role.split(".")[0] ?? "") && simulatedRole !== "operator" && (
             <OperatorsGraph title="Evolution des trajets par opérateurs" campaignId={campaignId} />
           )}
           <ApdfTable

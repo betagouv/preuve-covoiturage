@@ -1,7 +1,6 @@
 "use client";
 import SelectGeo from "@/components/common/SelectGeo";
 import SelectTerritory from "@/components/common/SelectTerritory";
-import SelectTerritoryByOperator from "@/components/common/SelectTerritoryByOperator";
 import { getApiUrl } from "@/helpers/api";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -86,7 +85,6 @@ export default function TabExport() {
   const [territorySelectors, setTerritorySelectors] = useState<TerritorySelectorsInterface>();
   const [geoSelector, setGeoSelector] = useState<"geo" | "campaign">("campaign");
   const export_endpoint = getApiUrl("v3", `exports`);
-
   // Call related states
   const [response, setResponse] = useState<ResultInterfaceV3 | null>(null);
   const [loading, setLoading] = useState(false);
@@ -174,7 +172,7 @@ export default function TabExport() {
       />
       {user && (
         <div className={fr.cx("fr-mt-4w")}>
-          {!["territory.admin", "territory.user"].includes(user.role) && simulatedRole !== "territory" && (
+          {user.role === "registry.admin" && simulate === false && (
             <RadioButtons
               legend="Périmètre de l'export"
               name="radio"
@@ -209,14 +207,14 @@ export default function TabExport() {
                     }}
                   />
                 )}
-                {(simulatedRole === "operator" || user.role.split(".")[0] === "operator") && (
+                {/* {(simulatedRole === "operator" || user.role.split(".")[0] === "operator") && (
                   <SelectTerritoryByOperator
                     defaultValue={user.territory_id}
                     onChange={(v) => {
                       setTerritoryId(v);
                     }}
                   />
-                )}
+                )} */}
               </>
             )}
             {(!!territoryId || !!territorySelectors) && (
