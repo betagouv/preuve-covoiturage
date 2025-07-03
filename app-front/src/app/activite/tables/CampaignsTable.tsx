@@ -7,7 +7,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { type ReactNode, useMemo, useState } from "react";
-import { TerritoriesInterface } from '../../../interfaces/dataInterface';
+import { TerritoriesInterface } from "../../../interfaces/dataInterface";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -57,18 +57,24 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     );
   };
   const dataTable =
-    (data?.result.data.map((d, i) => [
-      getIcon(d.status as string),
-      new Date(d.start_date).toLocaleDateString(),
-      new Date(d.end_date).toLocaleDateString(),
-      territoriesList().find((t) => t?._id === d.territory_id)?.name,
-      d.name,
-      `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
-      `${(Number(d.max_amount) / 100).toLocaleString()} €`,
-      <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
-        Détails
-      </Button>,
-    ]) as ReactNode[][]) ?? [];
+    (data?.result.data
+      .sort((a, b) => {
+        const da = new Date(a.start_date).getTime();
+        const db = new Date(b.start_date).getTime();
+        return db - da; // ← décroissant
+      })
+      .map((d, i) => [
+        getIcon(d.status as string),
+        new Date(d.start_date).toLocaleDateString(),
+        new Date(d.end_date).toLocaleDateString(),
+        territoriesList().find((t) => t?._id === d.territory_id)?.name,
+        d.name,
+        `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
+        `${(Number(d.max_amount) / 100).toLocaleString()} €`,
+        <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
+          Détails
+        </Button>,
+      ]) as ReactNode[][]) ?? [];
 
   const headers = [
     "Statut",
