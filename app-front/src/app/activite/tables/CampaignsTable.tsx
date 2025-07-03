@@ -65,7 +65,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
       d.name,
       `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
       `${(Number(d.max_amount) / 100).toLocaleString()} €`,
-      <Button key={i} size="small" onClick={() => setCampaignId(Number(d.id))}>
+      <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
         Détails
       </Button>,
     ]) as ReactNode[][]) ?? [];
@@ -81,7 +81,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     "",
   ];
 
-  const currentCampaign = data?.result.data.find((d) => Number(d.id) === campaignId);
+  const currentCampaign = data?.result.data.find((d) => Number(d._id) === campaignId);
   if (loading) return <Loading />;
   return (
     <>
