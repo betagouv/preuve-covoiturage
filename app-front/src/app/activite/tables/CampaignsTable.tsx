@@ -1,11 +1,13 @@
 import Loading from "@/components/layout/Loading";
 import { Config } from "@/config";
+import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { type ReactNode, useMemo, useState } from "react";
+import { TerritoriesInterface } from '../../../interfaces/dataInterface';
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -37,7 +39,14 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     result: { meta: null; data: Record<string, string | number>[] };
     jsonrpc: string;
   }>(url, false, init);
-
+  const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
+  const { data: territoriesData } = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const territoriesList = () => {
+    if (user?.territory_id) {
+      return [territoriesData?.data.find((t) => t._id === user?.territory_id)] as TerritoriesInterface["data"];
+    }
+    return territoriesData?.data ?? [];
+  };
   const getIcon = (value: string) => {
     return value === "finished" ? (
       <span className={fr.cx("ri-close-circle-fill", "fr-badge--error")} aria-hidden="true"></span>
@@ -50,9 +59,9 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
   const dataTable =
     (data?.result.data.map((d, i) => [
       getIcon(d.status as string),
-      d.start_date,
-      d.end_date,
-      d.territory_name,
+      new Date(d.start_date).toLocaleDateString(),
+      new Date(d.end_date).toLocaleDateString(),
+      territoriesList().find((t) => t?._id === d.territory_id)?.name,
       d.name,
       `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
       `${(Number(d.max_amount) / 100).toLocaleString()} €`,
