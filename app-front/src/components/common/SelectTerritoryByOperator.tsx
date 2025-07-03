@@ -6,10 +6,7 @@ import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useEffect, useState } from "react";
 import Loading from "../layout/Loading";
 
-export default function SelectTerritoryByOperator(props: {
-  defaultValue?: number;
-  onChange: (id?: number) => void;
-}) {
+export default function SelectTerritoryByOperator(props: { defaultValue?: number; onChange: (id?: number) => void }) {
   const { user } = useAuth();
   const [value, setValue] = useState<number | undefined>(props.defaultValue);
   const url = `${Config.get<string>(
