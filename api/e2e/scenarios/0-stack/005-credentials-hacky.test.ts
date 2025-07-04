@@ -18,7 +18,7 @@ import { regex_jwt } from "../../lib/regex.ts";
  *
  * Credentials = access_key + secret_key
  */
-describe("Credentials Authentication", () => {
+describe("Credentials Creation", () => {
   it("should fail to create credentials for another operator", async () => {
     const http = new API();
     await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
@@ -64,31 +64,19 @@ describe("Credentials Authentication", () => {
     });
   });
 
-  // it("should create, read and delete credentials", async () => {
-  //   const http = new API();
-  //   const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
-  //   const credentials = await http.createCredentials(operator.operator_id);
-  //   expect(credentials).toMatchObject({
-  //     access_key: expect.any(String),
-  //     secret_key: expect.any(String),
-  //   });
+  it("should fail on empty body", async () => {
+    const http = new API();
+    await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
 
-  //   // Read credentials
-  //   const list = await http.readCredentials(operator.operator_id);
-  //   expect(list).toBeDefined();
-  //   expect(list.length).toBeGreaterThan(0);
-  //   expect(list[0]).toMatchObject({
-  //     token_id: expect.any(String),
-  //     operator_id: operator.operator_id,
-  //     role: "operator.application",
-  //   });
+    // @ts-expect-error type error to simulate empty body
+    await expect(http.createCredentials(undefined)).rejects.toThrow(ForbiddenException);
+  });
 
-  //   // Delete credentials
-  //   const { operator_id, token_id } = list[0];
-  //   await http.deleteCredentials(operator_id, token_id!);
+  it("should fail on wrong payload", async () => {
+    const http = new API();
+    await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
 
-  //   // Verify deletion
-  //   const updatedCredentials = await http.readCredentials(operator.operator_id);
-  //   expect(updatedCredentials.filter((i) => i.token_id === token_id).length).toBe(0);
-  // });
+    // @ts-expect-error type error to simulate wrong payload
+    await expect(http.createCredentials("wrong")).rejects.toThrow(ForbiddenException);
+  });
 });

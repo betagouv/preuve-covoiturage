@@ -160,7 +160,7 @@ export class API {
     );
 
     if (!response.ok) {
-      const { error } = response.body as { error?: string };
+      const { error } = response.body as { error?: string } || response.body;
       throw newExceptionFromHttpStatus(response.status, error || response.statusText);
     }
 
