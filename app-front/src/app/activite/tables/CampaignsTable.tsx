@@ -1,11 +1,14 @@
 import Loading from "@/components/layout/Loading";
 import { Config } from "@/config";
+import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
+import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
+import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -13,6 +16,8 @@ import ApdfTable from "./ApdfTable";
 export default function CampaignsTable(props: { title: string; territoryId?: number; operatorId?: number }) {
   const [campaignId, setCampaignId] = useState<number>();
   const { user, simulatedRole } = useAuth();
+  const pageSize = 15;
+  const [page, setPage] = useState(1);
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=campaign:list`;
   const init = useMemo(() => {
     const params = {
@@ -37,7 +42,14 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     result: { meta: null; data: Record<string, string | number>[] };
     jsonrpc: string;
   }>(url, false, init);
-
+  const territoriesApiUrl = getApiUrl("v3", `dashboard/territories?limit=200`);
+  const { data: territoriesData } = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const territoriesList = () => {
+    if (user?.territory_id) {
+      return [territoriesData?.data.find((t) => t._id === user?.territory_id)] as TerritoriesInterface["data"];
+    }
+    return territoriesData?.data ?? [];
+  };
   const getIcon = (value: string) => {
     return value === "finished" ? (
       <span className={fr.cx("ri-close-circle-fill", "fr-badge--error")} aria-hidden="true"></span>
@@ -47,19 +59,32 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
       value
     );
   };
-  const dataTable =
-    (data?.result.data.map((d, i) => [
-      getIcon(d.status as string),
-      d.start_date,
-      d.end_date,
-      d.territory_name,
-      d.name,
-      `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
-      `${(Number(d.max_amount) / 100).toLocaleString()} €`,
-      <Button key={i} size="small" onClick={() => setCampaignId(Number(d.id))}>
-        Détails
-      </Button>,
-    ]) as ReactNode[][]) ?? [];
+  const active = data?.result.data
+    .filter((d) => d.status === "active")
+    .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+
+  const others = data?.result.data
+    .filter((d) => d.status !== "active")
+    .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+  const dataTableFull = [...(active ?? []), ...(others ?? [])].map((d, i) => [
+    getIcon(d.status as string),
+    new Date(d.start_date).toLocaleDateString(),
+    new Date(d.end_date).toLocaleDateString(),
+    territoriesList().find((t) => t._id === d.territory_id)?.name ?? d.territory_id,
+    d.name,
+    `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
+    `${(Number(d.max_amount) / 100).toLocaleString()} €`,
+    <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
+      Détails
+    </Button>,
+  ]) as ReactNode[][];
+  const pageCount = Math.max(1, Math.ceil(dataTableFull.length / pageSize));
+  const dataTable = dataTableFull.slice((page - 1) * pageSize, page * pageSize);
+
+  // ⚠️ si les données changent, on revient à la première page
+  useEffect(() => {
+    setPage(1);
+  }, [dataTableFull.length]);
 
   const headers = [
     "Statut",
@@ -72,7 +97,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     "",
   ];
 
-  const currentCampaign = data?.result.data.find((d) => Number(d.id) === campaignId);
+  const currentCampaign = data?.result.data.find((d) => Number(d._id) === campaignId);
   if (loading) return <Loading />;
   return (
     <>
@@ -82,6 +107,19 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
               <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+              <div className={fr.cx("fr-grid-row", "fr-mt-5w")}>
+                <div className={fr.cx("fr-mx-auto")}>
+                  <Pagination
+                    defaultPage={page}
+                    count={pageCount}
+                    getPageLinkProps={(value) => ({
+                      onClick: () => setPage(value),
+                      href: "#",
+                    })}
+                    showFirstLast
+                  />
+                </div>
+              </div>
             </>
           ) : (
             <p>Pas de campagnes ...</p>
