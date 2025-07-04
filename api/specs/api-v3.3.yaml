@@ -1,4 +1,4 @@
-openapi: 3.1.1
+openapi: 3.0.1
 info:
   title: Registre de preuve de covoiturage - Documentation technique
   version: '3.3'
@@ -180,16 +180,13 @@ paths:
     delete:
       operationId: 'auth:deleteCredentials'
       summary: Supprimer une clé d'API de l'opérateur
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token_id:
-                  type: string
-                  description: Identifiant de la clé d'API à supprimer
+      parameters:
+        - name: token_id
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Identifiant de la clé d'API à supprimer
 
       responses:
         '204':
