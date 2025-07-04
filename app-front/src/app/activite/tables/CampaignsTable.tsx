@@ -2,12 +2,12 @@ import Loading from "@/components/layout/Loading";
 import { Config } from "@/config";
 import { getApiUrl } from "@/helpers/api";
 import { useApi } from "@/hooks/useApi";
+import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { type ReactNode, useMemo, useState } from "react";
-import { TerritoriesInterface } from "../../../interfaces/dataInterface";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -56,25 +56,25 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
       value
     );
   };
-  const dataTable =
-    (data?.result.data
-      .sort((a, b) => {
-        const da = new Date(a.start_date).getTime();
-        const db = new Date(b.start_date).getTime();
-        return db - da; // ← décroissant
-      })
-      .map((d, i) => [
-        getIcon(d.status as string),
-        new Date(d.start_date).toLocaleDateString(),
-        new Date(d.end_date).toLocaleDateString(),
-        territoriesList().find((t) => t?._id === d.territory_id)?.name,
-        d.name,
-        `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
-        `${(Number(d.max_amount) / 100).toLocaleString()} €`,
-        <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
-          Détails
-        </Button>,
-      ]) as ReactNode[][]) ?? [];
+  const active = data?.result.data
+    .filter((d) => d.status === "active")
+    .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+
+  const others = data?.result.data
+    .filter((d) => d.status !== "active")
+    .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+  const dataTable = [...(active ?? []), ...(others ?? [])].map((d, i) => [
+    getIcon(d.status as string),
+    new Date(d.start_date).toLocaleDateString(),
+    new Date(d.end_date).toLocaleDateString(),
+    territoriesList().find((t) => t?._id === d.territory_id)?.name,
+    d.name,
+    `${(Number(d.incentive_sum) / 100).toLocaleString()} €`,
+    `${(Number(d.max_amount) / 100).toLocaleString()} €`,
+    <Button key={i} size="small" onClick={() => setCampaignId(Number(d._id))}>
+      Détails
+    </Button>,
+  ]) as ReactNode[][];
 
   const headers = [
     "Statut",
