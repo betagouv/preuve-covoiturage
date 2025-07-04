@@ -1,6 +1,6 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
-import { USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
+import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 
 describe("Unauthenticated smoke test", () => {
@@ -32,7 +32,9 @@ describe("Authenticated smoke test", () => {
   const http = new API();
 
   beforeEach(async () => {
-    if (!http.token) await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
+    const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
+    const { access_key, secret_key } = await http.createCredentials(operator.operator_id);
+    await http.authenticate(access_key, secret_key);
   });
 
   it("should get a JWT token", async () => {
@@ -49,7 +51,7 @@ describe("Authenticated smoke test", () => {
     expect(response.body).toMatchObject({
       operator_id: 1,
       role: "operator.admin",
-      email: "operator@example.com",
+      email: OPERATOR_EMAIL,
     });
   });
 });

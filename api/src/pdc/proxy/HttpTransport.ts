@@ -169,7 +169,7 @@ export class HttpTransport implements TransportInterface {
     const redisConfig = this.config.get("connections.redis");
     const redis = new Redis(redisConfig);
 
-    const sessionMiddleware = expressSession({
+    this.app.use(expressSession({
       cookie: {
         path: "/",
         httpOnly: true,
@@ -184,14 +184,7 @@ export class HttpTransport implements TransportInterface {
       resave: false,
       saveUninitialized: false,
       store: new RedisStore({ client: redis, prefix: "proxy:" }),
-    });
-
-    this.app.use(function (req: Request, res: Response, next: NextFunction) {
-      if (req.headers.authorization) {
-        return next();
-      }
-      return sessionMiddleware(req, res, next);
-    });
+    }));
   }
 
   private registerSecurity(): void {

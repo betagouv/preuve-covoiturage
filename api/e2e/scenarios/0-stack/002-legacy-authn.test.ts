@@ -14,7 +14,8 @@ describe("Legacy Authentication", () => {
     expect(http.token).toBeDefined();
   });
 
-  it("should be authenticated", async () => {
+  it("should be authenticated as application", async () => {
+    http.clearSessionCookie();
     const response = await http.get<ProfileResponse>("/profile");
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();

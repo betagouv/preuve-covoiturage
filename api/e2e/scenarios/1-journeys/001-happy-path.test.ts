@@ -1,6 +1,6 @@
 import { expect } from "dep:expect";
 import { beforeEach, describe, it } from "dep:testing-bdd";
-import { USER_ACCESSKEY, USER_SECRETKEY } from "../../config.ts";
+import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { regex_datetime } from "../../lib/regex.ts";
@@ -10,7 +10,9 @@ describe("Journey creation", () => {
   const http = new API();
 
   beforeEach(async () => {
-    if (!http.token) await http.authenticate(USER_ACCESSKEY, USER_SECRETKEY);
+    const operator = await http.login<{ operator_id: number }>(OPERATOR_EMAIL, OPERATOR_PASSWORD);
+    const { access_key, secret_key } = await http.createCredentials(operator.operator_id);
+    if (!http.token) await http.authenticate(access_key, secret_key);
   });
 
   it("should get a valid operator journey from faker", async () => {

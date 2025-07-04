@@ -12,12 +12,14 @@ import { ReadCredentialsAction } from "./actions/ReadCredentialsAction.ts";
 import { AuthRouter } from "./AuthRouter.ts";
 import { config } from "./config/index.ts";
 import { DexOIDCProvider } from "./providers/DexOIDCProvider.ts";
+import { OperatorRepository } from "./providers/OperatorRepository.ts";
 import { UserRepository } from "./providers/UserRepository.ts";
 
 @serviceProvider({
   config,
   providers: [
     UserRepository,
+    OperatorRepository,
     DexOIDCProvider,
     ProConnectOIDCProvider,
     [router, AuthRouter],
