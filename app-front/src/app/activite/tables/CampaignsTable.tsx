@@ -6,8 +6,9 @@ import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
+import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import JourneysGraph from "../graphs/JourneysGraph";
 import OperatorsGraph from "../graphs/OperatorsGraph";
 import ApdfTable from "./ApdfTable";
@@ -15,6 +16,8 @@ import ApdfTable from "./ApdfTable";
 export default function CampaignsTable(props: { title: string; territoryId?: number; operatorId?: number }) {
   const [campaignId, setCampaignId] = useState<number>();
   const { user, simulatedRole } = useAuth();
+  const pageSize = 25;
+  const [page, setPage] = useState(1);
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=campaign:list`;
   const init = useMemo(() => {
     const params = {
@@ -63,7 +66,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
   const others = data?.result.data
     .filter((d) => d.status !== "active")
     .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
-  const dataTable = [...(active ?? []), ...(others ?? [])].map((d, i) => [
+  const dataTableFull = [...(active ?? []), ...(others ?? [])].map((d, i) => [
     getIcon(d.status as string),
     new Date(d.start_date).toLocaleDateString(),
     new Date(d.end_date).toLocaleDateString(),
@@ -75,6 +78,13 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
       Détails
     </Button>,
   ]) as ReactNode[][];
+  const pageCount = Math.max(1, Math.ceil(dataTableFull.length / pageSize));
+  const dataTable = dataTableFull.slice((page - 1) * pageSize, page * pageSize);
+
+  // ⚠️ si les données changent, on revient à la première page
+  useEffect(() => {
+    setPage(1);
+  }, [dataTableFull.length]);
 
   const headers = [
     "Statut",
@@ -97,6 +107,15 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
               <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+              <Pagination
+                defaultPage={page}
+                count={pageCount}
+                getPageLinkProps={(value) => ({
+                  onClick: () => setPage(value),
+                  href: "#",
+                })}
+                showFirstLast
+              />
             </>
           ) : (
             <p>Pas de campagnes ...</p>
