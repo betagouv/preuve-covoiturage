@@ -42,7 +42,7 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     result: { meta: null; data: Record<string, string | number>[] };
     jsonrpc: string;
   }>(url, false, init);
-  const territoriesApiUrl = getApiUrl("v3", `dashboard/territories`);
+  const territoriesApiUrl = getApiUrl("v3", `dashboard/territories?limit=200`);
   const { data: territoriesData } = useApi<TerritoriesInterface>(territoriesApiUrl);
   const territoriesList = () => {
     if (user?.territory_id) {
