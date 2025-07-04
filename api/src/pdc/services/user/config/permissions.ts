@@ -11,8 +11,9 @@ const permissions = {
   "application.list": ["operator.user", "operator.admin"],
   "application.revoke": ["operator.admin"],
   "credentials.create": ["registry.admin", "operator.admin"],
-  "credentials.list": ["registry.admin", "operator.admin"],
+  "credentials.read": ["registry.admin", "operator.admin"],
   "credentials.delete": ["registry.admin", "operator.admin"],
+  "access_token.create": ["operator.application"],
   "certificate.create": [
     "operator.application",
     "operator.admin",

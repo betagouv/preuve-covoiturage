@@ -28,10 +28,6 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
   ): Promise<ResultType> {
     const [basePermission, permissionScopes] = options;
 
-    if (!basePermission || typeof basePermission !== "string") {
-      throw new InvalidParamsException("Invalid base permission");
-    }
-
     if (!permissionScopes.length) {
       throw new InvalidParamsException("No permissions defined");
     }
@@ -43,7 +39,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     }
 
     // If the user has basePermission --> OK
-    if (permissions.indexOf(basePermission) > -1) {
+    if (permissions.indexOf(String(basePermission)) > -1) {
       return next(params, context);
     }
 
@@ -53,13 +49,6 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     // the param to check is usually a territory_id or operator_id to make sure the user
     // is allowed to access the data for that specific territory or operator.
     for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
-      console.log({
-        p: get(params, paramsPath, Symbol()),
-        c: get(context, contextPath, Symbol()),
-        found: permissions.indexOf(scopedPermission) > -1,
-        scopedPermission,
-        permissions,
-      });
       if (
         this.paramMatchesContext(
           get(params, paramsPath, Symbol()),
@@ -77,7 +66,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
   private paramMatchesContext(value: unknown | unknown[], list: unknown | unknown[]): boolean {
     const val = Array.isArray(value) ? value : [value];
     const lst = Array.isArray(list) ? list : [list];
-    return val.reduce((p, c) => p && lst.includes(c), true);
+    return val.reduce((p, c) => p && lst.map((i) => String(i)).includes(String(c)), true);
   }
 }
 

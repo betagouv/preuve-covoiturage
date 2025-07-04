@@ -39,7 +39,7 @@ export class EnforceOperatorMiddleware implements MiddlewareInterface<void> {
       throw new UnauthorizedException("Operator ID is required in the session context");
     }
 
-    if (params.operator_id !== context_id) {
+    if (Number(params.operator_id) !== Number(context_id)) {
       throw new ForbiddenException(
         `Operator ID mismatch: expected ${String(context_id)}, got ${params.operator_id}`,
       );

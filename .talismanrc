@@ -22,7 +22,7 @@ fileignoreconfig:
 - filename: docker/dex/config-local.yaml
   checksum: 49435999ee3dc46f53f2265842affd97a56e3d7d7b5bc1bd712a2e0ce10072f0
 - filename: docker/dex/config-e2e.yaml
-  checksum: f6166bf23321cce48d5f72d7a749b8a782e485bd0eb642dc540edf5f6b339a6c
+  checksum: b9d61835e4bc73b76af477bdd2e9a3cf86eb60219a7a6fc6134363801060022d
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
 - filename: docker-compose.e2e.yml
@@ -54,7 +54,9 @@ fileignoreconfig:
 - filename: api/src/pdc/providers/migration/*Migrator.ts
   allowed_patterns: [pass]
 - filename: api/e2e/lib/API.ts
-  allowed_patterns: [key,"(?i)secretkey","(?i)accesskey"]
+  allowed_patterns: [key,"(?i)secretkey","(?i)accesskey","(?i)access","(?i)secret"]
+- filename: api/src/pdc/services/auth/actions/CreateAccessTokenAction.ts
+  allowed_patterns: [key,"(?i)secretkey","(?i)accesskey","(?i)access","(?i)secret"]
 - filename: api/e2e/scenarios/0-stack/004-credentials.test.ts
   checksum: 6b59470986719df9b04032fb0861d52d0091129c35715b0c5838ad42f280ddab
 - filename: api/e2e/scenarios/**/*.test.ts
@@ -67,8 +69,6 @@ fileignoreconfig:
   allowed_patterns: ["(?i)key","(?i)pass","(?i)secretkey","(?i)accesskey","(?i)password","(?i)secret"]
 - filename: app-front/.env.example
   checksum: 36c5d64bf21daf6fb29fe15a98ece709414d3c7c3b0d350c150aee16354fae0d
-- filename: api/src/pdc/services/auth/actions/CreateAccessTokenAction.ts
-  checksum: a22c5bbce013d19eb5ee58b3403dce9fa7aee71c6a19193c07f9a32a23d547f1
 - filename: api/src/pdc/services/auth/providers/DexClient.ts
   checksum: dc93dad663156e6b9924148218a02e909a59194e18a3f9c0793ac9ace711e9de
 - filename: api/src/pdc/services/auth/dto/Credentials.ts

@@ -1,5 +1,6 @@
 import { expect } from "dep:expect";
 import { describe, it } from "dep:testing-bdd";
+import { OPERATOR_EMAIL, OPERATOR_PASSWORD } from "../../config.ts";
 import { API } from "../../lib/API.ts";
 import { regex_jwt } from "../../lib/regex.ts";
 
@@ -10,9 +11,6 @@ import { regex_jwt } from "../../lib/regex.ts";
  * Credentials = access_key + secret_key
  */
 describe("Credentials Authentication", () => {
-  const OPERATOR_EMAIL = "operator@example.com";
-  const OPERATOR_PASSWORD = "admin1234";
-
   it("should authenticate an operator", async () => {
     const http = new API();
     const operator = await http.login(OPERATOR_EMAIL, OPERATOR_PASSWORD);
