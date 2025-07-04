@@ -16,7 +16,7 @@ import ApdfTable from "./ApdfTable";
 export default function CampaignsTable(props: { title: string; territoryId?: number; operatorId?: number }) {
   const [campaignId, setCampaignId] = useState<number>();
   const { user, simulatedRole } = useAuth();
-  const pageSize = 25;
+  const pageSize = 15;
   const [page, setPage] = useState(1);
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=campaign:list`;
   const init = useMemo(() => {
@@ -107,15 +107,19 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
             <>
               <h3 className={fr.cx("fr-callout__title")}>{props.title}</h3>
               <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
-              <Pagination
-                defaultPage={page}
-                count={pageCount}
-                getPageLinkProps={(value) => ({
-                  onClick: () => setPage(value),
-                  href: "#",
-                })}
-                showFirstLast
-              />
+              <div className={fr.cx("fr-grid-row", "fr-mt-5w")}>
+                <div className={fr.cx("fr-mx-auto")}>
+                  <Pagination
+                    defaultPage={page}
+                    count={pageCount}
+                    getPageLinkProps={(value) => ({
+                      onClick: () => setPage(value),
+                      href: "#",
+                    })}
+                    showFirstLast
+                  />
+                </div>
+              </div>
             </>
           ) : (
             <p>Pas de campagnes ...</p>

@@ -6,11 +6,7 @@ import { Download } from "@codegouvfr/react-dsfr/Download";
 import Table from "@codegouvfr/react-dsfr/Table";
 import { useMemo } from "react";
 
-export default function ApdfTable(props: {
-  title: string;
-  campaignId: number;
-  operatorId?: number;
-}) {
+export default function ApdfTable(props: { title: string; campaignId: number; operatorId?: number }) {
   const url = `${Config.get<string>("auth.domain")}/rpc?methods=apdf:list`;
   const init = useMemo(() => {
     const params = {
@@ -35,18 +31,9 @@ export default function ApdfTable(props: {
     result: { meta: null; data: Record<string, string | number>[] };
     jsonrpc: string;
   }>(url, false, init);
-  const headers = [
-    "Mois",
-    "Opérateur",
-    "Trajets",
-    "Trajets incités",
-    "Montant d'indemnisation",
-    "Fichier",
-  ];
+  const headers = ["Mois", "Opérateur", "Trajets", "Trajets incités", "Montant d'indemnisation", "Fichier"];
   const operatorsApiUrl = getApiUrl("v3", `dashboard/operators`);
-  const operatorsList = useApi<{ data: Record<string, string | number>[] }>(
-    operatorsApiUrl,
-  );
+  const operatorsList = useApi<{ data: Record<string, string | number>[] }>(operatorsApiUrl);
 
   if (!data) return <>Pas d&apos;APDF...</>;
 
@@ -57,8 +44,7 @@ export default function ApdfTable(props: {
         data={data.result.data
           .map((d, i) => [
             (d.datetime as string).slice(0, 7),
-            (operatorsList.data?.data ?? []).find((o) => o.id === d.operator_id)
-              ?.name ?? "inconnu",
+            (operatorsList.data?.data ?? []).find((o) => o.id === d.operator_id)?.name ?? "inconnu",
             d.trips.toLocaleString(),
             d.subsidized.toLocaleString(),
             `${(Number(d.amount) / 100).toLocaleString()} €`,
