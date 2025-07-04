@@ -4,6 +4,8 @@ import {
   DeleteCredentialsResult,
   ReadCredentialsResult,
 } from "@/pdc/services/auth/dto/Credentials.ts";
+import { newExceptionFromHttpStatus } from "../../src/ilos/common/newExceptionFromHttpStatus.ts";
+import { USER_ACCESSKEY, USER_SECRETKEY } from "../config.ts";
 import { env } from "./config.ts";
 import { faker } from "./faker.ts";
 import { RPCResponse } from "./types.ts";
@@ -31,8 +33,8 @@ export class API {
   }
 
   constructor() {
-    this.#defaultAccessKey = env("APIE2E_AUTH_ACCESSKEY");
-    this.#defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
+    this.#defaultAccessKey = USER_ACCESSKEY;
+    this.#defaultSecretKey = USER_SECRETKEY;
   }
 
   /**
@@ -158,7 +160,8 @@ export class API {
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to create credentials: ${response.statusText}`);
+      const { error } = response.body as { error?: string };
+      throw newExceptionFromHttpStatus(response.status, error || response.statusText);
     }
 
     return response.body;

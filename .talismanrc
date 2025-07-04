@@ -22,7 +22,7 @@ fileignoreconfig:
 - filename: docker/dex/config-local.yaml
   checksum: 49435999ee3dc46f53f2265842affd97a56e3d7d7b5bc1bd712a2e0ce10072f0
 - filename: docker/dex/config-e2e.yaml
-  checksum: 90e69566513c8096f271bd7a54025c8acd68cf16d0dddd2a68ee2d364ff45fce
+  checksum: f6166bf23321cce48d5f72d7a749b8a782e485bd0eb642dc540edf5f6b339a6c
 - filename: docker-compose.base.yml
   checksum: 26800d502eead58a42d2972c5077ef5974e45a3a4cc27734c17ce9a5866a8c06
 - filename: docker-compose.e2e.yml

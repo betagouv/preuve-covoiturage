@@ -10,6 +10,9 @@ const permissions = {
   "application.find": ["operator.user", "operator.admin"],
   "application.list": ["operator.user", "operator.admin"],
   "application.revoke": ["operator.admin"],
+  "credentials.create": ["registry.admin", "operator.admin"],
+  "credentials.list": ["registry.admin", "operator.admin"],
+  "credentials.delete": ["registry.admin", "operator.admin"],
   "certificate.create": [
     "operator.application",
     "operator.admin",
