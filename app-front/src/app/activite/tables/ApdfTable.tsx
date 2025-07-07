@@ -38,8 +38,8 @@ export default function ApdfTable(props: { title: string; campaignId: number; op
   const isRegistryAdmin = user?.role === "registry.admin" && simulate === false;
 
   const headers: string[] = isRegistryAdmin
-    ? ["Mois", "Opérateur", "Trajets", "Pris en charge", "Montant", ""]
-    : ["Mois", "Opérateur", "Pris en charge", "Montant", ""];
+    ? ["Mois", "Opérateur", "Trajets", "Trajets incités", "Montant d'incitations", ""]
+    : ["Mois", "Opérateur", "Trajets incités", "Montant d'incitations", ""];
 
   const operatorName = (id: number | string) => operatorsList.data?.data?.find((o) => o.id === id)?.name ?? "inconnu";
 
