@@ -25,10 +25,7 @@ export default function JourneysGraph(props: { title: string; campaignId: number
   if (!data || data.length === 0) {
     return <p>Pas de campagnes pour ce territoire...</p>;
   }
-  const name = [
-    "trajets éligible, trajets avec Origine OU destination sur le territoire",
-    "Trajets incités et validés par le RPC",
-  ];
+  const name = ["Trajets avec Origine OU destination sur le territoire", "Trajets incités et validés par le RPC"];
   const colors = ["#6a6af4", "#000091"];
   const labels =
     period === "month"
