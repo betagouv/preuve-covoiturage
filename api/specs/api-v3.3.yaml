@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.1
 info:
   title: Registre de preuve de covoiturage - Documentation technique
   version: '3.3'
@@ -61,27 +61,21 @@ info:
 
     ## Licence et version
 servers:
-  - url: 'https://api.covoiturage.beta.gouv.fr/v3.2'
+  - url: 'https://api.covoiturage.beta.gouv.fr/v3.3'
     description: Production
-  - url: 'https://api.demo.covoiturage.beta.gouv.fr/v3.2'
+  - url: 'https://api.demo.covoiturage.beta.gouv.fr/v3.3'
     description: Pré-production
 paths:
   /auth/access_token:
     post:
       operationId: 'auth:access_token'
-      summary: Créer un access_token à partir de clés d'accès
+      summary: Créer un jeton d'accès à partir des clés d'API
       description: |
-        Attention: l'URL est préfixée par le n° de version de l'API.
+        Créer un jeton d'accès (`access_token`) au format JWT pour permettre les échanges entre votre serveur et l'API
+        RPC.
 
-        Créer un access_token pour permettre les échanges entre votre
-        serveur et l'API RPC.
+        Le jeton d'accès est valide 5 minutes.
 
-        L'access_token est valide 5 minutes.
-
-        Sa création nécessite l'envoi de `access_key` et `secret_key` que vous
-        devez générer dans l'application RPC.
-
-        # TODO : ajouter un lien vers le schema du flow HTTP dans le topic Auth
       requestBody:
         required: true
         content:
@@ -98,7 +92,7 @@ paths:
                 - secret_key
       responses:
         '201':
-          description: Le token est créé
+          description: Le jeton est créé
           content:
             'application/json':
               schema:
@@ -106,11 +100,103 @@ paths:
                 properties:
                   access_token:
                     type: string
-                    description: un token JWT à durée de vie limitée
-                  expires_in:
-                    type: number
-                    description: durée de vie du token en secondes
-        # TODO : ajouter les erreurs
+                    description: jeton d'accès JWT
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
+      tags:
+        - Authentification
+
+  /auth/credentials:
+    get:
+      operationId: 'auth:readCredentials'
+      summary: Lister les clés d'API de l'opérateur
+      description: |
+        Vous ne pouvez pas récupérer les valeurs des secrets. Si vous avez perdu un `secret_key`, vous devez le
+        régénérer à nouveau.
+
+      responses:
+        '200':
+          description: La liste des credentials de l'opérateur
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    operator_id:
+                      type: integer
+                      description: Identifiant de l'opérateur
+                      example: 42
+                    role:
+                      type: string
+                      description: Rôle de la clé d'API
+                      enum:
+                      - operator.application
+                      example: operator.application
+                    token_id:
+                      type: string
+                      description: Identifiant de la clé d'API
+                      example: cb82956e-3833-4925-9891-47d9b2ba0186
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
+      tags:
+        - Authentification
+
+    post:
+      operationId: 'auth:createCredentials'
+      summary: Créer une clé d'API pour l'opérateur
+      description: |
+        La clé d'API est composée d'une `access_key` et d'un `secret_key`. Ces deux clés sont nécessaires pour
+        s'authentifier auprès de l'API RPC.
+
+      responses:
+        '201':
+          description: La clé d'API a été créée
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  access_key:
+                    type: string
+                    description: la clé d'accès à l'API RPC
+                    example: 9dc21a6c-bc33-4583-82cb-e96f966d4faf
+                  secret_key:
+                    type: string
+                    description: le secret de la clé d'accès à l'API RPC
+                    example: 1a2b3c4d5e6f7g8h9i0j
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
+      tags:
+        - Authentification
+
+    delete:
+      operationId: 'auth:deleteCredentials'
+      summary: Supprimer une clé d'API de l'opérateur
+      parameters:
+        - name: token_id
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Identifiant de la clé d'API à supprimer
+
+      responses:
+        '204':
+          description: La clé d'API a été supprimée
+        '401':
+          $ref: '#/components/responses/http_401_rpc'
+        '403':
+          $ref: '#/components/responses/http_403_rpc'
+      tags:
+        - Authentification
 
   /journeys:
     post:
@@ -1755,6 +1841,25 @@ components:
       scheme: bearer
       bearerFormat: JWT
 tags:
+  - name: Authentification
+    description: |
+      L'accès à l'API est protégé par un système d'authentification basé sur des tokens JWT à durée de vie limitée.
+      
+      A l'aide des clés d'API (`access_key` et `secret_key`), vous pouvez obtenir un token d'accès (`access_token`) qui
+      doit être envoyé dans les headers de chaque requête. Le token doit être envoyé dans l'en-tête `Authorization` sous
+      la forme `Bearer {access_token}`.
+
+      La création des clés d'API est disponible uniquement pour les opérateurs de covoiturage dans leur interface
+      d'administration. Ces clés n'ont pas de durée de vie limitée mais nous vous recommandons de les régénérer
+      régulièrement et d'en créer une pour chaque environnement (production, pré-production, développement, etc...).
+
+      Votre serveur doit ensuite demander un nouveau token via la route `/auth/access_token` en utilisant les clés
+      d'API à chaque fois qu'une requête authentifiée est executée.
+
+      Un exemple d'implémentation est disponible dans le dossier des tests _end-to-end_ de l'API avec un SDK et
+      plusieurs _flows_ d'authentification. [Voir le code sur
+      Github](https://github.com/betagouv/preuve-covoiturage/tree/main/api/e2e)
+
   - name: Trajets courte distance
     description: |
       L'API Trajets permet aux opérateurs de covoiturage d'envoyer des trajets
@@ -2048,7 +2153,7 @@ x-topics:
       l'opération (spécifique ou standardisée).
   - title: Export de trajets
     content: |
-      ## Schema d'export des trajets v3.2
+      ## Schema d'export des trajets v3.3
 
       Les trajets sont exportés au format CSV (séparateur : `,`) et compressés au
       format ZIP.
