@@ -1,7 +1,6 @@
 "use client";
 import SelectGeo from "@/components/common/SelectGeo";
 import SelectTerritory from "@/components/common/SelectTerritory";
-import SelectTerritoryByOperator from "@/components/common/SelectTerritoryByOperator";
 import { getApiUrl } from "@/helpers/api";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -10,7 +9,7 @@ import Button from "@codegouvfr/react-dsfr/Button";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
 import { type PerimeterType } from "../../../interfaces/searchInterface";
@@ -73,12 +72,19 @@ type ResultInterfaceV3 = {
 export default function TabExport() {
   const { user, simulate, simulatedRole } = useAuth();
   const [territoryId, setTerritoryId] = useState(user?.territory_id);
+  const forceHour = (input: Date | Dayjs, range: "start" | "end"): Date => {
+    const d = dayjs(input);
+    const date =
+      range === "start"
+        ? new Date(Date.UTC(d.year(), d.month(), d.date() - 1, 22, 0, 0, 0))
+        : new Date(Date.UTC(d.year(), d.month(), d.date(), 21, 59, 59, 999));
+    return date;
+  };
   const [startDate, setStartDate] = useState(dayjs().subtract(1, "month"));
   const [endDate, setEndDate] = useState(dayjs().subtract(5, "days"));
   const [territorySelectors, setTerritorySelectors] = useState<TerritorySelectorsInterface>();
   const [geoSelector, setGeoSelector] = useState<"geo" | "campaign">("campaign");
   const export_endpoint = getApiUrl("v3", `exports`);
-
   // Call related states
   const [response, setResponse] = useState<ResultInterfaceV3 | null>(null);
   const [loading, setLoading] = useState(false);
@@ -87,8 +93,8 @@ export default function TabExport() {
   const handleExport = async () => {
     const body: ParamsInterfaceV3 = {
       tz: "Europe/Paris",
-      start_at: startDate.toDate(),
-      end_at: endDate.toDate(),
+      start_at: forceHour(startDate, "start"),
+      end_at: forceHour(endDate, "end"),
       territory_id: territorySelectors ? [] : territoryId ? [territoryId] : [],
       geo_selector: territorySelectors,
       operator_id: user?.operator_id ? [user.operator_id] : [],
@@ -166,7 +172,7 @@ export default function TabExport() {
       />
       {user && (
         <div className={fr.cx("fr-mt-4w")}>
-          {!["territory.admin", "territory.user"].includes(user.role) && simulatedRole !== "territory" && (
+          {user.role === "registry.admin" && simulate === false && (
             <RadioButtons
               legend="Périmètre de l'export"
               name="radio"
@@ -201,14 +207,14 @@ export default function TabExport() {
                     }}
                   />
                 )}
-                {(simulatedRole === "operator" || user.role.split(".")[0] === "operator") && (
+                {/* {(simulatedRole === "operator" || user.role.split(".")[0] === "operator") && (
                   <SelectTerritoryByOperator
                     defaultValue={user.territory_id}
                     onChange={(v) => {
                       setTerritoryId(v);
                     }}
                   />
-                )}
+                )} */}
               </>
             )}
             {(!!territoryId || !!territorySelectors) && (

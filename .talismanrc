@@ -73,3 +73,7 @@ fileignoreconfig:
   checksum: dc93dad663156e6b9924148218a02e909a59194e18a3f9c0793ac9ace711e9de
 - filename: api/src/pdc/services/auth/dto/Credentials.ts
   checksum: 91a64650019bf028b007d007f60dd5aea509dc45da3abcfdb3a00195367f55bc
+- filename: dashboard/src/environments/environment.ts
+  checksum: 1009fa48bed279f75cbda214d8cab09c21feac71e7492c43291bf24688772a45
+- filename: api/specs/api-v3.3.yaml
+  checksum: 9c9aad9660da5bfdac53266fdf9167fb845fd83bde8fe55f5740f224537f597d
