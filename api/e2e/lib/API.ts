@@ -4,6 +4,7 @@ import {
   DeleteCredentialsResult,
   ReadCredentialsResult,
 } from "@/pdc/services/auth/dto/Credentials.ts";
+import { newExceptionFromHttpStatus } from "../../src/ilos/common/newExceptionFromHttpStatus.ts";
 import { env } from "./config.ts";
 import { faker } from "./faker.ts";
 import { RPCResponse } from "./types.ts";
@@ -21,18 +22,11 @@ export type HTTPResponse<T = string | object | null> = {
 export class API {
   #baseUrl = env("APIE2E_API_URL", "http://localhost:8080");
   #apiVersion = env("APIE2E_API_VERSION", "v3");
-  #defaultAccessKey: string;
-  #defaultSecretKey: string;
   #accessToken: string | null = null;
   #sessionCookie: string | null = null;
 
   get token(): string | null {
     return this.#accessToken;
-  }
-
-  constructor() {
-    this.#defaultAccessKey = env("APIE2E_AUTH_ACCESSKEY");
-    this.#defaultSecretKey = env("APIE2E_AUTH_SECRETKEY");
   }
 
   /**
@@ -42,14 +36,10 @@ export class API {
    */
 
   // Get a temporary access token using the default access key and secret key.
-  public async authenticate(access_key?: string, secret_key?: string): Promise<void> {
-    access_key = access_key || this.#defaultAccessKey;
-    secret_key = secret_key || this.#defaultSecretKey;
-
+  public async authenticate(access_key: string, secret_key: string): Promise<void> {
     try {
       const url = new URL(`/${this.#apiVersion}/auth/access_token`, this.#baseUrl);
 
-      // console.debug(`[API:authenticate] ${url.toString()}`);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -62,8 +52,8 @@ export class API {
       const body = await this.getBody(response) as { access_token?: string };
 
       if (!response.ok) {
-        console.error(body);
-        throw new Error(`Failed to authenticate ${access_key}`);
+        const { error } = response.body as { error?: string } || response.body;
+        throw newExceptionFromHttpStatus(response.status, error || response.statusText);
       }
 
       if (!body.access_token || typeof body.access_token !== "string") {
@@ -145,7 +135,8 @@ export class API {
     const response = await this.get<ReadCredentialsResult>(`/${this.#apiVersion}/auth/credentials`, params);
 
     if (!response.ok) {
-      throw new Error(`Failed to read credentials: ${response.statusText}`);
+      const { error } = response.body as { error?: string } || response.body;
+      throw newExceptionFromHttpStatus(response.status, error || response.statusText);
     }
 
     return response.body;
@@ -158,7 +149,8 @@ export class API {
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to create credentials: ${response.statusText}`);
+      const { error } = response.body as { error?: string } || response.body;
+      throw newExceptionFromHttpStatus(response.status, error || response.statusText);
     }
 
     return response.body;
@@ -169,7 +161,7 @@ export class API {
     const response = await this.delete<DeleteCredentialsResult>(`/${this.#apiVersion}/auth/credentials`, params);
 
     if (!response.ok) {
-      throw new Error(`Failed to delete credentials: ${response.statusText}`);
+      throw newExceptionFromHttpStatus(response.status, response.statusText);
     }
 
     return;

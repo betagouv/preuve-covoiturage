@@ -19,8 +19,7 @@ import { ConfiguredMiddleware } from "../interfaces.ts";
  *    ^ base permission       ^ scoped permission    ^ context path            ^ params path
  */
 @middleware()
-export class HasPermissionByScopeMiddleware
-  implements MiddlewareInterface<HasPermissionByScopeMiddlewareParams> {
+export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPermissionByScopeMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -33,21 +32,25 @@ export class HasPermissionByScopeMiddleware
       throw new InvalidParamsException("No permissions defined");
     }
 
-    const permissions = get(context, "call.user.permissions", []);
+    const permissions = get(context, "call.user.permissions", []) || [] as string[];
 
     if (permissions.length === 0) {
       throw new ForbiddenException("Invalid permissions");
     }
 
     // If the user has basePermission --> OK
-    if (permissions.indexOf(basePermission) > -1) {
+    if (permissions.indexOf(String(basePermission)) > -1) {
       return next(params, context);
     }
-    for (
-      const [scopedPermission, contextPath, paramsPath] of permissionScopes
-    ) {
+
+    // If the user does not have basePermission, check if the contextPath equals paramsPath
+    // and challenge against scoped permission.
+    //
+    // the param to check is usually a territory_id or operator_id to make sure the user
+    // is allowed to access the data for that specific territory or operator.
+    for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
       if (
-        this.belongsTo(
+        this.paramMatchesContext(
           get(params, paramsPath, Symbol()),
           get(context, contextPath, Symbol()),
         ) &&
@@ -60,10 +63,10 @@ export class HasPermissionByScopeMiddleware
     throw new ForbiddenException("Invalid permissions");
   }
 
-  private belongsTo(value: any | any[], list: any | any[]): boolean {
+  private paramMatchesContext(value: unknown | unknown[], list: unknown | unknown[]): boolean {
     const val = Array.isArray(value) ? value : [value];
     const lst = Array.isArray(list) ? list : [list];
-    return val.reduce((p, c) => p && lst.includes(c), true);
+    return val.reduce((p, c) => p && lst.map((i) => String(i)).includes(String(c)), true);
   }
 }
 
