@@ -13,15 +13,12 @@ import Table from "@codegouvfr/react-dsfr/Table";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-export default function OperatorCredentialsTable(props: { title: string; operatorId?: number; refresh: () => void }) {
+export default function OperatorCredentialsTable(props: { title: string; operatorId: number; refresh: () => void }) {
   const [credentials, setCredentials] = useState<Credentials>();
 
   const url = useMemo(() => {
     const urlObj = new URL(getApiUrl("v3", "auth/credentials"));
-    if (props.operatorId) {
-      urlObj.searchParams.set("operator_id", props.operatorId.toString());
-    }
-
+    urlObj.searchParams.set("operator_id", props.operatorId.toString());
     return urlObj.toString();
   }, [props.operatorId]);
 

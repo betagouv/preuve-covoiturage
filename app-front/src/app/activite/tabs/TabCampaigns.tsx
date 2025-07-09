@@ -23,19 +23,19 @@ export default function TabCampaigns() {
             <p>
               Les appels de fonds correspondent à une extraction effectuée chaque mois à une date précise (généralement
               le 6 du mois suivant), portant sur:
-              <ul>
-                <li>
-                  le nombre de trajets mensuels respectant les conditions générales d’utilisation de
-                  covoiturage.beta.gouv, avec une origine <strong>ou</strong> une destination sur le territoire
-                  sélectionné
-                </li>
-                <li>
-                  le nombre de trajets mensuels incités, c’est-à-dire les trajets identifiés comme éligibles aux
-                  critères de la campagne d’incitation, pour lesquels covoiturage.beta.gouv a calculé le montant
-                  d’incitation à verser.
-                </li>
-              </ul>
             </p>
+            <ul>
+              <li>
+                le nombre de trajets mensuels respectant les conditions générales d’utilisation de
+                covoiturage.beta.gouv, avec une origine <strong>ou</strong> une destination sur le territoire
+                sélectionné
+              </li>
+              <li>
+                le nombre de trajets mensuels incités, c’est-à-dire les trajets identifiés comme éligibles aux critères
+                de la campagne d’incitation, pour lesquels covoiturage.beta.gouv a calculé le montant d’incitation à
+                verser.
+              </li>
+            </ul>
           </>
         }
       />
