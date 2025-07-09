@@ -5,6 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import { type TerritoriesInterface } from "@/interfaces/dataInterface";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
@@ -122,7 +123,17 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
               </div>
             </>
           ) : (
-            <p>Pas de campagnes ...</p>
+            <Alert
+              title={"Pas de campagnes en cours"}
+              severity="info"
+              description={
+                <p>
+                  A date, nous n&apos;effectuons pas le suivi de vos campagnes d&apos;incitations financières,
+                  n&apos;hésitez pas à nous contacter en cas de besoin. Vous avez par contre accès à la fonctionnalité
+                  d&apos;export de données.
+                </p>
+              }
+            />
           )}
         </>
       )}
