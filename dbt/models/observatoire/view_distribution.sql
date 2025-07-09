@@ -27,3 +27,4 @@ select
   WHERE
     a.acquisition_status = 'processed'
     AND a.fraud_status = 'passed'
+    AND a.anomaly_status = 'passed'

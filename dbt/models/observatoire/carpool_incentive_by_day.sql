@@ -40,6 +40,7 @@ JOIN
 WHERE
   a.acquisition_status = 'processed'
   AND a.fraud_status = 'passed'
+  AND a.anomaly_status = 'passed'
 {% if is_incremental() %}
   AND a.start_datetime::date >= (SELECT MAX(start_date) FROM {{ this }})::date
 {% endif %}

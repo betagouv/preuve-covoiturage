@@ -7,4 +7,5 @@ from {{ ref('view_carpool') }}
 where
   acquisition_status = 'processed'
   and fraud_status = 'passed'
+  and anomaly_status = 'passed'
 group by driver_id

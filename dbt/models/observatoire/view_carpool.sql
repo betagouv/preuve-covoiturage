@@ -12,6 +12,7 @@ SELECT
   a.passenger_payments,
   b.acquisition_status,
   b.fraud_status,
+  b.anomaly_status,
   CASE
     WHEN
       c.start_geo_code::text ~ '^97[1-2]'::text
@@ -63,4 +64,4 @@ WHERE
   c.start_geo_code IS NOT NULL
   AND c.end_geo_code IS NOT NULL
   AND date_part('year', a.start_datetime) >= 2020
-  AND a.start_datetime < now() - INTERVAL '8' DAY
+  AND a.start_datetime < now() - INTERVAL '2' DAY
