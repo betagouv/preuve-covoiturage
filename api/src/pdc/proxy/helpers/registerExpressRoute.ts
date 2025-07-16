@@ -39,7 +39,7 @@ export function registerExpressRoute(
   app[params.method.toLocaleLowerCase()](path, [
     ...middlewares,
     asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-      const user = req.session?.user || {};
+      const user = req.session?.user || req.stateless?.user || {};
       setSentryUser(req);
       const { api_version, ...rparams } = req.params;
 

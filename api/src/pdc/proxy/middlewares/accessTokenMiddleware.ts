@@ -3,7 +3,7 @@ import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { DexOIDCProvider } from "@/pdc/services/auth/providers/DexOIDCProvider.ts";
-import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
+import { Request as ExpressRequest, NextFunction, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { getPermissions } from "../../services/auth/config/permissions.ts";
@@ -69,7 +69,7 @@ export function dexMiddleware(kernel: KernelInterface) {
         throw new UnauthorizedException("User not found");
       }
 
-      req.session.user = {
+      req.stateless.user = {
         operator_id: data.operator_id,
         role: data.role,
         email: data.token_id,
@@ -159,7 +159,7 @@ export function legacyTokenMiddleware(kernel: KernelInterface) {
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      set(req, "session.user", {
+      set(req, "stateless.user", {
         application_id: app._id,
         operator_id: app.owner_id,
         permissions: app.permissions,
