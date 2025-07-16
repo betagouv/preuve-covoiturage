@@ -10,6 +10,12 @@ models:
         data_type: character varying
       - name: journeys_count
         data_type: bigint
+      - name: journeys_count_18_30
+        data_type: bigint
+      - name: journeys_count_filtered
+        data_type: bigint
+      - name: journeys_count_filtered_18_30
+        data_type: bigint
       - name: avg_driver_revenue
         data_type: numeric
       - name: avg_distance
