@@ -44,6 +44,9 @@ describe("Authenticated smoke test", () => {
   });
 
   it("should get the user's profile", async () => {
+    // remove the token otherwise the session
+    // will not be loaded from the cookie.
+    http.clearAccessToken();
     const response = await http.get("/auth/me");
     expect(response.status).toBe(200);
 

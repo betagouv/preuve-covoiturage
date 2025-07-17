@@ -7,7 +7,6 @@ import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { getPermissions } from "../../services/auth/config/permissions.ts";
-import { UserRepository } from "../../services/auth/providers/UserRepository.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 /**
@@ -61,14 +60,8 @@ export function dexMiddleware(kernel: KernelInterface) {
       const dexProvider = kernel.get(DexOIDCProvider);
 
       const data = await dexProvider.verifyToken(token);
+
       req.session = req.session || {};
-
-      const repo = kernel.get(UserRepository);
-      const user = await repo.authenticateByEmail(data.token_id);
-      if (!user) {
-        throw new UnauthorizedException("User not found");
-      }
-
       req.session.user = {
         operator_id: data.operator_id,
         role: data.role,

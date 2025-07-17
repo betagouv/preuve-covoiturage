@@ -1,8 +1,6 @@
 import bodyParser from "dep:body-parser";
-import RedisStore from "dep:connect-redis";
 import cors from "dep:cors";
 import express, { NextFunction, Request, Response } from "dep:express";
-import expressSession from "dep:express-session";
 import helmet from "dep:helmet";
 import { Server } from "dep:http";
 import { Redis } from "dep:redis";
@@ -55,6 +53,7 @@ import {
   monHonorCertificateRateLimiter,
   rateLimiter,
 } from "./middlewares/rateLimiter.ts";
+import { sessionMiddleware } from "./middlewares/sessionMiddleware.ts";
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -164,27 +163,8 @@ export class HttpTransport implements TransportInterface {
     // must be set before configuring the session
     this.app.set("trust proxy", 1);
 
-    const sessionSecret = this.config.get("proxy.session.secret");
-    const sessionName = this.config.get("proxy.session.name");
-    const redisConfig = this.config.get("connections.redis");
-    const redis = new Redis(redisConfig);
-
-    this.app.use(expressSession({
-      cookie: {
-        path: "/",
-        httpOnly: true,
-        maxAge: this.config.get("proxy.session.maxAge"),
-        // https everywhere but in local development
-        secure: env_or_fail("APP_ENV", "local") !== "local",
-        sameSite: "lax",
-      },
-
-      name: sessionName,
-      secret: sessionSecret,
-      resave: false,
-      saveUninitialized: false,
-      store: new RedisStore({ client: redis, prefix: "proxy:" }),
-    }));
+    // Initiate the session from the cookie
+    this.app.use(sessionMiddleware(this.kernel));
   }
 
   private registerSecurity(): void {
@@ -400,7 +380,6 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       "/profile",
       authRateLimiter(),
-      authGuard(this.kernel),
       (req: Request, res: Response, _next: NextFunction) => {
         res.json(get(req.session, "user"));
       },

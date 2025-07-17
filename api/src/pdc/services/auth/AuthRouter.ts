@@ -1,9 +1,10 @@
 import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, proxy } from "@/ilos/common/index.ts";
-import { session } from "@/pdc/proxy/config/proxy.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
+import { session } from "../../../config/proxy.ts";
 import { authGuard } from "../../proxy/middlewares/authGuard.ts";
+import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts";
 import { UserRepository } from "./providers/UserRepository.ts";
 
 @injectable()
@@ -88,9 +89,21 @@ export class AuthRouter {
 
     this.app.get(
       "/auth/me",
-      authGuard(this.kernel),
+      sessionMiddleware(this.kernel),
       (req: express.Request, res: express.Response) => {
-        return res.json(req.session.user);
+        if (!req.session?.user) {
+          return res.status(401).json({
+            id: 1,
+            jsonrpc: "2.0",
+            error: {
+              code: 401,
+              data: "Error",
+              message: "Unauthorized Error",
+            },
+          });
+        }
+
+        return res.json(req.session?.user);
       },
     );
   }

@@ -16,7 +16,9 @@ describe("DEX Authentication", () => {
   });
 
   it("should be authenticated", async () => {
-    const response = await http.get("/profile");
+    // cookie-only authentication
+    http.clearAccessToken();
+    const response = await http.get("/auth/me");
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
     expect(response.body).toMatchObject({

@@ -4,7 +4,7 @@ import { accessTokenMiddleware } from "./accessTokenMiddleware.ts";
 
 export function authGuard(kernel: KernelInterface) {
   return async (req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
-    if (!req.session || !req.session.user) {
+    if (req.headers.authorization) {
       return accessTokenMiddleware(kernel)(req, res, next);
     }
     next();
