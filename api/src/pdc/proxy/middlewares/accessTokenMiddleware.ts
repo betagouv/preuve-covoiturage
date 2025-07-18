@@ -3,11 +3,10 @@ import { logger } from "@/lib/logger/index.ts";
 import { get, set } from "@/lib/object/index.ts";
 import { TokenProviderInterfaceResolver } from "@/pdc/providers/token/index.ts";
 import { DexOIDCProvider } from "@/pdc/services/auth/providers/DexOIDCProvider.ts";
-import { NextFunction, Request as ExpressRequest, Response } from "dep:express";
+import { Request as ExpressRequest, NextFunction, Response } from "dep:express";
 import { ApplicationInterface } from "../../services/application/contracts/common/interfaces/ApplicationInterface.ts";
 import { TokenPayloadInterface } from "../../services/application/contracts/common/interfaces/TokenPayloadInterface.ts";
 import { getPermissions } from "../../services/auth/config/permissions.ts";
-import { UserRepository } from "../../services/auth/providers/UserRepository.ts";
 import { createRPCPayload } from "../helpers/createRPCPayload.ts";
 
 /**
@@ -54,22 +53,17 @@ function getTokenFromRequest(req: ExpressRequest): string {
  * Returns an Express middleware that checks the token using DexOIDCProvider.
  * Accepts either a KernelInterface or a DexOIDCProvider instance as argument.
  */
-export function dexMiddleware(kernel: KernelInterface) {
+export function dexAccessTokenMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = getTokenFromRequest(req);
       const dexProvider = kernel.get(DexOIDCProvider);
 
       const data = await dexProvider.verifyToken(token);
-      req.session = req.session || {};
 
-      const repo = kernel.get(UserRepository);
-      const user = await repo.authenticateByEmail(data.token_id);
-      if (!user) {
-        throw new UnauthorizedException("User not found");
-      }
+      req.stateless = {};
 
-      req.session.user = {
+      req.stateless.user = {
         operator_id: data.operator_id,
         role: data.role,
         email: data.token_id,
@@ -95,7 +89,7 @@ export function dexMiddleware(kernel: KernelInterface) {
  */
 export function accessTokenMiddleware(kernel: KernelInterface) {
   return async (req: ExpressRequest, _res: Response, next: NextFunction): Promise<void> => {
-    dexMiddleware(kernel)(req, _res, async (err: Error | null) => {
+    dexAccessTokenMiddleware(kernel)(req, _res, async (err: Error | null) => {
       if (typeof err === "undefined" || err === null) {
         // If no error, continue to the next middleware
         return next();
@@ -159,7 +153,7 @@ export function legacyTokenMiddleware(kernel: KernelInterface) {
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      set(req, "session.user", {
+      set(req, "stateless.user", {
         application_id: app._id,
         operator_id: app.owner_id,
         permissions: app.permissions,

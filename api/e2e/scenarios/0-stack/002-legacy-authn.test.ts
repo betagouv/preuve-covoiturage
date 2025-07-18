@@ -4,7 +4,7 @@ import { OPERATOR_EMAIL, OPERATOR_PASSWORD, SUPPORTED_VERSIONS, UNSUPPORTED_VERS
 import { API } from "../../lib/API.ts";
 import { createOperatorJourney } from "../../lib/journey.ts";
 import { regex_datetime, regex_uuidV4 } from "../../lib/regex.ts";
-import { CreateJourneyResponse, ProfileResponse } from "../../lib/types.ts";
+import { CreateJourneyResponse } from "../../lib/types.ts";
 
 describe("Legacy Authentication", () => {
   const http = new API();
@@ -12,17 +12,6 @@ describe("Legacy Authentication", () => {
   beforeEach(async () => {
     if (!http.token) await http.legacyAuthenticate(OPERATOR_EMAIL, OPERATOR_PASSWORD);
     expect(http.token).toBeDefined();
-  });
-
-  it("should be authenticated as application", async () => {
-    http.clearSessionCookie();
-    const response = await http.get<ProfileResponse>("/profile");
-    expect(response.status).toEqual(200);
-    expect(response.body).toBeDefined();
-    expect(response.body.operator_id).toStrictEqual(1);
-    expect(response.body.application_id).toBeGreaterThan(0);
-    expect(response.body.permissions).toBeDefined();
-    expect(response.body.permissions.length).toBeGreaterThan(0);
   });
 
   for (const version of SUPPORTED_VERSIONS) {
