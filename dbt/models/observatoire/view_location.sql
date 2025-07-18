@@ -46,6 +46,7 @@ LEFT JOIN
   ON c.end_geo_code = e.old_com
 WHERE
   date_part('year', a.start_datetime) >= 2020
-  AND a.start_datetime < now() - INTERVAL '8' DAY
+  AND a.start_datetime < now() - INTERVAL '2' DAY
   AND b.acquisition_status = 'processed'
   AND b.fraud_status = 'passed'
+  AND b.anomaly_status = 'passed'
