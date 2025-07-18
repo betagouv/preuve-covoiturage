@@ -45,6 +45,7 @@ describe("Journey creation", () => {
       expect(response.body.result.data).toBeDefined();
       expect(response.body.result.data.operator_journey_id).toEqual(journey.operator_journey_id);
       expect(response.body.result.data.created_at).toMatch(regex_datetime);
+      expect(response.headers.get("set-cookie")).toBeNull();
     } else if ("error" in response.body) {
       console.error(response.body.error);
       throw new Error(response.body.error?.message || "Unknown error");
