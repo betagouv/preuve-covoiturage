@@ -94,16 +94,10 @@ export default function TabProfil() {
                     orientation="horizontal"
                   />
                   {simulatedRole === "territory" && (
-                    <SelectTerritory
-                      defaultValue={user.territory_id}
-                      onChange={onChangeTerritory}
-                    />
+                    <SelectTerritory defaultValue={user.territory_id} onChange={onChangeTerritory} />
                   )}
                   {simulatedRole === "operator" && (
-                    <SelectOperator
-                      defaultValue={user.operator_id}
-                      onChange={onChangeOperator}
-                    />
+                    <SelectOperator defaultValue={user.operator_id} onChange={onChangeOperator} />
                   )}
                 </>
               )}

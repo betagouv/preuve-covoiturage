@@ -15,7 +15,6 @@ import { DeleteOperatorAction } from "@/pdc/services/dashboard/actions/operators
 import { OperatorAction } from "@/pdc/services/dashboard/actions/operators/OperatorAction.ts";
 import { OperatorsAction } from "@/pdc/services/dashboard/actions/operators/OperatorsAction.ts";
 import { UpdateOperatorAction } from "@/pdc/services/dashboard/actions/operators/UpdateOperatorAction.ts";
-import { TerritoriesWithCampaignAction } from "@/pdc/services/dashboard/actions/TerritoriesWithCampaignAction.ts";
 import { CreateUserAction } from "@/pdc/services/dashboard/actions/users/CreateUserAction.ts";
 import { DeleteUserAction } from "@/pdc/services/dashboard/actions/users/DeleteUserAction.ts";
 import { UpdateUserAction } from "@/pdc/services/dashboard/actions/users/UpdateUserAction.ts";
@@ -43,7 +42,6 @@ import { UsersRepository } from "@/pdc/services/dashboard/providers/UsersReposit
     JourneysIncentiveByDayAction,
     CampaignsAction,
     CampaignApdfAction,
-    TerritoriesWithCampaignAction,
     OperatorAction,
     OperatorsAction,
     CreateOperatorAction,

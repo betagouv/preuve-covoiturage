@@ -15,9 +15,7 @@ import {
   CampaignsParamsInterface,
   CampaignsRepositoryInterface,
   CampaignsRepositoryInterfaceResolver,
-  CampaignsResultInterface,
-  TerritoriesWithCampaignParamsInterface,
-  TerritoriesWithCampaignResultInterface,
+  CampaignsResultInterface
 } from "../interfaces/CampaignsRepositoryInterface.ts";
 
 @provider({
@@ -86,27 +84,6 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       },
       data: rows,
     };
-  }
-
-  async getTerritoriesWithCampaign(
-    params: TerritoriesWithCampaignParamsInterface,
-  ): Promise<TerritoriesWithCampaignResultInterface[]> {
-    const filters = [];
-    if (params.operator_id) {
-      filters.push(sql`c.operator_id = ${params.operator_id}`);
-    }
-    const query = sql`
-      SELECT DISTINCT
-        a.territory_id as id,
-        b.name as name 
-      FROM ${raw(this.table)} a
-      LEFT JOIN ${raw(this.tableTerritory)} b on a.territory_id = b._id
-      ${params.operator_id ? sql`LEFT JOIN ${raw(this.tableIncentives)} c on a._id = c.policy_id` : sql``}
-      ${filters.length > 0 ? sql`WHERE ${join(filters, ` AND `)}` : sql``}
-      ORDER BY 2 
-    `;
-    const rows = await this.pgConnection.query<TerritoriesWithCampaignResultInterface>(query);
-    return rows;
   }
 
   async getCampaignApdf(
