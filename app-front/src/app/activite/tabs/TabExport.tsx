@@ -148,7 +148,9 @@ export default function TabExport() {
 
   const canChoose = user?.role === "registry.admin" && !simulate;
 
-  const showGeoSelector = geoSelector === "geo" || !!user?.role.startsWith("operator");
+  const isAdminImpersonatingOperator = user?.role === "registry.admin" && simulate && simulatedRole === "operator";
+
+  const showGeoSelector = geoSelector === "geo" || !!user?.role.startsWith("operator") || isAdminImpersonatingOperator;
 
   const showCampaignSelector = geoSelector === "campaign" && user?.role === "registry.admin" && !simulate;
 
