@@ -9,7 +9,7 @@ import Button from "@codegouvfr/react-dsfr/Button";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
 import { type PerimeterType } from "../../../interfaces/searchInterface";
@@ -145,6 +145,13 @@ export default function TabExport() {
       setTerritorySelectors({});
     }
   };
+
+  const canChoose = user?.role === "registry.admin" && !simulate;
+
+  const showGeoSelector = geoSelector === "geo" || !!user?.role.startsWith("operator");
+
+  const showCampaignSelector = geoSelector === "campaign" && user?.role === "registry.admin" && !simulate;
+
   return (
     <>
       <Alert
@@ -172,7 +179,7 @@ export default function TabExport() {
       />
       {user && (
         <div className={fr.cx("fr-mt-4w")}>
-          {user.role === "registry.admin" && simulate === false && (
+          {canChoose && (
             <RadioButtons
               legend="Périmètre de l'export"
               name="radio"
@@ -196,26 +203,15 @@ export default function TabExport() {
             />
           )}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-            {geoSelector === "geo" && <SelectGeo onChange={onChangeGeo} />}
-            {geoSelector === "campaign" && (
-              <>
-                {user.role === "registry.admin" && simulate === false && (
-                  <SelectTerritory
-                    defaultValue={user.territory_id}
-                    onChange={(v) => {
-                      setTerritoryId(v);
-                    }}
-                  />
-                )}
-                {/* {(simulatedRole === "operator" || user.role.split(".")[0] === "operator") && (
-                  <SelectTerritoryByOperator
-                    defaultValue={user.territory_id}
-                    onChange={(v) => {
-                      setTerritoryId(v);
-                    }}
-                  />
-                )} */}
-              </>
+            {showGeoSelector && <SelectGeo onChange={onChangeGeo} />}
+            {showCampaignSelector && (
+              <SelectTerritory
+                operatorIdScope={user.operator_id}
+                defaultValue={user.territory_id}
+                onChange={(v) => {
+                  setTerritoryId(v);
+                }}
+              />
             )}
             {(!!territoryId || !!territorySelectors) && (
               <div className="fr-mt-4w">
