@@ -44,9 +44,14 @@ export default function CampaignsTable(props: { title: string; territoryId?: num
     jsonrpc: string;
   }>(url, false, init);
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories?limit=200`);
-  const { data: territoriesData } = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const { data: territoriesData } = useApi<TerritoriesInterface>(
+    territoriesApiUrl,
+    false,
+    undefined,
+    user?.territory_id,
+  );
   const territoriesList = () => {
-    if (user?.territory_id) {
+    if (user?.territory_id && territoriesData?.data) {
       return [territoriesData?.data.find((t) => t._id === user?.territory_id)] as TerritoriesInterface["data"];
     }
     return territoriesData?.data ?? [];

@@ -11,7 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { type Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
-import SelectPolicyPerimeter from "../../../components/common/SelectPolicyPerimeter";
+import SelectTerritory from "../../../components/common/SelectTerritory";
 import { type PerimeterType } from "../../../interfaces/searchInterface";
 
 interface ParamsInterfaceV3 {
@@ -207,11 +207,10 @@ export default function TabExport() {
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
             {showGeoSelector && <SelectGeo onChange={onChangeGeo} />}
             {showCampaignSelector && (
-              <SelectPolicyPerimeter
-                operatorId={user.operator_id}
+              <SelectTerritory
+                defaultValue={user.territory_id}
                 onChange={(v) => {
-                  setTerritoryId(undefined);
-                  setTerritorySelectors(v);
+                  setTerritoryId(v);
                 }}
               />
             )}
