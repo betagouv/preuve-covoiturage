@@ -1,6 +1,5 @@
 "use client";
 import SelectGeo from "@/components/common/SelectGeo";
-import SelectTerritory from "@/components/common/SelectTerritory";
 import { getApiUrl } from "@/helpers/api";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -12,6 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { type Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import { useState } from "react";
+import SelectPolicyPerimeter from "../../../components/common/SelectPolicyPerimeter";
 import { type PerimeterType } from "../../../interfaces/searchInterface";
 
 interface ParamsInterfaceV3 {
@@ -207,11 +207,11 @@ export default function TabExport() {
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
             {showGeoSelector && <SelectGeo onChange={onChangeGeo} />}
             {showCampaignSelector && (
-              <SelectTerritory
-                operatorIdScope={user.operator_id}
-                defaultValue={user.territory_id}
+              <SelectPolicyPerimeter
+                operatorId={user.operator_id}
                 onChange={(v) => {
-                  setTerritoryId(v);
+                  setTerritoryId(undefined);
+                  setTerritorySelectors(v);
                 }}
               />
             )}
