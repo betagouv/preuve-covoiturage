@@ -141,6 +141,8 @@ export const IDFMPeriodeNormale2021: PolicyHandlerStaticInterface = class extend
     "2024-12-11",
     "2024-12-12",
     "2024-12-13",
+    "2025-07-01",
+    "2025-07-02",
   ];
 
   // Dates booster dans l'Oise sur la période

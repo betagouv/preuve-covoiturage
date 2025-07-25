@@ -2,7 +2,7 @@
 
 export const description = `<div _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 
-  <p>Campagne d'incitation au covoiturage du <b> 1 janvier 2025 au 31 décembre 2025</b>, toute la semaine</p>
+  <p>Campagne d'incitation au covoiturage du <b> 1 janvier 2025 au 15 juillet 2025</b>, toute la semaine</p>
   <p>Cette campagne est limitée à <b>320 000 euros</b>.</p>
 
   <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 5 km sont incités selon les règles suivantes :</p>
