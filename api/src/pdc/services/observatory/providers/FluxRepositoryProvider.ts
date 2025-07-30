@@ -155,7 +155,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       filters.push(sql`semester = ${params.semester}`);
     }
     const query = sql`
-      SELECT territory_1, l_territory_1, territory_2, l_territory_2, journeys
+      SELECT distinct territory_1, l_territory_1, territory_2, l_territory_2, journeys
       FROM ${raw(tableName)}
       WHERE ${join(filters, " AND ")}
       ORDER BY journeys DESC
