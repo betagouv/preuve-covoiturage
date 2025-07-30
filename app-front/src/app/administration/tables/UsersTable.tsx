@@ -50,12 +50,22 @@ export default function UsersTable(props: { title: string; territoryId?: number;
     return operatorsData?.data ?? [];
   };
   const territoriesApiUrl = getApiUrl("v3", `dashboard/territories?limit=200`);
+  const territoriesWithPolicyApiUrl = getApiUrl("v3", `dashboard/territories?policy=true&limit=200`);
   const { data: territoriesData, refetch: refetchTerritories } = useApi<TerritoriesInterface>(territoriesApiUrl);
+  const { data: territoriesWithPolicyData } = useApi<TerritoriesInterface>(territoriesWithPolicyApiUrl);
   const territoriesList = () => {
     if (user?.territory_id) {
       return [territoriesData?.data.find((t) => t._id === user?.territory_id)] as TerritoriesInterface["data"];
     }
     return territoriesData?.data ?? [];
+  };
+  const territoriesWithPolicyList = () => {
+    if (user?.territory_id) {
+      return [
+        territoriesWithPolicyData?.data.find((t) => t._id === user?.territory_id),
+      ] as TerritoriesInterface["data"];
+    }
+    return territoriesWithPolicyData?.data ?? [];
   };
 
   const dataTable =
@@ -281,7 +291,7 @@ export default function UsersTable(props: { title: string; territoryId?: number;
                   }}
                 >
                   {user?.role === "registry.admin" && <option value={undefined}>aucun</option>}
-                  {territoriesList().map((t, i) => (
+                  {territoriesWithPolicyList().map((t, i) => (
                     <option key={i} value={t?._id}>
                       {t?.name}
                     </option>
