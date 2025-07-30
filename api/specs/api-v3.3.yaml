@@ -1956,28 +1956,7 @@ security:
 x-topics:
   - title: Authentication
     content: |
-      Le token applicatif (access_token) est envoyé dans les Headers des requêtes HTTP :
-
-      ```
-      Authorization: Bearer {token}
-      ```
-
-      L\'access_token a une durée de vie limitée (5 minutes) et vous devez
-      en générer un nouveau avant chaque série de requêtes.
-
-      #### Obtenir un access_token
-
-      1. Connectez-vous à l'application du Registre de Preuve de Covoiturage
-      2. Rendez-vous sur la page d'administration et cliquez sur l'onglet API
-      3. Cliquez sur le bouton "Créer une clé d'accès à l'API"
-      4. Copiez l'`access_key` et la `secret_key`
-      5. Configurez votre application pour utiliser ces clés
-      
-      Ces clés sont utilisées lors de l'appel de `/auth/access_token`.
-
-      # TODO : mettre à jour la description
-      # TODO : mettre la procédure en fonction de la nouvelle interface du dashboard
-      # TODO : ajouter une route pour obtenir des credentials d'API
+      Voir la rubrique [Authentification](/group/endpoint-authentification) pour plus de détails.
 
   - title: Définitions
     content: |
