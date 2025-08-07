@@ -1,7 +1,7 @@
 {{ 
     config(
-     materialized = 'table' if target.name == 'dev' else 'incremental',
-    unique_key=[ 'cc_operator_journey_id'],
+    materialized = 'table' if target.name == 'dev' else 'incremental',
+    unique_key=[ 'cc_operator_journey_id', 'cc__id'],
     indexes = [
       {
         'columns':[

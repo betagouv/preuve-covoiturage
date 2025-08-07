@@ -1,7 +1,25 @@
-{{ config(materialized = 'table') }}
+{{ 
+    config(
+    materialized = 'table' if target.name == 'dev' else 'incremental',
+    unique_key=[ 'cc_operator_journey_id', 'cc__id'],
+    indexes = [
+      {
+        'columns':[
+          'cc_operator_journey_id'
+        ],
+      },
+       {
+        'columns':[
+          'cc__id'
+        ],
+      }
+    ]
+  )
+}}
 
 SELECT
-    r.*,
+    r.cc_operator_journey_id as cc_operator_journey_id,
+    r.cc__id as cc__id,
     ARRAY_AGG(fl.label) AS fraud_labels,
     ARRAY_AGG(al.label) AS anomaly_labels,
     SUM(pi.amount) as sum_incentives_amount
