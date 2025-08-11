@@ -70,7 +70,10 @@
     LEFT JOIN {{ source('geo', 'perimeters') }} pe      ON cg.end_geo_code = pe.arr
                                     AND pe.year = EXTRACT(YEAR FROM cc.start_datetime)::int
 {% if is_incremental() %}
-  WHERE cc.start_datetime::date >= (SELECT MAX(start_date) FROM {{ this }})::date
+  WHERE cc.start_datetime::date >= (
+        SELECT COALESCE(MAX(cc_start_datetime), DATE '1970-01-01')
+        FROM {{ this }}
+  )::date
 {% endif %}
 
 {% if target.name == 'dev' %}
