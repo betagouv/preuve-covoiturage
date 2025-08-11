@@ -55,7 +55,7 @@ models:
     metabase:
       +schema: "metabase"
     0_raw_zone:
-      +schema: "0_raw_zones"
+      +schema: "0_raw_zone"
 
   ## see docs: https://docs.elementary-data.com/
   elementary:

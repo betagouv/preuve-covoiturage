@@ -21,7 +21,7 @@
         -- Timezone-aware start_datetime
         CASE
             WHEN cg.start_geo_code::text ~ '^97[1-2]' THEN cc.start_datetime AT TIME ZONE 'America/Guadeloupe'
-            WHEN cg.start_geo_code::text ~ '^973'    THEN cc.start_datetime AT TIME ZONE 'America/Guyana'
+            WHEN cg.start_geo_code::text ~ '^973'    THEN cc.start_datetime AT TIME ZONE 'America/Cayenne'
             WHEN cg.start_geo_code::text ~ '^974'    THEN cc.start_datetime AT TIME ZONE 'Indian/Reunion'
             WHEN cg.start_geo_code::text ~ '^976'    THEN cc.start_datetime AT TIME ZONE 'Indian/Mayotte'
             ELSE cc.start_datetime AT TIME ZONE 'Europe/Paris'
@@ -30,7 +30,7 @@
         -- Timezone-aware end_datetime
         CASE
             WHEN cg.end_geo_code::text ~ '^97[1-2]' THEN cc.end_datetime AT TIME ZONE 'America/Guadeloupe'
-            WHEN cg.end_geo_code::text ~ '^973'    THEN cc.end_datetime AT TIME ZONE 'America/Guyana'
+            WHEN cg.end_geo_code::text ~ '^973'    THEN cc.end_datetime AT TIME ZONE 'America/Cayenne'
             WHEN cg.end_geo_code::text ~ '^974'    THEN cc.end_datetime AT TIME ZONE 'Indian/Reunion'
             WHEN cg.end_geo_code::text ~ '^976'    THEN cc.end_datetime AT TIME ZONE 'Indian/Mayotte'
             ELSE cc.end_datetime AT TIME ZONE 'Europe/Paris'
