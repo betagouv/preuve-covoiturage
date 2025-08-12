@@ -1,6 +1,7 @@
 {{ 
     config(
     materialized = 'table' if target.name == 'dev' else 'incremental',
+    incremental_strategy = 'delete+insert',
     unique_key=[ 'operator_journey_id', '_id'],
     indexes = [
       {
