@@ -4,11 +4,13 @@ models:
     columns:
       - name: arr_2020
         data_type: character varying
+        description: ''
       - name: arr_2021
         data_type: character varying
+        description: ''
       - name: arr_2022
         data_type: character varying
+        description: ''
       - name: arr_2023
         data_type: character varying
-      - name: arr_2024
-        data_type: character varying
+        description: ''
