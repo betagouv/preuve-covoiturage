@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: fraudcheck
+  - name: anomaly
     tables:
       - name: labels
         columns:
@@ -17,5 +17,15 @@ sources:
           - name: label
             data_type: character varying
             description: ''
-          - name: geo_code
+          - name: conflicting_carpool_id
+            data_type: integer
+            description: ''
+          - name: conflicting_operator_journey_id
+            data_type: character varying
+            description: ''
+          - name: overlap_duration_ratio
+            data_type: real
+            description: ''
+          - name: operator_journey_id
+            data_type: character varying
             description: ''

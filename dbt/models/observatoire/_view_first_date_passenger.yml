@@ -4,5 +4,7 @@ models:
     columns:
       - name: passenger_id
         data_type: character varying
+        description: ''
       - name: first_date
         data_type: date
+        description: ''
