@@ -1,8 +1,14 @@
 "use client";
-import { getUserSession } from "@/helpers/auth";
-import { type AuthContextProps } from "@/interfaces/auth";
+import { activeScopeLabel, getActiveScope, getUserSession, postAuthContext } from "@/helpers/auth";
+import { type AuthContextProps, type UserInterface } from "@/interfaces/auth";
+import { fr } from "@codegouvfr/react-dsfr";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+
+// Clés du miroir client (affichage + ré-assertion après reload).
+const MIRROR_KEY = "rpc.active_territory_id";
+const TOAST_KEY = "rpc.scope_switch_toast";
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -11,14 +17,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [simulate, setSimulate] = useState(false);
   const [simulatedRole, setSimulatedRole] = useState<"operator" | "territory" | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const [switchToast, setSwitchToast] = useState<{ severity: "success" | "error"; description: string }>();
+  const formEditingRef = useRef(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Ré-assertion : si la session serveur est repartie sur le défaut, restaurer le scope choisi.
+  const assertMirror = async (data: UserInterface) => {
+    const mirror = Number(sessionStorage.getItem(MIRROR_KEY)) || null;
+    const stillGranted = mirror && data.scopes?.some((s) => s.territory_id === mirror);
+    if (!stillGranted || data.territory_id === mirror) return;
+    try {
+      await postAuthContext(mirror);
+      data.territory_id = mirror;
+      data.operator_id = null;
+    } catch {
+      sessionStorage.removeItem(MIRROR_KEY);
+    }
+  };
 
   const checkAuth = async () => {
     const data = await getUserSession();
     if (data?.role && data?.role !== "anonymous") {
+      await assertMirror(data);
       setIsAuth(true);
       setUser(data);
+      // Toast en attente après le reload consécutif à une bascule.
+      const pending = sessionStorage.getItem(TOAST_KEY);
+      if (pending) {
+        setSwitchToast({ severity: "success", description: pending });
+        sessionStorage.removeItem(TOAST_KEY);
+      }
     } else {
       setIsAuth(false);
       setUser(data);
@@ -39,6 +68,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [loading, isAuth, pathname, router]);
+
+  // Réconciliation avec le serveur au retour d'onglet (le miroir ne fait jamais autorité).
+  useEffect(() => {
+    const reconcile = () => {
+      if (document.visibilityState !== "visible" || !isAuth) return;
+      getUserSession()
+        .then(async (data) => {
+          if (!data?.role || data.role === "anonymous") return;
+          await assertMirror(data);
+          // Le tuple simulé n'existe qu'en local : le serveur ne doit pas l'écraser.
+          setUser((prev) =>
+            prev && simulate ? { ...data, territory_id: prev.territory_id, operator_id: prev.operator_id } : data,
+          );
+        })
+        .catch(() => {
+          // Reconcile opportuniste : un /auth/me en échec ne doit pas casser la page.
+        });
+    };
+    document.addEventListener("visibilitychange", reconcile);
+    window.addEventListener("focus", reconcile);
+    return () => {
+      document.removeEventListener("visibilitychange", reconcile);
+      window.removeEventListener("focus", reconcile);
+    };
+  }, [isAuth, simulate]);
 
   // clean up user on simulatedRole reset
   useEffect(() => {
@@ -79,9 +133,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setFormEditing = (editing: boolean) => {
+    formEditingRef.current = editing;
+  };
+
+  // Bascule serveur du périmètre actif puis recharge pour ré-hydrater toutes les données de page.
+  const switchScope = async (territory_id: number) => {
+    if (user?.territory_id === territory_id) return;
+    if (formEditingRef.current && !window.confirm("Un formulaire est en cours d'édition. Changer de périmètre ?")) {
+      return;
+    }
+    try {
+      const { label } = await postAuthContext(territory_id);
+      sessionStorage.setItem(MIRROR_KEY, String(territory_id));
+      if (label) sessionStorage.setItem(TOAST_KEY, `Périmètre actif : ${label}`);
+      window.location.reload();
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Bascule de périmètre impossible";
+      setSwitchToast({ severity: "error", description });
+      // La session serveur fait foi après un refus : on réaligne l'affichage.
+      await checkAuth().catch(() => undefined);
+    }
+  };
+
   const logout = () => {
     setIsAuth(false);
     setUser(undefined);
+    sessionStorage.removeItem(MIRROR_KEY);
+    sessionStorage.removeItem(TOAST_KEY);
   };
 
   return (
@@ -90,15 +169,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuth,
         setIsAuth,
         user,
+        scopes: user?.scopes ?? [],
+        activeScope: getActiveScope(user),
         simulate,
         simulatedRole,
         onChangeTerritory,
         onChangeOperator,
         onChangeSimulate,
         onChangeSimulatedRole,
+        switchScope,
+        setFormEditing,
         logout,
       }}
     >
+      {switchToast && (
+        <div aria-live="polite" role="status" className={fr.cx("fr-container")} style={{ position: "fixed", top: "1rem", left: 0, right: 0, zIndex: 1000 }}>
+          <Alert
+            severity={switchToast.severity}
+            title={switchToast.severity === "error" ? "Bascule impossible" : "Périmètre changé"}
+            description={switchToast.description}
+            closable
+            onClose={() => setSwitchToast(undefined)}
+          />
+        </div>
+      )}
       {!loading && children}
     </AuthContext.Provider>
   );
@@ -111,3 +205,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export { activeScopeLabel };
