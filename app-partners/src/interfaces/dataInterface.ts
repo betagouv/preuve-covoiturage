@@ -15,6 +15,8 @@ export interface UsersInterface {
     role: string;
     login_siren?: string | null;
     scopes?: UserScopeInput[];
+    // Nombre total de périmètres du compte, indépendant du filtre de périmètre de l'appelant.
+    scopes_count?: number;
   }[];
 }
 
