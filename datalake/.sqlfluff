@@ -35,4 +35,4 @@ tab_space_size = 2
 # for RF04 instead of quoting (quoting would trigger RF06). RF04 still
 # catches any other accidental keyword-as-identifier usage.
 [sqlfluff:rules:references.keywords]
-ignore_words = year,type,precision,operator
+ignore_words = year,type,precision,operator,time,date,name,week
