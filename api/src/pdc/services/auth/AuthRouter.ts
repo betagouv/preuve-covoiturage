@@ -2,10 +2,12 @@ import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, p
 import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
 import { session } from "../../../config/proxy.ts";
 import { authGuard } from "../../proxy/middlewares/authGuard.ts";
 import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts";
+import { contextRoute } from "./context.ts";
 import { testCallbackRoute } from "./test/callback.ts";
 
 @injectable()
@@ -15,6 +17,7 @@ export class AuthRouter {
     private kernel: KernelInterfaceResolver,
     private proConnectOIDCProvider: ProConnectOIDCProvider,
     private config: ConfigInterfaceResolver,
+    private userScopeRepository: UserScopeRepository,
   ) {
   }
 
@@ -53,9 +56,7 @@ export class AuthRouter {
         // Store user and token information in the fresh session
         req.session.auth = { id_token: tokens.id_token };
         req.session.user = user;
-        await new Promise<void>((resolve, reject) =>
-          req.session.save((err: Error) => err ? reject(err) : resolve())
-        );
+        await new Promise<void>((resolve, reject) => req.session.save((err: Error) => err ? reject(err) : resolve()));
 
         return res.redirect(this.config.get("app_url"));
       }),
@@ -114,6 +115,9 @@ export class AuthRouter {
         return res.json(req.session?.user);
       },
     );
+
+    // Bascule du contexte actif (users territoire) — revalidée en DB, cf. spec §6.
+    this.app.post("/auth/context", contextRoute(this.userScopeRepository));
 
     /**
      * Test-only login route to create a session without going through OIDC.
