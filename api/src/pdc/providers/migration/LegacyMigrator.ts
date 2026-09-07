@@ -421,6 +421,7 @@ export class LegacyMigrator {
   }
 
   async seedUser(user: User) {
+    // DO UPDATE no-op : RETURNING doit renvoyer l'id même quand l'utilisateur existe déjà (re-seed).
     const inserted = await this.testConn.getClient().query({
       text: `
         INSERT INTO auth.users
@@ -433,7 +434,7 @@ export class LegacyMigrator {
           $5::auth.user_status_enum,
           $6::varchar
         )
-        ON CONFLICT DO NOTHING
+        ON CONFLICT (email) DO UPDATE SET email = excluded.email
         RETURNING _id
       `,
       values: [
@@ -446,17 +447,22 @@ export class LegacyMigrator {
       ],
     });
 
+    const operatorId = user.operator?._id ?? null;
+    const territoryId = user.territory?._id ?? null;
+    if (operatorId === null && territoryId === null) return;
+
     const userId = inserted.rows[0]?._id;
-    const scopeColumn = user.operator?._id ? "operator_id" : user.territory?._id ? "territory_id" : null;
-    if (!userId || !scopeColumn) return;
+    if (!userId) {
+      throw new Error(`[migrator] identifiant introuvable pour ${user.email} : périmètre non seedé`);
+    }
 
     await this.testConn.getClient().query({
       text: `
-        INSERT INTO auth.user_scopes (user_id, ${scopeColumn}, is_default)
-        VALUES ($1::int, $2::int, true)
+        INSERT INTO auth.user_scopes (user_id, operator_id, territory_id, is_default)
+        VALUES ($1::int, $2::int, $3::int, true)
         ON CONFLICT DO NOTHING
       `,
-      values: [userId, user.operator?._id ?? user.territory?._id],
+      values: [userId, operatorId, territoryId],
     });
   }
 
