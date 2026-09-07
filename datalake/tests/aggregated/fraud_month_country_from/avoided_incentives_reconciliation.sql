@@ -21,9 +21,14 @@ WHERE (
   FROM {{ ref('fraud_month_country_from') }}
   WHERE incremental_date::timestamp >= {{ fraud_window }}
 ) != (
-  -- même population que le modèle : filtered_carpools(perim='country', strict=true) + start_code IS NOT NULL
+  -- même population géo que le modèle, sinon écart permanent
   WITH filtered_carpools AS (
-    {{ filtered_carpools(perim='country', with_new_users=false, with_valid=false, strict=true) }}
+    {{ filtered_carpools(
+      perim='country',
+      with_new_users=false,
+      with_valid=false,
+      strict=true
+    ) }}
   )
   SELECT
     COALESCE(

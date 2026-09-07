@@ -3,8 +3,9 @@
 
 SELECT oo._id
 FROM {{ source('dlk_import', 'operator_operators') }} AS oo
-WHERE oo.deleted_at IS NULL
+WHERE
+  oo.deleted_at IS NULL
   AND NOT EXISTS (
-  SELECT 1 FROM {{ ref('operator') }} AS t
-  WHERE t._id = oo._id
-)
+    SELECT 1 FROM {{ ref('operator') }} AS t
+    WHERE t._id = oo._id
+  )
