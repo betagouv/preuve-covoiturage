@@ -3,8 +3,12 @@
   tags=['app_metabase', 'public_stats']
 ) }}
 
-with fraudulous_carpools as (
-  select SUM(carpools_fraud) as fraudulous_trips_count
+with invalid_carpools as (
+  select
+    SUM(carpools_invalid)         as invalid_carpools_count,
+    SUM(carpools_fraud)           as fraud_carpools_count,
+    SUM(carpools_anomaly)         as anomaly_carpools_count,
+    SUM(carpools_terms_violation) as terms_violation_carpools_count
   from {{ ref('fraud_year_country_from') }}
 ),
 
@@ -15,12 +19,12 @@ valid_carpools as (
     COUNT(distinct operator_id)
       as operators_count,
     SUM(carpools)
-      as validated_trips_count
+      as validated_carpools_count
   from {{ ref('operators') }}
 ),
 
 subsidized_carpools as (
-  select COUNT(distinct carpool_v2_id) as subsidized_trips_count
+  select COUNT(distinct carpool_v2_id) as subsidized_carpools_count
   from {{ ref('incentives') }}
   where amount > 0
 )
@@ -28,10 +32,13 @@ subsidized_carpools as (
 select
   valid_carpools.average_carpoolers_by_car,
   valid_carpools.operators_count,
-  valid_carpools.validated_trips_count,
-  fraudulous_carpools.fraudulous_trips_count,
-  subsidized_carpools.subsidized_trips_count
+  valid_carpools.validated_carpools_count,
+  invalid_carpools.invalid_carpools_count,
+  invalid_carpools.fraud_carpools_count,
+  invalid_carpools.anomaly_carpools_count,
+  invalid_carpools.terms_violation_carpools_count,
+  subsidized_carpools.subsidized_carpools_count
 
-from fraudulous_carpools
+from invalid_carpools
 cross join valid_carpools
 cross join subsidized_carpools

@@ -7,7 +7,7 @@ SELECT -- noqa: ST06
   to_char(incremental_date, 'YYYY-MM') AS date,
   operator_id,
   operator_name                        AS name,
-  sum(carpools)                        AS trips,
+  sum(carpools)                        AS carpools,
   sum(carpools_valid)                  AS ok,
   sum(carpools_invalid)                AS error
 FROM {{ ref('fraud_month_country_from') }}
