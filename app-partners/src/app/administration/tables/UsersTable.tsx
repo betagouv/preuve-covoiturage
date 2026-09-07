@@ -29,6 +29,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
   const { search, debouncedSearch, onChangeSearch: setSearchValue } = useUrlSearch();
   const modal = useActionsModal<UsersInterface["data"][0]>();
   const [alert, setAlert] = useState<"create" | "update" | "delete" | "error">();
+  const [deleteOutcome, setDeleteOutcome] = useState<"user_deleted" | "scope_released">();
   const onChangePage = (id: number) => {
     setCurrentPage(id);
   };
@@ -116,6 +117,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
                   onClick: () => {
                     modal.setCurrentRow(d);
                     modal.setOpenModal(true);
+                    setDeleteOutcome(undefined);
                     modal.setTypeModal("delete");
                   },
                 },
@@ -166,6 +168,24 @@ export default function UsersTable(props: { title: string; territoryId: number |
     return getRolesList(user?.role ?? "anonymous");
   };
 
+  // Un admin de territoire ne fait que libérer son périmètre : le compte survit s'il en porte d'autres.
+  const isScopedDelete = !canManageScopes && ((modal.currentRow.role ?? "") as string).startsWith("territory.");
+
+  const targetName = () => `${modal.currentRow?.firstname as string} ${modal.currentRow?.lastname as string}`;
+
+  const defaultDeleteConfirmation = () => `Êtes-vous sûr de vouloir supprimer l'utilisateur ${targetName()} ?`;
+
+  // scopes_count absent tant que l'API ne l'expose pas : on ne préjuge alors d'aucune des deux issues.
+  const scopedDeleteConfirmation = () => {
+    const count = modal.currentRow?.scopes_count as number | undefined;
+    if (count === undefined) {
+      return `Confirmez-vous le retrait de ${targetName()} de votre territoire ? Si ce compte n'est rattaché à aucun autre territoire, il sera définitivement supprimé.`;
+    }
+    return count > 1
+      ? `Confirmez-vous le retrait de ${targetName()} de votre territoire ? Le compte sera conservé si la personne dispose d'autres rattachements.`
+      : `Confirmez-vous la suppression du compte de ${targetName()} ? Cette action est définitive.`;
+  };
+
   // Type de formulaire décidé par le rôle de l'utilisateur édité, jamais par le contexte de l'admin connecté.
   const targetScopeType = ((modal.currentRow.role ?? "") as string).split(".")[0];
   const isOperatorTarget = targetScopeType === "operator";
@@ -186,8 +206,12 @@ export default function UsersTable(props: { title: string; territoryId: number |
     <>
       {alert === "delete" && (
         <AlertMessage
-          title="Suppression réussie"
-          message="L'utilisateur a été supprimé."
+          title={deleteOutcome === "scope_released" ? "Retrait du territoire réussi" : "Suppression réussie"}
+          message={
+            deleteOutcome === "scope_released"
+              ? "L'utilisateur n'a plus accès à votre territoire. Son compte n'a pas été supprimé."
+              : "L'utilisateur a été supprimé."
+          }
           typeAlert={alert}
           onClose={() => setAlert(undefined)}
         />
@@ -272,7 +296,8 @@ export default function UsersTable(props: { title: string; territoryId: number |
         onClose={() => modal.setOpenModal(false)}
         onSubmit={async () => {
           try {
-            await modal.submitModal("dashboard/user", formSchema);
+            const result = await modal.submitModal("dashboard/user", formSchema);
+            setDeleteOutcome(result?.outcome === "scope_released" ? "scope_released" : "user_deleted");
             setAlert(modal.typeModal);
           } catch {
             setAlert("error");
@@ -380,8 +405,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
               )}
             </>
           )}
-          {modal.typeModal === "delete" &&
-            `Êtes-vous sûr de vouloir supprimer l'utilisateur ${modal.currentRow?.firstname as string} ${modal.currentRow?.lastname as string} ?`}
+          {modal.typeModal === "delete" && (isScopedDelete ? scopedDeleteConfirmation() : defaultDeleteConfirmation())}
         </>
       </Modal>
     </>
