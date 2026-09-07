@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
@@ -152,31 +152,50 @@ export class UsersRepository implements UsersRepositoryInterface {
   async deleteUser(
     params: DeleteUserParamsInterface & { operator_id?: number; territory_id?: number },
   ): Promise<DeleteUserResultInterface> {
-    // Scoping du caller via le pivot : on ne supprime que si le périmètre est accordé.
-    const filters = [sql`users._id = ${params.id}`];
+    const checks = [];
     if (params.operator_id) {
-      filters.push(sql`EXISTS (
-        SELECT 1 FROM ${raw(this.tableScopes)} us
-        WHERE us.user_id = users._id AND us.operator_id = ${params.operator_id}
-      )`);
+      checks.push(sql`us.operator_id = ${params.operator_id}`);
     }
     if (params.territory_id) {
-      filters.push(sql`EXISTS (
-        SELECT 1 FROM ${raw(this.tableScopes)} us
-        WHERE us.user_id = users._id AND us.territory_id = ${params.territory_id}
-      )`);
+      checks.push(sql`us.territory_id = ${params.territory_id}`);
+    }
+
+    if (checks.length) {
+      const counts = await this.pgConnection.query<{ total: number; granted: number }>(sql`
+        SELECT
+          count(*)::int AS total,
+          count(*) FILTER (WHERE ${join(checks, " OR ")})::int AS granted
+        FROM ${raw(this.tableScopes)} us
+        WHERE us.user_id = ${params.id}
+      `);
+      // Périmètre non accordé (ou compte inconnu) : on refuse.
+      if (!counts.length || counts[0].granted < checks.length) {
+        throw new NotFoundException();
+      }
+      if (counts[0].total > 1) {
+        // Un scope opérateur est 1:1 : multi-périmètres ici = incohérent, on refuse.
+        if (!params.territory_id) {
+          throw new ConflictException(`user ${params.id} has multiple scopes`);
+        }
+        await this.userScopeRepository.removeTerritory(params.id, params.territory_id);
+        return {
+          success: true,
+          message: `territory ${params.territory_id} released for user ${params.id}`,
+          outcome: "scope_released",
+        };
+      }
     }
 
     const query = sql`
       DELETE FROM ${raw(this.table)} AS users
-      WHERE ${join(filters, " AND ")}
+      WHERE users._id = ${params.id}
       RETURNING users._id
     `;
     const rows = await this.pgConnection.query(query);
     if (rows.length !== 1) {
       throw new NotFoundException();
     }
-    return { success: true, message: `user ${params.id} deleted` };
+    return { success: true, message: `user ${params.id} deleted`, outcome: "user_deleted" };
   }
 
   async updateUser(data: UpdateUserDataInterface): Promise<UpdateUserResultInterface> {

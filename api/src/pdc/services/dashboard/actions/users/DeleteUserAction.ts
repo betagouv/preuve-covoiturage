@@ -7,6 +7,7 @@ import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/inter
 export type ResultInterface = {
   success: boolean;
   message: string;
+  outcome: "user_deleted" | "scope_released";
 };
 
 @handler({
@@ -36,8 +37,10 @@ export class DeleteUserAction extends AbstractAction {
 
   public override async handle(params: DeleteUser): Promise<ResultInterface> {
     const result = await this.repository.deleteUser(params);
-    // ON DELETE CASCADE nettoie user_scopes ; on purge aussi les sessions Redis.
-    await this.sessionRepository.destroyByUser(params.id);
+    // Retrait de périmètre : le compte survit, ses sessions restent valides.
+    if (result.outcome === "user_deleted") {
+      await this.sessionRepository.destroyByUser(params.id);
+    }
     return result;
   }
 }
