@@ -4,8 +4,8 @@
 ) }}
 
 SELECT
-  year                AS annee,
+  year::text          AS time,
   SUM(carpools_valid) AS count
 FROM {{ ref('fraud_year_country_from') }}
 GROUP BY year
-ORDER BY year
+ORDER BY time

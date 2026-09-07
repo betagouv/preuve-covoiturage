@@ -3,7 +3,7 @@
 
 SELECT 1 AS failure
 WHERE (
-  SELECT COUNT(*) FROM {{ source('dlk_import', 'operator_operators') }}
+  SELECT COUNT(*) FROM {{ source('dlk_import', 'operator_operators') }} WHERE deleted_at IS NULL
 ) != (
   SELECT COUNT(*) FROM {{ ref('operator') }}
 )

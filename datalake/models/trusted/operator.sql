@@ -11,3 +11,4 @@ SELECT
   name,
   siret
 FROM {{ source('dlk_import', 'operator_operators') }}
+WHERE deleted_at IS NULL

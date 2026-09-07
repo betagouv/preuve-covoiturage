@@ -4,7 +4,7 @@
 ) }}
 
 SELECT
-  week_start,
+  week_start AS week,
   is_specific,
   operator,
   count

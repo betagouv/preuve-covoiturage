@@ -18,7 +18,8 @@ SELECT
 FROM {{ source('dlk_import', 'policy_policies') }} AS pp
 LEFT JOIN
   {{ source('dlk_import', 'territory_territory_group') }} AS ttg
-  ON pp.territory_id = ttg._id
+  ON pp.territory_id = ttg._id AND ttg.deleted_at IS NULL
 LEFT JOIN
   {{ source('dlk_import', 'company_companies') }} AS ccp
   ON ttg.company_id = ccp._id
+WHERE pp.deleted_at IS NULL

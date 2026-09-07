@@ -4,7 +4,7 @@
 ) }}
 
 with fraudulous_carpools as (
-  select SUM(carpools_fraud) as fraudulous_carpools_count
+  select SUM(carpools_fraud) as fraudulous_trips_count
   from {{ ref('fraud_year_country_from') }}
 ),
 
@@ -15,22 +15,22 @@ valid_carpools as (
     COUNT(distinct operator_id)
       as operators_count,
     SUM(carpools)
-      as validated_carpools_count
+      as validated_trips_count
   from {{ ref('operators') }}
 ),
 
 subsidized_carpools as (
-  select COUNT(distinct carpool_v2_id) as subsidized_carpools_count
+  select COUNT(distinct carpool_v2_id) as subsidized_trips_count
   from {{ ref('incentives') }}
   where amount > 0
 )
 
 select
-  fraudulous_carpools.fraudulous_carpools_count,
   valid_carpools.average_carpoolers_by_car,
   valid_carpools.operators_count,
-  valid_carpools.validated_carpools_count,
-  subsidized_carpools.subsidized_carpools_count
+  valid_carpools.validated_trips_count,
+  fraudulous_carpools.fraudulous_trips_count,
+  subsidized_carpools.subsidized_trips_count
 
 from fraudulous_carpools
 cross join valid_carpools

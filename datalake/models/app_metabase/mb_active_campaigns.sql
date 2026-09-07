@@ -33,11 +33,11 @@ select
   enveloppe,
   name,
   (
-    validated + draft
+    COALESCE(validated, 0) + COALESCE(draft, 0)
   ) as total_encours,
   (
     date_part('day', now() - start_date)
-    / date_part('day', end_date - start_date)
+    / NULLIF(date_part('day', end_date - start_date), 0)
   ) as conso_jours
 from list
 order by validated desc

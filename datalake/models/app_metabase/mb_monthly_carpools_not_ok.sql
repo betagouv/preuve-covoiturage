@@ -4,8 +4,8 @@
 ) }}
 
 SELECT
-  date_trunc('month', start_datetime_tz)::date
-    AS mois,
+  to_char(date_trunc('month', start_datetime_tz), 'YYYY-MM')
+    AS time,
   count(*) FILTER (WHERE acquisition_status = 'failed')
     AS acquisition_failed,
   count(*) FILTER (WHERE acquisition_status = 'canceled')

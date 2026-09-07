@@ -21,12 +21,17 @@ WHERE (
   FROM {{ ref('fraud_month_country_from') }}
   WHERE incremental_date::timestamp >= {{ fraud_window }}
 ) != (
+  -- même population que le modèle : filtered_carpools(perim='country', strict=true) + start_code IS NOT NULL
+  WITH filtered_carpools AS (
+    {{ filtered_carpools(perim='country', with_new_users=false, with_valid=false, strict=true) }}
+  )
   SELECT
     COALESCE(
       SUM(campaigns_result_total) FILTER (WHERE fraud_status = 'failed'), 0
     )
-  FROM {{ ref('carpools') }}
+  FROM filtered_carpools
   WHERE
-    start_datetime_tz >= {{ fraud_window }}
-    AND start_datetime_tz <= CURRENT_TIMESTAMP
+    start_code IS NOT NULL
+    AND carpool_datetime >= {{ fraud_window }}
+    AND carpool_datetime <= CURRENT_TIMESTAMP
 )

@@ -5,8 +5,8 @@
 
 select
   operator_id,
-  operator_name,
-  carpools,
-  first_date as first_trip,
-  last_date  as last_trip
+  operator_name as name,
+  first_date    as min,
+  last_date     as max,
+  carpools      as trips
 from {{ ref('operators') }}
