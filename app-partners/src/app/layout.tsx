@@ -44,9 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <AuthProvider>
-          <DsfrProvider>
-            <MuiDsfrThemeProvider>
+        <DsfrProvider>
+          <MuiDsfrThemeProvider>
+            <AuthProvider>
               <Skiplinks />
               <AppHeader />
               <main tabIndex={-1}>
@@ -55,12 +55,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Follow />
               </main>
               <AppFooter />
-            </MuiDsfrThemeProvider>
-          </DsfrProvider>
-          <Suspense fallback={null}>
-            <MatomoAnalytics />
-          </Suspense>
-        </AuthProvider>
+              <Suspense fallback={null}>
+                <MatomoAnalytics />
+              </Suspense>
+            </AuthProvider>
+          </MuiDsfrThemeProvider>
+        </DsfrProvider>
       </body>
     </html>
   );
