@@ -243,6 +243,15 @@ describe("UsersRepository multi-scope (pivot)", () => {
     assertEquals(listed.data[0].operator_id, null);
   });
 
+  it("scopes_count compte tous les périmètres, même filtré sur un seul", async () => {
+    const listed = await repository.getUsers({ search: "multi.scope@example.com" });
+    assertEquals(listed.data[0].scopes_count, 2);
+
+    // Filtré sur 310 : le compte n'en expose qu'un, mais en porte bien deux.
+    const byT310 = await repository.getUsers({ territory_id: 310, search: "multi.scope" });
+    assertEquals(byT310.data[0].scopes_count, 2);
+  });
+
   it("delete scoped on a non-granted territory finds nothing", async () => {
     const created = await repository.getUsers({ search: "multi.scope@example.com" });
     const uid = created.data[0].id;

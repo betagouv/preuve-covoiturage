@@ -71,7 +71,10 @@ export class UsersRepository implements UsersRepositoryInterface {
         users.email,
         (ARRAY_AGG(us.operator_id ORDER BY us.is_default DESC, us._id ASC))[1] AS operator_id,
         (ARRAY_AGG(us.territory_id ORDER BY us.is_default DESC, us._id ASC))[1] AS territory_id,
-        users.role
+        users.role,
+        -- Sous-requête : le WHERE dégrade le LEFT JOIN en jointure interne, il ne verrait
+        -- que les scopes du caller.
+        (SELECT COUNT(*) FROM ${raw(this.tableScopes)} s WHERE s.user_id = users._id)::int AS scopes_count
       FROM ${raw(this.table)} AS users
       LEFT JOIN ${raw(this.tableScopes)} us ON us.user_id = users._id
       ${searchJoin}
