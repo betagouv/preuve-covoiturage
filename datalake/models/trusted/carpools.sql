@@ -2,7 +2,7 @@
 {{ config(
     materialized='incremental',
     incremental_strategy='delete+insert',
-    unique_key=['_id', 'fraud_status', 'anomaly_status', 'acquisition_status'],
+    unique_key=['_id'],
     indexes = [
       { 'columns':['_id'] },
       { 'columns':['start_datetime_tz'] },
