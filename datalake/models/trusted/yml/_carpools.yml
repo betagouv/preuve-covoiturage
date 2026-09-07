@@ -4,6 +4,9 @@ models:
     columns:
       - name: _id
         data_type: integer
+        data_tests:
+          - unique
+          - not_null
       - name: uuid
         data_type: character varying
       - name: legacy_id
