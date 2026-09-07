@@ -36,11 +36,12 @@ WITH old_perimeters AS (
     a.l_country,
     a.pop,
     a.surface,
-    ST_SETSRID(b.geom, 4326)  AS geom,
-    ST_SETSRID(a.geom, 4326)  AS geom_simple,
-    ST_SETSRID(c.geom, 4326)  AS centroid,
-    MAKE_DATE(a.year, 1, 1)   AS valid_from,
-    MAKE_DATE(a.year, 12, 31) AS valid_until
+    ST_SETSRID(b.geom, 4326)    AS geom,
+    ST_SETSRID(a.geom, 4326)    AS geom_simple,
+    ST_SETSRID(c.geom, 4326)    AS centroid,
+    MAKE_DATE(a.year, 1, 1)     AS valid_from,
+    -- Borne exclusive en jointure : sans le +1 an, le 31/12 est orphelin.
+    MAKE_DATE(a.year + 1, 1, 1) AS valid_until
   -- (year, arr) non unique sur l'étranger 2021-2023 (XXXXX = 7 territoires),
   -- la clé est (year, arr, l_arr)
   FROM {{ source('raw', 'old_perimeters_simple') }} AS a
