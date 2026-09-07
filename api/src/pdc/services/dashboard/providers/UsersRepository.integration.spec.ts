@@ -151,6 +151,7 @@ describe("UsersRepository", () => {
     const result = await repository.deleteUser({ id: createdUserId });
 
     assertEquals(result.success, true);
+    assertEquals(result.outcome, "user_deleted");
     assertEquals(result.message, `user ${createdUserId} deleted`);
 
     // Verify deletion
@@ -204,7 +205,7 @@ describe("UsersRepository multi-scope (pivot)", () => {
     await after(db);
   });
 
-  it("create dual-writes the pivot (default + extra territories)", async () => {
+  it("create writes the pivot (default + extra territories)", async () => {
     await repository.createUser({
       firstname: "Multi",
       lastname: "Scope",
@@ -236,13 +237,97 @@ describe("UsersRepository multi-scope (pivot)", () => {
     assertEquals(byT311.data.length, 1);
   });
 
-  it("delete cascades the pivot rows", async () => {
+  it("list exposes the default scope of the pivot", async () => {
+    const listed = await repository.getUsers({ search: "multi.scope@example.com" });
+    assertEquals(listed.data[0].territory_id, 310);
+    assertEquals(listed.data[0].operator_id, null);
+  });
+
+  it("scopes_count compte tous les périmètres, même filtré sur un seul", async () => {
+    const listed = await repository.getUsers({ search: "multi.scope@example.com" });
+    assertEquals(listed.data[0].scopes_count, 2);
+
+    // Filtré sur 310 : le compte n'en expose qu'un, mais en porte bien deux.
+    const byT310 = await repository.getUsers({ territory_id: 310, search: "multi.scope" });
+    assertEquals(byT310.data[0].scopes_count, 2);
+  });
+
+  it("delete scoped on a non-granted territory finds nothing", async () => {
     const created = await repository.getUsers({ search: "multi.scope@example.com" });
     const uid = created.data[0].id;
-    await repository.deleteUser({ id: uid });
+    await assertRejects(
+      async () => await repository.deleteUser({ id: uid, territory_id: 999999 }),
+      NotFoundException,
+      "Not found",
+    );
+  });
+
+  it("delete from a territory only releases that scope", async () => {
+    const created = await repository.getUsers({ search: "multi.scope@example.com" });
+    const uid = created.data[0].id;
+    const result = await repository.deleteUser({ id: uid, territory_id: 311 });
+    assertEquals(result.outcome, "scope_released");
+
+    const scopeRows = await db.connection.query<{ territory_id: number }>(sql`
+      SELECT territory_id FROM auth.user_scopes WHERE user_id = ${uid}
+    `);
+    assertEquals(scopeRows.length, 1);
+    assertEquals(scopeRows[0].territory_id, 310);
+
+    const still = await repository.getUsers({ id: uid });
+    assertEquals(still.data.length, 1);
+  });
+
+  it("releasing the default scope promotes another one", async () => {
+    await repository.createUser({
+      firstname: "Promote",
+      lastname: "Scope",
+      email: "promote.scope@example.com",
+      role: "territory.admin" as const,
+      operator_id: null,
+      territory_id: 310,
+      scopes: [311],
+    });
+    const uid = (await repository.getUsers({ search: "promote.scope@example.com" })).data[0].id;
+
+    const result = await repository.deleteUser({ id: uid, territory_id: 310 });
+    assertEquals(result.outcome, "scope_released");
+
+    const rows = await db.connection.query<{ territory_id: number; is_default: boolean }>(sql`
+      SELECT territory_id, is_default FROM auth.user_scopes WHERE user_id = ${uid}
+    `);
+    assertEquals(rows.length, 1);
+    assertEquals(rows[0].territory_id, 311);
+    assertEquals(rows[0].is_default, true);
+  });
+
+  it("delete of the last scope removes the account and its pivot rows", async () => {
+    const created = await repository.getUsers({ search: "multi.scope@example.com" });
+    const uid = created.data[0].id;
+
+    const result = await repository.deleteUser({ id: uid, territory_id: 310 });
+    assertEquals(result.outcome, "user_deleted");
+
     const scopeRows = await db.connection.query<{ n: number }>(sql`
       SELECT count(*)::int AS n FROM auth.user_scopes WHERE user_id = ${uid}
     `);
     assertEquals(scopeRows[0].n, 0);
+    assertEquals((await repository.getUsers({ id: uid })).data.length, 0);
+  });
+
+  it("operator caller deletes the account (scope 1:1)", async () => {
+    await repository.createUser({
+      firstname: "Op",
+      lastname: "Scope",
+      email: "op.scope@example.com",
+      role: "operator.admin" as const,
+      operator_id: 1,
+      territory_id: null,
+    });
+    const uid = (await repository.getUsers({ search: "op.scope@example.com" })).data[0].id;
+
+    const result = await repository.deleteUser({ id: uid, operator_id: 1 });
+    assertEquals(result.outcome, "user_deleted");
+    assertEquals((await repository.getUsers({ id: uid })).data.length, 0);
   });
 });

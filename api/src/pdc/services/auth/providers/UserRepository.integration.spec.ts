@@ -75,6 +75,19 @@ describe("UserRepository.authenticateByEmail", () => {
     assertEquals(user?.scopes.length, 2);
   });
 
+  // 9 registry.admin en production n'ont aucun périmètre : le login doit rester ouvert.
+  it("authenticates a user without any scope", async () => {
+    const { email } = await createUser(null);
+
+    const user = await repository.authenticateByEmail(email);
+
+    assertEquals(user?.territory_id, null);
+    assertEquals(user?.operator_id, null);
+    assertEquals(user?.siret, null);
+    assertEquals(user?.organisation, null);
+    assertEquals(user?.scopes, []);
+  });
+
   it("returns null for an unknown email", async () => {
     assertEquals(await repository.authenticateByEmail("does-not-exist@example.com"), null);
   });

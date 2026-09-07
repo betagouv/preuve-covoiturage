@@ -321,20 +321,35 @@ export class DenoMigrator {
   }
 
   async seedUser(user: User) {
-    await this.testConn.query(sql`
+    // DO UPDATE no-op : RETURNING doit renvoyer l'id même quand l'utilisateur existe déjà (re-seed).
+    const rows = await this.testConn.query<{ _id: number }>(sql`
       INSERT INTO auth.users
-        (email, firstname, lastname, password, status, role, territory_id, operator_id)
+        (email, firstname, lastname, password, status, role)
       VALUES (
         ${user.email}::varchar,
         ${user.firstname}::varchar,
         ${user.lastname}::varchar,
         ${user.password}::varchar,
         ${user.status}::auth.user_status_enum,
-        ${user.role}::varchar,
-        ${user.territory?._id},
-        ${user.operator?._id}
+        ${user.role}::varchar
       )
-      ON CONFLICT DO NOTHING 
+      ON CONFLICT (email) DO UPDATE SET email = excluded.email
+      RETURNING _id
+    `);
+
+    const operatorId = user.operator?._id ?? null;
+    const territoryId = user.territory?._id ?? null;
+    if (operatorId === null && territoryId === null) return;
+
+    const userId = rows[0]?._id;
+    if (!userId) {
+      throw new Error(`[migrator] identifiant introuvable pour ${user.email} : périmètre non seedé`);
+    }
+
+    await this.testConn.query(sql`
+      INSERT INTO auth.user_scopes (user_id, operator_id, territory_id, is_default)
+      VALUES (${userId}::int, ${operatorId}::int, ${territoryId}::int, true)
+      ON CONFLICT DO NOTHING
     `);
   }
 

@@ -421,21 +421,21 @@ export class LegacyMigrator {
   }
 
   async seedUser(user: User) {
-    await this.testConn.getClient().query({
+    // DO UPDATE no-op : RETURNING doit renvoyer l'id même quand l'utilisateur existe déjà (re-seed).
+    const inserted = await this.testConn.getClient().query({
       text: `
         INSERT INTO auth.users
-          (email, firstname, lastname, password, status, role, territory_id, operator_id)
+          (email, firstname, lastname, password, status, role)
         VALUES (
           $1::varchar,
           $2::varchar,
           $3::varchar,
           $4::varchar,
           $5::auth.user_status_enum,
-          $6::varchar,
-          $7::int,
-          $8::int
+          $6::varchar
         )
-        ON CONFLICT DO NOTHING 
+        ON CONFLICT (email) DO UPDATE SET email = excluded.email
+        RETURNING _id
       `,
       values: [
         user.email,
@@ -444,9 +444,25 @@ export class LegacyMigrator {
         user.password, // TODO: use cryptoprovider tcrypt password
         user.status,
         user.role,
-        user.territory?._id,
-        user.operator?._id,
       ],
+    });
+
+    const operatorId = user.operator?._id ?? null;
+    const territoryId = user.territory?._id ?? null;
+    if (operatorId === null && territoryId === null) return;
+
+    const userId = inserted.rows[0]?._id;
+    if (!userId) {
+      throw new Error(`[migrator] identifiant introuvable pour ${user.email} : périmètre non seedé`);
+    }
+
+    await this.testConn.getClient().query({
+      text: `
+        INSERT INTO auth.user_scopes (user_id, operator_id, territory_id, is_default)
+        VALUES ($1::int, $2::int, $3::int, true)
+        ON CONFLICT DO NOTHING
+      `,
+      values: [userId, operatorId, territoryId],
     });
   }
 

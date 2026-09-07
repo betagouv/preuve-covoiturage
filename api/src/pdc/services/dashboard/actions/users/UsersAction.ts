@@ -13,6 +13,8 @@ export type UserResult = {
   territory_id?: number;
   phone?: string;
   role: string;
+  // Nombre total de périmètres du compte, indépendant du filtre du caller.
+  scopes_count: number;
 };
 export type ResultInterface = {
   meta: {

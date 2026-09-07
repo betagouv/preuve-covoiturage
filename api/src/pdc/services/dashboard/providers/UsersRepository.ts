@@ -1,4 +1,4 @@
-import { NotFoundException, provider } from "@/ilos/common/index.ts";
+import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
@@ -57,20 +57,24 @@ export class UsersRepository implements UsersRepositoryInterface {
     const page = params.page || 1;
     const offset = (page - 1) * limit;
     const searchJoin = params.search
-      ? sql`LEFT JOIN ${raw(this.tableTerritory)} tg ON tg._id = users.territory_id LEFT JOIN ${
+      ? sql`LEFT JOIN ${raw(this.tableTerritory)} tg ON tg._id = us.territory_id LEFT JOIN ${
         raw(this.tableOperator)
-      } o ON o._id = users.operator_id`
+      } o ON o._id = us.operator_id`
       : sql``;
-    // GROUP BY users._id (PK) : un user multi-territoires n'apparaît qu'une fois.
+    // GROUP BY users._id (PK) : un user multi-territoires n'apparaît qu'une fois ;
+    // le périmètre exposé est son scope par défaut dans le pivot.
     const query = sql`
       SELECT
         users._id as id,
         users.firstname,
         users.lastname,
         users.email,
-        users.operator_id,
-        users.territory_id,
-        users.role
+        (ARRAY_AGG(us.operator_id ORDER BY us.is_default DESC, us._id ASC))[1] AS operator_id,
+        (ARRAY_AGG(us.territory_id ORDER BY us.is_default DESC, us._id ASC))[1] AS territory_id,
+        users.role,
+        -- Sous-requête : le WHERE dégrade le LEFT JOIN en jointure interne, il ne verrait
+        -- que les scopes du caller.
+        (SELECT COUNT(*) FROM ${raw(this.tableScopes)} s WHERE s.user_id = users._id)::int AS scopes_count
       FROM ${raw(this.table)} AS users
       LEFT JOIN ${raw(this.tableScopes)} us ON us.user_id = users._id
       ${searchJoin}
@@ -102,17 +106,14 @@ export class UsersRepository implements UsersRepositoryInterface {
   }
 
   async createUser(data: CreateUserDataInterface): Promise<CreateUserResultInterface> {
-    // Dual-write (expand) : on écrit encore les colonnes dépréciées operator_id/territory_id + login_siren.
     const query = sql`
       INSERT INTO ${raw(this.table)} (
-        firstname, lastname, email, role, operator_id, territory_id, login_siren
+        firstname, lastname, email, role, login_siren
       ) VALUES (
-        ${data.firstname}, ${data.lastname}, ${data.email}, ${data.role}, ${data.operator_id}, ${data.territory_id}, ${
-      data.login_siren ?? null
-    }
+        ${data.firstname}, ${data.lastname}, ${data.email}, ${data.role}, ${data.login_siren ?? null}
       )
       RETURNING
-        _id, created_at, firstname, lastname, email, role, operator_id, territory_id
+        _id, created_at, firstname, lastname, email, role
     `;
     const rows = await this.pgConnection.query<{ _id: number }>(query);
     if (rows.length !== 1) {
@@ -154,28 +155,53 @@ export class UsersRepository implements UsersRepositoryInterface {
   async deleteUser(
     params: DeleteUserParamsInterface & { operator_id?: number; territory_id?: number },
   ): Promise<DeleteUserResultInterface> {
-    const filters = [sql`_id = ${params.id}`];
+    const checks = [];
     if (params.operator_id) {
-      filters.push(sql`operator_id = ${params.operator_id}`);
+      checks.push(sql`us.operator_id = ${params.operator_id}`);
     }
     if (params.territory_id) {
-      filters.push(sql`territory_id = ${params.territory_id}`);
+      checks.push(sql`us.territory_id = ${params.territory_id}`);
+    }
+
+    if (checks.length) {
+      const counts = await this.pgConnection.query<{ total: number; granted: number }>(sql`
+        SELECT
+          count(*)::int AS total,
+          count(*) FILTER (WHERE ${join(checks, " OR ")})::int AS granted
+        FROM ${raw(this.tableScopes)} us
+        WHERE us.user_id = ${params.id}
+      `);
+      // Périmètre non accordé (ou compte inconnu) : on refuse.
+      if (!counts.length || counts[0].granted < checks.length) {
+        throw new NotFoundException();
+      }
+      if (counts[0].total > 1) {
+        // Un scope opérateur est 1:1 : multi-périmètres ici = incohérent, on refuse.
+        if (!params.territory_id) {
+          throw new ConflictException(`user ${params.id} has multiple scopes`);
+        }
+        await this.userScopeRepository.removeTerritory(params.id, params.territory_id);
+        return {
+          success: true,
+          message: `territory ${params.territory_id} released for user ${params.id}`,
+          outcome: "scope_released",
+        };
+      }
     }
 
     const query = sql`
-      DELETE FROM ${raw(this.table)}
-      WHERE ${join(filters, " AND ")}
-      RETURNING _id
+      DELETE FROM ${raw(this.table)} AS users
+      WHERE users._id = ${params.id}
+      RETURNING users._id
     `;
     const rows = await this.pgConnection.query(query);
     if (rows.length !== 1) {
       throw new NotFoundException();
     }
-    return { success: true, message: `user ${params.id} deleted` };
+    return { success: true, message: `user ${params.id} deleted`, outcome: "user_deleted" };
   }
 
   async updateUser(data: UpdateUserDataInterface): Promise<UpdateUserResultInterface> {
-    // Dual-write (expand) : colonnes dépréciées + login_siren, puis resynchro du pivot.
     const query = sql`
       UPDATE ${raw(this.table)}
       SET
@@ -183,12 +209,10 @@ export class UsersRepository implements UsersRepositoryInterface {
         lastname = ${data.lastname},
         email = ${data.email},
         role = ${data.role},
-        operator_id = ${data.operator_id},
-        territory_id = ${data.territory_id},
         login_siren = ${data.login_siren ?? null},
         updated_at = now()
       WHERE _id = ${data.id}
-      RETURNING _id, updated_at, firstname, lastname, email, role, operator_id, territory_id
+      RETURNING _id, updated_at, firstname, lastname, email, role
     `;
     const rows = await this.pgConnection.query<UpdateUserResultInterface>(query);
     if (rows.length !== 1) {
