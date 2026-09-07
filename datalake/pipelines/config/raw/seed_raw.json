@@ -1,24 +1,24 @@
 [
   {
     "name": "old_perimeters_full",
-    "filename": "old_perimeters.20260818T093524Z",
+    "filename": "old_perimeters.20260907T094258Z",
     "ext": "gpkg",
     "geo_layer": "full",
     "select": ["year", "arr", "l_arr", ["geom", "geometry", "geom"]],
-    "sha256": "sha256:cab16d53bfaafb23f57f7bd1a2174ec4f7ee3544e3a3ddb363272df2153aacb2",
-    "size": 1826607104,
+    "sha256": "sha256:c1f53ee794f88d4d6873061fda5b2ad4e0b41bdefec222b769bb69b8d1159c4d",
+    "size": 1710227456,
     "uploaded_at": "2026-07-03T22:40:07+00:00",
     "origin": ""
   },
   {
     "name": "old_perimeters_simple",
-    "filename": "old_perimeters.20260818T093524Z",
+    "filename": "old_perimeters.20260907T094258Z",
     "ext": "gpkg",
     "geo_layer": "simple"
   },
   {
     "name": "old_perimeters_centroid",
-    "filename": "old_perimeters.20260818T093524Z",
+    "filename": "old_perimeters.20260907T094258Z",
     "ext": "gpkg",
     "geo_layer": "centroid",
     "select": ["year", "arr", "l_arr", ["geom", "geometry", "geom"]]
