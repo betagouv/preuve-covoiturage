@@ -137,13 +137,20 @@ FROM anomaly.labels;
 
 -- ================= carpool v1 (TEMPORAIRE : suppr après consolidation trusted) =================
 
-CREATE OR REPLACE VIEW dlk_export.carpool_carpools AS
+-- carpool v1 : table absente des bases neuves (elle ne vient que du dump flashé).
+DO $$
+BEGIN
+  IF to_regclass('carpool.carpools') IS NOT NULL THEN
+    EXECUTE 'CREATE OR REPLACE VIEW dlk_export.carpool_carpools AS
 SELECT
   _id, created_at, acquisition_id, operator_id, trip_id, operator_trip_id, is_driver,
   operator_class, datetime, duration, start_position, end_position, distance, seats,
   operator_journey_id, cost, meta, status::text AS status,
   start_territory_id, end_territory_id, start_geo_code, end_geo_code, payment
-FROM carpool.carpools;
+FROM carpool.carpools;';
+  END IF;
+END
+$$;
 
 -- ================= cee (TEMPORAIRE : CEE déprécié) =================
 
@@ -160,8 +167,14 @@ FROM cee.cee_applications;
 --  Droits pour datalake_fdw (lecture seule, user créé par OpenTofu PR #36)
 -- =====================================================================
 
-GRANT USAGE   ON SCHEMA   dlk_export              TO datalake_fdw;
-GRANT SELECT  ON ALL TABLES IN SCHEMA dlk_export  TO datalake_fdw;
-
--- Auto-grant SELECT sur les futures vues créées par vnm dans dlk_export :
-ALTER DEFAULT PRIVILEGES IN SCHEMA dlk_export GRANT SELECT ON TABLES TO datalake_fdw;
+-- Le rôle est créé par OpenTofu : absent des bases de test/dev, où l'on saute les droits.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'datalake_fdw') THEN
+    GRANT USAGE  ON SCHEMA   dlk_export             TO datalake_fdw;
+    GRANT SELECT ON ALL TABLES IN SCHEMA dlk_export TO datalake_fdw;
+    -- Auto-grant SELECT sur les futures vues créées par vnm dans dlk_export :
+    ALTER DEFAULT PRIVILEGES IN SCHEMA dlk_export GRANT SELECT ON TABLES TO datalake_fdw;
+  END IF;
+END
+$$;

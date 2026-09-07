@@ -42,29 +42,28 @@ export async function migrateSQL(connectionString: string, path: string, verbose
         await transaction.queryArray`INSERT INTO public.migrations (name, run_on) VALUES (${td}, NOW())`;
         await transaction.commit();
       } catch (e) {
-        // There's no way to catch the database error to log it.
-        // Run the file with psql to debug...
         logger.error(`Error in migration: ${td}`);
-        if (e instanceof Error) {
-          logger.error(e.message);
-        } else {
-          logger.error("An unknown error occurred");
-        }
+        logger.error(migrationErrorMessage(e));
+        throw e;
       } finally {
         await migClient.end();
       }
     }
   } catch (e) {
     logger.error("Error in migrateSQL");
-    if (e instanceof Error) {
-      logger.error(e.message);
-    } else {
-      logger.error("An unknown error occurred");
-    }
+    logger.error(migrationErrorMessage(e));
+    throw e;
   } finally {
     conn.release();
     await pool.end();
   }
+}
+
+// deno-postgres masque l'erreur SQL derrière « transaction has been aborted » : le détail est dans cause.
+function migrationErrorMessage(e: unknown): string {
+  if (!(e instanceof Error)) return "An unknown error occurred";
+  const cause = e.cause instanceof Error ? e.cause.message : undefined;
+  return cause ? `${e.message} — ${cause}` : e.message;
 }
 
 async function getPossibleMigrationsFilePath(path: string): Promise<Map<string, string>> {
