@@ -1,4 +1,4 @@
-{% macro fraud_model(perim, grain, direction) %}
+{% macro fraud_model(perim, grain, direction, with_incentives=false) %}
 
   {# --------------------------------------------------------
      Lookback par grain
@@ -41,6 +41,7 @@ SELECT * FROM {{ ref('fraud_' ~ grain ~ '_plm_' ~ direction) }}
   materialized='incremental',
   incremental_strategy='delete+insert',
   unique_key=['operator_id', 'code', 'incremental_date'],
+  on_schema_change='append_new_columns',
   indexes=[
     {'columns': ['operator_id', 'code', 'incremental_date'], 'unique': true}
   ],
@@ -58,7 +59,7 @@ WITH filtered_carpools AS (
     operator_name,
     start_code AS code,
     {{ incremental_columns('carpool_datetime', grain) }},
-    {{ fraud_agg_columns() }}
+    {{ fraud_agg_columns(with_incentives=with_incentives) }}
   FROM filtered_carpools
   WHERE start_code IS NOT NULL
   GROUP BY 1, 2, 3, {{ group_by_grain(grain, 4) }}
@@ -70,7 +71,7 @@ WITH filtered_carpools AS (
     operator_name,
     end_code AS code,
     {{ incremental_columns('carpool_datetime', grain) }},
-    {{ fraud_agg_columns() }}
+    {{ fraud_agg_columns(with_incentives=with_incentives) }}
   FROM filtered_carpools
   WHERE end_code IS NOT NULL
   GROUP BY 1, 2, 3, {{ group_by_grain(grain, 4) }}
@@ -91,7 +92,7 @@ WITH filtered_carpools AS (
     operator_name,
     code,
     {{ incremental_columns('carpool_datetime', grain) }},
-    {{ fraud_agg_columns() }}
+    {{ fraud_agg_columns(with_incentives=with_incentives) }}
   FROM exploded
   WHERE code IS NOT NULL
   GROUP BY 1, 2, 3, {{ group_by_grain(grain, 4) }}

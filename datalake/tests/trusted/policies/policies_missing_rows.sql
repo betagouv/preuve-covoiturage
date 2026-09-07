@@ -1,0 +1,11 @@
+-- Pas de fenêtre : materialized='table', snapshot complet à chaque run.
+{{ config(severity='warn', tags=['trusted', 'policies']) }}
+
+SELECT pp._id
+FROM {{ source('dlk_import', 'policy_policies') }} AS pp
+WHERE
+  pp.deleted_at IS NULL
+  AND NOT EXISTS (
+    SELECT 1 FROM {{ ref('policies') }} AS t
+    WHERE t._id = pp._id
+  )
