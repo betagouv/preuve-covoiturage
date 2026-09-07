@@ -264,6 +264,8 @@ just pipeline-trusted-geo
 
 Construit la hiérarchie géographique dans `zone_trusted` (`perimeters`, `perimeters_agg`, `com_evolution`). Base pour tous les JOINs géographiques des carpools.
 
+La clé métier d'un périmètre est **`(year, arr, l_arr)`** : `(year, arr)` seul n'est pas unique sur l'étranger, où un même code couvre plusieurs territoires (`XXXXX` = France, Nouvelle-Calédonie, Polynésie…). Le pipeline passe par `dbt build`, donc le test d'unicité s'intercale entre `perimeters` et ses modèles avals, et c'est un garde-fou, pas une formalité : `archive-old-perimeters` réinjecte `perimeters` dans la zone raw, donc une duplication non détectée est élevée au cube à chaque cycle archive/reseed jusqu'à saturer le disque temporaire de Postgres.
+
 ### Étape 2 bis — Stats des tables distantes (FDW)
 
 ```bash

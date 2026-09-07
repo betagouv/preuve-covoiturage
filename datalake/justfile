@@ -120,8 +120,11 @@ pipeline-raw *args:
   just seed raw/seed_raw.json zone_raw --folder seeds {{ if args =~ "--full-refresh" { "--overwrite" } else { "" } }}
 
 # Pipeline 2: trusted geo (yearly)
+# `build` et non `run` : le test d'unicite suit les modeles. Une duplication de
+# perimeters serait recopiee dans la raw par `archive-old-perimeters`, puis elevee
+# au cube au reseed suivant.
 pipeline-trusted-geo *args:
-  just dbt run --select "tag:trusted,tag:geo" {{args}}
+  just dbt build --select "tag:trusted,tag:geo" {{args}}
 
 # Pipeline 3 : daily update (agrégés taggés daily + zone exposée + invalidation du cache).
 # Un seul `dbt run` sur l'union => dbt ordonne le DAG (agrégés frais avant l'exposé).
