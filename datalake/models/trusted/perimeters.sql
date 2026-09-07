@@ -36,11 +36,12 @@ WITH old_perimeters AS (
     a.l_country,
     a.pop,
     a.surface,
-    ST_SETSRID(b.geom, 4326)  AS geom,
-    ST_SETSRID(a.geom, 4326)  AS geom_simple,
-    ST_SETSRID(c.geom, 4326)  AS centroid,
-    MAKE_DATE(a.year, 1, 1)   AS valid_from,
-    MAKE_DATE(a.year, 12, 31) AS valid_until
+    ST_SETSRID(b.geom, 4326)    AS geom,
+    ST_SETSRID(a.geom, 4326)    AS geom_simple,
+    ST_SETSRID(c.geom, 4326)    AS centroid,
+    MAKE_DATE(a.year, 1, 1)     AS valid_from,
+    -- Borne exclusive en jointure : sans le +1 an, le 31/12 est orphelin.
+    MAKE_DATE(a.year + 1, 1, 1) AS valid_until
   -- (year, arr) non unique sur l'étranger 2021-2023 (XXXXX = 7 territoires),
   -- la clé est (year, arr, l_arr)
   FROM {{ source('raw', 'old_perimeters_simple') }} AS a
@@ -52,7 +53,7 @@ WITH old_perimeters AS (
 
 new_com AS (
   SELECT
-    2025                                 AS year,  -- noqa: RF04
+    2026                                 AS year,  -- noqa: RF04
     a.com                                AS arr,
     a.l_com                              AS l_arr,
     a.com,
@@ -72,17 +73,17 @@ new_com AS (
     ST_SETSRID(f.geom, 4326)             AS geom,
     ST_SETSRID(a.geom, 4326)             AS geom_simple,
     ST_SETSRID(g.geom, 4326)             AS centroid,
-    MAKE_DATE(2025, 1, 1)                AS valid_from,
-    MAKE_DATE(2026, 12, 31)              AS valid_until
-  FROM {{ source('raw', 'ign_aecarto_com_2025') }} AS a
+    MAKE_DATE(2026, 1, 1)                AS valid_from,
+    MAKE_DATE(2027, 12, 31)              AS valid_until
+  FROM {{ source('raw', 'ign_aecarto_com_2026') }} AS a
   LEFT JOIN
-    {{ source('raw', 'ign_aecarto_epci_2025') }} AS b
+    {{ source('raw', 'ign_aecarto_epci_2026') }} AS b
     ON LEFT(a.epci, 9) = LEFT(b.epci, 9)
-  LEFT JOIN {{ source('raw', 'ign_aecarto_dep_2025') }} AS c ON a.dep = c.dep
-  LEFT JOIN {{ source('raw', 'ign_aecarto_reg_2025') }} AS d ON a.reg = d.reg
-  LEFT JOIN {{ source('raw', 'cerema_aom_2025') }} AS e ON a.com = e.code_insee
-  LEFT JOIN {{ source('raw', 'ign_ae_com_2025') }} AS f ON a.com = f.com
-  LEFT JOIN {{ source('raw', 'ign_aecentroid_com_2025') }} AS g ON a.com = g.com
+  LEFT JOIN {{ source('raw', 'ign_aecarto_dep_2026') }} AS c ON a.dep = c.dep
+  LEFT JOIN {{ source('raw', 'ign_aecarto_reg_2026') }} AS d ON a.reg = d.reg
+  LEFT JOIN {{ source('raw', 'cerema_aom_2026') }} AS e ON a.com = e.code_insee
+  LEFT JOIN {{ source('raw', 'ign_ae_com_2026') }} AS f ON a.com = f.com
+  LEFT JOIN {{ source('raw', 'ign_aecentroid_com_2026') }} AS g ON a.com = g.com
 ),
 
 new_arr AS (
@@ -107,17 +108,17 @@ new_arr AS (
     ST_SETSRID(c.geom, 4326)             AS geom,
     ST_SETSRID(a.geom, 4326)             AS geom_simple,
     ST_SETSRID(d.geom, 4326)             AS centroid,
-    MAKE_DATE(2025, 1, 1)                AS valid_from,
-    MAKE_DATE(2026, 12, 31)              AS valid_until
-  FROM {{ source('raw', 'ign_aecarto_arr_2025') }} AS a
+    MAKE_DATE(2026, 1, 1)                AS valid_from,
+    MAKE_DATE(2027, 12, 31)              AS valid_until
+  FROM {{ source('raw', 'ign_aecarto_arr_2026') }} AS a
   LEFT JOIN new_com AS b ON a.com = b.arr
-  LEFT JOIN {{ source('raw', 'ign_ae_arr_2025') }} AS c ON a.arr = c.arr
-  LEFT JOIN {{ source('raw', 'ign_aecentroid_arr_2025') }} AS d ON a.arr = d.arr
+  LEFT JOIN {{ source('raw', 'ign_ae_arr_2026') }} AS c ON a.arr = c.arr
+  LEFT JOIN {{ source('raw', 'ign_aecentroid_arr_2026') }} AS d ON a.arr = d.arr
 ),
 
 new_country AS (
   SELECT
-    2025                    AS year,
+    2026                    AS year,
     arr,
     l_arr,
     com,
@@ -137,8 +138,8 @@ new_country AS (
     geom,
     geom_simple,
     centroid,
-    MAKE_DATE(2025, 1, 1)   AS valid_from,
-    MAKE_DATE(2026, 12, 31) AS valid_until
+    MAKE_DATE(2026, 1, 1)   AS valid_from,
+    MAKE_DATE(2027, 12, 31) AS valid_until
   FROM old_perimeters
   WHERE
     year = 2024
