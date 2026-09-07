@@ -321,20 +321,33 @@ export class DenoMigrator {
   }
 
   async seedUser(user: User) {
-    await this.testConn.query(sql`
+    const rows = await this.testConn.query<{ _id: number }>(sql`
       INSERT INTO auth.users
-        (email, firstname, lastname, password, status, role, territory_id, operator_id)
+        (email, firstname, lastname, password, status, role)
       VALUES (
         ${user.email}::varchar,
         ${user.firstname}::varchar,
         ${user.lastname}::varchar,
         ${user.password}::varchar,
         ${user.status}::auth.user_status_enum,
-        ${user.role}::varchar,
-        ${user.territory?._id},
-        ${user.operator?._id}
+        ${user.role}::varchar
       )
-      ON CONFLICT DO NOTHING 
+      ON CONFLICT DO NOTHING
+      RETURNING _id
+    `);
+
+    const userId = rows[0]?._id;
+    const scope = user.operator?._id
+      ? { column: "operator_id", value: user.operator._id }
+      : user.territory?._id
+      ? { column: "territory_id", value: user.territory._id }
+      : null;
+    if (!userId || !scope) return;
+
+    await this.testConn.query(sql`
+      INSERT INTO auth.user_scopes (user_id, ${raw(scope.column)}, is_default)
+      VALUES (${userId}::int, ${scope.value}::int, true)
+      ON CONFLICT DO NOTHING
     `);
   }
 

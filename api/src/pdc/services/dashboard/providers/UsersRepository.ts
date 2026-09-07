@@ -57,19 +57,20 @@ export class UsersRepository implements UsersRepositoryInterface {
     const page = params.page || 1;
     const offset = (page - 1) * limit;
     const searchJoin = params.search
-      ? sql`LEFT JOIN ${raw(this.tableTerritory)} tg ON tg._id = users.territory_id LEFT JOIN ${
+      ? sql`LEFT JOIN ${raw(this.tableTerritory)} tg ON tg._id = us.territory_id LEFT JOIN ${
         raw(this.tableOperator)
-      } o ON o._id = users.operator_id`
+      } o ON o._id = us.operator_id`
       : sql``;
-    // GROUP BY users._id (PK) : un user multi-territoires n'apparaît qu'une fois.
+    // GROUP BY users._id (PK) : un user multi-territoires n'apparaît qu'une fois ;
+    // le périmètre exposé est son scope par défaut dans le pivot.
     const query = sql`
       SELECT
         users._id as id,
         users.firstname,
         users.lastname,
         users.email,
-        users.operator_id,
-        users.territory_id,
+        (ARRAY_AGG(us.operator_id ORDER BY us.is_default DESC, us._id ASC))[1] AS operator_id,
+        (ARRAY_AGG(us.territory_id ORDER BY us.is_default DESC, us._id ASC))[1] AS territory_id,
         users.role
       FROM ${raw(this.table)} AS users
       LEFT JOIN ${raw(this.tableScopes)} us ON us.user_id = users._id
@@ -102,17 +103,14 @@ export class UsersRepository implements UsersRepositoryInterface {
   }
 
   async createUser(data: CreateUserDataInterface): Promise<CreateUserResultInterface> {
-    // Dual-write (expand) : on écrit encore les colonnes dépréciées operator_id/territory_id + login_siren.
     const query = sql`
       INSERT INTO ${raw(this.table)} (
-        firstname, lastname, email, role, operator_id, territory_id, login_siren
+        firstname, lastname, email, role, login_siren
       ) VALUES (
-        ${data.firstname}, ${data.lastname}, ${data.email}, ${data.role}, ${data.operator_id}, ${data.territory_id}, ${
-      data.login_siren ?? null
-    }
+        ${data.firstname}, ${data.lastname}, ${data.email}, ${data.role}, ${data.login_siren ?? null}
       )
       RETURNING
-        _id, created_at, firstname, lastname, email, role, operator_id, territory_id
+        _id, created_at, firstname, lastname, email, role
     `;
     const rows = await this.pgConnection.query<{ _id: number }>(query);
     if (rows.length !== 1) {
@@ -154,18 +152,25 @@ export class UsersRepository implements UsersRepositoryInterface {
   async deleteUser(
     params: DeleteUserParamsInterface & { operator_id?: number; territory_id?: number },
   ): Promise<DeleteUserResultInterface> {
-    const filters = [sql`_id = ${params.id}`];
+    // Scoping du caller via le pivot : on ne supprime que si le périmètre est accordé.
+    const filters = [sql`users._id = ${params.id}`];
     if (params.operator_id) {
-      filters.push(sql`operator_id = ${params.operator_id}`);
+      filters.push(sql`EXISTS (
+        SELECT 1 FROM ${raw(this.tableScopes)} us
+        WHERE us.user_id = users._id AND us.operator_id = ${params.operator_id}
+      )`);
     }
     if (params.territory_id) {
-      filters.push(sql`territory_id = ${params.territory_id}`);
+      filters.push(sql`EXISTS (
+        SELECT 1 FROM ${raw(this.tableScopes)} us
+        WHERE us.user_id = users._id AND us.territory_id = ${params.territory_id}
+      )`);
     }
 
     const query = sql`
-      DELETE FROM ${raw(this.table)}
+      DELETE FROM ${raw(this.table)} AS users
       WHERE ${join(filters, " AND ")}
-      RETURNING _id
+      RETURNING users._id
     `;
     const rows = await this.pgConnection.query(query);
     if (rows.length !== 1) {
@@ -175,7 +180,6 @@ export class UsersRepository implements UsersRepositoryInterface {
   }
 
   async updateUser(data: UpdateUserDataInterface): Promise<UpdateUserResultInterface> {
-    // Dual-write (expand) : colonnes dépréciées + login_siren, puis resynchro du pivot.
     const query = sql`
       UPDATE ${raw(this.table)}
       SET
@@ -183,12 +187,10 @@ export class UsersRepository implements UsersRepositoryInterface {
         lastname = ${data.lastname},
         email = ${data.email},
         role = ${data.role},
-        operator_id = ${data.operator_id},
-        territory_id = ${data.territory_id},
         login_siren = ${data.login_siren ?? null},
         updated_at = now()
       WHERE _id = ${data.id}
-      RETURNING _id, updated_at, firstname, lastname, email, role, operator_id, territory_id
+      RETURNING _id, updated_at, firstname, lastname, email, role
     `;
     const rows = await this.pgConnection.query<UpdateUserResultInterface>(query);
     if (rows.length !== 1) {

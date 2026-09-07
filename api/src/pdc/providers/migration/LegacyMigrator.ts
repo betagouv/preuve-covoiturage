@@ -421,21 +421,20 @@ export class LegacyMigrator {
   }
 
   async seedUser(user: User) {
-    await this.testConn.getClient().query({
+    const inserted = await this.testConn.getClient().query({
       text: `
         INSERT INTO auth.users
-          (email, firstname, lastname, password, status, role, territory_id, operator_id)
+          (email, firstname, lastname, password, status, role)
         VALUES (
           $1::varchar,
           $2::varchar,
           $3::varchar,
           $4::varchar,
           $5::auth.user_status_enum,
-          $6::varchar,
-          $7::int,
-          $8::int
+          $6::varchar
         )
-        ON CONFLICT DO NOTHING 
+        ON CONFLICT DO NOTHING
+        RETURNING _id
       `,
       values: [
         user.email,
@@ -444,9 +443,20 @@ export class LegacyMigrator {
         user.password, // TODO: use cryptoprovider tcrypt password
         user.status,
         user.role,
-        user.territory?._id,
-        user.operator?._id,
       ],
+    });
+
+    const userId = inserted.rows[0]?._id;
+    const scopeColumn = user.operator?._id ? "operator_id" : user.territory?._id ? "territory_id" : null;
+    if (!userId || !scopeColumn) return;
+
+    await this.testConn.getClient().query({
+      text: `
+        INSERT INTO auth.user_scopes (user_id, ${scopeColumn}, is_default)
+        VALUES ($1::int, $2::int, true)
+        ON CONFLICT DO NOTHING
+      `,
+      values: [userId, user.operator?._id ?? user.territory?._id],
     });
   }
 

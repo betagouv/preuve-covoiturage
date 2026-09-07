@@ -204,7 +204,7 @@ describe("UsersRepository multi-scope (pivot)", () => {
     await after(db);
   });
 
-  it("create dual-writes the pivot (default + extra territories)", async () => {
+  it("create writes the pivot (default + extra territories)", async () => {
     await repository.createUser({
       firstname: "Multi",
       lastname: "Scope",
@@ -236,10 +236,26 @@ describe("UsersRepository multi-scope (pivot)", () => {
     assertEquals(byT311.data.length, 1);
   });
 
+  it("list exposes the default scope of the pivot", async () => {
+    const listed = await repository.getUsers({ search: "multi.scope@example.com" });
+    assertEquals(listed.data[0].territory_id, 310);
+    assertEquals(listed.data[0].operator_id, null);
+  });
+
+  it("delete scoped on a non-granted territory finds nothing", async () => {
+    const created = await repository.getUsers({ search: "multi.scope@example.com" });
+    const uid = created.data[0].id;
+    await assertRejects(
+      async () => await repository.deleteUser({ id: uid, territory_id: 999999 }),
+      NotFoundException,
+      "Not found",
+    );
+  });
+
   it("delete cascades the pivot rows", async () => {
     const created = await repository.getUsers({ search: "multi.scope@example.com" });
     const uid = created.data[0].id;
-    await repository.deleteUser({ id: uid });
+    await repository.deleteUser({ id: uid, territory_id: 311 });
     const scopeRows = await db.connection.query<{ n: number }>(sql`
       SELECT count(*)::int AS n FROM auth.user_scopes WHERE user_id = ${uid}
     `);
