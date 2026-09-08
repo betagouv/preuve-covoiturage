@@ -238,6 +238,7 @@ Copier `.env.example` vers `.env` et configurer les valeurs.
 | `PROCONNECT_BASE_URL` | **Oui** | — | URL de découverte OIDC ProConnect |
 | `PROCONNECT_REDIRECT_URL` | **Oui** | — | URL de callback après authentification |
 | `PROCONNECT_LOGOUT_REDIRECT_URL` | **Oui** | — | URL de redirection après déconnexion |
+| `PROCONNECT_REQUIRE_MFA` | Non | `false` | `true` exige la double authentification (acr `eidas0-mfa`, `eidas1-mfa`, `eidas2`, `eidas3`) |
 
 #### Dex (authentification opérateurs)
 

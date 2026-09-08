@@ -1,4 +1,5 @@
 import Anonymous from "@/components/common/Anonymous";
+import MfaRequiredAlert from "@/components/auth/MfaRequiredAlert";
 import PageTitle from "@/components/common/PageTitle";
 import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -6,6 +7,7 @@ import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import ProConnectButton from "@codegouvfr/react-dsfr/ProConnectButton";
 import { type Metadata } from "next";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Espace partenaire du Registre de Preuve de Covoiturage",
@@ -17,6 +19,9 @@ export default function Home() {
   return (
     <div className={fr.cx("fr-container")}>
       <Anonymous />
+      <Suspense fallback={null}>
+        <MfaRequiredAlert />
+      </Suspense>
       <div
         id="content"
         className={fr.cx("fr-grid-row", "fr-grid-row--gutters", "fr-grid-row--center", "fr-grid-row--middle")}
