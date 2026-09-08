@@ -24,8 +24,10 @@ export default function IncentiveGraph({ title }: { title: string }) {
   );
 
   const row = data?.[0];
+  // L'API renvoie certaines valeurs en chaîne ("1000689") : on force le nombre
+  // sinon `sum` concatène et le pourcentage tombe à 0.
   const values = row
-    ? [row.collectivite, row.operateur, row.autres, row.no_incentive]
+    ? [row.collectivite, row.operateur, row.autres, row.no_incentive].map(Number)
     : [];
   const total = sum(values);
   const pct = (value: number) => `${((value * 100) / total).toFixed(1)} %`;
