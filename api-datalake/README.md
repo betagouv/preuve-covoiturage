@@ -74,6 +74,9 @@ just test              # pytest
 - [x] Squelette FastAPI + cache + fenêtre de publication
 - [x] Modèles dbt `zone_exposed.{location, observatory_perimeters, campaigns, aires_covoiturage}` — validés sur prod
 - [x] `GET /v3/observatory/location`, `campaigns`, `last-record`
+- [x] `GET /v3/observatory/territories/search` — autocomplete de territoires
+      (modèle `zone_exposed.observatory_search_territories` + index GIN trigram,
+      insensible aux accents ; remplace l'index Meilisearch `geo`)
 - [x] **Endpoints agrégés** : `flux`, `best-flux`, `evol-flux`, `incentive`,
       `occupation`, `best-territories`, `evol-occupation`, `journeys-by-hours`,
       `journeys-by-distances`, `keyfigures`, `aires-covoiturage`

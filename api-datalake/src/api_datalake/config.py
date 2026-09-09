@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     redis_url: str | None = None
     redis_ca: str | None = None  # CA privée (PEM) pour Redis TLS ; None en dev clair
     cache_ttl_seconds: int = 24 * 3600
+    # TTL dédié aux endpoints à espace de clés large (recherche texte libre) :
+    # borne la croissance mémoire Redis sur les termes tapés une seule fois.
+    search_cache_ttl_seconds: int = 3600
 
     # Fenêtre de publication (borne supérieure exclusive, YYYY-MM-DD)
     app_observatory_published_until: str | None = None
