@@ -75,11 +75,19 @@ describe("fetchTerritoryName", () => {
   });
 
   test("retourne le libellé du territoire trouvé", async () => {
-    respondWith(200, [{ l_territory: "Nantes Métropole" }]);
+    respondWith(200, [{ id: "244400404_epci", l_territory: "Nantes Métropole" }]);
 
     await expect(
       fetchTerritoryName({ code: "244400404", type: "epci" }),
     ).resolves.toBe("Nantes Métropole");
+  });
+
+  test("retombe sur France quand la recherche floue renvoie un autre territoire", async () => {
+    respondWith(200, [{ id: "77139_com", l_territory: "Courtry" }]);
+
+    await expect(
+      fetchTerritoryName({ code: "XXXXX", type: "country" }),
+    ).resolves.toBe("France");
   });
 
   test("résout le libellé sur le millésime demandé", async () => {
