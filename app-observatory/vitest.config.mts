@@ -5,6 +5,9 @@ export default defineConfig({
   resolve: {
     alias: { "@": resolve(import.meta.dirname, "src") },
   },
+  // `tsconfig.json` laisse le JSX à Next (`preserve`) : sans ça, un module testé
+  // qui importe un `.tsx` (contexte du dashboard) casse au parsing.
+  oxc: { jsx: { runtime: "automatic" } },
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],

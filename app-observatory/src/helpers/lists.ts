@@ -8,6 +8,10 @@ export const yearList = [
   { id: 2020, name: "2020" },
 ];
 
+// Dernier millésime du référentiel géo. Au-delà, l'API territoires sert `is_latest`
+// (le millésime courant peut être en avance sur les données réellement chargées).
+export const latestMillesime = Math.max(...yearList.map((y) => y.id));
+
 export const monthList = [
   { id: 1, name: "Janvier" },
   { id: 2, name: "Février" },

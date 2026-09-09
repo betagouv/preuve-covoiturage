@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { fetchSearchAPI, fetchTerritoryName } from "./search";
+import { fetchSearchAPI } from "./search";
 
 // Corps réel renvoyé par Meilisearch quand la clé est absente ou invalide.
 const invalidApiKey = {
@@ -40,31 +40,5 @@ describe("fetchSearchAPI", () => {
     await expect(fetchSearchAPI("indexes/geo/search")).resolves.toEqual({
       hits: [{ l_territory: "France" }],
     });
-  });
-});
-
-describe("fetchTerritoryName", () => {
-  test("retombe sur France quand la recherche répond 403", async () => {
-    respondWith(403, invalidApiKey);
-
-    await expect(
-      fetchTerritoryName({ code: "XXXXX", type: "country" }),
-    ).resolves.toBe("France");
-  });
-
-  test("retombe sur France quand la recherche ne renvoie aucun résultat", async () => {
-    respondWith(200, { hits: [] });
-
-    await expect(
-      fetchTerritoryName({ code: "00000", type: "com" }),
-    ).resolves.toBe("France");
-  });
-
-  test("retourne le libellé du territoire trouvé", async () => {
-    respondWith(200, { hits: [{ l_territory: "Nantes Métropole" }] });
-
-    await expect(
-      fetchTerritoryName({ code: "244400404", type: "epci" }),
-    ).resolves.toBe("Nantes Métropole");
   });
 });

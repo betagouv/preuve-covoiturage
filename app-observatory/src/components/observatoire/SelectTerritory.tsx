@@ -1,5 +1,7 @@
 'use client'
-import { castPerimeterType, fetchSearchAPI, getUrl } from '@/helpers/search';
+import { searchTerritories } from '@/helpers/api';
+import { latestMillesime } from '@/helpers/lists';
+import { castPerimeterType, getUrl } from '@/helpers/search';
 import { fr } from '@codegouvfr/react-dsfr';
 import Tag from '@codegouvfr/react-dsfr/Tag';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -18,18 +20,10 @@ export default function SelectTerritory(props: { url:string }) {
   }
   const [options, setOptions] = useState<any[]>([defaultOption]);
   const search =  async (v: string | null) => {
-    const query = {
-      q:v,
-      attributesToSearchOn:['territory','l_territory'], 
-      limit:20
-    };
-    try {
-      const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
-      setOptions(response.hits ?? []);
-    } catch(e) {
-      console.error(e);
-      setOptions([]);
-    }
+    // Millésimes passés : on cible l'année du dashboard ; millésime courant ou
+    // au-delà : `is_latest` (défaut API).
+    const { year } = dashboard.params;
+    setOptions(await searchTerritories(v, 20, year < latestMillesime ? year : undefined));
   };
 
   return ( 

@@ -2,7 +2,7 @@
 import { INSEECode, PerimeterType } from "@/interfaces/observatoire/Perimeter";
 import { TerritoryListInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { useCallback, useState } from "react";
-import { fetchTerritoryName } from "../helpers/search";
+import { fetchTerritoryName } from "../helpers/api";
 import { Params } from "../interfaces/common/contextInterface";
 import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 
