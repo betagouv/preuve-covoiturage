@@ -246,7 +246,7 @@ Séquence à exécuter **une seule fois** pour peupler le datalake from scratch.
 just migrate
 ```
 
-Applique les objets DB que dbt ne gère pas (idempotent, tracé dans `schema_migrations`) : la fonction `ts_ceil`, les **extensions `h3` / `h3_postgis`** (indispensables à `trusted.carpools`, qui indexe les positions en cellules H3 — sans elles l'étape 3 échoue) et le **tuning FDW** (`fetch_size`, `use_remote_estimate` sur le serveur `postgres_fdw` — scans cross-DB 10–100× plus rapides). Le serveur FDW lui-même reste créé par l'ops (OpenTofu).
+Applique les objets DB que dbt ne gère pas (idempotent, tracé dans `schema_migrations`) : la fonction `ts_ceil`, les **extensions `h3` / `h3_postgis`** (indispensables à `trusted.carpools`, qui indexe les positions en cellules H3 — sans elles l'étape 3 échoue), les **extensions `unaccent` / `pg_trgm` + la fonction `immutable_unaccent`** (recherche de territoires insensible aux accents, cf. `0005_search_extensions.sql`) et le **tuning FDW** (`fetch_size`, `use_remote_estimate` sur le serveur `postgres_fdw` — scans cross-DB 10–100× plus rapides). Le serveur FDW lui-même reste créé par l'ops (OpenTofu).
 
 ### Étape 1 — Données géographiques de référence
 
@@ -357,8 +357,11 @@ sur de vraies données.
 **Postgres local :**
 
 ```bash
-docker compose up -d postgres
+docker compose up -d postgres   # image docker/postgres : postgis + h3 + contrib (unaccent, pg_trgm) déjà présents
+just migrate                     # crée les objets DB non gérés par dbt : fonctions (ts_ceil, immutable_unaccent) + extensions (h3, unaccent, pg_trgm)
 ```
+
+`just migrate` est idempotent et rejouable ; à relancer après chaque nouvelle migration ajoutée sous `migrations/`. Voir [Étape 0 — Migrations](#étape-0--migrations-fonctions--extensions).
 
 ---
 
