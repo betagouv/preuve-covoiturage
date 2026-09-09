@@ -145,3 +145,80 @@ async def get_last_record(conn, type_: str, code: str,
     if not row:
         return None
     return {"year": row["year"], "month": row["month"]}
+
+
+# --------------------------------------------------------------------------- #
+# Recherche de territoires (autocomplete) — remplace l'index Meilisearch `geo`.
+# Source : zone_exposed.observatory_search_territories (modèle dbt + index GIN trgm).
+# --------------------------------------------------------------------------- #
+
+SEARCH_TABLE = "zone_exposed.observatory_search_territories"
+SEARCH_COLUMNS = ("id", "territory", "l_territory", "type", "year")
+
+# En dessous de 3 caractères, `q` n'a aucun trigramme : l'index GIN est inopérant
+# et un `LIKE '%q%'` dégénère en seq scan. On ne garde alors que la résolution
+# exacte (id / code de territoire), qui reste servie par un index btree.
+SEARCH_MIN_FUZZY_LEN = 3
+
+# `%` et `_` sont des jokers LIKE. On les neutralise (ainsi que `\`) pour que `q`
+# reste une sous-chaîne littérale — sinon `q="_"` matche tout et force un scan
+# large. Le `ESCAPE '\'` explicite dans la requête fige le caractère d'échappement.
+_LIKE_METACHARS = str.maketrans({"\\": r"\\", "%": r"\%", "_": r"\_"})
+
+
+def build_territory_search_query(q: str, limit: int = 20,
+                                 year: int | None = None) -> tuple[str, dict]:
+    """Requête d'autocomplete de territoires + résolution exacte d'un `id`.
+
+    - `q` >= 3 caractères : sous-chaîne désaccentuée (`LIKE`) OU proximité
+      trigramme (`%`), toutes deux accélérées par l'index GIN du modèle ;
+    - `q` plus court : résolution exacte seulement, pour éviter un seq scan sur
+      un motif non indexable ;
+    - dans tous les cas, égalité `id` / `territory` — servie par les index btree
+      du modèle et casse préservée (le front résout par l'`id` stocké tel quel).
+
+    Millésime : `year` explicite, sinon le dernier (`is_latest`). Valeurs liées
+    (`%(...)s`) ; `%%` dans la chaîne = littéral.
+    """
+    q = q.strip()
+    params: dict = {"q_exact": q, "q": q.lower(), "limit": limit}
+
+    year_clause = "is_latest"
+    if year is not None:
+        year_clause = "year = %(year)s"
+        params["year"] = year
+
+    exact = "(id = %(q_exact)s OR territory = %(q_exact)s)"
+    where_or = [exact]
+    order_by = [f"{exact} DESC"]
+    if len(q) >= SEARCH_MIN_FUZZY_LEN:
+        params["q_like"] = f"%{q.lower().translate(_LIKE_METACHARS)}%"
+        where_or[:0] = [
+            "public.immutable_unaccent(lower(l_territory)) "
+            "LIKE public.immutable_unaccent(%(q_like)s) ESCAPE '\\'",
+            "public.immutable_unaccent(lower(l_territory)) "
+            "%% public.immutable_unaccent(%(q)s)",
+        ]
+        order_by.append(
+            "similarity(public.immutable_unaccent(lower(l_territory)), "
+            "public.immutable_unaccent(%(q)s)) DESC")
+    order_by.append("length(l_territory) ASC")
+
+    cols = ", ".join(SEARCH_COLUMNS)
+    sql = f"""
+        SELECT {cols}
+        FROM {SEARCH_TABLE}
+        WHERE {year_clause}
+          AND ({" OR ".join(where_or)})
+        ORDER BY {", ".join(order_by)}
+        LIMIT %(limit)s
+    """
+    return sql, params
+
+
+async def search_territories(conn, q: str, limit: int = 20,
+                             year: int | None = None) -> list[dict]:
+    sql, params = build_territory_search_query(q, limit, year)
+    async with conn.cursor() as cur:
+        await cur.execute(sql, params)
+        return list(await cur.fetchall())

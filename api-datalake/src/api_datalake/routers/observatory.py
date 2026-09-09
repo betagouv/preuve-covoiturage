@@ -44,12 +44,16 @@ def _gzip_json(blob: bytes, cache_state: str) -> Response:
     )
 
 
-async def _serve_cached(redis, route: str, params: dict, produce, acquire) -> Response:
+async def _serve_cached(redis, route: str, params: dict, produce, acquire,
+                        ttl: int | None = None) -> Response:
     """Sert `produce(conn)` (données PG) avec cache Redis best-effort.
 
     La connexion n'est ouverte (`acquire()`) que sur cache MISS, et relâchée dès la
     requête terminée — avant la sérialisation/gzip. Une panne Redis dégrade en
     cache-miss (`X-Cache: BYPASS`), jamais en 500.
+
+    `ttl` : durée de vie en cache (défaut `cache_ttl_seconds`). Un endpoint à
+    espace de clés large (texte libre) passe un TTL plus court.
     """
     cutoff = settings.app_observatory_published_until
     key = None
@@ -65,7 +69,8 @@ async def _serve_cached(redis, route: str, params: dict, produce, acquire) -> Re
         data = await produce(conn)
     blob = gzip_payload(data)
     if ok:
-        await cache_set(redis, key, blob, settings.cache_ttl_seconds)
+        await cache_set(redis, key, blob,
+                        ttl if ttl is not None else settings.cache_ttl_seconds)
     return _gzip_json(blob, "MISS" if ok else "BYPASS")
 
 
@@ -129,6 +134,35 @@ async def campaigns(
         redis, "/observatory/campaigns", params,
         lambda conn: repo.get_campaigns(conn, type, code, year),
         acquire,
+    )
+
+
+@router.get("/territories/search")
+async def territories_search(
+    q: str = Query(..., min_length=1, max_length=64),
+    limit: int = Query(20, ge=1, le=50),
+    year: int | None = Query(None, ge=2015, le=2100),
+    acquire=Depends(get_conn),
+    redis=Depends(get_redis),
+):
+    """Autocomplete de sélection de territoire (remplace l'index Meilisearch `geo`).
+
+    Recherche de libellé insensible aux accents et à la casse, tolérante aux fautes
+    de frappe (>= 3 caractères). Sert aussi la résolution exacte d'un `id`
+    (`territory_type`, casse préservée). `year` cible un millésime ; par défaut le
+    dernier disponible. Réponse gzip cachée.
+    """
+    q = q.strip()
+    if not q:
+        return _gzip_json(gzip_payload([]), "BYPASS")
+    params = {"q": q, "limit": limit, "year": year}
+    return await _serve_cached(
+        redis, "/observatory/territories/search", params,
+        lambda conn: repo.search_territories(conn, q, limit, year),
+        acquire,
+        # espace de clés large (texte libre) -> TTL court, on ne veut pas garder
+        # 24 h chaque terme tapé une seule fois.
+        ttl=settings.search_cache_ttl_seconds,
     )
 
 
