@@ -1,25 +1,48 @@
 import { Config } from '@/config';
 import { search } from '@/config/search';
-import { PerimeterType } from '../interfaces/observatoire/Perimeter';
+import { INSEECode, PerimeterType } from '../interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '../interfaces/observatoire/dataInterfaces';
 
 export const searchHost = Config.get<string>('search.host');
 
 export const fetchSearchAPI = async (path:string, options = {}) => {
+  const mergedOptions = {
+    headers: search.headers,
+    ...options,
+  };
+  const requestUrl = `${searchHost}/${path}`;
+  let response: Response;
   try {
-    const mergedOptions = {
-      headers: search.headers,
-      ...options,
-    };
-    // Build request URL
-    const requestUrl = `${searchHost}/${path}`;
-    const response = await fetch(requestUrl, mergedOptions);
-    const data = await response.json();
-    return data;
+    response = await fetch(requestUrl, mergedOptions);
   }
   catch(e){
     console.error(e);
     throw new Error(`Please check if your server is running and you set all the required tokens.`);
+  }
+  // Meilisearch répond en JSON même en erreur : sans ce garde, le corps d'erreur
+  // est retourné comme un résultat et casse l'appelant plus loin.
+  if (!response.ok) {
+    throw new Error(`Search API ${path}: HTTP ${response.status} ${await response.text()}`);
+  }
+  return response.json();
+}
+
+export const fetchTerritoryName = async (value: { code: INSEECode; type: PerimeterType }) => {
+  const query = {
+    q: `${value.code}_${value.type}`,
+    attributesToSearchOn: ['id'],
+    limit: 1,
+  };
+  try {
+    const response = await fetchSearchAPI('indexes/geo/search', {
+      method: 'post',
+      body: JSON.stringify(query),
+    });
+    return (response?.hits?.[0]?.l_territory as string | undefined) ?? 'France';
+  }
+  catch(e){
+    console.error(e);
+    return 'France';
   }
 }
 

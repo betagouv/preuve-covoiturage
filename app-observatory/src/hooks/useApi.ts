@@ -20,10 +20,12 @@ export const useApi = <T>(input: RequestInfo | URL, init?: RequestInit) => {
           } catch {
             errorMessage = text;
           }
+          console.error(`API ${response.status} on ${input}`, errorMessage);
           setError(errorMessage);
           setData(undefined);
         }
       } catch (e: any) {
+        console.error(`API request failed on ${input}`, e);
         setError(e.message ?? "Network error");
         setData(undefined);
       } finally {

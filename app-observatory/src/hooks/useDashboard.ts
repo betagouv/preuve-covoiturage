@@ -2,7 +2,7 @@
 import { INSEECode, PerimeterType } from "@/interfaces/observatoire/Perimeter";
 import { TerritoryListInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { useCallback, useState } from "react";
-import { fetchSearchAPI } from "../helpers/search";
+import { fetchTerritoryName } from "../helpers/search";
 import { Params } from "../interfaces/common/contextInterface";
 import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 
@@ -42,7 +42,7 @@ export const useDashboard = () => {
     async (value?: { code: INSEECode; type: PerimeterType }) => {
       setLoading(true);
       const params = value ? value : { code: "XXXXX", type: "country" as PerimeterType };
-      const name = await getName(params);
+      const name = await fetchTerritoryName(params);
       setParams((p) => {
         return { ...p, ...params, name: name, observe: "com" } as typeof p;
       });
@@ -108,18 +108,7 @@ export const useDashboard = () => {
     });
   }, []);
 
-  const getName = async (value: { code: INSEECode; type: PerimeterType }) => {
-    const query = {
-      q: `${value.code}_${value.type}`,
-      attributesToSearchOn: ["id"],
-      limit: 1,
-    };
-    const response = await fetchSearchAPI("indexes/geo/search", {
-      method: "post",
-      body: JSON.stringify(query),
-    });
-    return response ? response.hits[0].l_territory as string : "France";
-  };
+  const getName = fetchTerritoryName;
 
   return {
     params,
