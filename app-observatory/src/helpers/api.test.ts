@@ -40,6 +40,16 @@ describe("searchTerritories", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  test("encode la saisie dans la query string", async () => {
+    const fetchSpy = respondWith(200, []);
+
+    await searchTerritories("saint-étienne & co");
+
+    expect(String(fetchSpy.mock.calls[0][0])).toContain(
+      "q=saint-%C3%A9tienne+%26+co",
+    );
+  });
+
   test("cible le millésime demandé quand `year` est fourni", async () => {
     const fetchSpy = respondWith(200, []);
 

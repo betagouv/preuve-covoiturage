@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { fetchSearchAPI } from "./search";
+import { fetchSearchAPI, getUrl } from "./search";
 
 // Corps réel renvoyé par Meilisearch quand la clé est absente ou invalide.
 const invalidApiKey = {
@@ -40,5 +40,33 @@ describe("fetchSearchAPI", () => {
     await expect(fetchSearchAPI("indexes/geo/search")).resolves.toEqual({
       hits: [{ l_territory: "France" }],
     });
+  });
+});
+
+describe("getUrl", () => {
+  test("renvoie le chemin nu sans territoire", () => {
+    expect(getUrl("territoire")).toBe("/observatoire/territoire");
+  });
+
+  test("porte le code et le type du territoire", () => {
+    expect(
+      getUrl("territoire", { territory: "69123", l_territory: "Lyon", type: "com" }),
+    ).toBe("/observatoire/territoire?code=69123&type=com");
+  });
+
+  test("tronque le code au SIREN (9 caractères)", () => {
+    expect(
+      getUrl("territoire", {
+        territory: "200046977000",
+        l_territory: "Métropole de Lyon",
+        type: "epci",
+      }),
+    ).toBe("/observatoire/territoire?code=200046977&type=epci");
+  });
+
+  test("encode un code qui casserait la query string", () => {
+    expect(
+      getUrl("territoire", { territory: "69&type=x", l_territory: "Bidon", type: "com" }),
+    ).toBe("/observatoire/territoire?code=69%26type%3Dx&type=com");
   });
 });
