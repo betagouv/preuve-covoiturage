@@ -259,6 +259,10 @@ jobs:
         working-directory: app-observatory
         run: npm run lint
 
+      - name: Run tests
+        working-directory: app-observatory
+        run: npm test
+
   observatory-smoke:
     needs: [changes, observatory-lint, observatory-audit]
     if: ${{ needs.changes.outputs.observatory == 'true' }}
