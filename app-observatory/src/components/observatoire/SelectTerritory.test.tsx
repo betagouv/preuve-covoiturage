@@ -24,6 +24,14 @@ const lyon = {
   year: 2026,
 };
 
+const courtry = {
+  id: "77139_com",
+  territory: "77139",
+  l_territory: "Courtry",
+  type: "com",
+  year: 2026,
+};
+
 const respondWith = (rows: unknown[]) =>
   vi.spyOn(globalThis, "fetch").mockResolvedValue(
     new Response(JSON.stringify(rows), {
@@ -115,6 +123,45 @@ describe("sélection", () => {
     expect(push).toHaveBeenCalledExactlyOnceWith(
       "/observatoire/territoire?code=69123&type=com",
     );
+  });
+
+  // Deux recherches espacées de 300 ms peuvent revenir dans le désordre : la
+  // réponse lente de la frappe précédente ne doit pas écraser la plus récente.
+  test("ignore la réponse d'une recherche remplacée", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    fetchSpy.mockImplementationOnce(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () => resolve(new Response(JSON.stringify([courtry]), { status: 200 })),
+            DEBOUNCE_MS * 2,
+          ),
+        ),
+    );
+    fetchSpy.mockResolvedValue(new Response(JSON.stringify([lyon]), { status: 200 }));
+    render(<SelectTerritory url="territoire" />);
+
+    typeSearch("lyo");
+    await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(1));
+    typeSearch("lyon");
+    await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(2));
+    await new Promise((r) => setTimeout(r, DEBOUNCE_MS * 3));
+
+    expect(screen.queryByText("Courtry")).toBeNull();
+    expect(screen.queryByText("Lyon")).not.toBeNull();
+  });
+
+  test("annule la requête en vol quand la saisie change", async () => {
+    const fetchSpy = respondWith([lyon]);
+    render(<SelectTerritory url="territoire" />);
+
+    typeSearch("lyo");
+    await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(1));
+    typeSearch("lyon");
+    await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(2));
+
+    expect((fetchSpy.mock.calls[0][1] as RequestInit).signal!.aborted).toBe(true);
+    expect((fetchSpy.mock.calls[1][1] as RequestInit).signal!.aborted).toBe(false);
   });
 
   // MUI réinjecte le libellé formaté dans le champ après sélection : sans le

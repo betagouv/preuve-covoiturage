@@ -8,7 +8,7 @@ import Tag from '@codegouvfr/react-dsfr/Tag';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useDashboardContext } from '../../context/DashboardProvider';
 
 export default function SelectTerritory(props: { url:string }) {
@@ -23,10 +23,17 @@ export default function SelectTerritory(props: { url:string }) {
   }
   const [options, setOptions] = useState<TerritorySearchResult[]>([defaultOption]);
   const { year } = dashboard.params;
+  // Une réponse lente ne doit pas écraser celle d'une frappe plus récente :
+  // chaque recherche annule la précédente.
+  const pending = useRef<AbortController>(undefined);
   const search = useMemo(
     () =>
       debounce((v: string | null) => {
-        void searchTerritories(v, 20, targetMillesime(year)).then(setOptions);
+        pending.current?.abort();
+        const { signal } = (pending.current = new AbortController());
+        void searchTerritories(v, 20, targetMillesime(year), signal).then((results) => {
+          if (!signal.aborted) setOptions(results);
+        });
       }),
     [year],
   );

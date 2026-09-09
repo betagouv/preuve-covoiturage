@@ -40,6 +40,25 @@ describe("searchTerritories", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  test("reste silencieuse quand la requête est annulée", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(
+      Object.assign(new Error("aborted"), { name: "AbortError" }),
+    );
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(searchTerritories("lyon")).resolves.toEqual([]);
+    expect(logged).not.toHaveBeenCalled();
+  });
+
+  test("transmet le signal d'annulation à fetch", async () => {
+    const fetchSpy = respondWith(200, []);
+    const { signal } = new AbortController();
+
+    await searchTerritories("lyon", 20, undefined, signal);
+
+    expect(fetchSpy.mock.calls[0][1]).toMatchObject({ signal });
+  });
+
   test("encode la saisie dans la query string", async () => {
     const fetchSpy = respondWith(200, []);
 

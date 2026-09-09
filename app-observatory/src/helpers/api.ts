@@ -20,6 +20,7 @@ export async function searchTerritories(
   q: string | null,
   limit = 20,
   year?: number,
+  signal?: AbortSignal,
 ): Promise<TerritorySearchResult[]> {
   const query = (q ?? "").trim();
   if (!query) return [];
@@ -30,7 +31,7 @@ export async function searchTerritories(
   // la panne pour ne pas la confondre avec une recherche sans résultat. La requête
   // est tenue hors des logs (saisie utilisateur).
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) {
       console.error(`Recherche de territoires : HTTP ${response.status}`);
       return [];
@@ -42,6 +43,8 @@ export async function searchTerritories(
     }
     return data;
   } catch (e) {
+    // Requête remplacée par une frappe plus récente : ce n'est pas une panne.
+    if (e instanceof Error && e.name === "AbortError") return [];
     console.error("Recherche de territoires injoignable", e);
     return [];
   }
