@@ -10,7 +10,7 @@ export default defineConfig({
   oxc: { jsx: { runtime: "automatic" } },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     // Config lit process.env au chargement du module et lève si l'hôte manque.
     env: {
       NEXT_PUBLIC_SEARCH_URL: "https://search.test",
