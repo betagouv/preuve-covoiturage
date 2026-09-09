@@ -1,0 +1,44 @@
+version: 2
+models:
+  - name: observatory_search_territories
+    description: >
+      Référentiel plat « un territoire recherchable par ligne » pour l'autocomplete de
+      sélection de territoire de l'observatoire (remplace l'index Meilisearch geo).
+      Multi-millésime : `is_latest` isole le dernier référentiel, `year` cible un
+      millésime précis. Recherche insensible aux accents via l'index GIN trigram
+      `immutable_unaccent(lower(l_territory))` (migration 0005_search_extensions).
+    columns:
+      - name: id
+        data_type: text
+        description: >
+          `territory` || '_' || `type` — clé métier d'un territoire, année exclue.
+          NON unique dans la table (se répète par millésime) ; unique parmi les
+          lignes `is_latest`. Grain de la table : (territory, type, year).
+        data_tests:
+          - not_null
+      - name: territory
+        data_type: character varying
+        description: Code du territoire (INSEE commune, code EPCI / AOM / département / région, code pays).
+        data_tests:
+          - not_null
+      - name: l_territory
+        data_type: character varying
+        description: Libellé du territoire (dominant si le libellé varie sur le millésime).
+        data_tests:
+          - not_null
+      - name: type
+        data_type: text
+        description: Niveau du territoire.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['com', 'epci', 'aom', 'dep', 'reg', 'country']
+      - name: year
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: is_latest
+        data_type: boolean
+        description: Vrai pour les lignes du dernier millésime disponible.
+        data_tests:
+          - not_null

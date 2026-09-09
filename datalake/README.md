@@ -262,7 +262,7 @@ Charge les données IGN 2025 (GPKG), CEREMA AOMs, mouvements INSEE, campagnes et
 just pipeline-trusted-geo
 ```
 
-Construit la hiérarchie géographique dans `zone_trusted` (`perimeters`, `perimeters_agg`, `com_evolution`). Base pour tous les JOINs géographiques des carpools. Les tables `perimeters`/`perimeters_agg` sont reconstruites par `DROP … CASCADE`, ce qui supprime les vues aval de `zone_exposed` : la recette enchaîne donc systématiquement un `dbt run` des vues exposées.
+Construit la hiérarchie géographique dans `zone_trusted` (`perimeters`, `perimeters_agg`, `com_evolution`). Base pour tous les JOINs géographiques des carpools. Les tables `perimeters`/`perimeters_agg` sont reconstruites par `DROP … CASCADE`, ce qui supprime les vues aval de `zone_exposed` (et laisse les tables aval sur l'ancien millésime) : la recette enchaîne donc systématiquement un `dbt run` de toute la zone exposée.
 
 ### Étape 2 bis — Stats des tables distantes (FDW)
 
