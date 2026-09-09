@@ -69,6 +69,16 @@ describe("searchTerritories", () => {
     );
   });
 
+  // La route répond 422 au-delà de 64 caractères (`Query(max_length=64)`) : un
+  // libellé d'EPCI collé dans le champ dépasse.
+  test("tronque la saisie à la borne de la route", async () => {
+    const fetchSpy = respondWith(200, []);
+
+    await searchTerritories("a".repeat(80));
+
+    expect(String(fetchSpy.mock.calls[0][0])).toContain(`q=${"a".repeat(64)}&`);
+  });
+
   test("cible le millésime demandé quand `year` est fourni", async () => {
     const fetchSpy = respondWith(200, []);
 
@@ -87,20 +97,13 @@ describe("searchTerritories", () => {
 });
 
 describe("fetchTerritoryName", () => {
-  test("retombe sur France quand la recherche échoue", async () => {
-    respondWith(503, { detail: "maintenance" });
+  test("ne consulte pas l'API pour la France entière", async () => {
+    const fetchSpy = respondWith(200, []);
 
     await expect(
       fetchTerritoryName({ code: "XXXXX", type: "country" }),
     ).resolves.toBe("France");
-  });
-
-  test("retombe sur France quand la recherche ne renvoie aucun résultat", async () => {
-    respondWith(200, []);
-
-    await expect(
-      fetchTerritoryName({ code: "00000", type: "com" }),
-    ).resolves.toBe("France");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   test("retourne le libellé du territoire trouvé", async () => {
@@ -111,20 +114,54 @@ describe("fetchTerritoryName", () => {
     ).resolves.toBe("Nantes Métropole");
   });
 
-  test("retombe sur France quand la recherche floue renvoie un autre territoire", async () => {
+  test("garde le code brut quand la recherche floue renvoie un autre territoire", async () => {
     respondWith(200, [{ id: "77139_com", l_territory: "Courtry" }]);
 
     await expect(
-      fetchTerritoryName({ code: "XXXXX", type: "country" }),
-    ).resolves.toBe("France");
+      fetchTerritoryName({ code: "69123", type: "com" }),
+    ).resolves.toBe("69123");
+  });
+
+  test("garde le code brut quand la recherche échoue", async () => {
+    respondWith(503, { detail: "maintenance" });
+
+    await expect(
+      fetchTerritoryName({ code: "69123", type: "com" }),
+    ).resolves.toBe("69123");
   });
 
   test("résout le libellé sur le millésime demandé", async () => {
-    const fetchSpy = respondWith(200, []);
+    const fetchSpy = respondWith(200, [{ id: "69123_com", l_territory: "Lyon" }]);
 
     await fetchTerritoryName({ code: "69123", type: "com" }, 2022);
 
     expect(String(fetchSpy.mock.calls[0][0])).toContain("year=2022");
+  });
+
+  // Commune nouvelle absente d'un millésime ancien : sans repli, le tableau de
+  // bord affichait le libellé d'un autre territoire.
+  test("retente sur le dernier millésime quand le territoire y est absent", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    fetchSpy.mockResolvedValueOnce(new Response("[]", { status: 200 }));
+    fetchSpy.mockResolvedValueOnce(
+      new Response(JSON.stringify([{ id: "14654_com", l_territory: "Souleuvre-en-Bocage" }]), {
+        status: 200,
+      }),
+    );
+
+    await expect(
+      fetchTerritoryName({ code: "14654", type: "com" }, 2022),
+    ).resolves.toBe("Souleuvre-en-Bocage");
+    expect(String(fetchSpy.mock.calls[1][0])).not.toContain("year=");
+  });
+
+  test("ne retente pas quand aucun millésime n'était demandé", async () => {
+    const fetchSpy = respondWith(200, []);
+
+    await expect(
+      fetchTerritoryName({ code: "69123", type: "com" }),
+    ).resolves.toBe("69123");
+    expect(fetchSpy).toHaveBeenCalledOnce();
   });
 });
 

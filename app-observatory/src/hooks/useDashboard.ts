@@ -109,9 +109,6 @@ export const useDashboard = () => {
     });
   }, []);
 
-  const getName = (value: { code: INSEECode; type: PerimeterType }) =>
-    fetchTerritoryName(value, targetMillesime(params.year));
-
   return {
     params,
     lastPeriod,
@@ -119,7 +116,6 @@ export const useDashboard = () => {
     getParams,
     onLoadTerritory,
     onChangeTerritory,
-    getName,
     onChangePeriod,
     onChangeMonth,
     onChangeTrimester,

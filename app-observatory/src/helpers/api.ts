@@ -5,6 +5,13 @@ import { useDashboardContext } from "../context/DashboardProvider";
 // Base de l'API observatoire (datalake) ; le path /observatory est fixé ici, pas dans la var d'env.
 export const OBSERVATORY_API_URL = `${Config.get<string>("next.public_datalake_base_url", "")}/observatory`;
 
+// Borne de `q` côté route (api-datalake, `Query(max_length=64)`) : au-delà elle
+// répond 422. Un libellé d'EPCI collé dans le champ dépasse.
+const SEARCH_MAX_QUERY = 64;
+
+// Sentinelle France du grain `country`, absente du référentiel de recherche.
+const FRANCE_CODE = "XXXXX";
+
 export interface TerritorySearchResult {
   id: string;
   territory: string;
@@ -22,7 +29,7 @@ export async function searchTerritories(
   year?: number,
   signal?: AbortSignal,
 ): Promise<TerritorySearchResult[]> {
-  const query = (q ?? "").trim();
+  const query = (q ?? "").trim().slice(0, SEARCH_MAX_QUERY);
   if (!query) return [];
   const params = new URLSearchParams({ q: query, limit: String(limit) });
   if (year !== undefined) params.set("year", String(year));
@@ -51,18 +58,22 @@ export async function searchTerritories(
 }
 
 // Résolution du libellé d'un territoire à partir de son `id` (`code_type`), sur le
-// millésime `year` (défaut API : le dernier). Retombe sur « France » si la recherche
-// ne renvoie rien ou échoue.
+// millésime `year` (défaut API : le dernier).
 // La route est floue : sans `id` exact elle renvoie le territoire le plus proche
 // (`XXXXX_country` → « Courtry »), d'où la comparaison sur `id`.
 export async function fetchTerritoryName(
   value: { code: INSEECode; type: PerimeterType },
   year?: number,
 ): Promise<string> {
+  if (value.code === FRANCE_CODE) return "France";
   const id = `${value.code}_${value.type}`;
-  const results = await searchTerritories(id, 1, year);
-  const exact = results.find((r) => r.id === id);
-  return exact?.l_territory ?? "France";
+  const exact = async (millesime?: number) =>
+    (await searchTerritories(id, 1, millesime)).find((r) => r.id === id)?.l_territory;
+
+  // Territoire absent du millésime demandé (commune nouvelle, fusion) : on retente
+  // sur le dernier référentiel. Sans libellé, le code brut reste plus honnête que
+  // « France », qui coifferait les données d'un autre territoire.
+  return await exact(year) ?? (year === undefined ? undefined : await exact()) ?? value.code;
 }
 export const GetApiUrl = (
   route: string,

@@ -72,13 +72,25 @@ describe("onLoadTerritory", () => {
     expect(result.current.params).toMatchObject({ code: "XXXXX", type: "country" });
   });
 
-  test("retombe sur « France » quand la recherche floue renvoie un autre territoire", async () => {
-    respondWith([territory("77139_com", "Courtry")]);
+  // `XXXXX` est exclu du référentiel de recherche : la requête ne pourrait pas
+  // aboutir, et elle partait à chaque arrivée sans `?code=`.
+  test("n'interroge pas l'API pour la France entière", async () => {
+    const fetchSpy = respondWith([]);
     const { result } = renderHook(() => useDashboard());
 
     await act(() => result.current.onLoadTerritory());
 
     expect(result.current.params.name).toBe("France");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  test("garde le code brut quand la recherche floue renvoie un autre territoire", async () => {
+    respondWith([territory("77139_com", "Courtry")]);
+    const { result } = renderHook(() => useDashboard());
+
+    await act(() => result.current.onLoadTerritory({ code: "69123", type: "com" }));
+
+    expect(result.current.params.name).toBe("69123");
   });
 
   test("réinitialise la maille observée", async () => {
@@ -118,22 +130,6 @@ describe("onLoadTerritory", () => {
     await act(() => result.current.onLoadTerritory({ code: "69123", type: "com" }));
 
     expect(lastUrl(fetchSpy)).not.toContain("year=");
-  });
-});
-
-describe("getName", () => {
-  test("résout le libellé sur le millésime courant", async () => {
-    const fetchSpy = respondWith([territory("244400404_epci", "Nantes Métropole")]);
-    const { result } = renderHook(() => useDashboard());
-    act(() => result.current.onChangeYear(2021));
-
-    await act(async () => {
-      await expect(
-        result.current.getName({ code: "244400404", type: "epci" }),
-      ).resolves.toBe("Nantes Métropole");
-    });
-
-    expect(lastUrl(fetchSpy)).toContain("year=2021");
   });
 });
 

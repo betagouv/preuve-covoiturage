@@ -81,6 +81,24 @@ describe("temporisation", () => {
   });
 });
 
+describe("champ vidé", () => {
+  test("rend la main au territoire courant sans requête", async () => {
+    const fetchSpy = respondWith([lyon]);
+    render(<SelectTerritory url="territoire" />);
+    typeSearch("lyon");
+    await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(1));
+
+    // Espace seul : même branche que le champ vidé, mais MUI garde la liste
+    // ouverte, ce qui permet de lire les options restaurées.
+    typeSearch(" ");
+    await new Promise((r) => setTimeout(r, DEBOUNCE_MS * 2));
+
+    expect(searchCalls(fetchSpy)).toHaveLength(1);
+    expect(screen.queryByText("France")).not.toBeNull();
+    expect(screen.queryByText("Lyon")).toBeNull();
+  });
+});
+
 describe("millésime", () => {
   test("cible l'année du tableau de bord sur un millésime passé", async () => {
     year = 2022;
@@ -100,6 +118,21 @@ describe("millésime", () => {
 
     await waitFor(() => expect(searchCalls(fetchSpy)).toHaveLength(1));
     expect(searchCalls(fetchSpy)[0]).not.toContain("year=");
+  });
+});
+
+describe("nettoyage", () => {
+  // Le timer d'un `search` remplacé (changement d'année) ou d'un composant démonté
+  // tirerait sur l'ancien millésime.
+  test("n'émet plus rien après démontage", async () => {
+    const fetchSpy = respondWith([lyon]);
+    const { unmount } = render(<SelectTerritory url="territoire" />);
+
+    typeSearch("lyon");
+    unmount();
+    await new Promise((r) => setTimeout(r, DEBOUNCE_MS * 2));
+
+    expect(searchCalls(fetchSpy)).toHaveLength(0);
   });
 });
 
