@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { fetchTerritoryName, searchTerritories } from "./api";
+import { latestMillesime, targetMillesime } from "./lists";
 
 const respondWith = (status: number, body: unknown) =>
   vi.spyOn(globalThis, "fetch").mockResolvedValue(
@@ -79,5 +80,27 @@ describe("fetchTerritoryName", () => {
     await expect(
       fetchTerritoryName({ code: "244400404", type: "epci" }),
     ).resolves.toBe("Nantes Métropole");
+  });
+
+  test("résout le libellé sur le millésime demandé", async () => {
+    const fetchSpy = respondWith(200, []);
+
+    await fetchTerritoryName({ code: "69123", type: "com" }, 2022);
+
+    expect(String(fetchSpy.mock.calls[0][0])).toContain("year=2022");
+  });
+});
+
+describe("targetMillesime", () => {
+  test("cible l'année demandée quand elle précède le dernier millésime", () => {
+    expect(targetMillesime(latestMillesime - 1)).toBe(latestMillesime - 1);
+  });
+
+  test("laisse l'API servir le dernier millésime pour l'année courante", () => {
+    expect(targetMillesime(latestMillesime)).toBeUndefined();
+  });
+
+  test("laisse l'API servir le dernier millésime au-delà du référentiel", () => {
+    expect(targetMillesime(latestMillesime + 1)).toBeUndefined();
   });
 });

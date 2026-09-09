@@ -1,6 +1,6 @@
 'use client'
 import { searchTerritories } from '@/helpers/api';
-import { latestMillesime } from '@/helpers/lists';
+import { targetMillesime } from '@/helpers/lists';
 import { castPerimeterType, getUrl } from '@/helpers/search';
 import { fr } from '@codegouvfr/react-dsfr';
 import Tag from '@codegouvfr/react-dsfr/Tag';
@@ -20,10 +20,7 @@ export default function SelectTerritory(props: { url:string }) {
   }
   const [options, setOptions] = useState<any[]>([defaultOption]);
   const search =  async (v: string | null) => {
-    // Millésimes passés : on cible l'année du dashboard ; millésime courant ou
-    // au-delà : `is_latest` (défaut API).
-    const { year } = dashboard.params;
-    setOptions(await searchTerritories(v, 20, year < latestMillesime ? year : undefined));
+    setOptions(await searchTerritories(v, 20, targetMillesime(dashboard.params.year)));
   };
 
   return ( 

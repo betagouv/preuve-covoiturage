@@ -37,12 +37,14 @@ export async function searchTerritories(
   }
 }
 
-// Résolution du libellé d'un territoire à partir de son `id` (`code_type`).
-// Retombe sur « France » si la recherche ne renvoie rien ou échoue.
+// Résolution du libellé d'un territoire à partir de son `id` (`code_type`), sur le
+// millésime `year` (défaut API : le dernier). Retombe sur « France » si la recherche
+// ne renvoie rien ou échoue.
 export async function fetchTerritoryName(
   value: { code: INSEECode; type: PerimeterType },
+  year?: number,
 ): Promise<string> {
-  const results = await searchTerritories(`${value.code}_${value.type}`, 1);
+  const results = await searchTerritories(`${value.code}_${value.type}`, 1, year);
   return results[0]?.l_territory ?? "France";
 }
 export const GetApiUrl = (

@@ -12,6 +12,11 @@ export const yearList = [
 // (le millésime courant peut être en avance sur les données réellement chargées).
 export const latestMillesime = Math.max(...yearList.map((y) => y.id));
 
+// Millésime à demander à l'API territoires pour une année de dashboard :
+// l'année elle-même si elle est antérieure au dernier millésime, sinon `undefined`
+// (l'API sert alors `is_latest`).
+export const targetMillesime = (year: number) => year < latestMillesime ? year : undefined;
+
 export const monthList = [
   { id: 1, name: "Janvier" },
   { id: 2, name: "Février" },
