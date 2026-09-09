@@ -23,8 +23,13 @@ export default function SelectTerritory(props: { url:string }) {
       attributesToSearchOn:['territory','l_territory'], 
       limit:20
     };
-    const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
-    setOptions(response.hits);
+    try {
+      const response = await fetchSearchAPI('indexes/geo/search',{method:'post',body: JSON.stringify(query)});
+      setOptions(response.hits ?? []);
+    } catch(e) {
+      console.error(e);
+      setOptions([]);
+    }
   };
 
   return ( 

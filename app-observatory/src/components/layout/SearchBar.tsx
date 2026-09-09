@@ -57,27 +57,32 @@ export default function SearchBar(props: SearchBarProps) {
         },
       ],
     };
-    const response = await fetchSearchAPI("multi-search", {
-      method: "post",
-      body: JSON.stringify(query),
-    });
-    setOptions(
-      response.results
-        .map((r: any) =>
-          r.hits.map((h: any) => {
-            // eslint-disable-next-line no-unused-vars
-            const { tags, content, ...hit } = h;
-            void content;
-            void tags;
-            return {
-              id: r.indexUid,
-              tag: h.tags ? h.tags[0].slug : null,
-              ...hit,
-            };
-          }),
-        )
-        .flat(),
-    );
+    try {
+      const response = await fetchSearchAPI("multi-search", {
+        method: "post",
+        body: JSON.stringify(query),
+      });
+      setOptions(
+        (response.results ?? [])
+          .map((r: any) =>
+            (r.hits ?? []).map((h: any) => {
+              // eslint-disable-next-line no-unused-vars
+              const { tags, content, ...hit } = h;
+              void content;
+              void tags;
+              return {
+                id: r.indexUid,
+                tag: h.tags ? h.tags[0].slug : null,
+                ...hit,
+              };
+            }),
+          )
+          .flat(),
+      );
+    } catch (e) {
+      console.error(e);
+      setOptions([]);
+    }
     clearTimeout(searchEventTimer.current);
     searchEventTimer.current = setTimeout(() => {
       if (v !== "") {

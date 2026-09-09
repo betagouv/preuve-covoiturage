@@ -7,6 +7,7 @@
     "build": "NEXT_TELEMETRY_DISABLED=1 next build",
     "start": "NEXT_TELEMETRY_DISABLED=1 next start",
     "lint": "NEXT_TELEMETRY_DISABLED=1 next lint",
+    "test": "vitest run",
     "predev": "only-include-used-icons",
     "prebuild": "only-include-used-icons"
   },
@@ -48,7 +49,8 @@
     "eslint-config-next": "^15.1.5",
     "sass": "^1.83.4",
     "sharp": "^0.33.5",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^5.0.0"
   },
   "overrides": {
     "postcss": "^8.5.10"
