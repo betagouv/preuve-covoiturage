@@ -8,6 +8,7 @@ SELECT
   old_com,
   new_com,
   ROW_NUMBER() OVER ()                   AS id,
+  date_eff::date                         AS date_eff,
   DATE_PART('year', date_eff::date)::int AS year,  -- noqa: RF04
   CASE
     WHEN mod = 20 THEN 'création'
