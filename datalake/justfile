@@ -128,8 +128,9 @@ pipeline-raw *args:
 pipeline-trusted-geo *args:
   just dbt run --select "tag:trusted,tag:geo" {{args}}
   # perimeters/perimeters_agg sont des tables : dbt les reconstruit par DROP … CASCADE,
-  # ce qui supprime les vues aval de zone_exposed. On les recrée.
-  just dbt run --select "models/exposed,config.materialized:view" {{args}}
+  # ce qui supprime les vues aval de zone_exposed (et laisse les tables aval, ex.
+  # observatory_search_territories, sur l'ancien millésime). On rejoue tout l'exposé.
+  just dbt run --select "models/exposed" {{args}}
 
 # Pipeline 3 : daily update (agrégés taggés daily + zone exposée + invalidation du cache).
 # Un seul `dbt run` sur l'union => dbt ordonne le DAG (agrégés frais avant l'exposé).
