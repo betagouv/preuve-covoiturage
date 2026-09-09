@@ -26,13 +26,23 @@ export async function searchTerritories(
   const params = new URLSearchParams({ q: query, limit: String(limit) });
   if (year !== undefined) params.set("year", String(year));
   const url = `${OBSERVATORY_API_URL}/territories/search?${params}`;
+  // L'autocomplete ne sait rien afficher d'autre qu'une liste vide : on journalise
+  // la panne pour ne pas la confondre avec une recherche sans résultat. La requête
+  // est tenue hors des logs (saisie utilisateur).
   try {
     const response = await fetch(url);
-    if (!response.ok) return [];
+    if (!response.ok) {
+      console.error(`Recherche de territoires : HTTP ${response.status}`);
+      return [];
+    }
     const data = await response.json();
-    return Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) {
+      console.error("Recherche de territoires : réponse inattendue");
+      return [];
+    }
+    return data;
   } catch (e) {
-    console.error(e);
+    console.error("Recherche de territoires injoignable", e);
     return [];
   }
 }

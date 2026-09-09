@@ -45,5 +45,7 @@ export const castPerimeterType = (value: PerimeterType) => {
 }
 
 export const getUrl = (url: string, option?:TerritoryListInterface) => {
-  return `/observatoire/${url}${option ? `?code=${option.territory.slice(0,9)}&type=${option.type}` : ''}`
+  if (!option) return `/observatoire/${url}`;
+  const params = new URLSearchParams({ code: option.territory.slice(0,9), type: option.type });
+  return `/observatoire/${url}?${params}`;
 }
