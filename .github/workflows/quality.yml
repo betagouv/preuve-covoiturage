@@ -259,12 +259,32 @@ jobs:
         working-directory: app-observatory
         run: npm run lint
 
+  observatory-unit:
+    needs: [changes, observatory-lint]
+    if: ${{ needs.changes.outputs.observatory == 'true' }}
+    name: (observatory) unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Install NodeJS
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: app-observatory
+        run: npm ci
+
       - name: Run tests
         working-directory: app-observatory
         run: npm test
 
   observatory-smoke:
-    needs: [changes, observatory-lint, observatory-audit]
+    needs: [changes, observatory-lint, observatory-unit, observatory-audit]
     if: ${{ needs.changes.outputs.observatory == 'true' }}
     name: (observatory) smoke tests
     runs-on: ubuntu-latest
@@ -381,6 +401,7 @@ jobs:
       - partners-smoke
       - observatory-audit
       - observatory-lint
+      - observatory-unit
       - observatory-smoke
       - zizmor
     permissions:
