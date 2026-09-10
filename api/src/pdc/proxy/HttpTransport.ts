@@ -39,7 +39,12 @@ import { prometheusMetricsFactory } from "./helpers/prometheusMetricsFactory.ts"
 import { CacheMiddleware, cacheMiddleware } from "./middlewares/cacheMiddleware.ts";
 import { dataWrapMiddleware, errorHandlerMiddleware } from "./middlewares/index.ts";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware.ts";
-import { apiRateLimiter, monHonorCertificateRateLimiter, rateLimiter } from "./middlewares/rateLimiter.ts";
+import {
+  apiRateLimiter,
+  authRateLimiter,
+  monHonorCertificateRateLimiter,
+  rateLimiter,
+} from "./middlewares/rateLimiter.ts";
 import { sessionMiddleware } from "./middlewares/sessionMiddleware.ts";
 
 export class HttpTransport implements TransportInterface {
@@ -207,7 +212,7 @@ export class HttpTransport implements TransportInterface {
 
     this.app.delete(
       "/cache",
-      rateLimiter(),
+      authRateLimiter(),
       this.cache.auth(),
       asyncHandler(async (req: Request, res: Response) => {
         const prefix = (req.query.prefix as string | undefined) || "*";
