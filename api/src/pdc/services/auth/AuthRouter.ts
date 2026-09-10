@@ -1,4 +1,5 @@
 import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, proxy } from "@/ilos/common/index.ts";
+import { env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
@@ -6,9 +7,11 @@ import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepo
 import express, { NextFunction, Request, Response } from "dep:express";
 import { session } from "../../../config/proxy.ts";
 import { authGuard } from "../../proxy/middlewares/authGuard.ts";
+import { loginRateLimiter } from "../../proxy/middlewares/rateLimiter.ts";
 import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts";
 import { contextRoute } from "./context.ts";
 import { testCallbackRoute } from "./test/callback.ts";
+import { isTestAuthEnabled } from "./test/enabled.ts";
 
 @injectable()
 export class AuthRouter {
@@ -115,12 +118,12 @@ export class AuthRouter {
     // Bascule du contexte actif (users territoire) — revalidée en DB, cf. spec §6.
     this.app.post("/auth/context", contextRoute(this.userScopeRepository));
 
-    /**
-     * Test-only login route to create a session without going through OIDC.
-     * This route should only be available in test environments.
-     */
-    if (["demo", "production"].includes(this.config.get("env")) === false) {
-      this.app.post("/auth/test/callback", testCallbackRoute.bind(this)(this.config));
+    // Test-only login, opt-in via APP_ENABLE_TEST_AUTH and never in demo/production
+    const envs = [this.config.get("env"), env_or_default("APP_ENV", "local")];
+    if (isTestAuthEnabled(envs, this.config.get("test.enabled"))) {
+      this.config.get("test.accounts")(); // fail fast at boot if APIE2E_AUTH_* are missing
+      logger.warn("[auth] test login route /auth/test/callback is ENABLED");
+      this.app.post("/auth/test/callback", loginRateLimiter(), testCallbackRoute(this.config));
     }
   }
 }

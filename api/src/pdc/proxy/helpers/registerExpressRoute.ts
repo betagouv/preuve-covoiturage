@@ -1,5 +1,6 @@
 import { ContextType, KernelInterface, RouteParams } from "@/ilos/common/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
+import { formatRouteError } from "@/pdc/proxy/helpers/formatRouteError.ts";
 import { setSentryUser } from "@/pdc/proxy/helpers/setSentryUser.ts";
 import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
 import { express, NextFunction, Request, Response } from "dep:express";
@@ -79,15 +80,8 @@ export function registerExpressRoute(
         }
         return res.end();
       } catch (e) {
-        res.status(e.httpCode || 500);
-        if (params.rpcAnswerOnFailure) {
-          return res.json({
-            jsonrpc: "2.0",
-            id: 1,
-            error: e.rpcError || { message: e.message },
-          });
-        }
-        return res.json(e.rpcError?.data || { error: e.message || "An unexpected error occurred." });
+        const { status, body } = formatRouteError(e, Boolean(params.rpcAnswerOnFailure));
+        return res.status(status).json(body);
       }
     }),
   ]);

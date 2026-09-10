@@ -58,6 +58,7 @@ services:
       NODE_ENV: ${NODE_ENV:-local}
       APP_ENV: ${APP_ENV:-local}
       APP_LOG_LEVEL: ${APP_LOG_LEVEL:-DEBUG}
+      APP_ENABLE_TEST_AUTH: ${APP_ENABLE_TEST_AUTH:-false}
 
       # Exposed Services URLs
       APP_API_URL: ${APP_API_URL:-http://localhost:8080}

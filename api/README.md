@@ -257,15 +257,18 @@ Copier `.env.example` vers `.env` et configurer les valeurs.
 
 #### Tests E2E
 
+Login de test (`/auth/test/callback`) : opt-in via `APP_ENABLE_TEST_AUTH`, jamais monté en demo/production.
+
 | Variable | Requis | Défaut | Description |
 | --- | --- | --- | --- |
 | `APIE2E_API_URL` | Non | `http://localhost:8080` | URL de l'API pour les tests E2E |
-| `APIE2E_AUTH_ADMIN_EMAIL` | Non | `admin@example.com` | Email du compte admin de test |
-| `APIE2E_AUTH_ADMIN_PASSWORD` | Non | `admin1234` | Mot de passe du compte admin de test |
-| `APIE2E_AUTH_OPERATOR_EMAIL` | Non | `operator@example.com` | Email du compte opérateur de test |
-| `APIE2E_AUTH_OPERATOR_PASSWORD` | Non | `admin1234` | Mot de passe du compte opérateur de test |
-| `APIE2E_AUTH_TERRITORY_EMAIL` | Non | `territory@example.com` | Email du compte territoire de test |
-| `APIE2E_AUTH_TERRITORY_PASSWORD` | Non | `admin1234` | Mot de passe du compte territoire de test |
+| `APP_ENABLE_TEST_AUTH` | Non | `false` | Active la route de login de test `/auth/test/callback` |
+| `APIE2E_AUTH_ADMIN_EMAIL` | Si le flag est actif | — | Email du compte admin de test |
+| `APIE2E_AUTH_ADMIN_PASSWORD` | Si le flag est actif | — | Mot de passe du compte admin de test |
+| `APIE2E_AUTH_OPERATOR_EMAIL` | Si le flag est actif | — | Email du compte opérateur de test |
+| `APIE2E_AUTH_OPERATOR_PASSWORD` | Si le flag est actif | — | Mot de passe du compte opérateur de test |
+| `APIE2E_AUTH_TERRITORY_EMAIL` | Si le flag est actif | — | Email du compte territoire de test |
+| `APIE2E_AUTH_TERRITORY_PASSWORD` | Si le flag est actif | — | Mot de passe du compte territoire de test |
 
 ## Architecture API
 
