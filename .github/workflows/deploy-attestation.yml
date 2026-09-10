@@ -31,8 +31,6 @@ jobs:
           cache-dependency-path: app-attestation/package-lock.json
 
       - name: Install and Build 🔧
-        env:
-          DEPLOY_ENV: production
         run: |
           cd app-attestation
           npm ci

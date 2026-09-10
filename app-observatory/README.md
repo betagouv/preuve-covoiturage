@@ -115,7 +115,6 @@ src/
 Copier `.env.example` vers `.env.local` et configurer :
 
 ```env
-NEXT_PUBLIC_API_URL=           # URL de l'API backend
 NEXT_PUBLIC_CMS_URL=           # URL du CMS Strapi
 NEXT_PUBLIC_MAPTILER_KEY=      # Clé MapTiler pour les fonds de carte
 NEXT_PUBLIC_MATOMO_URL=        # URL Matomo (analytics)
@@ -125,7 +124,6 @@ NEXT_PUBLIC_MATOMO_SITE_ID=    # ID du site Matomo
 En environement de développement il est possible d'utiliser les endpoints de production suivants :
 
 ```env
-NEXT_PUBLIC_API_URL=https://api.covoiturage.beta.gouv.fr/v3/observatory
 NEXT_PUBLIC_CMS_URL=https://ncms.covoiturage.beta.gouv.fr
 NEXT_PUBLIC_SEARCH_URL=https://search.covoiturage.beta.gouv.fr
 ```
