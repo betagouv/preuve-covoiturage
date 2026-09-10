@@ -1,15 +1,17 @@
-import { MDXRemote } from "next-mdx-remote/rsc";
+import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { VFileCompatible } from "vfile";
 
-export default function MDContent(props: { source: VFileCompatible }) {
-  const options = {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeSlug],
-    },
-  };
+// No "user-content-" prefix on ids: keeps the #slug anchors of rehype-slug working
+const schema = { ...defaultSchema, clobberPrefix: "" };
 
-  return <MDXRemote source={props.source} options={options} />;
+export default function MDContent(props: { source: string | undefined }) {
+  if (!props.source) return null;
+
+  return (
+    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug, [rehypeSanitize, schema]]}>
+      {props.source}
+    </ReactMarkdown>
+  );
 }
