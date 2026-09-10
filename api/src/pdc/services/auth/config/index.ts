@@ -2,7 +2,6 @@ import * as connections from "@/config/connections.ts";
 import * as proxy from "@/config/proxy.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
 import * as dex from "./dex.ts";
-import * as jwt from "./jwt.ts";
 import * as permissions from "./permissions.ts";
 import * as proconnect from "./proconnect.ts";
 import * as test from "./test.ts";
@@ -14,7 +13,6 @@ export const config = {
   connections,
   dex,
   env,
-  jwt,
   permissions,
   proconnect,
   proxy,

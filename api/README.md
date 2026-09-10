@@ -152,7 +152,6 @@ Copier `.env.example` vers `.env` et configurer les valeurs.
 
 | Variable | Requis | Défaut | Description |
 | --- | --- | --- | --- |
-| `APP_JWT_SECRET` | **Oui** | — | Clé secrète pour signer les tokens JWT (HS256). Le changer invalide tous les tokens existants |
 | `APP_RATE_LIMIT_MAX_FACTOR` | Non | `1` | Multiplicateur des limites de requêtes. `0` = désactivé |
 | `APP_SENTRY_DSN` | Non | `""` | DSN privé Sentry pour le reporting d'erreurs. Vide = Sentry désactivé |
 | `APP_SENTRY_ENV` | Non | `${NODE_ENV}` | Environnement Sentry pour filtrer les erreurs |

@@ -84,11 +84,7 @@ export class AuthRouter {
     this.app.get(
       "/auth/logout/callback",
       asyncHandler(async (req: Request, res: Response) => {
-        const { state: expectedState } = req.session?.auth || {};
-        const state = req.query?.state;
-        if (state !== expectedState) {
-          logger.warn("[auth] logout callback state mismatch");
-        }
+        // Session is already destroyed by /auth/logout; state cannot be checked here
         req.session.destroy((err: Error) => {
           if (err) {
             logger.error(`[auth] failed to destroy session on logout callback: ${err.message}`);
