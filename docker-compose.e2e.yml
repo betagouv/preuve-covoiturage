@@ -20,6 +20,15 @@ services:
       # CI needs them in the quality-api.yml workflow
       APIE2E_API_URL: https://api.covoiturage.test
 
+      # Test-only login route, opt-in flag + fixed e2e accounts (never in demo/production)
+      APP_ENABLE_TEST_AUTH: "true"
+      APIE2E_AUTH_ADMIN_EMAIL: admin@example.com
+      APIE2E_AUTH_ADMIN_PASSWORD: admin1234
+      APIE2E_AUTH_OPERATOR_EMAIL: operator@example.com
+      APIE2E_AUTH_OPERATOR_PASSWORD: admin1234
+      APIE2E_AUTH_TERRITORY_EMAIL: territory@example.com
+      APIE2E_AUTH_TERRITORY_PASSWORD: admin1234
+
     volumes:
       - ./docker/api/certs:/app/certs:ro
       - ./api:/app/api
