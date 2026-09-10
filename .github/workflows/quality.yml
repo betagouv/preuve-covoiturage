@@ -103,8 +103,6 @@ jobs:
           AWS_ENDPOINT: https://s3.covoiturage.test
           AWS_REGION: fr-par
           INTEGRATION_MAILER_SMTP_HOST: localhost
-          PRO_CONNECT_CLIENT_ID: ${{ secrets.PRO_CONNECT_CLIENT_ID }}
-          PRO_CONNECT_CLIENT_SECRET: ${{ secrets.PRO_CONNECT_CLIENT_SECRET }}
 
   api-e2e:
     needs: [changes, api-unit]
@@ -307,8 +305,6 @@ jobs:
         working-directory: app-observatory
         run: npm run build
         env:
-          DEPLOY_ENV: production
-          NEXT_PUBLIC_API_URL: ${{ vars.API_URL }}
           NEXT_PUBLIC_DATALAKE_BASE_URL: ${{ vars.DATALAKE_BASE_URL }}
           NEXT_PUBLIC_CMS_URL: ${{ vars.CMS_URL }}
           NEXT_PUBLIC_CMS_TOKEN: ${{ secrets.CMS_API_KEY }}

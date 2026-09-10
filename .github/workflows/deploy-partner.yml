@@ -35,7 +35,6 @@ jobs:
 
       - name: Install and Build 🔧
         env:
-          DEPLOY_ENV: ${{ matrix.env }}
           NEXT_PUBLIC_PC_USER_URI: ${{ vars.NEXT_PUBLIC_PC_USER_URI }}
           NEXT_PUBLIC_API_REDIRECT: ${{ vars.NEXT_PUBLIC_API_REDIRECT }}
           NEXT_PUBLIC_API_URL: ${{ vars.API_ROOT_URL }}
