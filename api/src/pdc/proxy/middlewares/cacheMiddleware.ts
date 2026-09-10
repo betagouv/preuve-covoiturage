@@ -3,6 +3,7 @@ import { ForbiddenException } from "@/ilos/common/index.ts";
 import { NextFunction, Request, Response } from "dep:express";
 
 import { logger } from "@/lib/logger/index.ts";
+import { safeCompare } from "@/lib/crypto/safeCompare.ts";
 import { cacheStore } from "./cache/redis.ts";
 import { deflate, getKey, inflate } from "./cache/transformers.ts";
 import type {
@@ -142,20 +143,21 @@ export function cacheMiddleware(
     },
 
     auth() {
+      // async signature kept for CacheMiddleware type; body is sync, next(err) not throw (Express 4 doesn't catch async throws)
       return async (
         req: Request,
         res: Response,
         next: NextFunction,
       ): Promise<void> => {
-        const token = String(globalConfig.authToken);
+        const token = String(globalConfig.authToken ?? "");
         const header = req.headers["x-route-cache-auth"];
 
         if (token === "") {
           return next(new Error("Please set APP_ROUTECACHE_AUTHTOKEN"));
         }
 
-        if (token !== header) {
-          throw new ForbiddenException(`Invalid X-Route-Cache-Auth header`);
+        if (typeof header !== "string" || !safeCompare(token, header)) {
+          return next(new ForbiddenException(`Invalid X-Route-Cache-Auth header`));
         }
 
         next();
