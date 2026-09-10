@@ -110,7 +110,6 @@ services:
 
       # Authentication
       APP_SESSION_SECRET: ${APP_SESSION_SECRET:-secret}
-      APP_JWT_SECRET: ${APP_JWT_SECRET:-secret} # (deprecated)
 
       # User registration (deprecated)
       APP_USER_REGISTRATION_ENABLED: ${APP_USER_REGISTRATION_ENABLED:-false}
