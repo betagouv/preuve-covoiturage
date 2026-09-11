@@ -23,7 +23,9 @@
 --
 -- Source : `perimeters_agg`, déjà éclaté par niveau (com/epci/aom/dep/reg/country)
 -- et dédoublonné par `mode()` sur le libellé. On écarte :
---   * le sentinel étranger `XXXXX` ;
+--   * le doublon `99100` — France telle que codée dans la nomenclature des pays
+--     étrangers ; la France est exposée ici sous `XXXXX_country`, code utilisé
+--     pour la France dans le reste de l'observatoire (cf. `perimeters.sql`) ;
 --   * l'artefact « pays agrégé en type=com » que `perimeters_agg` ajoute pour les
 --     modèles od_* — il ferait un doublon de `code` avec la ligne `type=country`.
 --
@@ -43,7 +45,7 @@ territories AS (
   FROM {{ ref('perimeters_agg') }} AS pa
   WHERE
     pa.code IS NOT NULL
-    AND pa.code <> 'XXXXX'
+    AND pa.code <> '99100'
     AND NOT (
       pa.type = 'com'
       AND EXISTS (
