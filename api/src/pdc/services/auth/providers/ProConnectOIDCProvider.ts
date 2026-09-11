@@ -5,6 +5,24 @@ import { createRemoteJWKSet } from "dep:jose";
 import * as client from "dep:openid-client";
 import { getPermissions } from "../config/permissions.ts";
 
+// Niveaux acr ProConnect valant double authentification.
+// https://partenaires.proconnect.gouv.fr/docs/fournisseur-service/double_authentification
+export const MFA_ACR_VALUES = Object.freeze(["eidas0-mfa", "eidas1-mfa", "eidas2", "eidas3"]);
+
+export class MfaRequiredError extends Error {
+  override name = "MfaRequiredError";
+}
+
+// Paramètre `claims` de /authorize : exige un acr MFA (ProConnect enrôle l'agent sinon).
+export function mfaClaimsParameter(values: readonly string[]): string {
+  return JSON.stringify({ id_token: { acr: { essential: true, values } } });
+}
+
+// Gate MFA fail-closed : l'acr rendu par ProConnect doit figurer dans les niveaux MFA.
+export function failsMfaCheck(acr: unknown, values: readonly string[]): boolean {
+  return typeof acr !== "string" || !values.includes(acr);
+}
+
 // Gate ProConnect fail-closed : SIREN(ProConnect) doit égaler login_siren (registry.admin bypass).
 export function failsSirenCheck(
   proconnect: { siren: string },
@@ -45,6 +63,10 @@ export class ProConnectOIDCProvider implements InitHookInterface {
   }
 
   async init(): Promise<void> {
+    if (this.#enabled && !this.config.get("proconnect.require_mfa")) {
+      logger.warn("[proconnect] double authentification non exigée. Use PROCONNECT_REQUIRE_MFA=true to enforce");
+    }
+
     await this.#configure(false);
   }
 
@@ -76,6 +98,10 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       state,
     };
 
+    if (this.config.get("proconnect.require_mfa")) {
+      parameters.claims = mfaClaimsParameter(MFA_ACR_VALUES);
+    }
+
     if (!this.clientConfig!.serverMetadata().supportsPKCE()) {
       state = client.randomState();
       parameters.state = state;
@@ -93,6 +119,15 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       expectedState,
       idTokenExpected: true,
     });
+
+    // La demande `claims` ne garantit rien : on revérifie l'acr rendu.
+    if (this.config.get("proconnect.require_mfa")) {
+      const acr = tokens.claims()?.acr;
+      if (failsMfaCheck(acr, MFA_ACR_VALUES)) {
+        throw new MfaRequiredError(`[proconnect] double authentification requise (acr=${acr})`);
+      }
+    }
+
     return tokens;
   }
 

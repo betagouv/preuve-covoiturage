@@ -2,7 +2,7 @@ import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, p
 import { env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
-import { ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
 import { session } from "../../../config/proxy.ts";
@@ -47,7 +47,21 @@ export class AuthRouter {
 
         // Fetch tokens and user info from ProConnect OIDC Provider
         // (état OIDC state/nonce lu ci-dessus, avant la régénération de session)
-        const tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
+        let tokens;
+        try {
+          tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
+        } catch (e) {
+          // name en second critère : instanceof casse si le module est résolu deux fois
+          if (!(e instanceof MfaRequiredError) && (e as Error)?.name !== "MfaRequiredError") throw e;
+          logger.warn(`[auth] ${(e as Error).message}`);
+
+          // pas d'identité attachée, mais on jette l'état OIDC de la tentative échouée
+          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
+          res.clearCookie(session.name);
+
+          return res.redirect(`${this.config.get("app_url")}?error=mfa_required`);
+        }
+
         const claims = tokens.claims();
         const user = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
 

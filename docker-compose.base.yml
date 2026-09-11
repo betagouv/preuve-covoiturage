@@ -130,6 +130,7 @@ services:
       PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://localhost:8080/auth/login/callback}
       PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-http://localhost:8080/auth/logout/callback}
       PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
+      PROCONNECT_REQUIRE_MFA: ${PROCONNECT_REQUIRE_MFA:-false}
     
     volumes:
       - ./docker/api/certs:/app/certs:ro
