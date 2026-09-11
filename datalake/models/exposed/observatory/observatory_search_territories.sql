@@ -10,27 +10,34 @@
     ]
 ) }}
 
--- Référentiel plat « un territoire recherchable par ligne » pour l'autocomplete de
--- sélection de territoire de l'observatoire (remplace l'index Meilisearch `geo`).
+-- Référentiel plat « un territoire recherchable par ligne » pour
+-- l'autocomplete de sélection de territoire de l'observatoire (remplace
+-- l'index Meilisearch `geo`).
 --
--- Grain : une ligne par (territory, type, year). `id` = territory || '_' || type
--- est la clé métier d'un territoire, année exclue : elle se répète d'un millésime
--- à l'autre (unique seulement au sein d'un `year`, et parmi les lignes
--- `is_latest`). La résolution exacte d'un `id` par l'API se fait sur `is_latest`.
+-- Grain : une ligne par (territory, type, year). `id` = territory || '_' ||
+-- type est la clé métier d'un territoire, année exclue : elle se répète
+-- d'un millésime à l'autre (unique seulement au sein d'un `year`, et parmi
+-- les lignes `is_latest`). La résolution exacte d'un `id` par l'API se fait
+-- sur `is_latest`.
 --
--- Multi-millésime : `is_latest` isole le dernier référentiel (comportement de
--- l'index Meilisearch actuel), `year` permet de cibler un millésime précis.
+-- Multi-millésime : `is_latest` isole le dernier référentiel (comportement
+-- de l'index Meilisearch actuel), `year` permet de cibler un millésime
+-- précis.
 --
--- Source : `perimeters_agg`, déjà éclaté par niveau (com/epci/aom/dep/reg/country)
--- et dédoublonné par `mode()` sur le libellé. On écarte :
---   * le doublon `99100` — France telle que codée dans la nomenclature des pays
---     étrangers ; la France est exposée ici sous `XXXXX_country`, code utilisé
---     pour la France dans le reste de l'observatoire (cf. `perimeters.sql`) ;
---   * l'artefact « pays agrégé en type=com » que `perimeters_agg` ajoute pour les
---     modèles od_* — il ferait un doublon de `code` avec la ligne `type=country`.
+-- Source : `perimeters_agg`, déjà éclaté par niveau
+-- (com/epci/aom/dep/reg/country) et dédoublonné par `mode()` sur le
+-- libellé. On écarte :
+--   * le doublon `99100` — France telle que codée dans la nomenclature
+--     des pays étrangers ; la France est exposée ici sous
+--     `XXXXX_country`, code utilisé pour la France dans le reste de
+--     l'observatoire (cf. `perimeters.sql`) ;
+--   * l'artefact « pays agrégé en type=com » que `perimeters_agg` ajoute
+--     pour les modèles od_* — il ferait un doublon de `code` avec la
+--     ligne `type=country`.
 --
 -- La recherche insensible aux accents s'appuie sur l'index GIN trigram
--- `immutable_unaccent(lower(l_territory))` (cf. migration `0005_search_extensions`).
+-- `immutable_unaccent(lower(l_territory))` (cf. migration
+-- `0005_search_extensions`).
 
 WITH latest_millesime AS (
   SELECT max(year) AS year FROM {{ ref('perimeters_agg') }}
@@ -57,11 +64,12 @@ territories AS (
 )
 
 SELECT
-  t.code || '_' || t.type                     AS id,
-  t.code                                       AS territory,
-  mode() WITHIN GROUP (ORDER BY t.libelle)     AS l_territory,
+  t.code                                   AS territory,
   t.type,
   t.year,
-  t.year = (SELECT year FROM latest_millesime) AS is_latest
+  t.code || '_' || t.type                  AS id,
+  t.year = lm.year                         AS is_latest,
+  mode() WITHIN GROUP (ORDER BY t.libelle) AS l_territory
 FROM territories AS t
-GROUP BY t.code, t.type, t.year
+CROSS JOIN latest_millesime AS lm
+GROUP BY t.code, t.type, t.year, lm.year
