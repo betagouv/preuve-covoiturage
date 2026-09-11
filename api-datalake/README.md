@@ -82,6 +82,8 @@ just test              # pytest
       `journeys-by-distances`, `keyfigures`, `aires-covoiturage`
       (code + tests ; validation données au fil de la matérialisation de l'exposé)
 - [ ] Repointage `app-observatory` puis décommission du service Deno
+      (sélection de territoire repointée sur `/observatory/territories/search` ;
+      la recherche de contenu du `SearchBar` reste sur Meilisearch, cf. #3358)
 
 > **Note prod** : les endpoints agrégés lisent `zone_exposed.{od,occupation,distribution,
 > incentive,users}_*`, matérialisés par le pipeline dbt (`dbt run --select aggregated exposed`).

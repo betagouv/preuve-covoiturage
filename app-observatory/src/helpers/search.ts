@@ -1,6 +1,6 @@
 import { Config } from '@/config';
 import { search } from '@/config/search';
-import { INSEECode, PerimeterType } from '../interfaces/observatoire/Perimeter';
+import { PerimeterType } from '../interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '../interfaces/observatoire/dataInterfaces';
 
 export const searchHost = Config.get<string>('search.host');
@@ -27,25 +27,6 @@ export const fetchSearchAPI = async (path:string, options = {}) => {
   return response.json();
 }
 
-export const fetchTerritoryName = async (value: { code: INSEECode; type: PerimeterType }) => {
-  const query = {
-    q: `${value.code}_${value.type}`,
-    attributesToSearchOn: ['id'],
-    limit: 1,
-  };
-  try {
-    const response = await fetchSearchAPI('indexes/geo/search', {
-      method: 'post',
-      body: JSON.stringify(query),
-    });
-    return (response?.hits?.[0]?.l_territory as string | undefined) ?? 'France';
-  }
-  catch(e){
-    console.error(e);
-    return 'France';
-  }
-}
-
 export const castPerimeterType = (value: PerimeterType) => {
   switch (value) {
     case 'com':
@@ -64,5 +45,7 @@ export const castPerimeterType = (value: PerimeterType) => {
 }
 
 export const getUrl = (url: string, option?:TerritoryListInterface) => {
-  return `/observatoire/${url}${option ? `?code=${option.territory.slice(0,9)}&type=${option.type}` : ''}`
+  if (!option) return `/observatoire/${url}`;
+  const params = new URLSearchParams({ code: option.territory.slice(0,9), type: option.type });
+  return `/observatoire/${url}?${params}`;
 }

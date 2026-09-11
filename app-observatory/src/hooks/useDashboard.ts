@@ -2,7 +2,8 @@
 import { INSEECode, PerimeterType } from "@/interfaces/observatoire/Perimeter";
 import { TerritoryListInterface } from "@/interfaces/observatoire/dataInterfaces";
 import { useCallback, useState } from "react";
-import { fetchTerritoryName } from "../helpers/search";
+import { fetchTerritoryName } from "../helpers/api";
+import { targetMillesime } from "../helpers/lists";
 import { Params } from "../interfaces/common/contextInterface";
 import { PeriodType } from "../interfaces/observatoire/componentsInterfaces";
 
@@ -41,14 +42,14 @@ export const useDashboard = () => {
   const onLoadTerritory = useCallback(
     async (value?: { code: INSEECode; type: PerimeterType }) => {
       setLoading(true);
-      const params = value ? value : { code: "XXXXX", type: "country" as PerimeterType };
-      const name = await fetchTerritoryName(params);
+      const territory = value ? value : { code: "XXXXX", type: "country" as PerimeterType };
+      const name = await fetchTerritoryName(territory, targetMillesime(params.year));
       setParams((p) => {
-        return { ...p, ...params, name: name, observe: "com" } as typeof p;
+        return { ...p, ...territory, name: name, observe: "com" } as typeof p;
       });
       setLoading(false);
     },
-    [],
+    [params.year],
   );
 
   const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
@@ -108,8 +109,6 @@ export const useDashboard = () => {
     });
   }, []);
 
-  const getName = fetchTerritoryName;
-
   return {
     params,
     lastPeriod,
@@ -117,7 +116,6 @@ export const useDashboard = () => {
     getParams,
     onLoadTerritory,
     onChangeTerritory,
-    getName,
     onChangePeriod,
     onChangeMonth,
     onChangeTrimester,

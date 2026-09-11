@@ -27,9 +27,6 @@ export type DashboardContextType = {
     getParams: (params: Params) => void;
     onLoadTerritory: (value?: { code: INSEECode; type: PerimeterType }) => void;
     onChangeTerritory: (value: TerritoryListInterface) => void;
-    getName: (
-      value: { code: INSEECode; type: PerimeterType },
-    ) => Promise<string>;
     onChangePeriod: (value: PeriodType) => void;
     onChangeMonth: (value: number) => void;
     onChangeTrimester: (value: number) => void;
