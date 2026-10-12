@@ -8,6 +8,7 @@
     "start": "NEXT_TELEMETRY_DISABLED=1 next start",
     "serve": "NEXT_TELEMETRY_DISABLED=1 npx serve out -p 4200",
     "lint": "NEXT_TELEMETRY_DISABLED=1 eslint --concurrency auto .",
+    "test": "vitest run",
     "predev": "react-dsfr update-icons",
     "prebuild": "react-dsfr update-icons"
   },
@@ -42,7 +43,8 @@
     "eslint-plugin-prettier": "^5.5.6",
     "sass": "^1.104.1",
     "typescript": "^5",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.3"
   },
   "overrides": {
     "postcss": "^8.5.28"

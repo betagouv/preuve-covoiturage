@@ -179,8 +179,32 @@ jobs:
         working-directory: app-partners
         run: npm run lint
 
+  partners-unit:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.partners == 'true' }}
+    name: (partners) unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install NodeJS
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: app-partners
+        run: npm ci
+
+      - name: Run tests
+        working-directory: app-partners
+        run: npm test
+
   partners-smoke:
-    needs: [changes, partners-lint, partners-audit]
+    needs: [changes, partners-lint, partners-unit, partners-audit]
     if: ${{ needs.changes.outputs.partners == 'true' }}
     name: (partners) smoke tests
     runs-on: ubuntu-latest
@@ -415,6 +439,7 @@ jobs:
       - api-e2e
       - partners-audit
       - partners-lint
+      - partners-unit
       - partners-smoke
       - observatory-audit
       - observatory-lint
