@@ -160,7 +160,7 @@ export default function OperatorCredentialsTable(props: { title: string; operato
               <p className={fr.cx("fr-mt-2w")}>secret_key</p>
               {/* Masquée par défaut : l'écran peut être partagé ou capturé. */}
               <code className="codeblock" aria-label={secretVisible ? undefined : "secret_key masquée"}>
-                {secretVisible ? credentials.secret_key : "•".repeat(24)}
+                {secretVisible ? credentials.secret_key : "•".repeat(16)}
               </code>
               <ButtonsGroup
                 className={fr.cx("fr-mt-1w")}
