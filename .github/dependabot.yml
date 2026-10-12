@@ -8,7 +8,6 @@ updates:
       - /app-partners
       - /app-observatory
       - /app-attestation-forms
-      - /cms
     target-branch: next
     schedule:
       interval: weekly
@@ -32,6 +31,23 @@ updates:
     commit-message:
       prefix: build(deps)
 
+  # CMS hors veille. Sans target-branch pour que ignore couvre aussi la sécurité.
+  - package-ecosystem: npm
+    directory: /cms
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
+  - package-ecosystem: docker
+    directories:
+      - /docker/cms
+      - /docker/cms/prod
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
   - package-ecosystem: uv
     directories:
       - /api-datalake
@@ -48,8 +64,16 @@ updates:
         update-types: [minor, patch]
 
   - package-ecosystem: docker
+    # Liste explicite pour exclure docker/cms.
     directories:
-      - /docker/**
+      - /docker/api
+      - /docker/data
+      - /docker/datalake/prod
+      - /docker/datalake-api/prod
+      - /docker/dbt/prod
+      - /docker/geo-import/prod
+      - /docker/postgres
+      - /docker/redis
     target-branch: next
     schedule:
       interval: weekly
