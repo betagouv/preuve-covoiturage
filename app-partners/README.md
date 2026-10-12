@@ -58,6 +58,9 @@ npm run start
 
 # Lint
 npm run lint
+
+# Tests unitaires (vitest, src/**/*.test.ts)
+npm test
 ```
 
 ## Configuration

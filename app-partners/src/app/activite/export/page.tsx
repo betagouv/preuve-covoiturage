@@ -3,6 +3,7 @@ import { ActiveScopeBadge } from "@/components/common/ActiveScopeBadge";
 import SelectGeo from "@/components/common/SelectGeo";
 import SelectTerritory from "@/components/common/SelectTerritory";
 import ExportList from "@/components/export/ExportList";
+import { exportRangeError } from "@/helpers/exportRange";
 import { useExportCreate } from "@/hooks/api/useExportCreate";
 import { TerritorySelectorsInterface } from "@/interfaces/dataInterface";
 import { type PerimeterType } from "@/interfaces/searchInterface";
@@ -35,6 +36,8 @@ export default function TabExport() {
   const [geoSelector, setGeoSelector] = useState<"geo" | "campaign">("campaign");
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const rangeError = exportRangeError(startDate, endDate);
 
   const { createExport, data: exportResponse, loading, error, reset } = useExportCreate();
 
@@ -130,14 +133,20 @@ export default function TabExport() {
                 label: "Périmètre géographique",
                 nativeInputProps: {
                   checked: geoSelector === "geo",
-                  onChange: () => { setGeoSelector("geo"); setTerritoryId(undefined); },
+                  onChange: () => {
+                    setGeoSelector("geo");
+                    setTerritoryId(undefined);
+                  },
                 },
               },
               {
                 label: "Périmètre campagne",
                 nativeInputProps: {
                   checked: geoSelector === "campaign",
-                  onChange: () => { setGeoSelector("campaign"); setTerritorySelectors(undefined); },
+                  onChange: () => {
+                    setGeoSelector("campaign");
+                    setTerritorySelectors(undefined);
+                  },
                 },
               },
             ]}
@@ -187,9 +196,14 @@ export default function TabExport() {
                 />
               </div>
 
+              {rangeError && (
+                <p className={fr.cx("fr-error-text", "fr-mt-2w")} role="alert">
+                  {rangeError}
+                </p>
+              )}
               <div>
                 <Button
-                  disabled={loading}
+                  disabled={loading || !!rangeError}
                   style={{
                     marginTop: fr.spacing("5v"),
                   }}
