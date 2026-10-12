@@ -15,6 +15,10 @@ export interface LegendInterface {
   type: string;
   classes: ClasseInterface[];
   order?: number;
+  subtitle?: string;
+  note?: string;
+  // opacité de la couche, reportée sur les pastilles pour qu'elles ressemblent à la carte
+  opacity?: number;
 }
 
 export interface ClasseInterface {
