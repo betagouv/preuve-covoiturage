@@ -1,4 +1,5 @@
 # API Deno (deno.jsonc) non géré par Dependabot : à couvrir à part.
+# Mises à jour de version vers next ; les correctifs de sécurité ciblent toujours main.
 version: 2
 
 updates:
@@ -8,6 +9,7 @@ updates:
       - /app-observatory
       - /app-attestation-forms
       - /cms
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -21,6 +23,7 @@ updates:
   # Application gelée : correctifs de sécurité seulement.
   - package-ecosystem: npm
     directory: /app-attestation
+    target-branch: next
     schedule:
       interval: weekly
     open-pull-requests-limit: 0
@@ -33,6 +36,7 @@ updates:
     directories:
       - /api-datalake
       - /datalake
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -46,6 +50,7 @@ updates:
   - package-ecosystem: docker
     directories:
       - /docker/**
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -58,6 +63,7 @@ updates:
 
   - package-ecosystem: docker-compose
     directory: /
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -72,6 +78,7 @@ updates:
     directories:
       - /
       - /.github/actions/*
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
