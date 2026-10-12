@@ -5,7 +5,7 @@ name: rpc
 
 services:
   dex:
-    image: dexidp/dex:v2.44.0-alpine
+    image: dexidp/dex:v2.45.1-alpine
     environment:
       # DEX configuration calling back to the API
       DEX_ISSUER_URL: http://dex:8090/
@@ -63,7 +63,6 @@ services:
       # Exposed Services URLs
       APP_API_URL: ${APP_API_URL:-http://localhost:8080}
       APP_APP_URL: ${APP_APP_URL:-http://localhost:4200}
-      APP_DASHBOARD_V2_URL: ${APP_DASHBOARD_V2_URL:-http://localhost:4200}
 
       # Internal Services URLs
       APP_MAIL_SMTP_URL: ${APP_MAIL_SMTP_URL:-smtp://mailer:1025}
@@ -119,7 +118,6 @@ services:
       DEX_BASE_URL: ${DEX_BASE_URL:-http://dex:8090}
       DEX_CLIENT_ID: ${DEX_CLIENT_ID:-secret}
       DEX_CLIENT_SECRET: ${DEX_CLIENT_SECRET:-secret}
-      DEX_REDIRECT_URL: ${DEX_REDIRECT_URL:-http://localhost:8080/auth/callback}
       DEX_GRPC_HOST: ${DEX_GRPC_HOST:-dex}
       DEX_GRPC_PORT: ${DEX_GRPC_PORT:-5557}
 
@@ -127,8 +125,7 @@ services:
       PROCONNECT_ENABLED: ${PROCONNECT_ENABLED:-true}
       PROCONNECT_CLIENT_ID: ${PROCONNECT_CLIENT_ID:-secret}
       PROCONNECT_CLIENT_SECRET: ${PROCONNECT_CLIENT_SECRET:-secret}
-      PROCONNECT_REDIRECT_URL: ${PROCONNECT_REDIRECT_URL:-http://localhost:8080/auth/login/callback}
-      PROCONNECT_LOGOUT_REDIRECT_URL: ${PROCONNECT_LOGOUT_REDIRECT_URL:-http://localhost:8080/auth/logout/callback}
+      # Les URL de rappel se déduisent de APP_API_URL, cf. api/src/config/urls.ts
       PROCONNECT_BASE_URL: ${PROCONNECT_BASE_URL:-https://fca.integ01.dev-agentconnect.fr/api/v2}
       PROCONNECT_REQUIRE_MFA: ${PROCONNECT_REQUIRE_MFA:-false}
     
@@ -140,24 +137,19 @@ services:
       - front
 
   s3:
-    # Docker Hub ne publie plus minio/minio : le dépôt a disparu et le pull échoue.
-    # quay.io est le registre officiel restant ; tag épinglé pour que la CI soit reproductible.
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    # MinIO a retiré ses images publiques (Docker Hub puis quay.io) : image Chainguard épinglée par digest.
+    image: cgr.dev/chainguard/minio:latest@sha256:6a1d0b45c8669726bba580ced0bfa4cb9fdeed1ed636dfabd81d1577beb6937b
     environment:
       MINIO_DOMAIN: s3
-    command: 'server /data'
+    command: ['server', '/data']
     networks:
       - back
 
   s3-init:
-    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    # image sans shell : alias passé par MC_HOST_<alias>, commande fournie par `just create_bucket`
+    image: cgr.dev/chainguard/minio-client:latest@sha256:b2bd7824d23d3e3b15bedd7e87fbc3be29d2e213307b4f901e4a1d92356dc20f
     environment:
-      MINIO_URL: http://s3:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_REGION_NAME: fr-par
-    entrypoint:
-      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
+      MC_HOST_minio: http://minioadmin:minioadmin@s3:9000
     networks:
       - back
     depends_on:

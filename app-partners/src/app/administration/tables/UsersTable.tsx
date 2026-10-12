@@ -2,6 +2,7 @@ import UserScopesEditor from "@/components/administration/UserScopesEditor";
 import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
+import { features } from "@/config/features";
 import { getRolesList, labelRole } from "@/helpers/auth";
 import { useOperatorsList, useTerritoriesList, useUsersList } from "@/hooks/api";
 import { useActionsModal } from "@/hooks/useActionsModal";
@@ -77,10 +78,11 @@ export default function UsersTable(props: { title: string; territoryId: number |
   };
 
   // Suggestion login_siren = 9 premiers chiffres du SIRET du territoire par défaut.
-  const suggestSiren = (scopes: UserScopeInput[]): string => {
+  // null (jamais "") quand rien à suggérer : l'API n'accepte que null ou 9 chiffres.
+  const suggestSiren = (scopes: UserScopeInput[]): string | null => {
     const def = scopes.find((s) => s.is_default) ?? scopes[0];
     const siret = territoriesList().find((t) => t?._id === def?.territory_id)?.siret;
-    return siret ? siret.slice(0, 9) : "";
+    return siret ? siret.slice(0, 9) : null;
   };
 
   // currentRow EST le corps de la requête : n'y mettre que des champs acceptés par l'API.
@@ -150,12 +152,10 @@ export default function UsersTable(props: { title: string; territoryId: number |
     firstname: z.string().min(3, { message: "Le prénom doit contenir au moins 3 caractères" }),
     lastname: z.string().min(3, { message: "Le nom doit contenir au moins 3 caractères" }),
     email: z.string().email({ message: `L'adresse mail n'est pas valide` }),
-    operator_id: z.coerce.number({ message: "L'identifiant n'est pas un nombre" }).nullable(),
-    territory_id: z.coerce.number({ message: "L'identifiant n'est pas un nombre" }).nullable(),
+    operator_id: z.number({ message: "L'identifiant n'est pas un nombre" }).nullish(),
+    territory_id: z.number({ message: "L'identifiant n'est pas un nombre" }).nullish(),
     role: z.enum(roles, { message: "Le rôle n'est pas valide" }),
-    login_siren: z
-      .union([z.string().regex(/^\d{9}$/, { message: "Le SIREN doit contenir 9 chiffres" }), z.literal(""), z.null()])
-      .optional(),
+    login_siren: z.string().regex(/^\d{9}$/, { message: "Le SIREN doit contenir 9 chiffres" }).nullish(),
     scopes: z
       .array(
         z.object({
@@ -208,7 +208,8 @@ export default function UsersTable(props: { title: string; territoryId: number |
       ...prev,
       scopes,
       territory_id: def?.territory_id,
-      login_siren: (prev.login_siren as string) || suggestSiren(scopes),
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- "" doit aussi être remplacé
+      login_siren: prev.login_siren || suggestSiren(scopes),
     }));
   };
 
@@ -318,69 +319,81 @@ export default function UsersTable(props: { title: string; territoryId: number |
         <>
           {(modal.typeModal === "update" || modal.typeModal === "create") && (
             <>
+              {/* Chaque contrôle est enveloppé dans fr-fieldset__element : le fieldset DSFR est en
+                  flex, sans cette enveloppe les champs se dimensionnent au contenu et s'alignent mal. */}
               <fieldset className={fr.cx("fr-fieldset")}>
                 <legend className={fr.cx("fr-fieldset__legend")}>Identité</legend>
-                <Input
-                  label="Prénom"
-                  state={modal.errors?.firstname ? "error" : "default"}
-                  stateRelatedMessage={modal.errors?.firstname ?? ""}
-                  nativeInputProps={{
-                    type: "text",
-                    value: (modal.currentRow.firstname as string) ?? "",
-                    onChange: (e) => modal.validateInputChange(formSchema, "firstname", e.target.value),
-                  }}
-                />
-                <Input
-                  label="Nom"
-                  state={modal.errors?.lastname ? "error" : "default"}
-                  stateRelatedMessage={modal.errors?.lastname ?? ""}
-                  nativeInputProps={{
-                    type: "text",
-                    value: (modal.currentRow.lastname as string) ?? "",
-                    onChange: (e) => modal.validateInputChange(formSchema, "lastname", e.target.value),
-                  }}
-                />
-                <Input
-                  label="Adresse mail"
-                  state={modal.errors?.email ? "error" : "default"}
-                  stateRelatedMessage={modal.errors?.email ?? ""}
-                  nativeInputProps={{
-                    type: "text",
-                    value: (modal.currentRow.email as string) ?? "",
-                    onChange: (e) => modal.validateInputChange(formSchema, "email", e.target.value),
-                  }}
-                />
-                <Select
-                  label="Rôle"
-                  nativeSelectProps={{
-                    value: (modal.currentRow.role ?? "") as string,
-                    onChange: (e) => modal.validateInputChange(formSchema, "role", e.target.value),
-                  }}
-                >
-                  {roleList().map((r: string, i: number) => (
-                    <option key={i} value={r}>
-                      {labelRole(r)}
-                    </option>
-                  ))}
-                </Select>
+                <div className={fr.cx("fr-fieldset__element")}>
+                  <Input
+                    label="Prénom"
+                    state={modal.errors?.firstname ? "error" : "default"}
+                    stateRelatedMessage={modal.errors?.firstname ?? ""}
+                    nativeInputProps={{
+                      type: "text",
+                      value: (modal.currentRow.firstname as string) ?? "",
+                      onChange: (e) => modal.validateInputChange(formSchema, "firstname", e.target.value),
+                    }}
+                  />
+                </div>
+                <div className={fr.cx("fr-fieldset__element")}>
+                  <Input
+                    label="Nom"
+                    state={modal.errors?.lastname ? "error" : "default"}
+                    stateRelatedMessage={modal.errors?.lastname ?? ""}
+                    nativeInputProps={{
+                      type: "text",
+                      value: (modal.currentRow.lastname as string) ?? "",
+                      onChange: (e) => modal.validateInputChange(formSchema, "lastname", e.target.value),
+                    }}
+                  />
+                </div>
+                <div className={fr.cx("fr-fieldset__element")}>
+                  <Input
+                    label="Adresse mail"
+                    state={modal.errors?.email ? "error" : "default"}
+                    stateRelatedMessage={modal.errors?.email ?? ""}
+                    nativeInputProps={{
+                      type: "text",
+                      value: (modal.currentRow.email as string) ?? "",
+                      onChange: (e) => modal.validateInputChange(formSchema, "email", e.target.value),
+                    }}
+                  />
+                </div>
+                <div className={fr.cx("fr-fieldset__element")}>
+                  <Select
+                    label="Rôle"
+                    nativeSelectProps={{
+                      value: (modal.currentRow.role ?? "") as string,
+                      onChange: (e) => modal.validateInputChange(formSchema, "role", e.target.value),
+                    }}
+                  >
+                    {roleList().map((r: string, i: number) => (
+                      <option key={i} value={r}>
+                        {labelRole(r)}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
               </fieldset>
 
               {/* Connexion : login_siren réservé registry.admin, masqué (pas grisé) sinon. */}
               {canManageScopes && (
                 <fieldset className={fr.cx("fr-fieldset")}>
                   <legend className={fr.cx("fr-fieldset__legend")}>Connexion</legend>
-                  <Input
-                    label="SIREN de connexion (ProConnect)"
-                    hintText="9 chiffres — distinct du SIRET du territoire"
-                    state={modal.errors?.login_siren ? "error" : "default"}
-                    stateRelatedMessage={modal.errors?.login_siren ?? ""}
-                    nativeInputProps={{
-                      inputMode: "numeric",
-                      maxLength: 9,
-                      value: (modal.currentRow.login_siren as string) ?? "",
-                      onChange: (e) => modal.validateInputChange(formSchema, "login_siren", e.target.value),
-                    }}
-                  />
+                  <div className={fr.cx("fr-fieldset__element")}>
+                    <Input
+                      label="SIREN de connexion (ProConnect)"
+                      hintText="9 chiffres — distinct du SIRET du territoire"
+                      state={modal.errors?.login_siren ? "error" : "default"}
+                      stateRelatedMessage={modal.errors?.login_siren ?? ""}
+                      nativeInputProps={{
+                        inputMode: "numeric",
+                        maxLength: 9,
+                        value: (modal.currentRow.login_siren as string) ?? "",
+                        onChange: (e) => modal.validateInputChange(formSchema, "login_siren", e.target.value || null),
+                      }}
+                    />
+                  </div>
                 </fieldset>
               )}
 
@@ -389,27 +402,58 @@ export default function UsersTable(props: { title: string; territoryId: number |
                 <fieldset className={fr.cx("fr-fieldset")}>
                   <legend className={fr.cx("fr-fieldset__legend")}>Périmètres</legend>
                   {isOperatorTarget && (
-                    <Select
-                      label="Opérateur"
-                      nativeSelectProps={{
-                        value: (modal.currentRow.operator_id as number) ?? undefined,
-                        onChange: (e) => modal.validateInputChange(formSchema, "operator_id", e.target.value),
-                      }}
-                    >
-                      {canManageScopes && <option value={undefined}>aucun</option>}
-                      {operatorsList().map((o, i) => (
-                        <option key={i} value={o?.id}>
-                          {o?.name}
-                        </option>
-                      ))}
-                    </Select>
+                    <div className={fr.cx("fr-fieldset__element")}>
+                      <Select
+                        label="Opérateur"
+                        nativeSelectProps={{
+                          value: (modal.currentRow.operator_id as number) ?? "",
+                          onChange: (e) =>
+                            modal.validateInputChange(
+                              formSchema,
+                              "operator_id",
+                              e.target.value === "" ? null : Number(e.target.value),
+                            ),
+                        }}
+                      >
+                        {canManageScopes && <option value="">aucun</option>}
+                        {operatorsList().map((o, i) => (
+                          <option key={i} value={o?.id}>
+                            {o?.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
                   )}
                   {canManageScopes && isTerritoryTarget && !isOperatorTarget && (
-                    <UserScopesEditor
-                      scopes={(modal.currentRow.scopes as UserScopeInput[]) ?? []}
-                      territories={territoriesList()}
-                      onChange={onChangeScopes}
-                    />
+                    <div className={fr.cx("fr-fieldset__element")}>
+                      {features.multiSiret ? (
+                        <UserScopesEditor
+                          scopes={(modal.currentRow.scopes as UserScopeInput[]) ?? []}
+                          territories={territoriesList()}
+                          onChange={onChangeScopes}
+                        />
+                      ) : (
+                        <Select
+                          label="Territoire"
+                          nativeSelectProps={{
+                            value: (modal.currentRow.territory_id as number) ?? "",
+                            onChange: (e) => {
+                              const territory_id = Number(e.target.value);
+                              if (territory_id) onChangeScopes([{ territory_id, is_default: true }]);
+                            },
+                          }}
+                        >
+                          <option value="" disabled>
+                            Sélectionner un territoire
+                          </option>
+                          {territoriesList().map((t) => (
+                            <option key={t?._id} value={t?._id}>
+                              {t?.name}
+                            </option>
+                          ))}
+                        </Select>
+                      )}
+                    </div>
                   )}
                 </fieldset>
               )}
