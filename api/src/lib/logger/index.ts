@@ -1,17 +1,20 @@
 import { env_or_default } from "@/lib/env/index.ts";
 import * as log from "dep:log";
 
-const level = env_or_default("APP_LOG_LEVEL", "DEBUG").toUpperCase() as log.LevelName;
-
-const consoleHandler = new log.ConsoleHandler(
-  level,
-  {
+export function setupLogger(level: log.LevelName): void {
+  const consoleHandler = new log.ConsoleHandler(level, {
     formatter: log.formatters.jsonFormatter,
     useColors: false,
-  },
-);
+  });
 
-log.setup({ handlers: { default: consoleHandler } });
+  // Sans `loggers`, std/log garde le logger par défaut en INFO et ignore tout debug.
+  log.setup({
+    handlers: { default: consoleHandler },
+    loggers: { default: { level, handlers: ["default"] } },
+  });
+}
+
+setupLogger(env_or_default("APP_LOG_LEVEL", "DEBUG").toUpperCase() as log.LevelName);
 
 export const getPerformanceTimer = () => {
   const start = performance.now();
