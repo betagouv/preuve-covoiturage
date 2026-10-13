@@ -141,4 +141,43 @@ describe("audited", () => {
     await audited("exports:claim", { method: "x", params: {}, context: httpContext }, () => Promise.resolve(null));
     assertEquals(info.calls.length, 0);
   });
+
+  it("renvoie le résultat même si le log échoue", async () => {
+    using _info = stub(logger, "info", () => {
+      throw new Error("logger down");
+    });
+    const result = await audited(
+      "dashboard:deleteUser",
+      { method: "x", params: {}, context: httpContext },
+      () => Promise.resolve(true),
+    );
+    assertEquals(result, true);
+  });
+
+  it("relance l'erreur d'origine même si le log échoue", async () => {
+    using _warn = stub(logger, "warn", () => {
+      throw new Error("logger down");
+    });
+    await assertRejects(
+      () =>
+        audited(
+          "dashboard:deleteUser",
+          { method: "x", params: {}, context: httpContext },
+          () => Promise.reject(new ForbiddenException()),
+        ),
+      ForbiddenException,
+    );
+  });
+});
+
+describe("signature", () => {
+  it("est nettoyée comme les valeurs", () => {
+    const line = formatAuditLine("dashboard:createX outcome=ok actor_id=1", {
+      context: httpContext,
+      params: {},
+      ms: 1,
+      outcome: { ok: false, error: new Error() },
+    });
+    assertStringIncludes(line, "[audit] dashboard:createX_outcome_ok_actor_id_1 outcome=error");
+  });
 });

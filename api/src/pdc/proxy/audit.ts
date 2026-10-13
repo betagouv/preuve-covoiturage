@@ -8,7 +8,7 @@ const WRITE_METHOD =
 // Le worker d'export interroge en boucle : une réclamation vide n'est pas une action.
 const POLLING_SIGNATURE = "exports:claim";
 
-// Liste blanche : rien d'autre que ces identifiants ne sort des params.
+// Liste blanche : seuls ces identifiants sortent des params. Jamais d'identity_key, téléphone, e-mail…
 const TARGET_KEYS = ["_id", "uuid", "operator_id", "territory_id", "policy_id", "campaign_id", "user_id"];
 const MAX_VALUE_LENGTH = 64;
 
@@ -51,8 +51,8 @@ export function formatAuditLine(signature: string, { context, params, ms, outcom
     ["outcome", outcome.ok ? "ok" : "error"],
     ["error", outcome.ok ? undefined : errorCode(outcome.error)],
     ["ms", Math.round(ms)],
-    ["transport", context?.channel?.transport ?? "internal"],
-    ["service", context?.channel?.service],
+    ["transport", scalar(context?.channel?.transport) ?? "internal"],
+    ["service", scalar(context?.channel?.service)],
     ["actor_id", field(user, "_id")],
     ["actor_role", field(user, "role")],
     ["actor_operator_id", field(user, "operator_id")],
@@ -62,8 +62,21 @@ export function formatAuditLine(signature: string, { context, params, ms, outcom
   ];
   const pairs = fields
     .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => `${k}=${String(v).replace(/[^A-Za-z0-9_.*:-]/g, "_").substring(0, MAX_VALUE_LENGTH)}`);
-  return ["[audit]", signature, ...pairs].join(" ");
+    .map(([k, v]) => `${k}=${sanitize(v as Scalar)}`);
+  return ["[audit]", sanitize(signature), ...pairs].join(" ");
+}
+
+function sanitize(value: Scalar): string {
+  return String(value).replace(/[^A-Za-z0-9_.*:-]/g, "_").substring(0, MAX_VALUE_LENGTH);
+}
+
+// L'audit ne doit jamais faire échouer l'action ni masquer son erreur.
+function safeLog(level: "info" | "warn", line: () => string): void {
+  try {
+    logger[level](line());
+  } catch {
+    // ignore
+  }
 }
 
 export async function audited<R>(signature: string, call: CallType, run: () => Promise<R>): Promise<R> {
@@ -76,14 +89,15 @@ export async function audited<R>(signature: string, call: CallType, run: () => P
     ms: performance.now() - start,
     outcome,
   });
+  let result: R;
   try {
-    const result = await run();
-    if (!(signature === POLLING_SIGNATURE && result == null)) {
-      logger.info(formatAuditLine(signature, entry({ ok: true, result })));
-    }
-    return result;
+    result = await run();
   } catch (error) {
-    logger.warn(formatAuditLine(signature, entry({ ok: false, error })));
+    safeLog("warn", () => formatAuditLine(signature, entry({ ok: false, error })));
     throw error;
   }
+  if (!(signature === POLLING_SIGNATURE && result == null)) {
+    safeLog("info", () => formatAuditLine(signature, entry({ ok: true, result })));
+  }
+  return result;
 }
