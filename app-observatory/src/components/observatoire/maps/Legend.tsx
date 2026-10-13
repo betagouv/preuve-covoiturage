@@ -6,10 +6,11 @@ export default function Legend(props: LegendInterface) {
   return (
     <div className={style.legend} style={props.order && props.order > 1 ? {"bottom":`${props.order*90}px`} : {} as CSSProperties} >
       <div className={style.legend_title}>{props.title}</div>
+      {props.subtitle && <div className={style.legend_subtitle}>{props.subtitle}</div>}
       {props.type !== 'proportional_circles' &&
         props.classes.map((c,i) =>
         <div key={i} className={style.item}>
-          <span className={style.legend_class} style={{"height":`${c.width}px`,"backgroundColor":`rgb(${c.color[0]},${c.color[1]},${c.color[2]})`} as CSSProperties}></span>
+          <span className={style.legend_class} style={{"height":`${c.width}px`,"backgroundColor":`rgb(${c.color[0]},${c.color[1]},${c.color[2]})`,"opacity":props.opacity} as CSSProperties}></span>
           <span className={style.legend_classname}>{c.val}</span>
         </div>
       )}
@@ -37,6 +38,7 @@ export default function Legend(props: LegendInterface) {
           )}
         </div>
       }
+      {props.note && <div className={style.legend_note}>{props.note}</div>}
     </div>
   );
 }

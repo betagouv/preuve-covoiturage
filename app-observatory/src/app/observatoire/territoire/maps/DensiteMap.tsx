@@ -2,7 +2,7 @@ import DownloadButton from '@/components/observatoire/DownloadButton';
 import DeckMap from '@/components/observatoire/maps/DeckMap';
 import { Config } from '@/config';
 import { OBSERVATORY_API_URL } from '@/helpers/api';
-import { classColor, jenks } from '@/helpers/analyse';
+import { classColor, getLegendClasses, jenks } from '@/helpers/analyse';
 import { useApi } from '@/hooks/useApi';
 import type { DensiteDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -13,6 +13,9 @@ import { cellsToMultiPolygon } from 'h3-js';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useMemo } from 'react';
 import { useDashboardContext } from '../../../../context/DashboardProvider';
+
+// laisse lire les noms de lieux sous les mailles
+const OPACITY = 0.8;
 
 export default function DensiteMap({ title }: { title: string }) {
   const { dashboard } = useDashboardContext();
@@ -44,8 +47,9 @@ export default function DensiteMap({ title }: { title: string }) {
     return data ? jenks(
       data,
         'count',
-        ['#fdd49e', '#fdbb84', '#fc8d59', '#e34a33', '#b30000', '#000000'],
-        [10, 10, 10, 10, 10, 10],
+        // rampe validée à OPACITY sur le fond de carte : paliers distincts, classe claire visible
+        ['#f8853a', '#e5600f', '#c44a06', '#8f3304', '#5a1c02'],
+        [10, 10, 10, 10, 10],
       )
     : [];
   }, [data]);
@@ -53,13 +57,12 @@ export default function DensiteMap({ title }: { title: string }) {
   const layer = new H3HexagonLayer({
     id: 'densite-layer',
     data: data ? data : [],
-    opacity: 0.4,
+    opacity: OPACITY,
     pickable: true,
     extruded: false,
-    lineWidthMinPixels: 1,
+    stroked: false,
     getHexagon: (d) => d.hex,
     getFillColor: (d) => classColor(d.count, analyse),
-    getLineColor: () => [80, 80, 80],
   });
   const bounds = () => {
     const hexagons = data?.map((d) => d.hex);
@@ -69,16 +72,13 @@ export default function DensiteMap({ title }: { title: string }) {
   };
   const tooltip = ({ object }: any) =>
     object && {
-      html: `<div><b>${object.count.toLocaleString()}</b> départ(s) ou arrivée(s) de covoiturage dans cette maille hexagonale</div>`,
+      html: `<div><b>${object.count.toLocaleString('fr-FR')}</b> ${object.count > 1 ? 'départs ou arrivées' : 'départ ou arrivée'} de covoiturage dans cette maille</div>`,
       className: 'fr-callout',
       style: {
         color: '#000',
         backgroundColor: '#fff',
         fontSize: '0.8em',
-        width: '250px',
-        height: '80px',
-        left: '-125px',
-        top: '-110px',
+        maxWidth: '250px',
       },
     };
 
@@ -109,6 +109,16 @@ export default function DensiteMap({ title }: { title: string }) {
           mapStyle={mapStyle} 
           layers={[layer]} 
           bounds={bounds()} 
+          legend={[
+            {
+              title: 'Départs et arrivées par maille',
+              subtitle: "Maille hexagonale d'environ 0,7 km²",
+              type: 'interval',
+              classes: getLegendClasses(analyse, 'interval'),
+              note: 'Chaque trajet compte dans la maille de son départ et dans celle de son arrivée. Classes calculées sur la période affichée.',
+              opacity: OPACITY,
+            },
+          ]}
           scrollZoom={false}
           download={
             <DownloadButton 

@@ -4,10 +4,10 @@ import { ckmeans } from 'simple-statistics';
 
 export function jenks(data: any[], field: string, colors: string[], width: number[]) {
   const vals: number[] = data.map((d) => d[field]);
-  const nbClasses = vals.length >= colors.length - 1 ? colors.length - 1 : vals.length;
+  const nbClasses = Math.min(colors.length, vals.length);
   const breaks =  nbClasses > 1 ? ckmeans(vals, nbClasses) : [];
   const analysis: AnalyseInterface[] = breaks.map((b, i) => {
-    return { val: b[0], color: hexToRgb(colors[i]), width: width[i] };
+    return { val: b[0], max: b[b.length - 1], color: hexToRgb(colors[i]), width: width[i] };
   });
   return analysis;
 }
@@ -22,22 +22,17 @@ export function hexToRgb(hex: string): [number, number, number] {
   }
 }
 
+// Classe qui contient la valeur : la dernière dont le seuil bas est <= val (classes triées).
+function classOf(val: number, analysis: AnalyseInterface[]) {
+  return analysis.findLast((d) => d.val <= val) ?? analysis[0];
+}
+
 export function classColor(val: number, analysis: AnalyseInterface[]) {
-  const classe = analysis
-    .map((d) => d.val)
-    .reduce((prev, curr) => {
-      return Math.abs(curr - val) > Math.abs(prev - val) ? prev : curr;
-    });
-  return analysis.find((d) => d.val === classe)?.color || [0, 0, 0];
+  return classOf(val, analysis)?.color || [0, 0, 0];
 }
 
 export function classWidth(val: number, analysis: AnalyseInterface[]) {
-  const classe = analysis
-    .map((d) => d.val)
-    .reduce((prev, curr) => {
-      return Math.abs(curr - val) > Math.abs(prev - val) ? prev : curr;
-    });
-  return analysis.find((d) => d.val === classe)?.width || 1;
+  return classOf(val, analysis)?.width || 1;
 }
 
 export function getPeriod(year: number, month: number) {
@@ -51,7 +46,16 @@ export function getPeriod(year: number, month: number) {
 export function getLegendClasses(analysis: AnalyseInterface[], type: string){
   const legend:ClasseInterface[] =  []
   if (analysis.length > 1){
-    if(type === 'interval'){
+    if(type === 'interval' && analysis.every((d) => d.max !== undefined)){
+      const fmt = (n: number) => n.toLocaleString('fr-FR');
+      for(const d of analysis){
+        legend.push({
+          color: d.color,
+          val: d.val === d.max ? fmt(d.val) : `${fmt(d.val)} – ${fmt(d.max!)}`,
+          width: d.width,
+        })
+      }
+    } else if(type === 'interval'){
       for(const key in analysis){
         const classe = {
           color:[255,255,255],
