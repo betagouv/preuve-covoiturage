@@ -3,7 +3,7 @@
   indexes=[
     { 'columns': ['week_start', 'journey_type', 'is_specific', 'operator_id'], 'unique': true }
   ],
-  tags=['aggregated', 'cee']
+  tags=['aggregated', 'cee', 'daily']
 ) }}
 
 SELECT
