@@ -10,7 +10,6 @@ import {
   environmentWhitelistMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
   hasPermissionMiddlewareBinding,
-  loggerMiddlewareBinding,
   validateDateMiddlewareBinding,
 } from "./middlewares.ts";
 
@@ -26,6 +25,5 @@ export const bindings = [
   environmentWhitelistMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
   hasPermissionMiddlewareBinding,
-  loggerMiddlewareBinding,
   validateDateMiddlewareBinding,
 ];
