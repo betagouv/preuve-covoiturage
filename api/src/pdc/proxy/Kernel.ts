@@ -1,4 +1,4 @@
-import { kernel } from "@/ilos/common/index.ts";
+import { CallType, HandlerConfigType, kernel } from "@/ilos/common/index.ts";
 import { RedisConnection } from "@/ilos/connection-redis/index.ts";
 import { Kernel as BaseKernel } from "@/ilos/framework/index.ts";
 import { SentryProvider } from "@/pdc/providers/sentry/index.ts";
@@ -17,6 +17,7 @@ import { HonorServiceProvider } from "../services/honor/HonorServiceProvider.ts"
 import { OperatorServiceProvider } from "../services/operator/OperatorServiceProvider.ts";
 import { PolicyServiceProvider } from "../services/policy/PolicyServiceProvider.ts";
 import { TerritoryServiceProvider } from "../services/territory/TerritoryServiceProvider.ts";
+import { audited } from "./audit.ts";
 import { config } from "./config/index.ts";
 
 @kernel({
@@ -44,4 +45,9 @@ import { config } from "./config/index.ts";
     [DenoPostgresConnection, new DenoPostgresConnection()],
   ],
 })
-export class Kernel extends BaseKernel {}
+export class Kernel extends BaseKernel {
+  // Point de passage de tous les appels (HTTP, RPC, CLI, internes) : on y trace les écritures.
+  protected override getHandlerAndCall(config: HandlerConfigType, call: CallType, timeout = 0) {
+    return audited(config.signature ?? call.method, call, () => super.getHandlerAndCall(config, call, timeout));
+  }
+}
