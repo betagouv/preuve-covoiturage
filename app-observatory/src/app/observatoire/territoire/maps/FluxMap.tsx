@@ -32,8 +32,8 @@ export default function FluxMap({ title }: { title: string }) {
     return filteredData ? jenks(
       filteredData,
         'passengers',
-        ['#000091', '#000091', '#000091', '#000091', '#000091', '#000091'],
-        [1, 3, 6, 12, 24, 48],
+        ['#000091', '#000091', '#000091', '#000091', '#000091'],
+        [1, 3, 6, 12, 24],
       )
     : [];
   }, [filteredData]);

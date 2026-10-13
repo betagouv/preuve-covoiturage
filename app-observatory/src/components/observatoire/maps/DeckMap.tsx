@@ -68,7 +68,7 @@ const DeckMap = (props: DeckMapInterface) => {
             <FullscreenControl />
             {props.legend &&
               props.legend.map((l,i) =>
-                <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
+                <Legend key={i} {...l} />
               )
             }
           </Map>
