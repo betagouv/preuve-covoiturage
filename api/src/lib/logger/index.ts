@@ -14,7 +14,7 @@ export function setupLogger(level: log.LevelName): void {
   });
 }
 
-setupLogger(env_or_default("APP_LOG_LEVEL", "DEBUG").toUpperCase() as log.LevelName);
+setupLogger(env_or_default("APP_LOG_LEVEL", "INFO").toUpperCase() as log.LevelName);
 
 export const getPerformanceTimer = () => {
   const start = performance.now();
