@@ -3,6 +3,7 @@ import { env_or_default } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { errorCode, newAttemptId, proconnectLog } from "@/pdc/services/auth/providers/proconnectLog.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
 import express, { NextFunction, Request, Response } from "dep:express";
@@ -13,6 +14,8 @@ import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts"
 import { contextRoute } from "./context.ts";
 import { testCallbackRoute } from "./test/callback.ts";
 import { isTestAuthEnabled } from "./test/enabled.ts";
+
+const elapsed = (start: number) => Math.round(performance.now() - start);
 
 @injectable()
 export class AuthRouter {
@@ -33,10 +36,9 @@ export class AuthRouter {
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
         const { redirectUrl, state, nonce } = await this.proConnectOIDCProvider.getLoginUrl();
         req.session = req.session || {};
-        req.session.auth = {
-          state,
-          nonce,
-        };
+        const attempt = newAttemptId();
+        req.session.auth = { state, nonce, attempt };
+        proconnectLog.info("login start", { attempt, mfa_required: this.config.get("proconnect.require_mfa") });
 
         return res.redirect(redirectUrl);
       }),
@@ -47,17 +49,28 @@ export class AuthRouter {
       authRateLimiter(),
       asyncHandler(async (req: Request, res: Response) => {
         const url = new URL(req.originalUrl, this.config.get("proxy.apiUrl"));
-        const { state, nonce } = req.session?.auth || {};
+        const { state, nonce, attempt = "none" } = req.session?.auth || {};
+        const provider_error = url.searchParams.get("error") ?? undefined;
+        const session_state = state && nonce ? "ok" : "missing";
+        // distingue cookie non renvoyé par le navigateur et session introuvable côté serveur
+        const cookie = req.headers.cookie?.includes(`${session.name}=`) ? "present" : "absent";
+        // cookie de session perdu ou refus côté ProConnect : cas d'échec typiques
+        const received = session_state === "missing" || provider_error ? "warn" : "info";
+        proconnectLog[received]("callback received", { attempt, session_state, cookie, provider_error });
 
         // Fetch tokens and user info from ProConnect OIDC Provider
         // (état OIDC state/nonce lu ci-dessus, avant la régénération de session)
         let tokens;
+        let start = performance.now();
         try {
           tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
         } catch (e) {
           // name en second critère : instanceof casse si le module est résolu deux fois
-          if (!(e instanceof MfaRequiredError) && (e as Error)?.name !== "MfaRequiredError") throw e;
-          logger.warn(`[auth] ${(e as Error).message}`);
+          if (!(e instanceof MfaRequiredError) && (e as Error)?.name !== "MfaRequiredError") {
+            proconnectLog.warn("token failed", { attempt, error: errorCode(e), ms: elapsed(start) });
+            throw e;
+          }
+          proconnectLog.warn("mfa refused", { attempt, acr: (e as MfaRequiredError).acr, error: errorCode(e) });
 
           // pas d'identité attachée, mais on jette l'état OIDC de la tentative échouée
           await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
@@ -67,13 +80,35 @@ export class AuthRouter {
         }
 
         const claims = tokens.claims();
-        const user = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
+        const str = (v: unknown) => typeof v === "string" ? v : undefined;
+        const sub = str(claims?.sub);
+        const idp_id = str(claims?.idp_id);
+        proconnectLog.info("token ok", { attempt, acr: str(claims?.acr), sub, idp_id, ms: elapsed(start) });
 
-        // Un compte absent du registre ou dont le SIREN ne correspond pas retombe en « anonymous ».
-        // Un contrôle d'accès qui échoue doit refuser, pas ouvrir une session dégradée : sans cela
-        // le front voit un utilisateur connecté et tout futur écran sans garde en hérite.
-        if (!user || user.role === "anonymous") {
-          logger.warn(`[auth] connexion refusée pour ${user?.email ?? "inconnu"}`);
+        start = performance.now();
+        let info;
+        try {
+          info = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
+        } catch (e) {
+          proconnectLog.warn("userinfo failed", { attempt, sub, error: errorCode(e), ms: elapsed(start) });
+          throw e;
+        }
+        const { user, has_email, has_siret } = info;
+        const idp = info.idp_id ?? idp_id;
+        proconnectLog.info("userinfo ok", { attempt, ms: elapsed(start), has_email, has_siret });
+
+        // Un compte absent du registre ou dont le SIREN ne correspond pas est refusé, pas ouvert en
+        // session dégradée : sans cela le front voit un utilisateur connecté et tout futur écran sans garde en hérite.
+        if (!user) {
+          proconnectLog.warn("user refused", {
+            attempt,
+            reason: info.reason,
+            error: info.error,
+            email: info.email,
+            siren: info.siren,
+            sub,
+            idp_id: idp,
+          });
           await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
           res.clearCookie(session.name);
 
@@ -89,6 +124,7 @@ export class AuthRouter {
         req.session.auth = { id_token: tokens.id_token };
         req.session.user = user;
         await new Promise<void>((resolve, reject) => req.session.save((err: Error) => err ? reject(err) : resolve()));
+        proconnectLog.info("session created", { attempt, role: user.role, sub, idp_id: idp });
 
         return res.redirect(this.config.get("app_url"));
       }),
@@ -98,11 +134,12 @@ export class AuthRouter {
       "/auth/logout",
       authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        proconnectLog.info("logout start");
         const { id_token } = req.session?.auth || {};
         const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
         req.session.destroy((err: Error) => {
           if (err) {
-            logger.error("Failed to destroy session during logout:", err);
+            proconnectLog.error("logout session destroy failed", { error: errorCode(err) });
           }
           res.clearCookie(session.name);
           res.redirect(redirectUrl);
@@ -113,10 +150,11 @@ export class AuthRouter {
     this.app.get(
       "/auth/logout/callback",
       asyncHandler(async (req: Request, res: Response) => {
+        proconnectLog.info("logout callback");
         // Session is already destroyed by /auth/logout; state cannot be checked here
         req.session.destroy((err: Error) => {
           if (err) {
-            logger.error(`[auth] failed to destroy session on logout callback: ${err.message}`);
+            proconnectLog.error("logout callback session destroy failed", { error: errorCode(err) });
           }
           res.clearCookie(session.name);
           res.redirect(this.config.get("app_url"));

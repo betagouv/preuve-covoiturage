@@ -4,13 +4,20 @@ import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts"
 import { createRemoteJWKSet } from "dep:jose";
 import * as client from "dep:openid-client";
 import { getPermissions } from "../config/permissions.ts";
+import { errorCode, type Masked, maskEmail, maskSiren, proconnectLog } from "./proconnectLog.ts";
 
 // Niveaux acr ProConnect valant double authentification.
 // https://partenaires.proconnect.gouv.fr/docs/fournisseur-service/double_authentification
 export const MFA_ACR_VALUES = Object.freeze(["eidas0-mfa", "eidas1-mfa", "eidas2", "eidas3"]);
 
+// idp_id (fournisseur d'identité utilisé) : lien avec le support ProConnect dans les logs [proconnect].
+export const PROCONNECT_SCOPE = "openid email siret given_name usual_name idp_id";
+
 export class MfaRequiredError extends Error {
   override name = "MfaRequiredError";
+  constructor(message: string, public readonly acr?: string) {
+    super(message);
+  }
 }
 
 // Paramètre `claims` de /authorize : exige un acr MFA (ProConnect enrôle l'agent sinon).
@@ -23,16 +30,47 @@ export function failsMfaCheck(acr: unknown, values: readonly string[]): boolean 
   return typeof acr !== "string" || !values.includes(acr);
 }
 
+export type LocalUserRefusal =
+  | "not_found"
+  | "anonymous_role"
+  | "no_login_siren"
+  | "siren_mismatch"
+  | "missing_claims"
+  | "db_error";
+
 // Gate ProConnect fail-closed : SIREN(ProConnect) doit égaler login_siren (registry.admin bypass).
+export function sirenRefusal(
+  proconnect: { siren: string },
+  user: { login_siren?: string | null; role: string },
+): "no_login_siren" | "siren_mismatch" | null {
+  if (user.role === "registry.admin") return null; // admin : bypass du gate
+  const loginSiren = user.login_siren?.trim();
+  if (!loginSiren) return "no_login_siren"; // fail-closed explicite : pas de SIREN de connexion, jamais de String(null)
+  return proconnect.siren.substring(0, 9) !== loginSiren ? "siren_mismatch" : null;
+}
+
 export function failsSirenCheck(
   proconnect: { siren: string },
   user: { login_siren?: string | null; role: string },
 ): boolean {
-  if (user.role === "registry.admin") return false; // admin : bypass du gate
-  const loginSiren = user.login_siren?.trim();
-  if (!loginSiren) return true; // fail-closed explicite : pas de SIREN de connexion, jamais de String(null)
-  return proconnect.siren.substring(0, 9) !== loginSiren;
+  return sirenRefusal(proconnect, user) !== null;
 }
+
+type AuthenticatedUser = NonNullable<Awaited<ReturnType<UserRepository["authenticateByEmail"]>>>;
+export type ProConnectLocalUser = AuthenticatedUser & { name?: string; permissions: string[] };
+export type LocalUserResult =
+  | { user: ProConnectLocalUser }
+  | { user: null; reason: LocalUserRefusal; error?: string };
+export type ProConnectUserInfo = {
+  user: ProConnectLocalUser | null;
+  reason?: LocalUserRefusal;
+  error?: string;
+  idp_id?: string;
+  email: Masked;
+  siren: Masked;
+  has_email: boolean;
+  has_siret: boolean;
+};
 
 @provider()
 export class ProConnectOIDCProvider implements InitHookInterface {
@@ -59,13 +97,15 @@ export class ProConnectOIDCProvider implements InitHookInterface {
       return;
     }
 
+    const start = performance.now();
     try {
       await this.getConfig();
+      proconnectLog.info("discovery ok", { ms: Math.round(performance.now() - start) });
     } catch (e) {
+      proconnectLog.warn("discovery failed", { ms: Math.round(performance.now() - start), error: errorCode(e) });
       // Au démarrage (fail=false) : un ProConnect injoignable ne doit pas empêcher l'API de
       // démarrer. La découverte est rejouée à la première connexion, où l'échec reste bloquant.
       if (fail) throw e;
-      logger.warn(`[proconnect] découverte impossible au démarrage : ${(e as Error).message}`);
     }
   }
 
@@ -93,14 +133,12 @@ export class ProConnectOIDCProvider implements InitHookInterface {
     await this.#configure();
 
     const redirect_uri = this.config.get("proconnect.redirect_url");
-    const scope = "openid email siret given_name usual_name";
-
     let state = client.randomState();
     const nonce = client.randomNonce();
 
     const parameters: Record<string, string> = {
       redirect_uri,
-      scope,
+      scope: PROCONNECT_SCOPE,
       nonce,
       state,
     };
@@ -131,51 +169,60 @@ export class ProConnectOIDCProvider implements InitHookInterface {
     if (this.config.get("proconnect.require_mfa")) {
       const acr = tokens.claims()?.acr;
       if (failsMfaCheck(acr, MFA_ACR_VALUES)) {
-        throw new MfaRequiredError(`[proconnect] double authentification requise (acr=${acr})`);
+        throw new MfaRequiredError(
+          `[proconnect] double authentification requise (acr=${acr})`,
+          typeof acr === "string" ? acr : undefined,
+        );
       }
     }
 
     return tokens;
   }
 
-  async getUserInfo(accessToken: string, sub: string) {
+  async getUserInfo(accessToken: string, sub: string): Promise<ProConnectUserInfo> {
     await this.#configure();
 
     const userInfo = await client.fetchUserInfo(this.clientConfig!, accessToken, sub);
-    const user = await this.getLocalUser(
-      userInfo.email!,
-      userInfo.siret! as string,
-      userInfo.given_name,
-      userInfo.usual_name as string,
-    );
+    const email = typeof userInfo.email === "string" ? userInfo.email : "";
+    const siret = typeof userInfo.siret === "string" ? userInfo.siret : "";
+    const trace = {
+      email: maskEmail(email),
+      siren: maskSiren(siret),
+      has_email: !!email,
+      has_siret: !!siret,
+      ...(typeof userInfo.idp_id === "string" ? { idp_id: userInfo.idp_id } : {}),
+    };
 
-    return user;
+    if (!email || !siret) return { ...trace, user: null, reason: "missing_claims" };
+
+    const res = await this.getLocalUser(email, siret, userInfo.given_name, userInfo.usual_name as string | undefined);
+    return { ...trace, ...res };
   }
 
-  protected async getLocalUser(email: string, siret: string, given_name?: string, family_name?: string) {
+  protected async getLocalUser(
+    email: string,
+    siret: string,
+    given_name?: string,
+    family_name?: string,
+  ): Promise<LocalUserResult> {
     try {
       const user = await this.userRepository.authenticateByEmail(email);
+      if (!user) return { user: null, reason: "not_found" };
+      // role est un varchar libre : un compte « anonymous » en base ne doit pas ouvrir de session
+      if (user.role === "anonymous") return { user: null, reason: "anonymous_role" };
 
-      if (!user) throw new Error(`User not found: ${email}`);
-      if (failsSirenCheck({ siren: siret.substring(0, 9) }, user)) {
-        throw new Error(`SIRET check failed: ${email} / ${siret}`);
-      }
+      const reason = sirenRefusal({ siren: siret.substring(0, 9) }, user);
+      if (reason) return { user: null, reason };
 
       return {
-        ...user,
-        ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
-        permissions: getPermissions(user.role),
+        user: {
+          ...user,
+          ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
+          permissions: getPermissions(user.role),
+        },
       };
     } catch (e) {
-      const m = e instanceof Error ? e.message : e;
-      logger.error("[ProConnectOIDCProvider] Error fetching local user:", m);
-
-      return {
-        email: email,
-        role: "anonymous",
-        permissions: [],
-        ...(given_name || family_name) ? { name: given_name + " " + family_name } : {},
-      };
+      return { user: null, reason: "db_error", error: errorCode(e) };
     }
   }
 
