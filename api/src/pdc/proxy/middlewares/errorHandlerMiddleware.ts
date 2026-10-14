@@ -1,5 +1,7 @@
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { NextFunction, Request, Response } from "dep:express";
+
+const httpLog = taggedLogger("[http]");
 
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
@@ -65,13 +67,18 @@ export function errorHandlerMiddleware(
 
 function respond(err: Error, res: Response, _req: Request, code: number): void {
   try {
-    const { id, method } = Array.isArray(_req.body) ? _req.body.pop() : _req.body;
-
-    logger.error(
-      `[errorHandler] ${err.name} ${code} ${err.message}`,
-      { id, method },
-    );
-  } catch (e) {}
+    // Jamais err.message : il peut contenir des données personnelles.
+    const body = Array.isArray(_req.body) ? _req.body.at(-1) : _req.body;
+    httpLog[code >= 500 ? "error" : "warn"]("error", {
+      status: code,
+      error: err.name && err.name !== "Error" ? err.name : err.constructor.name,
+      method: _req.method,
+      route: _req.route?.path,
+      rpc: typeof body?.method === "string" ? body.method : undefined,
+    });
+  } catch {
+    // ignore
+  }
 
   if (res.headersSent) return;
 

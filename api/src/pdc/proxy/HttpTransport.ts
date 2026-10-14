@@ -25,6 +25,7 @@ import { handlerListIdentifier, ServiceProvider } from "@/ilos/core/index.ts";
 const MAX_RPC_BATCH_SIZE = 20;
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { auditLog } from "@/pdc/proxy/audit.ts";
 import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { isRpcEndpointEnabled } from "./helpers/rpcEndpointEnabled.ts";
@@ -231,6 +232,7 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req: Request, res: Response) => {
         const prefix = (req.query.prefix as string | undefined) || "*";
         const result = await this.cache.flush(prefix);
+        auditLog.info("cache:flush", { outcome: "ok", transport: "http", prefix });
         res.status(200).json({ id: 1, jsonrpc: "2.0", result });
       }),
     );
@@ -524,7 +526,9 @@ export class HttpTransport implements TransportInterface {
       });
 
       response.error.data = cleaned;
-    } catch {}
+    } catch {
+      // data non JSON : laissée telle quelle
+    }
 
     return response;
   }
@@ -532,7 +536,9 @@ export class HttpTransport implements TransportInterface {
   /**
    * Fetch additional data for territories
    */
-  private async getTerritoryInfos(user: any): Promise<any> {
+  private async getTerritoryInfos(
+    user: { territory_id?: number | null; authorizedZoneCodes?: { com: string[] } },
+  ): Promise<typeof user | Record<string, never>> {
     if (user.territory_id) {
       const dt = { com: [] } as { com: string[] };
 

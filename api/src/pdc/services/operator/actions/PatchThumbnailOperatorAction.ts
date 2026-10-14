@@ -26,7 +26,7 @@ export class PatchThumbnailOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    this.operatorRepository.patchThumbnail(params._id, params.thumbnail);
+    await this.operatorRepository.patchThumbnail(params._id, params.thumbnail);
 
     return { ...params };
   }

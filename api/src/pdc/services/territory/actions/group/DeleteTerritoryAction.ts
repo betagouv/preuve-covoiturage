@@ -1,4 +1,4 @@
-import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 
 import { hasPermissionMiddleware } from "@/pdc/providers/middleware/middlewares.ts";
@@ -15,7 +15,6 @@ import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/T
 })
 export class DeleteTerritoryAction extends AbstractAction {
   constructor(
-    private kernel: KernelInterfaceResolver,
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
   ) {
     super();
@@ -23,14 +22,5 @@ export class DeleteTerritoryAction extends AbstractAction {
 
   public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.territoryRepository.delete(params._id);
-    await this.kernel.call(
-      "user:deleteAssociated",
-      {
-        territory_id: params._id,
-      },
-      {
-        channel: { service: "territory" },
-      },
-    );
   }
 }

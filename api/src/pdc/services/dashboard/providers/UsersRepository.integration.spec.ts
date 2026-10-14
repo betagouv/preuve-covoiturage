@@ -39,6 +39,7 @@ describe("UsersRepository", () => {
 
     assertEquals(result.success, true);
     assertEquals(typeof result.message, "string");
+    assertEquals(typeof result.id, "number");
 
     // Verify the user was created by fetching it
     const users = await repository.getUsers({ search: "john.doe@example.com" });

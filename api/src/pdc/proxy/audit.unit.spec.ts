@@ -37,6 +37,12 @@ describe("isAudited", () => {
     assertFalse(isAudited("unknown"));
   });
 
+  it("trace les écritures que le nom ne dit pas", () => {
+    assert(isAudited("apdf:export"));
+    assert(isAudited("policy:stats"));
+    assertFalse(isAudited("exports:list"));
+  });
+
   it("ignore l'acquisition, déjà historisée", () => {
     assertFalse(isAudited("acquisition:create"));
     assertFalse(isAudited("acquisition:cancel"));
@@ -68,6 +74,47 @@ describe("formatAuditLine", () => {
     for (const pii of ["@", "Martin", "Jean", "0605060708", "0601020304"]) {
       assertFalse(line.includes(pii), `${pii} dans ${line}`);
     }
+  });
+
+  it("reprend l'empreinte de session du contexte", () => {
+    const line = formatAuditLine("dashboard:updateUser", {
+      context: { ...httpContext, call: { ...httpContext.call, metadata: { session: "a1b2c3d4" } } },
+      params: {},
+      ms: 1,
+      outcome: { ok: true, result: null },
+    });
+    assertStringIncludes(line, "transport=http service=proxy session=a1b2c3d4 actor_id=5");
+  });
+
+  it("lit l'id du dashboard, en params comme en résultat", () => {
+    const update = formatAuditLine("dashboard:deleteUser", {
+      context: httpContext,
+      params: { id: 42 },
+      ms: 1,
+      outcome: { ok: true, result: { success: true } },
+    });
+    assertStringIncludes(update, " id=42");
+
+    const create = formatAuditLine("dashboard:createUser", {
+      context: httpContext,
+      params: { email: "cible@example.com" },
+      ms: 1,
+      outcome: { ok: true, result: { success: true, id: 43, message: "user cible@example.com created" } },
+    });
+    assertStringIncludes(create, "result_id=43");
+    assertFalse(create.includes("cible"));
+  });
+
+  it("joint les listes d'identifiants numériques et reprend l'issue du résultat", () => {
+    const line = formatAuditLine("export:createVersionThree", {
+      context: httpContext,
+      params: { operator_id: [3, 7], territory_id: ["12"] },
+      ms: 1,
+      outcome: { ok: true, result: { uuid: "u-1", outcome: "scope_released" } },
+    });
+    assertStringIncludes(line, " operator_id=3.7 ");
+    assertFalse(line.includes("territory_id=12"));
+    assertStringIncludes(line, "result_id=u-1 result=scope_released");
   });
 
   it("ignore les identifiants non scalaires", () => {
