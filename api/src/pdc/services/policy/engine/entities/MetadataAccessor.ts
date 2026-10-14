@@ -1,6 +1,8 @@
-import { logger } from "../../../../../lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from "../../interfaces/index.ts";
 import { UnknownMetaException } from "../exceptions/UnknownMetaException.ts";
+
+const log = taggedLogger("[campaign]");
 
 export class MetadataAccessor implements MetadataAccessorInterface {
   constructor(
@@ -22,7 +24,7 @@ export class MetadataAccessor implements MetadataAccessorInterface {
   get(uuid: string): number {
     const meta = this.data.get(uuid);
     if (!meta || !("value" in meta)) {
-      logger.error(`key ${uuid} not found in [${[...this.data.keys()].join(", ")}] (${JSON.stringify(meta)})`);
+      log.error("meta key not found", { uuid, keys: this.data.size });
       throw new UnknownMetaException(`${uuid} not found`);
     }
     return meta.value;

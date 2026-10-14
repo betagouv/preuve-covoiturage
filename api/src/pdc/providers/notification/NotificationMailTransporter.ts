@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { exit } from "@/lib/process/index.ts";
 import { TemplateInterface, TemplateProviderInterfaceResolver } from "@/pdc/providers/template/index.ts";
 import Handlebars from "dep:handlebars";
@@ -17,6 +17,8 @@ interface NotificationOptions {
   debugToOverride: string;
   from: string;
 }
+
+const log = taggedLogger("[mail]");
 
 @provider({
   identifier: NotificationTransporterInterfaceResolver,
@@ -56,7 +58,7 @@ export class NotificationMailTransporter
         debug,
       };
     } catch (e) {
-      logger.error(e.stack);
+      log.error("options failed", { error: errorCode(e) });
     }
   }
 
@@ -68,8 +70,7 @@ export class NotificationMailTransporter
         try {
           await this.transporter.verify();
         } catch (e) {
-          const message = e instanceof Error ? e.message : String(e);
-          logger.error("Failed to connect to SMTP server", message);
+          log.error("smtp connect failed", { error: e instanceof Error ? e.message : String(e) });
           exit(1);
         }
       }

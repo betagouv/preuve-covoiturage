@@ -40,12 +40,6 @@ export class DependencyTree {
         [...unmetDeps].filter((x) => !unmet.has(x)),
       );
       if (unresolvableDependencies.size > 0) {
-        // if dependency is no resolvable, just warn
-        // logger.warn(
-        //   `Unsolvable extension dependencies : ${
-        //     [...unresolvableDependencies].map((k) => k.toString()).join(", ")
-        //   }`,
-        // );
         [...unresolvableDependencies].forEach((x) => unmetDeps.delete(x));
         // throw new Error(`Unsolvable extension dependencies : ${[...unresolvableDependencies].join(', ')}`);
       }

@@ -1,11 +1,13 @@
 import { coerceDate } from "@/ilos/cli/index.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { ExportTarget } from "../models/Export.ts";
 import { ExportParams } from "../models/ExportParams.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
 import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.ts";
+
+const log = taggedLogger("[export]", { maxLength: 512 });
 
 export type Options = {
   created_by: number;
@@ -44,7 +46,7 @@ export type Options = {
           return value as ExportTarget;
         }
 
-        logger.warn(`Invalid target: ${value}, using default: ${ExportTarget.TERRITORY}`);
+        log.warn("invalid target, using default", { target: value, default: ExportTarget.TERRITORY });
         return ExportTarget.TERRITORY;
       },
     },
@@ -114,11 +116,12 @@ export class CreateCommand implements CommandInterface {
       },
     );
 
-    logger.info(`Export request created!
-      UUID: ${uuid}
-      Target: ${target}
-      Status: ${status}
-      From: ${params.get().start_at} to ${params.get().end_at}
-    `);
+    log.info("request created", {
+      uuid,
+      target,
+      status,
+      start_at: new Date(params.get().start_at).toISOString(),
+      end_at: new Date(params.get().end_at).toISOString(),
+    });
   }
 }

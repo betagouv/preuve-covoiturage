@@ -1,7 +1,7 @@
 import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, proxy } from "@/ilos/common/index.ts";
 import { env_or_default } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
+import { sessionRef } from "@/pdc/proxy/helpers/sessionRef.ts";
 import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
 import { errorCode, newAttemptId, proconnectLog } from "@/pdc/services/auth/providers/proconnectLog.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
@@ -124,7 +124,14 @@ export class AuthRouter {
         req.session.auth = { id_token: tokens.id_token };
         req.session.user = user;
         await new Promise<void>((resolve, reject) => req.session.save((err: Error) => err ? reject(err) : resolve()));
-        proconnectLog.info("session created", { attempt, role: user.role, sub, idp_id: idp });
+        proconnectLog.info("session created", {
+          attempt,
+          session: await sessionRef(req.sessionID),
+          user_id: user._id,
+          role: user.role,
+          sub,
+          idp_id: idp,
+        });
 
         return res.redirect(this.config.get("app_url"));
       }),
@@ -134,7 +141,10 @@ export class AuthRouter {
       "/auth/logout",
       authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        proconnectLog.info("logout start");
+        proconnectLog.info("logout start", {
+          session: await sessionRef(req.sessionID),
+          user_id: req.session?.user?._id,
+        });
         const { id_token } = req.session?.auth || {};
         const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
         req.session.destroy((err: Error) => {
@@ -189,7 +199,7 @@ export class AuthRouter {
     const envs = [this.config.get("env"), env_or_default("APP_ENV", "local")];
     if (isTestAuthEnabled(envs, this.config.get("test.enabled"))) {
       this.config.get("test.accounts")(); // fail fast at boot if APIE2E_AUTH_* are missing
-      logger.warn("[auth] test login route /auth/test/callback is ENABLED");
+      proconnectLog.warn("test login enabled");
       this.app.post("/auth/test/callback", loginRateLimiter(), testCallbackRoute(this.config, this.userRepository));
     }
   }

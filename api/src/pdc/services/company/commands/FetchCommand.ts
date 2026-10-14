@@ -1,9 +1,11 @@
 import { command } from "@/ilos/common/Decorators.ts";
 import { CommandInterface, ValidatorInterfaceResolver } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { CompanyDataSourceProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyDataSourceProviderInterface.ts";
 import { CompanyRepositoryProviderInterfaceResolver } from "@/pdc/services/company/interfaces/CompanyRepositoryProviderInterface.ts";
 import { aliasCommand } from "../contracts/fetch.schema.ts";
+
+const log = taggedLogger("[company]", { maxLength: 512 });
 
 export type Options = {
   save: boolean;
@@ -30,7 +32,7 @@ export class FetchCommand implements CommandInterface {
   public async call(siret: string, options: Options): Promise<void> {
     // Validate SIRET format
     try {
-      logger.info("Validating SIRET format...");
+      log.debug("validating siret", { siret });
       this.validator.registerValidator({
         $schema: "http://json-schema.org/draft-07/schema#",
         $id: "siret",
@@ -41,24 +43,23 @@ export class FetchCommand implements CommandInterface {
 
       await this.validator.validate(siret, aliasCommand);
     } catch (error) {
-      logger.error(error.message);
-      logger.error(this.validator.errors);
+      log.error("invalid siret", { siret, error: error.message });
     }
 
     // Fetch company data from the INSEE SIRENE API
-    logger.log(`Fetching company data for SIRET ${siret}...`);
+    log.debug("fetching", { siret });
 
     try {
       const data = await this.datasource.find(siret);
 
       if (options.save) {
-        logger.info("Saving fetched data to the database...");
+        log.debug("saving", { siret });
         await this.repository.updateOrCreate(data);
       }
 
-      logger.info(data);
+      log.info("fetched", { siret, legal_name: data.legal_name });
     } catch (error) {
-      logger.error(error.message);
+      log.error("fetch failed", { siret, error: error.message });
     }
   }
 }

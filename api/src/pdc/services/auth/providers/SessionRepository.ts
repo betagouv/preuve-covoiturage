@@ -1,7 +1,9 @@
 import { ConfigInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { SESSION_KEY_PREFIX } from "@/pdc/proxy/middlewares/sessionMiddleware.ts";
 import { Redis } from "dep:redis";
+
+const log = taggedLogger("[session]");
 
 /**
  * Purge des sessions Redis d'un utilisateur.
@@ -50,7 +52,7 @@ export class SessionRepository {
           }
         } catch (_e) {
           // Session non-JSON ou corrompue : on l'ignore (ne bloque pas la purge).
-          logger.warn(`[session] clé non parsable ignorée: ${key}`);
+          log.warn("unparsable key skipped");
         }
       }
     } while (cursor > 0);

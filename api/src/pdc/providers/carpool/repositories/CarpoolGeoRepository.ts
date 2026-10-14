@@ -1,9 +1,11 @@
 import { provider } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
 import { CarpoolGeo, Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider()
 export class CarpoolGeoRepository {
@@ -23,7 +25,7 @@ export class CarpoolGeoRepository {
 
       return result.rows[0] ?? null;
     } catch (e) {
-      logger.error(`[carpool-geo] error finding carpool geo for ${carpool_id}: ${e.message}`);
+      log.error("find carpool geo", { carpool_id, error: errorCode(e) });
       throw new DatabaseException(e.message);
     } finally {
       if (!client) {
@@ -101,7 +103,7 @@ export class CarpoolGeoRepository {
         WHERE carpool_id = ${carpool_id}
       `);
     } catch (e) {
-      logger.error(`[carpool-geo] error deleting carpool geo for ${carpool_id}: ${e.message}`);
+      log.error("delete carpool geo", { carpool_id, error: errorCode(e) });
       throw new DatabaseException(e.message);
     } finally {
       if (!client) {

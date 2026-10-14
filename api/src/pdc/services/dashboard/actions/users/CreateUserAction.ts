@@ -14,6 +14,7 @@ import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/inter
 export type ResultInterface = {
   success: boolean;
   message: string;
+  id: number;
 };
 
 @handler({

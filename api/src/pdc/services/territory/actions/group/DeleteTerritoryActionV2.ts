@@ -1,4 +1,4 @@
-import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { object } from "@/lib/superstruct/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/helpers.ts";
@@ -6,7 +6,6 @@ import { Id } from "@/pdc/providers/superstruct/shared/index.ts";
 import { TerritoryRepositoryProviderInterfaceResolver } from "@/pdc/services/territory/interfaces/TerritoryRepositoryProviderInterface.ts";
 
 import { ResultInterface } from "@/pdc/services/territory/contracts/delete.contract.ts";
-
 
 export interface ParamsInterface {
   id: number;
@@ -34,7 +33,6 @@ export const DeleteTerritory = object({
 })
 export class DeleteTerritoryActionV2 extends AbstractAction {
   constructor(
-    private kernel: KernelInterfaceResolver,
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
   ) {
     super();
@@ -42,14 +40,5 @@ export class DeleteTerritoryActionV2 extends AbstractAction {
 
   public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.territoryRepository.delete(params.id);
-    await this.kernel.call(
-      "user:deleteAssociated",
-      {
-        territory_id: params.id,
-      },
-      {
-        channel: { service: "territory" },
-      },
-    );
   }
 }

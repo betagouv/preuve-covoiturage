@@ -1,10 +1,12 @@
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, formatTaggedLine, taggedLogger } from "@/lib/logger/tagged.ts";
 
 // Brand : seuls maskEmail/maskSiren produisent un Masked, un email/siren en clair ne compile pas.
 export type Masked = string & { readonly __masked: unique symbol };
 
 export type ProconnectFields = {
   attempt?: string;
+  session?: string;
+  user_id?: number;
   ms?: number;
   mfa_required?: boolean;
   session_state?: "ok" | "missing";
@@ -23,7 +25,6 @@ export type ProconnectFields = {
 };
 
 const MASKED = "***" as Masked;
-const MAX_VALUE_LENGTH = 64;
 
 export function maskEmail(value?: string | null): Masked {
   const at = value?.indexOf("@") ?? -1;
@@ -43,28 +44,9 @@ export function newAttemptId(): string {
 }
 
 export function formatProconnectLine(step: string, fields: ProconnectFields = {}): string {
-  const pairs = Object.entries(fields)
-    .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => `${k}=${String(v).replace(/[^A-Za-z0-9_.@*:-]/g, "_").substring(0, MAX_VALUE_LENGTH)}`);
-  return ["[proconnect]", step, ...pairs].join(" ");
+  return formatTaggedLine("[proconnect]", step, fields, { allowAt: true });
 }
 
-type LogMethod = (step: string, fields?: ProconnectFields) => void;
+export const proconnectLog = taggedLogger<ProconnectFields>("[proconnect]", { allowAt: true });
 
-const at = (level: "debug" | "info" | "warn" | "error"): LogMethod => (step, fields) =>
-  logger[level](formatProconnectLine(step, fields));
-
-export const proconnectLog = {
-  debug: at("debug"),
-  info: at("info"),
-  warn: at("warn"),
-  error: at("error"),
-};
-
-// Jamais e.message : il peut contenir URL ou données personnelles.
-export function errorCode(e: unknown): string {
-  if (!(e instanceof Error)) return "unknown";
-  const { error, code } = e as Error & { error?: unknown; code?: unknown };
-  const detail = typeof error === "string" ? error : typeof code === "string" ? code : undefined;
-  return detail ? `${e.name}:${detail}` : e.name;
-}
+export { errorCode };

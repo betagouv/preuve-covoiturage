@@ -1,11 +1,13 @@
 import { provider } from "@/ilos/common/index.ts";
 import { Cursor } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.ts";
 import excel from "dep:excel";
 import { normalize } from "../../helpers/normalizeAPDFData.helper.ts";
 import { APDFTripInterface } from "../../interfaces/APDFTripInterface.ts";
 import { AbstractWorksheetWriter } from "./AbstractWorksheetWriter.ts";
+
+const log = taggedLogger("[apdf]");
 
 @provider()
 export class TripsWorksheetWriter extends AbstractWorksheetWriter {
@@ -99,7 +101,7 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     }
 
     const b2 = new Date();
-    logger.debug(`[apdf:export] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
+    log.debug("writing trips", { ms: b2.getTime() - b1.getTime() });
     worksheet.commit();
   }
 }

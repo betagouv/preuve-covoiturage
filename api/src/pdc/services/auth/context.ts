@@ -1,4 +1,6 @@
+import { auditLog } from "@/pdc/proxy/audit.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
+import { sessionRef } from "@/pdc/proxy/helpers/sessionRef.ts";
 import { UserScope, UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
 import { Request, Response } from "dep:express";
 
@@ -39,6 +41,14 @@ export function contextRoute(userScopeRepository: UserScopeRepository) {
     user.territory_id = territoryId;
     user.operator_id = null;
     await new Promise<void>((resolve, reject) => req.session.save((err: Error) => err ? reject(err) : resolve()));
+    auditLog.info("auth:context", {
+      outcome: "ok",
+      transport: "http",
+      session: await sessionRef(req.sessionID),
+      actor_id: user._id,
+      actor_role: user.role,
+      territory_id: territoryId,
+    });
 
     // Libellé d'affichage depuis les scopes autorisés (fallback vide).
     const label = (user.scopes ?? []).find((s: UserScope) => s.territory_id === territoryId)?.label ?? "";

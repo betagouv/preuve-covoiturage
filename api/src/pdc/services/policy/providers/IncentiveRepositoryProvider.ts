@@ -1,6 +1,6 @@
 import { provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { empty, raw } from "@/lib/pg/sql.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -9,6 +9,8 @@ import {
   SerializedIncentiveInterface,
   SerializedMetadataVariableDefinitionInterface,
 } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]");
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,
@@ -125,7 +127,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         AND datetime < ${to}::timestamp
     `);
 
-    logger.debug(`FOUND ${countRows[0].count} incentives to process`);
+    log.debug("find draft incentives", { count: countRows[0].count });
 
     const query = sql`
       SELECT
@@ -171,14 +173,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
             statelessAmount: stateless_amount,
           };
         });
-        logger.log({ count: rows.length });
+        log.debug("find draft incentives batch", { count: rows.length });
       }
     } catch (e) {
-      if (e instanceof Error) {
-        logger.error(`[IncentiveRepositoryProvider] ${e.message}`, { from, to });
-      } else {
-        logger.error(`[IncentiveRepositoryProvider] Unknown error`, { from, to });
-      }
+      log.error("find draft incentives failed", {
+        from: from?.toISOString(),
+        to: to.toISOString(),
+        error: errorCode(e),
+      });
       throw e;
     }
   }

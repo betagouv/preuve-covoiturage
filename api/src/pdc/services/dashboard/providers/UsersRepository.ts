@@ -139,6 +139,7 @@ export class UsersRepository implements UsersRepositoryInterface {
     return {
       success: true,
       message: `user ${JSON.stringify(rows[0])} created`,
+      id: rows[0]._id,
     };
   }
 

@@ -1,4 +1,6 @@
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+
+const log = taggedLogger("[http]");
 
 type RouteError = { httpCode?: number; rpcError?: { data?: unknown }; message?: string; stack?: string };
 
@@ -7,7 +9,7 @@ export function formatRouteError(e: unknown, rpcAnswerOnFailure: boolean): { sta
   const status = err.httpCode || 500;
 
   if (status >= 500) {
-    logger.error(`[route] ${status} ${err.message ?? String(e)}`, { stack: err.stack });
+    log.error("route failed", { status, error: errorCode(e) });
     const message = "Internal Server Error";
     return {
       status,

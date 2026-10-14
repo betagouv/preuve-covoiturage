@@ -1,11 +1,14 @@
 import { command, CommandInterface, ConfigInterfaceResolver } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, formatTaggedLine, taggedLogger } from "@/lib/logger/tagged.ts";
+import { auditLog } from "@/pdc/proxy/audit.ts";
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
 } from "@/pdc/providers/notification/index.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { InactiveUserDeletionWarningNotification } from "../notifications/InactiveUserDeletionWarningNotification.ts";
+
+const log = taggedLogger("[purge]", { maxLength: 512 });
 
 interface Options {
   inactivity: string;
@@ -20,7 +23,7 @@ export function assertNotificationConfigured(config: ConfigInterfaceResolver): v
   const smtp = config.get("notification.mail.smtp", null);
   if (!smtp) {
     throw new Error(
-      "[purge-inactive-users] notification.mail.smtp non configuré ; arrêt pour éviter de supprimer des comptes non avertis",
+      "[purge] notification.mail.smtp non configuré ; arrêt pour éviter de supprimer des comptes non avertis",
     );
   }
 }
@@ -56,7 +59,7 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
       const fullname = `${user.firstname ?? ""} ${user.lastname ?? ""}`.trim() || user.email;
       try {
         if (options.dryRun) {
-          logger.info(`[purge-inactive-users] (dry-run) avertirait ${user._id}`);
+          log.info("would warn", { id: user._id, dry_run: true });
         } else {
           await this.emailer.send(
             new InactiveUserDeletionWarningNotification(`${fullname} <${user.email}>`, {
@@ -67,9 +70,15 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
           // Si markUserWarned throw ici, warned peut sous-compter (sens sûr : l'utilisateur sera réavertit, jamais supprimé à tort).
           await this.usersRepository.markUserWarned(user._id);
           warned++;
+          auditLog.info("dashboard:purgeInactiveUsers", {
+            outcome: "ok",
+            transport: "internal",
+            result: "warned",
+            id: user._id,
+          });
         }
       } catch (e) {
-        logger.error(`[purge-inactive-users] échec avertissement ${user._id}: ${e instanceof Error ? e.message : e}`);
+        log.error("warn failed", { id: user._id, error: errorCode(e) });
       }
     }
 
@@ -83,17 +92,30 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
       const toDelete = await this.usersRepository.findUsersToDelete(options.grace);
       candidates = toDelete.length;
       for (const user of toDelete) {
-        logger.info(`[purge-inactive-users] (dry-run) supprimerait ${user._id}`);
+        log.info("would delete", { id: user._id, dry_run: true });
       }
     } else {
       const removed = await this.usersRepository.deleteInactiveUsers(options.grace);
       deleted = removed.length;
       candidates = removed.length;
+      for (const user of removed) {
+        auditLog.info("dashboard:purgeInactiveUsers", {
+          outcome: "ok",
+          transport: "internal",
+          result: "deleted",
+          id: user._id,
+        });
+      }
     }
 
-    const summary = `[purge-inactive-users] avertis=${warned}/${toWarn.length} supprimés=${deleted}/${candidates}` +
-      (options.dryRun ? " (dry-run)" : "");
-    logger.info(summary);
-    return summary;
+    const fields = {
+      warned,
+      to_warn: toWarn.length,
+      deleted,
+      candidates,
+      dry_run: options.dryRun,
+    };
+    log.info("done", fields);
+    return formatTaggedLine("[purge]", "done", fields);
   }
 }

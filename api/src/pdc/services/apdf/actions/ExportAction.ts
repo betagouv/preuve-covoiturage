@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action } from "@/ilos/core/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
@@ -13,6 +13,8 @@ import { getCampaignOperators } from "../helpers/getCampaignOperators.helper.ts"
 import { DataRepositoryProviderInterfaceResolver } from "../interfaces/APDFRepositoryProviderInterface.ts";
 import { CheckCampaign } from "../providers/CheckCampaign.ts";
 import { BuildExcel } from "../providers/excel/BuildExcel.ts";
+
+const log = taggedLogger("[apdf]");
 
 @handler({
   ...handlerConfig,
@@ -35,7 +37,7 @@ export class ExportAction extends Action {
     const verbose = this.isVerbose(context);
 
     if (verbose) {
-      logger.info(`$$$ Exporting APDF from ${start_date.toISOString()} to ${end_date.toISOString()}`);
+      log.debug("exporting", { start_date: start_date.toISOString(), end_date: end_date.toISOString() });
     }
 
     const files: string[] = [];
@@ -44,7 +46,7 @@ export class ExportAction extends Action {
         // Make sure the campaign is active and within the date range
         const campaign: string | PolicyResultInterface = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => logger.error(`[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`));
+          .catch((e) => log.error("check campaign failed", { campaign_id: c_id, error: errorCode(e) }));
 
         if (!campaign || typeof campaign !== "object") return;
 
@@ -60,29 +62,29 @@ export class ExportAction extends Action {
         ).filter((operator_id) => (operators.length ? operators.includes(operator_id) : true));
 
         if (!activeOperatorIds.length) {
-          logger.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
+          log.info("no active operators", { campaign_id: campaign._id });
         }
 
         if (verbose) {
-          logger.info(`
-            $$$ Building APDF for campaign ${campaign.name}:
-            $$$  - start_date: ${campaign.start_date.toISOString()}
-            $$$  - end_date:   ${campaign.end_date.toISOString()}
-            $$$  - used:       ${campaign.incentive_sum / 100}€
-            $$$ Declared  :    ${operators.map((i) => `#${i}`).join(", ")}
-            $$$ Operators :    ${activeOperatorIds.map((i) => `#${i}`).join(", ")}
-          `);
+          log.debug("building campaign", {
+            campaign_id: campaign._id,
+            start_date: campaign.start_date.toISOString(),
+            end_date: campaign.end_date.toISOString(),
+            used_eur: campaign.incentive_sum / 100,
+            declared: operators.join("."),
+            operators: activeOperatorIds.join("."),
+          });
         }
 
         // Generate XLSX files for each operator and upload to S3 storage
         await Promise.all(
           activeOperatorIds.map(async (o_id) => {
             try {
-              logger.info(`$$$ > Building APDF for campaign ${campaign.name}, operator id ${o_id}`);
+              log.debug("building file", { campaign_id: campaign._id, operator_id: o_id });
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
 
               if (this.config.get("apdf.s3UploadEnabled") === false) {
-                logger.warn(`APDF Upload disabled! Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file\n > ${filepath}`);
+                log.warn("upload disabled", { campaign_id: campaign._id, operator_id: o_id });
                 return;
               }
 
@@ -97,17 +99,13 @@ export class ExportAction extends Action {
               try {
                 await unlink(filepath);
               } catch (_e) {
-                logger.warn(`Failed to unlink ${filepath}`);
+                log.warn("unlink failed", { campaign_id: campaign._id, operator_id: o_id });
               }
 
               files.push(file);
             } catch (e) {
               const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
-              if (e instanceof Error) {
-                logger.error(e.message);
-              }
-
-              logger.error(message);
+              log.error("export failed", { campaign_id: campaign._id, operator_id: o_id, error: errorCode(e) });
               files.push(message);
             }
           }),

@@ -1,6 +1,8 @@
 import { command, CommandInterface, ResultType } from "../../../../ilos/common/index.ts";
-import { logger } from "../../../../lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]", { maxLength: 512 });
 
 @command({
   signature: "campaign:sync",
@@ -13,11 +15,11 @@ export class SyncCommand implements CommandInterface {
 
   public async call(): Promise<ResultType> {
     // sync status
-    logger.info("Syncing campaign statuses");
+    log.info("sync statuses");
     await this.policyRepository.updateAllCampaignStatuses();
 
     // sync incentive sum
-    logger.info("Syncing campaign incentive_sum");
+    log.info("sync incentive_sum");
     for (const campaign_id of await this.policyRepository.listApplicablePoliciesId()) {
       await this.policyRepository.syncIncentiveSum(campaign_id);
     }

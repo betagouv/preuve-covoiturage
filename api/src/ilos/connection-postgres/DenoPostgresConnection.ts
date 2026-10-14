@@ -1,7 +1,7 @@
 import { ClientOptions, Pool } from "dep:postgres";
 import { array, assert, boolean, number, object, pattern, refine, string, union } from "dep:superstruct";
 import { env_or_default, env_or_false } from "../../lib/env/index.ts";
-import { logger } from "../../lib/logger/index.ts";
+import { errorCode, taggedLogger } from "../../lib/logger/tagged.ts";
 import sql, { Sql } from "../../lib/pg/sql.ts";
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "../common/index.ts";
 
@@ -9,6 +9,8 @@ export type Cursor<TResult> = {
   read: (rowCount?: number) => AsyncGenerator<TResult[]>;
   [Symbol.asyncDispose]: () => Promise<void>;
 };
+
+const log = taggedLogger("[pg]");
 
 export class DenoPostgresConnection
   implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface, AsyncDisposable {
@@ -42,7 +44,7 @@ export class DenoPostgresConnection
     }
 
     if (forceInsecure) {
-      logger.warn("APP_POSTGRES_INSECURE is set, using insecure connection");
+      log.warn("insecure connection", { env: "APP_POSTGRES_INSECURE" });
     }
 
     /**
@@ -190,10 +192,10 @@ export class DenoPostgresConnection
       throw new Error("Connection attempts exceeded");
     }
 
-    logger.debug(`[pg] connecting to ${this.#poolConfig.database}`);
+    log.debug("connecting", { database: this.#poolConfig.database });
 
     if (await this.isReady()) {
-      logger.debug(`[pg] already connected to ${this.#poolConfig.database}`);
+      log.debug("already connected", { database: this.#poolConfig.database });
       return;
     }
 
@@ -201,13 +203,13 @@ export class DenoPostgresConnection
     await this.query(sql`SELECT 1`);
 
     this.#connectionAttempts = 0;
-    logger.debug(`[pg] connected to ${this.#poolConfig.database}`);
+    log.debug("connected", { database: this.#poolConfig.database });
   }
 
   async down(): Promise<void> {
     this.#pool && await this.#pool.end();
     this.#pool = null;
-    logger.debug(`[pg] disconnected from ${this.#poolConfig.database}`);
+    log.debug("disconnected", { database: this.#poolConfig.database });
   }
 
   async isReady(): Promise<boolean> {
@@ -242,7 +244,7 @@ export class DenoPostgresConnection
 
     try {
       await client.queryArray(`BEGIN`);
-      logger.debug(`[pg] creating cursor ${cursorName}`);
+      log.debug("creating cursor", { cursor: cursorName });
 
       await client.queryArray(`DECLARE ${cursorName} CURSOR FOR ${sql.text}`, sql.values);
 
@@ -287,8 +289,7 @@ export class DenoPostgresConnection
         client.release();
       }
 
-      const message = e instanceof Error ? e.message : String(e);
-      logger.error(`[pg] cursor error ${message}`);
+      log.error("cursor error", { error: errorCode(e) });
       throw e;
     }
   }
@@ -308,7 +309,7 @@ export class DenoPostgresConnection
       return result.rows as TResult[];
     } catch (e) {
       transaction && await client.queryArray(`ROLLBACK`);
-      e instanceof Error && logger.error("[pg] transaction error", e.message);
+      log.error("transaction error", { error: errorCode(e) });
       throw e;
     }
   }

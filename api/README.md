@@ -178,6 +178,8 @@ Copier `.env.example` vers `.env` et configurer les valeurs.
 | `APP_VERSION` | Non | ISO timestamp | Version de l'application, utilisée dans les tags Sentry et les logs de démarrage |
 | `APP_LOG_LEVEL` | Non | `INFO` | Niveau de log (`DEBUG`, `INFO`, `WARN`, `ERROR`). Les écritures passant par le Kernel sont tracées en `INFO` avec le préfixe `[audit]` (identifiants pseudonymes de l'acteur et des ressources uniquement, ni e-mail, ni nom, ni téléphone) |
 
+Format des logs : `[tag] étape clé=valeur` via `taggedLogger("[tag]")` (`src/lib/logger/tagged.ts`). Tags : `[audit]`, `[http]`, `[kernel]`, `[pg]`, `[cache]`, `[session]`, `[proconnect]`, `[dex]`, `[campaign]`, `[apdf]`, `[export]`, `[geo]`, `[boot]`… Les valeurs sont filtrées et tronquées ; sur les chemins de requête, une erreur est notée `error=<Classe:code>` (`errorCode(e)`), jamais par son message. `session=` est une empreinte de la session, stable du login au logout.
+
 #### URLs des services
 
 | Variable | Requis | Défaut | Description |

@@ -1,6 +1,8 @@
 import { command, CommandInterface, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { signature as indexGeo } from "@/pdc/services/territory/contracts/indexAllGeo.contract.ts";
+
+const log = taggedLogger("[territory]", { maxLength: 512 });
 
 @command({
   signature: "territory:index",
@@ -11,7 +13,7 @@ export class IndexCommand implements CommandInterface {
   public async call(): Promise<ResultType> {
     const handlers = [indexGeo];
     for (const h of handlers) {
-      logger.info(`[territory:index] index ${h} in Meilisearch`);
+      log.info("indexing", { signature: h });
       await this.kernel.call(h, {}, { channel: { service: "territory" } });
     }
   }

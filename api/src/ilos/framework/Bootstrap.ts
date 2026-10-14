@@ -8,9 +8,11 @@ import {
   TransportInterface,
 } from "@/ilos/common/index.ts";
 import { getTmpDir } from "@/lib/file/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { catchErrors, registerGracefulShutdown } from "@/lib/process/index.ts";
 import { Kernel } from "./Kernel.ts";
+
+const log = taggedLogger("[boot]", { maxLength: 512 });
 
 const defaultBootstrapObject: BootstrapType = {
   kernel: () => Kernel,
@@ -81,10 +83,10 @@ export class Bootstrap {
     })
     class CustomKernel extends kernelConstructor {}
 
-    logger.debug("Kernel: starting");
+    log.debug("kernel starting");
     const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
-    logger.debug("Kernel: started");
+    log.debug("kernel started");
 
     let transport: TransportInterface;
 
@@ -103,9 +105,9 @@ export class Bootstrap {
 
     this.registerShutdownHook(kernelInstance, transport);
 
-    logger.debug("Transport: starting");
+    log.debug("transport starting");
     await transport.up(options);
-    logger.debug("Transport: started");
+    log.debug("transport started");
 
     if (shouldBeKilled) {
       await transport.down();
@@ -133,10 +135,10 @@ export class Bootstrap {
     command: string | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
-    logger.info("Bootstraping app...");
+    log.info("bootstrap");
 
     const tmpdir = getTmpDir();
-    logger.info(`Using temporary directory: ${tmpdir}`);
+    log.info("tmpdir", { path: tmpdir });
 
     return await this.start(command, ...opts);
   }

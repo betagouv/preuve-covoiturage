@@ -1,11 +1,13 @@
 import { command, CommandInterface, ContextType, KernelInterfaceResolver, ResultType } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { CampaignRepository } from "@/pdc/providers/campaign/repositories/CampaignRepository.ts";
 import { Timezone } from "@/pdc/providers/validator/index.ts";
 import { signature as apply } from "../contracts/apply.contract.ts";
 import { castUserStringToUTC, subDaysTz, today, toISOString } from "../helpers/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]", { maxLength: 512 });
 
 interface CommandOptions {
   campaigns: number[];
@@ -90,10 +92,7 @@ export class ApplyCommand implements CommandInterface {
         // as the processed finalized incentives might affect the result
         // of further incentives.
         if (params.override && params.to) {
-          logger.warn(
-            `[campaign:apply] Be careful when re-processing incentives with the --override option in conjunction ` +
-              `with a --to end date. Further incentives will have to be re-processed and finalized too.`,
-          );
+          log.warn("apply override with to date, reprocess and finalize further incentives", { policy_id });
         }
 
         // call the action
@@ -101,14 +100,20 @@ export class ApplyCommand implements CommandInterface {
           await this.kernel.call(apply, params, context);
         } catch (e) {
           const message = Error.isError(e) ? e.message : "Unknown error";
-          logger.error(message, { params });
+          log.error("apply failed", {
+            policy_id,
+            from: params.from,
+            to: params.to,
+            override: params.override,
+            error: message,
+          });
         }
       }
 
       return "";
     } catch (e) {
       const message = Error.isError(e) ? e.message : "Unknown error";
-      logger.error(get(e, "rpcError.data", message));
+      log.error("apply command failed", { error: String(get(e, "rpcError.data", message)) });
     }
   }
 }

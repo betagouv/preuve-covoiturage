@@ -1,10 +1,12 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { empty, join, raw, Sql } from "@/lib/pg/sql.ts";
 import { PolicyStatusEnum } from "../contracts/common/interfaces/PolicyInterface.ts";
 import { toISOString } from "../helpers/index.ts";
 import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]");
 
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,
@@ -17,9 +19,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   constructor(protected pgConnection: DenoPostgresConnection) {}
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
-    const territoryFilter = territoryId !== undefined
-      ? sql`AND pp.territory_id = ${territoryId}`
-      : empty;
+    const territoryFilter = territoryId !== undefined ? sql`AND pp.territory_id = ${territoryId}` : empty;
 
     const rows = await this.pgConnection.query<SerializedPolicyInterface>(sql`
       SELECT
@@ -234,7 +234,6 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
    *       create the key. #FIXME
    */
   async syncIncentiveSum(campaign_id: number): Promise<void> {
-    const pf = "[campaign:syncincentivesum]";
     const key_name = "max_amount_restriction.global.campaign.global";
 
     // update the campaign with the sum of validated incentives
@@ -247,7 +246,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     `);
 
     if (!metaRows.length) {
-      logger.warn(`${pf} ${key_name} key not found for campaign ${campaign_id}`);
+      log.warn("sync incentive_sum key not found", { campaign_id, key_name });
       return;
     }
 
@@ -269,26 +268,21 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     `);
 
     if (!sumRows.length) {
-      logger.warn(`${pf} Could not calculate incentive sum for campaign ${campaign_id}`);
+      log.warn("sync incentive_sum not computed", { campaign_id });
       return;
     }
 
     const { incentive_sum } = sumRows[0];
 
     // update max_amount_restriction.global.campaign.global
-    logger.info(
-      `${pf} Setting policy_meta (${key_id}) ` +
-        `to ${incentive_sum} ` +
-        `at ${toISOString(datetime)} ` +
-        `for campaign ${campaign_id}`,
-    );
+    log.debug("sync incentive_sum set meta", { campaign_id, key_id, incentive_sum, at: toISOString(datetime) });
 
     await this.pgConnection.query(sql`
       UPDATE policy.policy_metas SET value = ${incentive_sum} WHERE _id = ${key_id}
     `);
 
     // update incentive_sum in the policy
-    logger.info(`${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`);
+    log.info("sync incentive_sum", { campaign_id, incentive_sum });
     await this.pgConnection.query(sql`
       UPDATE policy.policies SET incentive_sum = LEAST(max_amount, ${incentive_sum}) WHERE _id = ${campaign_id}
     `);

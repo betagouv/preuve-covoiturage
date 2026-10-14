@@ -1,9 +1,11 @@
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { AbstractDataset } from "../../../common/AbstractDataset.ts";
 import { SqlError } from "../../../errors/SqlError.ts";
 import { TransformError } from "../../../errors/TransformError.ts";
 import { streamData } from "../../../helpers/index.ts";
 import { ArchiveFileTypeEnum, FileTypeEnum } from "../../../interfaces/index.ts";
+
+const log = taggedLogger("[geo-import]", { maxLength: 512 });
 
 export interface TransformationParamsInterface {
   key: string;
@@ -91,7 +93,7 @@ export abstract class IgnDataset extends AbstractDataset {
       for (const { file, key } of this.transformedFiles) {
         if (file && file.length) {
           let i = 1;
-          logger.info(`Processing file ${file} : ${key}`);
+          log.info("processing file", { file, key });
 
           const chunkSize = 1000;
           const cursor = streamData(file, this.fileType, this.sheetOptions, chunkSize);
@@ -102,14 +104,14 @@ export abstract class IgnDataset extends AbstractDataset {
           let results;
           do {
             results = await cursor.next();
-            console.log(`Processing chunk ${i} of ${chunkSize} - ${key}`);
+            log.debug("processing chunk", { chunk: i, size: chunkSize, key });
             done = !!results.done;
             if (results.value) {
               const values = [JSON.stringify(results.value)];
 
               switch (key) {
                 case "geom":
-                  logger.info("  > Updating geom");
+                  log.info("updating geom");
                   await connection.query({
                     text: `
                       INSERT INTO ${this.tableWithSchema} (
@@ -133,7 +135,7 @@ export abstract class IgnDataset extends AbstractDataset {
                   });
                   break;
                 case "geom_simple":
-                  logger.info("  > Updating geom_simple");
+                  log.info("updating geom_simple");
                   await connection.query({
                     text: `
                       UPDATE ${this.tableWithSchema} AS tgt
@@ -150,7 +152,7 @@ export abstract class IgnDataset extends AbstractDataset {
                   });
                   break;
                 case "centroid":
-                  logger.info("  > Updating centroids");
+                  log.info("updating centroids");
                   await connection.query({
                     text: `
                       UPDATE ${this.tableWithSchema} AS tgt
@@ -173,7 +175,7 @@ export abstract class IgnDataset extends AbstractDataset {
         }
       }
 
-      logger.info("  > Updating missing centroids");
+      log.info("updating missing centroids");
       await connection.query({
         text: `
           UPDATE ${this.tableWithSchema}
@@ -187,7 +189,7 @@ export abstract class IgnDataset extends AbstractDataset {
     } catch (e) {
       await connection.query("ROLLBACK");
       connection.release();
-      logger.error(e);
+      log.error("load failed", { error: errorCode(e), message: (e as Error).message });
       throw new SqlError(this, (e as Error).message);
     }
   }

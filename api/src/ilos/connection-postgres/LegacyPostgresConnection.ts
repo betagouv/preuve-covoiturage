@@ -1,6 +1,6 @@
 import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from "@/ilos/common/index.ts";
 import { env_or_fail, env_or_int } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { v4 } from "@/lib/uuid/index.ts";
 import type { PoolConfig } from "dep:pg";
 import pg from "dep:pg";
@@ -10,6 +10,8 @@ export type NativeCursor<T> = {
   read: (rowCount?: number) => Promise<T[]>;
   release: () => Promise<void>;
 };
+
+const log = taggedLogger("[pg]");
 
 export enum PgPoolStatus {
   UP = "UP",
@@ -39,16 +41,13 @@ export class PgPool extends pg.Pool {
     });
 
     this.on("error", (err: Error) => {
-      logger.error("[pg] pool error", err.message);
+      log.error("pool error", { error: errorCode(err) });
       this._status = PgPoolStatus.ERROR;
     });
 
     this.on("remove", () => {
       const { totalCount, idleCount, waitingCount } = this;
-      logger.debug(
-        `[pg] client removed ` +
-          `(total: ${totalCount}, idle: ${idleCount}, waiting: ${waitingCount})`,
-      );
+      log.debug("client removed", { total: totalCount, idle: idleCount, waiting: waitingCount });
     });
   }
 
@@ -102,7 +101,7 @@ export class LegacyPostgresConnection implements ConnectionInterface<PgPool>, In
 
   async up(): Promise<void> {
     await this.pool.query("SELECT NOW()");
-    logger.debug("[pg] connect to", this.database);
+    log.debug("connected", { database: this.database });
   }
 
   async destroy(): Promise<void> {
@@ -110,7 +109,7 @@ export class LegacyPostgresConnection implements ConnectionInterface<PgPool>, In
   }
 
   async down(): Promise<void> {
-    logger.debug("[pg] disconnect from", this.database);
+    log.debug("disconnecting", { database: this.database });
     this.pool.connected && await this.pool.end();
   }
 

@@ -1,6 +1,6 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import {
   TerritoryCodeEnum,
@@ -10,6 +10,8 @@ import {
   TerritorySelectorsInterface,
 } from "../interfaces/index.ts";
 import { TerritoryPerimeterInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryPerimeterInterface.ts";
+
+const log = taggedLogger("[campaign]");
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -39,8 +41,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       }
       return rows[0];
     } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      logger.error(message, e);
+      log.error("find territory by point failed", { error: errorCode(e) });
       return null;
     }
   }
@@ -65,9 +66,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   async findUUIDById(
     _id: number | number[],
   ): Promise<{ _id: number; uuid: string }[]> {
-    const idFilter = Array.isArray(_id)
-      ? sql`t._id = ANY(${_id})`
-      : sql`t._id = ${_id}`;
+    const idFilter = Array.isArray(_id) ? sql`t._id = ANY(${_id})` : sql`t._id = ${_id}`;
 
     return await this.pgConnection.query<{ _id: number; uuid: string }>(sql`
       SELECT

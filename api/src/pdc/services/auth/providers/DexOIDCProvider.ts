@@ -1,7 +1,9 @@
 import { ConfigInterfaceResolver, InitHookInterface, provider, UnauthorizedException } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { encodeBase64 } from "dep:encoding";
 import { createRemoteJWKSet, errors, jwtVerify } from "dep:jose";
+
+const dexLog = taggedLogger("[dex]");
 
 const { JOSEError, JWKSTimeout } = errors;
 
@@ -77,7 +79,10 @@ export class DexOIDCProvider implements InitHookInterface {
       // Surface why verification failed (signature, issuer, expiry, ...) for
       // support without leaking it to the client, then translate the error.
       if (err instanceof JOSEError && !(err instanceof JWKSTimeout)) {
-        logger.warn(`[DexOIDCProvider:verifyToken] ${err.code} ${err.message}`);
+        dexLog.warn("token rejected", {
+          error: err.code,
+          claim: err instanceof errors.JWTClaimValidationFailed ? err.claim : undefined,
+        });
       }
 
       throw toVerificationError(err);
@@ -108,7 +113,7 @@ export class DexOIDCProvider implements InitHookInterface {
     });
 
     if (!response.ok) {
-      logger.error(`[OIDCProvider:getToken] ${response.status} ${response.statusText}`);
+      dexLog.error("token request failed", { status: response.status });
       throw new Error(response.statusText);
     }
 

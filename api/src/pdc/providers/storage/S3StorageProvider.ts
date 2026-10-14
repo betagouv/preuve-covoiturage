@@ -4,10 +4,12 @@ import { S3Client } from "dep:s3-lite-client";
 import { URL } from "dep:url";
 import { ConfigInterfaceResolver, provider, ProviderInterface } from "../../../ilos/common/index.ts";
 import { env_or_fail } from "../../../lib/env/index.ts";
-import { logger } from "../../../lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { filenameFromPath, getBucketName } from "./helpers/buckets.ts";
 import { S3ObjectList } from "./index.ts";
 import { BucketName } from "./interfaces/BucketName.ts";
+
+const log = taggedLogger("[s3]");
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
@@ -61,9 +63,7 @@ export class S3StorageProvider implements ProviderInterface {
       bucketName: getBucketName(bucket),
     };
 
-    logger.info(
-      `[S3StorageProvider:list] bucket ${params.bucketName}/${params.prefix}`,
-    );
+    log.debug("list", { bucket: params.bucketName, key: params.prefix });
 
     const generator = client.listObjects(params);
     const result = [];
@@ -102,11 +102,7 @@ export class S3StorageProvider implements ProviderInterface {
     } catch (e) {
       // rs is closed by the putObject as the stream is consumed
       // do not call rs.close() or you get a Bad Resource ID error.
-      if (e instanceof Error) {
-        logger.error(`S3StorageProvider Error: ${e.message} (${bucketName}/${key})`);
-      } else {
-        logger.error(`S3StorageProvider Error: Unknown error (${filepath})`);
-      }
+      log.error("upload failed", { bucket: bucketName, key, error: errorCode(e) });
       throw e;
     }
   }
@@ -138,12 +134,7 @@ export class S3StorageProvider implements ProviderInterface {
       });
       return url;
     } catch (e) {
-      if (e instanceof Error) {
-        logger.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
-      } else {
-        logger.error(`S3StorageProvider Error: Unknown error (${filekey})`);
-      }
-
+      log.error("signed url failed", { bucket: getBucketName(bucket), key: filekey, error: errorCode(e) });
       throw e;
     }
   }

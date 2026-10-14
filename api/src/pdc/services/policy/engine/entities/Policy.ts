@@ -1,4 +1,4 @@
-import { logger } from "../../../../../lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { Timezone } from "../../../../providers/validator/index.ts";
 import { PolicyStatusEnum } from "../../contracts/common/interfaces/PolicyInterface.ts";
 import {
@@ -22,6 +22,8 @@ import { TerritoryPerimeterInterface } from "@/pdc/services/territory/contracts/
 import { isSelected } from "../helpers/index.ts";
 import { policies } from "../policies/index.ts";
 import { StatefulContext, StatelessContext } from "./Context.ts";
+
+const log = taggedLogger("[campaign]");
 
 export class Policy implements PolicyInterface {
   private perimeterArr = new Map<number, Set<string>>();
@@ -102,10 +104,11 @@ export class Policy implements PolicyInterface {
           context.incentive.set(0);
           return context.incentive;
         }
-        logger.error(
-          `Stateless incentive calculation for carpool ${carpool.operator_id} ${carpool.operator_journey_id} failed : ${e.message}`,
-        );
-        logger.debug(e);
+        log.error("process stateless failed", {
+          operator_id: carpool.operator_id,
+          operator_journey_id: carpool.operator_journey_id,
+          error: errorCode(e),
+        });
         throw e;
       }
     }
@@ -125,8 +128,7 @@ export class Policy implements PolicyInterface {
       await store.save(context.meta);
       return context.incentive;
     } catch (e) {
-      logger.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
-      logger.debug(e);
+      log.error("process stateful failed", { incentive_id: incentive._id, error: errorCode(e) });
       throw e;
     }
   }
