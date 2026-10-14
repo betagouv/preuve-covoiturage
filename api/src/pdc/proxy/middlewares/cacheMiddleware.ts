@@ -86,11 +86,11 @@ export function cacheMiddleware(
           }
 
           for (const warn of warnings.values()) {
-            log.warn("skipped", { url: req.url, reason: warn.message });
+            log.warn("skipped", { path: req.path, reason: warn.message });
           }
 
           for (const error of errors.values()) {
-            log.error("invalid", { url: req.url, reason: error.message });
+            log.error("invalid", { path: req.path, reason: error.message });
           }
 
           next();

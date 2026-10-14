@@ -13,7 +13,7 @@ import {
   RouteMetaProviderInterface,
 } from "./interfaces/index.ts";
 
-import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+import { coarse, errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import {
   EtalabAPIGeoProvider,
   EtalabBaseAdresseNationaleProvider,
@@ -88,7 +88,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        log.error("position to insee", { lon: geo.lon, lat: geo.lat, error: errorCode(e) });
+        log.error("position to insee", { lon: coarse(geo.lon), lat: coarse(geo.lat), error: errorCode(e) });
         failure.push(`positionToInsee ${e.message}`);
       }
     }
@@ -105,10 +105,10 @@ export class GeoProvider implements GeoProviderInterface {
         return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
         log.error("route meta", {
-          start_lon: start.lon,
-          start_lat: start.lat,
-          end_lon: end.lon,
-          end_lat: end.lat,
+          start_lon: coarse(start.lon),
+          start_lat: coarse(start.lat),
+          end_lon: coarse(end.lon),
+          end_lat: coarse(end.lat),
           error: errorCode(e),
         });
         failure.push(`getRouteMeta ${e.message}`);

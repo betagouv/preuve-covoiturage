@@ -5,6 +5,7 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import { CompanyRepositoryProviderInterfaceResolver } from "../interfaces/CompanyRepositoryProviderInterface.ts";
 
 import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+import { maskSiren } from "@/pdc/services/auth/providers/proconnectLog.ts";
 const log = taggedLogger("[company]");
 
 import { signature as fetchSignature } from "../contracts/fetch.contract.ts";
@@ -51,7 +52,7 @@ export class FindAction extends AbstractAction {
 
       return res;
     } catch (e) {
-      log.error("find failed", { error: errorCode(e), siret });
+      log.error("find failed", { error: errorCode(e), siren: maskSiren(siret) });
       return null;
     }
   }

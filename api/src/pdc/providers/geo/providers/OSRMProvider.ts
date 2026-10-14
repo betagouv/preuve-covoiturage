@@ -1,7 +1,7 @@
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
-import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+import { coarse, errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { PointInterface, RouteMeta, RouteMetaProviderInterface } from "../interfaces/index.ts";
 
@@ -43,10 +43,10 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     } catch (e) {
       log.error("route meta", {
         provider: "osrm",
-        start_lon: start.lon,
-        start_lat: start.lat,
-        end_lon: end.lon,
-        end_lat: end.lat,
+        start_lon: coarse(start.lon),
+        start_lat: coarse(start.lat),
+        end_lon: coarse(end.lon),
+        end_lat: coarse(end.lat),
         error: errorCode(e),
       });
       switch (e.response?.status) {

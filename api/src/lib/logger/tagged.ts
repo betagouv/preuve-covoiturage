@@ -12,6 +12,9 @@ export function safeValue(value: string | number | boolean, options: Options = {
   return String(value).replace(unsafe, "_").substring(0, options.maxLength ?? MAX_VALUE_LENGTH);
 }
 
+// Position arrondie à ~1 km : assez pour diagnostiquer, pas pour réidentifier.
+export const coarse = (v: number): number => Math.round(v * 100) / 100;
+
 export function formatTaggedLine(tag: string, step: string, fields: TaggedFields = {}, options: Options = {}): string {
   const pairs = Object.entries(fields)
     .filter(([, v]) => v !== undefined)

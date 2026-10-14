@@ -1,4 +1,4 @@
-import { taggedLogger } from "@/lib/logger/tagged.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 
 const log = taggedLogger("[boot]", { maxLength: 512 });
 
@@ -67,7 +67,7 @@ export function catchErrors(
 ) {
   async function uncaughtExceptionHandler(e: Event) {
     e.preventDefault();
-    log.error("uncaught exception", { error: reason((e as ErrorEvent).error ?? e.type) });
+    log.error("uncaught exception", { error: errorCode((e as ErrorEvent).error) });
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
@@ -90,7 +90,7 @@ export function catchErrors(
   globalThis.addEventListener("error", uncaughtExceptionHandler);
 
   async function unhandledRejectionHandler(e: Event & { reason: unknown }) {
-    log.error("unhandled rejection", { error: reason(e.reason) });
+    log.error("unhandled rejection", { error: errorCode(e.reason) });
     e.preventDefault();
 
     // shut down anyway after `timeout` seconds
