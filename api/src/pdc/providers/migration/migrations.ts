@@ -1,13 +1,15 @@
 import { env_or_false } from "@/lib/env/index.ts";
 import { readTextFile } from "@/lib/file/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { extname, join } from "@/lib/path/index.ts";
 import { readdir } from "dep:fs-promises";
 import { Client as PgClient, Pool as PgPool } from "dep:postgres";
 
+const log = taggedLogger("[migrator]", { maxLength: 512 });
+
 export async function migrateSQL(connectionString: string, path: string, verbose = true) {
   if (env_or_false("SKIP_SQL_MIGRATIONS")) {
-    logger.warn("Skipping SQL migrations");
+    log.warn("skipping sql migrations");
     return;
   }
 
@@ -37,21 +39,19 @@ export async function migrateSQL(connectionString: string, path: string, verbose
       await transaction.begin();
 
       try {
-        verbose && logger.info(` - migrate ${td}`);
+        verbose && log.info("migrate", { file: td });
         await transaction.queryArray(statements);
         await transaction.queryArray`INSERT INTO public.migrations (name, run_on) VALUES (${td}, NOW())`;
         await transaction.commit();
       } catch (e) {
-        logger.error(`Error in migration: ${td}`);
-        logger.error(migrationErrorMessage(e));
+        log.error("migration failed", { file: td, error: errorCode(e), message: migrationErrorMessage(e) });
         throw e;
       } finally {
         await migClient.end();
       }
     }
   } catch (e) {
-    logger.error("Error in migrateSQL");
-    logger.error(migrationErrorMessage(e));
+    log.error("migrate sql failed", { error: errorCode(e), message: migrationErrorMessage(e) });
     throw e;
   } finally {
     conn.release();

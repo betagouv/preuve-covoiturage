@@ -1,4 +1,4 @@
-import { formatTaggedLine, taggedLogger } from "@/lib/logger/tagged.ts";
+import { errorCode, formatTaggedLine, taggedLogger } from "@/lib/logger/tagged.ts";
 
 // Brand : seuls maskEmail/maskSiren produisent un Masked, un email/siren en clair ne compile pas.
 export type Masked = string & { readonly __masked: unique symbol };
@@ -49,10 +49,4 @@ export function formatProconnectLine(step: string, fields: ProconnectFields = {}
 
 export const proconnectLog = taggedLogger<ProconnectFields>("[proconnect]", { allowAt: true });
 
-// Jamais e.message : il peut contenir URL ou données personnelles.
-export function errorCode(e: unknown): string {
-  if (!(e instanceof Error)) return "unknown";
-  const { error, code } = e as Error & { error?: unknown; code?: unknown };
-  const detail = typeof error === "string" ? error : typeof code === "string" ? code : undefined;
-  return detail ? `${e.name}:${detail}` : e.name;
-}
+export { errorCode };

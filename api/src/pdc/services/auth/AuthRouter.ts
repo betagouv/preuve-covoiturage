@@ -1,6 +1,5 @@
 import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, proxy } from "@/ilos/common/index.ts";
 import { env_or_default } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { sessionRef } from "@/pdc/proxy/helpers/sessionRef.ts";
 import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
@@ -200,7 +199,7 @@ export class AuthRouter {
     const envs = [this.config.get("env"), env_or_default("APP_ENV", "local")];
     if (isTestAuthEnabled(envs, this.config.get("test.enabled"))) {
       this.config.get("test.accounts")(); // fail fast at boot if APIE2E_AUTH_* are missing
-      logger.warn("[auth] test login route /auth/test/callback is ENABLED");
+      proconnectLog.warn("test login enabled");
       this.app.post("/auth/test/callback", loginRateLimiter(), testCallbackRoute(this.config, this.userRepository));
     }
   }

@@ -1,6 +1,6 @@
 import { CallType, ContextType } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
-import { formatTaggedLine, safeValue, TaggedFields, taggedLogger } from "@/lib/logger/tagged.ts";
+import { errorCode, formatTaggedLine, safeValue, TaggedFields, taggedLogger } from "@/lib/logger/tagged.ts";
 
 // L'acquisition est exclue : déjà historisée dans carpool_v2.requests, et à fort volume.
 const EXCLUDED_SERVICES = new Set(["acquisition"]);
@@ -42,13 +42,6 @@ function field(obj: unknown, key: string): Scalar | undefined {
   return obj && typeof obj === "object" && !Array.isArray(obj)
     ? scalar((obj as Record<string, unknown>)[key])
     : undefined;
-}
-
-// Jamais e.message : il peut contenir des données personnelles.
-function errorCode(e: unknown): string {
-  if (!(e instanceof Error)) return "unknown";
-  const code = (e as Error & { rpcError?: { code?: unknown } }).rpcError?.code;
-  return code === undefined ? e.constructor.name : `${e.constructor.name}:${code}`;
 }
 
 export function formatAuditLine(signature: string, { context, params, ms, outcome }: AuditEntry): string {

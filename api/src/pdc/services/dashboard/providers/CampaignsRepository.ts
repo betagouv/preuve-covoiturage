@@ -1,6 +1,6 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { join, raw } from "@/lib/pg/sql.ts";
 import {
   APDFNameProvider,
@@ -17,6 +17,8 @@ import {
   CampaignsResultInterface,
   ScopedCampaignApdfParams,
 } from "../interfaces/CampaignsRepositoryInterface.ts";
+
+const log = taggedLogger("[apdf]");
 
 @provider({
   identifier: CampaignsRepositoryInterfaceResolver,
@@ -107,11 +109,7 @@ export class CampaignsRepository implements CampaignsRepositoryInterface {
       const files = list.filter((obj) => obj.size > 0);
       return await this.enrichApdf(this.ownedByCaller(files, params.operator_id));
     } catch (e) {
-      if (e instanceof Error) {
-        logger.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
-      } else {
-        logger.error(`[Apdf:StorageRepo:findByCampaign]`, e);
-      }
+      log.error("find by campaign failed", { campaign_id: params.campaign_id, error: errorCode(e) });
       throw e;
     }
   }

@@ -4,7 +4,9 @@ import { hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
 import { CompanyRepositoryProviderInterfaceResolver } from "../interfaces/CompanyRepositoryProviderInterface.ts";
 
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+const log = taggedLogger("[company]");
+
 import { signature as fetchSignature } from "../contracts/fetch.contract.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/find.contract.ts";
 import { alias } from "../contracts/find.schema.ts";
@@ -49,7 +51,7 @@ export class FindAction extends AbstractAction {
 
       return res;
     } catch (e) {
-      logger.error(e.message, e);
+      log.error("find failed", { error: errorCode(e), siret });
       return null;
     }
   }

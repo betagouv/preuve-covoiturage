@@ -1,7 +1,9 @@
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { readFile } from "dep:fs-promises";
 
+const log = taggedLogger("[geo-import]", { maxLength: 512 });
+
 export async function loadFileAsString(path: string): Promise<string> {
-  logger.debug(`Loading file ${path}`);
+  log.debug("loading file", { file: path });
   return readFile(path, { encoding: "utf-8" });
 }

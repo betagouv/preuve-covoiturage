@@ -23,8 +23,9 @@ import { handlerListIdentifier, ServiceProvider } from "@/ilos/core/index.ts";
 
 // Plafond d'un batch JSON-RPC : le limiteur de débit compte la requête HTTP, pas les appels.
 const MAX_RPC_BATCH_SIZE = 20;
+const log = taggedLogger("[http]");
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { auditLog } from "@/pdc/proxy/audit.ts";
 import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
@@ -338,9 +339,7 @@ export class HttpTransport implements TransportInterface {
    */
   private registerStaticFolder() {
     const __dirname = new URL(".", import.meta.url).pathname;
-    logger.debug(
-      `registerStaticFolder: ${join(__dirname, "public/.well-known")}`,
-    );
+    log.debug("static folder", { path: join(__dirname, "public/.well-known") });
     this.app.use(
       "/.well-known",
       express.static(join(__dirname, "public/.well-known")),
@@ -356,7 +355,7 @@ export class HttpTransport implements TransportInterface {
     // Canal fermé hors local/CI : aucun client ne l'utilise, cf. rpcEndpointEnabled.ts.
     const envs = [env_or_fail("NODE_ENV", "local"), env_or_fail("APP_ENV", "local")];
     if (!isRpcEndpointEnabled(envs, env_or_false("APP_ENABLE_RPC_ENDPOINT"))) {
-      logger.info(`[proxy] RPC endpoint ${endpoint} is disabled`);
+      log.info("rpc disabled", { endpoint });
       return;
     }
 
@@ -438,10 +437,7 @@ export class HttpTransport implements TransportInterface {
   private start(port = 8080, _timeout = 30000): void {
     this.server = this.app.listen(
       port,
-      () =>
-        logger.info(
-          `Listening on port ${port}. Version ${this.config.get("sentry.version")}`,
-        ),
+      () => log.info("listening", { port, version: this.config.get("sentry.version") }),
     );
     // FIXME
     // this.server.setTimeout(_timeout);
@@ -554,7 +550,7 @@ export class HttpTransport implements TransportInterface {
 
         dt.com = authorizedCodes.com || [];
       } catch (e) {
-        logger.warn("[proxy] failed to fetch authorized zone codes", { error: e });
+        log.warn("authorized zone codes failed", { error: errorCode(e) });
       }
 
       user.authorizedZoneCodes = { ...dt };

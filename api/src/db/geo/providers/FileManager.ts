@@ -1,7 +1,7 @@
 import { ConfigStore } from "@/ilos/core/extensions/index.ts";
 import { createHash, sha256sum } from "@/lib/crypto/index.ts";
 import { remove } from "@/lib/file/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import { v4 as uuidV4 } from "@/lib/uuid/index.ts";
 import { BucketName, S3StorageProvider } from "@/pdc/providers/storage/index.ts";
@@ -16,6 +16,8 @@ import {
   FileTypeEnum,
   MirrorAclEnum,
 } from "../interfaces/index.ts";
+
+const log = taggedLogger("[geo-import]", { maxLength: 512 });
 
 export class FileManager implements FileManagerInterface {
   readonly basePath: string;
@@ -32,7 +34,7 @@ export class FileManager implements FileManagerInterface {
   }
 
   async download({ url, sha256 }: FileResource): Promise<string> {
-    logger.info(`Downloading ${url}`);
+    log.info("downloading", { url });
 
     const filepath = await this.getTemporaryFilePath(url, true);
 
@@ -41,7 +43,7 @@ export class FileManager implements FileManagerInterface {
     if (await this.fileExists(filepath)) {
       try {
         await this.check(filepath, sha256);
-        logger.info(`File already exists: ${filepath}`);
+        log.info("file already exists", { file: filepath });
         return filepath;
       } catch {
         await this.clear(filepath);
@@ -52,7 +54,7 @@ export class FileManager implements FileManagerInterface {
     try {
       await this.retrieveFromCache(filepath, url, sha256);
     } catch (e) {
-      logger.info(`Cache failed (${e.message}), Trying direct download`);
+      log.info("cache failed, trying direct download", { error: errorCode(e), message: e.message });
       await this.downloadAndCache(filepath, url, sha256);
     }
 
@@ -65,7 +67,7 @@ export class FileManager implements FileManagerInterface {
       await access(filepath);
       const extractPath = filepath.replace("/download/", "/extract/");
 
-      logger.info(`Extracting to ${extractPath}`);
+      log.info("extracting", { file: extractPath });
 
       try {
         await access(extractPath);
@@ -91,11 +93,11 @@ export class FileManager implements FileManagerInterface {
       const files: Set<string> = new Set();
       await getAllFiles(extractPath, getFileExtensions(fileType), files);
 
-      logger.info(`Extracted ${files.size} files`);
+      log.info("extracted", { count: files.size });
 
       return [...files];
     } catch (err) {
-      logger.error(err);
+      log.error("extract failed", { error: errorCode(err), message: (err as Error).message });
       throw err;
     }
   }
@@ -119,11 +121,11 @@ export class FileManager implements FileManagerInterface {
         `format=${format}`,
         `precision=${precision}`,
       ];
-      logger.debug(`Running mapshaper with options ${options.join(" ")}`);
+      log.debug("running mapshaper", { options: options.join(" ") });
       await mapshaper.runCommands(options.join(" "));
       return outFilepath;
     } catch (err) {
-      logger.error(err);
+      log.error("transform failed", { error: errorCode(err), message: (err as Error).message });
       throw err;
     }
   }
@@ -158,7 +160,7 @@ export class FileManager implements FileManagerInterface {
       throw new Error("No mirror URL provided");
     }
 
-    logger.info(`Downloading from mirror ${mirror}`);
+    log.info("downloading from mirror", { url: mirror });
 
     const response = await fetch(mirror, { method: "GET", redirect: "follow" });
 
@@ -169,11 +171,11 @@ export class FileManager implements FileManagerInterface {
     await this.save(destination, response.body);
     await this.check(destination, sha256);
 
-    logger.info("Downloading from mirror OK");
+    log.info("mirror download ok");
   }
 
   protected async downloadAndCache(destination: string, url: string, sha256: string | undefined): Promise<void> {
-    logger.info(`Downloading ${url}`);
+    log.info("downloading", { url });
 
     const response = await fetch(url, { method: "GET", redirect: "follow" });
 
@@ -185,16 +187,16 @@ export class FileManager implements FileManagerInterface {
     await this.check(destination, sha256);
     await this.cache(destination);
 
-    logger.info("Direct downloading OK");
+    log.info("direct download ok");
   }
 
   protected async cache(destination: string): Promise<void> {
     if (this.mirrorAcl !== MirrorAclEnum.READ_WRITE) {
-      logger.warn("No write permission to cache the dataset");
+      log.warn("no write permission to cache dataset");
       return;
     }
 
-    logger.info(`Caching ${destination}`);
+    log.info("caching", { file: destination });
 
     try {
       const s3 = new S3StorageProvider(new ConfigStore({}));
@@ -207,9 +209,9 @@ export class FileManager implements FileManagerInterface {
         },
       });
 
-      logger.info(`File cached: ${key}`);
+      log.info("file cached", { key });
     } catch (e) {
-      logger.error(`Caching failed: ${e.message}`);
+      log.error("caching failed", { error: errorCode(e), message: e.message });
     }
   }
 
@@ -226,7 +228,7 @@ export class FileManager implements FileManagerInterface {
 
   protected async getMirrorUrl(url: string): Promise<string | undefined> {
     if (!this.mirrorUrl) {
-      logger.warn("No mirror URL provided");
+      log.warn("no mirror url provided");
       return;
     }
 
@@ -239,7 +241,7 @@ export class FileManager implements FileManagerInterface {
 
   protected async save(destination: string, stream: ReadableStream<Uint8Array>): Promise<void> {
     await writeFile(destination, stream);
-    logger.info(`Saved to ${destination}`);
+    log.info("saved", { file: destination });
   }
 
   protected async check(data: string | ReadableStream<Uint8Array>, sha256: string | undefined): Promise<void> {

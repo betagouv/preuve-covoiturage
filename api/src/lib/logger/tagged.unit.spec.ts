@@ -18,6 +18,13 @@ describe("formatTaggedLine", () => {
     assertEquals(formatTaggedLine("[x]", "y", { error: "a".repeat(100) }), `[x] y error=${"a".repeat(64)}`);
   });
 
+  it("relève la limite sur demande", () => {
+    assertEquals(
+      formatTaggedLine("[x]", "y", { error: "a".repeat(100) }, { maxLength: 80 }),
+      `[x] y error=${"a".repeat(80)}`,
+    );
+  });
+
   it("refuse @ sauf demande explicite", () => {
     assertEquals(formatTaggedLine("[x]", "y", { email: "j***@idfm.fr" }), "[x] y email=j***_idfm.fr");
     assertEquals(

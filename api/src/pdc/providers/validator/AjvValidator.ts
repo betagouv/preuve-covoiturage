@@ -6,11 +6,14 @@ import {
   ValidatorInterface,
 } from "@/ilos/common/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { uuid } from "@/pdc/providers/test/helpers.ts";
 import { Ajv, ErrorObject, Format, KeywordDefinition, ValidateFunction } from "dep:ajv";
 import ajvErrors from "dep:ajverrors";
 import addFormats from "dep:ajvformats";
 import ajvKeywords from "dep:ajvkeywords";
+
+const log = taggedLogger("[validator]", { maxLength: 512 });
 
 @provider()
 export class AjvValidator implements ValidatorInterface {
@@ -93,10 +96,7 @@ export class AjvValidator implements ValidatorInterface {
       }
       return this;
     } catch (e) {
-      logger.error(
-        `Error during adding validator ${schema.$id} | ${target} | ${e.message}`,
-      );
-      logger.error(e.message, e);
+      log.error("schema registration failed", { schema: schema.$id, target, error: e.message });
       throw e;
     }
   }
@@ -120,7 +120,7 @@ export class AjvValidator implements ValidatorInterface {
     const resolver = schema ? schema : data.constructor;
 
     if (!this.bindings.has(resolver)) {
-      logger.error(`No schema provided for this type (${resolver})`);
+      log.error("no schema", { resolver: String(resolver) });
       throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);

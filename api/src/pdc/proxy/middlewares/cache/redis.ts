@@ -7,7 +7,6 @@ export function cacheStore(config: GlobalCacheConfig): CacheStore {
   return {
     async get(key: CacheKey): Promise<CacheValue | null> {
       if (!driver) return null;
-      // logger.debug('cache get', { key });
       const str = await driver.get(key);
       if (!str) return null;
       return Buffer.from(str, "base64");
@@ -15,7 +14,6 @@ export function cacheStore(config: GlobalCacheConfig): CacheStore {
 
     async set(key: CacheKey, value: CacheValue, ttl?: CacheTTL): Promise<void> {
       if (!driver) return;
-      // logger.debug('cache set', { key, value });
       await driver.set(
         key,
         value.toString("base64"),
@@ -26,13 +24,11 @@ export function cacheStore(config: GlobalCacheConfig): CacheStore {
 
     async del(keys: Set<CacheKey>): Promise<number> {
       if (!driver) return;
-      // logger.debug('cache del', { keys });
       return driver.del(...keys);
     },
 
     async ttl(key: CacheKey): Promise<number | null> {
       if (!driver) return null;
-      // logger.debug('cache ttl', { key });
       return driver.ttl(key);
     },
 

@@ -7,13 +7,15 @@ import {
   ValidatorInterfaceResolver,
 } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { RegisterRequest, RegisterResponse } from "@/pdc/providers/carpool/interfaces/acquisition.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { handlerConfig, ParamsInterface, PayloadV3, ResultInterface } from "../contracts/create.contract.ts";
 import { v3alias } from "../contracts/create.schema.ts";
+
+const log = taggedLogger("[acquisition]");
 
 @handler({
   ...handlerConfig,
@@ -55,9 +57,10 @@ export class CreateJourneyAction extends AbstractAction {
         created_at: results.created_at,
       };
     } catch (e) {
-      logger.error(e.message, {
-        operator_journey_id: params.operator_journey_id,
+      log.error("create failed", {
+        error: errorCode(e),
         operator_id: this.getOperatorId(context),
+        operator_journey_id: params.operator_journey_id,
       });
 
       throw e;

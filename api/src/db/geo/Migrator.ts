@@ -10,8 +10,10 @@ import {
   StaticAbstractDataset,
   StaticMigrable,
 } from "@/db/geo/interfaces/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import pg from "dep:pg";
+
+const log = taggedLogger("[geo-import]", { maxLength: 512 });
 
 export class Migrator {
   protected migrableInstances: Map<StaticMigrable, DatasetInterface> = new Map();
@@ -27,18 +29,18 @@ export class Migrator {
   ) {}
 
   async prepare(): Promise<void> {
-    logger.info(`[db] Connecting to database`);
+    log.info("connecting to database");
 
     const client = await this.pool.connect();
     await client.query(`CREATE SCHEMA IF NOT EXISTS ${this.config.targetSchema}`);
     client.release();
 
-    logger.info(`[db] Connected!`);
+    log.info("connected");
     await this.dbStateManager.install();
 
-    logger.info(`[fs] Ensure filesystem is ready`);
+    log.info("ensuring filesystem");
     await this.file.ensureDirPath();
-    logger.info(`[fs] ok`);
+    log.info("filesystem ready");
   }
 
   protected getInstance(ctor: StaticMigrable): DatasetInterface {
@@ -78,42 +80,35 @@ export class Migrator {
     stateManager: StateManagerInterface,
   ): Promise<void> {
     const migrableCtor = migrable.constructor as StaticMigrable;
-    logger.debug(`start: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`);
+    log.debug("start", { state: migrableState, uuid: migrableCtor.uuid });
 
     try {
       switch (migrableState) {
         case State.Planned:
-          // logger.debug(`${migrableCtor.uuid} : start processing`);
           await migrable.validate(stateManager);
           stateManager.set(migrableCtor, State.Validated);
           break;
         case State.Validated:
-          // logger.debug(`${migrableCtor.uuid} : before`);
           await migrable.before();
           stateManager.set(migrableCtor, State.Created);
           break;
         case State.Created:
-          // logger.debug(`${migrableCtor.uuid} : download`);
           await migrable.download();
           stateManager.set(migrableCtor, State.Downloaded);
           break;
         case State.Downloaded:
-          // logger.debug(`${migrableCtor.uuid} : transform`);
           await migrable.transform();
           stateManager.set(migrableCtor, State.Transformed);
           break;
         case State.Transformed:
-          // logger.debug(`${migrableCtor.uuid} : load`);
           await migrable.load();
           stateManager.set(migrableCtor, State.Loaded);
           break;
         case State.Loaded:
-          // logger.debug(`${migrableCtor.uuid} : import`);
           await migrable.import();
           stateManager.set(migrableCtor, State.Imported);
           break;
         case State.Imported:
-          // logger.debug(`${migrableCtor.uuid} : after`);
           if (!this.config.noCleanup) {
             await migrable.after();
           }
@@ -122,17 +117,20 @@ export class Migrator {
             : stateManager.set(migrableCtor, State.Done);
           break;
         case State.DoneSkipPersistence:
-          // logger.debug(`${migrableCtor.uuid} : done with skip persistence`);
           break;
         case State.Done:
-          // logger.debug(`${migrableCtor.uuid} : done`);
           break;
         default:
           throw new Error();
       }
-      logger.debug(`end: (state = ${migrableState}, uuid = ${migrableCtor.uuid})`);
+      log.debug("end", { state: migrableState, uuid: migrableCtor.uuid });
     } catch (e) {
-      logger.debug(`error: (state = ${migrableState}, uuid = ${migrableCtor.uuid}) ${e?.message || ""}`);
+      log.debug("step failed", {
+        state: migrableState,
+        uuid: migrableCtor.uuid,
+        error: errorCode(e),
+        message: e?.message,
+      });
 
       throw e;
     }
@@ -145,13 +143,13 @@ export class Migrator {
         await this.do(migrable, state, stateManager);
       }
     } catch (e) {
-      logger.error(`${migrableCtor.uuid} : ${(e as Error).message}`);
+      log.error("process failed", { uuid: migrableCtor.uuid, error: errorCode(e), message: (e as Error).message });
       throw e;
     }
   }
 
   async run(todo?: StaticMigrable[]): Promise<void> {
-    logger.info(`[db] Running migrations`);
+    log.info("running migrations");
 
     const state = await this.dbStateManager.toMemory();
     state.plan(todo || (await this.getTodo(state)));
@@ -169,7 +167,12 @@ export class Migrator {
           const migrable = this.getInstance(migrableCtor);
           await this.do(migrable, migrableState, state);
         } catch (e) {
-          logger.error(`Error during processing ${migrableCtor.uuid} - ${migrableState} : ${e?.message || ""}`);
+          log.error("processing failed", {
+            uuid: migrableCtor.uuid,
+            state: migrableState,
+            error: errorCode(e),
+            message: e?.message,
+          });
           state.set(migrableCtor, State.Failed);
           const migrablesToUnplan = state.get(migrableState);
           [...migrablesToUnplan].map((mc) => state.set(mc, State.Unplanned));
@@ -181,7 +184,7 @@ export class Migrator {
   }
 
   async cleanup(): Promise<void> {
-    logger.info(`[db] Cleaning up`);
+    log.info("cleaning up");
     await this.pool.end();
   }
 }

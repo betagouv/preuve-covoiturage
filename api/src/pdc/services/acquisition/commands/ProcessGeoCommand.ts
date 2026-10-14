@@ -1,8 +1,11 @@
 import { coerceDate, coerceInt } from "@/ilos/cli/index.ts";
 import { command, CommandInterface } from "@/ilos/common/index.ts";
-import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { getPerformanceTimer } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { subDays } from "dep:date-fns";
+
+const log = taggedLogger("[acquisition]", { maxLength: 512 });
 
 type Options = {
   loop: boolean;
@@ -66,12 +69,12 @@ export class ProcessGeoCommand implements CommandInterface {
       const subtimer = getPerformanceTimer();
       const did = await this.encode(options);
       const subperformance = subtimer.stop();
-      logger.info(`Processed: ${did} in ${subperformance} ms`);
+      log.info("batch processed", { count: did, ms: subperformance });
       shouldContinue = did === options.size;
     } while (shouldContinue && options.loop);
 
     const performance = timer.stop();
-    logger.info(`Geo encoding done in ${performance} ms`);
+    log.info("geo encoding done", { ms: performance });
   }
 
   protected async encode(options: Options): Promise<number> {

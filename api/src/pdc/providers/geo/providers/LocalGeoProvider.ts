@@ -1,8 +1,10 @@
 import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { InseeCoderInterface, PointInterface } from "../interfaces/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
@@ -44,8 +46,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
 
       return closeCom[0].arr;
     } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      logger.error(`[LocalGeoProvider] (${lon},${lat}) ${message}`);
+      log.error("position to insee", { provider: "local", lon, lat, error: errorCode(e) });
       throw e;
     }
   }

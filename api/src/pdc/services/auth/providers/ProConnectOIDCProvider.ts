@@ -1,5 +1,4 @@
 import { ConfigInterfaceResolver, InitHookInterface, provider } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { createRemoteJWKSet } from "dep:jose";
 import * as client from "dep:openid-client";
@@ -93,7 +92,7 @@ export class ProConnectOIDCProvider implements InitHookInterface {
         throw new Error(msg);
       }
 
-      logger.warn(msg);
+      proconnectLog.warn("disabled");
       return;
     }
 
@@ -111,7 +110,7 @@ export class ProConnectOIDCProvider implements InitHookInterface {
 
   async init(): Promise<void> {
     if (this.#enabled && !this.config.get("proconnect.require_mfa")) {
-      logger.warn("[proconnect] double authentification non exigée. Use PROCONNECT_REQUIRE_MFA=true to enforce");
+      proconnectLog.warn("mfa not enforced");
     }
 
     await this.#configure(false);

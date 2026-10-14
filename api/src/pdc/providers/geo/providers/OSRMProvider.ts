@@ -1,9 +1,11 @@
 import { provider } from "@/ilos/common/index.ts";
 import { env_or_fail } from "@/lib/env/index.ts";
 import fetcher from "@/lib/fetcher/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { PointInterface, RouteMeta, RouteMetaProviderInterface } from "../interfaces/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
@@ -39,9 +41,14 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      logger.error(
-        `[OSRMProvider] (${start.lon},${start.lat};${end.lon},${end.lat})`,
-      );
+      log.error("route meta", {
+        provider: "osrm",
+        start_lon: start.lon,
+        start_lat: start.lat,
+        end_lon: end.lon,
+        end_lat: end.lat,
+        error: errorCode(e),
+      });
       switch (e.response?.status) {
         case 429:
           throw new Error(`[OSRMProvider] Too many requests on ${this.domain}`);

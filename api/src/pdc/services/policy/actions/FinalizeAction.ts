@@ -2,14 +2,15 @@ import { defaultTimezone } from "@/config/time.ts";
 import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
-import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { getPerformanceTimer } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/finalize.contract.ts";
 import { alias } from "../contracts/finalize.schema.ts";
 import { signature as syncincentivesumSignature } from "../contracts/syncIncentiveSum.contract.ts";
 import { MetadataStore } from "../engine/entities/MetadataStore.ts";
 import { Policy } from "../engine/entities/Policy.ts";
-import { castUserStringToUTC, subDaysTz, today, toTzString } from "../helpers/index.ts";
+import { castUserStringToUTC, subDaysTz, today } from "../helpers/index.ts";
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -19,6 +20,8 @@ import {
   PolicyRepositoryProviderInterfaceResolver,
   StatefulIncentiveInterface,
 } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]");
 
 // TOFIX ?
 // from and to props must be strings to pass schema validation
@@ -48,9 +51,7 @@ export class FinalizeAction extends AbstractAction {
 
   public override async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
-      logger.warn(
-        "[campaign:finalize] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
-      );
+      log.warn("finalize disabled", { env: "APP_DISABLE_POLICY_PROCESSING" });
       return;
     }
 
@@ -61,7 +62,7 @@ export class FinalizeAction extends AbstractAction {
     // call the action instead of the repo to avoid having
     // to duplicate the listing of all campaigns
     if (sync_incentive_sum) {
-      logger.info("[campaign:finalize] syncIncentiveSum");
+      log.info("finalize sync incentive_sum");
       await this.kernel.call(syncincentivesumSignature, {}, {
         channel: { service: handlerConfig.service },
       });
@@ -81,21 +82,18 @@ export class FinalizeAction extends AbstractAction {
         // Update incentive on canceled carpool
         const subtimer = getPerformanceTimer();
         await this.incentiveRepository.disableOnExcludedCarpool(currentFrom, currentTo);
-        logger.info(`[campaign:finalize] disableOnExcludedCarpool in ${subtimer.stop()} ms`);
+        log.debug("finalize disable excluded carpool", { ms: subtimer.stop() });
 
-        // eslint-disable-next-line prettier/prettier,max-len
-        logger.info(
-          `[campaign:finalize] stateful starting from ${toTzString(currentFrom)} until ${toTzString(currentTo)}`,
-        );
+        log.info("finalize stateful start", { from: currentFrom.toISOString(), to: currentTo.toISOString() });
         await this.processStatefulPolicies(policyMap, currentTo, currentFrom);
-        logger.debug("[campaign:finalize] stateful finished");
+        log.debug("finalize stateful done");
 
         // Lock all
-        logger.debug(`[campaign:finalize] set status on incentives`);
+        log.debug("finalize set status");
         await this.incentiveRepository.setStatus(currentFrom, currentTo);
-        logger.debug("[campaign:finalize] lock finished");
+        log.debug("finalize lock done");
       } catch (e) {
-        logger.debug(`[campaign:finalize] unlock all incentive until ${toTzString(currentTo)} in catch block`);
+        log.warn("finalize unlock incentives", { from: currentFrom.toISOString(), to: currentTo.toISOString() });
         await this.incentiveRepository.setStatus(currentFrom, currentTo, true);
         throw e;
       }
@@ -103,7 +101,7 @@ export class FinalizeAction extends AbstractAction {
       currentTime += timespan; // move to the next hour
     }
 
-    logger.info(`[campaign:finalize] stateful in ${timer.stop()} ms`);
+    log.info("finalize done", { ms: timer.stop() });
   }
 
   /**
@@ -141,7 +139,7 @@ export class FinalizeAction extends AbstractAction {
       if (results.value) {
         for (const incentive of results.value) {
           if (!incentive.policy_id) {
-            logger.warn(`[processStatefulPolicies] incentive missing policy_id. Skipping...`);
+            log.warn("finalize skip incentive without policy_id", { incentive_id: incentive._id });
             continue;
           }
 
@@ -149,7 +147,7 @@ export class FinalizeAction extends AbstractAction {
           if (!policyMap.has(incentive.policy_id)) {
             const res = await this.policyRepository.find(incentive.policy_id);
             if (!res) {
-              logger.warn(`[processStatefulPolicies] policy ${incentive.policy_id} not found. Skipping...`);
+              log.warn("finalize skip policy not found", { policy_id: incentive.policy_id });
               continue;
             }
 
@@ -159,7 +157,7 @@ export class FinalizeAction extends AbstractAction {
           const policy = policyMap.get(incentive.policy_id);
 
           if (!policy) {
-            logger.warn(`[processStatefulPolicies] policy ${incentive.policy_id} not found in map. Skipping...`);
+            log.warn("finalize skip policy not in map", { policy_id: incentive.policy_id });
             continue;
           }
 
@@ -175,12 +173,12 @@ export class FinalizeAction extends AbstractAction {
       const len = updatedIncentives.length;
       const rate = ((len / duration) * 1000).toFixed(3);
 
-      logger.debug(`[campaign:finalize] ${len} incentives done in ${duration}ms (${rate}/s)`);
+      log.debug("finalize incentives done", { count: len, ms: duration, rate: Number(rate) });
     } while (!done);
 
     // 5. Persist meta
-    logger.debug("[campaign:finalize] store metadata");
+    log.debug("finalize store metadata");
     await store.store(MetadataLifetime.Day);
-    logger.debug("[campaign:finalize] store metadata done");
+    log.debug("finalize store metadata done");
   }
 }

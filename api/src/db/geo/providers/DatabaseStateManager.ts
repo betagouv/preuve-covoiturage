@@ -1,4 +1,4 @@
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import pg from "dep:pg";
 import {
   AppConfigInterface,
@@ -8,6 +8,8 @@ import {
   StaticMigrable,
 } from "../interfaces/index.ts";
 import { MemoryStateManager } from "./MemoryStateManager.ts";
+
+const log = taggedLogger("[geo-import]", { maxLength: 512 });
 
 export class DatabaseStateManager implements DatabaseStateManagerInterface {
   readonly table: string = "dataset_migration";
@@ -44,7 +46,7 @@ export class DatabaseStateManager implements DatabaseStateManagerInterface {
     for (const { key } of result.rows) {
       const migrable = this.migrations.get(key);
       if (!migrable) {
-        logger.error(`Migration ${key} is not found`);
+        log.error("migration not found", { key });
       } else {
         setResult.add(migrable);
       }

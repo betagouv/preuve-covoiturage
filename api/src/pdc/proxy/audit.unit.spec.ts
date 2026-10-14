@@ -113,14 +113,14 @@ describe("formatAuditLine", () => {
       outcome: { ok: true, result: { uuid: "u-1", outcome: "scope_released" } },
     });
     assertStringIncludes(line, " operator_id=3.7 ");
-    assertFalse(line.includes("territory_id=12"));
+    assertFalse(line.includes(" territory_id="));
     assertStringIncludes(line, "result_id=u-1 result=scope_released");
   });
 
   it("ignore les identifiants non scalaires", () => {
     const line = formatAuditLine("territory:update", {
       context: httpContext,
-      params: { _id: { $ne: 1 }, operator_id: [1, 2] },
+      params: { _id: { $ne: 1 }, operator_id: ["1", "2"] },
       ms: 1,
       outcome: { ok: true, result: null },
     });

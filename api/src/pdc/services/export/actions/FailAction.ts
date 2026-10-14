@@ -1,13 +1,15 @@
 import { NotFoundException } from "@/ilos/common/exceptions/index.ts";
 import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { hasPermissionMiddleware } from "../../../providers/middleware/middlewares.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/fail.contract.ts";
 import { alias } from "../contracts/fail.schema.ts";
 import { ExportStatus } from "../models/Export.ts";
 import { ExportRepositoryInterfaceResolver } from "../repositories/ExportRepository.ts";
 import { NotificationService } from "../services/NotificationService.ts";
+
+const log = taggedLogger("[export]");
 
 @handler({
   ...handlerConfig,
@@ -43,7 +45,7 @@ export class FailAction extends AbstractAction {
       await this.notification.error({ ...exp, error: params.message });
       await this.notification.support({ ...exp, error: params.message });
     } catch (e) {
-      logger.error(`Export ${exp.uuid} failed but notification failed: ${(e as Error).message}`);
+      log.error("notification failed after failure", { uuid: exp.uuid, error: errorCode(e) });
     }
 
     return { status: ExportStatus.FAILURE };

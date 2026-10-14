@@ -1,6 +1,6 @@
 import { defaultTimezone } from "@/config/time.ts";
 import { KernelInterfaceResolver, provider } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { APDFNameProvider } from "@/pdc/providers/storage/index.ts";
 import { ExcelCampaignConfig } from "@/pdc/services/apdf/interfaces/ExcelTypes.ts";
 import excel from "dep:excel";
@@ -11,6 +11,8 @@ import { DataRepositoryProvider } from "../DataRepositoryProvider.ts";
 import { SlicesWorksheetWriter } from "./SlicesWorksheetWriter.ts";
 import { TripsWorksheetWriter } from "./TripsWorksheetWriter.ts";
 import { wrapSlices } from "./wrapSlicesHelper.ts";
+
+const log = taggedLogger("[apdf]");
 
 @provider()
 export class BuildExcel {
@@ -89,11 +91,7 @@ export class BuildExcel {
       await using cursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.TripsWsWriter.call(cursor, config, wkw);
     } catch (e) {
-      logger.error(`[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`);
-      if (e instanceof Error) {
-        logger.error(e.message);
-        logger.error(e.stack);
-      }
+      log.error("write trips failed", { campaign_id: params.campaign_id, error: errorCode(e) });
     }
   }
 
@@ -106,10 +104,7 @@ export class BuildExcel {
       if (!slices.length) return;
       await this.slicesWsWriter.call(wkw, slices, withDeclared);
     } catch (e) {
-      logger.error("[apdf:buildExcel] Error while computing slices");
-      if (e instanceof Error) {
-        logger.error(e.message);
-      }
+      log.error("compute slices failed", { error: errorCode(e) });
     }
   }
 
@@ -134,7 +129,7 @@ export class BuildExcel {
     );
 
     if (!campaign) {
-      logger.warn(`[BuildExcel] Campaign ${campaign_id} not found`);
+      log.warn("campaign not found", { campaign_id });
       return defaultParams;
     }
 

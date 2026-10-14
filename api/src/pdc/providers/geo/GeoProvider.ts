@@ -13,13 +13,15 @@ import {
   RouteMetaProviderInterface,
 } from "./interfaces/index.ts";
 
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import {
   EtalabAPIGeoProvider,
   EtalabBaseAdresseNationaleProvider,
   LocalGeoProvider,
   OSRMProvider,
 } from "./providers/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider({
   identifier: GeoProviderInterfaceResolver,
@@ -59,9 +61,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await geocoder.literalToPosition(literal);
       } catch (e) {
-        logger.error(
-          `[GeoProvider:literalToPosition] (${literal}) ${e.message}`,
-        );
+        log.error("literal to position", { error: errorCode(e) });
         failure.push(`literalToPosition ${e.message}`);
       }
     }
@@ -74,7 +74,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseeReverseCoder.inseeToPosition(insee);
       } catch (e) {
-        logger.error(`[GeoProvider:inseeToPosition] (${insee}) ${e.message}`);
+        log.error("insee to position", { insee, error: errorCode(e) });
         failure.push(`inseeToPosition ${e.message}`);
       }
     }
@@ -88,9 +88,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        logger.error(
-          `[GeoProvider:positionToInsee] (${geo.lon},${geo.lat}) ${e.message}`,
-        );
+        log.error("position to insee", { lon: geo.lon, lat: geo.lat, error: errorCode(e) });
         failure.push(`positionToInsee ${e.message}`);
       }
     }
@@ -106,9 +104,13 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
-        logger.error(
-          `[GeoProvider:getRouteMeta] (${start.lon},${start.lat};${end.lon},${end.lat}) ${e.message}`,
-        );
+        log.error("route meta", {
+          start_lon: start.lon,
+          start_lat: start.lat,
+          end_lon: end.lon,
+          end_lat: end.lat,
+          error: errorCode(e),
+        });
         failure.push(`getRouteMeta ${e.message}`);
       }
     }

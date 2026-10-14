@@ -1,6 +1,6 @@
 import { subMonths } from "dep:date-fns";
 import { provider } from "../../../../ilos/common/index.ts";
-import { logger } from "../../../../lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import {
   APDFNameProvider,
   BucketName,
@@ -13,6 +13,8 @@ import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
 } from "../interfaces/StorageRepositoryProviderInterface.ts";
+
+const log = taggedLogger("[apdf]");
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,
@@ -30,8 +32,7 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
       const list = await this.s3StorageProvider.list(this.bucket, `${campaign._id}`);
       return list.filter((obj: S3Object) => obj.size > 0);
     } catch (e) {
-      const errMsg = e instanceof Error ? e.message : String(e);
-      logger.error(`[Apdf:StorageRepo:findByCampaign] ${errMsg}`);
+      log.error("find by campaign failed", { campaign_id: campaign._id, error: errorCode(e) });
       throw e;
     }
   }
