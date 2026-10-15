@@ -27,6 +27,11 @@ export function roleRank(role: string): number {
   return ROLE_RANK[role] ?? 0;
 }
 
+// Famille du rôle : `registry`, `territory` ou `operator`.
+export function roleFamily(role: string): string {
+  return role.split(".")[0] ?? "";
+}
+
 /**
  * Détecte l'octroi d'un périmètre (tableau `scopes` non vide).
  *
@@ -66,6 +71,11 @@ export class UserScopeGuardMiddleware implements MiddlewareInterface {
     const targetRole = get(params, "role", "") as string;
     if (targetRole && roleRank(targetRole) > roleRank(callerRole)) {
       throw new ForbiddenException("Attribution d'un rôle de rang supérieur interdite");
+    }
+
+    // Seul registry.admin change de famille.
+    if (targetRole && !hasManageScopes && roleFamily(targetRole) !== roleFamily(callerRole)) {
+      throw new ForbiddenException("Attribution d'un rôle d'une autre famille interdite");
     }
 
     return next(params, context);

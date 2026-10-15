@@ -1,7 +1,7 @@
 import { assertEquals } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
 import { NotFoundException, UnexpectedException } from "@/ilos/common/index.ts";
-import { formatRouteError } from "./formatRouteError.ts";
+import { formatRouteError, violationMessages } from "./formatRouteError.ts";
 
 describe("formatRouteError", () => {
   it("keeps typed 4xx message (plain)", () => {
@@ -47,5 +47,45 @@ describe("formatRouteError", () => {
     const { status, body } = formatRouteError("boom", false);
     assertEquals(status, 500);
     assertEquals(body, { error: "Internal Server Error" });
+  });
+  it("relaie les messages de violation d'un 400 (liste de chaînes)", () => {
+    const err = { httpCode: 400, message: "Invalid params", rpcError: { data: ["email : Expected a valid email"] } };
+    assertEquals(formatRouteError(err, false), { status: 400, body: ["email : Expected a valid email"] });
+  });
+
+  // ajv rend des objets décrivant le DTO : chemins, mots-clés, contraintes, valeur reçue.
+  it("ne relaie pas la structure du DTO produite par ajv", () => {
+    const err = {
+      httpCode: 400,
+      message: "Invalid params",
+      rpcError: { data: [{ instancePath: "/siret", keyword: "pattern", params: { pattern: "^[0-9]{14}$" } }] },
+    };
+    assertEquals(formatRouteError(err, false), { status: 400, body: { error: "Invalid params" } });
+  });
+
+  it("garde le message d'un 403 sans le détail du périmètre refusé", () => {
+    const err = { httpCode: 403, message: "Interdit", rpcError: { data: { scope: "territory_id", value: 2 } } };
+    assertEquals(formatRouteError(err, false), { status: 403, body: { error: "Interdit" } });
+  });
+
+  it("filtre aussi le champ data de la réponse JSON-RPC", () => {
+    const err = {
+      httpCode: 400,
+      message: "Invalid params",
+      rpcError: { code: -32602, message: "Invalid params", data: [{ instancePath: "/siret" }] },
+    };
+    assertEquals(formatRouteError(err, true), {
+      status: 400,
+      body: { jsonrpc: "2.0", id: 1, error: { code: -32602, message: "Invalid params", data: undefined } },
+    });
+  });
+
+  it("violationMessages: chaîne, liste de chaînes, rien d'autre", () => {
+    assertEquals(violationMessages("Start should be before end"), "Start should be before end");
+    assertEquals(violationMessages(["a", "b"]), ["a", "b"]);
+    assertEquals(violationMessages([]), undefined);
+    assertEquals(violationMessages(["a", { b: 1 }]), undefined);
+    assertEquals(violationMessages({ message: "x" }), undefined);
+    assertEquals(violationMessages(undefined), undefined);
   });
 });

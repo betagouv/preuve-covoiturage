@@ -37,4 +37,16 @@ describe("dto/Users", () => {
   it("refuse un login_siren qui n'a pas 9 chiffres", () => {
     assertEquals(failures({ ...base, login_siren: "1234" }, CreateUser).length > 0, true);
   });
+  it("refuse les balises dans le nom et le prénom", () => {
+    assertEquals(failures({ ...base, firstname: "<script>alert(1)</script>" }, CreateUser).length > 0, true);
+    assertEquals(failures({ ...base, lastname: "Dupont <img onerror=x>" }, CreateUser).length > 0, true);
+  });
+
+  it("refuse un caractère de contrôle dans le nom", () => {
+    assertEquals(failures({ ...base, lastname: "Dupont\u0000" }, CreateUser).length > 0, true);
+  });
+
+  it("accepte les accents, apostrophes et traits d'union", () => {
+    assertEquals(failures({ ...base, firstname: "Jean-Élie", lastname: "O'Connor Œuf" }, CreateUser), []);
+  });
 });

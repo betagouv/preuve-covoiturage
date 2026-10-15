@@ -1,6 +1,6 @@
 import { array, Infer, object, optional } from "@/lib/superstruct/index.ts";
 import { boolean, nullable, pattern, string } from "@/lib/superstruct/index.ts";
-import { Email, Id, NullableId, Role, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Email, Id, NullableId, PlainText, Role, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
 
 // SIREN de connexion ProConnect : 9 chiffres, distinct du SIRET du territoire.
 export const LoginSiren = nullable(pattern(string(), /^\d{9}$/));
@@ -22,8 +22,8 @@ export const Users = object({
 });
 
 export const CreateUser = object({
-  firstname: Varchar,
-  lastname: Varchar,
+  firstname: PlainText,
+  lastname: PlainText,
   email: Email,
   role: Role,
   operator_id: optional(NullableId),
@@ -38,8 +38,8 @@ export const DeleteUser = object({
 
 export const UpdateUser = object({
   id: Id,
-  firstname: Varchar,
-  lastname: Varchar,
+  firstname: PlainText,
+  lastname: PlainText,
   email: Email,
   role: Role,
   operator_id: optional(NullableId),
