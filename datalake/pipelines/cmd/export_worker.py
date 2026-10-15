@@ -4,8 +4,10 @@ Drains the API's pending export queue: claim -> COPY to CSV -> zip -> upload to
 the export bucket -> report success/failure back to the API.
 """
 
+import logging
 import os
 import tempfile
+import time
 import zipfile
 from datetime import datetime
 
@@ -20,6 +22,7 @@ from pipelines.helpers.s3 import export_s3_client, s3_upload
 
 load_dotenv()
 app = typer.Typer()
+log = logging.getLogger("export_worker")
 
 TARGETS = ["operator", "territory"]
 
@@ -29,58 +32,91 @@ def _to_local_date(iso: str) -> str:
     return datetime.fromisoformat(iso).strftime("%Y-%m-%d")
 
 
-def stream_csv(conn, inner_sql: str, csv_path: str) -> None:
+def _mo(path: str) -> str:
+    return f"{os.path.getsize(path) / 1e6:.1f} Mo"
+
+
+def stream_csv(conn, inner_sql: str, csv_path: str) -> int:
     # server-side streaming COPY straight to a local file, semicolon-delimited + header
     copy_sql = f"COPY ({inner_sql}) TO STDOUT (FORMAT CSV, DELIMITER ';', HEADER)"
     with open(csv_path, "wb") as f, conn.cursor() as cur:
         with cur.copy(copy_sql) as copy:
             for chunk in copy:
                 f.write(chunk)
+        return cur.rowcount
 
 
 def process_one(api, conn, s3, bucket) -> bool:
+    log.info("claim : recherche d'un export en attente (%s)", ", ".join(TARGETS))
     task = api.claim(TARGETS)
     if not task:
+        log.info("claim : aucun export en attente")
         return False
     uuid = task["uuid"]
+    started = time.monotonic()
     try:
         params = dict(task["params"])
+        geo = {k: len(v) for k, v in (params.get("geo_selector") or {}).items() if v}
+        log.info("[%s] réclamé : target=%s start_at=%s end_at=%s operator_id=%s geo=%s",
+                 uuid, task["target"], params["start_at"], params["end_at"],
+                 params.get("operator_id"), geo)
         params["start_at"] = _to_local_date(params["start_at"])
         params["end_at"] = _to_local_date(params["end_at"])
         inner = build_copy_sql(task["target"], params)
+        log.info("[%s] requête construite : %s → %s (borne exclusive)",
+                 uuid, params["start_at"], params["end_at"])
 
         # temp files vont dans un répertoire inscriptible (TMPDIR, défaut /tmp) :
         # le workdir de l'image est monté en lecture seule. Auto-nettoyé en sortie.
         with tempfile.TemporaryDirectory(prefix="export-") as tmp:
             csv_path = os.path.join(tmp, f"{uuid}.csv")
             zip_path = os.path.join(tmp, f"{uuid}.csv.zip")
-            stream_csv(conn, inner, csv_path)
+            key = f"{uuid}.csv.zip"
+
+            t = time.monotonic()
+            log.info("[%s] COPY depuis zone_exposed.export_partners…", uuid)
+            rows = stream_csv(conn, inner, csv_path)
+            log.info("[%s] CSV écrit : %s lignes, %s en %.1fs",
+                     uuid, rows, _mo(csv_path), time.monotonic() - t)
+
+            t = time.monotonic()
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
                 z.write(csv_path, arcname=f"{uuid}.csv")
+            log.info("[%s] zip : %s en %.1fs", uuid, _mo(zip_path), time.monotonic() - t)
 
-            s3_upload(bucket, f"{uuid}.csv.zip", zip_path, client=s3)
+            t = time.monotonic()
+            log.info("[%s] upload s3://%s/%s…", uuid, bucket, key)
+            s3_upload(bucket, key, zip_path, client=s3)
+            log.info("[%s] upload terminé en %.1fs", uuid, time.monotonic() - t)
+
             api.complete(uuid, os.path.getsize(zip_path))
+        log.info("[%s] terminé, signalé à l'API (%.1fs au total)",
+                 uuid, time.monotonic() - started)
         return True
-    except Exception as e:  # any failure -> report to API, don't crash the loop
+    except Exception:  # any failure -> report to API, don't crash the loop
         # Full detail stays worker-side (logs); the API/user only sees a generic
         # message — raw psycopg/botocore errors can leak schema/hostnames.
-        print(f"❌ export {uuid} failed: {e!r}")
+        log.exception("[%s] échec après %.1fs", uuid, time.monotonic() - started)
         api.fail(uuid, "export generation failed")
         return True
 
 
 @app.command()
 def run(max_iterations: int = 50):
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s %(levelname)s %(message)s")
     api = ApiClient(os.environ["API_URL"],
                     os.environ["EXPORT_WORKER_ACCESS_KEY"],
                     os.environ["EXPORT_WORKER_SECRET_KEY"])
     s3 = export_s3_client()
     bucket = os.environ["EXPORT_S3_BUCKET"]
+    log.info("démarrage : bucket=%s max_iterations=%s", bucket, max_iterations)
     processed = 0
     with psycopg.connect(pg_conninfo()) as conn:
+        log.info("connecté au datalake")
         while processed < max_iterations and process_one(api, conn, s3, bucket):
             processed += 1
-    print(f"✅ processed {processed} export(s)")
+    log.info("fin : %s export(s) traité(s)", processed)
 
 
 if __name__ == "__main__":
