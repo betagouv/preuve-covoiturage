@@ -75,7 +75,7 @@ Copier `.env.example` vers `.env.local` et configurer :
 | `NEXT_PUBLIC_API_REDIRECT`        | URL de redirection API                                                      |
 | `NEXT_PUBLIC_DATALAKE_BASE_URL`   | URL de l'API datalake (recherche de territoires)                            |
 | `NEXT_PUBLIC_PC_USER_URI`         | URI utilisateur PC                                                          |
-| `NEXT_PUBLIC_FEATURE_MULTI_SIRET` | `true` affiche le multi-périmètre (bascule, badge, éditeur). Off par défaut |
+| `NEXT_PUBLIC_FEATURE_MULTI_SIRET` | `true` affiche le multi-périmètre : liste des territoires dans le menu compte du header (si ≥ 2), badge, éditeur. Off par défaut |
 
 Les `NEXT_PUBLIC_*` sont figées au build : changer le flag demande un redéploiement (var GitHub `PARTNER_FEATURE_MULTI_SIRET` par environnement).
 

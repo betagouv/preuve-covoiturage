@@ -25,6 +25,46 @@
   z-index: 1;
 }
 
+// Menu compte du header : réutilise le collapse du sélecteur de langue DSFR, sans son icône « traduire ».
+.user-menu {
+  display: inline-flex;
+  .fr-translate__btn::before {
+    content: none;
+  }
+  .fr-menu {
+    right: 0;
+    min-width: 18rem;
+    text-align: left;
+  }
+  .fr-menu__list {
+    display: block;
+  }
+  .fr-nav__link {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .fr-nav__link[aria-current="true"] {
+    font-weight: 700;
+  }
+  .fr-nav__link[aria-current="true"]::after {
+    content: "✓";
+    margin-left: auto;
+  }
+}
+.user-menu__summary {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+.user-menu__identity {
+  border-bottom: 1px solid var(--border-default-grey);
+}
+.user-menu__heading {
+  color: var(--text-mention-grey);
+  text-transform: uppercase;
+}
+
 // Accueil : « covoiturage.beta.gouv.fr » ne tient pas sur une ligne de titre en mobile.
 @media (max-width: 36em) {
   .home-title h1 {

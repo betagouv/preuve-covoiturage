@@ -128,6 +128,13 @@ export const getActiveScope = (user?: UserInterface): UserScope | undefined => {
   );
 };
 
+// Territoires entre lesquels basculer : au moins deux, sinon rien à choisir (opérateur = 1:1).
+export const switchableScopes = (user: Pick<UserInterface, "scopes"> | undefined, enabled: boolean): UserScope[] => {
+  if (!enabled) return [];
+  const territories = (user?.scopes ?? []).filter((s) => s.territory_id);
+  return territories.length > 1 ? territories : [];
+};
+
 // Libellé affichable du périmètre actif (jamais l'ID brut).
 export const activeScopeLabel = (user?: UserInterface): string => {
   const scope = getActiveScope(user);
