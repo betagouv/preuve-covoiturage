@@ -1,12 +1,9 @@
 import { assertEquals } from "dep:assert";
 import { afterAll, beforeAll, describe, it } from "dep:testing-bdd";
-import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection } from "@/ilos/connection-postgres/index.ts";
 import sql from "@/lib/pg/sql.ts";
 import { DenoDbContext, makeDenoDbBeforeAfter } from "@/pdc/providers/test/index.ts";
 import { TerritoryRepositoryProvider } from "./TerritoryRepositoryProvider.ts";
-
-class TestKernel extends KernelInterfaceResolver {}
 
 describe("TerritoryRepositoryProvider", () => {
   let db: DenoDbContext;
@@ -18,7 +15,7 @@ describe("TerritoryRepositoryProvider", () => {
     db = await before();
     legacy = new LegacyPostgresConnection({ connectionString: db.db.currentConnectionString });
     await legacy.up();
-    repository = new TerritoryRepositoryProvider(legacy, new TestKernel());
+    repository = new TerritoryRepositoryProvider(legacy);
   });
 
   afterAll(async () => {

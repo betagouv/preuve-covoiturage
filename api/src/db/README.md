@@ -12,9 +12,7 @@
 
 - `just migrate` : joue toutes les migrations et flashe les données depuis le cache
 - `just seed` : joue toutes les migrations et charge les données de test de `providers/migration/seeds`
-- `just source` : importe les jeux de données de `db/geo` dans `geo.perimeters` (legacy, remplacé par le datalake)
 - `just geo-import <fichier> [sha256]` : remplace `geo.perimeters` et met à jour `com_evolution` depuis le datalake
-- `just external_data_migrate` : importe les jeux de données externes
 
 ## Migrations
 
@@ -75,7 +73,7 @@ En prod, le script tourne depuis l'image `docker/geo-import/prod` (psql + pg_res
 
 ## Dump des données pour le flash
 
-La table `geo.perimeters` peut être alimentée par `just source` ou flashée depuis un dump de données.
+La table `geo.perimeters` est flashée depuis un dump de données.
 
 L'archive actuelle remplit `geo.perimeters` avec les millésimes d'avant le datalake : lancer ensuite
 `geo-import` sur la base neuve.

@@ -1,5 +1,3 @@
-import { SingleResultInterface as GeoSingleResultInterface } from './listGeo.contract.ts';
-
 /**
  * Peut être un code siren d'une EPCI ou d'une AOM
  */
@@ -20,7 +18,7 @@ export interface SingleResultInterface {
   dep_name: string;
   dep_siren: string;
 
-  coms: Array<Pick<GeoSingleResultInterface, 'insee' | 'name'>>;
+  coms: Array<{ insee: string; name: string }>;
 }
 
 export type ResultInterface = SingleResultInterface;

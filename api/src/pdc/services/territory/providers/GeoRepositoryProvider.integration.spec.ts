@@ -1,12 +1,9 @@
 import { assertEquals } from "dep:assert";
 import { afterAll, beforeAll, describe, it } from "dep:testing-bdd";
 
-import { KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { DenoDbContext, makeDenoDbBeforeAfter } from "@/pdc/providers/test/dbMacro.ts";
 
 import { GeoRepositoryProvider } from "./GeoRepositoryProvider.ts";
-
-class TestKernel extends KernelInterfaceResolver {}
 
 describe("GeoRepositoryProvider", () => {
   let db: DenoDbContext;
@@ -15,40 +12,11 @@ describe("GeoRepositoryProvider", () => {
 
   beforeAll(async () => {
     db = await before();
-    repository = new GeoRepositoryProvider(db.connection, new TestKernel());
+    repository = new GeoRepositoryProvider(db.connection);
   });
 
   afterAll(async () => {
     await after(db);
-  });
-
-  it("list with a search that matches nothing returns an empty page and total 0", async () => {
-    const result = await repository.list({ search: "__no_match__" });
-    assertEquals(result.data, [] as never);
-    assertEquals(result.meta.pagination.total, 0);
-    assertEquals(result.meta.pagination.offset, 0);
-    assertEquals(result.meta.pagination.limit, 100);
-  });
-
-  it("list honours custom limit / offset and the exclude_coms branch", async () => {
-    const result = await repository.list({
-      search: "__no_match__",
-      exclude_coms: true,
-      limit: 5,
-      offset: 10,
-    });
-    assertEquals(result.data, [] as never);
-    assertEquals(result.meta.pagination.limit, 5);
-    assertEquals(result.meta.pagination.offset, 10);
-  });
-
-  it("list with an INSEE allowlist filter compiles without crashing", async () => {
-    const result = await repository.list({
-      search: "__no_match__",
-      where: { insee: ["00000", "99999"] },
-    });
-    assertEquals(result.data, [] as never);
-    assertEquals(result.meta.pagination.total, 0);
   });
 
   it("findBySiren returns the empty-shape result when no row matches", async () => {

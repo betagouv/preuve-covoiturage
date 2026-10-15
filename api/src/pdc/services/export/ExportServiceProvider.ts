@@ -79,7 +79,6 @@ const validators = [
     ["validate", ValidatorMiddleware],
     ["timezone", DefaultTimezoneMiddleware],
     ownScopeGuardMiddlewareBinding,
-    // scopeToGroupBinding,
   ],
 })
 export class ExportServiceProvider extends AbstractServiceProvider {

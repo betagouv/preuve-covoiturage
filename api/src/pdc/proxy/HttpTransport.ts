@@ -25,18 +25,13 @@ import { handlerListIdentifier, ServiceProvider } from "@/ilos/core/index.ts";
 const MAX_RPC_BATCH_SIZE = 20;
 const log = taggedLogger("[http]");
 import { env_or_fail, env_or_false } from "@/lib/env/index.ts";
-import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { auditLog } from "@/pdc/proxy/audit.ts";
 import { get } from "@/lib/object/index.ts";
 import { join } from "@/lib/path/index.ts";
 import { isRpcEndpointEnabled } from "./helpers/rpcEndpointEnabled.ts";
 import { Sentry, SentryProvider } from "@/pdc/providers/sentry/index.ts";
 import { registerExpressRoute } from "@/pdc/proxy/helpers/registerExpressRoute.ts";
-import {
-  ParamsInterface as GetAuthorizedCodesParams,
-  ResultInterface as GetAuthorizedCodesResult,
-  signature as getAuthorizedCodesSignature,
-} from "@/pdc/services/territory/contracts/getAuthorizedCodes.contract.ts";
 import { asyncHandler } from "./helpers/asyncHandler.ts";
 import { createRPCPayload } from "./helpers/createRPCPayload.ts";
 import { healthCheckFactory } from "./helpers/healthCheckFactory.ts";
@@ -101,7 +96,6 @@ export class HttpTransport implements TransportInterface {
     this.registerHonorRoutes();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
-    this.registerGeoRoutes();
     this.registerStaticFolder();
   }
 
@@ -159,7 +153,7 @@ export class HttpTransport implements TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
-    // Politique générale, sauf /honor et /geo/search qui ont la leur (plus bas).
+    // Politique générale, sauf /honor qui a la sienne (plus bas).
     // L'exclusion est testée explicitement : le montage par expression régulière d'Express
     // ne se comporte pas comme un préfixe, et l'ancien motif n'excluait rien.
     const generalCors = cors({
@@ -169,30 +163,15 @@ export class HttpTransport implements TransportInterface {
       credentials: true,
     });
     this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (/^\/(honor|geo\/search)\b/.test(req.path)) return next();
+      if (/^\/honor\b/.test(req.path)) return next();
       return generalCors(req, res, next);
     });
-
-    this.app.use(
-      /\/(geo\/search)/i,
-      cors({
-        origin: this.config.get("proxy.observatoryCors"),
-        optionsSuccessStatus: 200,
-      }),
-    );
 
     // apply specific cors policy
     this.app.use(
       "/honor",
       cors({
         origin: this.config.get("proxy.certUrl"),
-        optionsSuccessStatus: 200,
-      }),
-    );
-    this.app.use(
-      "/geo/search",
-      cors({
-        origin: this.config.get("proxy.showcase"),
         optionsSuccessStatus: 200,
       }),
     );
@@ -249,23 +228,6 @@ export class HttpTransport implements TransportInterface {
       "/metrics",
       metricsMiddleware("metrics"),
       prometheusMetricsFactory(),
-    );
-  }
-
-  private registerGeoRoutes(): void {
-    this.app.post(
-      "/geo/search",
-      rateLimiter(),
-      asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        const response = await this.kernel.handle(
-          createRPCPayload(
-            "territory:listGeo",
-            { search: req.body.search, exclude_coms: req.body.exclude_coms },
-            { permissions: ["common.territory.list"] },
-          ),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
     );
   }
 
@@ -410,13 +372,12 @@ export class HttpTransport implements TransportInterface {
             );
           }
 
-          let user = get(req, "session.user", null);
+          const user = get(req, "session.user", null);
 
           if (!user) {
             throw new UnauthorizedException();
           }
 
-          user = { ...user, ...(await this.getTerritoryInfos(user)) };
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
           // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
@@ -527,37 +488,5 @@ export class HttpTransport implements TransportInterface {
     }
 
     return response;
-  }
-
-  /**
-   * Fetch additional data for territories
-   */
-  private async getTerritoryInfos(
-    user: { territory_id?: number | null; authorizedZoneCodes?: { com: string[] } },
-  ): Promise<typeof user | Record<string, never>> {
-    if (user.territory_id) {
-      const dt = { com: [] } as { com: string[] };
-
-      try {
-        const authorizedCodes = await this.kernel.call<
-          GetAuthorizedCodesParams,
-          GetAuthorizedCodesResult
-        >(
-          getAuthorizedCodesSignature,
-          { _id: user.territory_id },
-          { call: { user }, channel: { service: "proxy" } },
-        );
-
-        dt.com = authorizedCodes.com || [];
-      } catch (e) {
-        log.warn("authorized zone codes failed", { error: errorCode(e) });
-      }
-
-      user.authorizedZoneCodes = { ...dt };
-
-      return user;
-    }
-
-    return {};
   }
 }

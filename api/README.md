@@ -121,7 +121,6 @@ Commandes principales :
 | `just api campaign:sync` | Synchroniser les sommes d'incitation |
 | `just api campaign:stats` | Générer les stats de campagne |
 | `just api apdf:export` | Exporter les APDF |
-| `just api territory:index` | Indexer les territoires dans Meilisearch |
 | `just api territory:perimeter <action> -t <territory_id> [type:code...]` | Périmètre versionné d'un territoire (voir ci-dessous) |
 | `just api acquisition:geo` | Traiter le géocodage des acquisitions |
 | `just api company:fetch <siret>` | Récupérer les données entreprise (INSEE SIRENE) |
@@ -254,14 +253,6 @@ Format des logs : `[tag] étape clé=valeur` via `taggedLogger("[tag]")` (`src/l
 | `APP_ROUTECACHE_ENABLED` | Non | `true` | Active le cache de réponses HTTP dans Redis |
 | `APP_ROUTECACHE_GZIP_ENABLED` | Non | `true` | Active la compression GZip des payloads en cache |
 | `APP_ROUTECACHE_AUTHTOKEN` | Non | — | Token `[a-zA-Z0-9]` pour le flush du cache via `DELETE /cache?prefix=` (header `X-Route-Cache-Auth`) |
-
-#### Meilisearch
-
-| Variable | Requis | Défaut | Description |
-| --- | --- | --- | --- |
-| `APP_MEILISEARCH_HOST` | Non | `http://localhost` | URL du serveur Meilisearch |
-| `APP_MEILISEARCH_APIKEY` | Non | `""` | Clé API Meilisearch |
-| `APP_MEILISEARCH_INDEX` | Non | `geo` | Nom de l'index pour la recherche de territoires |
 
 #### Export
 

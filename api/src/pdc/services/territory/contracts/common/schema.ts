@@ -12,11 +12,11 @@ export const territoryCodeSchema = {
   },
 };
 
-export function schema(alias: string, update = false) {
+export function schema(alias: string) {
   return {
     $id: alias,
     type: "object",
-    required: ["company_id", "name", "selector", ...(update ? ["_id"] : [])],
+    required: ["company_id", "name", "selector"],
     additionalProperties: true,
     properties: {
       contacts: { contacts },
@@ -35,7 +35,6 @@ export function schema(alias: string, update = false) {
       },
       selector: territoryCodeSchema,
       name: { macro: "varchar" },
-      ...(update ? { _id: { macro: "serial" } } : {}),
     },
   };
 }
