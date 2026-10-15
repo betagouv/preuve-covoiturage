@@ -59,6 +59,7 @@ const DeckMap = (props: DeckMapInterface) => {
               height: props.height ? props.height : '60vh',
             }}
             mapStyle={props.mapStyle}
+            workerUrl="/maplibre-gl-worker.mjs"
             onLoad={() => fitBounds(mapRef.current, props.bounds)}
             scrollZoom={props.scrollZoom}
           >
@@ -67,7 +68,7 @@ const DeckMap = (props: DeckMapInterface) => {
             <FullscreenControl />
             {props.legend &&
               props.legend.map((l,i) =>
-                <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
+                <Legend key={i} {...l} />
               )
             }
           </Map>

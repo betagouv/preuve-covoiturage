@@ -27,6 +27,17 @@
   .legend_title {
     font-weight: bold;
   }
+  .legend_subtitle,
+  .legend_note {
+    font-size: 0.75em;
+    color: #3a3a3a;
+  }
+  .legend_subtitle {
+    margin-bottom: 4px;
+  }
+  .legend_note {
+    margin-top: 6px;
+  }
   .amount {
     margin-top: 10px;
   }
