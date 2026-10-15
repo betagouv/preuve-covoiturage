@@ -2,7 +2,7 @@
 name: cgu-rules
 description: Cached, machine-checkable distillation of the RPC CGU - read by the pr-preparer cgu-guard check.
 canonical_url: https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/cgu-conditions-generales-dutilisation-de-covoiturage.beta.gouv
-last_synced: 2026-10-08
+last_synced: 2026-10-15
 cgu_version: 2026-02-17
 ttl_days: 7
 ---
@@ -75,6 +75,20 @@ compte « administrateur » qui enregistre les agents habilités. La DGITM ouvre
   périmètre (territoire ou opérateur) sans la permission d'administration du registre ;
 - retire une garde de permission ou de périmètre sur les routes `dashboard/user*` ;
 - supprime ou affaiblit la journalisation des actions d'administration des comptes.
+
+## CGU-5 - Cloisonnement territorial des AOM  (CGU 2.1 / 2.3.2 / 2.5)  [severity: blocker]
+
+Une AOM n'accède qu'aux informations relatives à son propre territoire ; un tiers mandaté (2.5)
+agit sous mandat pour un territoire donné. Un compte qui porte plusieurs périmètres n'en
+consulte qu'un à la fois, et le périmètre actif est établi côté serveur.
+
+**Flag the diff if it:**
+- permet de lire des données (exports, campagnes, statistiques, APDF) d'un territoire qui n'est
+  pas rattaché au compte, ou mélange plusieurs territoires dans une même réponse de données ;
+- fait dépendre le périmètre actif d'une valeur choisie côté client (paramètre de requête,
+  stockage navigateur) sans revalidation en base par le serveur ;
+- retire ou contourne la revalidation de `POST /auth/context` ou le filtre de périmètre de
+  session sur les routes de données.
 
 ## How the guard reports
 
