@@ -79,13 +79,26 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async list(params: TerritoryParams): Promise<ListResultInterface> {
-    const { search, offset, limit, operator_id, policy } = { limit: 100, offset: 0, ...params };
-    const values = [];
+    const { id, search, offset, limit, operator_id, policy } = { limit: 100, offset: 0, ...params };
+    const values: unknown[] = [];
     const whereClauses: string[] = [];
 
+    const bind = (value: unknown): string => {
+      values.push(value);
+      return `$${values.length}`;
+    };
+
+    if (id) {
+      whereClauses.push(`tg._id = ${bind(id)}`);
+    }
+
     if (search) {
-      values.push(`%${search.toLowerCase()}%`);
-      whereClauses.push(`(LOWER(tg.name) LIKE $${values.length} or cc.siret LIKE $${values.length})`);
+      // `%` et `_` sont des jokers LIKE.
+      const needle = `%${search.toLowerCase().replace(/([%_\\])/g, "\\$1")}%`;
+      const placeholder = bind(needle);
+      whereClauses.push(
+        `(LOWER(tg.name) LIKE ${placeholder} ESCAPE '\\' OR cc.siret LIKE ${placeholder} ESCAPE '\\')`,
+      );
     }
 
     const client = this.connection.getClient();
@@ -104,16 +117,14 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
           meta: { pagination: { offset, limit, total: 0 } },
         };
       }
-      values.push(policiesResults.rows.map((r: { _id: number }) => r._id));
-      whereClauses.push(
-        `tg._id = ANY ($1::int[])`,
-      );
+      const policyTerritoryIds = policiesResults.rows.map((r: { _id: number }) => r._id);
+      whereClauses.push(`tg._id = ANY (${bind(policyTerritoryIds)}::int[])`);
     }
     if (operator_id) {
       const operatorQuery = {
         text: `
         WITH operator_incentives AS (SELECT DISTINCT(policy_id) FROM policy.incentives WHERE operator_id = $1)
-        SELECT DISTINCT(tg._id) FROM policy.policies pp 
+        SELECT DISTINCT(tg._id) FROM policy.policies pp
         JOIN territory.territory_group tg ON tg._id = pp.territory_id
         WHERE pp._id IN (SELECT * FROM operator_incentives)`,
         values: [operator_id],
@@ -128,14 +139,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         };
       }
 
-      values.push(territoriesForOperatorResults.rows.map((r: { _id: number }) => r._id));
-      whereClauses.push(
-        `tg._id = ANY ($1::int[])`,
-      );
+      const operatorTerritoryIds = territoriesForOperatorResults.rows.map((r: { _id: number }) => r._id);
+      whereClauses.push(`tg._id = ANY (${bind(operatorTerritoryIds)}::int[])`);
     }
+
+    const where = ["tg.deleted_at IS NULL", ...whereClauses].join(" AND ");
+
     const countQuery = `SELECT count(*) as territory_count from ${this.table} as tg
       LEFT JOIN company.companies cc ON cc._id = tg.company_id
-      ${whereClauses.length ? ` WHERE ${whereClauses.join(" AND ")}` : ""}`;
+      WHERE ${where}`;
 
     const total = parseFloat(
       (
@@ -146,16 +158,16 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       ).rows[0].territory_count,
     );
 
-    values.push(limit);
-    values.push(offset);
+    const limitPlaceholder = bind(limit);
+    const offsetPlaceholder = bind(offset);
     const query = {
       text: `
         SELECT tg._id, tg.name, cc.siret FROM ${this.table} as tg
         LEFT JOIN company.companies cc ON cc._id = tg.company_id
-        WHERE tg.deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""}
+        WHERE ${where}
         ORDER BY tg.name ASC
-        LIMIT $${whereClauses.length + 1}
-        OFFSET $${whereClauses.length + 2}
+        LIMIT ${limitPlaceholder}
+        OFFSET ${offsetPlaceholder}
       `,
       values,
     };

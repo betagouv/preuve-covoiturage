@@ -1,4 +1,4 @@
-import { handler } from "@/ilos/common/index.ts";
+import { ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { SessionRepository } from "@/pdc/services/auth/providers/SessionRepository.ts";
@@ -35,7 +35,11 @@ export class DeleteUserAction extends AbstractAction {
     super();
   }
 
-  public override async handle(params: DeleteUser): Promise<ResultInterface> {
+  public override async handle(params: DeleteUser, context: ContextType): Promise<ResultInterface> {
+    if (context?.call?.user?._id === params.id) {
+      throw new ForbiddenException("Suppression de son propre compte interdite");
+    }
+
     const result = await this.repository.deleteUser(params);
     // Purge aussi sur retrait de périmètre : sinon la session en cours garde le territoire révoqué.
     await this.sessionRepository.destroyByUser(params.id);

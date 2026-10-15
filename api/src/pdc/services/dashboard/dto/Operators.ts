@@ -1,5 +1,5 @@
 import { Infer, object, optional } from "@/lib/superstruct/index.ts";
-import { Id, Siret, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Id, PlainText, Siret, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
 
 export const Operators = object({
   id: optional(Id),
@@ -8,7 +8,7 @@ export const Operators = object({
   limit: optional(Id),
 });
 export const CreateOperator = object({
-  name: Varchar,
+  name: PlainText,
   siret: Siret,
 });
 export const DeleteOperator = object({
@@ -16,7 +16,7 @@ export const DeleteOperator = object({
 });
 export const UpdateOperator = object({
   id: Id,
-  name: Varchar,
+  name: PlainText,
   siret: Siret,
 });
 

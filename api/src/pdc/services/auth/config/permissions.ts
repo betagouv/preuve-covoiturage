@@ -120,9 +120,7 @@ const permissions = {
     "registry.admin",
   ],
   "user.list": [
-    "operator.user",
     "operator.admin",
-    "territory.user",
     "territory.admin",
     "registry.user",
     "registry.admin",
