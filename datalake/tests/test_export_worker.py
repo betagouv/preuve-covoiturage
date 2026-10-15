@@ -89,4 +89,7 @@ def test_process_one_logs_every_step_at_info(stream_csv, caplog):
         assert any(step in m for m in infos), f"étape « {step} » absente des logs"
     assert all("u3" in m for m in infos if not m.startswith("claim"))
     assert any("2 lignes" in m for m in infos)
-    assert any("territory" in m and "2026-01-01" in m and "217500016" in m for m in infos)
+    claimed = next(m for m in infos if "réclamé" in m)
+    assert "territory" in claimed and "2026-01-01" in claimed
+    # geo_selector résolu = parfois des centaines de codes : on n'en logue que le nombre
+    assert "{'aom': 1}" in claimed and "217500016" not in claimed

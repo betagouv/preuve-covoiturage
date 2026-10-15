@@ -56,7 +56,10 @@ def process_one(api, conn, s3, bucket) -> bool:
     started = time.monotonic()
     try:
         params = dict(task["params"])
-        log.info("[%s] réclamé : target=%s params=%s", uuid, task["target"], params)
+        geo = {k: len(v) for k, v in (params.get("geo_selector") or {}).items() if v}
+        log.info("[%s] réclamé : target=%s start_at=%s end_at=%s operator_id=%s geo=%s",
+                 uuid, task["target"], params["start_at"], params["end_at"],
+                 params.get("operator_id"), geo)
         params["start_at"] = _to_local_date(params["start_at"])
         params["end_at"] = _to_local_date(params["end_at"])
         inner = build_copy_sql(task["target"], params)
