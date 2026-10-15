@@ -1,4 +1,5 @@
 import { env, env_or_fail } from "@/lib/env/index.ts";
+import { stripIpv6Brackets } from "@/lib/net/index.ts";
 import { readFileSync } from "dep:fs";
 import { URL } from "dep:url";
 
@@ -11,7 +12,7 @@ function unnestRedisConnectionString(connectionString: string): {
 } {
   const connectionURL = new URL(connectionString);
   return {
-    host: connectionURL.hostname,
+    host: stripIpv6Brackets(connectionURL.hostname),
     port: parseInt(connectionURL.port, 10) || 6379,
     username: connectionURL.username || undefined,
     password: connectionURL.password || undefined,
@@ -52,10 +53,7 @@ const postgresTls = {
 };
 
 const connectionString = env_or_fail("APP_POSTGRES_URL");
-const { hostname } = new URL(env_or_fail("APP_POSTGRES_URL"));
-
-// wrap the hostname in brackets if it contains a port for IPV6 support
-const sslHost = hostname.includes(":") ? `[${hostname}]` : hostname;
+const sslHost = stripIpv6Brackets(new URL(connectionString).hostname);
 
 export const postgres = {
   connectionString,

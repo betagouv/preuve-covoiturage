@@ -343,7 +343,7 @@ POST /v3/dashboard/user
 
 - JWT pour authentification
 - CORS configuré par route
-- Rate limiting (global + spécifique auth)
+- Rate limiting (global + spécifique auth), clé = IP cliente, IPv6 agrégée en /56
 - Helmet (headers HTTP)
 - Protection XSS
 
