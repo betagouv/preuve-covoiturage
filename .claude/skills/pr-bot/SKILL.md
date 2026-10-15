@@ -18,6 +18,8 @@ dependabot/* ──squash──▶ deps/dependabot-<date> ──squash──▶ 
 
 - Only PRs authored by `app/dependabot` with a `dependabot/*` head. Never touch other PRs.
 - `gh` always through `pass-env gh …` (never bare `gh`).
+- PRs touching `cms/`, `docker/cms/` or `app-attestation/`: close without merging, even for
+  security (frozen / out of scope). No confirmation needed.
 - Confirm with the user: the PR selection (step 2) and the merge into `main` (step 6). Merging
   into `main` publishes a stable release to **production**.
 - Never `--admin`, never self-approve, never force-push `main` / `next`, never tag by hand.
@@ -46,7 +48,7 @@ Per PR, `pass-env gh pr view <n> --json title,body,files,labels` and
 | bump type (title / body) | **major** -> read the changelog in the body, look for breaking changes |
 | files | anything other than manifest + lockfile (`package*.json`, `pyproject.toml`, `uv.lock`, `Dockerfile`, `compose*.yml`, workflows) -> suspicious, do not merge |
 | security | `security` label or advisory in the body -> priority |
-| directory | `app-attestation/` (frozen, Angular 16): security fixes only; `dbt/` (deprecated, absent from `dependabot.yml`): skip unless critical advisory |
+| directory | `cms/`, `docker/cms/`, `app-attestation/`: close (see hard rules); `dbt/` (deprecated, absent from `dependabot.yml`): skip unless critical advisory |
 | overlap | two PRs bumping the same package in the same dir (e.g. a single bump + a group) -> keep the superset, close the other |
 | CI coverage | `quality.yml` covers `api/`, `app-partners/`, `app-observatory/`, `shared/`, `docker/api/`; `quality-datalake*.yml` cover `datalake/` and `api-datalake/` -> other dirs have no CI, say so |
 
