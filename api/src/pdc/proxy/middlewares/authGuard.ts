@@ -10,3 +10,15 @@ export function authGuard(kernel: KernelInterface) {
     next();
   };
 }
+
+// Route non publique sans utilisateur (session ou jeton) : 401 explicite, pas d'action anonyme en 403.
+export function requireUser() {
+  return (req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
+    if (req.session?.user || req.stateless?.user) return next();
+    return res.status(401).json({
+      id: 1,
+      jsonrpc: "2.0",
+      error: { code: 401, data: "Error", message: "Unauthorized Error" },
+    });
+  };
+}

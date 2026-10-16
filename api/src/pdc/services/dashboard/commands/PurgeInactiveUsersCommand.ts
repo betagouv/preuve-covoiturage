@@ -5,6 +5,7 @@ import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
 } from "@/pdc/providers/notification/index.ts";
+import { SessionRepository } from "@/pdc/services/auth/providers/SessionRepository.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { InactiveUserDeletionWarningNotification } from "../notifications/InactiveUserDeletionWarningNotification.ts";
 
@@ -47,6 +48,7 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
     private config: ConfigInterfaceResolver,
     private usersRepository: UsersRepositoryInterfaceResolver,
     private emailer: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
+    private sessionRepository: SessionRepository,
   ) {}
 
   public async call(options: Options): Promise<string> {
@@ -105,6 +107,12 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
           result: "deleted",
           id: user._id,
         });
+        // Un compte inactif peut encore porter un cookie valide : on ferme ses sessions.
+        try {
+          await this.sessionRepository.destroyByUser(user._id);
+        } catch (e) {
+          log.error("session purge failed", { id: user._id, error: errorCode(e) });
+        }
       }
     }
 

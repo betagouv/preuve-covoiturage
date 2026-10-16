@@ -92,3 +92,33 @@ describe("UserRepository.authenticateByEmail", () => {
     assertEquals(await repository.authenticateByEmail("does-not-exist@example.com"), null);
   });
 });
+
+describe("UserRepository.findById", () => {
+  let db: DenoDbContext;
+  let repository: UserRepository;
+  const { before, after } = makeDenoDbBeforeAfter();
+
+  beforeAll(async () => {
+    db = await before();
+    repository = new UserRepository(db.connection, new UserScopeRepository(db.connection));
+  });
+
+  afterAll(async () => {
+    await after(db);
+  });
+
+  it("returns the identity of an existing user and null once deleted", async () => {
+    const email = "find-by-id@example.com";
+    const rows = await db.connection.query<{ _id: number }>(sql`
+      INSERT INTO auth.users (email, firstname, lastname, password, status, role)
+      VALUES (${email}::varchar, 'U'::varchar, 'Find'::varchar, 'x'::varchar, 'active'::auth.user_status_enum, 'territory.admin'::varchar)
+      RETURNING _id
+    `);
+    const id = rows[0]._id;
+
+    assertEquals((await repository.findById(id))?.email, email);
+
+    await db.connection.query(sql`DELETE FROM auth.users WHERE _id = ${id}`);
+    assertEquals(await repository.findById(id), null);
+  });
+});

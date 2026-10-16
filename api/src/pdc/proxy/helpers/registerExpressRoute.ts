@@ -7,7 +7,7 @@ import { rateLimiter } from "@/pdc/proxy/middlewares/rateLimiter.ts";
 import { express, NextFunction, Request, Response } from "dep:express";
 import { formatRange, parse, satisfies, tryParseRange } from "dep:semver";
 import { versions } from "../config/API_VERSION.ts";
-import { authGuard } from "../middlewares/authGuard.ts";
+import { authGuard, requireUser } from "../middlewares/authGuard.ts";
 
 // Configure this here: ../config/API_VERSION.ts
 const SUPPORTED_VERSIONS = versions.map((v) => parse(v));
@@ -34,7 +34,7 @@ export function registerExpressRoute(
   ];
 
   if (!params.public) {
-    middlewares = [authGuard(kernel), ...middlewares];
+    middlewares = [authGuard(kernel), requireUser(), ...middlewares];
   }
 
   const path = `/:api_version/${params.path}`.replaceAll("//", "/");

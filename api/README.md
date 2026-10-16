@@ -342,6 +342,7 @@ POST /v3/dashboard/user
 ## Sécurité
 
 - JWT pour authentification
+- Routes `/v3/*` non publiques : 401 JSON-RPC sans session ni jeton (403 réservé aux droits manquants) ; `/auth/me` relit le compte en base et détruit la session d'un utilisateur supprimé
 - CORS configuré par route
 - Rate limiting (global + spécifique auth)
 - Helmet (headers HTTP)
