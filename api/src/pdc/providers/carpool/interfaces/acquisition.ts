@@ -39,4 +39,5 @@ export type ProcessGeoParams = {
   failedOnly: boolean;
 };
 
-export type ProcessGeoResults = number;
+// cursor = start_datetime du dernier trajet du lot (lots triés par date).
+export type ProcessGeoResults = { count: number; failed: number; cursor?: Date };

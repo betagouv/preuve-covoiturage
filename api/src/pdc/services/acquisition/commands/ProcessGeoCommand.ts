@@ -5,7 +5,8 @@ import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
 import { subDays } from "dep:date-fns";
 
-const log = taggedLogger("[acquisition]", { maxLength: 512 });
+const log = taggedLogger("[geo]", { maxLength: 512 });
+const perSecond = (count: number, ms: number): number => Math.round((count * 1000) / Math.max(ms, 1));
 
 type Options = {
   loop: boolean;
@@ -62,27 +63,56 @@ export class ProcessGeoCommand implements CommandInterface {
   public async call(opts: Options): Promise<void> {
     const options = this.validateOptions(opts);
 
-    let shouldContinue = true;
+    const from = options.after ?? subDays(new Date(), options.lastDays);
+    const to = options.until ?? new Date();
+    log.info("start", {
+      from: from.toISOString(),
+      to: to.toISOString(),
+      size: options.size,
+      loop: options.loop,
+      failed_only: options.failed,
+    });
+
     const timer = getPerformanceTimer();
+    let batch = 0;
+    let total = 0;
+    let totalFailed = 0;
+    let shouldContinue = true;
 
     do {
       const subtimer = getPerformanceTimer();
-      const did = await this.encode(options);
-      const subperformance = subtimer.stop();
-      log.info("batch processed", { count: did, ms: subperformance });
-      shouldContinue = did === options.size;
+      const { count, failed, cursor } = await this.carpool.processGeo({
+        batchSize: options.size,
+        failedOnly: options.failed,
+        from,
+        to,
+      });
+      batch++;
+      total += count;
+      totalFailed += failed;
+      if (count > 0) {
+        const ms = timer.stop();
+        log.info("batch", {
+          batch,
+          count,
+          failed,
+          total,
+          total_failed: totalFailed,
+          cursor: cursor?.toISOString(),
+          ms: Math.round(subtimer.stop()),
+          per_s: perSecond(total, ms),
+        });
+      }
+      shouldContinue = count === options.size;
     } while (shouldContinue && options.loop);
 
-    const performance = timer.stop();
-    log.info("geo encoding done", { ms: performance });
-  }
-
-  protected async encode(options: Options): Promise<number> {
-    return await this.carpool.processGeo({
-      batchSize: options.size,
-      failedOnly: options.failed,
-      from: options.after ?? subDays(new Date(), options.lastDays),
-      to: options.until ?? new Date(),
+    const ms = timer.stop();
+    log.info("done", {
+      batches: batch,
+      total,
+      total_failed: totalFailed,
+      ms: Math.round(ms),
+      per_s: perSecond(total, ms),
     });
   }
 
