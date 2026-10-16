@@ -1,4 +1,5 @@
 import UserScopesEditor from "@/components/administration/UserScopesEditor";
+import AdminTable from "@/components/common/AdminTable";
 import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
@@ -22,7 +23,6 @@ import Button, { type ButtonProps } from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
 import Select from "@codegouvfr/react-dsfr/Select";
-import Table from "@codegouvfr/react-dsfr/Table";
 import Tooltip from "@codegouvfr/react-dsfr/Tooltip";
 import { useEffect, useState } from "react";
 
@@ -341,7 +341,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
           />
         </div>
       )}
-      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+      <AdminTable data={dataTable} headers={headers} />
       <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage} />
       <Modal
         open={modal.openModal}
