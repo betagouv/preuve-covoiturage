@@ -10,6 +10,12 @@ import {
 } from "@/interfaces/auth";
 import crypto from "crypto";
 
+const PROCONNECT_ACCOUNT_URL = "https://identite.proconnect.gouv.fr/personal-information";
+
+// Page « mes informations » ProConnect : `NEXT_PUBLIC_PC_USER_URI` (bac à sable en démo), production sinon.
+export const proconnectAccountUrl = (configured?: string): string =>
+  configured !== undefined && configured !== "" ? configured : PROCONNECT_ACCOUNT_URL;
+
 export const generateNonce = () => {
   return crypto.randomBytes(16).toString("hex");
 };

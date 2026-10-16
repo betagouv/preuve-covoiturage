@@ -10,7 +10,7 @@ import { NotificationService } from "./NotificationService.ts";
 describe("NotificationService", () => {
   const creator = { _id: 42, email: "u@test.fr", fullname: "U Ser" };
 
-  function makeService(sent: { to: string }[]) {
+  function makeService(sent: { to: string; data?: { action_href?: string } }[]) {
     const emailer = {
       init: async () => {},
       destroy: async () => {},
@@ -21,10 +21,14 @@ describe("NotificationService", () => {
     const userRepository = {
       find: async (_id: number) => (_id === creator._id ? creator : null),
     };
+    const config = {
+      get: (k: string) => ({ app_url: "https://partenaire.example.com" })[k],
+    };
     return new NotificationService(
       {} as never,
       userRepository as never,
       emailer as never,
+      config as never,
     );
   }
 
@@ -41,13 +45,14 @@ describe("NotificationService", () => {
   }
 
   it("emails the export creator on success", async () => {
-    const sent: { to: string }[] = [];
+    const sent: { to: string; data?: { action_href?: string } }[] = [];
     const service = makeService(sent);
 
     await service.success(makeExport());
 
     assertEquals(sent.length, 1);
     assertEquals(sent[0].to, "U Ser <u@test.fr>");
+    assertEquals(sent[0].data?.action_href, "https://partenaire.example.com/activite/export/");
   });
 
   it("emails the export creator on error", async () => {

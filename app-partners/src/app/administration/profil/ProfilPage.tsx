@@ -1,7 +1,8 @@
 "use client";
 import SelectOperator from "@/components/common/SelectOperator";
 import SelectTerritory from "@/components/common/SelectTerritory";
-import { activeScopeLabel, labelRole } from "@/helpers/auth";
+import { Config } from "@/config";
+import { activeScopeLabel, labelRole, proconnectAccountUrl } from "@/helpers/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
@@ -71,7 +72,7 @@ export default function ProfilPage() {
           )}
           <p>
             <a
-              href={`https://identite.proconnect.gouv.fr/personal-information`}
+              href={proconnectAccountUrl(Config.get<string>("auth.pc_uri", ""))}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Modifier mes informations sur ProConnect (s'ouvre dans un nouvel onglet)"

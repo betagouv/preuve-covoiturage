@@ -9,8 +9,11 @@ import {
 } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { assertNotificationConfigured, PurgeInactiveUsersCommand } from "./PurgeInactiveUsersCommand.ts";
 
+const appUrl = "https://partenaire.example.com";
+
 function fakeConfig(smtp: unknown): ConfigInterfaceResolver {
-  return { get: (_k: string, d?: unknown) => smtp ?? d } as unknown as ConfigInterfaceResolver;
+  const values: Record<string, unknown> = { "notification.mail.smtp": smtp, app_url: appUrl };
+  return { get: (k: string, d?: unknown) => values[k] ?? d } as unknown as ConfigInterfaceResolver;
 }
 
 describe("assertNotificationConfigured", () => {
@@ -60,20 +63,23 @@ describe("PurgeInactiveUsersCommand.call", () => {
 
   function fakeEmailer(failFor: string[] = []) {
     const sent: string[] = [];
+    const hrefs: string[] = [];
     const calls: string[] = [];
     const emailer = {
-      send: (n: { to: string }) => {
+      send: (n: { to: string; data: { action_href: string } }) => {
         calls.push("send");
         if (failFor.some((email) => n.to.includes(email))) {
           return Promise.reject(new Error(`envoi échoué pour ${n.to}`));
         }
         sent.push(n.to);
+        hrefs.push(n.data.action_href);
         return Promise.resolve();
       },
     };
     return {
       emailer: emailer as unknown as NotificationTransporterInterfaceResolver<{ to: string }>,
       sent,
+      hrefs,
       calls,
     };
   }
@@ -90,7 +96,39 @@ describe("PurgeInactiveUsersCommand.call", () => {
     return { sessions: sessions as unknown as SessionRepository, purged };
   }
 
-  const options = { inactivity: "12 months", grace: "7 days", appUrl: "https://partenaire.example.com", dryRun: false };
+  const options = { inactivity: "12 months", grace: "7 days", dryRun: false };
+
+  it("sans --app-url, le lien de reconnexion vient de la config (app_url)", async () => {
+    const toWarn: InactiveUserToWarn[] = [{ _id: 1, email: "u1@example.com", firstname: null, lastname: null }];
+    const { repository } = fakeRepository(toWarn, []);
+    const { emailer, hrefs } = fakeEmailer();
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
+
+    await command.call(options);
+
+    assertEquals(hrefs, [appUrl]);
+  });
+
+  it("--app-url prime sur la config", async () => {
+    const toWarn: InactiveUserToWarn[] = [{ _id: 1, email: "u1@example.com", firstname: null, lastname: null }];
+    const { repository } = fakeRepository(toWarn, []);
+    const { emailer, hrefs } = fakeEmailer();
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
+
+    await command.call({ ...options, appUrl: "https://autre.example.com" });
+
+    assertEquals(hrefs, ["https://autre.example.com"]);
+  });
 
   it("avertit puis marque, puis supprime (ordre send -> mark -> delete)", async () => {
     const toWarn: InactiveUserToWarn[] = [

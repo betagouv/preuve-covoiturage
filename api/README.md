@@ -227,6 +227,8 @@ Format des logs : `[tag] étape clé=valeur` via `taggedLogger("[tag]")` (`src/l
 | `BREVO_WELCOME_TEMPLATE_ID` | Non | `0` | ID du template Brevo pour l'email de bienvenue. `0` = désactivé |
 | `BREVO_API_URL` | Non | `https://api.brevo.com/v3/smtp/email` | Endpoint API Brevo |
 
+L'e-mail de bienvenue (création d'un utilisateur) transmet au template Brevo les paramètres `email`, `siret` et `login_url` (URL du front, `APP_APP_URL`). Le template doit utiliser `{{ params.login_url }}` pour le lien de connexion, jamais une URL en dur : la même clé sert en démo et en production.
+
 #### Stockage S3
 
 | Variable | Requis | Défaut | Description |
@@ -277,8 +279,9 @@ Format des logs : `[tag] étape clé=valeur` via `taggedLogger("[tag]")` (`src/l
 | `PROCONNECT_CLIENT_ID` | **Oui** | — | Client ID OAuth2/OIDC ProConnect |
 | `PROCONNECT_CLIENT_SECRET` | **Oui** | — | Client secret OAuth2/OIDC ProConnect |
 | `PROCONNECT_BASE_URL` | **Oui** | — | URL de découverte OIDC ProConnect |
-| `PROCONNECT_REDIRECT_URL` | **Oui** | — | URL de callback après authentification |
-| `PROCONNECT_LOGOUT_REDIRECT_URL` | **Oui** | — | URL de redirection après déconnexion |
+| `PROCONNECT_ENABLED` | Non | `true` | `false` désactive la connexion ProConnect |
+| `PROCONNECT_REDIRECT_URL` | Non | `${APP_API_URL}/auth/login/callback` | URL de rappel après authentification, déduite de `APP_API_URL` ; à ne poser que pour un montage exotique (même origine obligatoire) |
+| `PROCONNECT_LOGOUT_REDIRECT_URL` | Non | `${APP_API_URL}/auth/logout/callback` | URL de rappel après déconnexion, déduite de `APP_API_URL` |
 | `PROCONNECT_REQUIRE_MFA` | Non | `false` | `true` exige la double authentification (acr `eidas0-mfa`, `eidas1-mfa`, `eidas2`, `eidas3`) |
 
 #### Dex (authentification opérateurs)
