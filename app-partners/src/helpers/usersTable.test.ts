@@ -1,4 +1,4 @@
-import { territoriesCell } from "@/helpers/usersTable";
+import { roleColor, territoriesCell } from "@/helpers/usersTable";
 import { describe, expect, it } from "vitest";
 
 describe("territoriesCell", () => {
@@ -22,7 +22,10 @@ describe("territoriesCell", () => {
   });
 
   it("se replie sur l'identifiant quand le nom manque", () => {
-    const cell = territoriesCell([{ territory_id: 7, is_default: true }, { territory_id: 8, territory_name: null }]);
+    const cell = territoriesCell([
+      { territory_id: 7, is_default: true },
+      { territory_id: 8, territory_name: null },
+    ]);
     expect(cell).toEqual({ label: "#7", extra: 1, all: ["#7", "#8"] });
   });
 
@@ -35,5 +38,18 @@ describe("territoriesCell", () => {
   it("se replie sur la colonne territory_id legacy sans scopes", () => {
     expect(territoriesCell(undefined, 42)).toEqual({ label: "#42", extra: 0, all: ["#42"] });
     expect(territoriesCell([], 42)).toEqual({ label: "#42", extra: 0, all: ["#42"] });
+  });
+});
+
+describe("roleColor", () => {
+  it("associe une couleur à chaque famille de rôle", () => {
+    expect(roleColor("registry.admin")).toBe("blue");
+    expect(roleColor("operator.user")).toBe("orange");
+    expect(roleColor("territory.admin")).toBe("green");
+  });
+
+  it("ne colore pas les rôles hors famille", () => {
+    expect(roleColor("demo")).toBeUndefined();
+    expect(roleColor("")).toBeUndefined();
   });
 });

@@ -14,3 +14,9 @@ export const territoriesCell = (
   const def = list.find((s) => s.is_default) ?? list[0];
   return { label: name(def), extra: list.length - 1, all: list.map(name) };
 };
+
+const ROLE_COLORS = { registry: "blue", operator: "orange", territory: "green" } as const;
+
+// Pastille de la colonne « Rôle » : la couleur suit la famille (préfixe avant le point).
+export const roleColor = (role: string): (typeof ROLE_COLORS)[keyof typeof ROLE_COLORS] | undefined =>
+  ROLE_COLORS[role.split(".")[0] as keyof typeof ROLE_COLORS];
