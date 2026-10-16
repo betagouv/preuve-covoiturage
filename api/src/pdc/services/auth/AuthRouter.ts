@@ -3,6 +3,7 @@ import { env_or_default } from "@/lib/env/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
 import { sessionRef } from "@/pdc/proxy/helpers/sessionRef.ts";
 import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { LoginErrorCode, loginErrorCode } from "@/pdc/services/auth/loginError.ts";
 import { errorCode, newAttemptId, proconnectLog } from "@/pdc/services/auth/providers/proconnectLog.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
@@ -58,6 +59,14 @@ export class AuthRouter {
         const received = session_state === "missing" || provider_error ? "warn" : "info";
         proconnectLog[received]("callback received", { attempt, session_state, cookie, provider_error });
 
+        // Tout échec revient au front avec un code générique ; pas d'identité attachée, mais on jette
+        // l'état OIDC de la tentative échouée.
+        const refuse = async (code: LoginErrorCode) => {
+          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
+          res.clearCookie(session.name);
+          return res.redirect(`${this.config.get("app_url")}?error=${code}`);
+        };
+
         // Fetch tokens and user info from ProConnect OIDC Provider
         // (état OIDC state/nonce lu ci-dessus, avant la régénération de session)
         let tokens;
@@ -65,18 +74,14 @@ export class AuthRouter {
         try {
           tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
         } catch (e) {
-          // name en second critère : instanceof casse si le module est résolu deux fois
-          if (!(e instanceof MfaRequiredError) && (e as Error)?.name !== "MfaRequiredError") {
-            proconnectLog.warn("token failed", { attempt, error: errorCode(e), ms: elapsed(start) });
-            throw e;
+          const code = loginErrorCode(e);
+          if (code === "mfa_required") {
+            proconnectLog.warn("mfa refused", { attempt, acr: (e as MfaRequiredError).acr, error: errorCode(e) });
+          } else {
+            // state/nonce invalide, session perdue, `error=` ProConnect ou échange de code refusé
+            proconnectLog.warn("token failed", { attempt, provider_error, error: errorCode(e), ms: elapsed(start) });
           }
-          proconnectLog.warn("mfa refused", { attempt, acr: (e as MfaRequiredError).acr, error: errorCode(e) });
-
-          // pas d'identité attachée, mais on jette l'état OIDC de la tentative échouée
-          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
-          res.clearCookie(session.name);
-
-          return res.redirect(`${this.config.get("app_url")}?error=mfa_required`);
+          return refuse(code);
         }
 
         const claims = tokens.claims();
@@ -91,7 +96,7 @@ export class AuthRouter {
           info = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
         } catch (e) {
           proconnectLog.warn("userinfo failed", { attempt, sub, error: errorCode(e), ms: elapsed(start) });
-          throw e;
+          return refuse("login_failed");
         }
         const { user, has_email, has_siret } = info;
         const idp = info.idp_id ?? idp_id;
@@ -109,10 +114,7 @@ export class AuthRouter {
             sub,
             idp_id: idp,
           });
-          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
-          res.clearCookie(session.name);
-
-          return res.redirect(`${this.config.get("app_url")}?error=unauthorized`);
+          return refuse("unauthorized");
         }
 
         // Anti-fixation : régénère la session avant d'attacher l'utilisateur authentifié.

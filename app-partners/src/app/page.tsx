@@ -1,5 +1,4 @@
-import Anonymous from "@/components/common/Anonymous";
-import MfaRequiredAlert from "@/components/auth/MfaRequiredAlert";
+import LoginErrorAlert from "@/components/auth/LoginErrorAlert";
 import PageTitle from "@/components/common/PageTitle";
 import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -18,9 +17,8 @@ export default function Home() {
   const proconnectUrl = Config.get<string>("auth.domain") + "/auth/login";
   return (
     <div className={fr.cx("fr-container")}>
-      <Anonymous />
       <Suspense fallback={null}>
-        <MfaRequiredAlert />
+        <LoginErrorAlert />
       </Suspense>
       <div
         id="content"
