@@ -92,13 +92,16 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       whereClauses.push(`tg._id = ${bind(id)}`);
     }
 
+    // Les noms qui commencent par la recherche passent devant ceux qui la contiennent.
+    let orderBy = "tg.name ASC";
     if (search) {
       // `%` et `_` sont des jokers LIKE.
-      const needle = `%${search.toLowerCase().replace(/([%_\\])/g, "\\$1")}%`;
-      const placeholder = bind(needle);
+      const escaped = search.toLowerCase().replace(/([%_\\])/g, "\\$1");
+      const placeholder = bind(`%${escaped}%`);
       whereClauses.push(
         `(LOWER(tg.name) LIKE ${placeholder} ESCAPE '\\' OR cc.siret LIKE ${placeholder} ESCAPE '\\')`,
       );
+      orderBy = `(LOWER(tg.name) LIKE ${bind(`${escaped}%`)} ESCAPE '\\') DESC, tg.name ASC`;
     }
 
     const client = this.connection.getClient();
@@ -165,7 +168,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         SELECT tg._id, tg.name, cc.siret FROM ${this.table} as tg
         LEFT JOIN company.companies cc ON cc._id = tg.company_id
         WHERE ${where}
-        ORDER BY tg.name ASC
+        ORDER BY ${orderBy}
         LIMIT ${limitPlaceholder}
         OFFSET ${offsetPlaceholder}
       `,

@@ -6,7 +6,8 @@ export default defineConfig({
     alias: { "@": resolve(import.meta.dirname, "src") },
   },
   test: {
+    // Les tests de composant (`.test.tsx`) déclarent `// @vitest-environment jsdom` en tête.
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
   },
 });

@@ -38,4 +38,27 @@ describe("TerritoryRepositoryProvider", () => {
     assertEquals(result.data, [{ _id: rows[0]._id, name: "SCoT sans entreprise", siret: null }] as never);
     assertEquals(result.meta.pagination.total, 1);
   });
+
+  it("list search ignores case and ranks prefix matches first", async () => {
+    await db.connection.query(sql`
+      INSERT INTO territory.territory_group (name, company_id)
+      VALUES ('Zone Métropole Test', NULL), ('Métropole Test Accent', NULL)
+    `);
+
+    const result = await repository.list({ search: "MÉTROPOLE TEST" });
+
+    assertEquals(
+      result.data.map((t) => t.name),
+      ["Métropole Test Accent", "Zone Métropole Test"],
+    );
+    assertEquals(result.meta.pagination.total, 2);
+  });
+
+  it("list honours limit while total counts every match", async () => {
+    const result = await repository.list({ search: "métropole test", limit: 1 });
+
+    assertEquals(result.data.length, 1);
+    assertEquals(result.meta.pagination.limit, 1);
+    assertEquals(result.meta.pagination.total, 2);
+  });
 });
