@@ -1,6 +1,6 @@
 import { support } from "@/config/contacts.ts";
 import { provider } from "@/ilos/common/Decorators.ts";
-import { ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
@@ -42,6 +42,7 @@ export class NotificationService {
     protected kernel: KernelInterfaceResolver,
     protected userRepository: UserRepositoryInterfaceResolver,
     protected emailer: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
+    protected config: ConfigInterfaceResolver,
   ) {}
 
   /**
@@ -52,6 +53,7 @@ export class NotificationService {
     const notification = new ExportCSVNotification(
       `${fullname} <${email}>`,
       { fullname },
+      this.config.get("app_url"),
     );
     await this.emailer.send(notification);
   }

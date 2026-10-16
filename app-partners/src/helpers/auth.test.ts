@@ -1,4 +1,4 @@
-import { getRolesList, getUserSession, isEditableRole, switchableScopes } from "@/helpers/auth";
+import { getRolesList, getUserSession, isEditableRole, proconnectAccountUrl, switchableScopes } from "@/helpers/auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 describe("getUserSession", () => {
@@ -61,5 +61,18 @@ describe("switchableScopes", () => {
   it("ne propose rien flag coupé ou sans utilisateur", () => {
     expect(switchableScopes({ scopes }, false)).toEqual([]);
     expect(switchableScopes(undefined, true)).toEqual([]);
+  });
+});
+
+describe("proconnectAccountUrl", () => {
+  it("utilise l'URI configurée", () => {
+    expect(proconnectAccountUrl("https://identite-sandbox.proconnect.gouv.fr/personal-information")).toBe(
+      "https://identite-sandbox.proconnect.gouv.fr/personal-information",
+    );
+  });
+
+  it("replie sur la production quand la variable est vide", () => {
+    expect(proconnectAccountUrl("")).toBe("https://identite.proconnect.gouv.fr/personal-information");
+    expect(proconnectAccountUrl(undefined)).toBe("https://identite.proconnect.gouv.fr/personal-information");
   });
 });
