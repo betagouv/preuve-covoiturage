@@ -160,6 +160,7 @@ App-Partners est un **frontend pur** : il ne possède aucune base de données pr
 
 - L'authentification se fait via l'API (`/login`) qui retourne un **token JWT** stocké en session
 - Chaque requête inclut ce token pour validation
+- `AuthProvider` revérifie `/auth/me` à chaque navigation, au retour d'onglet et sur l'événement `auth:unauthorized` émis par `useApi` sur un 401 : une session perdue (expirée, compte supprimé) renvoie à l'accueil
 - Les appels API sont centralisés dans `src/hooks/api/` via des hooks custom (`use[Feature][Action]`)
 - La configuration de l'URL de l'API se fait via `NEXT_PUBLIC_API_URL` dans `.env.local`
 - Les helpers de requête se trouvent dans `src/helpers/`

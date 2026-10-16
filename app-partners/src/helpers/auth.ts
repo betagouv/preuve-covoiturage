@@ -99,10 +99,12 @@ export const labelType = (type: string) => {
   }
 };
 
-export const getUserSession = async () => {
+// Session courante ; undefined sans session valide (401 : expirée ou compte supprimé).
+export const getUserSession = async (): Promise<AuthContextProps["user"] | undefined> => {
   const response = await fetch(`${Config.get<string>("auth.domain")}/auth/me`, {
     credentials: "include",
   });
+  if (!response.ok) return undefined;
   return (await response.json()) as AuthContextProps["user"];
 };
 

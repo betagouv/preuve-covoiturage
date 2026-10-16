@@ -12,6 +12,7 @@ import { authGuard } from "../../proxy/middlewares/authGuard.ts";
 import { authRateLimiter, loginRateLimiter } from "../../proxy/middlewares/rateLimiter.ts";
 import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts";
 import { contextRoute } from "./context.ts";
+import { meRoute } from "./me.ts";
 import { testCallbackRoute } from "./test/callback.ts";
 import { isTestAuthEnabled } from "./test/enabled.ts";
 
@@ -172,25 +173,8 @@ export class AuthRouter {
       }),
     );
 
-    this.app.get(
-      "/auth/me",
-      sessionMiddleware(this.kernel),
-      (req: express.Request, res: express.Response) => {
-        if (!req.session?.user) {
-          return res.status(401).json({
-            id: 1,
-            jsonrpc: "2.0",
-            error: {
-              code: 401,
-              data: "Error",
-              message: "Unauthorized Error",
-            },
-          });
-        }
-
-        return res.json(req.session?.user);
-      },
-    );
+    // Session courante, compte relu en base (un utilisateur supprimé est déconnecté), cf. me.ts.
+    this.app.get("/auth/me", sessionMiddleware(this.kernel), meRoute(this.userRepository, session.name));
 
     // Bascule du contexte actif (users territoire) — revalidée en DB, cf. spec §6.
     this.app.post("/auth/context", authRateLimiter(), contextRoute(this.userScopeRepository));

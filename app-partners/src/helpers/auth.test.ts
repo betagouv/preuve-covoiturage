@@ -1,5 +1,23 @@
-import { getRolesList, isEditableRole, switchableScopes } from "@/helpers/auth";
-import { describe, expect, it } from "vitest";
+import { getRolesList, getUserSession, isEditableRole, switchableScopes } from "@/helpers/auth";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+describe("getUserSession", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("renvoie l'utilisateur quand /auth/me répond 200", async () => {
+    const user = { _id: 7, role: "territory.admin" };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(user), { status: 200 })));
+
+    expect(await getUserSession()).toEqual(user);
+  });
+
+  it("renvoie undefined quand /auth/me répond 401", async () => {
+    const body = { error: { code: 401, message: "Unauthorized Error" } };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(body), { status: 401 })));
+
+    expect(await getUserSession()).toBeUndefined();
+  });
+});
 
 describe("isEditableRole", () => {
   it("n'accepte que les rôles attribuables depuis l'interface", () => {
