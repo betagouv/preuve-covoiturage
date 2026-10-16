@@ -1,11 +1,10 @@
-import { writeFile } from "@/db/geo/helpers/file/writeFile.ts";
-import { un7zFile } from "@/db/geo/helpers/index.ts";
 import { sha256sum } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
 import { exists, getTmpDir } from "@/lib/file/index.ts";
 import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import { mkdir } from "dep:fs-promises";
+import { extractFull, SevenZipOptions } from "dep:node-7z";
 import { Pool as PgPool, PoolClient as PgPoolClient } from "dep:postgres";
 import * as s from "dep:superstruct";
 
@@ -131,7 +130,7 @@ export class FlashDBData {
     }
 
     // store and validate
-    await writeFile(arc, response.body);
+    await Deno.writeFile(arc, response.body);
     await this.validateArchive(arc);
   }
 
@@ -218,4 +217,14 @@ export class FlashDBData {
       await pool.end();
     }
   }
+}
+
+function un7zFile(filepath: string, extractPath: string): Promise<void> {
+  const bin = env("SEVEN_ZIP_BIN_PATH");
+  const options: SevenZipOptions | undefined = bin ? { $bin: bin } : undefined;
+  return new Promise((resolve, reject) => {
+    const stream = extractFull(filepath, extractPath, options);
+    stream.on("end", resolve);
+    stream.on("error", reject);
+  });
 }

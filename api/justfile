@@ -10,13 +10,13 @@ docker_compose_proxy_file:=join(parent_directory(justfile_directory()),"docker-c
 # `--cached-only` by default (CI/image-safe). Override with `DENO_CACHED_ONLY=`
 # (empty) locally to allow Deno to auto-fetch missing deps.
 deno_cached_only := env_var_or_default("DENO_CACHED_ONLY", "--cached-only")
-deno_allow_import := "--allow-import=cdn.sheetjs.com:443,cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443"
+deno_allow_import := "--allow-import=cdn.esm.sh:443,deno.land:443,raw.githubusercontent.com:443,jsr.io:443"
 # Only dirs the API writes to: getTmpDir() (exports, APDF, archives) and the geo cache/download dirs
 deno_write_tmp := env_var_or_default("TMPDIR", env_var_or_default("TMP", env_var_or_default("TEMP", "/tmp")))
 deno_write_cache := env_var_or_default("CACHE_DIRECTORY", deno_write_tmp)
 deno_write_download := env_var_or_default("DOWNLOAD_DIRECTORY", deno_write_cache + "/download")
 deno_allow_write := "--allow-write=" + deno_write_tmp + "," + deno_write_cache + "," + deno_write_download
-# pg_restore (FlashDBData) and 7-Zip (node-7z, geo import), plus an explicit SEVEN_ZIP_BIN_PATH if set
+# pg_restore and 7-Zip (FlashDBData), plus an explicit SEVEN_ZIP_BIN_PATH if set
 deno_seven_zip := env_var_or_default("SEVEN_ZIP_BIN_PATH", "")
 deno_run_bins := "pg_restore,7z,7za,7zr" + (if deno_seven_zip != "" { "," + deno_seven_zip } else { "" })
 deno_flags := "--allow-net --allow-env --allow-read --allow-sys --allow-run=" + deno_run_bins + " --unstable-fs " + deno_allow_write + " " + deno_allow_import + " " + deno_cached_only
@@ -135,11 +135,6 @@ migrate:
 seed:
   deno run {{ deno_flags }} src/db/cmd-seed.ts
 
-# Source the geo.perimeters data
-[group('database')]
-source:
-  deno run {{ deno_flags }} --v8-flags=--max-old-space-size=4096 src/db/cmd-source.ts
-
 # Replace geo.perimeters with the millesimes dumped by the datalake (`just export-perimeters`) and
 # refresh geo.com_evolution (src/db/geo/import.sh, step by step in src/db/geo/RUNBOOK.md).
 # ex: just geo-import ../datalake/tmp/geo/perimeters_2025-2026.20260929T080503Z.pgdump
@@ -151,11 +146,6 @@ geo-import source sha="":
   set -euo pipefail
   cd "{{ invocation_directory() }}"
   APP_POSTGRES_URL="{{ pgurl }}" "{{ justfile_directory() }}/src/db/geo/import.sh" run "$1" "$2"
-
-# Run external data migrations
-[group('database')]
-external_data_migrate:
-  deno run {{ deno_flags }} src/db/external_data/index.ts
 
 # Drop remaining test databases
 #
