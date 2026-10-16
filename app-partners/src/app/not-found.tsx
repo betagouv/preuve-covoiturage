@@ -2,6 +2,10 @@
 import Button from "@codegouvfr/react-dsfr/Button";
 import ovoidSvg from "@codegouvfr/react-dsfr/dsfr/artwork/background/ovoid.svg";
 import technicalErrorSvg from "@codegouvfr/react-dsfr/dsfr/artwork/pictograms/system/technical-error.svg";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = { title: "Page non trouvée" };
+
 export default function NotFound() {
   return (
     <main role="main" id="content">
