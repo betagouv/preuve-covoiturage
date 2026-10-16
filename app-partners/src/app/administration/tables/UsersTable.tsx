@@ -1,10 +1,14 @@
 import UserScopesEditor from "@/components/administration/UserScopesEditor";
+import AdminTable from "@/components/common/AdminTable";
 import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
+import TerritoryAutocomplete from "@/components/common/TerritoryAutocomplete";
 import { features } from "@/config/features";
+import { type TerritoryOption } from "@/helpers/api";
 import { getRolesList, isEditableRole, labelRole } from "@/helpers/auth";
 import { userFormSchema } from "@/helpers/userForm";
+import { territoriesCell } from "@/helpers/usersTable";
 import { useOperatorsList, useTerritoriesList, useUsersList } from "@/hooks/api";
 import { FormValidationError, useActionsModal } from "@/hooks/useActionsModal";
 import { useUrlSearch } from "@/hooks/useUrlSearch";
@@ -21,7 +25,7 @@ import Button, { type ButtonProps } from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
 import Select from "@codegouvfr/react-dsfr/Select";
-import Table from "@codegouvfr/react-dsfr/Table";
+import Tooltip from "@codegouvfr/react-dsfr/Tooltip";
 import { useEffect, useState } from "react";
 
 export default function UsersTable(props: { title: string; territoryId: number | null; operatorId: number | null }) {
@@ -61,7 +65,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
   const totalPages = data?.meta.totalPages ?? 1;
   const totalRecords = data?.meta.total ?? 0;
 
-  const headers = ["Prénom", "Nom", "Adresse mail", "Rôle", "Opérateur", "Territoire", "Actions"];
+  const headers = ["Prénom", "Nom", "Adresse mail", "Rôle", "Opérateur", "Territoires", "Actions"];
   const { data: operatorsData, refetch: refetchOperators } = useOperatorsList({ limit: 100 });
   const operatorsList = () => {
     if (user?.operator_id) {
@@ -69,9 +73,9 @@ export default function UsersTable(props: { title: string; territoryId: number |
     }
     return operatorsData?.data ?? [];
   };
-  // Limite large : la modale doit résoudre le nom de tous les territoires, l'Autocomplete filtre en local.
-  const { data: territoriesData, refetch: refetchTerritories } = useTerritoriesList({ limit: 1000 });
-  // Liste complète : un registry.admin porteur d'un scope a un territory_id sans être limité à ce territoire.
+  // Hors registry.admin l'API masque scopes : seul le territoire de l'admin connecté reste à nommer
+  // dans la colonne. La modale, elle, cherche les territoires côté serveur (TerritoryAutocomplete).
+  const { data: territoriesData } = useTerritoriesList({ limit: 1, territory_id: props.territoryId });
   const territoriesList = (): TerritoriesInterface["data"] => territoriesData?.data ?? [];
 
   // Périmètres initiaux d'une ligne (fallback sur la colonne legacy si l'API ne renvoie pas encore scopes).
@@ -84,9 +88,16 @@ export default function UsersTable(props: { title: string; territoryId: number |
   // Suggestion login_siren = 9 premiers chiffres du SIRET du territoire par défaut.
   // null (jamais "") quand rien à suggérer : l'API n'accepte que null ou 9 chiffres.
   const suggestSiren = (scopes: UserScopeInput[]): string | null => {
-    const def = scopes.find((s) => s.is_default) ?? scopes[0];
-    const siret = territoriesList().find((t) => t?._id === def?.territory_id)?.siret;
+    const siret = (scopes.find((s) => s.is_default) ?? scopes[0])?.siret;
     return siret ? siret.slice(0, 9) : null;
+  };
+
+  // Périmètre par défaut du formulaire, sous la forme attendue par l'autocomplétion.
+  const defaultTerritory = (): TerritoryOption | null => {
+    const scopes = (modal.currentRow.scopes as UserScopeInput[] | undefined) ?? [];
+    const def = scopes.find((s) => s.is_default) ?? scopes[0];
+    if (!def?.territory_id) return null;
+    return { _id: def.territory_id, name: def.territory_name ?? `#${def.territory_id}`, siret: def.siret ?? null };
   };
 
   // currentRow EST le corps de la requête : n'y mettre que des champs acceptés par l'API.
@@ -142,6 +153,33 @@ export default function UsersTable(props: { title: string; territoryId: number |
     );
   };
 
+  // Une ligne par compte : le défaut, « (+N) » pour les autres, tous listés dans l'infobulle.
+  // Hors registry.admin l'API masque scopes : le nom du territory_id legacy vient de la liste des territoires.
+  const territoriesColumn = (d: UsersInterface["data"][0]) => {
+    const nameOf = (id: number) => territoriesList().find((t) => t?._id === id)?.name;
+    const { label, extra, all } = territoriesCell(d.scopes, d.territory_id, nameOf);
+    const cell = (
+      <span className="users-territories">
+        {label}
+        {extra > 0 && ` (+${extra})`}
+      </span>
+    );
+    if (extra === 0) return cell;
+    return (
+      <Tooltip
+        kind="hover"
+        title={all.map((name, i) => (
+          <span key={i}>
+            {name}
+            <br />
+          </span>
+        ))}
+      >
+        {cell}
+      </Tooltip>
+    );
+  };
+
   const dataTable =
     data?.data?.map((d) => [
       d.firstname,
@@ -149,7 +187,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
       d.email,
       labelRole(d.role),
       operatorsList().find((o) => o?.id === d.operator_id)?.name,
-      territoriesList().find((t) => t?._id === d.territory_id)?.name,
+      territoriesColumn(d),
       rowActions(d),
     ]) ?? [];
 
@@ -312,7 +350,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
           />
         </div>
       )}
-      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+      <AdminTable data={dataTable} headers={headers} />
       <Pagination count={totalPages} defaultPage={currentPage} onChange={onChangePage} />
       <Modal
         open={modal.openModal}
@@ -320,7 +358,6 @@ export default function UsersTable(props: { title: string; territoryId: number |
         onOpen={async () => {
           if (modal.typeModal === "update" || modal.typeModal === "create") {
             await refetchOperators();
-            await refetchTerritories();
           }
         }}
         onClose={() => modal.setOpenModal(false)}
@@ -454,29 +491,20 @@ export default function UsersTable(props: { title: string; territoryId: number |
                       {features.multiSiret ? (
                         <UserScopesEditor
                           scopes={(modal.currentRow.scopes as UserScopeInput[]) ?? []}
-                          territories={territoriesList()}
                           onChange={onChangeScopes}
                         />
                       ) : (
-                        <Select
+                        <TerritoryAutocomplete
                           label="Territoire"
-                          nativeSelectProps={{
-                            value: (modal.currentRow.territory_id as number) ?? "",
-                            onChange: (e) => {
-                              const territory_id = Number(e.target.value);
-                              if (territory_id) onChangeScopes([{ territory_id, is_default: true }]);
-                            },
-                          }}
-                        >
-                          <option value="" disabled>
-                            Sélectionner un territoire
-                          </option>
-                          {territoriesList().map((t) => (
-                            <option key={t?._id} value={t?._id}>
-                              {t?.name}
-                            </option>
-                          ))}
-                        </Select>
+                          value={defaultTerritory()}
+                          onChange={(t) =>
+                            onChangeScopes(
+                              t
+                                ? [{ territory_id: t._id, is_default: true, territory_name: t.name, siret: t.siret }]
+                                : [],
+                            )
+                          }
+                        />
                       )}
                       {modal.errors?.scopes && <p className={fr.cx("fr-error-text")}>{modal.errors.scopes}</p>}
                     </div>

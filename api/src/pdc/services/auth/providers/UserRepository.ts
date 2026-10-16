@@ -34,6 +34,17 @@ export class UserRepository {
     protected userScopeRepository: UserScopeRepository,
   ) {}
 
+  // Existence du compte : sert à invalider une session dont l'utilisateur a été supprimé.
+  async findById(id: number): Promise<UserIdentityRow | null> {
+    const rows = await this.denoConnection.query<UserIdentityRow>(sql`
+      SELECT u.email, u.role, u.login_siren, u._id, u.analytics_id
+      FROM ${raw(this.table)} u
+      WHERE u._id = ${id}
+      LIMIT 1
+    `);
+    return rows[0] ?? null;
+  }
+
   async authenticateByEmail(email: string, data: Record<string, RawValue> = {}): Promise<LocalSiretUser | null> {
     if (!email) return null;
     const rows = await this.denoConnection.query<UserIdentityRow>(sql`

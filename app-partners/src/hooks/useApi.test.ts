@@ -1,5 +1,31 @@
-import { apiErrorMessage, parseBody, toUserError, UNREACHABLE_MESSAGE } from "@/hooks/useApi";
-import { describe, expect, it } from "vitest";
+import {
+  AUTH_UNAUTHORIZED_EVENT,
+  apiErrorMessage,
+  parseBody,
+  signalUnauthorized,
+  toUserError,
+  UNREACHABLE_MESSAGE,
+} from "@/hooks/useApi";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+describe("signalUnauthorized", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("dispatche l'événement sur window", () => {
+    const target = new EventTarget();
+    vi.stubGlobal("window", target);
+    const received: string[] = [];
+    target.addEventListener(AUTH_UNAUTHORIZED_EVENT, (e) => received.push(e.type));
+
+    signalUnauthorized();
+
+    expect(received).toEqual([AUTH_UNAUTHORIZED_EVENT]);
+  });
+
+  it("ne plante pas hors navigateur", () => {
+    expect(() => signalUnauthorized()).not.toThrow();
+  });
+});
 
 describe("apiErrorMessage", () => {
   it("traduit les statuts d'accès sans relayer le corps", () => {

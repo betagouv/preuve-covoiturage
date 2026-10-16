@@ -65,10 +65,43 @@
   text-transform: uppercase;
 }
 
+// Liste des utilisateurs : une ligne par compte, tronquée ; le détail est dans l'infobulle.
+.users-territories {
+  display: inline-block;
+  max-width: 16rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
 // Accueil : « covoiturage.beta.gouv.fr » ne tient pas sur une ligne de titre en mobile.
 @media (max-width: 36em) {
   .home-title h1 {
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+}
+
+// Tableaux d'administration : le balisage DSFR hérité met la table en `display: block`, d'où une largeur au contenu.
+.admin-table {
+  overflow-x: auto;
+  > table {
+    display: table;
+    width: 100%;
+    th,
+    td {
+      text-align: left;
+    }
+    th:last-child,
+    td:last-child {
+      text-align: right;
+      .fr-btns-group {
+        justify-content: flex-end;
+        li {
+          justify-content: flex-end;
+        }
+      }
+    }
   }
 }

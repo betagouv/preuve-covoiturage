@@ -33,7 +33,7 @@
     "dep:date-fns-locale": "npm:date-fns@^3.6/locale",
     "dep:turf-helpers": "npm:@turf/helpers",
     "dep:sentry": "npm:@sentry/node@^8.2",
-    "dep:express-rate-limit": "npm:express-rate-limit@^7.3",
+    "dep:express-rate-limit": "npm:express-rate-limit@^8.7",
     "dep:handlebars": "npm:handlebars@^4.7.10",
     "dep:ibantools": "npm:ibantools@^4.5", // useless : remove use and clear
     "dep:libphonenumber-js": "npm:libphonenumber-js@^1.11",
@@ -41,7 +41,7 @@
     "dep:body-parser": "npm:body-parser@^1.20",
     "dep:connect-redis": "npm:connect-redis@^7.1",
     "dep:express-mung": "npm:express-mung@^0.5",
-    "dep:rate-limit-redis": "npm:rate-limit-redis@^4.2",
+    "dep:rate-limit-redis": "npm:rate-limit-redis@^6.0",
     "dep:express-session": "npm:express-session@^1.18",
     "dep:prom-client": "npm:prom-client@^15.1",
     "dep:cors": "npm:cors@^2.8",

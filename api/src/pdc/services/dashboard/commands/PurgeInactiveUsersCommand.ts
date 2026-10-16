@@ -5,6 +5,7 @@ import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
 } from "@/pdc/providers/notification/index.ts";
+import { SessionRepository } from "@/pdc/services/auth/providers/SessionRepository.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { InactiveUserDeletionWarningNotification } from "../notifications/InactiveUserDeletionWarningNotification.ts";
 
@@ -13,7 +14,7 @@ const log = taggedLogger("[purge]", { maxLength: 512 });
 interface Options {
   inactivity: string;
   grace: string;
-  appUrl: string;
+  appUrl?: string;
   dryRun: boolean;
 }
 
@@ -34,11 +35,7 @@ export function assertNotificationConfigured(config: ConfigInterfaceResolver): v
   options: [
     { signature: "--inactivity <inactivity>", description: "Seuil d'inactivité (interval PG)", default: "12 months" },
     { signature: "--grace <grace>", description: "Durée du préavis (interval PG)", default: "7 days" },
-    {
-      signature: "--app-url <appUrl>",
-      description: "URL de reconnexion (espace partenaire)",
-      default: "https://partenaire.covoiturage.beta.gouv.fr",
-    },
+    { signature: "--app-url <appUrl>", description: "URL de reconnexion (défaut : APP_APP_URL)" },
     { signature: "--dry-run", description: "N'envoie rien et ne supprime rien, log seulement" },
   ],
 })
@@ -47,10 +44,12 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
     private config: ConfigInterfaceResolver,
     private usersRepository: UsersRepositoryInterfaceResolver,
     private emailer: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
+    private sessionRepository: SessionRepository,
   ) {}
 
   public async call(options: Options): Promise<string> {
     assertNotificationConfigured(this.config);
+    const appUrl = options.appUrl || this.config.get("app_url");
 
     // Phase 1 — avertir
     const toWarn = await this.usersRepository.findUsersToWarn(options.inactivity);
@@ -64,7 +63,7 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
           await this.emailer.send(
             new InactiveUserDeletionWarningNotification(`${fullname} <${user.email}>`, {
               fullname,
-              action_href: options.appUrl,
+              action_href: appUrl,
             }),
           );
           // Si markUserWarned throw ici, warned peut sous-compter (sens sûr : l'utilisateur sera réavertit, jamais supprimé à tort).
@@ -105,6 +104,12 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
           result: "deleted",
           id: user._id,
         });
+        // Un compte inactif peut encore porter un cookie valide : on ferme ses sessions.
+        try {
+          await this.sessionRepository.destroyByUser(user._id);
+        } catch (e) {
+          log.error("session purge failed", { id: user._id, error: errorCode(e) });
+        }
       }
     }
 

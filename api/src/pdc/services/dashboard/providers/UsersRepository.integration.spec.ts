@@ -256,10 +256,18 @@ describe("UsersRepository multi-scope (pivot)", () => {
   it("la liste expose les périmètres complets et le login_siren", async () => {
     const listed = await repository.getUsers({ search: "multi.scope@example.com" });
     assertEquals(listed.data[0].scopes, [
-      { territory_id: 310, is_default: true },
-      { territory_id: 311, is_default: false },
+      { territory_id: 310, is_default: true, territory_name: "Test territoire 310", siret: "13002526500013" },
+      { territory_id: 311, is_default: false, territory_name: "Test territoire 311", siret: "13002526500013" },
     ]);
     assertEquals(listed.data[0].login_siren, null);
+  });
+
+  it("chaque périmètre porte le nom et le SIRET de son territoire", async () => {
+    const listed = await repository.getUsers({ search: "multi.scope@example.com" });
+    const names = listed.data[0].scopes.map((s) => s.territory_name);
+    assertEquals(names, ["Test territoire 310", "Test territoire 311"]);
+    // SIRET via company.companies (fixture dinum, _id 1).
+    assertEquals(listed.data[0].scopes.map((s) => s.siret), ["13002526500013", "13002526500013"]);
   });
 
   // Régression : un admin de territoire n'envoie pas scopes[] ; son update ne doit rien amputer.
@@ -296,9 +304,9 @@ describe("UsersRepository multi-scope (pivot)", () => {
 
     const after = await repository.getUsers({ id: uid });
     assertEquals(after.data[0].territory_id, 311);
-    assertEquals(after.data[0].scopes, [
-      { territory_id: 311, is_default: true },
-      { territory_id: 310, is_default: false },
+    assertEquals(after.data[0].scopes.map((s) => [s.territory_id, s.is_default]), [
+      [311, true],
+      [310, false],
     ]);
 
     // Remise en état pour les cas suivants (310 redevient le défaut).

@@ -32,6 +32,7 @@ export class BrevoProvider implements BrevoProviderInterface {
       params: {
         email: params.email,
         siret: params.siret,
+        login_url: params.login_url,
       },
     };
 

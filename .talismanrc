@@ -35,7 +35,7 @@ fileignoreconfig:
   - filename: notebooks/cerema/pdll2025.ipynb
     checksum: 26708491073bd3546e9c811ed788218e7a0e28551e311b25325f870d8eea0a6a
   - filename: api/src/config/connections.ts
-    checksum: 243b7f3ec0caaedd588841b5310b9de50fdbe6a81aaf66737bacd57d724f3aa7
+    checksum: 42584f6484e627bebc4460f11d52791a952d0b8eb1467e6d147ec74714525046
   - filename: api/src/lib/crypto/index.ts
     allowed_patterns: [privateKey, importKey]
   - filename: api/src/pdc/services/policy/providers/*.ts

@@ -1,6 +1,6 @@
 "use client";
 import { activeScopeLabel, getActiveScope, getUserSession, postAuthContext } from "@/helpers/auth";
-import { toUserError } from "@/hooks/useApi";
+import { AUTH_UNAUTHORIZED_EVENT, toUserError } from "@/hooks/useApi";
 import { type AuthContextProps, type UserInterface } from "@/interfaces/auth";
 import { fr } from "@codegouvfr/react-dsfr";
 import Alert from "@codegouvfr/react-dsfr/Alert";
@@ -23,6 +23,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authError, setAuthError] = useState<Error>();
   const [switchToast, setSwitchToast] = useState<{ severity: "success" | "error"; description: string }>();
   const formEditingRef = useRef(false);
+  // checkAuth tourne depuis des effets figés : le mode simulate est lu via une ref, jamais périmé.
+  const simulateRef = useRef(simulate);
+  simulateRef.current = simulate;
 
   // Le toast de bascule se ferme seul : fixé en haut, il recouvrait l'en-tête jusqu'au rechargement.
   useEffect(() => {
@@ -60,7 +63,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data?.role && data?.role !== "anonymous") {
       await assertMirror(data);
       setIsAuth(true);
-      setUser(data);
+      // Le tuple simulé n'existe qu'en local : le serveur ne doit pas l'écraser.
+      setUser((prev) =>
+        prev && simulateRef.current
+          ? { ...data, territory_id: prev.territory_id, operator_id: prev.operator_id }
+          : data,
+      );
       // Toast en attente après le reload consécutif à une bascule.
       const pending = sessionStorage.getItem(TOAST_KEY);
       if (pending) {
@@ -74,8 +82,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
+  // À chaque navigation : un compte supprimé ou une session expirée ne doit pas survivre au cookie.
+  // Déjà authentifié : pas de spinner, la vérification se fait en arrière-plan.
   useEffect(() => {
     void checkAuth();
+  }, [pathname]);
+
+  // useApi signale un 401 : la session serveur fait foi, on la revérifie.
+  useEffect(() => {
+    const onUnauthorized = () => void checkAuth();
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized);
+    return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized);
   }, []);
 
   useEffect(() => {
@@ -95,7 +112,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (document.visibilityState !== "visible" || !isAuth) return;
       getUserSession()
         .then(async (data) => {
-          if (!data?.role || data.role === "anonymous") return;
+          // Session perdue pendant l'absence : déconnexion, la redirection suit via l'effet isAuth.
+          if (!data?.role || data.role === "anonymous") {
+            setIsAuth(false);
+            setUser(undefined);
+            return;
+          }
           await assertMirror(data);
           // Le tuple simulé n'existe qu'en local : le serveur ne doit pas l'écraser.
           setUser((prev) =>

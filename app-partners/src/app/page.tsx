@@ -1,5 +1,4 @@
-import Anonymous from "@/components/common/Anonymous";
-import MfaRequiredAlert from "@/components/auth/MfaRequiredAlert";
+import LoginErrorAlert from "@/components/auth/LoginErrorAlert";
 import PageTitle from "@/components/common/PageTitle";
 import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -10,7 +9,8 @@ import Image from "next/image";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Espace partenaire du Registre de Preuve de Covoiturage",
+  // Le template du layout ne s'applique pas à la page du même segment
+  title: "Accueil | Espace partenaire Covoiturage.beta.gouv.fr",
   description: "Développer le covoiturage de courte distance",
 };
 
@@ -18,9 +18,8 @@ export default function Home() {
   const proconnectUrl = Config.get<string>("auth.domain") + "/auth/login";
   return (
     <div className={fr.cx("fr-container")}>
-      <Anonymous />
       <Suspense fallback={null}>
-        <MfaRequiredAlert />
+        <LoginErrorAlert />
       </Suspense>
       <div
         id="content"

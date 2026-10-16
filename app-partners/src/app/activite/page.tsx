@@ -1,13 +1,8 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { type Metadata } from "next";
+import Activite from "./ActiviteRedirect";
 
-export default function Activite() {
-  const router = useRouter();
+export const metadata: Metadata = { title: "Activité" };
 
-  useEffect(() => {
-    router.push("/activite/export");
-  }, [router]);
-
-  return null;
+export default function Page() {
+  return <Activite />;
 }
