@@ -6,9 +6,9 @@ import Pagination from "@/components/common/Pagination";
 import TerritoryAutocomplete from "@/components/common/TerritoryAutocomplete";
 import { features } from "@/config/features";
 import { type TerritoryOption } from "@/helpers/api";
-import { getRolesList, isEditableRole, labelRole } from "@/helpers/auth";
+import { getRolesList, isEditableRole, isOperator, isTerritory, labelRole } from "@/helpers/auth";
 import { userFormSchema } from "@/helpers/userForm";
-import { territoriesCell } from "@/helpers/usersTable";
+import { roleColor, territoriesCell } from "@/helpers/usersTable";
 import { useOperatorsList, useTerritoriesList, useUsersList } from "@/hooks/api";
 import { FormValidationError, useActionsModal } from "@/hooks/useActionsModal";
 import { useUrlSearch } from "@/hooks/useUrlSearch";
@@ -27,6 +27,14 @@ import Input from "@codegouvfr/react-dsfr/Input";
 import Select from "@codegouvfr/react-dsfr/Select";
 import Tooltip from "@codegouvfr/react-dsfr/Tooltip";
 import { useEffect, useState } from "react";
+
+// Texte tronqué sur une ligne, complet au survol.
+const ellipsis = (text?: string) =>
+  text ? (
+    <span className="cell-ellipsis" title={text}>
+      {text}
+    </span>
+  ) : null;
 
 export default function UsersTable(props: { title: string; territoryId: number | null; operatorId: number | null }) {
   const { user, simulatedRole, setFormEditing } = useAuth();
@@ -65,7 +73,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
   const totalPages = data?.meta.totalPages ?? 1;
   const totalRecords = data?.meta.total ?? 0;
 
-  const headers = ["Prénom", "Nom", "Adresse mail", "Rôle", "Opérateur", "Territoires", "Actions"];
+  const headers = ["Nom", "Adresse mail", "Rôle", "Entités", "Actions"];
   const { data: operatorsData, refetch: refetchOperators } = useOperatorsList({ limit: 100 });
   const operatorsList = () => {
     if (user?.operator_id) {
@@ -148,7 +156,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
         key={d.id}
         buttons={buttons as [ButtonProps, ...ButtonProps[]]}
         buttonsSize="small"
-        inlineLayoutWhen="lg and up"
+        inlineLayoutWhen="always"
       />
     );
   };
@@ -158,13 +166,12 @@ export default function UsersTable(props: { title: string; territoryId: number |
   const territoriesColumn = (d: UsersInterface["data"][0]) => {
     const nameOf = (id: number) => territoriesList().find((t) => t?._id === id)?.name;
     const { label, extra, all } = territoriesCell(d.scopes, d.territory_id, nameOf);
+    if (extra === 0) return ellipsis(label);
     const cell = (
-      <span className="users-territories">
-        {label}
-        {extra > 0 && ` (+${extra})`}
+      <span>
+        <span className="cell-ellipsis">{label}</span> (+{extra})
       </span>
     );
-    if (extra === 0) return cell;
     return (
       <Tooltip
         kind="hover"
@@ -180,18 +187,31 @@ export default function UsersTable(props: { title: string; territoryId: number |
     );
   };
 
+  // Opérateur ou territoires selon la famille du rôle ; rien pour le registre.
+  const entitiesColumn = (d: UsersInterface["data"][0]) => {
+    if (isOperator(d.role)) return ellipsis(operatorsList().find((o) => o?.id === d.operator_id)?.name);
+    if (isTerritory(d.role)) return territoriesColumn(d);
+    return null;
+  };
+
+  const roleColumn = (role: string) => {
+    const color = roleColor(role);
+    return (
+      <span className="role-pill">
+        {color && <span className={`role-pill__dot role-pill__dot--${color}`} aria-hidden="true" />}
+        {labelRole(role)}
+      </span>
+    );
+  };
+
   const dataTable =
     data?.data?.map((d) => [
-      d.firstname,
-      d.lastname,
-      d.email,
-      labelRole(d.role),
-      operatorsList().find((o) => o?.id === d.operator_id)?.name,
-      territoriesColumn(d),
+      ellipsis(`${d.firstname} ${d.lastname}`),
+      ellipsis(d.email),
+      roleColumn(d.role),
+      entitiesColumn(d),
       rowActions(d),
     ]) ?? [];
-
-
 
   // À la bascule de rôle, les champs de l'autre famille sont purgés : sinon le corps envoyé porte
   // à la fois un opérateur et des périmètres.
@@ -454,7 +474,8 @@ export default function UsersTable(props: { title: string; territoryId: number |
                         inputMode: "numeric",
                         maxLength: 9,
                         value: (modal.currentRow.login_siren as string | null) ?? "",
-                        onChange: (e) => modal.validateInputChange(userFormSchema, "login_siren", e.target.value || null),
+                        onChange: (e) =>
+                          modal.validateInputChange(userFormSchema, "login_siren", e.target.value || null),
                       }}
                     />
                   </div>

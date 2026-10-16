@@ -65,14 +65,36 @@
   text-transform: uppercase;
 }
 
-// Liste des utilisateurs : une ligne par compte, tronquée ; le détail est dans l'infobulle.
-.users-territories {
+// Cellule de tableau sur une ligne, tronquée ; le texte complet est dans le title ou l'infobulle.
+.cell-ellipsis {
   display: inline-block;
-  max-width: 16rem;
+  max-width: 12rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: bottom;
+}
+
+// Pastille du rôle : bleu = registre, orange = opérateur, vert = territoire.
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.role-pill__dot {
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  &--blue {
+    background-color: var(--background-flat-blue-france);
+  }
+  &--orange {
+    background-color: var(--background-flat-orange-terre-battue);
+  }
+  &--green {
+    background-color: var(--background-flat-green-emeraude);
+  }
 }
 
 // Accueil : « covoiturage.beta.gouv.fr » ne tient pas sur une ligne de titre en mobile.
@@ -92,11 +114,15 @@
     th,
     td {
       text-align: left;
+      white-space: nowrap;
     }
+    // width: 1 % + nowrap : la colonne d'actions prend la largeur de ses boutons, sur une ligne.
     th:last-child,
     td:last-child {
+      width: 1%;
       text-align: right;
       .fr-btns-group {
+        flex-wrap: nowrap;
         justify-content: flex-end;
         li {
           justify-content: flex-end;
