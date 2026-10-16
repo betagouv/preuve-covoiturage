@@ -1,7 +1,7 @@
 "use client";
 import SelectOperator from "@/components/common/SelectOperator";
 import SelectTerritory from "@/components/common/SelectTerritory";
-import { labelRole } from "@/helpers/auth";
+import { activeScopeLabel, labelRole } from "@/helpers/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { fr } from "@codegouvfr/react-dsfr";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
@@ -11,6 +11,8 @@ import { useEffect } from "react";
 export default function ProfilPage() {
   const {
     user,
+    scopes,
+    activeScope,
     simulate,
     simulatedRole,
     onChangeSimulate,
@@ -41,15 +43,31 @@ export default function ProfilPage() {
           <p>
             <b>Rôle:</b> {labelRole(user.role)}
           </p>
-          {user.operator_id && (
+          {activeScopeLabel(user) && (
             <p>
-              <b>Identifiant de l&apos;opérateur:</b> {user.operator_id}
+              <b>Périmètre actif:</b> {activeScopeLabel(user)}
+              {activeScope?.siret && ` (SIRET ${activeScope.siret})`}
             </p>
           )}
-          {user.territory_id && (
+          {user.login_siren && (
             <p>
-              <b>Identifiant du territoire:</b> {user.territory_id}
+              <b>SIREN de connexion ProConnect:</b> {user.login_siren}
             </p>
+          )}
+          {scopes.length > 1 && (
+            <>
+              <p className={fr.cx("fr-mb-1w")}>
+                <b>Périmètres accessibles:</b>
+              </p>
+              <ul className={fr.cx("fr-mb-3w")}>
+                {scopes.map((s) => (
+                  <li key={s.operator_id ?? s.territory_id}>
+                    {s.label}
+                    {s.siret && ` (SIRET ${s.siret})`}
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
           <p>
             <a
