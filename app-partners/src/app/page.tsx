@@ -10,7 +10,8 @@ import Image from "next/image";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Espace partenaire du Registre de Preuve de Covoiturage",
+  // Le template du layout ne s'applique pas à la page du même segment
+  title: "Accueil | Espace partenaire Covoiturage.beta.gouv.fr",
   description: "Développer le covoiturage de courte distance",
 };
 

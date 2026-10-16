@@ -1,13 +1,8 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { type Metadata } from "next";
+import Administration from "./AdministrationRedirect";
 
-export default function Administration() {
-  const router = useRouter();
+export const metadata: Metadata = { title: "Administration" };
 
-  useEffect(() => {
-    router.push("/administration/profil");
-  }, [router]);
-
-  return null;
+export default function Page() {
+  return <Administration />;
 }

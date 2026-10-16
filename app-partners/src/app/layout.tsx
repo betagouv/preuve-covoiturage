@@ -19,7 +19,10 @@ import { type Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "partenaire.covoiturage.gouv.fr",
+  title: {
+    template: "%s | Espace partenaire Covoiturage.beta.gouv.fr",
+    default: "Espace partenaire Covoiturage.beta.gouv.fr",
+  },
   description: "Développer le covoiturage de courte distance",
 };
 
