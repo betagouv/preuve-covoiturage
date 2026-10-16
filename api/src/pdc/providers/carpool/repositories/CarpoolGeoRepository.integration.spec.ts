@@ -46,6 +46,7 @@ describe("CarpoolGeoRepository", () => {
     assertEquals(processable, [
       {
         carpool_id: carpool_id,
+        start_datetime: insertableCarpool.start_datetime,
         start: insertableCarpool.start_position,
         end: insertableCarpool.end_position,
       },
@@ -90,6 +91,7 @@ describe("CarpoolGeoRepository", () => {
     assertEquals(processable, [
       {
         carpool_id: carpool_id,
+        start_datetime: insertableCarpool.start_datetime,
         start: insertableCarpool.start_position,
         end: insertableCarpool.end_position,
       },

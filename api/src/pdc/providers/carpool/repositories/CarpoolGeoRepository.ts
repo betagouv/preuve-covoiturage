@@ -37,7 +37,7 @@ export class CarpoolGeoRepository {
   async findProcessable(
     search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
     client: PoolClient,
-  ): Promise<Array<{ carpool_id: Id; start: Position; end: Position }>> {
+  ): Promise<Array<{ carpool_id: Id; start_datetime: Date; start: Position; end: Position }>> {
     const failedOnlyClause = !search.failedOnly
       ? raw(` AND cg._id IS NULL`)
       : raw(` AND ( cg.start_geo_code IS NULL OR cg.end_geo_code IS NULL )`);
@@ -45,6 +45,7 @@ export class CarpoolGeoRepository {
     const query = sql`
         SELECT 
           cc._id,
+          cc.start_datetime,
           ST_X(cc.start_position::geometry)::numeric as start_lon,
           ST_Y(cc.start_position::geometry)::numeric as start_lat,
           ST_X(cc.end_position::geometry)::numeric as end_lon,
@@ -64,6 +65,7 @@ export class CarpoolGeoRepository {
 
     return result.rows.map((r) => ({
       carpool_id: r._id,
+      start_datetime: r.start_datetime,
       start: {
         lat: parseFloat(r.start_lat),
         lon: parseFloat(r.start_lon),

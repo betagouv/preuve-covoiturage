@@ -275,6 +275,7 @@ export class CarpoolAcquisitionService {
         failedOnly: params.failedOnly,
       }, conn);
 
+      let failed = 0;
       for (const item of list) {
         await conn.query("BEGIN");
         try {
@@ -294,6 +295,7 @@ export class CarpoolAcquisitionService {
           );
           await conn.query("COMMIT");
         } catch (e) {
+          failed++;
           await conn.query("ROLLBACK");
           await this.statusRepository.setGeoProcessingStatus(
             item.carpool_id,
@@ -309,7 +311,7 @@ export class CarpoolAcquisitionService {
         }
       }
 
-      return list.length;
+      return { count: list.length, failed, cursor: list.at(-1)?.start_datetime };
     } finally {
       conn.release();
     }
