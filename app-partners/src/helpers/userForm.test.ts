@@ -50,6 +50,15 @@ describe("userFormSchema", () => {
     expect(fieldErrors({ ...valid, role: "operator.user", operator_id: 3 }).operator_id).toBeUndefined();
   });
 
+  // L'API refuse les clés inconnues : les champs d'affichage de la liste ne doivent pas repartir.
+  it("retire territory_name et siret des périmètres avant envoi", () => {
+    const r = userFormSchema.parse({
+      ...valid,
+      scopes: [{ territory_id: 12, is_default: true, territory_name: "IDFM", siret: "13002526500013" }],
+    });
+    expect(r.scopes).toEqual([{ territory_id: 12, is_default: true }]);
+  });
+
   it("exige un périmètre pour un rôle territoire quand les périmètres sont édités", () => {
     expect(fieldErrors({ ...valid, scopes: [] }).scopes).toEqual(["Ajoutez au moins un périmètre"]);
     // territory.admin n'édite pas les périmètres : scopes absent du corps.

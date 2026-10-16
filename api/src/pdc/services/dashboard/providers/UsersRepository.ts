@@ -32,6 +32,7 @@ export class UsersRepository implements UsersRepositoryInterface {
   private readonly tableScopes = "auth.user_scopes";
   private readonly tableTerritory = "territory.territory_group";
   private readonly tableOperator = "operator.operators";
+  private readonly tableCompany = "company.companies";
 
   constructor(
     private pgConnection: DenoPostgresConnection,
@@ -85,9 +86,15 @@ export class UsersRepository implements UsersRepositoryInterface {
         (SELECT COUNT(*) FROM ${raw(this.tableScopes)} s WHERE s.user_id = users._id)::int AS scopes_count,
         -- Périmètres complets : sans eux le formulaire d'édition réécrirait le compte avec le seul défaut.
         COALESCE((
-          SELECT json_agg(json_build_object('territory_id', s.territory_id, 'is_default', s.is_default)
-                          ORDER BY s.is_default DESC, s._id ASC)
+          SELECT json_agg(json_build_object(
+                            'territory_id', s.territory_id,
+                            'is_default', s.is_default,
+                            'territory_name', stg.name,
+                            'siret', sc.siret
+                          ) ORDER BY s.is_default DESC, s._id ASC)
           FROM ${raw(this.tableScopes)} s
+          LEFT JOIN ${raw(this.tableTerritory)} stg ON stg._id = s.territory_id
+          LEFT JOIN ${raw(this.tableCompany)} sc ON sc._id = stg.company_id
           WHERE s.user_id = users._id AND s.territory_id IS NOT NULL
         ), '[]'::json) AS scopes
       FROM ${raw(this.table)} AS users

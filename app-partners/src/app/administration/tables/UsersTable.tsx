@@ -5,6 +5,7 @@ import Pagination from "@/components/common/Pagination";
 import { features } from "@/config/features";
 import { getRolesList, isEditableRole, labelRole } from "@/helpers/auth";
 import { userFormSchema } from "@/helpers/userForm";
+import { territoriesCell } from "@/helpers/usersTable";
 import { useOperatorsList, useTerritoriesList, useUsersList } from "@/hooks/api";
 import { FormValidationError, useActionsModal } from "@/hooks/useActionsModal";
 import { useUrlSearch } from "@/hooks/useUrlSearch";
@@ -22,6 +23,7 @@ import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
 import Select from "@codegouvfr/react-dsfr/Select";
 import Table from "@codegouvfr/react-dsfr/Table";
+import Tooltip from "@codegouvfr/react-dsfr/Tooltip";
 import { useEffect, useState } from "react";
 
 export default function UsersTable(props: { title: string; territoryId: number | null; operatorId: number | null }) {
@@ -61,7 +63,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
   const totalPages = data?.meta.totalPages ?? 1;
   const totalRecords = data?.meta.total ?? 0;
 
-  const headers = ["Prénom", "Nom", "Adresse mail", "Rôle", "Opérateur", "Territoire", "Actions"];
+  const headers = ["Prénom", "Nom", "Adresse mail", "Rôle", "Opérateur", "Territoires", "Actions"];
   const { data: operatorsData, refetch: refetchOperators } = useOperatorsList({ limit: 100 });
   const operatorsList = () => {
     if (user?.operator_id) {
@@ -142,6 +144,33 @@ export default function UsersTable(props: { title: string; territoryId: number |
     );
   };
 
+  // Une ligne par compte : le défaut, « (+N) » pour les autres, tous listés dans l'infobulle.
+  // Hors registry.admin l'API masque scopes : le nom du territory_id legacy vient de la liste des territoires.
+  const territoriesColumn = (d: UsersInterface["data"][0]) => {
+    const nameOf = (id: number) => territoriesList().find((t) => t?._id === id)?.name;
+    const { label, extra, all } = territoriesCell(d.scopes, d.territory_id, nameOf);
+    const cell = (
+      <span className="users-territories">
+        {label}
+        {extra > 0 && ` (+${extra})`}
+      </span>
+    );
+    if (extra === 0) return cell;
+    return (
+      <Tooltip
+        kind="hover"
+        title={all.map((name, i) => (
+          <span key={i}>
+            {name}
+            <br />
+          </span>
+        ))}
+      >
+        {cell}
+      </Tooltip>
+    );
+  };
+
   const dataTable =
     data?.data?.map((d) => [
       d.firstname,
@@ -149,7 +178,7 @@ export default function UsersTable(props: { title: string; territoryId: number |
       d.email,
       labelRole(d.role),
       operatorsList().find((o) => o?.id === d.operator_id)?.name,
-      territoriesList().find((t) => t?._id === d.territory_id)?.name,
+      territoriesColumn(d),
       rowActions(d),
     ]) ?? [];
 

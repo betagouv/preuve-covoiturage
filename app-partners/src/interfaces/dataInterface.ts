@@ -25,6 +25,9 @@ export interface UserScopeInput {
   operator_id?: number;
   territory_id?: number;
   is_default?: boolean;
+  // Lecture seule (liste) : retirés par userFormSchema avant envoi.
+  territory_name?: string | null;
+  siret?: string | null;
 }
 
 export interface Company {
