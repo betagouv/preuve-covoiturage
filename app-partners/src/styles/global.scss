@@ -65,6 +65,16 @@
   text-transform: uppercase;
 }
 
+// Liste des utilisateurs : une ligne par compte, tronquée ; le détail est dans l'infobulle.
+.users-territories {
+  display: inline-block;
+  max-width: 16rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
 // Accueil : « covoiturage.beta.gouv.fr » ne tient pas sur une ligne de titre en mobile.
 @media (max-width: 36em) {
   .home-title h1 {

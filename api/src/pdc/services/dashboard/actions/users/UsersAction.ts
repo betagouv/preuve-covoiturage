@@ -17,8 +17,8 @@ export type UserResult = {
   login_siren?: string | null;
   // Nombre total de périmètres du compte, indépendant du filtre du caller.
   scopes_count: number;
-  // Périmètres territoire du compte, défaut en tête.
-  scopes: Array<{ territory_id: number; is_default: boolean }>;
+  // Périmètres territoire du compte, défaut en tête ; nom et SIRET du territoire pour l'affichage.
+  scopes: Array<{ territory_id: number; is_default: boolean; territory_name: string | null; siret: string | null }>;
 };
 export type ResultInterface = {
   meta: {
