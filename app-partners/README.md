@@ -169,6 +169,7 @@ App-Partners est un **frontend pur** : il ne possède aucune base de données pr
 - Les appels API sont centralisés dans `src/hooks/api/` via des hooks custom (`use[Feature][Action]`)
 - La configuration de l'URL de l'API se fait via `NEXT_PUBLIC_API_URL` dans `.env.local`
 - Les helpers de requête se trouvent dans `src/helpers/`
+- Recherche de territoire (modale utilisateur, `TerritoryAutocomplete`) : `GET /v3/dashboard/territories?search=&limit=` (recherche sur nom ou SIRET, `limit` ≤ 200, 20 résultats affichés)
 
 ## Extensions VSCode Recommandées
 

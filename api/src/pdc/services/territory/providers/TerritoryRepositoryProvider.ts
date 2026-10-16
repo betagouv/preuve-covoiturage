@@ -92,10 +92,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       whereClauses.push(`tg._id = ${bind(id)}`);
     }
 
-    if (search) {
-      // `%` et `_` sont des jokers LIKE.
-      const needle = `%${search.toLowerCase().replace(/([%_\\])/g, "\\$1")}%`;
-      const placeholder = bind(needle);
+    // `%` et `_` sont des jokers LIKE.
+    const escaped = search ? search.toLowerCase().replace(/([%_\\])/g, "\\$1") : undefined;
+    if (escaped !== undefined) {
+      const placeholder = bind(`%${escaped}%`);
       whereClauses.push(
         `(LOWER(tg.name) LIKE ${placeholder} ESCAPE '\\' OR cc.siret LIKE ${placeholder} ESCAPE '\\')`,
       );
@@ -158,6 +158,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       ).rows[0].territory_count,
     );
 
+    // Lié après le comptage : la requête count partage `values` et n'a pas ce paramètre.
+    // Les noms qui commencent par la recherche passent devant ceux qui la contiennent.
+    const orderBy = escaped !== undefined
+      ? `(LOWER(tg.name) LIKE ${bind(`${escaped}%`)} ESCAPE '\\') DESC, tg.name ASC`
+      : "tg.name ASC";
     const limitPlaceholder = bind(limit);
     const offsetPlaceholder = bind(offset);
     const query = {
@@ -165,7 +170,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         SELECT tg._id, tg.name, cc.siret FROM ${this.table} as tg
         LEFT JOIN company.companies cc ON cc._id = tg.company_id
         WHERE ${where}
-        ORDER BY tg.name ASC
+        ORDER BY ${orderBy}
         LIMIT ${limitPlaceholder}
         OFFSET ${offsetPlaceholder}
       `,

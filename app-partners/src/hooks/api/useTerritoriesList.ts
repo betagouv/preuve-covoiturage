@@ -19,7 +19,7 @@ export function useTerritoriesList(
   return useRestQuery<TerritoriesInterface>(
     "v3",
     "dashboard/territories",
-    { limit, ...(policy !== undefined && { policy }) },
+    { limit, ...(policy !== undefined && { policy }), ...(territory_id && { id: territory_id }) },
     {},
     [limit, policy, territory_id],
   );

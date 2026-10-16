@@ -48,3 +48,39 @@ export async function searchTerritories(q: string | null, limit = 20, signal?: A
     return [];
   }
 }
+
+export interface TerritoryOption {
+  _id: number;
+  name: string;
+  siret: string | null;
+}
+
+// Recherche serveur dans `territory.territory_group` (modale utilisateur) : le périmètre d'un
+// compte est un `territory_group._id`, pas un code géo comme dans l'observatoire.
+export async function searchDashboardTerritories(
+  q: string | null,
+  limit = 20,
+  signal?: AbortSignal,
+): Promise<TerritoryOption[]> {
+  const search = (q ?? "").trim();
+  if (!search) return [];
+  const params = new URLSearchParams({ search, limit: String(limit) });
+  const url = getApiUrl("v3", `dashboard/territories?${params}`);
+  try {
+    const response = await fetch(url, { credentials: "include", signal });
+    if (!response.ok) {
+      console.error(`Recherche de territoires : HTTP ${response.status}`);
+      return [];
+    }
+    const body = (await response.json()) as { data?: unknown };
+    if (!Array.isArray(body?.data)) {
+      console.error("Recherche de territoires : réponse inattendue");
+      return [];
+    }
+    return body.data as TerritoryOption[];
+  } catch (e) {
+    if (e instanceof Error && e.name === "AbortError") return [];
+    console.error("Recherche de territoires injoignable", e);
+    return [];
+  }
+}
