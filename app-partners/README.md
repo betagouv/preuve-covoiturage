@@ -76,8 +76,13 @@ Copier `.env.example` vers `.env.local` et configurer :
 | `NEXT_PUBLIC_DATALAKE_BASE_URL`   | URL de l'API datalake (recherche de territoires)                            |
 | `NEXT_PUBLIC_PC_USER_URI`         | URI utilisateur PC                                                          |
 | `NEXT_PUBLIC_FEATURE_MULTI_SIRET` | `true` affiche le multi-périmètre : liste des territoires dans le menu compte du header (si ≥ 2), badge, éditeur. Off par défaut |
+| `NEXT_PUBLIC_CONTACT_EMAIL`       | Adresse du support affichée dans les messages d'erreur de connexion et la page 404 (`contact@covoiturage.beta.gouv.fr` par défaut) |
 
 Les `NEXT_PUBLIC_*` sont figées au build : changer le flag demande un redéploiement (var GitHub `PARTNER_FEATURE_MULTI_SIRET` par environnement).
+
+### Erreurs de connexion
+
+Après le callback ProConnect, l'API redirige vers `/?error=<code>` et la page d'accueil affiche une alerte DSFR (`LoginErrorAlert`) : `mfa_required` (double authentification absente), `unauthorized` (compte inconnu de la plateforme, avec l'adresse du support), `login_failed` (échec technique du callback, détail dans les logs API seulement).
 
 ### Alias de chemin
 
