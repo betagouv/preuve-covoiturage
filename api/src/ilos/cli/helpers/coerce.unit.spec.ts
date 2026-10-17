@@ -1,6 +1,20 @@
-import { assertEquals } from "dep:assert";
+import { assertEquals, assertThrows } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
-import { coerceDate, coerceIntList } from "./coerce.ts";
+import { InvalidArgumentError } from "dep:commander";
+import { coerceDate, coerceInt, coerceIntList } from "./coerce.ts";
+
+describe("coerce integer", () => {
+  it("parses integers", () => {
+    assertEquals(coerceInt("7"), 7);
+    assertEquals(coerceInt("-2"), -2);
+  });
+
+  it("rejects non numeric input", () => {
+    for (const s of ["abc", "2abc", "1.5", ""]) {
+      assertThrows(() => coerceInt(s), InvalidArgumentError, "Not an integer");
+    }
+  });
+});
 
 describe("coerce integer list", () => {
   it("comma separated ok", () => {
