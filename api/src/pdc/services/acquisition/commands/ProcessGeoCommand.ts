@@ -13,7 +13,7 @@ type Options = {
   size: number;
   after?: Date;
   until?: Date;
-  lastDays: number;
+  lastDays?: number;
   failed: boolean;
 };
 
@@ -44,8 +44,7 @@ type Options = {
     },
     {
       signature: "-d, --last-days <days>",
-      description: "Process x last days from now",
-      default: 1,
+      description: "Process x last days from now (default: 1, without --after/--until)",
       coerce: coerceInt,
     },
     {
@@ -63,8 +62,9 @@ export class ProcessGeoCommand implements CommandInterface {
   public async call(opts: Options): Promise<void> {
     const options = this.validateOptions(opts);
 
-    const from = options.after ?? subDays(new Date(), options.lastDays);
-    const to = options.until ?? new Date();
+    const now = new Date();
+    const to = options.until ?? now;
+    const from = options.after ?? subDays(now, options.lastDays ?? 1);
     log.info("start", {
       from: from.toISOString(),
       to: to.toISOString(),
@@ -121,15 +121,19 @@ export class ProcessGeoCommand implements CommandInterface {
       throw new Error("Start date cannot be after end date");
     }
 
-    if (opts.lastDays && opts.after) {
+    if (opts.lastDays !== undefined && opts.after) {
       throw new Error("Cannot use last days and start date at the same time");
     }
 
-    if (opts.lastDays && opts.until) {
+    if (opts.lastDays !== undefined && opts.until) {
       throw new Error("Cannot use last days and end date at the same time");
     }
 
-    if (opts.lastDays && opts.lastDays < 1) {
+    if (opts.until && !opts.after) {
+      throw new Error("End date requires a start date");
+    }
+
+    if (opts.lastDays !== undefined && opts.lastDays < 1) {
       throw new Error("Last days must be greater than 0");
     }
 

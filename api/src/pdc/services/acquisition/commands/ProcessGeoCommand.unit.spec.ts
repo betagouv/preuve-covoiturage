@@ -1,4 +1,4 @@
-import { assertEquals, assertMatch } from "dep:assert";
+import { assertEquals, assertMatch, assertRejects } from "dep:assert";
 import { afterEach, beforeEach, describe, it } from "dep:testing-bdd";
 import sinon from "dep:sinon";
 import { logger } from "@/lib/logger/index.ts";
@@ -15,7 +15,6 @@ describe("ProcessGeoCommand", () => {
     size: 2,
     after: new Date("2026-10-01T00:00:00Z"),
     until: new Date("2026-10-02T00:00:00Z"),
-    lastDays: 0,
     failed: false,
   };
 
@@ -55,5 +54,48 @@ describe("ProcessGeoCommand", () => {
     processGeo.onSecondCall().resolves({ count: 0, failed: 0 });
     await command.call(opts);
     assertMatch(lines().at(-1)!, /^\[geo\] done batches=2 total=2 total_failed=1 ms=\d+ per_s=\d+$/);
+  });
+
+  describe("date window", () => {
+    const base = { loop: false, size: 2, failed: false };
+    const window = () => processGeo.firstCall.args[0] as { from: Date; to: Date };
+
+    beforeEach(() => processGeo.resolves({ count: 0, failed: 0 }));
+
+    it("accepts --after alone", async () => {
+      await command.call({ ...base, after: opts.after });
+      assertEquals(window().from, opts.after);
+    });
+
+    it("rejects --until without --after", async () => {
+      await assertRejects(() => command.call({ ...base, until: opts.until }), Error, "End date requires a start date");
+    });
+
+    it("defaults to the last day", async () => {
+      sinon.useFakeTimers({ now: new Date("2026-10-17T12:00:00Z"), toFake: ["Date"] });
+      await command.call(base);
+      assertEquals(window().from, new Date("2026-10-16T12:00:00Z"));
+      assertEquals(window().to, new Date("2026-10-17T12:00:00Z"));
+    });
+
+    it("rejects --last-days with --after", async () => {
+      await assertRejects(
+        () => command.call({ ...base, lastDays: 2, after: opts.after }),
+        Error,
+        "Cannot use last days and start date at the same time",
+      );
+    });
+
+    it("rejects --last-days with --until", async () => {
+      await assertRejects(
+        () => command.call({ ...base, lastDays: 2, until: opts.until }),
+        Error,
+        "Cannot use last days and end date at the same time",
+      );
+    });
+
+    it("rejects --last-days 0", async () => {
+      await assertRejects(() => command.call({ ...base, lastDays: 0 }), Error, "Last days must be greater than 0");
+    });
   });
 });
