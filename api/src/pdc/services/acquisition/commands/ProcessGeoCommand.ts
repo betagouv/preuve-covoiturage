@@ -3,6 +3,7 @@ import { command, CommandInterface } from "@/ilos/common/index.ts";
 import { getPerformanceTimer } from "@/lib/logger/index.ts";
 import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { CarpoolAcquisitionService } from "@/pdc/providers/carpool/index.ts";
+import { ProcessGeoCursor } from "@/pdc/providers/carpool/interfaces/index.ts";
 import { subDays } from "dep:date-fns";
 
 const log = taggedLogger("[geo]", { maxLength: 512 });
@@ -78,15 +79,19 @@ export class ProcessGeoCommand implements CommandInterface {
     let total = 0;
     let totalFailed = 0;
     let shouldContinue = true;
+    let cursor: ProcessGeoCursor | undefined;
 
     do {
       const subtimer = getPerformanceTimer();
-      const { count, failed, cursor } = await this.carpool.processGeo({
+      const result = await this.carpool.processGeo({
         batchSize: options.size,
         failedOnly: options.failed,
         from,
         to,
+        after: cursor,
       });
+      const { count, failed } = result;
+      cursor = result.cursor;
       batch++;
       total += count;
       totalFailed += failed;
@@ -98,7 +103,7 @@ export class ProcessGeoCommand implements CommandInterface {
           failed,
           total,
           total_failed: totalFailed,
-          cursor: cursor?.toISOString(),
+          cursor: cursor?.start_datetime.toISOString(),
           ms: Math.round(subtimer.stop()),
           per_s: perSecond(total, ms),
         });

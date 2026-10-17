@@ -38,8 +38,16 @@ describe("ProcessGeoCommand", () => {
   });
 
   it("logs cumulative progress and cursor for each batch", async () => {
-    processGeo.onFirstCall().resolves({ count: 2, failed: 1, cursor: new Date("2026-10-01T08:00:00Z") });
-    processGeo.onSecondCall().resolves({ count: 1, failed: 0, cursor: new Date("2026-10-01T09:00:00Z") });
+    processGeo.onFirstCall().resolves({
+      count: 2,
+      failed: 1,
+      cursor: { start_datetime: new Date("2026-10-01T08:00:00Z"), _id: 1 },
+    });
+    processGeo.onSecondCall().resolves({
+      count: 1,
+      failed: 0,
+      cursor: { start_datetime: new Date("2026-10-01T09:00:00Z"), _id: 2 },
+    });
     await command.call(opts);
 
     const batches = lines().filter((l) => l.startsWith("[geo] batch"));
@@ -49,8 +57,22 @@ describe("ProcessGeoCommand", () => {
     assertMatch(batches[1], / per_s=\d+$/);
   });
 
+  it("resumes each batch after the cursor of the previous one", async () => {
+    const cursor = { start_datetime: new Date("2026-10-01T08:00:00Z"), _id: 1 };
+    processGeo.onFirstCall().resolves({ count: 2, failed: 2, cursor });
+    processGeo.onSecondCall().resolves({ count: 0, failed: 0 });
+    await command.call({ ...opts, failed: true });
+
+    assertEquals(processGeo.firstCall.args[0].after, undefined);
+    assertEquals(processGeo.secondCall.args[0].after, cursor);
+  });
+
   it("logs a summary at the end", async () => {
-    processGeo.onFirstCall().resolves({ count: 2, failed: 1, cursor: new Date("2026-10-01T08:00:00Z") });
+    processGeo.onFirstCall().resolves({
+      count: 2,
+      failed: 1,
+      cursor: { start_datetime: new Date("2026-10-01T08:00:00Z"), _id: 1 },
+    });
     processGeo.onSecondCall().resolves({ count: 0, failed: 0 });
     await command.call(opts);
     assertMatch(lines().at(-1)!, /^\[geo\] done batches=2 total=2 total_failed=1 ms=\d+ per_s=\d+$/);

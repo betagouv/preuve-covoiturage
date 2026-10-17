@@ -3,7 +3,7 @@ import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres
 import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
-import { CarpoolGeo, Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+import { CarpoolGeo, Id, Position, ProcessGeoCursor, UpsertableCarpoolGeo } from "../interfaces/index.ts";
 
 const log = taggedLogger("[geo]");
 
@@ -35,12 +35,15 @@ export class CarpoolGeoRepository {
   }
 
   async findProcessable(
-    search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
+    search: { limit: number; from: Date; to: Date; failedOnly?: boolean; after?: ProcessGeoCursor },
     client: PoolClient,
   ): Promise<Array<{ carpool_id: Id; start_datetime: Date; start: Position; end: Position }>> {
     const failedOnlyClause = !search.failedOnly
       ? raw(` AND cg._id IS NULL`)
       : raw(` AND ( cg.start_geo_code IS NULL OR cg.end_geo_code IS NULL )`);
+    const afterClause = search.after
+      ? sql`AND (cc.start_datetime, cc._id) > (${search.after.start_datetime}, ${search.after._id})`
+      : raw("");
 
     const query = sql`
         SELECT 
@@ -57,7 +60,8 @@ export class CarpoolGeoRepository {
           cc.start_datetime >= ${search.from} AND
           cc.start_datetime < ${search.to}
           ${failedOnlyClause}
-        ORDER BY cc.start_datetime
+          ${afterClause}
+        ORDER BY cc.start_datetime, cc._id
         LIMIT ${search.limit}
     `;
 

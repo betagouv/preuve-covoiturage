@@ -273,6 +273,7 @@ export class CarpoolAcquisitionService {
         from: params.from,
         to: params.to,
         failedOnly: params.failedOnly,
+        after: params.after,
       }, conn);
 
       let failed = 0;
@@ -311,7 +312,9 @@ export class CarpoolAcquisitionService {
         }
       }
 
-      return { count: list.length, failed, cursor: list.at(-1)?.start_datetime };
+      const last = list.at(-1);
+      const cursor = last && { start_datetime: last.start_datetime, _id: last.carpool_id };
+      return { count: list.length, failed, cursor };
     } finally {
       conn.release();
     }
