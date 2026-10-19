@@ -38,15 +38,15 @@
     "@typescript-eslint/eslint-plugin": "^8.70.1",
     "@typescript-eslint/parser": "^8.70.1",
     "eslint": "^9.36.0",
-    "eslint-config-next": "^16.3.8",
+    "eslint-config-next": "^16.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
-    "sass": "^1.104.1",
+    "sass": "^1.105.1",
     "typescript": "^5",
     "typescript-eslint": "^8.70.1",
     "vitest": "^5.0.3"
   },
   "overrides": {
-    "postcss": "^8.5.28"
+    "postcss": "^8.5.31"
   }
 }
