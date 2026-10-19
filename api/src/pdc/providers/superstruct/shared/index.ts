@@ -6,6 +6,7 @@ import {
   integer,
   nullable,
   pattern,
+  refine,
   size,
   string,
   Struct,
@@ -36,6 +37,17 @@ export const Timestamp = coerce(
   (v) => new Date(v),
 );
 export const Varchar = size(string(), 0, 256);
+
+// Équivalent superstruct du mot-clé ajv `sanitize` : ni balise, ni caractère de contrôle.
+export const PlainText = refine(Varchar, "plaintext", (value) => {
+  for (const char of value) {
+    const code = char.codePointAt(0) ?? 0;
+    if (char === "<" || char === ">" || code < 0x20 || code === 0x7f) {
+      return "Les balises et les caractères de contrôle ne sont pas autorisés";
+    }
+  }
+  return true;
+});
 
 export const Uuid = pattern(
   string(),

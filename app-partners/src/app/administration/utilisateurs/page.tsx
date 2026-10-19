@@ -1,17 +1,8 @@
-"use client";
-import { useAuth } from "@/providers/AuthProvider";
-import UsersTable from "../tables/UsersTable";
+import { type Metadata } from "next";
+import TabUsers from "./UtilisateursPage";
 
-export default function TabUsers() {
-  const { user } = useAuth();
+export const metadata: Metadata = { title: "Utilisateurs et accès" };
 
-  return (
-    <>
-      <UsersTable
-        title="Gestion des utilisateurs"
-        territoryId={user?.territory_id ?? null}
-        operatorId={user?.operator_id ?? null}
-      />
-    </>
-  );
+export default function Page() {
+  return <TabUsers />;
 }

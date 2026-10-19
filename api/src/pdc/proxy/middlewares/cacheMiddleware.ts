@@ -2,7 +2,7 @@
 import { ForbiddenException } from "@/ilos/common/index.ts";
 import { NextFunction, Request, Response } from "dep:express";
 
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { safeCompare } from "@/lib/crypto/safeCompare.ts";
 import { cacheStore } from "./cache/redis.ts";
 import { deflate, getKey, inflate } from "./cache/transformers.ts";
@@ -17,6 +17,8 @@ import type {
 } from "./cache/types.ts";
 import { CacheTTL } from "./cache/types.ts";
 import { validate } from "./cache/validators.ts";
+
+const log = taggedLogger("[cache]");
 
 const defaultGlobalConfig: GlobalCacheConfig = {
   authorizedMethods: ["HEAD", "GET"],
@@ -84,17 +86,11 @@ export function cacheMiddleware(
           }
 
           for (const warn of warnings.values()) {
-            logger.warn({
-              "X-Route-Cache-Url": req.url,
-              "X-Route-Cache-Warn": warn.message,
-            });
+            log.warn("skipped", { path: req.path, reason: warn.message });
           }
 
           for (const error of errors.values()) {
-            logger.error({
-              "X-Route-Cache-Url": req.url,
-              "X-Route-Cache-Error": error.message,
-            });
+            log.error("invalid", { path: req.path, reason: error.message });
           }
 
           next();
@@ -170,9 +166,7 @@ export function cacheMiddleware(
       const keys = await store.scan(pattern);
       if (keys && keys.size) await store.del(keys);
 
-      logger.debug(
-        `[route-cache] flushed ${keys.size} keys from pattern: ${pattern}`,
-      );
+      log.debug("flush", { pattern, keys: keys.size });
 
       return {
         size: keys.size,

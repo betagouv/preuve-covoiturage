@@ -1,16 +1,20 @@
 import { command, CommandInterface, ConfigInterfaceResolver } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, formatTaggedLine, taggedLogger } from "@/lib/logger/tagged.ts";
+import { auditLog } from "@/pdc/proxy/audit.ts";
 import {
   MailTemplateNotificationInterface,
   NotificationTransporterInterfaceResolver,
 } from "@/pdc/providers/notification/index.ts";
+import { SessionRepository } from "@/pdc/services/auth/providers/SessionRepository.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { InactiveUserDeletionWarningNotification } from "../notifications/InactiveUserDeletionWarningNotification.ts";
+
+const log = taggedLogger("[purge]", { maxLength: 512 });
 
 interface Options {
   inactivity: string;
   grace: string;
-  appUrl: string;
+  appUrl?: string;
   dryRun: boolean;
 }
 
@@ -20,7 +24,7 @@ export function assertNotificationConfigured(config: ConfigInterfaceResolver): v
   const smtp = config.get("notification.mail.smtp", null);
   if (!smtp) {
     throw new Error(
-      "[purge-inactive-users] notification.mail.smtp non configuré ; arrêt pour éviter de supprimer des comptes non avertis",
+      "[purge] notification.mail.smtp non configuré ; arrêt pour éviter de supprimer des comptes non avertis",
     );
   }
 }
@@ -31,11 +35,7 @@ export function assertNotificationConfigured(config: ConfigInterfaceResolver): v
   options: [
     { signature: "--inactivity <inactivity>", description: "Seuil d'inactivité (interval PG)", default: "12 months" },
     { signature: "--grace <grace>", description: "Durée du préavis (interval PG)", default: "7 days" },
-    {
-      signature: "--app-url <appUrl>",
-      description: "URL de reconnexion (espace partenaire)",
-      default: "https://partenaire.covoiturage.beta.gouv.fr",
-    },
+    { signature: "--app-url <appUrl>", description: "URL de reconnexion (défaut : APP_APP_URL)" },
     { signature: "--dry-run", description: "N'envoie rien et ne supprime rien, log seulement" },
   ],
 })
@@ -44,10 +44,12 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
     private config: ConfigInterfaceResolver,
     private usersRepository: UsersRepositoryInterfaceResolver,
     private emailer: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
+    private sessionRepository: SessionRepository,
   ) {}
 
   public async call(options: Options): Promise<string> {
     assertNotificationConfigured(this.config);
+    const appUrl = options.appUrl || this.config.get("app_url");
 
     // Phase 1 — avertir
     const toWarn = await this.usersRepository.findUsersToWarn(options.inactivity);
@@ -56,20 +58,26 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
       const fullname = `${user.firstname ?? ""} ${user.lastname ?? ""}`.trim() || user.email;
       try {
         if (options.dryRun) {
-          logger.info(`[purge-inactive-users] (dry-run) avertirait ${user._id}`);
+          log.info("would warn", { id: user._id, dry_run: true });
         } else {
           await this.emailer.send(
             new InactiveUserDeletionWarningNotification(`${fullname} <${user.email}>`, {
               fullname,
-              action_href: options.appUrl,
+              action_href: appUrl,
             }),
           );
           // Si markUserWarned throw ici, warned peut sous-compter (sens sûr : l'utilisateur sera réavertit, jamais supprimé à tort).
           await this.usersRepository.markUserWarned(user._id);
           warned++;
+          auditLog.info("dashboard:purgeInactiveUsers", {
+            outcome: "ok",
+            transport: "internal",
+            result: "warned",
+            id: user._id,
+          });
         }
       } catch (e) {
-        logger.error(`[purge-inactive-users] échec avertissement ${user._id}: ${e instanceof Error ? e.message : e}`);
+        log.error("warn failed", { id: user._id, error: errorCode(e) });
       }
     }
 
@@ -83,17 +91,36 @@ export class PurgeInactiveUsersCommand implements CommandInterface {
       const toDelete = await this.usersRepository.findUsersToDelete(options.grace);
       candidates = toDelete.length;
       for (const user of toDelete) {
-        logger.info(`[purge-inactive-users] (dry-run) supprimerait ${user._id}`);
+        log.info("would delete", { id: user._id, dry_run: true });
       }
     } else {
       const removed = await this.usersRepository.deleteInactiveUsers(options.grace);
       deleted = removed.length;
       candidates = removed.length;
+      for (const user of removed) {
+        auditLog.info("dashboard:purgeInactiveUsers", {
+          outcome: "ok",
+          transport: "internal",
+          result: "deleted",
+          id: user._id,
+        });
+        // Un compte inactif peut encore porter un cookie valide : on ferme ses sessions.
+        try {
+          await this.sessionRepository.destroyByUser(user._id);
+        } catch (e) {
+          log.error("session purge failed", { id: user._id, error: errorCode(e) });
+        }
+      }
     }
 
-    const summary = `[purge-inactive-users] avertis=${warned}/${toWarn.length} supprimés=${deleted}/${candidates}` +
-      (options.dryRun ? " (dry-run)" : "");
-    logger.info(summary);
-    return summary;
+    const fields = {
+      warned,
+      to_warn: toWarn.length,
+      deleted,
+      candidates,
+      dry_run: options.dryRun,
+    };
+    log.info("done", fields);
+    return formatTaggedLine("[purge]", "done", fields);
   }
 }

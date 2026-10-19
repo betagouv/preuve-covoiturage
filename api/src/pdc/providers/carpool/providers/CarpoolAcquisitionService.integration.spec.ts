@@ -54,7 +54,7 @@ describe("CarpoolAcquisitionService", () => {
       overrides.lookupRepository ?? lookupRepository,
       overrides.carpoolRepository ?? carpoolRepository,
       overrides.geoRepository ?? geoRepository,
-      geoService,
+      overrides.geoService ?? geoService,
     );
   }
 
@@ -542,5 +542,39 @@ describe("CarpoolAcquisitionService", () => {
       data.operator_journey_id,
     );
     assertEquals(after?.acquisition_status, "processed");
+  });
+
+  it("Should not process the same permanently failing carpools again when given the cursor", async () => {
+    const failingGeo = sinon.createStubInstance(GeoProvider);
+    failingGeo.positionToInsee.rejects(new Error("geo down"));
+    const service = getService({ geoService: failingGeo });
+
+    const start_datetime = new Date("2023-04-01T08:00:00.000Z");
+    const conn = await db.connection.getClient().connect();
+    for (let i = 0; i < 3; i++) {
+      await carpoolRepository.register({
+        ...insertableCarpool,
+        operator_journey_id: `geo_failed_loop_${i}`,
+        start_datetime,
+        end_datetime: new Date("2023-04-01T09:00:00.000Z"),
+      }, conn);
+    }
+    conn.release();
+    const params = {
+      batchSize: 1,
+      from: new Date("2023-04-01T00:00:00.000Z"),
+      to: new Date("2023-04-02T00:00:00.000Z"),
+      failedOnly: true,
+    };
+
+    const first = await service.processGeo(params);
+    const second = await service.processGeo({ ...params, after: first.cursor });
+    const third = await service.processGeo({ ...params, after: second.cursor });
+    const last = await service.processGeo({ ...params, after: third.cursor });
+
+    assertEquals([first.failed, second.failed, third.failed], [1, 1, 1]);
+    assertEquals(new Set([first.cursor?._id, second.cursor?._id, third.cursor?._id]).size, 3);
+    assertEquals(third.cursor?.start_datetime, start_datetime);
+    assertEquals(last.count, 0);
   });
 });

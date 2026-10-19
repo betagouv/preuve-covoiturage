@@ -1,11 +1,9 @@
-import {
-  ConfigInterfaceResolver,
-  provider,
-  ProviderInterface,
-} from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { ConfigInterfaceResolver, provider, ProviderInterface } from "@/ilos/common/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { Sentry } from "./Sentry.ts";
+
+const log = taggedLogger("[sentry]");
 
 @provider()
 export class SentryProvider implements ProviderInterface {
@@ -42,9 +40,11 @@ export class SentryProvider implements ProviderInterface {
             return null;
           }
 
-          logger.info(
-            `[sentry event] #${event.event_id} ${event.transaction} : ${hint.originalException.toString()}`,
-          );
+          log.info("event", {
+            event_id: event.event_id,
+            transaction: event.transaction,
+            error: errorCode(hint.originalException),
+          });
 
           return event;
         },

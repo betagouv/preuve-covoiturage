@@ -1,5 +1,5 @@
 import { KernelInterfaceResolver, NotFoundException } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import {
   ParamsInterface as FindByUuidParamsInterface,
   ResultInterface as FindByUuidResultInterface,
@@ -10,6 +10,8 @@ import {
   ResultInterface as PolicyResultInterface,
   signature as policyFindSignature,
 } from "../../policy/contracts/find.contract.ts";
+
+const log = taggedLogger("[apdf]");
 
 export async function getCampaignOperators(
   kernel: KernelInterfaceResolver,
@@ -22,9 +24,7 @@ export async function getCampaignOperators(
   } catch (e) {
     // catch and log to avoid blocking the whole export
     // on error, the list will not be filtered
-    logger.warn(
-      `[apdf:export] (campaign_id: ${_id}) Get declared operators failed: ${e.message}`,
-    );
+    log.warn("get declared operators failed", { campaign_id: _id, error: errorCode(e) });
     return [];
   }
 }

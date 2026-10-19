@@ -1,6 +1,6 @@
 import { handler, KernelInterfaceResolver } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { copyFromContextMiddleware, hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 import {
   ParamsInterface as OperatorParamsInterface,
@@ -12,6 +12,8 @@ import { alias } from "../contracts/list.schema.ts";
 import { Policy } from "../engine/entities/Policy.ts";
 import { SerializedPolicyInterface } from "../interfaces/engine/PolicyInterface.ts";
 import { PolicyRepositoryProviderInterfaceResolver } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]");
 
 @handler({
   ...handlerConfig,
@@ -45,8 +47,7 @@ export class ListAction extends AbstractAction {
           policy.params = importedPolicy.params();
           return policy;
         } catch (e) {
-          const errMsg = e instanceof Error ? e.message : String(e);
-          logger.warn(`Could not import policy ${r._id}`, errMsg);
+          log.warn("list import policy failed", { policy_id: r._id, error: errorCode(e) });
           return policy;
         }
       }),

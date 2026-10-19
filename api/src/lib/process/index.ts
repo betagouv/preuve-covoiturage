@@ -1,4 +1,8 @@
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
+
+const log = taggedLogger("[boot]", { maxLength: 512 });
+
+const reason = (e: unknown): string => e instanceof Error ? e.message : String(e);
 
 export const exit = (code: number | undefined) => {
   Deno.exit(code);
@@ -21,11 +25,11 @@ export function registerGracefulShutdown(
 ) {
   function gracefullShutDown(signal: Deno.Signal) {
     return async () => {
-      logger.info(`got kill signal (${signal}), starting graceful shut down`);
+      log.info("shutdown start", { signal });
       // shut down anyway after `timeout` seconds
       if (timeout) {
         setTimeout(() => {
-          logger.error("could not finish in time, forcefully exiting");
+          log.error("shutdown timeout");
           exit(1);
         }, timeout * 1000);
       }
@@ -35,7 +39,7 @@ export function registerGracefulShutdown(
         try {
           await Promise.resolve(handler());
         } catch (err) {
-          logger.error("error happened during graceful shut down", err);
+          log.error("shutdown handler failed", { error: reason(err) });
           isError = true;
         }
       }
@@ -43,7 +47,7 @@ export function registerGracefulShutdown(
         exit(1);
       }
 
-      logger.info("graceful shut down finished");
+      log.info("shutdown done");
       exit(0);
     };
   }
@@ -63,12 +67,12 @@ export function catchErrors(
 ) {
   async function uncaughtExceptionHandler(e: Event) {
     e.preventDefault();
-    logger.error("uncaught exception", e);
+    log.error("uncaught exception", { error: errorCode((e as ErrorEvent).error) });
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
       setTimeout(() => {
-        logger.error("could not finish in time, forcefully exiting");
+        log.error("shutdown timeout");
         exit(1);
       }, timeout * 1000);
     }
@@ -77,7 +81,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        logger.error("failed to close resource", err);
+        log.error("close failed", { error: reason(err) });
       }
     }
 
@@ -86,13 +90,13 @@ export function catchErrors(
   globalThis.addEventListener("error", uncaughtExceptionHandler);
 
   async function unhandledRejectionHandler(e: Event & { reason: unknown }) {
-    logger.error("Unhandled Rejection", e.reason);
+    log.error("unhandled rejection", { error: errorCode(e.reason) });
     e.preventDefault();
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
       setTimeout(() => {
-        logger.error("could not finish in time, forcefully exiting");
+        log.error("shutdown timeout");
         exit(1);
       }, timeout * 1000);
     }
@@ -101,7 +105,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        logger.error("failed to close resource", err);
+        log.error("close failed", { error: reason(err) });
       }
     }
 

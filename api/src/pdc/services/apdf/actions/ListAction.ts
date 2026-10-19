@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from "../../../../ilos/common/index.ts";
 import { Action } from "../../../../ilos/core/index.ts";
-import { logger } from "../../../../lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "../../../providers/middleware/index.ts";
 import {
   ParamsInterface as CampaignFindParams,
@@ -15,6 +15,8 @@ import {
 import { handlerConfig, ParamsInterface, ResultsInterface } from "../contracts/list.contract.ts";
 import { alias } from "../contracts/list.schema.ts";
 import { StorageRepositoryProviderInterfaceResolver } from "../interfaces/StorageRepositoryProviderInterface.ts";
+
+const log = taggedLogger("[apdf]");
 
 @handler({
   ...handlerConfig,
@@ -52,8 +54,7 @@ export class ListAction extends Action {
         { channel: { service: "apdf" }, call: context.call },
       );
     } catch (e) {
-      const errMsg = e instanceof Error ? e.message : String(e);
-      logger.error(`[apdf:list -> campaign:find] ${errMsg}`);
+      log.error("find campaign failed", { campaign_id, error: errorCode(e) });
       throw e;
     }
 

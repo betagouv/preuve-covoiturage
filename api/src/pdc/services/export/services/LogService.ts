@@ -1,7 +1,9 @@
 import { provider } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { ExportLogEvent } from "../models/ExportLog.ts";
 import { LogRepositoryInterfaceResolver } from "../repositories/LogRepository.ts";
+
+const log = taggedLogger("[export]");
 
 export enum LogLevels {
   INFO = "info",
@@ -65,7 +67,7 @@ export class LogService {
     export_id: number,
     message = "Export created",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} created`);
+    log.info("created", { export_id });
     await this.log(export_id, ExportLogEvent.CREATED, message);
   }
 
@@ -73,7 +75,7 @@ export class LogService {
     export_id: number,
     message = "Export cancelled",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} cancelled`);
+    log.info("cancelled", { export_id });
     await this.log(export_id, ExportLogEvent.CANCELLED, message);
   }
 
@@ -81,7 +83,7 @@ export class LogService {
     export_id: number,
     message = "Export being processed",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} being processed`);
+    log.info("being processed", { export_id });
     await this.log(export_id, ExportLogEvent.RUNNING, message);
   }
 
@@ -89,7 +91,7 @@ export class LogService {
     export_id: number,
     message = "Export succeeded",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} succeeded`);
+    log.info("succeeded", { export_id });
     await this.log(export_id, ExportLogEvent.SUCCESS, message);
   }
 
@@ -97,8 +99,7 @@ export class LogService {
     export_id: number,
     message = "Export failed",
   ): Promise<void> {
-    logger.error(` ~ Export #${export_id} failed`);
-    logger.error(message);
+    log.error("failed", { export_id });
     await this.log(export_id, ExportLogEvent.FAILURE, message);
   }
 
@@ -106,7 +107,7 @@ export class LogService {
     export_id: number,
     message = "Export sent by email",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} sent by email`);
+    log.info("sent by email", { export_id });
     await this.log(export_id, ExportLogEvent.SEND, message);
   }
 
@@ -114,7 +115,7 @@ export class LogService {
     export_id: number,
     message = "Export uploaded",
   ): Promise<void> {
-    logger.info(` ~ Export #${export_id} uploaded`);
+    log.info("uploaded", { export_id });
     await this.log(export_id, ExportLogEvent.UPLOAD, message);
   }
 

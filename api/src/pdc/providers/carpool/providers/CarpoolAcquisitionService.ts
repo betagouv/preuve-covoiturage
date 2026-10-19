@@ -1,7 +1,7 @@
 import { ConflictException, NotFoundException, provider } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { addMinutes, differenceInHours, endOfDay, startOfDay } from "@/pdc/helpers/dates.helper.ts";
 import { getTzFromLon } from "@/pdc/helpers/geo.helper.ts";
 import {
@@ -27,6 +27,8 @@ import { CarpoolRepository } from "../repositories/CarpoolRepository.ts";
 import { CarpoolRequestRepository } from "../repositories/CarpoolRequestRepository.ts";
 import { CarpoolStatusRepository } from "../repositories/CarpoolStatusRepository.ts";
 import { CarpoolAcquisitionStatus } from "../status/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider()
 export class CarpoolAcquisitionService {
@@ -271,8 +273,10 @@ export class CarpoolAcquisitionService {
         from: params.from,
         to: params.to,
         failedOnly: params.failedOnly,
+        after: params.after,
       }, conn);
 
+      let failed = 0;
       for (const item of list) {
         await conn.query("BEGIN");
         try {
@@ -292,6 +296,7 @@ export class CarpoolAcquisitionService {
           );
           await conn.query("COMMIT");
         } catch (e) {
+          failed++;
           await conn.query("ROLLBACK");
           await this.statusRepository.setGeoProcessingStatus(
             item.carpool_id,
@@ -303,11 +308,13 @@ export class CarpoolAcquisitionService {
             carpool_id: item.carpool_id,
             error: e.message,
           }, conn);
-          logger.error(`[geo] error encoding ${item.carpool_id} : ${e.message}`);
+          log.error("encode carpool geo", { carpool_id: item.carpool_id, error: errorCode(e) });
         }
       }
 
-      return list.length;
+      const last = list.at(-1);
+      const cursor = last && { start_datetime: last.start_datetime, _id: last.carpool_id };
+      return { count: list.length, failed, cursor };
     } finally {
       conn.release();
     }

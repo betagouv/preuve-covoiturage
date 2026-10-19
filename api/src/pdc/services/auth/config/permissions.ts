@@ -69,29 +69,8 @@ const permissions = {
   // Territories
   "territory.create": ["registry.admin"],
 
-  // @deprecated
   "territory.delete": ["registry.admin"],
-  "territory.find": [
-    "common",
-    "territory.user",
-    "territory.admin",
-    "registry.user",
-    "registry.admin",
-  ],
-
-  // @deprecated
-  "territory.update": ["territory.admin", "registry.admin"],
   "territory.list": ["common"],
-  "territory.read": [
-    "common",
-    "territory.user",
-    "territory.admin",
-    "registry.user",
-    "registry.admin",
-  ],
-
-  // @deprecated
-  "territory.patchContacts": ["territory.admin", "registry.admin"],
 
   // APDF
   "apdf.list": [
@@ -120,9 +99,7 @@ const permissions = {
     "registry.admin",
   ],
   "user.list": [
-    "operator.user",
     "operator.admin",
-    "territory.user",
     "territory.admin",
     "registry.user",
     "registry.admin",

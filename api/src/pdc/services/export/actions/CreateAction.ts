@@ -7,6 +7,7 @@ import {
   hasPermissionMiddleware,
   validateDateMiddleware,
 } from "@/pdc/providers/middleware/middlewares.ts";
+import { ownScopeGuardMiddleware } from "@/pdc/services/export/middlewares/OwnScopeGuardMiddleware.ts";
 import { maxEndDefault, minStartDefault } from "../config/export.ts";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/create.contract.ts";
 import { aliasV3 } from "../contracts/create.schema.ts";
@@ -20,6 +21,8 @@ import { TerritoryServiceInterfaceResolver } from "../services/TerritoryService.
   middlewares: [
     hasPermissionMiddleware("common.export.create"),
     ["timezone", DefaultTimezoneMiddleware],
+    // Avant les recopies de contexte, qui écrasent le périmètre demandé.
+    ownScopeGuardMiddleware(),
     // preserve=false : l'auteur vient de la session. Sinon le corps le fixe librement et
     // l'export part au nom d'un tiers, qui en reçoit la notification et le lien de téléchargement.
     copyFromContextMiddleware(`call.user._id`, "created_by", false),

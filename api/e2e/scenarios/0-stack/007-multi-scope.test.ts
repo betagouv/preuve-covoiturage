@@ -406,3 +406,37 @@ describe("Multi-périmètre : administration des utilisateurs", () => {
     await admin.delete(`/v3/dashboard/user/${after.id}`);
   });
 });
+
+describe("Suppression d'un compte connecté", () => {
+  // Seuls les comptes seedés peuvent ouvrir une session de test : on supprime le compte
+  // multi-périmètre puis on le recrée à l'identique pour les scénarios suivants.
+  it("un compte supprimé perd sa session : /auth/me et les routes de données répondent 401", async () => {
+    const admin = new API();
+    await admin.callback(ADMIN_EMAIL, ADMIN_PASSWORD);
+    const row = await findUser(admin, MULTI_EMAIL);
+
+    const b = new API();
+    await b.callback(MULTI_EMAIL, MULTI_PASSWORD);
+    expect((await b.get("/auth/me")).status).toBe(200);
+    expect((await b.get("/v3/dashboard/users")).status).toBe(200);
+
+    try {
+      // Le cookie encore présent côté B ne doit plus ouvrir aucune porte.
+      expect((await admin.delete(`/v3/dashboard/user/${row.id}`)).status).toBe(200);
+      expect((await b.get("/auth/me")).status).toBe(401);
+      expect((await b.get("/v3/dashboard/users")).status).toBe(401);
+    } finally {
+      const restored = await admin.post("/v3/dashboard/user", {
+        firstname: "User",
+        lastname: "multi-territory",
+        email: MULTI_EMAIL,
+        role: "territory.admin",
+        scopes: [
+          { territory_id: TERRITORY_IDFM_ID, is_default: true },
+          { territory_id: TERRITORY_LYON_ID },
+        ],
+      });
+      expect(restored.status).toBe(200);
+    }
+  });
+});

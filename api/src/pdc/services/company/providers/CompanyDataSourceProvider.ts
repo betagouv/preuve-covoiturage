@@ -6,9 +6,11 @@ import {
 } from "../interfaces/CompanyDataSourceProviderInterface.ts";
 
 import fetcher from "@/lib/fetcher/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { CompanyInterface } from "@/shared/common/interfaces/CompanyInterface2.ts";
+
+const log = taggedLogger("[company]");
 
 @provider({
   identifier: CompanyDataSourceProviderInterfaceResolver,
@@ -73,7 +75,7 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {
-      logger.error(`[CompanyDataSourceProvider] ${e.message}`);
+      log.error("fetch failed", { error: errorCode(e) });
       throw e;
     }
   }

@@ -1,3 +1,4 @@
+import AdminTable from "@/components/common/AdminTable";
 import AlertMessage from "@/components/common/AlertMessage";
 import { Modal } from "@/components/common/Modal";
 import Pagination from "@/components/common/Pagination";
@@ -12,7 +13,6 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Button from "@codegouvfr/react-dsfr/Button";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import Input from "@codegouvfr/react-dsfr/Input";
-import Table from "@codegouvfr/react-dsfr/Table";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
@@ -247,7 +247,7 @@ export default function TerritoriesTable(props: { title: string; id: number | nu
           />
         </div>
       )}
-      <Table data={dataTable} headers={headers} colorVariant="blue-ecume" />
+      <AdminTable data={dataTable} headers={headers} />
       <Pagination count={totalPages()} defaultPage={currentPage} onChange={onChangePage} />
       <Modal
         open={modal.openModal}

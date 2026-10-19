@@ -1,5 +1,5 @@
 import { DenoPostgresConnection } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { basePath, join } from "@/lib/path/index.ts";
 import sql, { join as sqlJoin, raw } from "@/lib/pg/sql.ts";
 import { Options as ParseOptions, parse } from "dep:csv-parse";
@@ -13,6 +13,8 @@ import { companies, Company } from "./seeds/companies.ts";
 import { Operator, operators } from "./seeds/operators.ts";
 import { CreateTerritoryGroupInterface, territory_groups, TerritorySelectorsInterface } from "./seeds/territories.ts";
 import { User, users } from "./seeds/users.ts";
+
+const log = taggedLogger("[migrator]", { maxLength: 512 });
 
 export type DenoMigratorMigrateParams = {
   path: string;
@@ -78,7 +80,7 @@ export class DenoMigrator {
 
   async create() {
     if (this.hasTmpDb) {
-      logger.debug(`[migrator] creating database ${this.dbName}`);
+      log.debug("creating database", { db: this.dbName });
       await this.baseConn.up();
       await this.baseConn.raw(sql`CREATE DATABASE ${raw(this.dbName)}`);
     }
@@ -94,11 +96,11 @@ export class DenoMigrator {
     };
 
     if (skip) {
-      logger.warn("[migrator] skipping migrations");
+      log.warn("skipping migrations");
       return;
     }
 
-    verbose && logger.info("[migrator] Migrate database schema");
+    verbose && log.info("migrate database schema");
     await migrateSQL(this.currentConnectionString, path, verbose);
 
     if (flash) {
@@ -106,7 +108,7 @@ export class DenoMigrator {
         throw new Error("[migrator] cache configuration is required to flash data");
       }
 
-      verbose && logger.info("[migrator] flash data");
+      verbose && log.info("flash data");
       const flash = new FlashDBData({
         connectionString: this.currentConnectionString,
         cache,
@@ -118,31 +120,32 @@ export class DenoMigrator {
   }
 
   async seed() {
-    logger.debug("[migrator] seeding...");
+    log.debug("seeding start");
 
     await this.up();
     await this.testConn.query(sql`SET session_replication_role = 'replica'`);
 
     for (const company of companies) {
-      this.verbose && logger.debug(`Seeding company ${company.legal_name}`);
+      this.verbose && log.debug("seed company", { name: company.legal_name });
       await this.seedCompany(company);
     }
 
-    this.verbose && logger.debug(`Seeding geo`);
+    this.verbose && log.debug("seed geo");
     await this.seedTerritory();
 
     for (const operator of operators) {
-      this.verbose && logger.debug(`Seeding operator ${operator.name}`);
+      this.verbose && log.debug("seed operator", { name: operator.name });
       await this.seedOperator(operator);
     }
 
+    let seededUsers = 0;
     for (const user of users) {
-      this.verbose && logger.debug(`Seeding user ${user.email}`);
+      this.verbose && log.debug("seed user", { count: ++seededUsers });
       await this.seedUser(user);
     }
 
     for (const territory_group of territory_groups) {
-      this.verbose && logger.debug(`Seeding territory group ${territory_group.name}`);
+      this.verbose && log.debug("seed territory group", { name: territory_group.name });
       await this.seedTerritoryGroup(territory_group);
     }
     // seeds use explicit ids: move the sequence past them for later inserts
@@ -151,12 +154,12 @@ export class DenoMigrator {
     `);
 
     for (const carpool of carpoolsV2) {
-      this.verbose && logger.debug(`Seeding carpool ${carpool[0].acquisition_id}`);
+      this.verbose && log.debug("seed carpool", { acquisition_id: carpool[0].acquisition_id });
       await this.seedCarpoolV2(carpool);
     }
 
     await this.testConn.query(sql`SET session_replication_role = 'origin'`);
-    logger.debug("[migrator] seeding... done");
+    log.debug("seeding done");
   }
 
   protected async seedFromCSV(filename: string, tablename: string, _csvOptions: ParseOptions = {}) {

@@ -1,7 +1,9 @@
 // from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/health-check.ts
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { registerOnSignal } from "@/lib/process/index.ts";
 import { Request, RequestHandler, Response } from "dep:express";
+
+const log = taggedLogger("[http]");
 
 export function healthCheckFactory(
   checks: Array<() => Promise<any>> = [],
@@ -27,7 +29,7 @@ export function healthCheckFactory(
       try {
         await check();
       } catch (err) {
-        logger.error("health check failed", err);
+        log.error("health check failed", { error: errorCode(err) });
         res.status(500).send({
           status: "error",
         });

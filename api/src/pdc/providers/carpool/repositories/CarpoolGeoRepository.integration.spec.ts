@@ -46,6 +46,7 @@ describe("CarpoolGeoRepository", () => {
     assertEquals(processable, [
       {
         carpool_id: carpool_id,
+        start_datetime: insertableCarpool.start_datetime,
         start: insertableCarpool.start_position,
         end: insertableCarpool.end_position,
       },
@@ -90,6 +91,7 @@ describe("CarpoolGeoRepository", () => {
     assertEquals(processable, [
       {
         carpool_id: carpool_id,
+        start_datetime: insertableCarpool.start_datetime,
         start: insertableCarpool.start_position,
         end: insertableCarpool.end_position,
       },
@@ -106,5 +108,31 @@ describe("CarpoolGeoRepository", () => {
     assertObjectMatch(result.rows.pop(), {
       errors: JSON.parse(JSON.stringify([data.error])),
     });
+  });
+
+  it("Should resume after the cursor, ties broken by _id", async () => {
+    const start_datetime = new Date("2023-03-01T08:00:00.000Z");
+    const ids: Id[] = [];
+    for (let i = 0; i < 3; i++) {
+      const carpool = await carpoolRepository.register({
+        ...insertableCarpool,
+        operator_journey_id: `geo_cursor_${i}`,
+        start_datetime,
+        end_datetime: new Date("2023-03-01T09:00:00.000Z"),
+      }, conn);
+      ids.push(carpool._id);
+    }
+    const search = {
+      limit: 2,
+      from: new Date("2023-03-01T00:00:00.000Z"),
+      to: new Date("2023-03-02T00:00:00.000Z"),
+      failedOnly: true,
+    };
+
+    const first = await repository.findProcessable(search, conn);
+    assertEquals(first.map((p) => p.carpool_id), ids.slice(0, 2));
+
+    const second = await repository.findProcessable({ ...search, after: { start_datetime, _id: ids[1] } }, conn);
+    assertEquals(second.map((p) => p.carpool_id), ids.slice(2));
   });
 });

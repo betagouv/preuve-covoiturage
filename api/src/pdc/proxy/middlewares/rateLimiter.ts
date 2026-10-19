@@ -3,7 +3,7 @@ import { Request, Response } from "dep:express";
 import rateLimit, { Options as RateLimiterOptions, RateLimitRequestHandler } from "dep:express-rate-limit";
 import RateLimitRedisStore from "dep:rate-limit-redis";
 import { Redis as RedisClient } from "dep:redis";
-import { config } from "../config/index.ts";
+import { redis as redisConfig } from "@/config/connections.ts";
 
 const minute = 60000;
 
@@ -12,7 +12,6 @@ export function rateLimiter(
   prefix = "rl",
   scalable = true,
 ): RateLimitRequestHandler {
-  const redisConfig = config.connections.redis;
   const client = new RedisClient(redisConfig);
   const options = {
     store: new RateLimitRedisStore({

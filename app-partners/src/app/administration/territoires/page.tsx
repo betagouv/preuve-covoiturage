@@ -1,12 +1,8 @@
-"use client";
-import { useAuth } from "@/providers/AuthProvider";
-import TerritoriesTable from "../tables/TerritoriesTable";
+import { type Metadata } from "next";
+import TabTerritories from "./TerritoiresPage";
 
-export default function TabTerritories() {
-  const { user } = useAuth();
-  return (
-    <>
-      <TerritoriesTable title="Gestion des territoires" id={user?.territory_id ?? null} />
-    </>
-  );
+export const metadata: Metadata = { title: "Territoires" };
+
+export default function Page() {
+  return <TabTerritories />;
 }

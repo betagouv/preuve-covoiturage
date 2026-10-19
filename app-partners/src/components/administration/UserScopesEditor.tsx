@@ -1,19 +1,18 @@
 "use client";
-import { type Territory } from "@/interfaces/dataInterface";
+import TerritoryAutocomplete from "@/components/common/TerritoryAutocomplete";
+import { type TerritoryOption } from "@/helpers/api";
 import { type UserScopeInput } from "@/interfaces/dataInterface";
 import Button from "@codegouvfr/react-dsfr/Button";
-import Select from "@codegouvfr/react-dsfr/Select";
 import Table from "@codegouvfr/react-dsfr/Table";
 
 // Édition des périmètres territoire d'un user : liste + radio défaut + ajout (registry.admin).
 export default function UserScopesEditor(props: {
   scopes: UserScopeInput[];
-  territories: Territory[];
   onChange: (scopes: UserScopeInput[]) => void;
 }) {
-  const { scopes, territories, onChange } = props;
+  const { scopes, onChange } = props;
 
-  const nameOf = (territory_id?: number) => territories.find((t) => t?._id === territory_id)?.name ?? territory_id;
+  const nameOf = (s: UserScopeInput) => s.territory_name ?? `#${s.territory_id}`;
 
   const setDefault = (territory_id?: number) => {
     onChange(scopes.map((s) => ({ ...s, is_default: s.territory_id === territory_id })));
@@ -28,18 +27,21 @@ export default function UserScopesEditor(props: {
     onChange(next);
   };
 
-  const add = (territory_id: number) => {
-    if (!territory_id || scopes.some((s) => s.territory_id === territory_id)) return;
-    onChange([...scopes, { territory_id, is_default: scopes.length === 0 }]);
+  const add = (t: TerritoryOption | null) => {
+    if (!t || scopes.some((s) => s.territory_id === t._id)) return;
+    onChange([
+      ...scopes,
+      { territory_id: t._id, is_default: scopes.length === 0, territory_name: t.name, siret: t.siret },
+    ]);
   };
 
   const rows = scopes.map((s) => [
-    nameOf(s.territory_id),
+    nameOf(s),
     <input
       key={`def-${s.territory_id}`}
       type="radio"
       name="scope-default"
-      aria-label={`Périmètre par défaut : ${String(nameOf(s.territory_id))}`}
+      aria-label={`Périmètre par défaut : ${nameOf(s)}`}
       checked={!!s.is_default}
       onChange={() => setDefault(s.territory_id)}
     />,
@@ -56,29 +58,15 @@ export default function UserScopesEditor(props: {
     </Button>,
   ]);
 
-  const options = territories.filter((t) => t?._id && !scopes.some((s) => s.territory_id === t._id));
-
   return (
     <>
       <Table data={rows} headers={["Territoire", "Défaut", "Action"]} fixed />
-      {/* Select natif plutôt qu'un champ à liste déroulante : la liste d'un composant porté
-          hors de la modale se peint sous elle, et le rendu s'aligne sur le reste du formulaire. */}
-      <Select
+      <TerritoryAutocomplete
+        value={null}
         label="Ajouter un périmètre"
-        disabled={options.length === 0}
-        nativeSelectProps={{
-          id: "add-scope",
-          value: "",
-          onChange: (e) => add(Number(e.target.value)),
-        }}
-      >
-        <option value="">{options.length ? "Sélectionner un territoire" : "Aucun territoire disponible"}</option>
-        {options.map((t) => (
-          <option key={t._id} value={t._id}>
-            {t.name}
-          </option>
-        ))}
-      </Select>
+        excludeIds={scopes.map((s) => s.territory_id).filter((id): id is number => !!id)}
+        onChange={add}
+      />
     </>
   );
 }

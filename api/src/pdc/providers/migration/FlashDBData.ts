@@ -1,13 +1,14 @@
-import { writeFile } from "@/db/geo/helpers/file/writeFile.ts";
-import { un7zFile } from "@/db/geo/helpers/index.ts";
 import { sha256sum } from "@/lib/crypto/index.ts";
 import { env, env_or_default } from "@/lib/env/index.ts";
 import { exists, getTmpDir } from "@/lib/file/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { basename, join } from "@/lib/path/index.ts";
 import { mkdir } from "dep:fs-promises";
+import { extractFull, SevenZipOptions } from "dep:node-7z";
 import { Pool as PgPool, PoolClient as PgPoolClient } from "dep:postgres";
 import * as s from "dep:superstruct";
+
+const log = taggedLogger("[flash]", { maxLength: 512 });
 
 type FlashDBDataConfig = {
   connectionString: string;
@@ -62,11 +63,11 @@ export class FlashDBData {
       cache: s.object({
         url: s.refine(s.string(), "CacheURL", (value) => {
           if (!value.startsWith("https://")) {
-            logger.warn(`[FlashDBData] Cache URL should start with "https://", got: ${value}`);
+            log.warn("cache url should start with https");
           }
 
           if (!value.endsWith(".7z")) {
-            logger.error(`[FlashDBData] Cache URL should end with ".7z", got: ${value}`);
+            log.error("cache url should end with 7z");
             return false;
           }
 
@@ -84,7 +85,7 @@ export class FlashDBData {
   }
 
   private async setup(): Promise<SetupPaths> {
-    this.config.verbose && logger.info(`[FlashDBData] Setting up...`);
+    this.config.verbose && log.info("setting up");
     const dir = await this.ensureDestination();
     const arc = await this.ensureArchiveFilePath();
     const sql = await this.ensureSqlFilePath();
@@ -109,16 +110,16 @@ export class FlashDBData {
   }
 
   private async downloadArchive({ arc }: Pick<SetupPaths, "arc">): Promise<void> {
-    this.config.verbose && logger.info(`[FlashDBData] Downloading archive from cache...`);
+    this.config.verbose && log.info("downloading archive");
 
     // local cache
     if (await exists(arc)) {
       try {
         await this.validateArchive(arc);
-        this.config.verbose && logger.info(`[FlashDBData] File exists in cache, skipping download...`);
+        this.config.verbose && log.info("archive in cache, skipping download");
         return;
       } catch {
-        this.config.verbose && logger.info(`[FlashDBData] Existing archive is invalid, download again...`);
+        this.config.verbose && log.info("archive invalid, downloading again");
       }
     }
 
@@ -129,17 +130,17 @@ export class FlashDBData {
     }
 
     // store and validate
-    await writeFile(arc, response.body);
+    await Deno.writeFile(arc, response.body);
     await this.validateArchive(arc);
   }
 
   private async extractArchive({ dir, arc, sql }: Omit<SetupPaths, "db">): Promise<void> {
-    this.config.verbose && logger.info(`[FlashDBData] Extracting 7z archive...`);
+    this.config.verbose && log.info("extracting archive");
 
     await this.validateArchive(arc);
 
     if (await exists(sql)) {
-      this.config.verbose && logger.info(`[FlashDBData] SQL file exists in cache, skipping extraction...`);
+      this.config.verbose && log.info("sql file in cache, skipping extraction");
       return;
     }
 
@@ -154,7 +155,7 @@ export class FlashDBData {
 
   private async restore({ sql, db }: Pick<SetupPaths, "sql" | "db">): Promise<void> {
     try {
-      this.config.verbose && logger.info(`[FlashDBData] Restoring schema...`);
+      this.config.verbose && log.info("restoring schema");
 
       this.pool = new PgPool(this.config.connectionString, 10);
       this.client = await this.pool.connect();
@@ -165,7 +166,7 @@ export class FlashDBData {
       await this.save();
     } catch (e) {
       this.client && await this.client.queryArray("ROLLBACK");
-      logger.error(`[FlashDBData] Error restoring schema: ${e.message}`);
+      log.error("restore schema failed", { error: errorCode(e), message: e.message });
     } finally {
       this.client && this.client.release();
       this.pool && await this.pool.end();
@@ -178,11 +179,11 @@ export class FlashDBData {
     const { stdout, stderr } = await child.output();
 
     if (stdout.length) {
-      this.config.verbose && logger.info(`[FlashDBData] Restored dump: ${new TextDecoder().decode(stdout)}`);
+      this.config.verbose && log.info("restored dump", { output: new TextDecoder().decode(stdout) });
     }
 
     if (stderr.length) {
-      logger.error(`[FlashDBData] Error restoring dump: ${new TextDecoder().decode(stderr)}`);
+      log.error("restore dump failed", { output: new TextDecoder().decode(stderr) });
     }
   }
 
@@ -193,7 +194,7 @@ export class FlashDBData {
     try {
       await client.queryArray`INSERT INTO migrations (name, run_on) VALUES (${this.migrationName}, ${new Date()})`;
     } catch (e) {
-      logger.error(`[FlashDBData] Error saving migration: ${e.message}`);
+      log.error("save migration failed", { error: errorCode(e), message: e.message });
       throw e;
     } finally {
       client.release();
@@ -209,11 +210,21 @@ export class FlashDBData {
       const { rowCount } = await client.queryArray`SELECT name FROM migrations WHERE name = ${this.migrationName}`;
       return !!rowCount;
     } catch (e) {
-      logger.error(`[FlashDBData] Error finding migration: ${e.message}`);
+      log.error("find migration failed", { error: errorCode(e), message: e.message });
       throw e;
     } finally {
       client.release();
       await pool.end();
     }
   }
+}
+
+function un7zFile(filepath: string, extractPath: string): Promise<void> {
+  const bin = env("SEVEN_ZIP_BIN_PATH");
+  const options: SevenZipOptions | undefined = bin ? { $bin: bin } : undefined;
+  return new Promise((resolve, reject) => {
+    const stream = extractFull(filepath, extractPath, options);
+    stream.on("end", resolve);
+    stream.on("error", reject);
+  });
 }

@@ -1,9 +1,11 @@
 import { provider } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import sql, { raw } from "@/lib/pg/sql.ts";
 import { DatabaseException } from "@/pdc/providers/carpool/exceptions/DatabaseException.ts";
-import { CarpoolGeo, Id, Position, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+import { CarpoolGeo, Id, Position, ProcessGeoCursor, UpsertableCarpoolGeo } from "../interfaces/index.ts";
+
+const log = taggedLogger("[geo]");
 
 @provider()
 export class CarpoolGeoRepository {
@@ -23,7 +25,7 @@ export class CarpoolGeoRepository {
 
       return result.rows[0] ?? null;
     } catch (e) {
-      logger.error(`[carpool-geo] error finding carpool geo for ${carpool_id}: ${e.message}`);
+      log.error("find carpool geo", { carpool_id, error: errorCode(e) });
       throw new DatabaseException(e.message);
     } finally {
       if (!client) {
@@ -33,16 +35,20 @@ export class CarpoolGeoRepository {
   }
 
   async findProcessable(
-    search: { limit: number; from: Date; to: Date; failedOnly?: boolean },
+    search: { limit: number; from: Date; to: Date; failedOnly?: boolean; after?: ProcessGeoCursor },
     client: PoolClient,
-  ): Promise<Array<{ carpool_id: Id; start: Position; end: Position }>> {
+  ): Promise<Array<{ carpool_id: Id; start_datetime: Date; start: Position; end: Position }>> {
     const failedOnlyClause = !search.failedOnly
       ? raw(` AND cg._id IS NULL`)
       : raw(` AND ( cg.start_geo_code IS NULL OR cg.end_geo_code IS NULL )`);
+    const afterClause = search.after
+      ? sql`AND (cc.start_datetime, cc._id) > (${search.after.start_datetime}, ${search.after._id})`
+      : raw("");
 
     const query = sql`
         SELECT 
           cc._id,
+          cc.start_datetime,
           ST_X(cc.start_position::geometry)::numeric as start_lon,
           ST_Y(cc.start_position::geometry)::numeric as start_lat,
           ST_X(cc.end_position::geometry)::numeric as end_lon,
@@ -54,7 +60,8 @@ export class CarpoolGeoRepository {
           cc.start_datetime >= ${search.from} AND
           cc.start_datetime < ${search.to}
           ${failedOnlyClause}
-        ORDER BY cc.start_datetime
+          ${afterClause}
+        ORDER BY cc.start_datetime, cc._id
         LIMIT ${search.limit}
     `;
 
@@ -62,6 +69,7 @@ export class CarpoolGeoRepository {
 
     return result.rows.map((r) => ({
       carpool_id: r._id,
+      start_datetime: r.start_datetime,
       start: {
         lat: parseFloat(r.start_lat),
         lon: parseFloat(r.start_lon),
@@ -101,7 +109,7 @@ export class CarpoolGeoRepository {
         WHERE carpool_id = ${carpool_id}
       `);
     } catch (e) {
-      logger.error(`[carpool-geo] error deleting carpool geo for ${carpool_id}: ${e.message}`);
+      log.error("delete carpool geo", { carpool_id, error: errorCode(e) });
       throw new DatabaseException(e.message);
     } finally {
       if (!client) {

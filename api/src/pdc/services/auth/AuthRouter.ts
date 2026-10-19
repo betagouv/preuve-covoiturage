@@ -1,8 +1,9 @@
 import { ConfigInterfaceResolver, inject, injectable, KernelInterfaceResolver, proxy } from "@/ilos/common/index.ts";
 import { env_or_default } from "@/lib/env/index.ts";
-import { logger } from "@/lib/logger/index.ts";
 import { asyncHandler } from "@/pdc/proxy/helpers/asyncHandler.ts";
+import { sessionRef } from "@/pdc/proxy/helpers/sessionRef.ts";
 import { MfaRequiredError, ProConnectOIDCProvider } from "@/pdc/services/auth/providers/ProConnectOIDCProvider.ts";
+import { LoginErrorCode, loginErrorCode } from "@/pdc/services/auth/loginError.ts";
 import { errorCode, newAttemptId, proconnectLog } from "@/pdc/services/auth/providers/proconnectLog.ts";
 import { UserRepository } from "@/pdc/services/auth/providers/UserRepository.ts";
 import { UserScopeRepository } from "@/pdc/services/auth/providers/UserScopeRepository.ts";
@@ -12,6 +13,7 @@ import { authGuard } from "../../proxy/middlewares/authGuard.ts";
 import { authRateLimiter, loginRateLimiter } from "../../proxy/middlewares/rateLimiter.ts";
 import { sessionMiddleware } from "../../proxy/middlewares/sessionMiddleware.ts";
 import { contextRoute } from "./context.ts";
+import { meRoute } from "./me.ts";
 import { testCallbackRoute } from "./test/callback.ts";
 import { isTestAuthEnabled } from "./test/enabled.ts";
 
@@ -58,6 +60,14 @@ export class AuthRouter {
         const received = session_state === "missing" || provider_error ? "warn" : "info";
         proconnectLog[received]("callback received", { attempt, session_state, cookie, provider_error });
 
+        // Tout échec revient au front avec un code générique ; pas d'identité attachée, mais on jette
+        // l'état OIDC de la tentative échouée.
+        const refuse = async (code: LoginErrorCode) => {
+          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
+          res.clearCookie(session.name);
+          return res.redirect(`${this.config.get("app_url")}?error=${code}`);
+        };
+
         // Fetch tokens and user info from ProConnect OIDC Provider
         // (état OIDC state/nonce lu ci-dessus, avant la régénération de session)
         let tokens;
@@ -65,18 +75,14 @@ export class AuthRouter {
         try {
           tokens = await this.proConnectOIDCProvider.getToken(url, nonce, state);
         } catch (e) {
-          // name en second critère : instanceof casse si le module est résolu deux fois
-          if (!(e instanceof MfaRequiredError) && (e as Error)?.name !== "MfaRequiredError") {
-            proconnectLog.warn("token failed", { attempt, error: errorCode(e), ms: elapsed(start) });
-            throw e;
+          const code = loginErrorCode(e);
+          if (code === "mfa_required") {
+            proconnectLog.warn("mfa refused", { attempt, acr: (e as MfaRequiredError).acr, error: errorCode(e) });
+          } else {
+            // state/nonce invalide, session perdue, `error=` ProConnect ou échange de code refusé
+            proconnectLog.warn("token failed", { attempt, provider_error, error: errorCode(e), ms: elapsed(start) });
           }
-          proconnectLog.warn("mfa refused", { attempt, acr: (e as MfaRequiredError).acr, error: errorCode(e) });
-
-          // pas d'identité attachée, mais on jette l'état OIDC de la tentative échouée
-          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
-          res.clearCookie(session.name);
-
-          return res.redirect(`${this.config.get("app_url")}?error=mfa_required`);
+          return refuse(code);
         }
 
         const claims = tokens.claims();
@@ -91,7 +97,7 @@ export class AuthRouter {
           info = await this.proConnectOIDCProvider.getUserInfo(tokens.access_token, claims!.sub);
         } catch (e) {
           proconnectLog.warn("userinfo failed", { attempt, sub, error: errorCode(e), ms: elapsed(start) });
-          throw e;
+          return refuse("login_failed");
         }
         const { user, has_email, has_siret } = info;
         const idp = info.idp_id ?? idp_id;
@@ -109,10 +115,7 @@ export class AuthRouter {
             sub,
             idp_id: idp,
           });
-          await new Promise<void>((resolve) => req.session ? req.session.destroy(() => resolve()) : resolve());
-          res.clearCookie(session.name);
-
-          return res.redirect(`${this.config.get("app_url")}?error=unauthorized`);
+          return refuse("unauthorized");
         }
 
         // Anti-fixation : régénère la session avant d'attacher l'utilisateur authentifié.
@@ -124,7 +127,14 @@ export class AuthRouter {
         req.session.auth = { id_token: tokens.id_token };
         req.session.user = user;
         await new Promise<void>((resolve, reject) => req.session.save((err: Error) => err ? reject(err) : resolve()));
-        proconnectLog.info("session created", { attempt, role: user.role, sub, idp_id: idp });
+        proconnectLog.info("session created", {
+          attempt,
+          session: await sessionRef(req.sessionID),
+          user_id: user._id,
+          role: user.role,
+          sub,
+          idp_id: idp,
+        });
 
         return res.redirect(this.config.get("app_url"));
       }),
@@ -134,7 +144,10 @@ export class AuthRouter {
       "/auth/logout",
       authGuard(this.kernel),
       asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-        proconnectLog.info("logout start");
+        proconnectLog.info("logout start", {
+          session: await sessionRef(req.sessionID),
+          user_id: req.session?.user?._id,
+        });
         const { id_token } = req.session?.auth || {};
         const { redirectUrl } = await this.proConnectOIDCProvider.getLogoutUrl(id_token);
         req.session.destroy((err: Error) => {
@@ -162,25 +175,8 @@ export class AuthRouter {
       }),
     );
 
-    this.app.get(
-      "/auth/me",
-      sessionMiddleware(this.kernel),
-      (req: express.Request, res: express.Response) => {
-        if (!req.session?.user) {
-          return res.status(401).json({
-            id: 1,
-            jsonrpc: "2.0",
-            error: {
-              code: 401,
-              data: "Error",
-              message: "Unauthorized Error",
-            },
-          });
-        }
-
-        return res.json(req.session?.user);
-      },
-    );
+    // Session courante, compte relu en base (un utilisateur supprimé est déconnecté), cf. me.ts.
+    this.app.get("/auth/me", sessionMiddleware(this.kernel), meRoute(this.userRepository, session.name));
 
     // Bascule du contexte actif (users territoire) — revalidée en DB, cf. spec §6.
     this.app.post("/auth/context", authRateLimiter(), contextRoute(this.userScopeRepository));
@@ -189,7 +185,7 @@ export class AuthRouter {
     const envs = [this.config.get("env"), env_or_default("APP_ENV", "local")];
     if (isTestAuthEnabled(envs, this.config.get("test.enabled"))) {
       this.config.get("test.accounts")(); // fail fast at boot if APIE2E_AUTH_* are missing
-      logger.warn("[auth] test login route /auth/test/callback is ENABLED");
+      proconnectLog.warn("test login enabled");
       this.app.post("/auth/test/callback", loginRateLimiter(), testCallbackRoute(this.config, this.userRepository));
     }
   }

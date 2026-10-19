@@ -2,7 +2,8 @@ import { defaultTimezone } from "@/config/time.ts";
 import { ContextType, handler, InvalidParamsException, NotFoundException } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { env_or_false } from "@/lib/env/index.ts";
-import { getPerformanceTimer, logger } from "@/lib/logger/index.ts";
+import { getPerformanceTimer } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { internalOnlyMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { isAfter, max as maxDate, min as minDate } from "dep:date-fns";
 import { handlerConfig, ParamsInterface, ResultInterface } from "../contracts/apply.contract.ts";
@@ -16,6 +17,8 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
   TripRepositoryProviderInterfaceResolver,
 } from "../interfaces/index.ts";
+
+const log = taggedLogger("[campaign]");
 
 @handler({
   ...handlerConfig,
@@ -45,13 +48,11 @@ export class ApplyAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (env_or_false("APP_DISABLE_POLICY_PROCESSING")) {
-      return logger.warn(
-        "[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING",
-      );
+      return log.warn("apply disabled", { env: "APP_DISABLE_POLICY_PROCESSING" });
     }
 
     const { from, to, override } = this.defaultParams(params);
-    logger.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    log.info("apply policy", { policy_id: params.policy_id });
     await this.processPolicy(params.policy_id, from, to, override);
   }
 
@@ -113,7 +114,7 @@ export class ApplyAction extends AbstractAction {
       );
     }
 
-    logger.info(`[policy ${policy_id}] starting from ${s} to ${e}`);
+    log.info("apply start", { policy_id, from: start.toISOString(), to: end.toISOString() });
 
     const batchSize = 1000;
     const cursor = this.tripRepository.findTripByPolicy(
@@ -127,7 +128,7 @@ export class ApplyAction extends AbstractAction {
 
     do {
       if (total === 0) {
-        logger.info(`[policy ${policy._id}] Fetching carpools...`);
+        log.debug("apply fetch carpools", { policy_id });
       }
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
@@ -146,9 +147,7 @@ export class ApplyAction extends AbstractAction {
       const ms = new Date().getTime() - bs.getTime();
       if (counter) {
         const rate = ((counter / ms) * 1000).toFixed(0);
-        logger.info(
-          `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${rate}/s)`,
-        );
+        log.debug("apply trips done", { policy_id, count: counter, total, ms, rate: Number(rate) });
       }
       total += counter;
       counter = 0;
@@ -159,14 +158,10 @@ export class ApplyAction extends AbstractAction {
         await this.incentiveRepository.createOrUpdateMany(
           incentives.map((i) => i.export()),
         );
-        logger.info(
-          `[policy ${policy_id}] stored ${incentives.length} incentives in ${timer.stop()} ms`,
-        );
+        log.debug("apply stored incentives", { policy_id, count: incentives.length, ms: timer.stop() });
       }
     } while (!done);
 
-    logger.info(
-      `[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`,
-    );
+    log.info("apply finished", { policy_id, count: total, ms: new Date().getTime() - bench.getTime() });
   }
 }

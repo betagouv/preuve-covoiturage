@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
 import { ContextType, ForbiddenException } from "@/ilos/common/index.ts";
-import { roleRank, UserScopeGuardMiddleware } from "./UserScopeGuardMiddleware.ts";
+import { roleFamily, roleRank, UserScopeGuardMiddleware } from "./UserScopeGuardMiddleware.ts";
 
 describe("UserScopeGuardMiddleware", () => {
   const middleware = new UserScopeGuardMiddleware();
@@ -14,6 +14,7 @@ describe("UserScopeGuardMiddleware", () => {
 
   const registryAdmin = { role: "registry.admin", permissions: ["registry.user.manageScopes", "registry.user.create"] };
   const territoryAdmin = { role: "territory.admin", permissions: ["territory.user.create"], territory_id: 1 };
+  const operatorAdmin = { role: "operator.admin", permissions: ["operator.user.create"], operator_id: 1 };
 
   it("roleRank: registry.admin outranks territory.admin outranks territory.user", () => {
     assertEquals(roleRank("registry.admin") > roleRank("territory.admin"), true);
@@ -106,6 +107,39 @@ describe("UserScopeGuardMiddleware", () => {
         next,
         undefined,
       ),
+      "next() called",
+    );
+  });
+  it("roleFamily: préfixe du rôle", () => {
+    assertEquals(roleFamily("territory.admin"), "territory");
+    assertEquals(roleFamily("operator.user"), "operator");
+    assertEquals(roleFamily(""), "");
+  });
+
+  it("403 when territory.admin assigns role operator.admin (famille)", async () => {
+    await assertRejects(
+      () => middleware.process({ role: "operator.admin" }, ctx(territoryAdmin), next, undefined),
+      ForbiddenException,
+    );
+  });
+
+  it("403 when operator.admin assigns role territory.user (famille)", async () => {
+    await assertRejects(
+      () => middleware.process({ role: "territory.user" }, ctx(operatorAdmin), next, undefined),
+      ForbiddenException,
+    );
+  });
+
+  it("OK when operator.admin assigns role operator.user (même famille)", async () => {
+    assertEquals(
+      await middleware.process({ role: "operator.user" }, ctx(operatorAdmin), next, undefined),
+      "next() called",
+    );
+  });
+
+  it("OK when registry.admin assigns role operator.admin (franchit les familles)", async () => {
+    assertEquals(
+      await middleware.process({ role: "operator.admin" }, ctx(registryAdmin), next, undefined),
       "next() called",
     );
   });

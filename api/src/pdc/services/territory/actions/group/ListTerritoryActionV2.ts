@@ -2,15 +2,15 @@ import { handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyFromContextMiddleware, hasPermissionMiddleware } from "@/pdc/providers/middleware/index.ts";
 
-import { Infer, object, optional } from "@/lib/superstruct/index.ts";
-import { Boolean, Id, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
+import { Infer, integer, object, optional } from "@/lib/superstruct/index.ts";
+import { Boolean, CoerceNumberMinMax, Id, Varchar } from "@/pdc/providers/superstruct/shared/index.ts";
 import { ResultInterface } from "@/pdc/services/territory/contracts/list.contract.ts";
 import { TerritoryRepositoryProviderInterfaceResolver } from "../../interfaces/TerritoryRepositoryProviderInterface.ts";
 
 export const TerritoryParamsValidator = object({
   id: optional(Id),
-  page: optional(Id),
-  limit: optional(Id),
+  // 200 = plus grande limite demandée par le dashboard (sélecteurs de territoire).
+  limit: optional(CoerceNumberMinMax(integer(), 1, 200)),
   offset: optional(Id),
   search: optional(Varchar),
   operator_id: optional(Id),

@@ -2,8 +2,11 @@ import { ServiceContainerInterface } from "@/ilos/common/index.ts";
 import { CommandOptions } from "@/ilos/common/types/command/CommandInterface.ts";
 import { CommandInterface } from "@/ilos/common/types/index.ts";
 import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { Command as Runner } from "dep:commander";
 import { identifierCfg, identifierList } from "../cli/constants.ts";
+
+const log = taggedLogger("[boot]", { maxLength: 512 });
 
 function registerCommand(
   runner: Runner,
@@ -41,7 +44,7 @@ function registerCommand(
         logger.info(result);
       }
     } catch (e) {
-      logger.error(e);
+      log.error("command failed", { error: e instanceof Error ? e.message : String(e) });
       throw e;
     }
   });

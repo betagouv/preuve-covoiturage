@@ -1,6 +1,7 @@
 export interface SendWelcomeEmailParams {
   email: string;
   siret: string;
+  login_url: string;
 }
 
 export interface BrevoProviderInterface {
@@ -8,7 +9,7 @@ export interface BrevoProviderInterface {
 }
 
 export abstract class BrevoProviderInterfaceResolver implements BrevoProviderInterface {
-  async sendWelcomeEmail(params: SendWelcomeEmailParams): Promise<void> {
+  async sendWelcomeEmail(_params: SendWelcomeEmailParams): Promise<void> {
     throw new Error("Not implemented");
   }
 }

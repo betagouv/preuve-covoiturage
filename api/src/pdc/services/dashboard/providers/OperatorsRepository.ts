@@ -96,6 +96,7 @@ export class OperatorsRepository implements OperatorsRepositoryInterface {
     return {
       success: true,
       message: `Operator ${JSON.stringify(rows[0])} created`,
+      id: rows[0].id,
     };
   }
 

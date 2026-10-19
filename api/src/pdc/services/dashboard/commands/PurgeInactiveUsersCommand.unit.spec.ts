@@ -2,14 +2,18 @@ import { assertEquals, assertRejects, assertThrows } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
 import { ConfigInterfaceResolver } from "@/ilos/common/index.ts";
 import { NotificationTransporterInterfaceResolver } from "@/pdc/providers/notification/index.ts";
+import { SessionRepository } from "@/pdc/services/auth/providers/SessionRepository.ts";
 import {
   InactiveUserToWarn,
   UsersRepositoryInterfaceResolver,
 } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 import { assertNotificationConfigured, PurgeInactiveUsersCommand } from "./PurgeInactiveUsersCommand.ts";
 
+const appUrl = "https://partenaire.example.com";
+
 function fakeConfig(smtp: unknown): ConfigInterfaceResolver {
-  return { get: (_k: string, d?: unknown) => smtp ?? d } as unknown as ConfigInterfaceResolver;
+  const values: Record<string, unknown> = { "notification.mail.smtp": smtp, app_url: appUrl };
+  return { get: (k: string, d?: unknown) => values[k] ?? d } as unknown as ConfigInterfaceResolver;
 }
 
 describe("assertNotificationConfigured", () => {
@@ -59,25 +63,72 @@ describe("PurgeInactiveUsersCommand.call", () => {
 
   function fakeEmailer(failFor: string[] = []) {
     const sent: string[] = [];
+    const hrefs: string[] = [];
     const calls: string[] = [];
     const emailer = {
-      send: (n: { to: string }) => {
+      send: (n: { to: string; data: { action_href: string } }) => {
         calls.push("send");
         if (failFor.some((email) => n.to.includes(email))) {
           return Promise.reject(new Error(`envoi échoué pour ${n.to}`));
         }
         sent.push(n.to);
+        hrefs.push(n.data.action_href);
         return Promise.resolve();
       },
     };
     return {
       emailer: emailer as unknown as NotificationTransporterInterfaceResolver<{ to: string }>,
       sent,
+      hrefs,
       calls,
     };
   }
 
-  const options = { inactivity: "12 months", grace: "7 days", appUrl: "https://partenaire.example.com", dryRun: false };
+  function fakeSessions(failFor: number[] = []) {
+    const purged: number[] = [];
+    const sessions = {
+      destroyByUser: (id: number) => {
+        if (failFor.includes(id)) return Promise.reject(new Error("redis down"));
+        purged.push(id);
+        return Promise.resolve();
+      },
+    };
+    return { sessions: sessions as unknown as SessionRepository, purged };
+  }
+
+  const options = { inactivity: "12 months", grace: "7 days", dryRun: false };
+
+  it("sans --app-url, le lien de reconnexion vient de la config (app_url)", async () => {
+    const toWarn: InactiveUserToWarn[] = [{ _id: 1, email: "u1@example.com", firstname: null, lastname: null }];
+    const { repository } = fakeRepository(toWarn, []);
+    const { emailer, hrefs } = fakeEmailer();
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
+
+    await command.call(options);
+
+    assertEquals(hrefs, [appUrl]);
+  });
+
+  it("--app-url prime sur la config", async () => {
+    const toWarn: InactiveUserToWarn[] = [{ _id: 1, email: "u1@example.com", firstname: null, lastname: null }];
+    const { repository } = fakeRepository(toWarn, []);
+    const { emailer, hrefs } = fakeEmailer();
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
+
+    await command.call({ ...options, appUrl: "https://autre.example.com" });
+
+    assertEquals(hrefs, ["https://autre.example.com"]);
+  });
 
   it("avertit puis marque, puis supprime (ordre send -> mark -> delete)", async () => {
     const toWarn: InactiveUserToWarn[] = [
@@ -86,7 +137,12 @@ describe("PurgeInactiveUsersCommand.call", () => {
     ];
     const { repository, marked, deleted } = fakeRepository(toWarn, [{ _id: 42 }]);
     const { emailer, sent } = fakeEmailer();
-    const command = new PurgeInactiveUsersCommand(fakeConfig({ host: "smtp.example.com" }), repository, emailer);
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
 
     await command.call(options);
 
@@ -102,7 +158,12 @@ describe("PurgeInactiveUsersCommand.call", () => {
     ];
     const { repository, marked } = fakeRepository(toWarn, []);
     const { emailer, sent } = fakeEmailer(["u1@example.com"]);
-    const command = new PurgeInactiveUsersCommand(fakeConfig({ host: "smtp.example.com" }), repository, emailer);
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
 
     await command.call(options);
 
@@ -116,7 +177,12 @@ describe("PurgeInactiveUsersCommand.call", () => {
     ];
     const { repository, marked, deleted, calls } = fakeRepository(toWarn, [{ _id: 42 }]);
     const { emailer, sent } = fakeEmailer();
-    const command = new PurgeInactiveUsersCommand(fakeConfig({ host: "smtp.example.com" }), repository, emailer);
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
 
     await command.call({ ...options, dryRun: true });
 
@@ -130,7 +196,12 @@ describe("PurgeInactiveUsersCommand.call", () => {
   it("run réel : suppression atomique via deleteInactiveUsers (jamais SELECT+deleteUser, anti-course)", async () => {
     const { repository, deleted, calls } = fakeRepository([], [{ _id: 42 }, { _id: 43 }]);
     const { emailer } = fakeEmailer();
-    const command = new PurgeInactiveUsersCommand(fakeConfig({ host: "smtp.example.com" }), repository, emailer);
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      fakeSessions().sessions,
+    );
 
     await command.call(options);
 
@@ -141,13 +212,46 @@ describe("PurgeInactiveUsersCommand.call", () => {
     assertEquals(calls.includes("deleteUser"), false);
   });
 
+  it("ferme les sessions de chaque compte supprimé, même si Redis échoue pour l'un d'eux", async () => {
+    const { repository, deleted } = fakeRepository([], [{ _id: 42 }, { _id: 43 }, { _id: 44 }]);
+    const { emailer } = fakeEmailer();
+    const { sessions, purged } = fakeSessions([43]);
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      sessions,
+    );
+
+    await command.call(options);
+
+    assertEquals(deleted, [42, 43, 44]);
+    assertEquals(purged, [42, 44]);
+  });
+
+  it("dry-run ne ferme aucune session", async () => {
+    const { repository } = fakeRepository([], [{ _id: 42 }]);
+    const { emailer } = fakeEmailer();
+    const { sessions, purged } = fakeSessions();
+    const command = new PurgeInactiveUsersCommand(
+      fakeConfig({ host: "smtp.example.com" }),
+      repository,
+      emailer,
+      sessions,
+    );
+
+    await command.call({ ...options, dryRun: true });
+
+    assertEquals(purged, []);
+  });
+
   it("le garde-fou stoppe avant tout traitement quand SMTP absent", async () => {
     const { repository, calls: repoCalls } = fakeRepository(
       [{ _id: 1, email: "u1@example.com", firstname: null, lastname: null }],
       [{ _id: 42 }],
     );
     const { emailer, calls: emailerCalls } = fakeEmailer();
-    const command = new PurgeInactiveUsersCommand(fakeConfig(null), repository, emailer);
+    const command = new PurgeInactiveUsersCommand(fakeConfig(null), repository, emailer, fakeSessions().sessions);
 
     await assertRejects(() => command.call(options));
 

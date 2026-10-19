@@ -74,10 +74,15 @@ Copier `.env.example` vers `.env.local` et configurer :
 | `NEXT_PUBLIC_API_URL`             | URL de l'API backend                                                        |
 | `NEXT_PUBLIC_API_REDIRECT`        | URL de redirection API                                                      |
 | `NEXT_PUBLIC_DATALAKE_BASE_URL`   | URL de l'API datalake (recherche de territoires)                            |
-| `NEXT_PUBLIC_PC_USER_URI`         | URI utilisateur PC                                                          |
-| `NEXT_PUBLIC_FEATURE_MULTI_SIRET` | `true` affiche le multi-périmètre (bascule, badge, éditeur). Off par défaut |
+| `NEXT_PUBLIC_PC_USER_URI`         | Page « mes informations » ProConnect (lien du profil). Production : `https://identite.proconnect.gouv.fr/personal-information`, démo (bac à sable) : `https://identite-sandbox.proconnect.gouv.fr/personal-information`. Vide = production |
+| `NEXT_PUBLIC_FEATURE_MULTI_SIRET` | `true` affiche le multi-périmètre : liste des territoires dans le menu compte du header (si ≥ 2), badge, éditeur. Off par défaut |
+| `NEXT_PUBLIC_CONTACT_EMAIL`       | Adresse du support affichée dans les messages d'erreur de connexion et la page 404 (`contact@covoiturage.beta.gouv.fr` par défaut) |
 
 Les `NEXT_PUBLIC_*` sont figées au build : changer le flag demande un redéploiement (var GitHub `PARTNER_FEATURE_MULTI_SIRET` par environnement).
+
+### Erreurs de connexion
+
+Après le callback ProConnect, l'API redirige vers `/?error=<code>` et la page d'accueil affiche une alerte DSFR (`LoginErrorAlert`) : `mfa_required` (double authentification absente), `unauthorized` (compte inconnu de la plateforme, avec l'adresse du support), `login_failed` (échec technique du callback, détail dans les logs API seulement).
 
 ### Alias de chemin
 
@@ -160,9 +165,11 @@ App-Partners est un **frontend pur** : il ne possède aucune base de données pr
 
 - L'authentification se fait via l'API (`/login`) qui retourne un **token JWT** stocké en session
 - Chaque requête inclut ce token pour validation
+- `AuthProvider` revérifie `/auth/me` à chaque navigation, au retour d'onglet et sur l'événement `auth:unauthorized` émis par `useApi` sur un 401 : une session perdue (expirée, compte supprimé) renvoie à l'accueil
 - Les appels API sont centralisés dans `src/hooks/api/` via des hooks custom (`use[Feature][Action]`)
 - La configuration de l'URL de l'API se fait via `NEXT_PUBLIC_API_URL` dans `.env.local`
 - Les helpers de requête se trouvent dans `src/helpers/`
+- Recherche de territoire (modale utilisateur, `TerritoryAutocomplete`) : `GET /v3/dashboard/territories?search=&limit=` (recherche sur nom ou SIRET, `limit` ≤ 200, 20 résultats affichés)
 
 ## Extensions VSCode Recommandées
 

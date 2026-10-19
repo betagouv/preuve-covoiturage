@@ -128,8 +128,6 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       );
     }
 
-    // logger.debug(`[kernel] ${config.signature} ${timeout}ms`);
-
     if (timeout === 0) {
       return handler(call);
     }

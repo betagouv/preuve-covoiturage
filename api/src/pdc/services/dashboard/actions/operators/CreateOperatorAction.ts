@@ -6,6 +6,7 @@ import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/i
 export type ResultInterface = {
   success: boolean;
   message: string;
+  id: number;
 };
 
 @handler({

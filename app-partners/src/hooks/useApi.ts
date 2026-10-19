@@ -9,6 +9,14 @@ type ApiResponse<T> = PaginateAPIResponse<T> | T;
 
 export const UNREACHABLE_MESSAGE = "Le service est momentanément injoignable. Réessayez dans quelques instants.";
 
+// Session perdue (401) : AuthProvider écoute cet événement et revérifie /auth/me.
+export const AUTH_UNAUTHORIZED_EVENT = "auth:unauthorized";
+
+export const signalUnauthorized = () => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
+};
+
 // fetch rejette un TypeError anglophone quand le serveur ne répond pas : on parle français à l'utilisateur.
 export const toUserError = (e: unknown): Error =>
   e instanceof TypeError ? new Error(UNREACHABLE_MESSAGE) : e instanceof Error ? e : new Error(String(e));
@@ -60,6 +68,7 @@ export const useApi = <T>(url: string | URL, paginate = false, init?: RequestIni
       const text = await response.text();
       const parsed = parseBody(text);
       if (!response.ok) {
+        if (response.status === 401) signalUnauthorized();
         throw new Error(apiErrorMessage(response.status, parsed));
       }
       const res = (typeof parsed === "object" ? parsed : null) as ApiResponse<T> | null;

@@ -1,19 +1,13 @@
-import { KernelInterfaceResolver, NotFoundException, provider } from "@/ilos/common/index.ts";
+import { NotFoundException, provider } from "@/ilos/common/index.ts";
 import { LegacyPostgresConnection, PoolClient } from "@/ilos/connection-postgres/index.ts";
 import { TerritoryParams } from "@/pdc/services/territory/actions/group/ListTerritoryActionV2.ts";
 import { TerritorySelectorsInterface } from "@/pdc/services/territory/contracts/common/interfaces/TerritoryCodeInterface.ts";
 import {
   CreateParamsInterface,
   CreateResultInterface,
-  FindParamsInterface,
-  FindResultInterface,
   ListResultInterface,
-  PatchContactsParamsInterface,
-  PatchContactsResultInterface,
   TerritoryRepositoryProviderInterface,
   TerritoryRepositoryProviderInterfaceResolver,
-  UpdateParamsInterface,
-  UpdateResultInterface,
 } from "../interfaces/TerritoryRepositoryProviderInterface.ts";
 
 @provider({
@@ -24,68 +18,29 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   public readonly relationTable = "territory.territory_group_selector";
   public readonly GROUP_DEFAULT_SHORT_NAME = "";
 
-  constructor(
-    protected connection: LegacyPostgresConnection,
-    protected kernel: KernelInterfaceResolver,
-  ) {}
-
-  async find(params: FindParamsInterface): Promise<FindResultInterface> {
-    const result = await this.connection.getClient().query<any>({
-      text: `
-        WITH selector_raw AS (
-          SELECT
-            territory_group_id,
-            selector_type,
-            ARRAY_AGG(selector_value) as selector_value
-          FROM ${this.relationTable}
-          WHERE territory_group_id = $1
-          GROUP BY territory_group_id, selector_type
-        ),
-        selector AS (
-          SELECT
-            territory_group_id,
-            JSON_OBJECT_AGG(
-              selector_type,
-              selector_value
-            ) as selector
-          FROM selector_raw
-          GROUP BY territory_group_id
-        ) 
-        SELECT
-          tg._id,
-          tg.company_id,
-          tg.created_at,
-          tg.updated_at,
-          tg.name,
-          tg.shortname,
-          tg.contacts,
-          tg.address,
-          tgs.selector
-        FROM ${this.table} AS tg
-        LEFT JOIN selector AS tgs
-          ON tgs.territory_group_id = tg._id
-        WHERE 
-          tg._id = $1 AND
-          tg.deleted_at IS NULL
-      `,
-      values: [params._id],
-    });
-
-    if (result.rowCount === 0) {
-      throw new NotFoundException();
-    }
-
-    return result.rows[0];
-  }
+  constructor(protected connection: LegacyPostgresConnection) {}
 
   async list(params: TerritoryParams): Promise<ListResultInterface> {
-    const { search, offset, limit, operator_id, policy } = { limit: 100, offset: 0, ...params };
-    const values = [];
+    const { id, search, offset, limit, operator_id, policy } = { limit: 100, offset: 0, ...params };
+    const values: unknown[] = [];
     const whereClauses: string[] = [];
 
-    if (search) {
-      values.push(`%${search.toLowerCase()}%`);
-      whereClauses.push(`(LOWER(tg.name) LIKE $${values.length} or cc.siret LIKE $${values.length})`);
+    const bind = (value: unknown): string => {
+      values.push(value);
+      return `$${values.length}`;
+    };
+
+    if (id) {
+      whereClauses.push(`tg._id = ${bind(id)}`);
+    }
+
+    // `%` et `_` sont des jokers LIKE.
+    const escaped = search ? search.toLowerCase().replace(/([%_\\])/g, "\\$1") : undefined;
+    if (escaped !== undefined) {
+      const placeholder = bind(`%${escaped}%`);
+      whereClauses.push(
+        `(LOWER(tg.name) LIKE ${placeholder} ESCAPE '\\' OR cc.siret LIKE ${placeholder} ESCAPE '\\')`,
+      );
     }
 
     const client = this.connection.getClient();
@@ -104,16 +59,14 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
           meta: { pagination: { offset, limit, total: 0 } },
         };
       }
-      values.push(policiesResults.rows.map((r: { _id: number }) => r._id));
-      whereClauses.push(
-        `tg._id = ANY ($1::int[])`,
-      );
+      const policyTerritoryIds = policiesResults.rows.map((r: { _id: number }) => r._id);
+      whereClauses.push(`tg._id = ANY (${bind(policyTerritoryIds)}::int[])`);
     }
     if (operator_id) {
       const operatorQuery = {
         text: `
         WITH operator_incentives AS (SELECT DISTINCT(policy_id) FROM policy.incentives WHERE operator_id = $1)
-        SELECT DISTINCT(tg._id) FROM policy.policies pp 
+        SELECT DISTINCT(tg._id) FROM policy.policies pp
         JOIN territory.territory_group tg ON tg._id = pp.territory_id
         WHERE pp._id IN (SELECT * FROM operator_incentives)`,
         values: [operator_id],
@@ -128,14 +81,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
         };
       }
 
-      values.push(territoriesForOperatorResults.rows.map((r: { _id: number }) => r._id));
-      whereClauses.push(
-        `tg._id = ANY ($1::int[])`,
-      );
+      const operatorTerritoryIds = territoriesForOperatorResults.rows.map((r: { _id: number }) => r._id);
+      whereClauses.push(`tg._id = ANY (${bind(operatorTerritoryIds)}::int[])`);
     }
+
+    const where = ["tg.deleted_at IS NULL", ...whereClauses].join(" AND ");
+
     const countQuery = `SELECT count(*) as territory_count from ${this.table} as tg
       LEFT JOIN company.companies cc ON cc._id = tg.company_id
-      ${whereClauses.length ? ` WHERE ${whereClauses.join(" AND ")}` : ""}`;
+      WHERE ${where}`;
 
     const total = parseFloat(
       (
@@ -146,16 +100,21 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       ).rows[0].territory_count,
     );
 
-    values.push(limit);
-    values.push(offset);
+    // Lié après le comptage : la requête count partage `values` et n'a pas ce paramètre.
+    // Les noms qui commencent par la recherche passent devant ceux qui la contiennent.
+    const orderBy = escaped !== undefined
+      ? `(LOWER(tg.name) LIKE ${bind(`${escaped}%`)} ESCAPE '\\') DESC, tg.name ASC`
+      : "tg.name ASC";
+    const limitPlaceholder = bind(limit);
+    const offsetPlaceholder = bind(offset);
     const query = {
       text: `
         SELECT tg._id, tg.name, cc.siret FROM ${this.table} as tg
         LEFT JOIN company.companies cc ON cc._id = tg.company_id
-        WHERE tg.deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(" AND ")}` : ""}
-        ORDER BY tg.name ASC
-        LIMIT $${whereClauses.length + 1}
-        OFFSET $${whereClauses.length + 2}
+        WHERE ${where}
+        ORDER BY ${orderBy}
+        LIMIT ${limitPlaceholder}
+        OFFSET ${offsetPlaceholder}
       `,
       values,
     };
@@ -271,116 +230,5 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     }
 
     return;
-  }
-
-  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    const connection = await this.connection.getClient().connect();
-    await connection.query<any>("BEGIN");
-    try {
-      const fields = ["name", "shortname", "contacts", "address", "company_id"];
-
-      const values: any[] = [
-        data.name,
-        "",
-        data.contacts,
-        data.address,
-        data.company_id,
-      ];
-
-      const query = {
-        text: `
-          UPDATE ${this.table}
-          SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(",")}
-          WHERE _id = ${data._id}
-          RETURNING *
-        `,
-        values,
-      };
-
-      const result = await connection.query<any>(query);
-
-      if (result.rowCount !== 1) {
-        throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
-      }
-
-      const resultData = result.rows[0];
-
-      if (data.selector) {
-        await this.syncSelector(connection, resultData._id, data.selector);
-      }
-
-      await connection.query<any>("COMMIT");
-      return { ...resultData, selector: data.selector };
-    } catch (e) {
-      await connection.query<any>("ROLLBACK");
-      throw e;
-    } finally {
-      connection.release();
-    }
-  }
-
-  async patchContacts(
-    params: PatchContactsParamsInterface,
-  ): Promise<PatchContactsResultInterface> {
-    const query = {
-      text: `UPDATE ${this.table} set contacts = $2 WHERE _id = $1`,
-      values: [params._id, JSON.stringify(params.patch)],
-    };
-
-    const client = this.connection.getClient();
-    await client.query<any>(query);
-
-    const modifiedTerritoryRes = await client.query<any>({
-      text: `SELECT * FROM ${this.table} WHERE _id = $1`,
-      values: [params._id],
-    });
-
-    return modifiedTerritoryRes.rows[0];
-  }
-
-  async getRelationCodes(
-    params: { _id: number },
-  ): Promise<TerritorySelectorsInterface> {
-    const query = {
-      text: `
-        WITH selector_raw AS (
-          SELECT
-            territory_group_id,
-            selector_type,
-            ARRAY_AGG(selector_value) as selector_value
-          FROM ${this.relationTable}
-          WHERE territory_group_id = $1
-          GROUP BY territory_group_id, selector_type
-        )
-        SELECT
-          territory_group_id,
-          JSON_OBJECT_AGG(
-            selector_type,
-            selector_value
-          ) as selector
-        FROM selector_raw
-        GROUP BY territory_group_id
-      `,
-      values: [params._id],
-    };
-
-    const result = await this.connection.getClient().query<any>(query);
-    return result.rows[0].selector;
-  }
-
-  async getRelationCodesCom(
-    params: { _id: number },
-  ): Promise<TerritorySelectorsInterface> {
-    const query = {
-      text: `
-      SELECT
-        ARRAY_AGG(arr) AS com
-      FROM territory.get_arr($1::int, now())
-      `,
-      values: [params._id],
-    };
-
-    const result = await this.connection.getClient().query<any>(query);
-    return result.rows[0];
   }
 }

@@ -1,11 +1,13 @@
 import { coerceIntList } from "@/ilos/cli/index.ts";
 import { command, CommandInterface, ContextType, KernelInterfaceResolver } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { set } from "@/lib/object/index.ts";
 import { CampaignRepository } from "@/pdc/providers/campaign/repositories/CampaignRepository.ts";
 import { fromZonedTime } from "dep:date-fns-tz";
 import { ParamsInterface as ExportParams, signature as exportSignature } from "../contracts/export.contract.ts";
 import { castExportParams } from "../helpers/castExportParams.helper.ts";
+
+const log = taggedLogger("[apdf]", { maxLength: 512 });
 
 interface Options {
   campaigns: number[];
@@ -97,11 +99,12 @@ export class ExportCommand implements CommandInterface {
 
     set(params, "query.campaign_id", campaign_list);
 
-    logger.info(
-      `Running [${exportSignature}] from ${start_date.toISOString()} to ${end_date.toISOString()} for campaigns: ${
-        campaign_list.join(", ")
-      }`,
-    );
+    log.info("running export", {
+      signature: exportSignature,
+      start_date: start_date.toISOString(),
+      end_date: end_date.toISOString(),
+      campaigns: campaign_list.join("."),
+    });
 
     await this.kernel.call(exportSignature, params, context);
 

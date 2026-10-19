@@ -6,16 +6,17 @@ import {
   ParamsType,
   ResultType,
 } from "@/ilos/common/index.ts";
-import { logger } from "@/lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { get } from "@/lib/object/index.ts";
 import { ConfiguredMiddleware } from "../interfaces.ts";
+
+const log = taggedLogger("[kernel]");
 
 /*
  * Filter call from channel service
  */
 @middleware()
-export class ChannelServiceWhitelistMiddleware
-  implements MiddlewareInterface<ChannelServiceWhitelistMiddlewareParams> {
+export class ChannelServiceWhitelistMiddleware implements MiddlewareInterface<ChannelServiceWhitelistMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
@@ -24,9 +25,7 @@ export class ChannelServiceWhitelistMiddleware
   ): Promise<ResultType> {
     const service = get(context, "channel.service", "");
     if (config.indexOf(service) < 0) {
-      logger.error(
-        `Service is not reachable from ${service}, only [${config.join(", ")}]`,
-      );
+      log.warn("service refused", { service });
       throw new ForbiddenException(`Service is not reachable from ${service}`);
     }
     return next(params, context);

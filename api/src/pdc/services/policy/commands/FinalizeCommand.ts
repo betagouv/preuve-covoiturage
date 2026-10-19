@@ -5,10 +5,12 @@ import {
   KernelInterfaceResolver,
   ResultType,
 } from "../../../../ilos/common/index.ts";
-import { logger } from "../../../../lib/logger/index.ts";
+import { taggedLogger } from "@/lib/logger/tagged.ts";
 import { Timezone } from "../../../providers/validator/index.ts";
 import { ParamsInterface, signature as finalize } from "../contracts/finalize.contract.ts";
 import { castUserStringToUTC, toISOString } from "../helpers/index.ts";
+
+const log = taggedLogger("[campaign]", { maxLength: 512 });
 
 interface CommandOptions {
   from: string;
@@ -65,7 +67,7 @@ export class FinalizeCommand implements CommandInterface {
 
       return "";
     } catch (e) {
-      logger.error(e.rpcError?.data || e.message);
+      log.error("finalize command failed", { error: String(e.rpcError?.data || e.message) });
     }
   }
 }

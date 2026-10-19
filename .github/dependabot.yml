@@ -1,4 +1,5 @@
 # API Deno (deno.jsonc) non géré par Dependabot : à couvrir à part.
+# Mises à jour de version vers next ; les correctifs de sécurité ciblent toujours main.
 version: 2
 
 updates:
@@ -7,7 +8,7 @@ updates:
       - /app-partners
       - /app-observatory
       - /app-attestation-forms
-      - /cms
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -21,6 +22,7 @@ updates:
   # Application gelée : correctifs de sécurité seulement.
   - package-ecosystem: npm
     directory: /app-attestation
+    target-branch: next
     schedule:
       interval: weekly
     open-pull-requests-limit: 0
@@ -29,10 +31,28 @@ updates:
     commit-message:
       prefix: build(deps)
 
+  # CMS hors veille. Sans target-branch pour que ignore couvre aussi la sécurité.
+  - package-ecosystem: npm
+    directory: /cms
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
+  - package-ecosystem: docker
+    directories:
+      - /docker/cms
+      - /docker/cms/prod
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
   - package-ecosystem: uv
     directories:
       - /api-datalake
       - /datalake
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -44,8 +64,17 @@ updates:
         update-types: [minor, patch]
 
   - package-ecosystem: docker
+    # Liste explicite pour exclure docker/cms.
     directories:
-      - /docker/**
+      - /docker/api
+      - /docker/data
+      - /docker/datalake/prod
+      - /docker/datalake-api/prod
+      - /docker/dbt/prod
+      - /docker/geo-import/prod
+      - /docker/postgres
+      - /docker/redis
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -58,6 +87,7 @@ updates:
 
   - package-ecosystem: docker-compose
     directory: /
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:
@@ -72,6 +102,7 @@ updates:
     directories:
       - /
       - /.github/actions/*
+    target-branch: next
     schedule:
       interval: weekly
     cooldown:

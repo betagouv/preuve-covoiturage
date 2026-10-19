@@ -1,3 +1,5 @@
+import { InvalidArgumentError } from "dep:commander";
+
 export function coerceIntList(s: string): number[] {
   if (!s || !s.length) return [];
   return s
@@ -13,10 +15,10 @@ export function coerceDate(s: string | null): Date | null {
   return null;
 }
 
-export function coerceInt(s: string): number | undefined {
-  const i = parseInt(s);
-  if (isNaN(i)) {
-    return undefined;
+// Commander affiche l'InvalidArgumentError et arrête la commande.
+export function coerceInt(s: string): number {
+  if (!/^-?\d+$/.test(s)) {
+    throw new InvalidArgumentError("Not an integer.");
   }
-  return i;
+  return parseInt(s, 10);
 }

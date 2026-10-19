@@ -1,5 +1,8 @@
-import { assertEquals } from "dep:assert";
+import { assertEquals, assertFalse } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
+import { stub } from "dep:testing-mock";
+import { UnauthorizedException } from "@/ilos/common/index.ts";
+import { logger } from "@/lib/logger/index.ts";
 import { errorHandlerMiddleware } from "./errorHandlerMiddleware.ts";
 
 function callHandler(errMessage: string, errName = "Error") {
@@ -99,5 +102,26 @@ describe("errorHandlerMiddleware", () => {
     assertEquals(body.id, 1);
     assertEquals(body.jsonrpc, "2.0");
     assertEquals(body.error.code, 404);
+  });
+
+  it("journalise au format [http] sans le message d'erreur", () => {
+    using warn = stub(logger, "warn");
+    const req = { method: "POST", route: { path: "/:api_version/journeys" }, body: { email: "a@b.fr" } };
+    const res = { headersSent: true };
+    // deno-lint-ignore no-explicit-any
+    errorHandlerMiddleware(new UnauthorizedException("token de jean@ex.fr"), req as any, res as any, (() => {}) as any);
+    const line = warn.calls[0].args[0] as string;
+    assertEquals(line, "[http] error status=401 error=UnauthorizedException method=POST route=/:api_version/journeys");
+    assertFalse(line.includes("jean"));
+    assertEquals(req.body, { email: "a@b.fr" });
+  });
+
+  it("réserve le niveau error aux 5xx", () => {
+    using error = stub(logger, "error");
+    using warn = stub(logger, "warn");
+    callHandler("Internal Server Error");
+    callHandler("Not Found Error");
+    assertEquals(error.calls.length, 1);
+    assertEquals(warn.calls.length, 1);
   });
 });

@@ -10,6 +10,12 @@ import {
 } from "@/interfaces/auth";
 import crypto from "crypto";
 
+const PROCONNECT_ACCOUNT_URL = "https://identite.proconnect.gouv.fr/personal-information";
+
+// Page « mes informations » ProConnect : `NEXT_PUBLIC_PC_USER_URI` (bac à sable en démo), production sinon.
+export const proconnectAccountUrl = (configured?: string): string =>
+  configured !== undefined && configured !== "" ? configured : PROCONNECT_ACCOUNT_URL;
+
 export const generateNonce = () => {
   return crypto.randomBytes(16).toString("hex");
 };
@@ -99,10 +105,12 @@ export const labelType = (type: string) => {
   }
 };
 
-export const getUserSession = async () => {
+// Session courante ; undefined sans session valide (401 : expirée ou compte supprimé).
+export const getUserSession = async (): Promise<AuthContextProps["user"] | undefined> => {
   const response = await fetch(`${Config.get<string>("auth.domain")}/auth/me`, {
     credentials: "include",
   });
+  if (!response.ok) return undefined;
   return (await response.json()) as AuthContextProps["user"];
 };
 
@@ -126,6 +134,13 @@ export const getActiveScope = (user?: UserInterface): UserScope | undefined => {
   return user.scopes.find((s) =>
     user.operator_id ? s.operator_id === user.operator_id : s.territory_id === user.territory_id,
   );
+};
+
+// Territoires entre lesquels basculer : au moins deux, sinon rien à choisir (opérateur = 1:1).
+export const switchableScopes = (user: Pick<UserInterface, "scopes"> | undefined, enabled: boolean): UserScope[] => {
+  if (!enabled) return [];
+  const territories = (user?.scopes ?? []).filter((s) => s.territory_id);
+  return territories.length > 1 ? territories : [];
 };
 
 // Libellé affichable du périmètre actif (jamais l'ID brut).

@@ -25,10 +25,109 @@
   z-index: 1;
 }
 
+// Menu compte du header : réutilise le collapse du sélecteur de langue DSFR, sans son icône « traduire ».
+.user-menu {
+  display: inline-flex;
+  .fr-translate__btn::before {
+    content: none;
+  }
+  .fr-menu {
+    right: 0;
+    min-width: 18rem;
+    text-align: left;
+  }
+  .fr-menu__list {
+    display: block;
+  }
+  .fr-nav__link {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .fr-nav__link[aria-current="true"] {
+    font-weight: 700;
+  }
+  .fr-nav__link[aria-current="true"]::after {
+    content: "✓";
+    margin-left: auto;
+  }
+}
+.user-menu__summary {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+.user-menu__identity {
+  border-bottom: 1px solid var(--border-default-grey);
+}
+.user-menu__heading {
+  color: var(--text-mention-grey);
+  text-transform: uppercase;
+}
+
+// Cellule de tableau sur une ligne, tronquée ; le texte complet est dans le title ou l'infobulle.
+.cell-ellipsis {
+  display: inline-block;
+  max-width: 12rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+// Pastille du rôle : bleu = registre, orange = opérateur, vert = territoire.
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.role-pill__dot {
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  &--blue {
+    background-color: var(--background-flat-blue-france);
+  }
+  &--orange {
+    background-color: var(--background-flat-orange-terre-battue);
+  }
+  &--green {
+    background-color: var(--background-flat-green-emeraude);
+  }
+}
+
 // Accueil : « covoiturage.beta.gouv.fr » ne tient pas sur une ligne de titre en mobile.
 @media (max-width: 36em) {
   .home-title h1 {
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+}
+
+// Tableaux d'administration : le balisage DSFR hérité met la table en `display: block`, d'où une largeur au contenu.
+.admin-table {
+  overflow-x: auto;
+  > table {
+    display: table;
+    width: 100%;
+    th,
+    td {
+      text-align: left;
+      white-space: nowrap;
+    }
+    // width: 1 % + nowrap : la colonne d'actions prend la largeur de ses boutons, sur une ligne.
+    th:last-child,
+    td:last-child {
+      width: 1%;
+      text-align: right;
+      .fr-btns-group {
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        li {
+          justify-content: flex-end;
+        }
+      }
+    }
   }
 }

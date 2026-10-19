@@ -32,11 +32,15 @@ export interface CancelRequest extends ApiVersionObject {
   cancel_message: CancelMessage;
 }
 
+// Dernier trajet d'un lot (lots triés par start_datetime, _id).
+export type ProcessGeoCursor = { start_datetime: Date; _id: Id };
+
 export type ProcessGeoParams = {
   batchSize: number;
   from: Date;
   to: Date;
   failedOnly: boolean;
+  after?: ProcessGeoCursor;
 };
 
-export type ProcessGeoResults = number;
+export type ProcessGeoResults = { count: number; failed: number; cursor?: ProcessGeoCursor };

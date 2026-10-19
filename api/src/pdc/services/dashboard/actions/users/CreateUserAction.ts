@@ -1,5 +1,6 @@
-import { ContextType, handler } from "@/ilos/common/index.ts";
+import { ConfigInterfaceResolver, ContextType, handler } from "@/ilos/common/index.ts";
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
+import { errorCode, taggedLogger } from "@/lib/logger/tagged.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import {
   MANAGE_SCOPES_PERMISSION,
@@ -11,9 +12,12 @@ import { OperatorsRepositoryInterfaceResolver } from "@/pdc/services/dashboard/i
 import { TerritoriesRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/TerritoriesRepositoryInterface.ts";
 import { UsersRepositoryInterfaceResolver } from "@/pdc/services/dashboard/interfaces/UsersRepositoryInterface.ts";
 
+const log = taggedLogger("[users]");
+
 export type ResultInterface = {
   success: boolean;
   message: string;
+  id: number;
 };
 
 @handler({
@@ -40,6 +44,7 @@ export class CreateUserAction extends AbstractAction {
     private operatorsRepository: OperatorsRepositoryInterfaceResolver,
     private territoriesRepository: TerritoriesRepositoryInterfaceResolver,
     private brevoProvider: BrevoProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -48,14 +53,16 @@ export class CreateUserAction extends AbstractAction {
     const data = this.scopedPayload(params, context);
     const result = await this.repository.createUser(data);
 
+    // L'échec de l'e-mail d'invitation ne remet pas en cause la création du compte.
     try {
       const siret = await this.getSiretForUser(data.operator_id, data.territory_id);
       await this.brevoProvider.sendWelcomeEmail({
         email: data.email,
         siret: siret || "",
+        login_url: this.config.get("app_url"),
       });
-    } catch (_error) {
-      // Email failure should not prevent user creation
+    } catch (e) {
+      log.error("welcome email failed", { id: result.id, error: errorCode(e) });
     }
 
     return result;
