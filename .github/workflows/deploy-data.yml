@@ -13,7 +13,8 @@ on:
     branches:
       - main
     paths:
-      - "dbt/**"
+      - "notebooks/**"
+      - "docker/data/**"
 
 jobs:
   tag:
