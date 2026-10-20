@@ -408,11 +408,9 @@ jobs:
               - 'docker/api/**'
               - 'app-partners/**'
               - 'app-observatory/**'
-              - 'shared/**'
             api:
               - 'api/**'
               - 'docker/api/**'
-              - 'shared/**'
             partners:
               - 'app-partners/**'
             observatory:
