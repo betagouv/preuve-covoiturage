@@ -12,6 +12,7 @@ const routeToTabId: Record<string, string> = {
   "/administration/operateurs/": "3",
   "/administration/territoires/": "4",
   "/administration/cles-api/": "5",
+  "/administration/campagnes/": "6",
 };
 
 const tabIdToRoute: Record<string, string> = {
@@ -20,6 +21,7 @@ const tabIdToRoute: Record<string, string> = {
   "3": "/administration/operateurs/",
   "4": "/administration/territoires/",
   "5": "/administration/cles-api/",
+  "6": "/administration/campagnes/",
 };
 
 export default function AdministrationLayout({ children }: { children: React.ReactNode }) {
@@ -57,6 +59,13 @@ export default function AdministrationLayout({ children }: { children: React.Rea
     tabs.push({
       tabId: "5",
       label: "Clés d'API",
+    });
+  }
+
+  if (user?.role.startsWith("registry.") || user?.operator_id || user?.territory_id) {
+    tabs.push({
+      tabId: "6",
+      label: "Campagnes déclarées",
     });
   }
 

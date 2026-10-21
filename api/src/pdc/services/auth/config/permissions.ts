@@ -42,6 +42,20 @@ const permissions = {
   // @deprecated
   "operator.patchThumbnail": ["operator.admin", "registry.admin"],
 
+  // Conditions des campagnes d'incitation (carte observatoire, open data), RPC ou non
+  "campaign_condition.list": [
+    "operator.user",
+    "operator.admin",
+    "territory.user",
+    "territory.admin",
+    "registry.user",
+    "registry.admin",
+  ],
+  "campaign_condition.create": ["operator.admin", "territory.admin", "registry.admin"],
+  "campaign_condition.update": ["operator.admin", "territory.admin", "registry.admin"],
+  "campaign_condition.delete": ["operator.admin", "territory.admin", "registry.admin"],
+  "campaign_condition.validate": ["registry.admin"],
+
   // Campaigns
   "policy.create": ["territory.admin", "registry.admin"],
 
