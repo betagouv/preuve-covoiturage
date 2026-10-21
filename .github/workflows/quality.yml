@@ -149,7 +149,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: "Audit public site dependencies"
         run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
@@ -169,7 +169,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-partners
@@ -193,7 +193,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-partners
@@ -218,7 +218,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-partners
@@ -251,7 +251,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: "Audit public site dependencies"
         run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
@@ -271,7 +271,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-observatory
@@ -295,7 +295,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-observatory
@@ -320,7 +320,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.22.1"
 
       - name: Install dependencies
         working-directory: app-observatory
