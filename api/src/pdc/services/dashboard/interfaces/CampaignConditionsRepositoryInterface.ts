@@ -5,8 +5,10 @@ import type {
 
 export type CampaignConditionStatus = "draft" | "validated";
 
-export type CampaignConditionRow = CreateCampaignCondition & {
+export type CampaignConditionRow = Omit<CreateCampaignCondition, "email_contact"> & {
   id: number;
+  // null quand l'appelant n'est ni l'auteur ni admin RPC
+  email_contact: string | null;
   created_by_operator_id: number | null;
   created_by_territory_id: number | null;
   status: CampaignConditionStatus;

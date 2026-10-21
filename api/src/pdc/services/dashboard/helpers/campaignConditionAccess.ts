@@ -43,3 +43,13 @@ export function assertCanWrite(existing: Owned, nextOperatorIds: number[] | null
   if (!owns) throw new ForbiddenException("Campagne en lecture seule : contactez l'équipe RPC");
   if (nextOperatorIds) assertCanCreate(nextOperatorIds, caller);
 }
+
+const isAuthor = (row: Owned, caller: Caller) =>
+  caller.territory_id !== null
+    ? row.created_by_territory_id === caller.territory_id
+    : caller.operator_id !== null && row.created_by_operator_id === caller.operator_id;
+
+// L'email de contact n'est pas publié : seuls l'auteur et les admins RPC le reçoivent.
+export function withContactFor<T extends Owned & { email_contact: string | null }>(row: T, caller: Caller): T {
+  return caller.registry || isAuthor(row, caller) ? row : { ...row, email_contact: null };
+}

@@ -5,7 +5,6 @@ import {
   enums,
   Infer,
   integer,
-  min,
   nullable,
   object,
   optional,
@@ -19,13 +18,13 @@ import { Email, Id, PlainText, Serial } from "@/pdc/providers/superstruct/shared
 const TerritoryType = enums(["com", "epci", "aom", "dep", "reg", "country", "custom"]);
 const Eligibilite = enums(["tous", "jeunes_18_25", "demandeurs_emploi", "mineurs", "autre"]);
 // Chaîne AAAA-MM-JJ (comparable telle quelle) ; `DateOnly` partagé convertit en Date.
-const IsoDate = refine(
-  pattern(string(), /^\d{4}-\d{2}-\d{2}$/),
-  "iso_date",
-  (v) => !Number.isNaN(Date.parse(v)) || "Date invalide",
-);
-// Centimes ou nombres de trajets / km : entiers positifs.
-const Count = nullable(min(integer(), 0));
+// Aller-retour : refuse les dates impossibles (2026-02-31) que Postgres rejetterait en 500.
+const IsoDate = refine(pattern(string(), /^\d{4}-\d{2}-\d{2}$/), "iso_date", (v) => {
+  const d = new Date(`${v}T00:00:00Z`);
+  return (!Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v) || "Date invalide";
+});
+// Centimes ou nombres de trajets / km : entiers positifs, bornés au int Postgres.
+const Count = nullable(size(integer(), 0, 2147483647));
 const LongText = refine(size(string(), 0, 2000), "plaintext", (v) => !/[<>]/.test(v) || "Balises interdites");
 
 const fields = {

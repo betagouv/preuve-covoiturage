@@ -2,7 +2,7 @@ import { ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { CampaignConditions } from "@/pdc/services/dashboard/dto/CampaignConditions.ts";
-import { callerOf } from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
+import { Caller, callerOf, withContactFor } from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
 import {
   CampaignConditionRow,
   CampaignConditionsRepositoryInterfaceResolver,
@@ -32,7 +32,13 @@ export class CampaignConditionsAction extends AbstractAction {
 
   // Un opérateur voit les campagnes où il est listé ; un territoire, celles qu'il a saisies ou qui le concernent.
   public override async handle(params: CampaignConditions, context: ContextType): Promise<CampaignConditionRow[]> {
-    const caller = callerOf(context, "registry.campaign_condition.list");
+    const rows = await this.rowsFor(params, callerOf(context, "registry.campaign_condition.list"));
+    // registry.user lit tout mais, comme les non-auteurs, ne reçoit pas l'email de contact
+    const writer = callerOf(context);
+    return rows.map((row) => withContactFor(row, writer));
+  }
+
+  private async rowsFor(params: CampaignConditions, caller: Caller): Promise<CampaignConditionRow[]> {
     if (caller.registry) return this.repository.list({ id: params.id });
     if (caller.territory_id !== null) {
       const resolved = await this.repository.resolveTerritory(caller.territory_id);

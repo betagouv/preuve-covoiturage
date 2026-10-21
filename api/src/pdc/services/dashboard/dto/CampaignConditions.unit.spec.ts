@@ -66,6 +66,12 @@ describe("dto/CampaignConditions", () => {
     assertEquals(failures({ ...base, operator_ids: [] }).length > 0, true);
   });
 
+  it("refuse une date impossible et un montant au-delà d'un int Postgres", () => {
+    assertEquals(failures({ ...base, date_debut: "2026-02-31" }).length > 0, true);
+    assertEquals(failures({ ...base, budget_incitations: 2147483648 }).length > 0, true);
+    assertEquals(failures({ ...base, budget_incitations: 2147483647 }), []);
+  });
+
   it("refuse un montant négatif ou décimal (centimes entiers)", () => {
     assertEquals(failures({ ...base, budget_incitations: -1 }).length > 0, true);
     assertEquals(failures({ ...base, budget_incitations: 10.5 }).length > 0, true);

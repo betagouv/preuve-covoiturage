@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
 import { ForbiddenException } from "@/ilos/common/index.ts";
-import { assertCanCreate, assertCanWrite, callerOf } from "./campaignConditionAccess.ts";
+import { assertCanCreate, assertCanWrite, callerOf, withContactFor } from "./campaignConditionAccess.ts";
 
 describe("campaignConditionAccess", () => {
   const registry = callerOf({
@@ -71,6 +71,16 @@ describe("campaignConditionAccess", () => {
     assertCanWrite(byTerritory, [5], territory7);
     assertThrows(() => assertCanWrite(multi, [3], territory7), ForbiddenException);
     assertThrows(() => assertCanWrite(mono, [3], territory7), ForbiddenException);
+  });
+
+  it("ne transmet l'email de contact qu'à l'auteur et aux admins RPC", () => {
+    const row = { ...byTerritory, email_contact: "agent@example.org" };
+    assertEquals(withContactFor(row, registry).email_contact, "agent@example.org");
+    assertEquals(withContactFor(row, territory7).email_contact, "agent@example.org");
+    assertEquals(withContactFor(row, operator3).email_contact, null);
+    assertEquals(withContactFor({ ...mono, email_contact: "x@example.org" }, operator3).email_contact, "x@example.org");
+    const registryUser = { registry: false, operator_id: null, territory_id: null };
+    assertEquals(withContactFor(row, registryUser).email_contact, null);
   });
 
   it("laisse l'équipe RPC tout modifier", () => {
