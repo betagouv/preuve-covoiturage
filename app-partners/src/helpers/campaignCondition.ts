@@ -144,9 +144,8 @@ export const canEditCampaign = (
   user: { role: string; operator_id: number | null; territory_id?: number | null },
 ) => {
   if (user.role === "registry.admin") return true;
-  if (user.role === "territory.admin") {
-    return user.territory_id != null && campaign.created_by_territory_id === user.territory_id;
-  }
+  // L'API ne liste à un territoire que les campagnes qu'il a saisies ou qui portent sur lui : il a la main dessus.
+  if (user.role === "territory.admin") return user.territory_id != null;
   return (
     user.role === "operator.admin" &&
     user.operator_id !== null &&

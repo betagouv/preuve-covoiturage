@@ -26,7 +26,7 @@ export type CampaignConditionsFilter = {
   // campagnes où cet opérateur est listé
   operator_id?: number;
   // campagnes saisies par ce territoire ou portant sur lui
-  territory?: { id: number; resolved: ResolvedTerritory | null };
+  territory?: { id: number; resolved: Pick<ResolvedTerritory, "territory_type" | "territory_code"> | null };
 };
 
 export interface CampaignConditionsRepositoryInterface {
