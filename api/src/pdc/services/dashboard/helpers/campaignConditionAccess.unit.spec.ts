@@ -1,7 +1,14 @@
 import { assertEquals, assertThrows } from "dep:assert";
 import { describe, it } from "dep:testing-bdd";
 import { ForbiddenException } from "@/ilos/common/index.ts";
-import { assertCanCreate, assertCanWrite, callerOf, withContactFor, withTerritory } from "./campaignConditionAccess.ts";
+import {
+  assertCanCreate,
+  assertCanWrite,
+  callerOf,
+  contactReaderOf,
+  withContactFor,
+  withTerritory,
+} from "./campaignConditionAccess.ts";
 
 describe("campaignConditionAccess", () => {
   const registry = callerOf({
@@ -101,6 +108,15 @@ describe("campaignConditionAccess", () => {
     assertEquals(withContactFor({ ...mono, email_contact: "x@example.org" }, operator3).email_contact, "x@example.org");
     const registryUser = { registry: false, operator_id: null, territory_id: null, territory: null };
     assertEquals(withContactFor(row, registryUser).email_contact, null);
+  });
+
+  it("ne donne l'email au territoire concerné que s'il peut modifier (pas à territory.user)", () => {
+    const row = { ...byOperatorOnAom7, email_contact: "op@example.org" };
+    const ctx = (permissions: string[]) => ({ call: { user: { permissions, operator_id: null, territory_id: 7 } } });
+    const admin = contactReaderOf(ctx(["territory.campaign_condition.update"]), territory7.territory);
+    const reader = contactReaderOf(ctx(["territory.campaign_condition.list"]), territory7.territory);
+    assertEquals(withContactFor(row, admin).email_contact, "op@example.org");
+    assertEquals(withContactFor(row, reader).email_contact, null);
   });
 
   it("laisse l'équipe RPC tout modifier", () => {

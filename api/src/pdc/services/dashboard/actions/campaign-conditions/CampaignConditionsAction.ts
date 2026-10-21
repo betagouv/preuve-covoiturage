@@ -2,7 +2,12 @@ import { ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { CampaignConditions } from "@/pdc/services/dashboard/dto/CampaignConditions.ts";
-import { Caller, callerOf, withContactFor } from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
+import {
+  Caller,
+  callerOf,
+  contactReaderOf,
+  withContactFor,
+} from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
 import { withCallerTerritory } from "@/pdc/services/dashboard/helpers/campaignConditionTerritory.ts";
 import {
   CampaignConditionRow,
@@ -35,8 +40,8 @@ export class CampaignConditionsAction extends AbstractAction {
   public override async handle(params: CampaignConditions, context: ContextType): Promise<CampaignConditionRow[]> {
     const reader = await withCallerTerritory(this.repository, callerOf(context, "registry.campaign_condition.list"));
     const rows = await this.rowsFor(params, reader);
-    // registry.user lit tout mais, comme les non-auteurs, ne reçoit pas l'email de contact
-    const writer = { ...callerOf(context), territory: reader.territory };
+    // registry.user et territory.user lisent sans recevoir l'email de contact (réservé à qui peut modifier)
+    const writer = contactReaderOf(context, reader.territory);
     return rows.map((row) => withContactFor(row, writer));
   }
 

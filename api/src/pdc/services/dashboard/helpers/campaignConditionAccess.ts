@@ -75,3 +75,15 @@ export function withContactFor<T extends Owned & { email_contact: string | null 
   const operatorAuthor = caller.operator_id !== null && row.created_by_operator_id === caller.operator_id;
   return caller.registry || operatorAuthor || territoryOwns(row, caller) ? row : { ...row, email_contact: null };
 }
+
+// Destinataire de l'email : admin RPC, opérateur auteur, ou territoire concerné qui peut modifier la campagne.
+export function contactReaderOf(context: Pick<ContextType, "call">, territory: Caller["territory"]): Caller {
+  const caller = callerOf(context);
+  const permissions = (context?.call?.user?.permissions ?? []) as string[];
+  const territoryWriter = permissions.includes("territory.campaign_condition.update");
+  return {
+    ...caller,
+    territory: territoryWriter ? territory : null,
+    territory_id: territoryWriter ? caller.territory_id : null,
+  };
+}
