@@ -11,6 +11,8 @@ import {
   sensTrajetsLabels,
 } from "@/helpers/campaignCondition";
 import { castPerimeterType } from "@/helpers/search";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import { fr } from "@codegouvfr/react-dsfr";
 import ButtonsGroup from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
@@ -141,25 +143,33 @@ export default function CampaignConditionForm(props: {
           </>
         )}
         {props.lockedOperatorId === null && (
-          <Checkbox
-            className={fr.cx("fr-mt-3w")}
-            legend="Opérateurs participants"
-            hintText="Plusieurs opérateurs possibles"
-            orientation="horizontal"
-            state={shown("operator_ids") ? "error" : "default"}
-            stateRelatedMessage={shown("operator_ids")}
-            options={props.operators.map((o) => ({
-              label: o.name,
-              nativeInputProps: {
-                checked: draft.operator_ids.includes(o.id),
-                onChange: (e) =>
-                  set(
-                    "operator_ids",
-                    e.target.checked ? [...draft.operator_ids, o.id] : draft.operator_ids.filter((id) => id !== o.id),
-                  ),
-              },
-            }))}
-          />
+          <div className={fr.cx("fr-mt-3w", "fr-mb-3w")}>
+            <Autocomplete
+              multiple
+              id="select-operators"
+              options={props.operators}
+              getOptionLabel={(o) => o.name}
+              isOptionEqualToValue={(a, b) => a.id === b.id}
+              value={props.operators.filter((o) => draft.operator_ids.includes(o.id))}
+              onChange={(_e, selected) =>
+                set(
+                  "operator_ids",
+                  selected.map((o) => o.id),
+                )
+              }
+              noOptionsText="Aucun opérateur"
+              filterSelectedOptions
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Opérateurs participants"
+                  placeholder={draft.operator_ids.length ? "" : "Chercher un opérateur"}
+                  error={!!shown("operator_ids")}
+                  helperText={shown("operator_ids") ?? "Plusieurs opérateurs possibles"}
+                />
+              )}
+            />
+          </div>
         )}
         {field("email_contact", "Email de contact de la collectivité", "email", "Non publié")}
       </Section>
