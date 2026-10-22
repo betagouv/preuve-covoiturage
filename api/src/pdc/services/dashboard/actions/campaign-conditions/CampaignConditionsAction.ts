@@ -2,12 +2,7 @@ import { ContextType, ForbiddenException, handler } from "@/ilos/common/index.ts
 import { Action as AbstractAction } from "@/ilos/core/index.ts";
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from "@/pdc/providers/middleware/index.ts";
 import { CampaignConditions } from "@/pdc/services/dashboard/dto/CampaignConditions.ts";
-import {
-  Caller,
-  callerOf,
-  contactReaderOf,
-  withContactFor,
-} from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
+import { Caller, callerOf } from "@/pdc/services/dashboard/helpers/campaignConditionAccess.ts";
 import { withCallerTerritory } from "@/pdc/services/dashboard/helpers/campaignConditionTerritory.ts";
 import {
   CampaignConditionRow,
@@ -38,11 +33,10 @@ export class CampaignConditionsAction extends AbstractAction {
 
   // Un opérateur voit les campagnes où il est listé ; un territoire, celles qu'il a saisies ou qui le concernent.
   public override async handle(params: CampaignConditions, context: ContextType): Promise<CampaignConditionRow[]> {
-    const reader = await withCallerTerritory(this.repository, callerOf(context, "registry.campaign_condition.list"));
-    const rows = await this.rowsFor(params, reader);
-    // registry.user et territory.user lisent sans recevoir l'email de contact (réservé à qui peut modifier)
-    const writer = contactReaderOf(context, reader.territory);
-    return rows.map((row) => withContactFor(row, writer));
+    return this.rowsFor(
+      params,
+      await withCallerTerritory(this.repository, callerOf(context, "registry.campaign_condition.list")),
+    );
   }
 
   private async rowsFor(params: CampaignConditions, caller: Caller): Promise<CampaignConditionRow[]> {

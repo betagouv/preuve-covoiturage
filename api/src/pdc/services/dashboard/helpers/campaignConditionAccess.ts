@@ -68,22 +68,3 @@ export function assertCanWrite(existing: Owned, nextOperatorIds: number[] | null
   if (!owns) throw new ForbiddenException("Campagne en lecture seule : contactez l'équipe RPC");
   if (nextOperatorIds) assertCanCreate(nextOperatorIds, caller);
 }
-
-// L'email de contact n'est pas publié : seuls l'équipe RPC (admin), l'opérateur auteur et le territoire
-// concerné le reçoivent.
-export function withContactFor<T extends Owned & { email_contact: string | null }>(row: T, caller: Caller): T {
-  const operatorAuthor = caller.operator_id !== null && row.created_by_operator_id === caller.operator_id;
-  return caller.registry || operatorAuthor || territoryOwns(row, caller) ? row : { ...row, email_contact: null };
-}
-
-// Destinataire de l'email : admin RPC, opérateur auteur, ou territoire concerné qui peut modifier la campagne.
-export function contactReaderOf(context: Pick<ContextType, "call">, territory: Caller["territory"]): Caller {
-  const caller = callerOf(context);
-  const permissions = (context?.call?.user?.permissions ?? []) as string[];
-  const territoryWriter = permissions.includes("territory.campaign_condition.update");
-  return {
-    ...caller,
-    territory: territoryWriter ? territory : null,
-    territory_id: territoryWriter ? caller.territory_id : null,
-  };
-}

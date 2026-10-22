@@ -35,7 +35,6 @@ export const campaignConditionSchema = z
       { message: "Sélectionnez un territoire" },
     ),
     operator_ids: z.array(z.number()).min(1, { message: "Sélectionnez au moins un opérateur" }),
-    email_contact: z.string().trim().toLowerCase().email({ message: "L'adresse mail n'est pas valide" }),
     premiere_campagne: z.boolean(),
     date_debut: z.string().date("Date de début requise"),
     date_fin: z.string().date("Date invalide").nullable(),
@@ -108,7 +107,6 @@ export const emptyCampaignCondition = (): Omit<CampaignConditionForm, "territory
 } => ({
   territory: null,
   operator_ids: [],
-  email_contact: "",
   premiere_campagne: false,
   date_debut: "",
   date_fin: null,

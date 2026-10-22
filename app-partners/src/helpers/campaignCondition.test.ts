@@ -13,7 +13,6 @@ const valid = {
   ...emptyCampaignCondition(),
   territory: { type: "custom", code: "36709", label: "PETR Alsace du Nord" },
   operator_ids: [3],
-  email_contact: "mobilite@example.org",
   date_debut: "2026-01-01",
   date_fin: "2026-12-31",
   trajet_classe_preuve: ["C"],

@@ -48,12 +48,7 @@ export default function CampaignConditionForm(props: {
   const num = (k: Key) => (e: React.ChangeEvent<HTMLInputElement>) =>
     set(k, (e.target.value === "" ? null : Number(e.target.value)) as never);
 
-  const field = (
-    k: Key,
-    label: string,
-    kind: "euros" | "entier" | "km" | "date" | "texte" | "email",
-    hint?: string,
-  ) => {
+  const field = (k: Key, label: string, kind: "euros" | "entier" | "km" | "date" | "texte", hint?: string) => {
     const error = shown(k);
     const value = draft[k] as string | number | null;
     const isNum = kind === "euros" || kind === "entier" || kind === "km";
@@ -65,7 +60,7 @@ export default function CampaignConditionForm(props: {
         state={error ? "error" : "default"}
         stateRelatedMessage={error}
         nativeInputProps={{
-          type: isNum ? "number" : kind === "date" ? "date" : kind === "email" ? "email" : "text",
+          type: isNum ? "number" : kind === "date" ? "date" : "text",
           min: isNum ? 0 : undefined,
           step: kind === "euros" ? "0.01" : isNum ? 1 : undefined,
           value: value ?? "",
@@ -171,7 +166,6 @@ export default function CampaignConditionForm(props: {
             />
           </div>
         )}
-        {field("email_contact", "Email de contact de la collectivité", "email", "Non publié")}
       </Section>
 
       <Section title="2. Période et budget">
