@@ -16,7 +16,6 @@ RPC (Registre de Preuve de Covoiturage) - beta.gouv.fr. Certifies carpooling jou
 | `app-attestation/` | Cert generator | Angular 16 (frozen) |
 | `cms/` | CMS | Strapi 4 |
 | `shared/` | Shared TS types | (deprecated) |
-| `dbt/` | Analytics | DBT, Python (deprecated) |
 | `docker/` | Containers | Docker |
 
 Each dir has `README.md`. Skills in `.claude/skills/`.
